@@ -4,12 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal Oficial de Vigilância Sanitária | SP</title>
-  <meta name="description" content="Portal de Gestão, Licenciamento e Fiscalização Sanitária da Prefeitura de São Paulo.">
+  <meta name="description" content="Portal de Gestão, Licenciamento e Fiscalização Sanitária da Prefeitura de São Paulo." />
 
-  <link rel="icon" href="imagens/5.png" type="image/png">
-
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" href="imagens/5.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
     :root {
@@ -35,178 +34,281 @@
     ul { list-style: none; }
     img { max-width: 100%; display: block; }
 
-    /* --- BARRA GOV VERMELHA --- */
-    .gov-bar { background: var(--sp-red); color: #fff; padding: 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2000; position: relative; }
     .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
-    .gov-links a { color: #fff; margin-left: 20px; font-weight: 600; text-decoration: none; opacity: 0.9; }
-    .gov-links a:hover { opacity: 1; text-decoration: underline; }
+
+    /* --- BARRA GOV VERMELHA --- */
+    .gov-bar {
+      background: var(--sp-red);
+      color: #fff;
+      padding: 10px 0;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 2000;
+      position: relative;
+    }
+    .gov-left { font-weight: 700; opacity: 0.95; }
+    .gov-links { display: flex; gap: 10px; }
+    .gov-links a {
+      color: #fff;
+      font-weight: 800;
+      opacity: 0.95;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.08);
+      white-space: nowrap;
+    }
+    .gov-links a:hover { opacity: 1; background: rgba(255,255,255,0.14); }
 
     /* --- HEADER --- */
-    header { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 15px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-    .header-grid { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 40px; }
+    header {
+      background: var(--glass);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 14px 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+    .header-grid {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 24px;
+    }
 
-    .brand { display: flex; align-items: center; gap: 15px; }
-    .brand img { height: 75px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
-    .brand-text h1 { font-size: 1.4rem; line-height: 1; color: var(--text-dark); letter-spacing: -0.5px; text-transform: uppercase; font-weight: 900; }
-    .brand-text span { font-size: 0.75rem; color: var(--sp-red); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand img { height: 68px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+    .brand-text h1 {
+      font-size: 1.35rem;
+      line-height: 1;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+    .brand-text span {
+      font-size: 0.75rem;
+      color: var(--sp-red);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
 
-    nav ul { display: flex; list-style: none; gap: 10px; }
-    nav a { text-decoration: none; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; padding: 10px 18px; border-radius: 50px; transition: 0.3s; }
+    nav ul { display: flex; gap: 10px; }
+    nav a {
+      color: var(--text-dark);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 10px 18px;
+      border-radius: 999px;
+      transition: 0.3s;
+    }
     nav a:hover, nav a.active { background: rgba(218, 37, 28, 0.08); color: var(--sp-red); }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
     /* BOTÃO GOV.BR */
-    .btn-login { background: var(--gov-blue); color: white; padding: 10px 25px; border-radius: 25px; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
+    .btn-login {
+      background: var(--gov-blue);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid transparent;
+      transition: 0.3s;
+      white-space: nowrap;
+    }
     .btn-login:hover { background: var(--gov-dark-blue); box-shadow: 0 4px 15px rgba(19, 81, 180, 0.3); }
-    .btn-login i { font-size: 1.3rem; }
+    .btn-login i { font-size: 1.15rem; }
 
-    /* ===== MOBILE: HAMBURGUER + DRAWER ===== */
-    .header-actions { display: inline-flex; align-items: center; gap: 12px; justify-content: flex-end; }
-
-    .hamburger-btn{
+    /* Botão hambúrguer (aparece no mobile) */
+    .hamburger-btn {
       display: none;
       width: 44px;
       height: 44px;
       border-radius: 12px;
+      background: #f8f9fa;
       border: 1px solid #e9ecef;
-      background: #fff;
       cursor: pointer;
       align-items: center;
       justify-content: center;
-      transition: .2s;
+      color: #333;
+      transition: 0.2s;
     }
-    .hamburger-btn:hover{ transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
-    .hamburger-btn i{ font-size: 18px; color: var(--text-dark); }
+    .hamburger-btn:hover { background: #f1f3f5; }
+    .hamburger-btn i { font-size: 18px; }
 
-    .drawer-overlay{
+    /* --- DRAWER MOBILE --- */
+    .drawer-overlay {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.45);
       z-index: 9999;
       display: none;
     }
-
-    .drawer{
+    .drawer {
       position: fixed;
       top: 0;
       left: 0;
-      width: 320px;
-      max-width: 85vw;
       height: 100%;
+      width: 310px;
+      max-width: 86vw;
       background: #fff;
       z-index: 10000;
-      transform: translateX(-100%);
-      transition: transform .25s ease;
-      box-shadow: 10px 0 30px rgba(0,0,0,0.18);
+      transform: translateX(-110%);
+      transition: transform 0.25s ease;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
       display: flex;
       flex-direction: column;
     }
+    .drawer.open { transform: translateX(0); }
+    .drawer-overlay.open { display: block; }
 
-    .drawer.open{ transform: translateX(0); }
-    .drawer-overlay.open{ display: block; }
-
-    .drawer-header{
-      padding: 16px 18px;
+    .drawer-top {
+      padding: 18px 18px 14px;
       border-bottom: 1px solid #eee;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
     }
-    .drawer-title{
+    .drawer-title {
       font-weight: 900;
-      letter-spacing: .4px;
-      text-transform: uppercase;
       color: var(--text-dark);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.95rem;
+      letter-spacing: -0.2px;
     }
-    .drawer-close{
+    .drawer-close {
       width: 40px;
       height: 40px;
       border-radius: 12px;
-      border: 1px solid #eee;
-      background: #fff;
+      border: 1px solid #e9ecef;
+      background: #f8f9fa;
       cursor: pointer;
-    }
-    .drawer-close i{ font-size: 16px; }
-
-    .drawer-nav{
-      padding: 14px;
-      display: grid;
-      gap: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .drawer-nav a{
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid #eee;
+    .drawer-nav {
+      padding: 10px 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .drawer-nav a {
+      padding: 12px 12px;
+      border-radius: 14px;
       font-weight: 800;
-      color: #233;
-      background: #fafafa;
+      color: #2c3e50;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid #f1f3f5;
+      background: #fff;
     }
-    .drawer-nav a:hover{
+    .drawer-nav a:hover { background: #f8f9fa; }
+    .drawer-nav a i { width: 18px; text-align: center; opacity: 0.9; }
+
+    .drawer-nav a.denuncia {
       background: rgba(218, 37, 28, 0.08);
-      border-color: rgba(218, 37, 28, 0.35);
+      border-color: rgba(218, 37, 28, 0.25);
       color: var(--sp-red);
     }
-    .drawer-nav a i{
-      opacity: .65;
+    .drawer-nav a.denuncia strong {
+      background: var(--sp-red);
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      margin-left: auto;
     }
 
-    .drawer-nav a.destaque{
-      background: rgba(218, 37, 28, 0.08);
-      border-color: rgba(218, 37, 28, 0.55);
-      color: var(--sp-red);
-      position: relative;
-    }
-    .drawer-nav a.destaque::after{
-      content: "PRIORITÁRIO";
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      color: #fff;
-      background: var(--sp-red);
-      padding: 4px 8px;
-      border-radius: 999px;
-      position: absolute;
-      right: 12px;
-      top: 10px;
+    .drawer-bottom {
+      margin-top: auto;
+      padding: 16px;
+      border-top: 1px solid #eee;
+      background: #fafafa;
+      color: #666;
+      font-size: 0.9rem;
     }
 
     /* --- HERO --- */
     .hero {
       background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center;
       background-size: cover;
-      min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center;
-      color: white; padding-top: 40px;
+      min-height: 600px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: white;
+      padding-top: 40px;
     }
     .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
-    .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
-    .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    .hero-badge {
+      background: var(--sp-red);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 25px;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4);
+    }
+    .hero h2 {
+      font-size: 3.5rem;
+      line-height: 1.1;
+      font-weight: 900;
+      margin-bottom: 20px;
+      font-family: 'Montserrat', sans-serif;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
     .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
 
     /* Busca */
     .search-box {
-      background: white; padding: 8px; border-radius: 50px; display: flex;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 600px; margin: 0 auto 50px;
+      background: white;
+      padding: 8px;
+      border-radius: 50px;
+      display: flex;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      max-width: 600px;
+      margin: 0 auto 50px;
     }
     .search-box input { border: none; flex: 1; padding: 15px 25px; font-size: 1.1rem; color: #333; outline: none; }
-    .search-box button { background: var(--sp-red); color: white; border: none; padding: 0 35px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 1rem; transition: 0.3s; }
+    .search-box button { background: var(--sp-red); color: white; border: none; padding: 0 35px; border-radius: 50px; cursor: pointer; font-weight: 900; font-size: 1rem; transition: 0.3s; }
     .search-box button:hover { background: var(--sp-dark-red); }
 
     /* --- SIMULAÇÃO EM TEMPO REAL --- */
     .live-stats-bar {
-      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
-      padding: 25px 0; border-top: 1px solid rgba(255,255,255,0.1);
-      width: 100%; position: absolute; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 25px 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      width: 100%;
+      position: absolute;
+      bottom: 0;
     }
     .live-grid { display: flex; justify-content: center; gap: 60px; text-align: center; color: white; }
-    .live-item h4 { font-size: 2.8rem; font-weight: 800; margin: 0; color: #ffeb3b; font-family: 'Courier New', monospace; line-height: 1; }
-    .live-item span { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 600; }
+    .live-item h4 { font-size: 2.8rem; font-weight: 900; margin: 0; color: #ffeb3b; font-family: 'Courier New', monospace; line-height: 1; }
+    .live-item span { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 800; }
 
     /* --- STATUS CARDS --- */
     .status-bar { margin-top: 60px; padding-bottom: 60px; background: white; }
@@ -214,13 +316,13 @@
     .status-card { background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #eee; display: flex; align-items: center; gap: 15px; transition: 0.3s; box-shadow: var(--shadow); }
     .status-card:hover { transform: translateY(-5px); border-color: var(--sp-red); }
     .icon-box { width: 60px; height: 60px; background: #f0f4ff; color: var(--gov-blue); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
-    .status-info h4 { font-size: 0.9rem; color: var(--text-light); margin-bottom: 5px; text-transform: uppercase; font-weight: 700; }
-    .status-info strong { font-size: 1.2rem; color: var(--text-dark); display: block; font-weight: 800; }
+    .status-info h4 { font-size: 0.9rem; color: var(--text-light); margin-bottom: 5px; text-transform: uppercase; font-weight: 900; }
+    .status-info strong { font-size: 1.2rem; color: var(--text-dark); display: block; font-weight: 900; }
 
     /* --- ESTILOS GERAIS DE FORMULÁRIO --- */
     .form-control { width: 100%; padding: 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; margin-bottom: 15px; transition: 0.3s; font-family: 'Roboto', sans-serif; background: #fff; }
     .form-control:focus { border-color: var(--gov-blue); outline: none; }
-    .btn-success { background: var(--success-color); color: white; border: none; padding: 20px; border-radius: 10px; font-weight: 800; font-size: 1.2rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+    .btn-success { background: var(--success-color); color: white; border: none; padding: 20px; border-radius: 10px; font-weight: 900; font-size: 1.2rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
     .btn-success:hover { background: #1b5e20; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2); }
 
     /* --- REGULARIZE SECTION --- */
@@ -231,7 +333,7 @@
     .checklist-intro p { font-size: 1.1rem; color: #555; margin-bottom: 30px; line-height: 1.8; }
     .steps-box { background: white; padding: 30px; border-radius: 12px; border-left: 5px solid var(--success-color); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
     .steps-box h4 { color: var(--success-color); margin-bottom: 20px; font-size: 1.2rem; }
-    .steps-box li { margin-bottom: 15px; display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 0.95rem; color: #444; }
+    .steps-box li { margin-bottom: 15px; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 0.95rem; color: #444; }
 
     .checklist-form-container { flex: 1.2; min-width: 350px; background: white; padding: 50px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); border: 1px solid #eee; }
     .docs-list { margin: 25px 0; border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
@@ -254,10 +356,18 @@
     .area-card h3 { font-size: 1.3rem; margin-bottom: 15px; color: var(--text-dark); }
 
     /* --- IMPACTO --- */
-    .impact-section { padding: 120px 0; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1595855729736-2a725902f232?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-attachment: fixed; background-position: center; color: white; text-align: center; }
+    .impact-section {
+      padding: 120px 0;
+      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1595855729736-2a725902f232?q=80&w=2070&auto=format&fit=crop');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      color: white;
+      text-align: center;
+    }
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
     .stat-item h3 { font-size: 4rem; font-weight: 900; color: #ffeb3b; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; line-height: 1; }
-    .stat-item p { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+    .stat-item p { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
 
     /* --- NOTÍCIAS --- */
     .news-section { padding: 100px 0; background: var(--bg-light); }
@@ -269,15 +379,15 @@
     .news-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
     .news-card:hover .news-img img { transform: scale(1.1); }
     .news-body { padding: 25px; flex: 1; display: flex; flex-direction: column; }
-    .news-tag { align-self: flex-start; background: var(--sp-red); color: white; padding: 5px 12px; font-size: 0.7rem; font-weight: 700; border-radius: 4px; text-transform: uppercase; margin-bottom: 10px; }
-    .news-body h3 { font-size: 1.3rem; font-weight: 700; color: #222; line-height: 1.3; margin-bottom: 15px; }
+    .news-tag { align-self: flex-start; background: var(--sp-red); color: white; padding: 5px 12px; font-size: 0.7rem; font-weight: 900; border-radius: 4px; text-transform: uppercase; margin-bottom: 10px; }
+    .news-body h3 { font-size: 1.3rem; font-weight: 900; color: #222; line-height: 1.3; margin-bottom: 15px; }
     .news-body p { font-size: 0.95rem; color: #666; flex: 1; margin-bottom: 20px; }
-    .read-more { color: var(--gov-blue); font-weight: 800; font-size: 0.9rem; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+    .read-more { color: var(--gov-blue); font-weight: 900; font-size: 0.9rem; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
 
     /* --- LEGISLAÇÃO --- */
     .laws-section { padding: 80px 0; background: white; border-top: 1px solid #eee; }
     .law-table { width: 100%; border-collapse: collapse; margin-top: 30px; background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
-    .law-table th { background: var(--text-dark); color: white; padding: 18px; text-align: left; font-weight: 700; text-transform: uppercase; font-size: 0.9rem; }
+    .law-table th { background: var(--text-dark); color: white; padding: 18px; text-align: left; font-weight: 900; text-transform: uppercase; font-size: 0.9rem; }
     .law-table td { padding: 18px; border-bottom: 1px solid #eee; color: #555; font-size: 0.95rem; }
     .law-table tr:hover { background: #f9f9f9; }
     .download-btn { color: var(--sp-red); font-size: 1.2rem; transition: 0.3s; }
@@ -286,7 +396,7 @@
     /* --- FAQ --- */
     .faq-section { padding: 80px 0; background: #f4f6f8; }
     .faq-item { background: white; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-    .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 1.05rem; color: #333; transition: 0.3s; }
+    .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 1.05rem; color: #333; transition: 0.3s; }
     .faq-question:hover { background: #fff0f0; color: var(--sp-red); }
     .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; padding: 0 20px; color: #666; line-height: 1.6; background: #fff; }
     .faq-item.active .faq-answer { padding-bottom: 20px; }
@@ -297,23 +407,21 @@
     .report-header { text-align: center; margin-bottom: 60px; }
     .report-header h2 { font-size: 3rem; color: var(--text-dark); margin-bottom: 15px; }
     .report-header p { font-size: 1.2rem; color: #666; max-width: 700px; margin: 0 auto; }
-
     .report-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 60px; align-items: start; }
 
     .report-guide { background: var(--bg-light); padding: 40px; border-radius: 20px; border: 1px solid #eee; }
     .report-guide h3 { color: var(--sp-red); margin-bottom: 25px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
     .guide-steps { list-style: none; counter-reset: step-counter; }
-    .guide-steps li { position: relative; margin-bottom: 25px; padding-left: 50px; font-weight: 600; color: var(--text-dark); font-size: 1.05rem; }
-    .guide-steps li::before { counter-increment: step-counter; content: counter(step-counter); position: absolute; left: 0; top: -5px; width: 35px; height: 35px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+    .guide-steps li { position: relative; margin-bottom: 25px; padding-left: 50px; font-weight: 800; color: var(--text-dark); font-size: 1.05rem; }
+    .guide-steps li::before { counter-increment: step-counter; content: counter(step-counter); position: absolute; left: 0; top: -5px; width: 35px; height: 35px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; }
     .guide-steps p { font-weight: 400; font-size: 0.9rem; color: #666; margin-top: 5px; }
-    .anon-badge { display: inline-flex; align-items: center; gap: 10px; background: #e0f7fa; color: #00796b; padding: 10px 20px; border-radius: 50px; font-weight: 700; margin-top: 20px; }
+    .anon-badge { display: inline-flex; align-items: center; gap: 10px; background: #e0f7fa; color: #00796b; padding: 10px 20px; border-radius: 50px; font-weight: 900; margin-top: 20px; }
 
     .report-form-container { padding: 10px; }
     .input-with-icon { position: relative; }
     .input-with-icon i { position: absolute; left: 20px; top: 18px; color: #999; font-size: 1.1rem; z-index: 2; }
     .input-with-icon .form-control { padding-left: 55px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
     .char-counter { text-align: right; font-size: 0.85rem; color: #999; margin-top: -10px; margin-bottom: 15px; }
 
     .fake-upload-zone { border: 3px dashed #e0e0e0; border-radius: 15px; padding: 30px; text-align: center; background: #fafafa; cursor: pointer; transition: 0.3s; margin-bottom: 25px; }
@@ -321,25 +429,72 @@
     .fake-upload-zone i { font-size: 3rem; color: var(--sp-red); margin-bottom: 15px; }
     .fake-upload-zone h4 { color: var(--text-dark); margin-bottom: 5px; }
     .fake-upload-zone p { color: #666; font-size: 0.9rem; }
-    .upload-warning { background: #fff3cd; color: #856404; padding: 10px 20px; border-radius: 50px; font-size: 0.85rem; display: inline-block; margin-top: 15px; font-weight: 600; }
+    .upload-warning { background: #fff3cd; color: #856404; padding: 10px 20px; border-radius: 50px; font-size: 0.85rem; display: inline-block; margin-top: 15px; font-weight: 800; }
 
-    .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 800; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
+    .btn-report {
+      background: var(--sp-red);
+      color: white;
+      border: none;
+      padding: 22px;
+      width: 100%;
+      font-weight: 900;
+      font-size: 1.3rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3);
+    }
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
     /* Footer */
     footer { background: #151515; color: #aaa; padding-top: 80px; margin-top: 0; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
     img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
-    .footer h4 { color: white; font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; font-weight: 700; border-left: 3px solid var(--sp-red); padding-left: 10px; }
+    .footer h4 { color: white; font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; font-weight: 900; border-left: 3px solid var(--sp-red); padding-left: 10px; }
     .footer ul li { margin-bottom: 12px; }
-    .footer a { color: #aaa; text-decoration: none; transition: 0.3s; }
+    .footer a { color: #aaa; transition: 0.3s; }
     .footer a:hover { color: white; padding-left: 5px; }
     .footer-bottom { background: #000; padding: 25px 0; text-align: center; border-top: 1px solid #333; font-size: 0.9rem; }
 
     /* Chatbot */
-    .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9999; }
-    .chat-interface { position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9998; display: none; flex-direction: column; border: 1px solid #eee; }
-    .chat-header { background: var(--sp-red); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+    .chat-widget-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 65px;
+      height: 65px;
+      background: var(--sp-red);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5);
+      z-index: 9998;
+    }
+    .chat-interface {
+      position: fixed;
+      bottom: 110px;
+      right: 30px;
+      width: 360px;
+      height: 500px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      z-index: 9998;
+      display: none;
+      flex-direction: column;
+      border: 1px solid #eee;
+    }
+    .chat-header { background: var(--sp-red); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
     .chat-body { flex: 1; padding: 20px; overflow-y: auto; background: #f8f9fa; }
     .chat-input { padding: 15px; background: white; display: flex; border-top: 1px solid #eee; gap: 10px; }
     .chat-input input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 30px; outline: none; }
@@ -347,66 +502,85 @@
     .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
 
-    /* ===== RESPONSIVO ===== */
+    /* --- MOBILE AJUSTES --- */
     @media (max-width: 900px) {
+      /* GOV BAR: deixa bonito e alinhado no mobile */
+      .gov-bar { font-size: 10px; padding: 8px 0; }
+      .flex-between { align-items: flex-start; }
+      .gov-left { display: block; max-width: 62%; line-height: 1.2; }
+      .gov-links { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+      .gov-links a { padding: 6px 10px; }
+
+      /* HEADER: só logo + gov + hamburger */
+      header { padding: 10px 0; }
+      nav { display: none; } /* some no mobile */
+      .hamburger-btn { display: inline-flex; }
+
       .header-grid { grid-template-columns: 1fr auto; gap: 12px; }
-      nav { display: none; } /* some menu desktop */
-      .hamburger-btn { display: inline-flex; } /* aparece hambúrguer */
+      .brand img { height: 52px; }
+      .brand-text h1 { font-size: 1.05rem; }
+      .brand-text span { font-size: 0.68rem; }
 
-      /* Barra gov melhor no mobile */
-      .gov-bar .flex-between{
-        flex-direction: column;
-        gap: 6px;
-        align-items: flex-start;
+      .btn-login {
+        padding: 10px 12px;
+        font-size: 0.88rem;
+        border-radius: 12px;
+        gap: 8px;
       }
-      .gov-links{
-        width: 100%;
-        display: flex;
-        justify-content: flex-start;
-        gap: 14px;
-        flex-wrap: wrap;
-      }
-      .gov-links a{ margin-left: 0; }
+      .btn-login i { font-size: 1.05rem; }
 
-      /* Logo menor no mobile */
-      .brand img { height: 58px; }
-      .brand-text h1 { font-size: 1.15rem; }
-      .brand-text span { font-size: 0.7rem; }
-
-      /* Botão gov.br compacto */
-      .btn-login { padding: 10px 14px; border-radius: 14px; font-size: 0.92rem; }
-
-      /* Ajustes gerais já existentes */
-      .checklist-wrapper, .report-grid, .live-grid, .news-grid, .stats-grid, .areas-grid, .footer-grid { display: flex; flex-direction: column; }
-
-      .hero { text-align: center; min-height: 560px; }
+      /* HERO: tipografia + busca em coluna */
+      .hero { min-height: 610px; padding-top: 18px; }
       .hero h2 { font-size: 2.2rem; }
-      .hero p { font-size: 1.05rem; }
+      .hero p { font-size: 1.05rem; margin-bottom: 22px; }
 
-      .search-box { flex-direction: column; border-radius: 18px; padding: 10px; }
-      .search-box input { padding: 14px 16px; font-size: 1rem; }
-      .search-box button { padding: 14px 16px; width: 100%; border-radius: 14px; }
+      .search-box {
+        border-radius: 18px;
+        padding: 10px;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 92%;
+      }
+      .search-box input {
+        padding: 14px 16px;
+        font-size: 1rem;
+        border-radius: 14px;
+        border: 1px solid #eee;
+      }
+      .search-box button {
+        height: 52px;
+        border-radius: 14px;
+        width: 100%;
+      }
 
-      .live-stats-bar { position: relative; background: #333; }
-      .live-grid { gap: 22px; }
+      /* LIVE BAR: vira bloco e não sobrepõe */
+      .live-stats-bar { position: relative; background: rgba(0,0,0,0.78); }
+      .live-grid { flex-direction: column; gap: 16px; }
+      .live-item h4 { font-size: 2.4rem; }
 
+      /* GRIDS principais */
       .status-grid { grid-template-columns: 1fr; }
-      .checklist-form-container { padding: 28px; min-width: auto; }
+      .news-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .areas-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
 
-      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .checklist-form-container { padding: 22px; min-width: auto; }
+      .report-grid { grid-template-columns: 1fr; gap: 25px; }
       .report-header h2 { font-size: 2.2rem; }
 
-      /* chat não tampar números */
-      .chat-widget-btn { bottom: 90px; }
+      /* Chat no mobile */
+      .chat-interface { right: 12px; left: 12px; width: auto; }
+      .chat-widget-btn { right: 16px; bottom: 18px; width: 60px; height: 60px; }
     }
   </style>
 </head>
 
 <body>
-
+  <!-- GOV BAR -->
   <div class="gov-bar">
     <div class="container flex-between">
-      <span>Prefeitura do Município de São Paulo</span>
+      <span class="gov-left">Prefeitura do Município de São Paulo</span>
       <div class="gov-links">
         <a href="#">Acessibilidade</a>
         <a href="#">Alto Contraste</a>
@@ -414,10 +588,38 @@
     </div>
   </div>
 
+  <!-- DRAWER MOBILE -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-top">
+      <div class="drawer-title">Menu</div>
+      <button class="drawer-close" onclick="closeDrawer()" aria-label="Fechar menu">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <nav class="drawer-nav">
+      <a href="#inicio" onclick="closeDrawer()"><i class="fas fa-chart-line"></i> Painel</a>
+      <a href="#regularize" onclick="closeDrawer()"><i class="fas fa-clipboard-check"></i> Regularize-se</a>
+      <a href="#legislacao" onclick="closeDrawer()"><i class="fas fa-gavel"></i> Legislação</a>
+      <a href="#formularios" onclick="closeDrawer()"><i class="fas fa-file-lines"></i> Formulários</a>
+      <a href="#noticias" onclick="closeDrawer()"><i class="fas fa-newspaper"></i> Notícias</a>
+      <a class="denuncia" href="#contato" onclick="closeDrawer()">
+        <i class="fas fa-triangle-exclamation"></i> Denúncia
+        <strong>Destaque</strong>
+      </a>
+    </nav>
+
+    <div class="drawer-bottom">
+      Canal oficial de orientação e denúncias. Use o menu para navegar pelas seções.
+    </div>
+  </aside>
+
+  <!-- HEADER -->
   <header>
     <div class="container header-grid">
-      <a href="#" class="brand">
-        <img src="imagens/5.png" alt="Brasão SP" style="height: 60px; width: auto;">
+      <a href="#inicio" class="brand">
+        <img src="imagens/5.png" alt="Brasão SP" style="height: 60px; width: auto;" />
         <div class="brand-text">
           <h1>COVISA</h1>
           <span>Vigilância em Saúde</span>
@@ -441,45 +643,22 @@
           Entrar com gov.br
         </a>
 
-        <!-- Hamburger (só no mobile) -->
-        <button class="hamburger-btn" id="btnOpenDrawer" aria-label="Abrir menu">
+        <button class="hamburger-btn" onclick="openDrawer()" aria-label="Abrir menu">
           <i class="fas fa-bars"></i>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Drawer + Overlay -->
-  <div class="drawer-overlay" id="drawerOverlay"></div>
-
-  <aside class="drawer" id="drawer">
-    <div class="drawer-header">
-      <div class="drawer-title">Menu</div>
-      <button class="drawer-close" id="btnCloseDrawer" aria-label="Fechar menu">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-
-    <nav class="drawer-nav">
-      <a href="#inicio" class="drawer-link">Painel <i class="fas fa-chevron-right"></i></a>
-      <a href="#regularize" class="drawer-link">Regularize-se <i class="fas fa-chevron-right"></i></a>
-      <a href="#legislacao" class="drawer-link">Legislação <i class="fas fa-chevron-right"></i></a>
-      <a href="#formularios" class="drawer-link">Formulários <i class="fas fa-chevron-right"></i></a>
-      <a href="#noticias" class="drawer-link">Notícias <i class="fas fa-chevron-right"></i></a>
-
-      <!-- Destaque -->
-      <a href="#contato" class="drawer-link destaque">Denúncia <i class="fas fa-chevron-right"></i></a>
-    </nav>
-  </aside>
-
+  <!-- HERO -->
   <section id="inicio" class="hero">
     <div class="container hero-content">
       <span class="hero-badge">● Monitoramento Online 2026</span>
-      <h2>Gestão Integrada de<br>Vigilância e Saúde.</h2>
+      <h2>Gestão Integrada de<br />Vigilância e Saúde.</h2>
       <p>Fiscalização ativa, controle de riscos e segurança sanitária.</p>
 
       <div class="search-box">
-        <input type="text" placeholder="Buscar protocolos, legislação ou serviços...">
+        <input type="text" placeholder="Buscar protocolos, legislação ou serviços..." />
         <button>Pesquisar</button>
       </div>
     </div>
@@ -502,6 +681,7 @@
     </div>
   </section>
 
+  <!-- STATUS -->
   <div class="container status-bar">
     <div class="status-grid">
       <div class="status-card">
@@ -523,6 +703,7 @@
     </div>
   </div>
 
+  <!-- REGULARIZE -->
   <section id="regularize" class="checklist-section">
     <div class="container">
       <div class="checklist-wrapper">
@@ -542,7 +723,7 @@
 
         <div class="checklist-form-container">
           <form id="form-regularizacao">
-            <label style="font-weight: 700; display: block; margin-bottom: 5px;">Qual seu tipo de negócio?</label>
+            <label style="font-weight: 800; display: block; margin-bottom: 5px;">Qual seu tipo de negócio?</label>
             <select class="form-control" id="tipo_estab" required>
               <option value="">Selecione...</option>
               <option value="Alimentos (Restaurante/Bar)">Alimentos (Restaurante/Bar)</option>
@@ -552,30 +733,29 @@
               <option value="Indústria/Fábrica">Indústria / Fábrica</option>
             </select>
 
-            <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia da Empresa" required>
+            <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia da Empresa" required />
 
-            <p style="font-weight: 700; margin-top: 25px; color: var(--sp-red);">📄 Documentação Obrigatória (Checklist):</p>
+            <p style="font-weight: 900; margin-top: 25px; color: var(--sp-red);">📄 Documentação Obrigatória (Checklist):</p>
             <div class="docs-list">
-              <label class="doc-item"><input type="checkbox" id="doc_cnpj"><i class="fas fa-file-invoice doc-icon"></i> CNPJ Ativo</label>
-              <label class="doc-item"><input type="checkbox" id="doc_alvara"><i class="fas fa-building doc-icon"></i> Alvará de Funcionamento Prefeitura</label>
-              <label class="doc-item"><input type="checkbox" id="doc_cmvs"><i class="fas fa-id-card doc-icon"></i> Licença Sanitária (CMVS)</label>
-              <label class="doc-item"><input type="checkbox" id="doc_social"><i class="fas fa-file-contract doc-icon"></i> Contrato Social / MEI</label>
-              <label class="doc-item"><input type="checkbox" id="doc_resp"><i class="fas fa-user-md doc-icon"></i> Responsável Técnico (Se exigido)</label>
-              <label class="doc-item"><input type="checkbox" id="doc_avcb"><i class="fas fa-fire-extinguisher doc-icon"></i> AVCB Bombeiros (Incêndio)</label>
-              <label class="doc-item"><input type="checkbox" id="doc_pragas"><i class="fas fa-bug doc-icon"></i> Controle de Pragas (Dedetização)</label>
-              <label class="doc-item"><input type="checkbox" id="doc_agua"><i class="fas fa-tint doc-icon"></i> Limpeza Caixa D'Água (Certificado)</label>
-              <label class="doc-item"><input type="checkbox" id="doc_pops"><i class="fas fa-book doc-icon"></i> Manual de Boas Práticas + POPs</label>
+              <label class="doc-item"><input type="checkbox" id="doc_cnpj" /><i class="fas fa-file-invoice doc-icon"></i> CNPJ Ativo</label>
+              <label class="doc-item"><input type="checkbox" id="doc_alvara" /><i class="fas fa-building doc-icon"></i> Alvará de Funcionamento Prefeitura</label>
+              <label class="doc-item"><input type="checkbox" id="doc_cmvs" /><i class="fas fa-id-card doc-icon"></i> Licença Sanitária (CMVS)</label>
+              <label class="doc-item"><input type="checkbox" id="doc_social" /><i class="fas fa-file-contract doc-icon"></i> Contrato Social / MEI</label>
+              <label class="doc-item"><input type="checkbox" id="doc_resp" /><i class="fas fa-user-md doc-icon"></i> Responsável Técnico (Se exigido)</label>
+              <label class="doc-item"><input type="checkbox" id="doc_avcb" /><i class="fas fa-fire-extinguisher doc-icon"></i> AVCB Bombeiros (Incêndio)</label>
+              <label class="doc-item"><input type="checkbox" id="doc_pragas" /><i class="fas fa-bug doc-icon"></i> Controle de Pragas (Dedetização)</label>
+              <label class="doc-item"><input type="checkbox" id="doc_agua" /><i class="fas fa-tint doc-icon"></i> Limpeza Caixa D'Água (Certificado)</label>
+              <label class="doc-item"><input type="checkbox" id="doc_pops" /><i class="fas fa-book doc-icon"></i> Manual de Boas Práticas + POPs</label>
             </div>
 
-            <button type="submit" class="btn-success">
-              <i class="fab fa-whatsapp"></i> Enviar para Análise Técnica
-            </button>
+            <button type="submit" class="btn-success"><i class="fab fa-whatsapp"></i> Enviar para Análise Técnica</button>
           </form>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- AREAS -->
   <section class="areas-section">
     <div class="container">
       <div class="areas-header">
@@ -593,6 +773,7 @@
     </div>
   </section>
 
+  <!-- IMPACTO -->
   <section class="impact-section">
     <div class="container">
       <div class="impact-title">
@@ -608,12 +789,13 @@
     </div>
   </section>
 
+  <!-- NOTICIAS -->
   <section id="noticias" class="news-section">
     <div class="container">
       <div class="section-header"><h2>Destaques Operacionais</h2></div>
       <div class="news-grid">
         <div class="news-card">
-          <div class="news-img"><img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=600&auto=format&fit=crop" alt="Dengue"></div>
+          <div class="news-img"><img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=600&auto=format&fit=crop" alt="Dengue" /></div>
           <div class="news-body">
             <span class="news-tag">Urgente</span>
             <h3>Operação Dengue Zero: Ações em toda a capital</h3>
@@ -622,7 +804,7 @@
           </div>
         </div>
         <div class="news-card">
-          <div class="news-img"><img src="imagens/3.jpeg" class="card-img-top" alt="Operação de fiscalização"></div>
+          <div class="news-img"><img src="imagens/3.jpeg" class="card-img-top" alt="Operação de fiscalização" /></div>
           <div class="news-body">
             <span class="news-tag">Fiscalização</span>
             <h3>Blitz fecha restaurantes clandestinos no centro</h3>
@@ -631,7 +813,7 @@
           </div>
         </div>
         <div class="news-card">
-          <div class="news-img"><img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=600&auto=format&fit=crop" alt="Vacina"></div>
+          <div class="news-img"><img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=600&auto=format&fit=crop" alt="Vacina" /></div>
           <div class="news-body">
             <span class="news-tag">Saúde</span>
             <h3>Campanha de Multivacinação Prorrogada</h3>
@@ -643,6 +825,7 @@
     </div>
   </section>
 
+  <!-- LEGISLACAO -->
   <section id="legislacao" class="laws-section">
     <div class="container">
       <div class="section-header"><h2>Legislação Sanitária</h2></div>
@@ -651,14 +834,27 @@
           <tr><th>Norma</th><th>Descrição</th><th>Download</th></tr>
         </thead>
         <tbody>
-          <tr><td>Lei 13.725</td><td>Código Sanitário do Município de São Paulo.</td><td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
-          <tr><td>Portaria 2619</td><td>Boas Práticas para Alimentos (Temperaturas, Higiene).</td><td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
-          <tr><td>RDC 216</td><td>Regulamento Técnico ANVISA para Serviços de Alimentação.</td><td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
+          <tr>
+            <td>Lei 13.725</td>
+            <td>Código Sanitário do Município de São Paulo.</td>
+            <td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td>
+          </tr>
+          <tr>
+            <td>Portaria 2619</td>
+            <td>Boas Práticas para Alimentos (Temperaturas, Higiene).</td>
+            <td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td>
+          </tr>
+          <tr>
+            <td>RDC 216</td>
+            <td>Regulamento Técnico ANVISA para Serviços de Alimentação.</td>
+            <td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td>
+          </tr>
         </tbody>
       </table>
     </div>
   </section>
 
+  <!-- FORMULARIOS -->
   <section id="formularios" class="laws-section" style="border-top: none; background: #f9f9f9;">
     <div class="container">
       <div class="section-header"><h2>Formulários e Instruções</h2></div>
@@ -667,12 +863,17 @@
           <tr><th>Documento</th><th>Descrição</th><th>Download</th></tr>
         </thead>
         <tbody>
-          <tr><td>Instruções de Preenchimento</td><td>Guia completo para preenchimento dos formulários sanitários.</td><td><a href="INSTRUÇÕES FORMULÁRIOS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
+          <tr>
+            <td>Instruções de Preenchimento</td>
+            <td>Guia completo para preenchimento dos formulários sanitários.</td>
+            <td><a href="INSTRUÇÕES FORMULÁRIOS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td>
+          </tr>
         </tbody>
       </table>
     </div>
   </section>
 
+  <!-- FAQ -->
   <section class="faq-section">
     <div class="container">
       <div class="section-header"><h2>Perguntas Frequentes</h2></div>
@@ -691,6 +892,7 @@
     </div>
   </section>
 
+  <!-- DENUNCIA -->
   <section id="contato" class="report-section">
     <div class="container">
       <div class="report-header">
@@ -706,9 +908,7 @@
             <li>Anexe Evidências<p>Fotos e vídeos aumentam a eficácia da fiscalização.</p></li>
             <li>Acompanhe<p>O protocolo será gerado via WhatsApp para acompanhamento.</p></li>
           </ol>
-          <div class="anon-badge">
-            <i class="fas fa-user-secret"></i> Anonimato Garantido pela Lei 12.527
-          </div>
+          <div class="anon-badge"><i class="fas fa-user-secret"></i> Anonimato Garantido pela Lei 12.527</div>
         </div>
 
         <div class="report-form-container">
@@ -730,15 +930,15 @@
 
               <div class="input-with-icon" style="display:none;">
                 <i class="far fa-calendar-alt"></i>
-                <input type="datetime-local" class="form-control" id="data_hora">
+                <input type="datetime-local" class="form-control" id="data_hora" />
               </div>
             </div>
 
-            <input type="text" class="form-control" id="resumo_outros" placeholder="Descreva o motivo (máx 50 letras)" style="display: none;" maxlength="50">
+            <input type="text" class="form-control" id="resumo_outros" placeholder="Descreva o motivo (máx 50 letras)" style="display: none;" maxlength="50" />
 
             <div class="input-with-icon">
               <i class="fas fa-map-marker-alt"></i>
-              <input type="text" class="form-control" id="local" placeholder="Nome do estabelecimento e endereço completo *" required>
+              <input type="text" class="form-control" id="local" placeholder="Nome do estabelecimento e endereço completo *" required />
             </div>
 
             <div class="input-with-icon">
@@ -763,12 +963,13 @@
     </div>
   </section>
 
+  <!-- FOOTER -->
   <footer>
     <div class="container">
       <div class="footer-grid">
         <div>
-          <img src="imagens/5.png" class="footer-logo" alt="Brasão SP" style="height: 80px !important; width: auto !important;">
-          <p>Secretaria Municipal da Saúde<br>Coordenação de Vigilância em Saúde</p>
+          <img src="imagens/5.png" class="footer-logo" alt="Brasão SP" style="height: 80px !important; width: auto !important;" />
+          <p>Secretaria Municipal da Saúde<br />Coordenação de Vigilância em Saúde</p>
         </div>
         <div>
           <h4>Institucional</h4>
@@ -789,49 +990,33 @@
     </div>
   </footer>
 
+  <!-- CHAT -->
   <div class="chat-widget-btn" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
   <div class="chat-interface" id="chat-interface">
     <div class="chat-header"><span>Assistente COVISA</span><i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer;"></i></div>
     <div class="chat-body" id="chat-body"><div class="chat-bubble bubble-ai">Olá! Sou o assistente virtual. Como posso ajudar hoje?</div></div>
     <form class="chat-input" id="chat-form">
-      <input type="text" id="chat-msg" placeholder="Digite sua dúvida..." required>
+      <input type="text" id="chat-msg" placeholder="Digite sua dúvida..." required />
       <button type="submit"><i class="fas fa-paper-plane"></i></button>
     </form>
   </div>
 
   <script>
     /* =============================== */
-    /* 0. DRAWER MOBILE (MENU LATERAL) */
+    /* DRAWER (MENU MOBILE)            */
     /* =============================== */
-    const btnOpenDrawer = document.getElementById('btnOpenDrawer');
-    const btnCloseDrawer = document.getElementById('btnCloseDrawer');
-    const drawer = document.getElementById('drawer');
-    const drawerOverlay = document.getElementById('drawerOverlay');
-
-    function openDrawer(){
-      drawer.classList.add('open');
-      drawerOverlay.classList.add('open');
+    function openDrawer() {
+      document.getElementById('drawer').classList.add('open');
+      document.getElementById('drawerOverlay').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
-
-    function closeDrawer(){
-      drawer.classList.remove('open');
-      drawerOverlay.classList.remove('open');
+    function closeDrawer() {
+      document.getElementById('drawer').classList.remove('open');
+      document.getElementById('drawerOverlay').classList.remove('open');
       document.body.style.overflow = '';
     }
-
-    btnOpenDrawer.addEventListener('click', openDrawer);
-    btnCloseDrawer.addEventListener('click', closeDrawer);
-    drawerOverlay.addEventListener('click', closeDrawer);
-
-    // fecha no ESC
     document.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape') closeDrawer();
-    });
-
-    // fecha ao clicar em qualquer link do drawer
-    document.querySelectorAll('.drawer-link').forEach(a=>{
-      a.addEventListener('click', () => closeDrawer());
+      if (e.key === 'Escape') closeDrawer();
     });
 
     /* =============================== */
@@ -855,7 +1040,7 @@
     atualizarDadosReais();
 
     /* =============================== */
-    /* 2. FAQ ACORDEÃO */
+    /* 2. FAQ ACORDEÃO                 */
     /* =============================== */
     document.querySelectorAll('.faq-question').forEach(q => {
       q.addEventListener('click', () => {
@@ -867,7 +1052,7 @@
     });
 
     /* =============================== */
-    /* 3. ENVIO WHATSAPP SEM BUG */
+    /* 3. ENVIO WHATSAPP               */
     /* =============================== */
     function enviarWhatsApp(texto) {
       const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(texto);
@@ -875,7 +1060,7 @@
     }
 
     /* =============================== */
-    /* 4. CHECKLIST REGULARIZE */
+    /* 4. CHECKLIST REGULARIZE         */
     /* =============================== */
     document.getElementById('form-regularizacao').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -905,7 +1090,7 @@
     });
 
     /* =============================== */
-    /* 5. DENUNCIA */
+    /* 5. DENUNCIA                     */
     /* =============================== */
     function verificarOutros(sel) {
       const campoOutros = document.getElementById('resumo_outros');
@@ -937,7 +1122,7 @@
     });
 
     /* =============================== */
-    /* 6. CHATBOT */
+    /* 6. CHATBOT                      */
     /* =============================== */
     function toggleChat() {
       const c = document.getElementById('chat-interface');
@@ -962,7 +1147,7 @@
     });
 
     /* =============================== */
-    /* 7. AUTO REFRESH (20 MIN) */
+    /* 7. AUTO REFRESH (20 MIN)        */
     /* =============================== */
     setTimeout(function () {
       window.location.reload();
