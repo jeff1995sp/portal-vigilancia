@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Oficial de Vigilância Sanitária | SP</title>
+    <meta name="description" content="Portal de Gestão, Licenciamento e Fiscalização Sanitária da Prefeitura de São Paulo.">
+
+    <link rel="icon" href="imagens/5.png" type="image/png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --sp-red: #da251c;
+            --sp-dark-red: #a81009;
+            --gov-blue: #1351b4;
+            --gov-dark-blue: #0d3c85;
+            --success-color: #2e7d32;
+            --text-dark: #2c3e50;
+            --text-light: #555555;
+            --bg-light: #f4f6f8;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        /* --- RESET GERAL --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; line-height: 1.6; }
+        h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; font-weight: 700; }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+
+        /* --- BARRA GOV VERMELHA --- */
+        .gov-bar { background: var(--sp-red); color: #fff; padding: 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2000; position: relative; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .gov-links a { color: #fff; margin-left: 20px; font-weight: 600; text-decoration: none; opacity: 0.9; }
+        .gov-links a:hover { opacity: 1; text-decoration: underline; }
+
+        /* --- HEADER (COM LOGO TRANSPARENTE) --- */
+        header { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 15px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .header-grid { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 40px; }
+        
+        .brand { display: flex; align-items: center; gap: 15px; }
+        .brand img { height: 75px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); } 
+        .brand-text h1 { font-size: 1.4rem; line-height: 1; color: var(--text-dark); letter-spacing: -0.5px; text-transform: uppercase; font-weight: 900; }
+        .brand-text span { font-size: 0.75rem; color: var(--sp-red); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+        
+        nav ul { display: flex; list-style: none; gap: 10px; }
+        nav a { text-decoration: none; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; padding: 10px 18px; border-radius: 50px; transition: 0.3s; }
+        nav a:hover, nav a.active { background: rgba(218, 37, 28, 0.08); color: var(--sp-red); }
+        
+        /* BOTÃO GOV.BR */
+        .btn-login { background: var(--gov-blue); color: white; padding: 10px 25px; border-radius: 25px; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; }
+        .btn-login:hover { background: var(--gov-dark-blue); box-shadow: 0 4px 15px rgba(19, 81, 180, 0.3); }
+        .btn-login i { font-size: 1.3rem; }
+
+        /* --- HERO COM IMAGEM 1.PNG --- */
+        .hero {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center;
+            background-size: cover;
+            min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center;
+            color: white; padding-top: 40px;
+        }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
+        .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
+        .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
+
+        /* Busca */
+        .search-box {
+            background: white; padding: 8px; border-radius: 50px; display: flex;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 600px; margin: 0 auto 50px;
+        }
+        .search-box input { border: none; flex: 1; padding: 15px 25px; font-size: 1.1rem; color: #333; outline: none; min-width: 0; }
+        .search-box button { background: var(--sp-red); color: white; border: none; padding: 0 35px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 1rem; transition: 0.3s; white-space: nowrap; }
+        .search-box button:hover { background: var(--sp-dark-red); }
+
+        /* --- SIMULAÇÃO EM TEMPO REAL --- */
+        .live-stats-bar {
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+            padding: 25px 0; border-top: 1px solid rgba(255,255,255,0.1);
+            width: 100%; position: absolute; bottom: 0;
+        }
+        .live-grid { display: flex; justify-content: center; gap: 60px; text-align: center; color: white; }
+        .live-item h4 { font-size: 2.8rem; font-weight: 800; margin: 0; color: #ffeb3b; font-family: 'Courier New', monospace; line-height: 1; }
+        .live-item span { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 600; }
+
+        /* --- STATUS CARDS --- */
+        .status-bar { margin-top: 60px; padding-bottom: 60px; background: white; }
+        .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
+        .status-card { background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #eee; display: flex; align-items: center; gap: 15px; transition: 0.3s; box-shadow: var(--shadow); }
+        .status-card:hover { transform: translateY(-5px); border-color: var(--sp-red); }
+        .icon-box { width: 60px; height: 60px; background: #f0f4ff; color: var(--gov-blue); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+        .status-info h4 { font-size: 0.9rem; color: var(--text-light); margin-bottom: 5px; text-transform: uppercase; font-weight: 700; }
+        .status-info strong { font-size: 1.2rem; color: var(--text-dark); display: block; font-weight: 800; }
+
+        /* --- ESTILOS GERAIS DE FORMULÁRIO --- */
+        .form-control { width: 100%; padding: 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; margin-bottom: 15px; transition: 0.3s; font-family: 'Roboto', sans-serif; background: #fff; }
+        .form-control:focus { border-color: var(--gov-blue); outline: none; }
+        .btn-success { background: var(--success-color); color: white; border: none; padding: 20px; border-radius: 10px; font-weight: 800; font-size: 1.2rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-success:hover { background: #1b5e20; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2); }
+
+        /* --- REGULARIZE SECTION --- */
+        .checklist-section { padding: 100px 0; background: #f9f9f9; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+        .checklist-wrapper { display: flex; gap: 60px; flex-wrap: wrap; }
+        .checklist-intro { flex: 1; min-width: 300px; }
+        .checklist-intro h2 { font-size: 2.8rem; color: var(--sp-red); margin-bottom: 20px; font-family: 'Montserrat', sans-serif; font-weight: 900; }
+        .checklist-intro p { font-size: 1.1rem; color: #555; margin-bottom: 30px; line-height: 1.8; }
+        .steps-box { background: white; padding: 30px; border-radius: 12px; border-left: 5px solid var(--success-color); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .steps-box h4 { color: var(--success-color); margin-bottom: 20px; font-size: 1.2rem; }
+        .steps-box li { margin-bottom: 15px; display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 0.95rem; color: #444; }
+        
+        .checklist-form-container { flex: 1.2; min-width: 350px; background: white; padding: 50px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); border: 1px solid #eee; }
+        .docs-list { margin: 25px 0; border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
+        .doc-item { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; background: #fafafa; cursor: pointer; transition: 0.2s; }
+        .doc-item:last-child { border-bottom: none; }
+        .doc-item:hover { background: #f0fff4; }
+        .doc-item input { margin-right: 15px; transform: scale(1.4); accent-color: var(--success-color); cursor: pointer; }
+        .doc-icon { color: #999; margin-right: 12px; width: 20px; text-align: center; }
+        .doc-item:hover .doc-icon { color: var(--success-color); }
+
+        /* --- ÁREAS DE ATUAÇÃO --- */
+        .areas-section { padding: 100px 0; background: #fff; text-align: center; }
+        .areas-header { max-width: 700px; margin: 0 auto 60px; }
+        .areas-header h2 { font-size: 2.5rem; color: var(--text-dark); margin-bottom: 15px; }
+        .areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .area-card { background: #fff; padding: 40px 30px; border-radius: 12px; border: 1px solid #eee; transition: 0.3s; position: relative; overflow: hidden; }
+        .area-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: var(--sp-red); }
+        .area-icon { width: 80px; height: 80px; background: #fff0f0; color: var(--sp-red); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 25px; transition: 0.3s; }
+        .area-card:hover .area-icon { background: var(--sp-red); color: white; }
+        .area-card h3 { font-size: 1.3rem; margin-bottom: 15px; color: var(--text-dark); }
+
+        /* --- IMPACTO --- */
+        .impact-section { padding: 120px 0; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1595855729736-2a725902f232?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-attachment: fixed; background-position: center; color: white; text-align: center; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
+        .stat-item h3 { font-size: 4rem; font-weight: 900; color: #ffeb3b; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; line-height: 1; }
+        .stat-item p { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* --- NOTÍCIAS --- */
+        .news-section { padding: 100px 0; background: var(--bg-light); }
+        .section-header h2 { font-size: 2.2rem; color: var(--text-dark); margin-bottom: 40px; border-left: 5px solid var(--sp-red); padding-left: 15px; }
+        .news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .news-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; height: 100%; display: flex; flex-direction: column; }
+        .news-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .news-img { height: 220px; background: #ddd; overflow: hidden; }
+        .news-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .news-card:hover .news-img img { transform: scale(1.1); }
+        .news-body { padding: 25px; flex: 1; display: flex; flex-direction: column; }
+        .news-tag { align-self: flex-start; background: var(--sp-red); color: white; padding: 5px 12px; font-size: 0.7rem; font-weight: 700; border-radius: 4px; text-transform: uppercase; margin-bottom: 10px; }
+        .news-body h3 { font-size: 1.3rem; font-weight: 700; color: #222; line-height: 1.3; margin-bottom: 15px; }
+        .news-body p { font-size: 0.95rem; color: #666; flex: 1; margin-bottom: 20px; }
+        .read-more { color: var(--gov-blue); font-weight: 800; font-size: 0.9rem; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+
+        /* --- LEGISLAÇÃO --- */
+        .laws-section { padding: 80px 0; background: white; border-top: 1px solid #eee; }
+        .law-table { width: 100%; border-collapse: collapse; margin-top: 30px; background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
+        .law-table th { background: var(--text-dark); color: white; padding: 18px; text-align: left; font-weight: 700; text-transform: uppercase; font-size: 0.9rem; }
+        .law-table td { padding: 18px; border-bottom: 1px solid #eee; color: #555; font-size: 0.95rem; }
+        .law-table tr:hover { background: #f9f9f9; }
+        .download-btn { color: var(--sp-red); font-size: 1.2rem; transition: 0.3s; }
+        .download-btn:hover { transform: scale(1.2); }
+
+        /* --- FAQ --- */
+        .faq-section { padding: 80px 0; background: #f4f6f8; }
+        .faq-item { background: white; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 1.05rem; color: #333; transition: 0.3s; }
+        .faq-question:hover { background: #fff0f0; color: var(--sp-red); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; padding: 0 20px; color: #666; line-height: 1.6; background: #fff; }
+        .faq-item.active .faq-answer { padding-bottom: 20px; }
+        .faq-item.active .faq-question i { transform: rotate(180deg); color: var(--sp-red); }
+
+        /* --- DENÚNCIA "TOP" (Novo Design) --- */
+        .report-section { padding: 100px 0; background: #fff; border-top: 5px solid var(--sp-red); }
+        .report-header { text-align: center; margin-bottom: 60px; }
+        .report-header h2 { font-size: 3rem; color: var(--text-dark); margin-bottom: 15px; }
+        .report-header p { font-size: 1.2rem; color: #666; max-width: 700px; margin: 0 auto; }
+        
+        .report-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 60px; align-items: start; }
+        
+        .report-guide { background: var(--bg-light); padding: 40px; border-radius: 20px; border: 1px solid #eee; }
+        .report-guide h3 { color: var(--sp-red); margin-bottom: 25px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .guide-steps { list-style: none; counter-reset: step-counter; }
+        .guide-steps li { position: relative; margin-bottom: 25px; padding-left: 50px; font-weight: 600; color: var(--text-dark); font-size: 1.05rem; }
+        .guide-steps li::before { counter-increment: step-counter; content: counter(step-counter); position: absolute; left: 0; top: -5px; width: 35px; height: 35px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+        .guide-steps p { font-weight: 400; font-size: 0.9rem; color: #666; margin-top: 5px; }
+        .anon-badge { display: inline-flex; align-items: center; gap: 10px; background: #e0f7fa; color: #00796b; padding: 10px 20px; border-radius: 50px; font-weight: 700; margin-top: 20px; }
+
+        .report-form-container { padding: 10px; }
+        .input-with-icon { position: relative; }
+        .input-with-icon i { position: absolute; left: 20px; top: 18px; color: #999; font-size: 1.1rem; z-index: 2; }
+        .input-with-icon .form-control { padding-left: 55px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        .char-counter { text-align: right; font-size: 0.85rem; color: #999; margin-top: -10px; margin-bottom: 15px; }
+        
+        .fake-upload-zone { border: 3px dashed #e0e0e0; border-radius: 15px; padding: 30px; text-align: center; background: #fafafa; cursor: pointer; transition: 0.3s; margin-bottom: 25px; }
+        .fake-upload-zone:hover { border-color: var(--sp-red); background: #fff5f5; }
+        .fake-upload-zone i { font-size: 3rem; color: var(--sp-red); margin-bottom: 15px; }
+        .fake-upload-zone h4 { color: var(--text-dark); margin-bottom: 5px; }
+        .fake-upload-zone p { color: #666; font-size: 0.9rem; }
+        .upload-warning { background: #fff3cd; color: #856404; padding: 10px 20px; border-radius: 50px; font-size: 0.85rem; display: inline-block; margin-top: 15px; font-weight: 600; }
+
+        .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 800; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
+        .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
+
+        /* Footer */
+        footer { background: #151515; color: #aaa; padding-top: 80px; margin-top: 0; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+        img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
+        .footer h4 { color: white; font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; font-weight: 700; border-left: 3px solid var(--sp-red); padding-left: 10px; }
+        .footer ul li { margin-bottom: 12px; }
+        .footer a { color: #aaa; text-decoration: none; transition: 0.3s; }
+        .footer a:hover { color: white; padding-left: 5px; }
+        .footer-bottom { background: #000; padding: 25px 0; text-align: center; border-top: 1px solid #333; font-size: 0.9rem; }
+
+        /* Chatbot */
+        .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9999; }
+        .chat-interface { position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9998; display: none; flex-direction: column; border: 1px solid #eee; }
+        .chat-header { background: var(--sp-red); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+        .chat-body { flex: 1; padding: 20px; overflow-y: auto; background: #f8f9fa; }
+        .chat-input { padding: 15px; background: white; display: flex; border-top: 1px solid #eee; gap: 10px; }
+        .chat-input input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 30px; outline: none; }
+        .chat-bubble { padding: 10px 15px; border-radius: 12px; margin-bottom: 10px; font-size: 0.9rem; max-width: 85%; }
+        .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+
+        /* =============================== */
+        /* RESPONSIVO (AJUSTE PARA CELULAR) */
+        /* =============================== */
+
+        /* Tablets / telas médias */
+        @media (max-width: 1024px) {
+            .container { padding: 0 16px; }
+            .header-grid { gap: 20px; }
+            .status-grid { grid-template-columns: repeat(2, 1fr); }
+            .news-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* Celular */
+        @media (max-width: 900px) {
+            .container { padding: 0 14px; }
+
+            /* Header */
+            .header-grid { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+            .brand { justify-content: center; }
+            .brand img { height: 62px; }
+            .brand-text h1 { font-size: 1.2rem; text-align: center; }
+            .brand-text span { display: block; text-align: center; }
+
+            /* Menu no celular (não some) */
+            nav { width: 100%; }
+            nav ul {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                gap: 8px;
+                padding: 8px 4px;
+                justify-content: flex-start;
+            }
+            nav ul::-webkit-scrollbar { height: 0; }
+            nav a { padding: 8px 14px; font-size: 0.85rem; white-space: nowrap; }
+
+            /* Botão gov */
+            .header-actions { width: 100%; display: flex; justify-content: center; }
+            .btn-login { width: 100%; justify-content: center; max-width: 520px; }
+
+            /* Hero */
+            .hero { min-height: 520px; padding-top: 18px; text-align: center; }
+            .hero h2 { font-size: 2.15rem; line-height: 1.15; }
+            .hero p { font-size: 1.05rem; margin-bottom: 22px; }
+
+            /* Search */
+            .search-box {
+                max-width: 100%;
+                border-radius: 16px;
+                margin: 0 auto 18px;
+                padding: 8px;
+            }
+            .search-box input { padding: 12px 14px; font-size: 1rem; }
+            .search-box button { padding: 0 18px; font-size: 0.95rem; }
+
+            /* Live stats */
+            .live-stats-bar { position: relative; background: rgba(0,0,0,0.75); }
+            .live-grid { flex-direction: column; gap: 14px; padding: 8px 0; }
+            .live-item h4 { font-size: 2.2rem; }
+
+            /* Cards / grids */
+            .status-bar { margin-top: 24px; padding-bottom: 40px; }
+            .status-grid { grid-template-columns: 1fr; gap: 14px; }
+            .status-card { padding: 18px; }
+            .icon-box { width: 52px; height: 52px; font-size: 1.5rem; }
+
+            /* Sections */
+            .checklist-section,
+            .areas-section,
+            .news-section,
+            .laws-section,
+            .faq-section,
+            .report-section { padding: 60px 0; }
+
+            .checklist-wrapper { flex-direction: column; gap: 22px; }
+            .checklist-intro h2 { font-size: 2rem; }
+            .checklist-form-container { padding: 22px; min-width: 0; border-radius: 16px; }
+
+            .areas-header h2 { font-size: 2rem; }
+            .areas-grid { grid-template-columns: 1fr; }
+
+            .impact-section { padding: 80px 0; background-attachment: scroll; }
+            .stats-grid { grid-template-columns: 1fr; gap: 22px; }
+            .stat-item h3 { font-size: 3.2rem; }
+
+            .news-grid { grid-template-columns: 1fr; }
+            .news-img { height: 200px; }
+
+            /* Tabelas no celular: scroll horizontal */
+            .law-table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+            .law-table th, .law-table td { white-space: nowrap; }
+
+            /* Denúncia */
+            .report-grid { display: flex; flex-direction: column; gap: 18px; }
+            .report-guide { padding: 22px; border-radius: 16px; }
+            .report-header h2 { font-size: 2.1rem; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+
+            .fake-upload-zone { padding: 18px; }
+            .btn-report { font-size: 1.05rem; padding: 18px; }
+
+            /* Footer */
+            .footer-grid { display: flex; flex-direction: column; gap: 20px; }
+            footer { padding-top: 50px; }
+
+            /* Chat */
+            .chat-interface {
+                width: calc(100% - 24px);
+                right: 12px;
+                bottom: 92px;
+                height: 70vh;
+            }
+            .chat-widget-btn {
+                right: 16px;
+                bottom: 16px;
+                width: 58px;
+                height: 58px;
+                font-size: 24px;
+            }
+        }
+
+        /* Celulares pequenos */
+        @media (max-width: 480px) {
+            .hero h2 { font-size: 1.85rem; }
+            .hero-badge { font-size: 0.72rem; }
+            .btn-login { font-size: 0.9rem; padding: 10px 16px; }
+            .search-box { flex-direction: column; border-radius: 16px; gap: 10px; }
+            .search-box button { height: 44px; border-radius: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="gov-bar">
+        <div class="container flex-between">
+            <span>Prefeitura do Município de São Paulo</span>
+            <div class="gov-links">
+                <a href="#">Acessibilidade</a>
+                <a href="#">Alto Contraste</a>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="container header-grid">
+            <a href="#" class="brand">
+                <img src="imagens/5.png" alt="Brasão SP" style="height: 60px; width: auto;">
+                <div class="brand-text">
+                    <h1>COVISA</h1>
+                    <span>Vigilância em Saúde</span>
+                </div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#inicio" class="active">Painel</a></li>
+                    <li><a href="#regularize">Regularize-se</a></li>
+                    <li><a href="#legislacao">Legislação</a></li>
+                    <li><a href="#formularios">Formulários</a></li>
+                    <li><a href="#noticias">Notícias</a></li>
+                    <li><a href="#contato">Denúncia</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="https://sso.acesso.gov.br/" target="_blank" class="btn-login">
+                    <i class="fas fa-user-circle"></i>
+                    Entrar com gov.br
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section id="inicio" class="hero">
+        <div class="container hero-content">
+            <span class="hero-badge">● Monitoramento Online 2026</span>
+            <h2>Gestão Integrada de<br>Vigilância e Saúde.</h2>
+            <p>Fiscalização ativa, controle de riscos e segurança sanitária.</p>
+            
+            <div class="search-box">
+                <input type="text" placeholder="Buscar protocolos, legislação ou serviços...">
+                <button>Pesquisar</button>
+            </div>
+        </div>
+
+        <div class="live-stats-bar">
+            <div class="container live-grid">
+                <div class="live-item">
+                    <h4 id="count-fiscal">1246</h4>
+                    <span>Estabelecimentos Fiscalizados</span>
+                </div>
+                <div class="live-item">
+                    <h4 id="count-multa" style="color: #ff5252;">12</h4>
+                    <span>Autuações Hoje</span>
+                </div>
+                <div class="live-item">
+                    <h4 id="count-regular" style="color: #69f0ae;">98%</h4>
+                    <span>Índice de Regularidade</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container status-bar">
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="icon-box"><i class="fas fa-clipboard-check"></i></div>
+                <div class="status-info"><h4>Licenciamento</h4><strong>Online</strong></div>
+            </div>
+            <div class="status-card">
+                <div class="icon-box"><i class="fas fa-box-open"></i></div>
+                <div class="status-info"><h4>Apreensões</h4><strong>Ativas</strong></div>
+            </div>
+            <div class="status-card">
+                <div class="icon-box"><i class="fas fa-hard-hat"></i></div>
+                <div class="status-info"><h4>Segurança</h4><strong>Monitorada</strong></div>
+            </div>
+            <div class="status-card">
+                <div class="icon-box"><i class="fas fa-file-contract"></i></div>
+                <div class="status-info"><h4>Protocolos</h4><strong>Abertos</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <section id="regularize" class="checklist-section">
+        <div class="container">
+            <div class="checklist-wrapper">
+                <div class="checklist-intro">
+                    <h2>Regularize seu Negócio</h2>
+                    <p>Selecione seu tipo de estabelecimento abaixo. O sistema listará a documentação obrigatória. Marque o que você já possui e envie para nossa pré-análise via WhatsApp.</p>
+                    
+                    <div class="steps-box">
+                        <h4><i class="fas fa-check-circle"></i> Benefícios da Legalização:</h4>
+                        <ul>
+                            <li><i class="fas fa-shield-alt"></i> Evita multas e fechamento.</li>
+                            <li><i class="fas fa-thumbs-up"></i> Credibilidade com o cliente.</li>
+                            <li><i class="fas fa-handshake"></i> Acesso a crédito e licitações.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="checklist-form-container">
+                    <form id="form-regularizacao">
+                        <label style="font-weight: 700; display: block; margin-bottom: 5px;">Qual seu tipo de negócio?</label>
+                        <select class="form-control" id="tipo_estab" required>
+                            <option value="">Selecione...</option>
+                            <option value="Alimentos (Restaurante/Bar)">Alimentos (Restaurante/Bar)</option>
+                            <option value="Saúde (Clínica/Consultório)">Saúde (Clínica/Consultório)</option>
+                            <option value="Beleza (Salão/Estética)">Beleza (Salão/Estética)</option>
+                            <option value="Escola/Educação">Escola / Creche</option>
+                            <option value="Indústria/Fábrica">Indústria / Fábrica</option>
+                        </select>
+
+                        <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia da Empresa" required>
+
+                        <p style="font-weight: 700; margin-top: 25px; color: var(--sp-red);">📄 Documentação Obrigatória (Checklist):</p>
+                        <div class="docs-list">
+                            <label class="doc-item">
+                                <input type="checkbox" id="doc_cnpj">
+                                <i class="fas fa-file-invoice doc-icon"></i> CNPJ Ativo
+                            </label>
+                            <label class="doc-item">
+                                <input type="checkbox" id="doc_alvara">
+                                <i class="fas fa-building doc-icon"></i> Alvará de Funcionamento Prefeitura
+                            </label>
+                            <label class="doc-item">
+                                <input type="checkbox" id="doc_cmvs">
+                                <i class="fas fa-id-card doc-icon"></i> Licença Sanitária (CMVS)
+                            </label>
+                            <label class="doc-item">
+                                <input type="checkbox" id="doc_social">
+                                <i class="fas fa-file-contract doc-icon"></i> Contrato Social / MEI
+                            </label>
+                            <label class="doc-item">
+                                <input type="checkbox" id="doc_resp">
+                                <i class="fas fa-user-md doc-icon"></i> Responsável Técnico (Se exigido)
+                            </label>
+                            <label class="doc-item">
+                                <input type="checkbox" id="doc_avcb">
+                                <i class="fas fa-fire-extinguisher doc-icon"></i> AVCB Bombeiros (Incêndio)
+                            </label>
+                            <label class="doc-item">
+                                <input type="checkbox" id="doc_pragas">
+                                <i class="fas fa-bug doc-icon"></i> Controle de Pragas (Dedetização)
+                            </label>
+                            <label class="doc-item">
+                                <input type="checkbox" id="doc_agua">
+                                <i class="fas fa-tint doc-icon"></i> Limpeza Caixa D'Água (Certificado)
+                            </label>
+                            <label class="doc-item">
+                                <input type="checkbox" id="doc_pops">
+                                <i class="fas fa-book doc-icon"></i> Manual de Boas Práticas + POPs
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-success">
+                            <i class="fab fa-whatsapp"></i> Enviar para Análise Técnica
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="areas-section">
+        <div class="container">
+            <div class="areas-header">
+                <h2>Onde a Vigilância Atua?</h2>
+                <p>Nossa fiscalização protege a saúde da população em diversas frentes essenciais.</p>
+            </div>
+            <div class="areas-grid">
+                <div class="area-card">
+                    <div class="area-icon"><i class="fas fa-utensils"></i></div>
+                    <h3>Alimentos</h3>
+                    <p>Fiscalização de restaurantes, mercados e indústrias para garantir segurança alimentar.</p>
+                </div>
+                <div class="area-card">
+                    <div class="area-icon"><i class="fas fa-pills"></i></div>
+                    <h3>Medicamentos</h3>
+                    <p>Controle de farmácias e drogarias para evitar venda de produtos irregulares.</p>
+                </div>
+                <div class="area-card">
+                    <div class="area-icon"><i class="fas fa-hospital"></i></div>
+                    <h3>Saúde</h3>
+                    <p>Inspeção em hospitais e clínicas para garantir esterilização e procedimentos seguros.</p>
+                </div>
+                <div class="area-card">
+                    <div class="area-icon"><i class="fas fa-paw"></i></div>
+                    <h3>Zoonoses</h3>
+                    <p>Controle da Dengue, vacinação antirrábica e controle de pragas urbanas.</p>
+                </div>
+                <div class="area-card">
+                    <div class="area-icon"><i class="fas fa-hard-hat"></i></div>
+                    <h3>Trabalho</h3>
+                    <p>Verificação de EPIs e condições de segurança em ambientes de trabalho.</p>
+                </div>
+                <div class="area-card">
+                    <div class="area-icon"><i class="fas fa-water"></i></div>
+                    <h3>Ambiental</h3>
+                    <p>Monitoramento da qualidade da água e solo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="impact-section">
+        <div class="container">
+            <div class="impact-title">
+                <h2>Balanço de Fiscalização 2025/2026</h2>
+                <p>Combate rigoroso a irregularidades para proteger você.</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>+15.400</h3>
+                    <p>Vistorias Realizadas</p>
+                </div>
+                <div class="stat-item">
+                    <h3>120 Ton</h3>
+                    <p>Alimentos Apreendidos</p>
+                </div>
+                <div class="stat-item">
+                    <h3>2.100</h3>
+                    <p>Interdições Cautelares</p>
+                </div>
+                <div class="stat-item">
+                    <h3>+60.000</h3>
+                    <p>Produtos Retirados</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="noticias" class="news-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Destaques Operacionais</h2>
+            </div>
+            <div class="news-grid">
+                <div class="news-card">
+                    <div class="news-img">
+                        <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=600&auto=format&fit=crop" alt="Dengue">
+                    </div>
+                    <div class="news-body">
+                        <span class="news-tag">Urgente</span>
+                        <h3>Operação Dengue Zero: Ações em toda a capital</h3>
+                        <p>Equipes realizam nebulização para eliminar focos do mosquito Aedes aegypti. Colabore!</p>
+                        <a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="news-card">
+                    <div class="news-img">
+                        <img src="imagens/3.jpeg" class="card-img-top" alt="Operação de fiscalização">
+                    </div>
+                    <div class="news-body">
+                        <span class="news-tag">Fiscalização</span>
+                        <h3>Blitz fecha restaurantes clandestinos no centro</h3>
+                        <p>Estabelecimentos operavam sem licença, com alimentos vencidos e higiene precária.</p>
+                        <a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="news-card">
+                    <div class="news-img">
+                        <img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=600&auto=format&fit=crop" alt="Vacina">
+                    </div>
+                    <div class="news-body">
+                        <span class="news-tag">Saúde</span>
+                        <h3>Campanha de Multivacinação Prorrogada</h3>
+                        <p>Atualize a caderneta da sua família nos postos de saúde mais próximos.</p>
+                        <a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="legislacao" class="laws-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Legislação Sanitária</h2>
+            </div>
+            <table class="law-table">
+                <thead>
+                    <tr>
+                        <th>Norma</th>
+                        <th>Descrição</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Lei 13.725</td>
+                        <td>Código Sanitário do Município de São Paulo.</td>
+                        <td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td>
+                    </tr>
+                    <tr>
+                        <td>Portaria 2619</td>
+                        <td>Boas Práticas para Alimentos (Temperaturas, Higiene).</td>
+                        <td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td>
+                    </tr>
+                    <tr>
+                        <td>RDC 216</td>
+                        <td>Regulamento Técnico ANVISA para Serviços de Alimentação.</td>
+                        <td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="formularios" class="laws-section" style="border-top: none; background: #f9f9f9;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Formulários e Instruções</h2>
+            </div>
+            <table class="law-table">
+                <thead>
+                    <tr>
+                        <th>Documento</th>
+                        <th>Descrição</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Instruções de Preenchimento</td>
+                        <td>Guia completo para preenchimento dos formulários sanitários.</td>
+                        <td><a href="INSTRUÇÕES FORMULÁRIOS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header"><h2>Perguntas Frequentes</h2></div>
+            <div class="faq-item">
+                <div class="faq-question">Como renovar o CMVS? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer"><p>A renovação deve ser solicitada 60 dias antes do vencimento via sistema online.</p></div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Preciso de Responsável Técnico? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer"><p>Depende da atividade. Drogarias e indústrias exigem. Lanchonetes geralmente não.</p></div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">A denúncia é anônima? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer"><p>Sim, seus dados são protegidos por lei e não são revelados ao denunciado.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contato" class="report-section">
+        <div class="container">
+            <div class="report-header">
+                <h2>Central de Denúncias 2.0</h2>
+                <p>Canal oficial para comunicar irregularidades sanitárias. Sua identidade é protegida por lei e o sigilo é absoluto.</p>
+            </div>
+
+            <div class="report-grid">
+                <div class="report-guide">
+                    <h3><i class="fas fa-info-circle"></i> Guia do Denunciante</h3>
+                    <ol class="guide-steps">
+                        <li>Deturpe o Problema
+                            <p>Seja específico: o que, onde e quando ocorreu.</p>
+                        </li>
+                        <li>Anexe Evidências
+                            <p>Fotos e vídeos aumentam a eficácia da fiscalização.</p>
+                        </li>
+                        <li>Acompanhe
+                            <p>O protocolo será gerado via WhatsApp para acompanhamento.</p>
+                        </li>
+                    </ol>
+                    <div class="anon-badge">
+                        <i class="fas fa-user-secret"></i> Anonimato Garantido pela Lei 12.527
+                    </div>
+                </div>
+
+                <div class="report-form-container">
+                    <form id="form-denuncia">
+                        <div class="form-row">
+                            <div class="input-with-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <select class="form-control" id="assunto" onchange="verificarOutros(this)" required>
+                                    <option value="" disabled selected>Selecione o Motivo *</option>
+                                    <option>Alimentos Vencidos/Estragados</option>
+                                    <option>Falta de Higiene/Sujeira</option>
+                                    <option>Foco de Dengue (Água Parada)</option>
+                                    <option>Estabelecimento Clandestino</option>
+                                    <option>Ruído Excessivo (PSIU)</option>
+                                    <option>Pragas (Ratos/Baratas)</option>
+                                    <option>Outros</option>
+                                </select>
+                            </div>
+
+                            <div class="input-with-icon" style="display:none;">
+                                <i class="far fa-calendar-alt"></i>
+                                <input type="datetime-local" class="form-control" id="data_hora">
+                            </div>
+                        </div>
+                        
+                        <input type="text" class="form-control" id="resumo_outros" placeholder="Descreva o motivo (máx 50 letras)" style="display: none;" maxlength="50">
+                        
+                        <div class="input-with-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" class="form-control" id="local" placeholder="Nome do estabelecimento e endereço completo *" required>
+                        </div>
+                        
+                        <div class="input-with-icon">
+                            <i class="fas fa-pencil-alt"></i>
+                            <textarea id="relato" class="form-control" rows="4" placeholder="Descreva a situação com o máximo de detalhes possível... *" maxlength="500" onkeyup="countChars(this)"></textarea>
+                        </div>
+                        <div class="char-counter"><span id="charNum">0</span>/500 caracteres</div>
+
+                        <div class="fake-upload-zone" onclick="alert('O envio de fotos sera feito na conversa do WhatsApp na proxima etapa.')">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h4>Evidencias (Fotos/Videos)</h4>
+                            <p>Clique para adicionar midias a sua denuncia.</p>
+                            <span class="upload-warning">O envio real sera feito via WhatsApp na proxima tela.</span>
+                        </div>
+
+                        <button type="submit" class="btn-report">
+                            Registrar Denuncia Segura <i class="fab fa-whatsapp"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <img src="imagens/5.png" class="footer-logo" alt="Brasão SP" style="height: 80px !important; width: auto !important;">
+                    <p>Secretaria Municipal da Saúde<br>Coordenação de Vigilância em Saúde</p>
+                </div>
+                <div>
+                    <h4>Institucional</h4>
+                    <ul><li>Quem Somos</li><li>Organograma</li><li>Transparência</li></ul>
+                </div>
+                <div>
+                    <h4>Serviços</h4>
+                    <ul><li>Licenciamento</li><li>Consultas</li><li>Taxas</li></ul>
+                </div>
+                <div>
+                    <h4>Canais</h4>
+                    <ul><li>156</li><li>Ouvidoria</li><li>e-SIC</li></ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Prefeitura de São Paulo. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="chat-widget-btn" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
+    <div class="chat-interface" id="chat-interface">
+        <div class="chat-header"><span>Assistente COVISA</span><i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer;"></i></div>
+        <div class="chat-body" id="chat-body"><div class="chat-bubble bubble-ai">Olá! Sou o assistente virtual. Como posso ajudar hoje?</div></div>
+        <form class="chat-input" id="chat-form">
+            <input type="text" id="chat-msg" placeholder="Digite sua dúvida..." required>
+            <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+
+    <script>
+        function atualizarDadosReais() {
+            const dataAgora = new Date();
+            const hora = dataAgora.getHours();
+
+            const baseFiscal = 1246; 
+            const incrementoLento = Math.floor(hora / 8); 
+            document.getElementById('count-fiscal').innerText = baseFiscal + incrementoLento;
+
+            let multasCalculadas = Math.floor((hora / 24) * 25);
+            let fatorAleatorio = Math.floor(Math.random() * 5);
+            let totalMultas = multasCalculadas + fatorAleatorio;
+            if (totalMultas > 30) totalMultas = 30;
+
+            document.getElementById('count-multa').innerText = totalMultas;
+        }
+
+        atualizarDadosReais();
+
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.addEventListener('click', () => {
+                const item = q.parentElement;
+                item.classList.toggle('active');
+                const ans = item.querySelector('.faq-answer');
+                ans.style.maxHeight = item.classList.contains('active') ? ans.scrollHeight + "px" : null;
+            });
+        });
+
+        function enviarWhatsApp(texto) {
+            const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(texto);
+            window.location.href = url;
+        }
+
+        document.getElementById('form-regularizacao').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const tipo = document.getElementById('tipo_estab').value;
+            const empresa = document.getElementById('nome_empresa').value;
+
+            const check = (id) => document.getElementById(id).checked ? "SIM" : "NAO";
+
+            const msg =
+                "ANALISE DOCUMENTAL - VIGILANCIA\n\n" +
+                "EMPRESA: " + empresa + "\n" +
+                "TIPO: " + tipo + "\n\n" +
+                "CHECKLIST:\n" +
+                "CNPJ: " + check('doc_cnpj') + "\n" +
+                "ALVARA: " + check('doc_alvara') + "\n" +
+                "CMVS: " + check('doc_cmvs') + "\n" +
+                "CONTRATO/MEI: " + check('doc_social') + "\n" +
+                "RESP TEC: " + check('doc_resp') + "\n" +
+                "AVCB: " + check('doc_avcb') + "\n" +
+                "DEDETIZACAO: " + check('doc_pragas') + "\n" +
+                "CAIXA DAGUA: " + check('doc_agua') + "\n" +
+                "POPS/MANUAL: " + check('doc_pops') + "\n\n" +
+                "SOLICITO ANALISE E ORIENTACAO.";
+
+            enviarWhatsApp(msg);
+        });
+
+        function verificarOutros(sel) {
+            const campoOutros = document.getElementById('resumo_outros');
+            campoOutros.style.display = sel.value === 'Outros' ? 'block' : 'none';
+            campoOutros.required = sel.value === 'Outros';
+        }
+
+        function countChars(obj) {
+            document.getElementById("charNum").innerHTML = obj.value.length;
+        }
+
+        document.getElementById('form-denuncia').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            let assunto = document.getElementById('assunto').value;
+            if (assunto === 'Outros') assunto = "Outros: " + document.getElementById('resumo_outros').value;
+
+            const local = document.getElementById('local').value;
+            const relato = document.getElementById('relato').value;
+
+            const msg =
+                "DENUNCIA SIGILOSA OFICIAL\n\n" +
+                "MOTIVO: " + assunto + "\n" +
+                "LOCAL: " + local + "\n" +
+                "RELATO: " + relato + "\n\n" +
+                "POSSUO EVIDENCIAS (FOTOS/VIDEOS) PARA ENVIAR NESTA CONVERSA.";
+
+            enviarWhatsApp(msg);
+        });
+
+        function toggleChat() {
+            const c = document.getElementById('chat-interface');
+            c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        document.getElementById('chat-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const txt = document.getElementById('chat-msg');
+            const body = document.getElementById('chat-body');
+            if (!txt.value) return;
+
+            body.innerHTML += `<div class="chat-bubble bubble-user">${txt.value}</div>`;
+            const userText = txt.value;
+            txt.value = '';
+            body.scrollTop = body.scrollHeight;
+
+            setTimeout(() => {
+                body.innerHTML += `<div class="chat-bubble bubble-ai">Entendi. Sobre "${userText}", recomendo verificar a secao de Legislacao ou abrir um chamado no 156.</div>`;
+                body.scrollTop = body.scrollHeight;
+            }, 1000);
+        });
+
+        setTimeout(function () {
+            window.location.reload();
+        }, 1200000);
+    </script>
+</body>
+</html>
