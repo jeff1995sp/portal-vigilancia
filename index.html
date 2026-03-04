@@ -794,7 +794,7 @@
       document.getElementById('btn-enviar-whatsapp').style.display = 'flex';
     }
 
-    /* ENVIO DE DADOS (ABA 1) E SALVANDO NO LOCALSTORAGE */
+    /* ENVIO DE DADOS E SALVANDO NO LOCALSTORAGE */
     document.getElementById('form-regularizacao').addEventListener('submit', (e) => {
       e.preventDefault();
       
@@ -815,19 +815,17 @@
       const txtFalta = naoMarcados.length > 0 ? naoMarcados.join(", ") : "Nenhum";
       const docsTextAdmin = `POSSUI: ${txtPossui} \n\nFALTA PROVIDENCIAR: ${txtFalta}`;
 
-      // Salva no LocalStorage para o Admin poder ver e precificar
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
       pedidos[cnpj] = { 
         nome: nome, 
         tipo: tipo, 
         docs: docsTextAdmin, 
         valor: null, 
-        status: "Análise Pendente",
+        pago: false, // FLAG DE PAGAMENTO AQUI
         data: new Date().toLocaleString()
       };
       localStorage.setItem('covisa_pedidos', JSON.stringify(pedidos));
 
-      // Manda pro WhatsApp
       const protocolo = "DIA-" + Math.floor(1000 + Math.random() * 9000);
       let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n`;
       msg += `*Protocolo:* ${protocolo}\n`;
@@ -840,17 +838,16 @@
 
       enviarWhatsApp(msg);
       
-      alert("Formulário enviado com sucesso! Acompanhe o valor da taxa na aba 'Pagar Taxa/Multa'.");
+      alert("Formulário enviado com sucesso! Fique atento às pendências. Acompanhe a liberação da taxa na aba 'Pagar Taxa/Multa'.");
       document.getElementById('form-regularizacao').reset();
       document.getElementById('area-checklist').style.display = 'none';
       document.getElementById('btn-enviar-whatsapp').style.display = 'none';
       
-      // Muda para aba de pagamento para o cliente já ver onde consulta
       alternarAba('pagamento');
       document.getElementById('consulta_cnpj').value = cnpj;
     });
 
-    /* CONSULTA DA TAXA (ABA 2) E EXIBIÇÃO DO PIX */
+    /* CONSULTA DA TAXA (ABA 2) E EXIBIÇÃO DO PIX / PAGO */
     let cnpjParaComprovante = "";
 
     document.getElementById('form-consulta').addEventListener('submit', (e) => {
@@ -860,26 +857,31 @@
       const divMsg = document.getElementById('mensagem-status');
       const textMsg = document.getElementById('texto-mensagem');
 
-      // Busca no banco de dados local (localStorage)
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
       let pedido = pedidos[cnpj];
 
       if (!pedido) {
         divPix.style.display = 'none';
         divMsg.style.display = 'block';
-        textMsg.innerText = "Nenhum cadastro encontrado para este CNPJ/CPF.";
+        divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderLeftColor = '#f59e0b';
+        textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum cadastro encontrado para este CNPJ/CPF.';
+      } else if (pedido.pago === true) {
+        /* A ÚNICA ALTERAÇÃO NO SEU INDEX.HTML É ESTE BLOCO AQUI! */
+        divPix.style.display = 'none';
+        divMsg.style.display = 'block';
+        divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderLeftColor = '#10b981';
+        textMsg.innerHTML = '<i class="fas fa-check-circle" style="font-size:1.2rem;"></i> <strong style="font-size:1.1rem;">Pagamento Confirmado!</strong><br><br>Sua taxa foi recebida e o seu processo de regularização está em andamento. Aguarde o contato dos nossos fiscais.';
       } else if (pedido.valor === null || pedido.valor === "") {
         divPix.style.display = 'none';
         divMsg.style.display = 'block';
-        textMsg.innerText = "A documentação está em análise técnica. Aguarde a liberação do valor.";
+        divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderLeftColor = '#f59e0b';
+        textMsg.innerHTML = '<i class="fas fa-clock"></i> A documentação está em análise técnica. Aguarde a liberação do valor.';
       } else {
-        // Valor foi definido pelo Admin!
         divMsg.style.display = 'none';
         divPix.style.display = 'block';
         
-        // Formata o valor pra R$ 0,00 se o admin digitou só numero
         let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-        if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor; // fallback
+        if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
 
         document.getElementById('valor-cobrado').innerText = valorFormatado;
         cnpjParaComprovante = cnpj;
@@ -945,7 +947,6 @@
         body.scrollTop = body.scrollHeight;
       }, 1000);
     });
-
   </script>
 </body>
 </html>
