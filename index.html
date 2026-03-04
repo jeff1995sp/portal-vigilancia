@@ -451,14 +451,19 @@
               <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Ramo de Atividade *</label>
               <select class="form-control" id="tipo_estab" required onchange="mostrarChecklist()">
                 <option value="" disabled selected>Selecione a atividade principal...</option>
+                <option value="Beleza">Estética e Beleza (Salão, Unhas, Barbearia, Tatuagem)</option>
                 <option value="Alimentos">Alimentos (Restaurante, Bar, Mercado, Padaria)</option>
                 <option value="Saúde">Saúde (Clínica, Odontologia, Farmácia, Laboratório)</option>
-                <option value="Beleza">Beleza (Salão, Estética, Barbearia, Tatuagem)</option>
-                <option value="Outros">Outros / Indústria / Instituições de Ensino</option>
+                <option value="Outros">Outros / Comércio Geral / Indústria</option>
               </select>
 
               <div id="area-checklist" style="display: none;">
-                <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental (Marque os que JÁ POSSUI):</p>
+                <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental (Marque APENAS os que JÁ POSSUI):</p>
+                
+                <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px;">
+                  <i class="fas fa-info-circle"></i> Atenção: Os itens que você NÃO marcar serão registrados como PENDÊNCIAS na análise dos fiscais.
+                </div>
+
                 <div class="docs-grid" id="lista-documentos">
                   </div>
               </div>
@@ -741,7 +746,7 @@
       document.getElementById('area-' + aba).style.display = 'block';
     }
 
-    /* GERAR GRID DE DOCUMENTOS VISUAL */
+    /* GERAR GRID DE DOCUMENTOS VISUAL COM LÓGICA DE ÁREA */
     const docsComuns = `
       <label class="doc-item"><input type="checkbox" class="doc-check" value="CNPJ Ativo" /><i class="fas fa-file-invoice"></i><span>CNPJ Ativo</span></label>
       <label class="doc-item"><input type="checkbox" class="doc-check" value="Contrato Social / MEI" /><i class="fas fa-file-contract"></i><span>Contrato / MEI</span></label>
@@ -757,18 +762,30 @@
       let docsEspecificos = "";
       if (tipo === "Alimentos") {
         docsEspecificos = `
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Manual Boas Práticas" /><i class="fas fa-book"></i><span>Manual BPF</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Limpeza Caixa D'água" /><i class="fas fa-tint"></i><span>Limpeza Caixa D'água</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Temperatura" /><i class="fas fa-thermometer-half"></i><span>Controle Temperatura</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Manual Boas Práticas (BPF)" /><i class="fas fa-book"></i><span>Manual BPF</span></label>
           <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" /><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="ASO - Exames dos Funcionários" /><i class="fas fa-stethoscope"></i><span>Saúde Funcionários</span></label>
         `;
       } else if (tipo === "Saúde") {
         docsEspecificos = `
           <label class="doc-item"><input type="checkbox" class="doc-check" value="Responsável Técnico" /><i class="fas fa-user-md"></i><span>Responsável Técnico</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="PGRSS (Resíduos)" /><i class="fas fa-trash-alt"></i><span>PGRSS (Resíduos)</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="PGRSS (Lixo Infectante)" /><i class="fas fa-trash-alt"></i><span>PGRSS (Resíduos)</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="POP - Procedimentos de Limpeza" /><i class="fas fa-pump-soap"></i><span>POP Limpeza</span></label>
         `;
       } else if (tipo === "Beleza") {
         docsEspecificos = `
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Certificado Autoclave" /><i class="fas fa-pump-medical"></i><span>Esterilização</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Estufa ou Autoclave (Esterilizador)" /><i class="fas fa-pump-medical"></i><span>Esterilizador</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Descarte de Perfurocortantes" /><i class="fas fa-box"></i><span>Descarte Agulhas/Lâminas</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Certificado Anvisa dos Produtos" /><i class="fas fa-clipboard-check"></i><span>Certificado Anvisa</span></label>
           <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" /><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
+        `;
+      } else {
+        docsEspecificos = `
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Limpeza Caixa D'água" /><i class="fas fa-tint"></i><span>Limpeza Caixa D'água</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" /><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Laudo de Ruído (Se aplicável)" /><i class="fas fa-volume-up"></i><span>Laudo de Ruído</span></label>
         `;
       }
 
@@ -785,16 +802,25 @@
       const cnpj = document.getElementById('cnpj_empresa').value;
       const tipo = document.getElementById('tipo_estab').value;
       
+      const todasOpcoes = document.querySelectorAll('.doc-check');
       const marcados = [];
-      document.querySelectorAll('.doc-check:checked').forEach(el => marcados.push(el.value));
-      const docsText = marcados.length > 0 ? marcados.join(", ") : "Nenhum selecionado";
+      const naoMarcados = [];
+
+      todasOpcoes.forEach(el => {
+        if(el.checked) marcados.push(el.value);
+        else naoMarcados.push(el.value);
+      });
+
+      const txtPossui = marcados.length > 0 ? marcados.join(", ") : "Nenhum";
+      const txtFalta = naoMarcados.length > 0 ? naoMarcados.join(", ") : "Nenhum";
+      const docsTextAdmin = `POSSUI: ${txtPossui} \n\nFALTA PROVIDENCIAR: ${txtFalta}`;
 
       // Salva no LocalStorage para o Admin poder ver e precificar
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
       pedidos[cnpj] = { 
         nome: nome, 
         tipo: tipo, 
-        docs: docsText, 
+        docs: docsTextAdmin, 
         valor: null, 
         status: "Análise Pendente",
         data: new Date().toLocaleString()
@@ -803,14 +829,14 @@
 
       // Manda pro WhatsApp
       const protocolo = "DIA-" + Math.floor(1000 + Math.random() * 9000);
-      const msg = 
-        "*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n" +
-        "*Protocolo:* " + protocolo + "\n" +
-        "*Empresa/Pessoa:* " + nome + "\n" +
-        "*Identificação (CNPJ/CPF):* " + cnpj + "\n" +
-        "*Ramo:* " + tipo + "\n" +
-        "*Documentos marcados:* " + docsText + "\n\n" +
-        "Aguardo a análise e emissão da taxa no sistema.";
+      let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n`;
+      msg += `*Protocolo:* ${protocolo}\n`;
+      msg += `*Empresa/Pessoa:* ${nome}\n`;
+      msg += `*Identificação (CNPJ/CPF):* ${cnpj}\n`;
+      msg += `*Ramo:* ${tipo}\n\n`;
+      msg += `✅ *DOCUMENTOS QUE POSSUI:*\n${marcados.length > 0 ? '- ' + marcados.join('\n- ') : 'Nenhum'}\n\n`;
+      msg += `🚨 *ALERTA - FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\n`;
+      msg += `Aguardo a análise e emissão da taxa no sistema.`;
 
       enviarWhatsApp(msg);
       
