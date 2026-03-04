@@ -116,7 +116,7 @@
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
     .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
-    .search-box { background: white; padding: 8px; border-radius: 50px; display: flex; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 600px; margin: 0 auto 50px; }
+    .search-box { background: white; padding: 8px; border-radius: 50px; display: flex; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 600px; margin: 0 auto 10px; }
     .search-box input { border: none; flex: 1; padding: 15px 25px; font-size: 1.1rem; color: #333; outline: none; }
     .search-box button { background: var(--sp-red); color: white; border: none; padding: 0 35px; border-radius: 50px; cursor: pointer; font-weight: 900; font-size: 1rem; transition: 0.3s; }
     .search-box button:hover { background: var(--sp-dark-red); }
@@ -144,7 +144,7 @@
     .btn-primary { background: var(--gov-blue); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: 900; font-size: 1.1rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; text-transform: uppercase; }
     .btn-primary:hover { background: var(--gov-dark-blue); transform: translateY(-2px); }
 
-    /* --- REGULARIZE SECTION (CORRIGIDA E APRIMORADA) --- */
+    /* --- REGULARIZE SECTION --- */
     .checklist-section { padding: 100px 0; background: #f4f7fa; border-top: 1px solid #e1e8ed; border-bottom: 1px solid #e1e8ed; }
     .checklist-wrapper { display: flex; gap: 60px; flex-wrap: wrap; align-items: flex-start; }
     .checklist-intro { flex: 1; min-width: 320px; }
@@ -156,7 +156,6 @@
     .process-step i { font-size: 1.8rem; color: var(--gov-blue); margin-bottom: 12px; display: block; }
     .process-step span { font-size: 0.85rem; font-weight: 800; color: #2d3748; text-transform: uppercase; }
 
-    /* Correção do CSS da Caixa de Atenção */
     .steps-box { background: #fff5f5; padding: 30px; border-radius: 12px; border-left: 6px solid var(--sp-red); box-shadow: 0 5px 20px rgba(218, 37, 28, 0.08); margin-bottom: 30px; }
     .steps-box h4 { color: var(--sp-red); margin-bottom: 15px; font-size: 1.35rem; font-weight: 900; display: flex; align-items: center; gap: 10px; line-height: 1.3; }
     .steps-box p { font-size: 1.05rem; color: #4a5568; margin-bottom: 20px; line-height: 1.6; }
@@ -166,7 +165,6 @@
 
     .checklist-form-container { flex: 1.2; min-width: 350px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
     
-    /* Abas de Navegação Interna */
     .form-tabs { display: flex; gap: 10px; margin-bottom: 30px; background: #f1f5f9; padding: 6px; border-radius: 12px; }
     .form-tab { flex: 1; text-align: center; padding: 12px; font-weight: 800; font-size: 0.9rem; color: #64748b; cursor: pointer; border-radius: 8px; transition: 0.3s; }
     .form-tab.active { background: #fff; color: var(--gov-blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
@@ -177,7 +175,6 @@
     .doc-item i { font-size: 2rem; color: #a0aec0; margin-bottom: 10px; transition: 0.2s; }
     .doc-item span { font-size: 0.85rem; font-weight: 700; color: #4a5568; }
     .doc-item:hover { border-color: #cbd5e0; background: #f8fafc; }
-    /* Estilo para quando selecionado */
     .doc-item input:checked ~ i { color: var(--gov-blue); }
     .doc-item input:checked ~ span { color: var(--gov-blue); }
     .doc-item:has(input:checked) { border-color: var(--gov-blue); background: #f0f4f8; }
@@ -190,7 +187,15 @@
     .invoice-value { text-align: center; margin-bottom: 25px; }
     .invoice-value span { display: block; font-size: 0.9rem; color: #718096; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
     .invoice-value h2 { font-size: 2.5rem; color: #2d3748; margin: 0; }
-    .qr-container { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e0; text-align: center; margin-bottom: 25px; }
+    .qr-container { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e0; text-align: center; margin-bottom: 25px; position: relative;}
+
+    /* --- BARRA DE PROGRESSO VISUAL --- */
+    .progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 35px; margin-top: 10px; padding: 0 20px;}
+    .progress-container::before { content: ''; position: absolute; top: 50%; left: 30px; right: 30px; height: 4px; background: #e2e8f0; z-index: 0; transform: translateY(-50%); }
+    .progress-step { position: relative; z-index: 1; background: white; border: 4px solid #e2e8f0; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #cbd5e0; }
+    .progress-step.active { border-color: var(--gov-blue); color: var(--gov-blue); }
+    .progress-step.completed { border-color: var(--success-color); background: var(--success-color); color: white; }
+    .progress-label { position: absolute; top: 55px; font-size: 0.75rem; text-align: center; width: 100px; left: -27px; font-weight: 800; color: #64748b; line-height: 1.2;}
 
     /* --- OUTRAS SEÇÕES --- */
     .areas-section { padding: 100px 0; background: #fff; text-align: center; }
@@ -324,6 +329,7 @@
       .chat-widget-btn { right: 16px; bottom: 18px; width: 60px; height: 60px; }
       .process-steps { flex-direction: column; }
       .docs-grid { grid-template-columns: 1fr; }
+      .progress-container { padding: 0; }
     }
   </style>
 </head>
@@ -392,6 +398,16 @@
         <input type="text" placeholder="Buscar protocolos, legislação ou serviços..." />
         <button>Pesquisar</button>
       </div>
+
+      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto;">
+        <h4 style="margin-bottom: 10px; font-size: 1.1rem;"><i class="fas fa-search"></i> Consulta Pública de Regularidade</h4>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="fake_consulta_cnpj" placeholder="Digite o CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;">
+          <button onclick="realizarConsultaFake()" style="background: var(--sp-red); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;">Consultar</button>
+        </div>
+        <div id="fake_consulta_resultado" style="display: none; margin-top: 15px; padding: 15px; background: #fff3cd; color: #856404; border-radius: 8px; font-weight: bold;"></div>
+      </div>
+
     </div>
     <div class="live-stats-bar">
       <div class="container live-grid">
@@ -445,9 +461,11 @@
           <div id="area-envio">
             <form id="form-regularizacao">
               <label style="font-weight: 800; display: block; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Dados Cadastrais</label>
+              
+              <input type="text" class="form-control" id="cnpj_empresa" placeholder="Digite seu CNPJ..." required style="margin-bottom: 10px;" />
+              <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados na Receita Federal...</div>
               <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia ou Razão Social *" required />
-              <input type="text" class="form-control" id="cnpj_empresa" placeholder="CNPJ, CPF ou Nome Social *" required />
-
+              
               <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Ramo de Atividade *</label>
               <select class="form-control" id="tipo_estab" required onchange="mostrarChecklist()">
                 <option value="" disabled selected>Selecione a atividade principal...</option>
@@ -466,6 +484,9 @@
 
                 <div class="docs-grid" id="lista-documentos">
                   </div>
+
+                <div id="risco-multa" style="padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 20px; display: none;"></div>
+
               </div>
 
               <button type="submit" class="btn-success" id="btn-enviar-whatsapp" style="display: none; margin-top: 25px;">
@@ -476,13 +497,20 @@
 
           <div id="area-pagamento" style="display: none;">
             <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
-              <h4 style="color: var(--gov-dark-blue); margin-bottom: 15px;">Consultar Taxas Pendentes</h4>
-              <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Digite o seu CNPJ/CPF para consultar os valores de taxas de análise documental ou multas emitidas após a análise técnica.</p>
+              <h4 style="color: var(--gov-dark-blue); margin-bottom: 15px;">Consultar Status do Processo</h4>
+              <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Digite o seu CNPJ para consultar o andamento da análise documental ou gerar o Pix da taxa.</p>
               
               <form id="form-consulta">
-                <input type="text" class="form-control" id="consulta_cnpj" placeholder="Digite seu CNPJ/CPF..." required />
+                <input type="text" class="form-control" id="consulta_cnpj" placeholder="Digite seu CNPJ..." required />
                 <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Consultar</button>
               </form>
+            </div>
+
+            <div id="barra-progresso" class="progress-container" style="display: none;">
+              <div class="progress-step" id="step-1"><i class="fas fa-file-alt"></i><span class="progress-label">Recebido</span></div>
+              <div class="progress-step" id="step-2"><i class="fas fa-search"></i><span class="progress-label">Em Análise</span></div>
+              <div class="progress-step" id="step-3"><i class="fas fa-dollar-sign"></i><span class="progress-label">Aguardando Taxa</span></div>
+              <div class="progress-step" id="step-4"><i class="fas fa-check"></i><span class="progress-label">Concluído</span></div>
             </div>
 
             <div id="resultado-pix" style="display: none;">
@@ -498,7 +526,9 @@
                   </div>
 
                   <div class="qr-container">
-                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação.</p>
+                    <div id="cronometro-pix" style="font-size: 1.2rem; font-weight: 900; color: var(--sp-red); margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 8px;"></div>
+                    
+                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
                     
                     <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
@@ -522,8 +552,11 @@
               </div>
             </div>
 
-            <div id="mensagem-status" style="display: none; background: #fffbeb; padding: 20px; border-radius: 12px; border-left: 4px solid #f59e0b; margin-top: 20px;">
-              <p style="font-weight: 700; color: #b45309; margin: 0;"><i class="fas fa-clock"></i> <span id="texto-mensagem">Em análise técnica...</span></p>
+            <div id="mensagem-status" style="display: none; padding: 25px; border-radius: 12px; border-left: 5px solid; margin-top: 20px; text-align: center;">
+              <span id="texto-mensagem" style="font-size: 1.1rem;">Em análise técnica...</span>
+              <button id="btn-baixar-pdf" class="btn-primary" style="display: none; margin-top: 20px;" onclick="gerarPDF()">
+                <i class="fas fa-file-pdf"></i> Baixar Licença Provisória
+              </button>
             </div>
           </div>
 
@@ -688,6 +721,43 @@
 
   <script>
     /* ============================================== */
+    /* IDEA 2: CONSULTA PÚBLICA FAKE                  */
+    /* ============================================== */
+    function realizarConsultaFake() {
+      const input = document.getElementById('fake_consulta_cnpj').value;
+      if(input.length < 5) { alert("Digite um CNPJ válido."); return; }
+      
+      let res = document.getElementById('fake_consulta_resultado');
+      res.style.display = 'block';
+      res.style.background = '#e0f2fe'; res.style.color = '#0369a1';
+      res.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando no sistema de fiscalização estadual...';
+      
+      setTimeout(() => {
+        res.style.background = '#fee2e2';
+        res.style.color = '#b91c1c';
+        res.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>STATUS: PENDENTE DE REGULARIZAÇÃO</strong><br><span style="font-size:0.95rem; font-weight:normal; display:block; margin-top:5px;">Este CNPJ encontra-se irregular e sujeito a notificação. <a href="#regularize" style="color: #991b1b; text-decoration: underline; font-weight: 900;">Clique aqui e Regularize agora</a>.</span>';
+      }, 1500);
+    }
+
+    /* ============================================== */
+    /* IDEA 1: AUTOPREENCHIMENTO DE CNPJ API BRASIL   */
+    /* ============================================== */
+    document.getElementById('cnpj_empresa').addEventListener('blur', async (e) => {
+      let cnpjLimpo = e.target.value.replace(/\D/g, '');
+      if(cnpjLimpo.length === 14) {
+        document.getElementById('loading-cnpj').style.display = 'block';
+        try {
+          let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
+          let dados = await req.json();
+          if(dados.razao_social) {
+            document.getElementById('nome_empresa').value = dados.nome_fantasia || dados.razao_social;
+          }
+        } catch(error) {}
+        document.getElementById('loading-cnpj').style.display = 'none';
+      }
+    });
+
+    /* ============================================== */
     /* DRAWER & ATUALIZAÇÕES GERAIS                   */
     /* ============================================== */
     function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
@@ -714,7 +784,7 @@
     }
 
     /* ============================================== */
-    /* LÓGICA DE ADMIN OCULTO (3 Cliques na Logo)     */
+    /* ADMIN OCULTO (3 Cliques na Logo)               */
     /* ============================================== */
     let cliquesLogo = 0;
     let timerCliques;
@@ -723,35 +793,43 @@
       clearTimeout(timerCliques);
       if(cliquesLogo >= 3) {
         let senha = prompt("ACESSO RESTRITO - Digite a senha do painel:");
-        if(senha === "1533") {
-          window.location.href = "admin.html";
-        } else if(senha !== null) {
-          alert("Senha incorreta!");
-        }
+        if(senha === "1533") { window.location.href = "admin.html"; } 
+        else if(senha !== null) { alert("Senha incorreta!"); }
         cliquesLogo = 0;
       }
       timerCliques = setTimeout(() => cliquesLogo = 0, 1500);
     }
 
     /* ============================================== */
-    /* LÓGICA DO SISTEMA DE ENVIO E CONSULTA (TAB)    */
+    /* LÓGICA DE ABAS E PROGRESSO                     */
     /* ============================================== */
     function alternarAba(aba) {
       document.getElementById('tab-envio').classList.remove('active');
       document.getElementById('tab-pagamento').classList.remove('active');
       document.getElementById('area-envio').style.display = 'none';
       document.getElementById('area-pagamento').style.display = 'none';
-
       document.getElementById('tab-' + aba).classList.add('active');
       document.getElementById('area-' + aba).style.display = 'block';
     }
 
-    /* GERAR GRID DE DOCUMENTOS VISUAL COM LÓGICA DE ÁREA */
+    function atualizarBarraProgresso(step) {
+      document.getElementById('barra-progresso').style.display = 'flex';
+      for(let i=1; i<=4; i++) {
+        let el = document.getElementById('step-' + i);
+        el.className = 'progress-step'; // reset
+        if(i < step) el.classList.add('completed');
+        if(i === step) el.classList.add('active');
+      }
+    }
+
+    /* ============================================== */
+    /* FORMULÁRIOS DE REGULARIZAÇÃO E RISCO (IDEIA 4) */
+    /* ============================================== */
     const docsComuns = `
-      <label class="doc-item"><input type="checkbox" class="doc-check" value="CNPJ Ativo" /><i class="fas fa-file-invoice"></i><span>CNPJ Ativo</span></label>
-      <label class="doc-item"><input type="checkbox" class="doc-check" value="Contrato Social / MEI" /><i class="fas fa-file-contract"></i><span>Contrato / MEI</span></label>
-      <label class="doc-item"><input type="checkbox" class="doc-check" value="Alvará de Funcionamento" /><i class="fas fa-building"></i><span>Alvará Prefeitura</span></label>
-      <label class="doc-item"><input type="checkbox" class="doc-check" value="AVCB Bombeiros" /><i class="fas fa-fire-extinguisher"></i><span>AVCB (Bombeiros)</span></label>
+      <label class="doc-item"><input type="checkbox" class="doc-check" value="CNPJ Ativo" onchange="calcularRisco()"/><i class="fas fa-file-invoice"></i><span>CNPJ Ativo</span></label>
+      <label class="doc-item"><input type="checkbox" class="doc-check" value="Contrato Social / MEI" onchange="calcularRisco()"/><i class="fas fa-file-contract"></i><span>Contrato / MEI</span></label>
+      <label class="doc-item"><input type="checkbox" class="doc-check" value="Alvará de Funcionamento" onchange="calcularRisco()"/><i class="fas fa-building"></i><span>Alvará Prefeitura</span></label>
+      <label class="doc-item"><input type="checkbox" class="doc-check" value="AVCB Bombeiros" onchange="calcularRisco()"/><i class="fas fa-fire-extinguisher"></i><span>AVCB (Bombeiros)</span></label>
     `;
 
     function mostrarChecklist() {
@@ -762,83 +840,82 @@
       let docsEspecificos = "";
       if (tipo === "Alimentos") {
         docsEspecificos = `
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Limpeza Caixa D'água" /><i class="fas fa-tint"></i><span>Limpeza Caixa D'água</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Temperatura" /><i class="fas fa-thermometer-half"></i><span>Controle Temperatura</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Manual Boas Práticas (BPF)" /><i class="fas fa-book"></i><span>Manual BPF</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" /><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="ASO - Exames dos Funcionários" /><i class="fas fa-stethoscope"></i><span>Saúde Funcionários</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Limpeza Caixa D'água" onchange="calcularRisco()"/><i class="fas fa-tint"></i><span>Limpeza Caixa</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle Temperatura" onchange="calcularRisco()"/><i class="fas fa-thermometer-half"></i><span>Temperatura</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Manual BPF" onchange="calcularRisco()"/><i class="fas fa-book"></i><span>Manual BPF</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" onchange="calcularRisco()"/><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="ASO Funcionários" onchange="calcularRisco()"/><i class="fas fa-stethoscope"></i><span>Saúde Func.</span></label>
         `;
       } else if (tipo === "Saúde") {
         docsEspecificos = `
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Responsável Técnico" /><i class="fas fa-user-md"></i><span>Responsável Técnico</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="PGRSS (Lixo Infectante)" /><i class="fas fa-trash-alt"></i><span>PGRSS (Resíduos)</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="POP - Procedimentos de Limpeza" /><i class="fas fa-pump-soap"></i><span>POP Limpeza</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Resp Técnico" onchange="calcularRisco()"/><i class="fas fa-user-md"></i><span>Resp Técnico</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="PGRSS Lixo" onchange="calcularRisco()"/><i class="fas fa-trash-alt"></i><span>PGRSS Lixo</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="POP Limpeza" onchange="calcularRisco()"/><i class="fas fa-pump-soap"></i><span>POP Limpeza</span></label>
         `;
       } else if (tipo === "Beleza") {
         docsEspecificos = `
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Estufa ou Autoclave (Esterilizador)" /><i class="fas fa-pump-medical"></i><span>Esterilizador</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Descarte de Perfurocortantes" /><i class="fas fa-box"></i><span>Descarte Agulhas/Lâminas</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Certificado Anvisa dos Produtos" /><i class="fas fa-clipboard-check"></i><span>Certificado Anvisa</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" /><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Autoclave" onchange="calcularRisco()"/><i class="fas fa-pump-medical"></i><span>Esterilizador</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Descarte Agulhas" onchange="calcularRisco()"/><i class="fas fa-box"></i><span>Descarte Agulhas</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Anvisa Produtos" onchange="calcularRisco()"/><i class="fas fa-clipboard-check"></i><span>Anvisa Produtos</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" onchange="calcularRisco()"/><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
         `;
       } else {
         docsEspecificos = `
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Limpeza Caixa D'água" /><i class="fas fa-tint"></i><span>Limpeza Caixa D'água</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" /><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Laudo de Ruído (Se aplicável)" /><i class="fas fa-volume-up"></i><span>Laudo de Ruído</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Limpeza Caixa" onchange="calcularRisco()"/><i class="fas fa-tint"></i><span>Limpeza Caixa</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle Pragas" onchange="calcularRisco()"/><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Laudo de Ruído" onchange="calcularRisco()"/><i class="fas fa-volume-up"></i><span>Laudo Ruído</span></label>
         `;
       }
 
       listaDocs.innerHTML = docsComuns + docsEspecificos;
       document.getElementById('area-checklist').style.display = 'block';
       document.getElementById('btn-enviar-whatsapp').style.display = 'flex';
+      calcularRisco(); // Inicializa o risco
     }
 
-    /* ENVIO DE DADOS E SALVANDO NO LOCALSTORAGE */
+    function calcularRisco() {
+      let divRisco = document.getElementById('risco-multa');
+      divRisco.style.display = 'block';
+      let naoMarcados = document.querySelectorAll('.doc-check:not(:checked)').length;
+      
+      if(naoMarcados === 0) {
+        divRisco.style.background = '#dcfce3'; divRisco.style.color = '#166534';
+        divRisco.innerHTML = '<i class="fas fa-shield-alt"></i> Tudo OK! Regularize agora para manter a segurança do CNPJ.';
+      } else {
+        let minMulta = (naoMarcados * 1250).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+        let maxMulta = (naoMarcados * 3500).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+        divRisco.style.background = '#fee2e2'; divRisco.style.color = '#b91c1c';
+        divRisco.innerHTML = `<i class="fas fa-exclamation-triangle"></i> RISCO ALTO DE AUTUAÇÃO DETECTADO<br><span style="font-weight:normal; font-size:0.9rem;">Multa estimada em caso de fiscalização: <b>${minMulta} a ${maxMulta}</b>. Gere sua taxa para travar multas retroativas.</span>`;
+      }
+    }
+
     document.getElementById('form-regularizacao').addEventListener('submit', (e) => {
       e.preventDefault();
-      
       const nome = document.getElementById('nome_empresa').value;
       const cnpj = document.getElementById('cnpj_empresa').value;
       const tipo = document.getElementById('tipo_estab').value;
-      
       const todasOpcoes = document.querySelectorAll('.doc-check');
-      const marcados = [];
-      const naoMarcados = [];
+      const marcados = []; const naoMarcados = [];
 
       todasOpcoes.forEach(el => {
         if(el.checked) marcados.push(el.value);
         else naoMarcados.push(el.value);
       });
 
-      const txtPossui = marcados.length > 0 ? marcados.join(", ") : "Nenhum";
-      const txtFalta = naoMarcados.length > 0 ? naoMarcados.join(", ") : "Nenhum";
-      const docsTextAdmin = `POSSUI: ${txtPossui} \n\nFALTA PROVIDENCIAR: ${txtFalta}`;
+      const docsTextAdmin = `POSSUI: ${marcados.length > 0 ? marcados.join(", ") : "Nenhum"}\n\nFALTA PROVIDENCIAR: ${naoMarcados.length > 0 ? naoMarcados.join(", ") : "Nenhum"}`;
 
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-      pedidos[cnpj] = { 
-        nome: nome, 
-        tipo: tipo, 
-        docs: docsTextAdmin, 
-        valor: null, 
-        pago: false, // FLAG DE PAGAMENTO AQUI
-        data: new Date().toLocaleString()
-      };
+      pedidos[cnpj] = { nome: nome, tipo: tipo, docs: docsTextAdmin, valor: null, pago: false, data: new Date().toLocaleString() };
       localStorage.setItem('covisa_pedidos', JSON.stringify(pedidos));
 
       const protocolo = "DIA-" + Math.floor(1000 + Math.random() * 9000);
-      let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n`;
-      msg += `*Protocolo:* ${protocolo}\n`;
-      msg += `*Empresa/Pessoa:* ${nome}\n`;
-      msg += `*Identificação (CNPJ/CPF):* ${cnpj}\n`;
-      msg += `*Ramo:* ${tipo}\n\n`;
-      msg += `✅ *DOCUMENTOS QUE POSSUI:*\n${marcados.length > 0 ? '- ' + marcados.join('\n- ') : 'Nenhum'}\n\n`;
-      msg += `🚨 *ALERTA - FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\n`;
-      msg += `Aguardo a análise e emissão da taxa no sistema.`;
+      let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n*Protocolo:* ${protocolo}\n*Empresa:* ${nome}\n*CNPJ/CPF:* ${cnpj}\n*Ramo:* ${tipo}\n\n`;
+      msg += `✅ *POSSUI:*\n${marcados.length > 0 ? '- ' + marcados.join('\n- ') : 'Nenhum'}\n\n`;
+      msg += `🚨 *FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\nAguardo a emissão da taxa.`;
 
       enviarWhatsApp(msg);
+      alert("Formulário enviado! Fique atento às pendências. Acompanhe a liberação da taxa na próxima tela.");
       
-      alert("Formulário enviado com sucesso! Fique atento às pendências. Acompanhe a liberação da taxa na aba 'Pagar Taxa/Multa'.");
       document.getElementById('form-regularizacao').reset();
       document.getElementById('area-checklist').style.display = 'none';
       document.getElementById('btn-enviar-whatsapp').style.display = 'none';
@@ -847,8 +924,29 @@
       document.getElementById('consulta_cnpj').value = cnpj;
     });
 
-    /* CONSULTA DA TAXA (ABA 2) E EXIBIÇÃO DO PIX / PAGO */
+    /* ============================================== */
+    /* CONSULTA DA TAXA, CRONÔMETRO (IDEIA 5) E PAGO  */
+    /* ============================================== */
     let cnpjParaComprovante = "";
+    let timerInterval;
+
+    function iniciarCronometroPix() {
+      clearInterval(timerInterval);
+      let time = 1800; // 30 minutos em segundos
+      let display = document.getElementById('cronometro-pix');
+      
+      timerInterval = setInterval(() => {
+        let minutes = parseInt(time / 60, 10);
+        let seconds = parseInt(time % 60, 10);
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        display.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo restante para isenção de multas: ${minutes}:${seconds}`;
+        if (--time < 0) {
+          clearInterval(timerInterval);
+          display.textContent = "Tempo expirado! Sujeito a fiscalização física.";
+        }
+      }, 1000);
+    }
 
     document.getElementById('form-consulta').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -856,35 +954,38 @@
       const divPix = document.getElementById('resultado-pix');
       const divMsg = document.getElementById('mensagem-status');
       const textMsg = document.getElementById('texto-mensagem');
+      const btnPdf = document.getElementById('btn-baixar-pdf');
 
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
       let pedido = pedidos[cnpj];
 
       if (!pedido) {
-        divPix.style.display = 'none';
-        divMsg.style.display = 'block';
-        divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderLeftColor = '#f59e0b';
+        divPix.style.display = 'none'; btnPdf.style.display = 'none'; divMsg.style.display = 'block';
+        divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderColor = '#f59e0b';
         textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum cadastro encontrado para este CNPJ/CPF.';
-      } else if (pedido.pago === true) {
-        /* A ÚNICA ALTERAÇÃO NO SEU INDEX.HTML É ESTE BLOCO AQUI! */
-        divPix.style.display = 'none';
-        divMsg.style.display = 'block';
-        divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderLeftColor = '#10b981';
-        textMsg.innerHTML = '<i class="fas fa-check-circle" style="font-size:1.2rem;"></i> <strong style="font-size:1.1rem;">Pagamento Confirmado!</strong><br><br>Sua taxa foi recebida e o seu processo de regularização está em andamento. Aguarde o contato dos nossos fiscais.';
-      } else if (pedido.valor === null || pedido.valor === "") {
-        divPix.style.display = 'none';
-        divMsg.style.display = 'block';
-        divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderLeftColor = '#f59e0b';
-        textMsg.innerHTML = '<i class="fas fa-clock"></i> A documentação está em análise técnica. Aguarde a liberação do valor.';
-      } else {
-        divMsg.style.display = 'none';
-        divPix.style.display = 'block';
-        
+        document.getElementById('barra-progresso').style.display = 'none';
+      } 
+      else if (pedido.pago === true) {
+        divPix.style.display = 'none'; divMsg.style.display = 'block'; btnPdf.style.display = 'inline-flex';
+        divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
+        textMsg.innerHTML = '<i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>Seu processo foi concluído com sucesso e as pendências foram baixadas no sistema. Baixe sua licença abaixo.';
+        atualizarBarraProgresso(4); // Step concluído
+      } 
+      else if (pedido.valor === null || pedido.valor === "") {
+        divPix.style.display = 'none'; btnPdf.style.display = 'none'; divMsg.style.display = 'block';
+        divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b';
+        textMsg.innerHTML = '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
+        atualizarBarraProgresso(2); // Step Em Análise
+      } 
+      else {
+        divMsg.style.display = 'none'; btnPdf.style.display = 'none'; divPix.style.display = 'block';
         let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
         if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
-
         document.getElementById('valor-cobrado').innerText = valorFormatado;
         cnpjParaComprovante = cnpj;
+        
+        atualizarBarraProgresso(3); // Step Aguardando Pagamento
+        iniciarCronometroPix(); // Ativa a Ideia 5
       }
     });
 
@@ -900,14 +1001,78 @@
       if(!cnpjParaComprovante) return;
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
       let pedido = pedidos[cnpjParaComprovante] || {};
-      
-      const msg = 
-        "*COMPROVANTE DE PAGAMENTO DE TAXA/MULTA*\n\n" +
-        "*Empresa/Pessoa:* " + (pedido.nome || 'Não identificado') + "\n" +
-        "*CNPJ/CPF:* " + cnpjParaComprovante + "\n" +
-        "Estou enviando o comprovante do pagamento liberado no sistema. Segue o anexo!";
-      
+      const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${pedido.nome || 'Não identificado'}\n*CNPJ/CPF:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
       enviarWhatsApp(msg);
+    }
+
+    /* ============================================== */
+    /* IDEA 3: GERAÇÃO DA LICENÇA PDF                 */
+    /* ============================================== */
+    function gerarPDF() {
+      let cnpj = document.getElementById('consulta_cnpj').value;
+      let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
+      let pedido = pedidos[cnpj];
+      if(!pedido) return;
+
+      let dataEmissao = new Date().toLocaleDateString('pt-BR');
+      let dVal = new Date(); dVal.setMonth(dVal.getMonth() + 12);
+      let dataValidade = dVal.toLocaleDateString('pt-BR');
+      let numeroDoc = Math.floor(Math.random() * 9000000) + 1000000;
+
+      let templatePDF = `
+      <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Alvará Provisório - ${pedido.nome}</title>
+      <style>
+        @page { size: A4; margin: 0; }
+        body { font-family: 'Arial', sans-serif; background: #fff; padding: 30mm; box-sizing: border-box; }
+        .borda { border: 5px solid #0d3c85; padding: 30px; height: 95%; box-sizing: border-box; border-radius: 10px; position: relative;}
+        .borda::after { content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; border: 2px solid #da251c; border-radius: 14px; pointer-events: none;}
+        .cabecalho { text-align: center; border-bottom: 2px solid #0d3c85; padding-bottom: 20px; margin-bottom: 30px; }
+        .cabecalho h1 { color: #0d3c85; font-size: 22px; margin: 0; text-transform: uppercase; font-weight: 900;}
+        .cabecalho h2 { color: #da251c; font-size: 16px; margin: 5px 0 0 0; }
+        .titulo { text-align: center; margin: 40px 0; }
+        .titulo h3 { font-size: 26px; color: #111; margin: 0; text-transform: uppercase; letter-spacing: 1px;}
+        .titulo p { font-size: 14px; color: #555; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+        td { padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;}
+        .label { font-weight: bold; color: #0d3c85; width: 35%; }
+        .aviso { background: #f8f9fa; border-left: 5px solid #2e7d32; padding: 15px; font-size: 13px; text-align: justify; line-height: 1.5; color: #333;}
+        .assinaturas { margin-top: 80px; text-align: center; }
+        .linha { border-top: 1px solid #000; width: 250px; margin: 0 auto 10px; }
+      </style>
+      </head><body>
+        <div class="borda">
+          <div class="cabecalho">
+            <h1>PREFEITURA DO MUNICÍPIO DE SÃO PAULO</h1>
+            <h2>COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA</h2>
+          </div>
+          <div class="titulo">
+            <h3>Certificado de Regularidade Sanitária</h3>
+            <p>Documento Emitido Eletronicamente via Portal Oficial</p>
+          </div>
+          <table>
+            <tr><td class="label">RAZÃO SOCIAL / NOME FANTASIA:</td><td><b>${pedido.nome.toUpperCase()}</b></td></tr>
+            <tr><td class="label">CNPJ / CPF DO RESPONSÁVEL:</td><td><b>${cnpj}</b></td></tr>
+            <tr><td class="label">RAMO DE ATIVIDADE DECLARADO:</td><td><b>${pedido.tipo.toUpperCase()}</b></td></tr>
+            <tr><td class="label">NÚMERO DO DOCUMENTO:</td><td><b>SP-${numeroDoc}-${new Date().getFullYear()}</b></td></tr>
+            <tr><td class="label">DATA DE EMISSÃO:</td><td><b>${dataEmissao}</b></td></tr>
+            <tr><td class="label">VÁLIDO ATÉ:</td><td><b style="color:#da251c;">${dataValidade}</b></td></tr>
+          </table>
+          <div class="aviso">
+            <strong>Certificação Provisória de Funcionamento:</strong> Atestamos que o estabelecimento supracitado regularizou o pagamento da Taxa de Análise de Pendências Documentais junto à Coordenação de Vigilância em Saúde. Este documento autoriza o funcionamento temporário enquanto a equipe técnica municipal realiza a fiscalização definitiva e conferência das pendências físicas registradas em sistema.
+          </div>
+          <div class="assinaturas">
+            <div class="linha"></div>
+            <strong>Diretoria de Inspeção Sanitária</strong><br>Prefeitura do Município de São Paulo
+          </div>
+        </div>
+      </body></html>
+      `;
+
+      let win = window.open('', '_blank');
+      win.document.write(templatePDF);
+      win.document.close();
+      win.focus();
+      setTimeout(() => { win.print(); }, 500); // Imprime o PDF em meio segundo
     }
 
     /* ============================================== */
@@ -926,7 +1091,7 @@
       if (assunto === 'Outros') assunto = "Outros: " + document.getElementById('resumo_outros').value;
       const local = document.getElementById('local').value;
       const relato = document.getElementById('relato').value;
-      const msg = "DENUNCIA SIGILOSA OFICIAL\n\nMOTIVO: " + assunto + "\nLOCAL: " + local + "\nRELATO: " + relato + "\n\nPOSSUO EVIDENCIAS (FOTOS/VIDEOS) PARA ENVIAR NESTA CONVERSA.";
+      const msg = "DENUNCIA SIGILOSA OFICIAL\n\nMOTIVO: " + assunto + "\nLOCAL: " + local + "\nRELATO: " + relato;
       enviarWhatsApp(msg);
     });
 
