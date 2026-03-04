@@ -325,24 +325,43 @@
     .btn-success { background: var(--success-color); color: white; border: none; padding: 20px; border-radius: 10px; font-weight: 900; font-size: 1.2rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
     .btn-success:hover { background: #1b5e20; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2); }
 
-    /* --- REGULARIZE SECTION --- */
-    .checklist-section { padding: 100px 0; background: #f9f9f9; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
-    .checklist-wrapper { display: flex; gap: 60px; flex-wrap: wrap; }
-    .checklist-intro { flex: 1; min-width: 300px; }
-    .checklist-intro h2 { font-size: 2.8rem; color: var(--sp-red); margin-bottom: 20px; font-family: 'Montserrat', sans-serif; font-weight: 900; }
-    .checklist-intro p { font-size: 1.1rem; color: #555; margin-bottom: 30px; line-height: 1.8; }
-    .steps-box { background: white; padding: 30px; border-radius: 12px; border-left: 5px solid var(--success-color); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-    .steps-box h4 { color: var(--success-color); margin-bottom: 20px; font-size: 1.2rem; }
-    .steps-box li { margin-bottom: 15px; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 0.95rem; color: #444; }
+    /* --- REGULARIZE SECTION (ATUALIZADO E PROFISSIONAL) --- */
+    .checklist-section { padding: 100px 0; background: #f4f7fa; border-top: 1px solid #e1e8ed; border-bottom: 1px solid #e1e8ed; }
+    .checklist-wrapper { display: flex; gap: 60px; flex-wrap: wrap; align-items: flex-start; }
+    .checklist-intro { flex: 1; min-width: 320px; }
+    .checklist-intro h2 { font-size: 2.8rem; color: var(--gov-dark-blue); margin-bottom: 20px; font-family: 'Montserrat', sans-serif; font-weight: 900; line-height: 1.2; }
+    .checklist-intro p.lead { font-size: 1.15rem; color: #4a5568; margin-bottom: 30px; line-height: 1.7; }
+    
+    .process-steps { display: flex; gap: 15px; margin-bottom: 35px; }
+    .process-step { background: #fff; padding: 18px 15px; border-radius: 12px; border-top: 4px solid var(--gov-blue); box-shadow: 0 6px 15px rgba(0,0,0,0.04); flex: 1; text-align: center; }
+    .process-step i { font-size: 1.8rem; color: var(--gov-blue); margin-bottom: 12px; display: block; }
+    .process-step span { font-size: 0.85rem; font-weight: 800; color: #2d3748; text-transform: uppercase; }
 
-    .checklist-form-container { flex: 1.2; min-width: 350px; background: white; padding: 50px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); border: 1px solid #eee; }
-    .docs-list { margin: 25px 0; border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
-    .doc-item { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; background: #fafafa; cursor: pointer; transition: 0.2s; }
+    .steps-box { background: #fff5f5; padding: 30px; border-radius: 12px; border-left: 6px solid var(--sp-red); box-shadow: 0 5px 20px rgba(218, 37, 28, 0.08); }
+    .steps-box h4 { color: var(--sp-red); margin-bottom: 15px; font-size: 1.25rem; display: flex; align-items: center; gap: 10px; }
+    .steps-box p { font-size: 1rem; color: #4a5568; margin-bottom: 15px; line-height: 1.6; }
+    .steps-box ul { list-style: none; padding-left: 0; }
+    .steps-box li { margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px; font-weight: 600; font-size: 0.95rem; color: #2d3748; }
+    .steps-box li i { color: var(--sp-red); margin-top: 4px; }
+
+    .checklist-form-container { flex: 1.2; min-width: 350px; background: white; padding: 45px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+    .docs-list { margin: 25px 0; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+    .doc-item { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; background: #f8fafc; cursor: pointer; transition: 0.2s; font-weight: 600; color: #4a5568; }
     .doc-item:last-child { border-bottom: none; }
-    .doc-item:hover { background: #f0fff4; }
-    .doc-item input { margin-right: 15px; transform: scale(1.4); accent-color: var(--success-color); cursor: pointer; }
-    .doc-icon { color: #999; margin-right: 12px; width: 20px; text-align: center; }
-    .doc-item:hover .doc-icon { color: var(--success-color); }
+    .doc-item:hover { background: #f0f4f8; color: var(--gov-blue); }
+    .doc-item input { margin-right: 15px; transform: scale(1.4); accent-color: var(--gov-blue); cursor: pointer; }
+    .doc-icon { color: #a0aec0; margin-right: 12px; width: 20px; text-align: center; font-size: 1.1rem; }
+    .doc-item:hover .doc-icon { color: var(--gov-blue); }
+    
+    .invoice-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: left; }
+    .invoice-header { background: #f8fafc; padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+    .invoice-header h4 { margin: 0; color: var(--gov-dark-blue); font-size: 1.1rem; }
+    .invoice-header .badge { background: #e6fffa; color: #319795; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+    .invoice-body { padding: 30px; }
+    .invoice-value { text-align: center; margin-bottom: 25px; }
+    .invoice-value span { display: block; font-size: 0.9rem; color: #718096; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
+    .invoice-value h2 { font-size: 2.5rem; color: #2d3748; margin: 0; }
+    .qr-container { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e0; text-align: center; margin-bottom: 25px; }
 
     /* --- ÁREAS DE ATUAÇÃO --- */
     .areas-section { padding: 100px 0; background: #fff; text-align: center; }
@@ -504,74 +523,41 @@
 
     /* --- MOBILE AJUSTES --- */
     @media (max-width: 900px) {
-      /* GOV BAR: deixa bonito e alinhado no mobile */
       .gov-bar { font-size: 10px; padding: 8px 0; }
       .flex-between { align-items: flex-start; }
       .gov-left { display: block; max-width: 62%; line-height: 1.2; }
       .gov-links { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
       .gov-links a { padding: 6px 10px; }
-
-      /* HEADER: só logo + gov + hamburger */
       header { padding: 10px 0; }
-      nav { display: none; } /* some no mobile */
+      nav { display: none; } 
       .hamburger-btn { display: inline-flex; }
-
       .header-grid { grid-template-columns: 1fr auto; gap: 12px; }
       .brand img { height: 52px; }
       .brand-text h1 { font-size: 1.05rem; }
       .brand-text span { font-size: 0.68rem; }
-
-      .btn-login {
-        padding: 10px 12px;
-        font-size: 0.88rem;
-        border-radius: 12px;
-        gap: 8px;
-      }
+      .btn-login { padding: 10px 12px; font-size: 0.88rem; border-radius: 12px; gap: 8px; }
       .btn-login i { font-size: 1.05rem; }
-
-      /* HERO: tipografia + busca em coluna */
       .hero { min-height: 610px; padding-top: 18px; }
       .hero h2 { font-size: 2.2rem; }
       .hero p { font-size: 1.05rem; margin-bottom: 22px; }
-
-      .search-box {
-        border-radius: 18px;
-        padding: 10px;
-        flex-direction: column;
-        gap: 10px;
-        max-width: 92%;
-      }
-      .search-box input {
-        padding: 14px 16px;
-        font-size: 1rem;
-        border-radius: 14px;
-        border: 1px solid #eee;
-      }
-      .search-box button {
-        height: 52px;
-        border-radius: 14px;
-        width: 100%;
-      }
-
-      /* LIVE BAR: vira bloco e não sobrepõe */
+      .search-box { border-radius: 18px; padding: 10px; flex-direction: column; gap: 10px; max-width: 92%; }
+      .search-box input { padding: 14px 16px; font-size: 1rem; border-radius: 14px; border: 1px solid #eee; }
+      .search-box button { height: 52px; border-radius: 14px; width: 100%; }
       .live-stats-bar { position: relative; background: rgba(0,0,0,0.78); }
       .live-grid { flex-direction: column; gap: 16px; }
       .live-item h4 { font-size: 2.4rem; }
-
-      /* GRIDS principais */
       .status-grid { grid-template-columns: 1fr; }
       .news-grid { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: 1fr; }
       .areas-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
-
       .checklist-form-container { padding: 22px; min-width: auto; }
       .report-grid { grid-template-columns: 1fr; gap: 25px; }
       .report-header h2 { font-size: 2.2rem; }
-
-      /* Chat no mobile */
       .chat-interface { right: 12px; left: 12px; width: auto; }
       .chat-widget-btn { right: 16px; bottom: 18px; width: 60px; height: 60px; }
+      
+      .process-steps { flex-direction: column; }
     }
   </style>
 </head>
@@ -702,67 +688,103 @@
     <div class="container">
       <div class="checklist-wrapper">
         <div class="checklist-intro">
-          <h2>Regularização e Análise Documental</h2>
-          <p>Preencha os dados do seu estabelecimento para verificar as pendências, emitir a taxa de análise e enviar seus documentos diretamente para nossos fiscais via WhatsApp.</p>
+          <h2>Regularização e<br>Análise Documental</h2>
+          <p class="lead">O processo de Regularização Sanitária garante que seu estabelecimento opere dentro das normas de saúde, promovendo segurança para seus clientes e evitando sanções legais rigorosas.</p>
           
+          <div class="process-steps">
+            <div class="process-step">
+              <i class="fas fa-file-signature"></i>
+              <span>1. Informar<br>Dados</span>
+            </div>
+            <div class="process-step">
+              <i class="fas fa-file-invoice-dollar"></i>
+              <span>2. Gerar<br>Taxa Única</span>
+            </div>
+            <div class="process-step">
+              <i class="fab fa-whatsapp"></i>
+              <span>3. Enviar<br>Comprovante</span>
+            </div>
+          </div>
+
           <div class="steps-box">
-            <h4><i class="fas fa-info-circle" style="color: var(--gov-blue);"></i> Importante:</h4>
-            <p style="font-size: 0.95rem; color: #444; margin-bottom: 0;">
-              A <strong>Taxa de Análise de Pendências Documentais</strong> é fundamental para o andamento do seu processo. O descumprimento dos prazos de regularização e o não pagamento desta taxa sujeitam o estabelecimento a medidas administrativas, que podem incluir a suspensão preventiva das atividades em até 48 horas, conforme a legislação sanitária vigente.
+            <h4><i class="fas fa-exclamation-triangle"></i> Atenção à Taxa de Análise de Pendências Documentais</h4>
+            <p>
+              A <strong>Taxa de Análise de Pendências Documentais</strong> é um requisito legal obrigatório e fundamental para o destravamento e andamento do seu processo. O descumprimento dos prazos e o não pagamento da taxa sujeitam o estabelecimento a penalidades severas.
             </p>
+            <ul>
+              <li><i class="fas fa-check"></i> Garante prioridade na análise pelos fiscais de plantão.</li>
+              <li><i class="fas fa-check"></i> Evita a <strong>suspensão preventiva das atividades em até 48 horas</strong>, conforme legislação sanitária vigente.</li>
+              <li><i class="fas fa-check"></i> Protege o CNPJ contra multas por irregularidade administrativa.</li>
+            </ul>
           </div>
         </div>
 
         <div class="checklist-form-container">
           <form id="form-regularizacao">
-            <label style="font-weight: 800; display: block; margin-bottom: 5px;">Dados do Estabelecimento</label>
-            <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia / Razão Social *" required />
+            <label style="font-weight: 800; display: block; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Dados Cadastrais do Estabelecimento</label>
+            <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia ou Razão Social *" required />
             <input type="text" class="form-control" id="cnpj_empresa" placeholder="CNPJ (Apenas números) *" required maxlength="14" />
 
-            <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px;">Ramo de Atividade *</label>
+            <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Ramo de Atividade *</label>
             <select class="form-control" id="tipo_estab" required onchange="mostrarChecklist()">
-              <option value="" disabled selected>Selecione...</option>
-              <option value="Alimentos">Alimentos (Restaurante, Bar, Mercado)</option>
-              <option value="Saúde">Saúde (Clínica, Odonto, Farmácia)</option>
-              <option value="Beleza">Beleza (Salão, Estética, Barbearia)</option>
-              <option value="Outros">Outros / Indústria / Educação</option>
+              <option value="" disabled selected>Selecione a atividade principal...</option>
+              <option value="Alimentos">Alimentos (Restaurante, Bar, Mercado, Padaria)</option>
+              <option value="Saúde">Saúde (Clínica, Odontologia, Farmácia, Laboratório)</option>
+              <option value="Beleza">Beleza (Salão, Estética, Barbearia, Tatuagem)</option>
+              <option value="Outros">Outros / Indústria / Instituições de Ensino</option>
             </select>
 
             <div id="area-checklist" style="display: none;">
-              <p style="font-weight: 900; margin-top: 25px; color: var(--sp-red);">📄 Marque os documentos que você JÁ POSSUI:</p>
+              <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental (Marque os que JÁ POSSUI):</p>
               <div class="docs-list" id="lista-documentos">
                 </div>
             </div>
 
-            <button type="submit" class="btn-success" id="btn-gerar-taxa" style="display: none; background: var(--gov-blue); margin-top: 20px;">
-              <i class="fas fa-file-invoice-dollar"></i> Gerar Taxa de Análise
+            <button type="submit" class="btn-success" id="btn-gerar-taxa" style="display: none; background: var(--gov-blue); margin-top: 25px;">
+              <i class="fas fa-file-invoice-dollar"></i> Gerar Taxa de Análise Documental
             </button>
           </form>
 
-          <div id="area-pagamento" style="display: none; text-align: center;">
-            <h3 style="color: var(--success-color); margin-bottom: 10px;"><i class="fas fa-check-circle"></i> Análise Gerada</h3>
-            <p style="font-weight: 800; font-size: 1.1rem; margin-bottom: 20px;">Protocolo: <span id="num-protocolo" style="color: var(--sp-red);"></span></p>
-
-            <div style="background: #f8f9fa; border: 2px dashed #ccc; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
-              <h4 style="color: var(--text-dark); margin-bottom: 10px;">Taxa de Análise Documental</h4>
-              <p style="font-size: 0.9rem; color: #555; margin-bottom: 20px;">Escaneie o QR Code abaixo com o aplicativo do seu banco ou utilize a opção Pix Copia e Cola para regularizar sua situação.</p>
-
-              <img src="imagens/qrcode.png" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 1px solid #eee;" />
-
-              <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left;">Pix Copia e Cola:</label>
-              <div style="display: flex; gap: 8px;">
-                <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px;" readonly />
-                <button onclick="copiarPix()" style="background: var(--text-dark); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
-              </div>
+          <div id="area-pagamento" style="display: none;">
+            <div style="text-align: center; margin-bottom: 25px;">
+              <h3 style="color: var(--success-color); margin-bottom: 5px;"><i class="fas fa-check-circle"></i> Análise Documental Registrada</h3>
+              <p style="font-weight: 800; font-size: 1.1rem; color: #4a5568;">Protocolo Oficial: <span id="num-protocolo" style="color: var(--sp-red);"></span></p>
             </div>
 
-            <p style="font-size: 0.95rem; font-weight: 600; color: var(--sp-dark-red); margin-bottom: 20px;">
-              Após o pagamento, clique no botão abaixo para enviar o comprovante junto com seus dados via WhatsApp.
-            </p>
+            <div class="invoice-card">
+              <div class="invoice-header">
+                <h4>Guia de Arrecadação - Taxa de Análise de Pendências Documentais</h4>
+                <span class="badge">Aguardando Pgto</span>
+              </div>
+              <div class="invoice-body">
+                <div class="invoice-value">
+                  <span>Valor da Taxa Única</span>
+                  <h2>R$ 137,90</h2>
+                </div>
 
-            <button onclick="enviarWhatsAppComprovante()" class="btn-success">
-              <i class="fab fa-whatsapp"></i> Enviar Comprovante
-            </button>
+                <div class="qr-container">
+                  <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e liberar o andamento do processo.</p>
+                  
+                  <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
+
+                  <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
+                    <button onclick="copiarPix()" style="background: var(--gov-blue); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
+                  </div>
+                </div>
+
+                <div style="background: #fff5f5; padding: 15px; border-radius: 8px; border-left: 4px solid var(--sp-red); margin-bottom: 25px;">
+                  <p style="font-size: 0.9rem; font-weight: 700; color: var(--sp-dark-red); margin: 0; line-height: 1.5;">
+                    <i class="fas fa-exclamation-circle"></i> OBRIGATÓRIO: Após o pagamento, clique no botão abaixo para enviar o comprovante com urgência via WhatsApp da fiscalização.
+                  </p>
+                </div>
+
+                <button onclick="enviarWhatsAppComprovante()" class="btn-success">
+                  <i class="fab fa-whatsapp"></i> ENVIAR COMPROVANTE AGORA
+                </button>
+              </div>
+            </div>
           </div>
 
         </div>
