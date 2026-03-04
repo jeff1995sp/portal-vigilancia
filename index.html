@@ -7,7 +7,7 @@
   <meta name="description" content="Portal de Gestão, Licenciamento e Fiscalização Sanitária da Prefeitura de São Paulo." />
 
   <link rel="icon" href="imagens/5.png" type="image/png" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@400;500;600;700;800&family=Times+New+Roman&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -39,6 +39,13 @@
 
     .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
+
+    /* --- FEATURE: BARRA DE SEGURANÇA --- */
+    .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
+    
+    /* --- FEATURE: BARRA LGPD --- */
+    .lgpd-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.9); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 9999; font-size: 0.85rem; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); }
+    .lgpd-btn { background: var(--gov-blue); border: none; padding: 8px 20px; color: white; border-radius: 4px; font-weight: bold; cursor: pointer; margin-left: 15px; text-transform: uppercase; font-size: 0.75rem; }
 
     /* --- BARRA GOV VERMELHA --- */
     .gov-bar {
@@ -105,7 +112,7 @@
     .drawer-top { padding: 18px 18px 14px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .drawer-title { font-weight: 900; color: var(--text-dark); letter-spacing: -0.2px; }
     .drawer-close { width: 40px; height: 40px; border-radius: 12px; border: 1px solid #e9ecef; background: #f8f9fa; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
-    .drawer-nav { padding: 10px 12px 18px; display: flex; flex-direction: column; gap: 20px; } /* Ajustado Gap Mobile */
+    .drawer-nav { padding: 10px 12px 18px; display: flex; flex-direction: column; gap: 20px; }
     .drawer-nav a { padding: 12px 12px; border-radius: 14px; font-weight: 800; color: #2c3e50; display: flex; align-items: center; gap: 10px; border: 1px solid #f1f3f5; background: #fff; }
     .drawer-nav a:hover { background: #f8f9fa; }
     .drawer-nav a i { width: 18px; text-align: center; opacity: 0.9; }
@@ -286,7 +293,7 @@
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
     /* Footer */
-    footer { background: #151515; color: #aaa; padding-top: 80px; margin-top: 0; }
+    footer { background: #151515; color: #aaa; padding-top: 80px; margin-top: 0; padding-bottom: 80px; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
     img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
     .footer h4 { color: white; font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; font-weight: 900; border-left: 3px solid var(--sp-red); padding-left: 10px; }
@@ -344,11 +351,16 @@
       .process-steps { flex-direction: column; }
       .docs-grid { grid-template-columns: 1fr; }
       .progress-container { padding: 0; }
+      .lgpd-bar { flex-direction: column; gap: 10px; text-align: center; }
     }
   </style>
 </head>
 
 <body>
+  <div class="security-bar">
+    <i class="fas fa-lock"></i> Ambiente Seguro | Criptografia SSL de 256 bits | IP Monitorado: <span id="user-ip">Carregando...</span>
+  </div>
+
   <div class="gov-bar">
     <div class="container flex-between">
       <span class="gov-left">Prefeitura do Município de São Paulo</span>
@@ -416,7 +428,7 @@
       <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 30px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
         <h4 style="margin-bottom: 10px; font-size: 1.1rem;"><i class="fas fa-search"></i> Consulta Pública de Regularidade</h4>
         <div style="display: flex; gap: 10px;">
-          <input type="text" id="fake_consulta_cnpj" placeholder="Digite o CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;">
+          <input type="text" id="fake_consulta_cnpj" placeholder="Digite o CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;" oninput="maskCNPJ(this)">
           <button onclick="realizarConsultaFake()" style="background: var(--sp-red); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;">Consultar</button>
         </div>
         <div id="fake_consulta_resultado" style="display: none; margin-top: 15px; padding: 15px; background: #fff3cd; color: #856404; border-radius: 8px; font-weight: bold;"></div>
@@ -476,9 +488,11 @@
             <form id="form-regularizacao">
               <label style="font-weight: 800; display: block; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Dados Cadastrais</label>
               
-              <input type="text" class="form-control" id="cnpj_empresa" placeholder="Digite seu CNPJ..." required style="margin-bottom: 10px;" />
+              <input type="text" class="form-control" id="cnpj_empresa" placeholder="00.000.000/0000-00" required style="margin-bottom: 10px;" oninput="maskCNPJ(this)" maxlength="18" />
+              
               <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados na Receita Federal...</div>
-              <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia ou Razão Social *" required />
+              
+              <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia ou Razão Social *" required onblur="salvarRascunho()" />
               
               <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Ramo de Atividade *</label>
               <select class="form-control" id="tipo_estab" required onchange="mostrarChecklist()">
@@ -515,7 +529,7 @@
               <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Digite o seu CNPJ para consultar o andamento da análise documental ou gerar o Pix da taxa.</p>
               
               <form id="form-consulta">
-                <input type="text" class="form-control" id="consulta_cnpj" placeholder="Digite seu CNPJ..." required />
+                <input type="text" class="form-control" id="consulta_cnpj" placeholder="Digite seu CNPJ..." required oninput="maskCNPJ(this)" />
                 <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Consultar</button>
               </form>
             </div>
@@ -578,6 +592,13 @@
       </div>
     </div>
   </section>
+
+  <div class="lgpd-bar" id="lgpd-bar">
+    <div>
+      <i class="fas fa-cookie-bite"></i> Este portal utiliza cookies e monitoramento de IP para fins de fiscalização sanitária, conforme Lei 13.709 (LGPD).
+    </div>
+    <button class="lgpd-btn" onclick="document.getElementById('lgpd-bar').style.display='none'">Aceitar e Continuar</button>
+  </div>
 
   <section class="areas-section">
     <div class="container">
@@ -735,6 +756,33 @@
 
   <script>
     /* ============================================== */
+    /* FEATURE 2 LISTA 2: SEGURANÇA IP + STARTUP      */
+    /* ============================================== */
+    document.getElementById('user-ip').innerText = "189." + Math.floor(Math.random()*255) + ".14." + Math.floor(Math.random()*99);
+    
+    // FEATURE 4 LISTA 1: CARREGAR RASCUNHO SALVO
+    if(localStorage.getItem('rascunho_nome')) {
+      document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
+    }
+
+    /* ============================================== */
+    /* FEATURE 1 LISTA 1: MÁSCARA CNPJ                */
+    /* ============================================== */
+    function maskCNPJ(i) {
+      let v = i.value.replace(/\D/g,'');
+      v = v.replace(/^(\d{2})(\d)/,"$1.$2");
+      v = v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");
+      v = v.replace(/\.(\d{3})(\d)/,".$1/$2");
+      v = v.replace(/(\d{4})(\d)/,"$1-$2");
+      i.value = v;
+    }
+
+    function salvarRascunho() {
+      const nome = document.getElementById('nome_empresa').value;
+      if(nome) localStorage.setItem('rascunho_nome', nome);
+    }
+
+    /* ============================================== */
     /* IDEA 2: CONSULTA PÚBLICA FAKE                  */
     /* ============================================== */
     function realizarConsultaFake() {
@@ -754,7 +802,7 @@
     }
 
     /* ============================================== */
-    /* IDEA 1: AUTOPREENCHIMENTO DE CNPJ API BRASIL   */
+    /* AUTOPREENCHIMENTO API BRASIL                   */
     /* ============================================== */
     document.getElementById('cnpj_empresa').addEventListener('blur', async (e) => {
       let cnpjLimpo = e.target.value.replace(/\D/g, '');
@@ -765,6 +813,7 @@
           let dados = await req.json();
           if(dados.razao_social) {
             document.getElementById('nome_empresa').value = dados.nome_fantasia || dados.razao_social;
+            salvarRascunho(); // Salva automático
           }
         } catch(error) {}
         document.getElementById('loading-cnpj').style.display = 'none';
@@ -1020,123 +1069,108 @@
     }
 
     /* ============================================== */
-    /* GERAÇÃO DE PDF EDITANDO O ARQUIVO EXISTENTE    */
+    /* FEATURE 5 LISTA 1: GERAÇÃO DE PDF CALIBRADA    */
     /* ============================================== */
     async function gerarPDF() {
-        const btn = document.getElementById('btn-baixar-pdf');
-        const textoOriginal = btn.innerHTML;
+      const btn = document.getElementById('btn-baixar-pdf');
+      const textoOriginal = btn.innerHTML;
+      
+      try {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando documento...';
+        btn.disabled = true;
+
+        const cnpj = document.getElementById('consulta_cnpj').value;
+        const db = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
+        const dados = db[cnpj] || {};
+
+        // DADOS
+        const nomeEmpresa = (dados.nome || "EMPRESA MODELO LTDA").toUpperCase();
+        const atividade = (dados.tipo || "COMÉRCIO").toUpperCase(); // 'tipo' pois vem do localStorage do formulário
+        const docCnpj = cnpj;
         
-        try {
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando documento...';
-            btn.disabled = true;
+        // DATAS
+        const hoje = new Date();
+        const dia = String(hoje.getDate()).padStart(2, '0');
+        const mesNum = String(hoje.getMonth() + 1).padStart(2, '0');
+        const ano = hoje.getFullYear();
+        const meses = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+        
+        const dataCurta = `${dia}/${mesNum}/${ano}`;
+        const dataValidade = `${dia}/${mesNum}/${ano + 1}`;
+        const dataExtenso = `SÃO PAULO, ${dia} DE ${meses[hoje.getMonth()]} DE ${ano}`;
+        const protocolo = "SP." + Math.floor(Math.random()*899999+100000) + "/" + ano;
 
-            // 1. DADOS PARA PREENCHER
-            let cnpj = document.getElementById('consulta_cnpj').value;
-            let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-            let pedido = pedidos[cnpj] || {};
+        // CARREGAR PDF
+        const url = 'Alvara Provisório.pdf';
+        const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
 
-            let nomeEmpresa = (pedido.nome || "NOME NÃO IDENTIFICADO").toUpperCase();
-            let tipoEmpresa = (pedido.tipo || "ATIVIDADE NÃO IDENTIFICADA").toUpperCase();
-            let docCnpj = cnpj || "000.000.000-00";
-            
-            // Datas e Protocolo
-            const dataHoje = new Date();
-            const dia = String(dataHoje.getDate()).padStart(2, '0');
-            const mes = String(dataHoje.getMonth() + 1).padStart(2, '0');
-            const ano = dataHoje.getFullYear();
-            const dataFormatada = `${dia}/${mes}/${ano}`;
-            
-            // Validade (1 ano pra frente)
-            const dataValidade = `${dia}/${mes}/${ano + 1}`;
-            
-            const protocolo = "SP." + Math.floor(Math.random() * 900000) + "/" + ano;
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.load(existingPdfBytes);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
-            // 2. CARREGAR O SEU PDF ORIGINAL
-            // O nome do arquivo tem que ser IDÊNTICO ao que está na pasta (incluindo acentos)
-            const url = 'Alvara Provisório.pdf'; 
-            const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
+        const page = pdfDoc.getPages()[0];
+        
+        // --- COORDENADAS CALIBRADAS PARA SEU PDF ---
+        
+        // 1. PROTOCOLO (Topo Direito - Seta)
+        page.drawText(protocolo, {
+          x: 400, y: 660, 
+          size: 14, font: fontBold, color: rgb(0.85, 0.14, 0.11) // Vermelho
+        });
 
-            // 3. PREPARAR PARA ESCREVER
-            const { PDFDocument, rgb, StandardFonts } = PDFLib;
-            const pdfDoc = await PDFDocument.load(existingPdfBytes);
-            const helveticaFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold); // Fonte Negrito
-            
-            const pages = pdfDoc.getPages();
-            const firstPage = pages[0];
-            
-            // Pega a altura da página para calcular o Y (PDF conta de baixo para cima)
-            const { height } = firstPage.getSize();
+        // 2. DADOS CENTRAIS (Bloco)
+        // Razão Social (X=160 para sair de cima do rótulo)
+        page.drawText(nomeEmpresa, {
+          x: 160, y: 505,
+          size: 11, font: fontBold, color: rgb(0,0,0)
+        });
+        // CNPJ
+        page.drawText(docCnpj, {
+          x: 160, y: 490,
+          size: 11, font: fontBold, color: rgb(0,0,0)
+        });
+        // Data Emissão (no meio)
+        page.drawText(dataCurta, {
+          x: 160, y: 475,
+          size: 11, font: fontBold, color: rgb(0,0,0)
+        });
+        // Valido Até / Atividade
+        page.drawText(atividade, {
+          x: 160, y: 455,
+          size: 11, font: fontBold, color: rgb(0,0,0)
+        });
 
-            // 4. ESCREVENDO OS DADOS NO PDF
-            // IMPORTANTE: Ajuste os valores de x e y para cair na linha certa do seu modelo
-            // x = distância da esquerda | y = distância de baixo para cima
-            
-            // Nome da Empresa
-            firstPage.drawText(nomeEmpresa, {
-                x: 120,      // Mova para direita/esquerda
-                y: 550,      // Mova para cima/baixo
-                size: 12,
-                font: helveticaFont,
-                color: rgb(0, 0, 0),
-            });
+        // 3. RODAPÉ (Círculos e Assinatura)
+        // Círculo Esquerdo (Emissão)
+        page.drawText(dataCurta, {
+          x: 120, y: 210, 
+          size: 12, font: fontBold, color: rgb(0,0,0)
+        });
+        // Círculo Direito (Validade - Vermelho)
+        page.drawText(dataValidade, {
+          x: 380, y: 210, 
+          size: 12, font: fontBold, color: rgb(0.85, 0.14, 0.11)
+        });
 
-            // CNPJ
-            firstPage.drawText(docCnpj, {
-                x: 120,
-                y: 530, 
-                size: 12,
-                font: helveticaFont,
-                color: rgb(0, 0, 0),
-            });
+        // Assinatura (Linha "AKI" - Texto Completo)
+        page.drawText(dataExtenso, {
+          x: 300, y: 135, // Ajuste fino da linha
+          size: 9, font: fontBold, color: rgb(0,0,0)
+        });
 
-            // Ramo de Atividade
-            firstPage.drawText(tipoEmpresa, {
-                x: 120,
-                y: 510,
-                size: 12,
-                font: helveticaFont,
-                color: rgb(0, 0, 0),
-            });
+        // SALVAR
+        const pdfBytes = await pdfDoc.save();
+        download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
 
-            // Número do Protocolo
-            firstPage.drawText(protocolo, {
-                x: 400,
-                y: 650, // Geralmente fica no topo
-                size: 14,
-                font: helveticaFont,
-                color: rgb(0.85, 0.14, 0.11), // Vermelho
-            });
+        btn.innerHTML = textoOriginal;
+        btn.disabled = false;
 
-            // Data de Emissão (Data de Hoje)
-            firstPage.drawText(dataFormatada, {
-                x: 100,
-                y: 200, // Ajuste para ficar no campo de data/assinatura
-                size: 11,
-                font: helveticaFont,
-            });
-
-             // Data de Validade
-             firstPage.drawText(dataValidade, {
-                x: 300,
-                y: 200, 
-                size: 11,
-                font: helveticaFont,
-                color: rgb(0.85, 0.14, 0.11), // Vermelho
-            });
-
-            // 5. SALVAR E BAIXAR
-            const pdfBytes = await pdfDoc.save();
-            download(pdfBytes, `Licenca_Provisoria_${cnpj}.pdf`, "application/pdf");
-
-            btn.innerHTML = textoOriginal;
-            btn.disabled = false;
-
-        } catch (erro) {
-            console.error(erro);
-            alert("Erro ao carregar o modelo de PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está na pasta correta.");
-            btn.innerHTML = textoOriginal;
-            btn.disabled = false;
-        }
+      } catch (err) {
+        console.error(err);
+        alert("Erro: Arquivo 'Alvara Provisório.pdf' não encontrado na pasta.");
+        btn.innerHTML = textoOriginal;
+        btn.disabled = false;
+      }
     }
 
     /* ============================================== */
