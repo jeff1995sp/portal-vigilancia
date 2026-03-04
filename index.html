@@ -9,6 +9,8 @@
   <link rel="icon" href="imagens/5.png" type="image/png" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     :root {
@@ -112,7 +114,7 @@
 
     /* --- HERO --- */
     .hero { background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center; color: white; padding-top: 40px; }
-    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding-bottom: 100px; /* Ajuste para não sobrepor a barra de baixo */ }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
     .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
@@ -758,7 +760,7 @@
     });
 
     /* ============================================== */
-    /* DRAWER & ATUALIZAÇÕES GERAIS                    */
+    /* DRAWER & ATUALIZAÇÕES GERAIS                   */
     /* ============================================== */
     function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
     function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); document.body.style.overflow = ''; }
@@ -801,7 +803,7 @@
     }
 
     /* ============================================== */
-    /* LÓGICA DE ABAS E PROGRESSO                      */
+    /* LÓGICA DE ABAS E PROGRESSO                     */
     /* ============================================== */
     function alternarAba(aba) {
       document.getElementById('tab-envio').classList.remove('active');
@@ -1006,7 +1008,7 @@
     }
 
     /* ============================================== */
-    /* IDEA 3: GERAÇÃO DA LICENÇA PDF (MODIFICADA)      */
+    /* IDEA 3: GERAÇÃO DA LICENÇA PDF DIRETO NO PC/CEL*/
     /* ============================================== */
     function gerarPDF() {
       let cnpj = document.getElementById('consulta_cnpj').value;
@@ -1019,66 +1021,49 @@
       let dataValidade = dVal.toLocaleDateString('pt-BR');
       let numeroDoc = Math.floor(Math.random() * 9000000) + 1000000;
 
-      // NOVO TEMPLATE PROFISSIONAL
-      let templatePDF = `
-      <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Alvará Provisório - ${pedido.nome}</title>
-      <style>
-        @page { size: A4; margin: 0; }
-        body { font-family: 'Arial', sans-serif; background: #fff; padding: 30mm; box-sizing: border-box; }
-        .borda { border: 5px solid #0d3c85; padding: 30px; height: 95%; box-sizing: border-box; border-radius: 10px; position: relative;}
-        .borda::after { content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; border: 2px solid #da251c; border-radius: 14px; pointer-events: none;}
-        
-        .cabecalho { text-align: center; border-bottom: 2px solid #0d3c85; padding-bottom: 20px; margin-bottom: 30px; }
-        .cabecalho h1 { color: #0d3c85; font-size: 22px; margin: 0; text-transform: uppercase; font-weight: 900;}
-        .cabecalho h2 { color: #da251c; font-size: 16px; margin: 5px 0 0 0; }
-        
-        .titulo { text-align: center; margin: 40px 0; }
-        .titulo h3 { font-size: 26px; color: #111; margin: 0; text-transform: uppercase; letter-spacing: 1px;}
-        .titulo p { font-size: 14px; color: #555; }
-        
-        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
-        td { padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;}
-        .label { font-weight: bold; color: #0d3c85; width: 35%; }
-        
-        .aviso { background: #f8f9fa; border-left: 5px solid #2e7d32; padding: 15px; font-size: 13px; text-align: justify; line-height: 1.5; color: #333;}
-        
-        .assinaturas { margin-top: 80px; text-align: center; }
-        .linha { border-top: 1px solid #000; width: 250px; margin: 0 auto 10px; }
-      </style>
-      </head><body>
-        <div class="borda">
-          <div class="cabecalho">
-            <h1>PREFEITURA DO MUNICÍPIO DE SÃO PAULO</h1>
-            <h2>COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA</h2>
-          </div>
-          <div class="titulo">
-            <h3>Certificado de Regularidade Sanitária</h3>
-            <p>Documento Emitido Eletronicamente via Portal Oficial</p>
-          </div>
-          <table>
-            <tr><td class="label">RAZÃO SOCIAL / NOME FANTASIA:</td><td><b>${pedido.nome.toUpperCase()}</b></td></tr>
-            <tr><td class="label">CNPJ / CPF DO RESPONSÁVEL:</td><td><b>${cnpj}</b></td></tr>
-            <tr><td class="label">RAMO DE ATIVIDADE DECLARADO:</td><td><b>${pedido.tipo.toUpperCase()}</b></td></tr>
-            <tr><td class="label">NÚMERO DO DOCUMENTO:</td><td><b>SP-${numeroDoc}-${new Date().getFullYear()}</b></td></tr>
-            <tr><td class="label">DATA DE EMISSÃO:</td><td><b>${dataEmissao}</b></td></tr>
-            <tr><td class="label">VÁLIDO ATÉ:</td><td><b style="color:#da251c;">${dataValidade}</b></td></tr>
-          </table>
-          <div class="aviso">
-            <strong>Certificação Provisória de Funcionamento:</strong> Atestamos que o estabelecimento supracitado regularizou o pagamento da Taxa de Análise de Pendências Documentais junto à Coordenação de Vigilância em Saúde. Este documento autoriza o funcionamento temporário enquanto a equipe técnica municipal realiza a fiscalização definitiva e conferência das pendências físicas registradas em sistema.
-          </div>
-          <div class="assinaturas">
-            <div class="linha"></div>
-            <strong>Diretoria de Inspeção Sanitária</strong><br>Prefeitura do Município de São Paulo
+      // Cria a estrutura visual escondida apenas para gerar o PDF
+      let element = document.createElement('div');
+      element.innerHTML = `
+        <div style="font-family: 'Arial', sans-serif; background: #fff; padding: 30mm; box-sizing: border-box; width: 100%;">
+          <div style="border: 5px solid #0d3c85; padding: 30px; border-radius: 10px; position: relative;">
+            <div style="text-align: center; border-bottom: 2px solid #0d3c85; padding-bottom: 20px; margin-bottom: 30px;">
+              <h1 style="color: #0d3c85; font-size: 22px; margin: 0; text-transform: uppercase; font-weight: 900;">PREFEITURA DO MUNICÍPIO DE SÃO PAULO</h1>
+              <h2 style="color: #da251c; font-size: 16px; margin: 5px 0 0 0;">COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA</h2>
+            </div>
+            <div style="text-align: center; margin: 40px 0;">
+              <h3 style="font-size: 26px; color: #111; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Certificado de Regularidade Sanitária</h3>
+              <p style="font-size: 14px; color: #555;">Documento Emitido Eletronicamente via Portal Oficial</p>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">RAZÃO SOCIAL / NOME FANTASIA:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b>${pedido.nome.toUpperCase()}</b></td></tr>
+              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">CNPJ / CPF DO RESPONSÁVEL:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b>${cnpj}</b></td></tr>
+              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">RAMO DE ATIVIDADE DECLARADO:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b>${pedido.tipo.toUpperCase()}</b></td></tr>
+              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">NÚMERO DO DOCUMENTO:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b>SP-${numeroDoc}-${new Date().getFullYear()}</b></td></tr>
+              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">DATA DE EMISSÃO:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b>${dataEmissao}</b></td></tr>
+              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">VÁLIDO ATÉ:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b style="color:#da251c;">${dataValidade}</b></td></tr>
+            </table>
+            <div style="background: #f8f9fa; border-left: 5px solid #2e7d32; padding: 15px; font-size: 13px; text-align: justify; line-height: 1.5; color: #333; margin-bottom: 80px;">
+              <strong>Certificação Provisória de Funcionamento:</strong> Atestamos que o estabelecimento supracitado regularizou o pagamento da Taxa de Análise de Pendências Documentais junto à Coordenação de Vigilância em Saúde. Este documento autoriza o funcionamento temporário enquanto a equipe técnica municipal realiza a fiscalização definitiva e conferência das pendências físicas registradas em sistema.
+            </div>
+            <div style="text-align: center; margin-bottom: 20px;">
+              <div style="border-top: 1px solid #000; width: 250px; margin: 0 auto 10px;"></div>
+              <strong>Diretoria de Inspeção Sanitária</strong><br>Prefeitura do Município de São Paulo
+            </div>
           </div>
         </div>
-      </body></html>
       `;
 
-      let win = window.open('', '_blank');
-      win.document.write(templatePDF);
-      win.document.close();
-      win.focus();
-      setTimeout(() => { win.print(); }, 500); // Imprime o PDF em meio segundo
+      // Configurações do Download
+      var opt = {
+        margin:       0,
+        filename:     'Licenca_Provisoria_' + cnpj + '.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      // Gera e faz o download na hora
+      html2pdf().set(opt).from(element).save();
     }
 
     /* ============================================== */
