@@ -114,7 +114,7 @@
 
     /* --- HERO --- */
     .hero { background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center; color: white; padding-top: 40px; }
-    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding-bottom: 100px; /* Ajuste para não sobrepor a barra de baixo */ }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding-bottom: 100px; }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
     .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
@@ -1021,61 +1021,66 @@
       let dataValidade = dVal.toLocaleDateString('pt-BR');
       let numeroDoc = Math.floor(Math.random() * 9000000) + 1000000;
 
-      // Cria a estrutura visual escondida
-      let element = document.createElement('div');
-      
-      // FORÇA o elemento a ter largura e ficar escondido fora da tela
-      element.style.position = 'absolute';
-      element.style.top = '-9999px';
-      element.style.left = '-9999px';
-      element.style.width = '800px'; 
-
-      element.innerHTML = `
-        <div style="font-family: 'Arial', sans-serif; background: #fff; padding: 30mm; box-sizing: border-box; width: 100%;">
-          <div style="border: 5px solid #0d3c85; padding: 30px; border-radius: 10px; position: relative;">
+      // Passar a string HTML DIRETO para a biblioteca é o jeito mais seguro!
+      let conteudoPDF = `
+        <div style="font-family: Arial, sans-serif; color: #333; width: 100%; padding: 20px;">
+          <div style="border: 4px solid #0d3c85; padding: 30px; border-radius: 10px;">
             <div style="text-align: center; border-bottom: 2px solid #0d3c85; padding-bottom: 20px; margin-bottom: 30px;">
-              <h1 style="color: #0d3c85; font-size: 22px; margin: 0; text-transform: uppercase; font-weight: 900;">PREFEITURA DO MUNICÍPIO DE SÃO PAULO</h1>
-              <h2 style="color: #da251c; font-size: 16px; margin: 5px 0 0 0;">COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA</h2>
+              <h1 style="color: #0d3c85; font-size: 20px; margin: 0; text-transform: uppercase;">PREFEITURA DO MUNICÍPIO DE SÃO PAULO</h1>
+              <h2 style="color: #da251c; font-size: 14px; margin: 5px 0 0 0;">COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA</h2>
             </div>
-            <div style="text-align: center; margin: 40px 0;">
-              <h3 style="font-size: 26px; color: #111; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Certificado de Regularidade Sanitária</h3>
-              <p style="font-size: 14px; color: #555;">Documento Emitido Eletronicamente via Portal Oficial</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <h3 style="font-size: 20px; color: #111; margin: 0; text-transform: uppercase;">Certificado de Regularidade Sanitária</h3>
+              <p style="font-size: 12px; color: #555;">Documento Emitido Eletronicamente via Portal Oficial</p>
             </div>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
-              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">RAZÃO SOCIAL / NOME FANTASIA:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b>${pedido.nome.toUpperCase()}</b></td></tr>
-              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">CNPJ / CPF DO RESPONSÁVEL:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b>${cnpj}</b></td></tr>
-              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">RAMO DE ATIVIDADE DECLARADO:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b>${pedido.tipo.toUpperCase()}</b></td></tr>
-              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">NÚMERO DO DOCUMENTO:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b>SP-${numeroDoc}-${new Date().getFullYear()}</b></td></tr>
-              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">DATA DE EMISSÃO:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b>${dataEmissao}</b></td></tr>
-              <tr><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px; font-weight: bold; color: #0d3c85; width: 45%;">VÁLIDO ATÉ:</td><td style="padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;"><b style="color:#da251c;">${dataValidade}</b></td></tr>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85; width: 45%;">RAZÃO SOCIAL / NOME FANTASIA:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b>${pedido.nome.toUpperCase()}</b></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85;">CNPJ / CPF DO RESPONSÁVEL:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b>${cnpj}</b></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85;">RAMO DE ATIVIDADE DECLARADO:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b>${pedido.tipo.toUpperCase()}</b></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85;">NÚMERO DO DOCUMENTO:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b>SP-${numeroDoc}-${new Date().getFullYear()}</b></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85;">DATA DE EMISSÃO:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b>${dataEmissao}</b></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85;">VÁLIDO ATÉ:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b style="color:#da251c;">${dataValidade}</b></td>
+              </tr>
             </table>
-            <div style="background: #f8f9fa; border-left: 5px solid #2e7d32; padding: 15px; font-size: 13px; text-align: justify; line-height: 1.5; color: #333; margin-bottom: 80px;">
+            <div style="background: #f8f9fa; border-left: 4px solid #2e7d32; padding: 15px; font-size: 12px; text-align: justify; line-height: 1.5; color: #333; margin-bottom: 50px;">
               <strong>Certificação Provisória de Funcionamento:</strong> Atestamos que o estabelecimento supracitado regularizou o pagamento da Taxa de Análise de Pendências Documentais junto à Coordenação de Vigilância em Saúde. Este documento autoriza o funcionamento temporário enquanto a equipe técnica municipal realiza a fiscalização definitiva e conferência das pendências físicas registradas em sistema.
             </div>
-            <div style="text-align: center; margin-bottom: 20px;">
-              <div style="border-top: 1px solid #000; width: 250px; margin: 0 auto 10px;"></div>
-              <strong>Diretoria de Inspeção Sanitária</strong><br>Prefeitura do Município de São Paulo
+            <div style="text-align: center; margin-bottom: 10px;">
+              <div style="border-top: 1px solid #000; width: 200px; margin: 0 auto 10px;"></div>
+              <strong style="font-size: 13px;">Diretoria de Inspeção Sanitária</strong><br>
+              <span style="font-size: 11px;">Prefeitura do Município de São Paulo</span>
             </div>
           </div>
         </div>
       `;
 
-      // Anexa o elemento na tela (de forma invisível) para a biblioteca conseguir ler o conteúdo
-      document.body.appendChild(element);
-
-      // Configurações do Download
       var opt = {
-        margin:       0,
+        margin:       [0.5, 0.5, 0.5, 0.5], // margens
         filename:     'Licenca_Provisoria_' + cnpj + '.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2 },
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
 
-      // Gera, faz o download e DEPOIS apaga o elemento invisível
-      html2pdf().set(opt).from(element).save().then(() => {
-        document.body.removeChild(element);
-      });
+      // Inicia a geração a partir da variável em texto e salva!
+      html2pdf().set(opt).from(conteudoPDF).save();
     }
 
     /* ============================================== */
