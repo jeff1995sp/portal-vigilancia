@@ -29,7 +29,7 @@
     .btn-limpar:hover { background: #dc2626; }
 
     table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 15px 20px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    th, td { padding: 15px 20px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
     th { background: #f8fafc; font-weight: 700; color: #475569; text-transform: uppercase; font-size: 0.85rem; }
     tr:hover { background: #f8fafc; }
     
@@ -79,7 +79,7 @@
           <tr>
             <th>Data</th>
             <th>CNPJ / Nome</th>
-            <th>Documentos / Tipo</th>
+            <th>Documentos / Análise</th>
             <th>Status</th>
             <th>Atribuir Valor (R$)</th>
           </tr>
@@ -112,15 +112,20 @@
           
           if(!req.valor) contPendente++; else contLiberado++;
 
-          // Cria a linha da tabela
+          // Cria a linha da tabela e ajusta como a caixa de docs aparece
           let tr = document.createElement('tr');
           tr.innerHTML = `
             <td style="font-size: 0.85rem; color: #64748b;">${req.data || 'Recente'}</td>
             <td><strong>${req.nome}</strong><br><small style="color:#64748b;">${cnpj}</small></td>
-            <td><span style="font-weight:bold; font-size:0.85rem;">${req.tipo}</span><br><small style="color:#64748b;">Docs: ${req.docs.substring(0,30)}...</small></td>
+            <td>
+              <span style="font-weight:bold; font-size:0.85rem;">Ramo: ${req.tipo}</span>
+              <div style="font-size: 0.8rem; color: #475569; background: #f1f5f9; padding: 8px; border-radius: 6px; margin-top: 5px; max-height: 100px; overflow-y: auto; white-space: pre-line;">
+                ${req.docs}
+              </div>
+            </td>
             <td><span class="status-badge ${classeStatus}">${txtStatus}</span></td>
             <td>
-              <div style="display:flex; gap: 8px;">
+              <div style="display:flex; flex-direction: column; gap: 8px;">
                 <input type="text" id="valor-${cnpj}" class="input-valor" placeholder="Ex: 137,90" value="${req.valor || ''}">
                 <button class="btn-salvar" onclick="salvarValor('${cnpj}')"><i class="fas fa-check"></i> Salvar</button>
               </div>
