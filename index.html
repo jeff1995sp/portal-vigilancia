@@ -113,8 +113,19 @@
     .drawer-bottom { margin-top: auto; padding: 16px; border-top: 1px solid #eee; background: #fafafa; color: #666; font-size: 0.9rem; }
 
     /* --- HERO --- */
-    .hero { background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center; color: white; padding-top: 40px; }
-    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding-bottom: 140px; /* Mais espaço para subir a caixa */ }
+    .hero { 
+      background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; 
+      background-size: cover; 
+      min-height: 600px; 
+      position: relative; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      color: white; 
+      padding-top: 40px;
+      padding-bottom: 150px; /* <--- AJUSTE PARA SUBIR A CAIXA E NÃO SOBREPOR A FAIXA PRETA */
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
     .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
@@ -310,7 +321,7 @@
       .brand-text span { font-size: 0.68rem; }
       .btn-login { padding: 10px 12px; font-size: 0.88rem; border-radius: 12px; gap: 8px; }
       .btn-login i { font-size: 1.05rem; }
-      .hero { min-height: 610px; padding-top: 18px; }
+      .hero { min-height: 610px; padding-top: 18px; padding-bottom: 120px; }
       .hero h2 { font-size: 2.2rem; }
       .hero p { font-size: 1.05rem; margin-bottom: 22px; }
       .search-box { border-radius: 18px; padding: 10px; flex-direction: column; gap: 10px; max-width: 92%; }
@@ -401,7 +412,7 @@
         <button>Pesquisar</button>
       </div>
 
-      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 20px; margin-bottom: 80px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
+      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 30px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
         <h4 style="margin-bottom: 10px; font-size: 1.1rem;"><i class="fas fa-search"></i> Consulta Pública de Regularidade</h4>
         <div style="display: flex; gap: 10px;">
           <input type="text" id="fake_consulta_cnpj" placeholder="Digite o CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;">
@@ -1008,7 +1019,7 @@
     }
 
     /* ============================================== */
-    /* IDEA 3: GERAÇÃO DA LICENÇA PDF DIRETO NO PC/CEL*/
+    /* GERAÇÃO DA LICENÇA PDF - 100% CORRIGIDA        */
     /* ============================================== */
     function gerarPDF() {
       let cnpj = document.getElementById('consulta_cnpj').value;
@@ -1021,17 +1032,9 @@
       let dataValidade = dVal.toLocaleDateString('pt-BR');
       let numeroDoc = Math.floor(Math.random() * 9000000) + 1000000;
 
-      // Cria o elemento na tela, mas escondido ATRÁS do site para o html2canvas conseguir "tirar a foto" sem dar tela em branco
-      let element = document.createElement('div');
-      element.style.position = 'absolute';
-      element.style.top = '0';
-      element.style.left = '0';
-      element.style.width = '800px';
-      element.style.zIndex = '-9999';
-      element.style.background = '#fff';
-
-      element.innerHTML = `
-        <div style="font-family: Arial, sans-serif; color: #333; padding: 40px; box-sizing: border-box;">
+      // Montamos o HTML do jeito exato que você pediu
+      let conteudoPDF = `
+        <div style="font-family: Arial, sans-serif; color: #333; padding: 40px; box-sizing: border-box; background: #fff; width: 800px;">
           <div style="border: 4px solid #0d3c85; padding: 30px; border-radius: 10px;">
             <div style="text-align: center; border-bottom: 2px solid #0d3c85; padding-bottom: 20px; margin-bottom: 30px;">
               <h1 style="color: #0d3c85; font-size: 22px; margin: 0; text-transform: uppercase;">PREFEITURA DO MUNICÍPIO DE SÃO PAULO</h1>
@@ -1039,7 +1042,7 @@
             </div>
             <div style="text-align: center; margin: 30px 0;">
               <h3 style="font-size: 22px; color: #111; margin: 0; text-transform: uppercase;">CERTIFICADO DE REGULARIDADE SANITÁRIA</h3>
-              <p style="font-size: 14px; color: #555;">Documento Procuração Advogado / Emissão Eletrônica</p>
+              <p style="font-size: 14px; color: #555; font-weight: bold; margin-top: 10px;">Documento procuração advogado / Emissão Eletrônica</p>
             </div>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
               <tr>
@@ -1047,11 +1050,11 @@
                 <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${pedido.nome.toUpperCase()}</b></td>
               </tr>
               <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">CNPJ / CPF DO RESPONSÁVEL:</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">CNPJ / CPF:</td>
                 <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${cnpj}</b></td>
               </tr>
               <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">RAMO DE ATIVIDADE DECLARADO:</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">RAMO DE ATIVIDADE:</td>
                 <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${pedido.tipo.toUpperCase()}</b></td>
               </tr>
               <tr>
@@ -1071,7 +1074,7 @@
               <strong>Certificação de Funcionamento:</strong> Atestamos que o estabelecimento supracitado regularizou o pagamento das pendências documentais. Este documento comprova a regularidade provisória e autoriza o funcionamento enquanto ocorre a fiscalização definitiva e conferência física pela equipe técnica.
             </div>
             <div style="text-align: center; margin-bottom: 10px;">
-              <div style="border-top: 1px solid #000; width: 200px; margin: 0 auto 10px;"></div>
+              <div style="border-top: 1px solid #000; width: 250px; margin: 0 auto 10px;"></div>
               <strong style="font-size: 14px;">Diretoria de Inspeção Sanitária</strong><br>
               <span style="font-size: 12px;">Prefeitura do Município de São Paulo</span>
             </div>
@@ -1079,21 +1082,34 @@
         </div>
       `;
 
-      // Anexa na página
-      document.body.appendChild(element);
-
-      // Configurações do Download
       var opt = {
         margin:       0,
         filename:     'Licenca_Provisoria_' + cnpj + '.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
+        image:        { type: 'jpeg', quality: 1.0 },
+        html2canvas:  { scale: 2, useCORS: true },
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
 
-      // Gera, faz o download e DEPOIS apaga o elemento invisível da tela
+      // Mostra mensagem que está carregando para o cliente aguardar 1 segundo
+      let btn = document.getElementById('btn-baixar-pdf');
+      let btnOriginalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Documento...';
+      btn.disabled = true;
+
+      // Coloca o HTML na página mas ESCONDIDO ATRÁS DO SITE (isso resolve a página branca!)
+      let element = document.createElement('div');
+      element.innerHTML = conteudoPDF;
+      element.style.position = 'absolute';
+      element.style.top = '0';
+      element.style.left = '0';
+      element.style.zIndex = '-100'; // Fica invisível atrás do fundo
+      document.body.appendChild(element);
+
+      // Gera, baixa e depois limpa tudo
       html2pdf().set(opt).from(element).save().then(() => {
         document.body.removeChild(element);
+        btn.innerHTML = btnOriginalText;
+        btn.disabled = false;
       });
     }
 
