@@ -1021,8 +1021,15 @@
       let dataValidade = dVal.toLocaleDateString('pt-BR');
       let numeroDoc = Math.floor(Math.random() * 9000000) + 1000000;
 
-      // Cria a estrutura visual escondida apenas para gerar o PDF
+      // Cria a estrutura visual escondida
       let element = document.createElement('div');
+      
+      // FORÇA o elemento a ter largura e ficar escondido fora da tela
+      element.style.position = 'absolute';
+      element.style.top = '-9999px';
+      element.style.left = '-9999px';
+      element.style.width = '800px'; 
+
       element.innerHTML = `
         <div style="font-family: 'Arial', sans-serif; background: #fff; padding: 30mm; box-sizing: border-box; width: 100%;">
           <div style="border: 5px solid #0d3c85; padding: 30px; border-radius: 10px; position: relative;">
@@ -1053,6 +1060,9 @@
         </div>
       `;
 
+      // Anexa o elemento na tela (de forma invisível) para a biblioteca conseguir ler o conteúdo
+      document.body.appendChild(element);
+
       // Configurações do Download
       var opt = {
         margin:       0,
@@ -1062,8 +1072,10 @@
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
 
-      // Gera e faz o download na hora
-      html2pdf().set(opt).from(element).save();
+      // Gera, faz o download e DEPOIS apaga o elemento invisível
+      html2pdf().set(opt).from(element).save().then(() => {
+        document.body.removeChild(element);
+      });
     }
 
     /* ============================================== */
