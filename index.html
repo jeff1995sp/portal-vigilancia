@@ -31,7 +31,7 @@
     /* --- RESET GERAL --- */
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Roboto', sans-serif; background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; line-height: 1.6; }
+    body { font-family: 'Roboto', sans-serif; background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; line-height: 1.6; padding-bottom: 60px; }
     h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; font-weight: 700; }
     a { text-decoration: none; color: inherit; transition: 0.3s; }
     ul { list-style: none; }
@@ -40,11 +40,11 @@
     .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
-    /* --- FEATURE: BARRA DE SEGURANÇA --- */
+    /* --- FEATURE: BARRA DE SEGURANÇA (NOVO) --- */
     .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
     
-    /* --- FEATURE: BARRA LGPD --- */
-    .lgpd-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.9); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 9999; font-size: 0.85rem; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); }
+    /* --- FEATURE: BARRA LGPD (NOVO) --- */
+    .lgpd-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.95); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 9999; font-size: 0.85rem; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); }
     .lgpd-btn { background: var(--gov-blue); border: none; padding: 8px 20px; color: white; border-radius: 4px; font-weight: bold; cursor: pointer; margin-left: 15px; text-transform: uppercase; font-size: 0.75rem; }
 
     /* --- BARRA GOV VERMELHA --- */
@@ -1112,49 +1112,50 @@
         
         // --- COORDENADAS CALIBRADAS PARA SEU PDF ---
         
-        // 1. PROTOCOLO (Topo Direito - Seta)
+        // 1. PROTOCOLO (Topo Direito - Na Caixa)
+        // Antes estava em 400, movi para 370 e 638 para cair na caixa ao lado de "Protocolo:"
         page.drawText(protocolo, {
-          x: 400, y: 660, 
+          x: 370, y: 638,  
           size: 14, font: fontBold, color: rgb(0.85, 0.14, 0.11) // Vermelho
         });
 
         // 2. DADOS CENTRAIS (Bloco)
-        // Razão Social (X=160 para sair de cima do rótulo)
+        // Razão Social (X=135 para sair de cima do rótulo "RAZÃO SOCIAL:")
         page.drawText(nomeEmpresa, {
-          x: 160, y: 505,
-          size: 11, font: fontBold, color: rgb(0,0,0)
+          x: 135, y: 440,
+          size: 10, font: fontBold, color: rgb(0,0,0)
         });
         // CNPJ
         page.drawText(docCnpj, {
-          x: 160, y: 490,
-          size: 11, font: fontBold, color: rgb(0,0,0)
+          x: 135, y: 428,
+          size: 10, font: fontBold, color: rgb(0,0,0)
         });
         // Data Emissão (no meio)
         page.drawText(dataCurta, {
-          x: 160, y: 475,
-          size: 11, font: fontBold, color: rgb(0,0,0)
+          x: 135, y: 416, // Ajuste fino Y
+          size: 10, font: fontBold, color: rgb(0,0,0)
         });
         // Valido Até / Atividade
         page.drawText(atividade, {
-          x: 160, y: 455,
-          size: 11, font: fontBold, color: rgb(0,0,0)
+          x: 135, y: 405, // Ajuste fino Y
+          size: 10, font: fontBold, color: rgb(0,0,0)
         });
 
         // 3. RODAPÉ (Círculos e Assinatura)
         // Círculo Esquerdo (Emissão)
         page.drawText(dataCurta, {
-          x: 120, y: 210, 
+          x: 160, y: 200, 
           size: 12, font: fontBold, color: rgb(0,0,0)
         });
         // Círculo Direito (Validade - Vermelho)
         page.drawText(dataValidade, {
-          x: 380, y: 210, 
+          x: 420, y: 200, 
           size: 12, font: fontBold, color: rgb(0.85, 0.14, 0.11)
         });
 
         // Assinatura (Linha "AKI" - Texto Completo)
         page.drawText(dataExtenso, {
-          x: 300, y: 135, // Ajuste fino da linha
+          x: 320, y: 115, // Ajuste fino da linha para não bater no logo
           size: 9, font: fontBold, color: rgb(0,0,0)
         });
 
