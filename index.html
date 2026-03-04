@@ -102,7 +102,7 @@
     .drawer-top { padding: 18px 18px 14px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .drawer-title { font-weight: 900; color: var(--text-dark); letter-spacing: -0.2px; }
     .drawer-close { width: 40px; height: 40px; border-radius: 12px; border: 1px solid #e9ecef; background: #f8f9fa; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
-    .drawer-nav { padding: 10px 12px 18px; display: flex; flex-direction: column; gap: 6px; }
+    .drawer-nav { padding: 10px 12px 18px; display: flex; flex-direction: column; gap: 66px; }
     .drawer-nav a { padding: 12px 12px; border-radius: 14px; font-weight: 800; color: #2c3e50; display: flex; align-items: center; gap: 10px; border: 1px solid #f1f3f5; background: #fff; }
     .drawer-nav a:hover { background: #f8f9fa; }
     .drawer-nav a i { width: 18px; text-align: center; opacity: 0.9; }
@@ -528,7 +528,7 @@
                   <div class="qr-container">
                     <div id="cronometro-pix" style="font-size: 1.2rem; font-weight: 900; color: var(--sp-red); margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 8px;"></div>
                     
-                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
+                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situation e travar possíveis multas.</p>
                     
                     <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
@@ -758,7 +758,7 @@
     });
 
     /* ============================================== */
-    /* DRAWER & ATUALIZAÇÕES GERAIS                   */
+    /* DRAWER & ATUALIZAÇÕES GERAIS                    */
     /* ============================================== */
     function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
     function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); document.body.style.overflow = ''; }
@@ -801,7 +801,7 @@
     }
 
     /* ============================================== */
-    /* LÓGICA DE ABAS E PROGRESSO                     */
+    /* LÓGICA DE ABAS E PROGRESSO                      */
     /* ============================================== */
     function alternarAba(aba) {
       document.getElementById('tab-envio').classList.remove('active');
@@ -1006,7 +1006,7 @@
     }
 
     /* ============================================== */
-    /* IDEA 3: GERAÇÃO DA LICENÇA PDF                 */
+    /* IDEA 3: GERAÇÃO DA LICENÇA PDF (MODIFICADA)      */
     /* ============================================== */
     function gerarPDF() {
       let cnpj = document.getElementById('consulta_cnpj').value;
@@ -1015,10 +1015,11 @@
       if(!pedido) return;
 
       let dataEmissao = new Date().toLocaleDateString('pt-BR');
-      let dVal = new Date(); dVal.setMonth(dVal.getMonth() + 12);
+      let dVal = new Date(); dVal.setMonth(dVal.getMonth() + 12); // Validade de 12 meses
       let dataValidade = dVal.toLocaleDateString('pt-BR');
       let numeroDoc = Math.floor(Math.random() * 9000000) + 1000000;
 
+      // NOVO TEMPLATE PROFISSIONAL
       let templatePDF = `
       <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Alvará Provisório - ${pedido.nome}</title>
       <style>
@@ -1026,16 +1027,21 @@
         body { font-family: 'Arial', sans-serif; background: #fff; padding: 30mm; box-sizing: border-box; }
         .borda { border: 5px solid #0d3c85; padding: 30px; height: 95%; box-sizing: border-box; border-radius: 10px; position: relative;}
         .borda::after { content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; border: 2px solid #da251c; border-radius: 14px; pointer-events: none;}
+        
         .cabecalho { text-align: center; border-bottom: 2px solid #0d3c85; padding-bottom: 20px; margin-bottom: 30px; }
         .cabecalho h1 { color: #0d3c85; font-size: 22px; margin: 0; text-transform: uppercase; font-weight: 900;}
         .cabecalho h2 { color: #da251c; font-size: 16px; margin: 5px 0 0 0; }
+        
         .titulo { text-align: center; margin: 40px 0; }
         .titulo h3 { font-size: 26px; color: #111; margin: 0; text-transform: uppercase; letter-spacing: 1px;}
         .titulo p { font-size: 14px; color: #555; }
+        
         table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
         td { padding: 12px; border-bottom: 1px solid #ddd; font-size: 15px;}
         .label { font-weight: bold; color: #0d3c85; width: 35%; }
+        
         .aviso { background: #f8f9fa; border-left: 5px solid #2e7d32; padding: 15px; font-size: 13px; text-align: justify; line-height: 1.5; color: #333;}
+        
         .assinaturas { margin-top: 80px; text-align: center; }
         .linha { border-top: 1px solid #000; width: 250px; margin: 0 auto 10px; }
       </style>
