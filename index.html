@@ -114,7 +114,7 @@
 
     /* --- HERO --- */
     .hero { background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center; color: white; padding-top: 40px; }
-    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding-bottom: 100px; }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding-bottom: 140px; /* Mais espaço para subir a caixa */ }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
     .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
@@ -401,7 +401,7 @@
         <button>Pesquisar</button>
       </div>
 
-      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto;">
+      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 20px; margin-bottom: 80px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
         <h4 style="margin-bottom: 10px; font-size: 1.1rem;"><i class="fas fa-search"></i> Consulta Pública de Regularidade</h4>
         <div style="display: flex; gap: 10px;">
           <input type="text" id="fake_consulta_cnpj" placeholder="Digite o CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;">
@@ -1021,66 +1021,80 @@
       let dataValidade = dVal.toLocaleDateString('pt-BR');
       let numeroDoc = Math.floor(Math.random() * 9000000) + 1000000;
 
-      // Passar a string HTML DIRETO para a biblioteca é o jeito mais seguro!
-      let conteudoPDF = `
-        <div style="font-family: Arial, sans-serif; color: #333; width: 100%; padding: 20px;">
+      // Cria o elemento na tela, mas escondido ATRÁS do site para o html2canvas conseguir "tirar a foto" sem dar tela em branco
+      let element = document.createElement('div');
+      element.style.position = 'absolute';
+      element.style.top = '0';
+      element.style.left = '0';
+      element.style.width = '800px';
+      element.style.zIndex = '-9999';
+      element.style.background = '#fff';
+
+      element.innerHTML = `
+        <div style="font-family: Arial, sans-serif; color: #333; padding: 40px; box-sizing: border-box;">
           <div style="border: 4px solid #0d3c85; padding: 30px; border-radius: 10px;">
             <div style="text-align: center; border-bottom: 2px solid #0d3c85; padding-bottom: 20px; margin-bottom: 30px;">
-              <h1 style="color: #0d3c85; font-size: 20px; margin: 0; text-transform: uppercase;">PREFEITURA DO MUNICÍPIO DE SÃO PAULO</h1>
-              <h2 style="color: #da251c; font-size: 14px; margin: 5px 0 0 0;">COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA</h2>
+              <h1 style="color: #0d3c85; font-size: 22px; margin: 0; text-transform: uppercase;">PREFEITURA DO MUNICÍPIO DE SÃO PAULO</h1>
+              <h2 style="color: #da251c; font-size: 16px; margin: 5px 0 0 0;">COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA</h2>
             </div>
             <div style="text-align: center; margin: 30px 0;">
-              <h3 style="font-size: 20px; color: #111; margin: 0; text-transform: uppercase;">Certificado de Regularidade Sanitária</h3>
-              <p style="font-size: 12px; color: #555;">Documento Emitido Eletronicamente via Portal Oficial</p>
+              <h3 style="font-size: 22px; color: #111; margin: 0; text-transform: uppercase;">CERTIFICADO DE REGULARIDADE SANITÁRIA</h3>
+              <p style="font-size: 14px; color: #555;">Documento Procuração Advogado / Emissão Eletrônica</p>
             </div>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
               <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85; width: 45%;">RAZÃO SOCIAL / NOME FANTASIA:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b>${pedido.nome.toUpperCase()}</b></td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85; width: 45%;">RAZÃO SOCIAL / NOME FANTASIA:</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${pedido.nome.toUpperCase()}</b></td>
               </tr>
               <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85;">CNPJ / CPF DO RESPONSÁVEL:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b>${cnpj}</b></td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">CNPJ / CPF DO RESPONSÁVEL:</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${cnpj}</b></td>
               </tr>
               <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85;">RAMO DE ATIVIDADE DECLARADO:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b>${pedido.tipo.toUpperCase()}</b></td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">RAMO DE ATIVIDADE DECLARADO:</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${pedido.tipo.toUpperCase()}</b></td>
               </tr>
               <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85;">NÚMERO DO DOCUMENTO:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b>SP-${numeroDoc}-${new Date().getFullYear()}</b></td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">NÚMERO DO DOCUMENTO:</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>SP-${numeroDoc}-${new Date().getFullYear()}</b></td>
               </tr>
               <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85;">DATA DE EMISSÃO:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b>${dataEmissao}</b></td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">DATA DE EMISSÃO:</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${dataEmissao}</b></td>
               </tr>
               <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: bold; color: #0d3c85;">VÁLIDO ATÉ:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;"><b style="color:#da251c;">${dataValidade}</b></td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">VÁLIDO ATÉ:</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b style="color:#da251c;">${dataValidade}</b></td>
               </tr>
             </table>
-            <div style="background: #f8f9fa; border-left: 4px solid #2e7d32; padding: 15px; font-size: 12px; text-align: justify; line-height: 1.5; color: #333; margin-bottom: 50px;">
-              <strong>Certificação Provisória de Funcionamento:</strong> Atestamos que o estabelecimento supracitado regularizou o pagamento da Taxa de Análise de Pendências Documentais junto à Coordenação de Vigilância em Saúde. Este documento autoriza o funcionamento temporário enquanto a equipe técnica municipal realiza a fiscalização definitiva e conferência das pendências físicas registradas em sistema.
+            <div style="background: #f8f9fa; border-left: 4px solid #2e7d32; padding: 15px; font-size: 13px; text-align: justify; line-height: 1.5; color: #333; margin-bottom: 50px;">
+              <strong>Certificação de Funcionamento:</strong> Atestamos que o estabelecimento supracitado regularizou o pagamento das pendências documentais. Este documento comprova a regularidade provisória e autoriza o funcionamento enquanto ocorre a fiscalização definitiva e conferência física pela equipe técnica.
             </div>
             <div style="text-align: center; margin-bottom: 10px;">
               <div style="border-top: 1px solid #000; width: 200px; margin: 0 auto 10px;"></div>
-              <strong style="font-size: 13px;">Diretoria de Inspeção Sanitária</strong><br>
-              <span style="font-size: 11px;">Prefeitura do Município de São Paulo</span>
+              <strong style="font-size: 14px;">Diretoria de Inspeção Sanitária</strong><br>
+              <span style="font-size: 12px;">Prefeitura do Município de São Paulo</span>
             </div>
           </div>
         </div>
       `;
 
+      // Anexa na página
+      document.body.appendChild(element);
+
+      // Configurações do Download
       var opt = {
-        margin:       [0.5, 0.5, 0.5, 0.5], // margens
+        margin:       0,
         filename:     'Licenca_Provisoria_' + cnpj + '.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
+        html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
 
-      // Inicia a geração a partir da variável em texto e salva!
-      html2pdf().set(opt).from(conteudoPDF).save();
+      // Gera, faz o download e DEPOIS apaga o elemento invisível da tela
+      html2pdf().set(opt).from(element).save().then(() => {
+        document.body.removeChild(element);
+      });
     }
 
     /* ============================================== */
