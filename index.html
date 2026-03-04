@@ -10,7 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
 
   <style>
     :root {
@@ -104,7 +105,7 @@
     .drawer-top { padding: 18px 18px 14px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .drawer-title { font-weight: 900; color: var(--text-dark); letter-spacing: -0.2px; }
     .drawer-close { width: 40px; height: 40px; border-radius: 12px; border: 1px solid #e9ecef; background: #f8f9fa; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
-    .drawer-nav { padding: 10px 12px 18px; display: flex; flex-direction: column; gap: 66px; }
+    .drawer-nav { padding: 10px 12px 18px; display: flex; flex-direction: column; gap: 20px; } /* Ajustado Gap Mobile */
     .drawer-nav a { padding: 12px 12px; border-radius: 14px; font-weight: 800; color: #2c3e50; display: flex; align-items: center; gap: 10px; border: 1px solid #f1f3f5; background: #fff; }
     .drawer-nav a:hover { background: #f8f9fa; }
     .drawer-nav a i { width: 18px; text-align: center; opacity: 0.9; }
@@ -123,7 +124,7 @@
       justify-content: center; 
       color: white; 
       padding-top: 40px;
-      padding-bottom: 150px; /* <--- ESPAÇO PARA A CAIXA SUBIR E NÃO ENCOSTAR NA FAIXA */
+      padding-bottom: 150px; 
     }
     .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
@@ -836,7 +837,7 @@
     }
 
     /* ============================================== */
-    /* FORMULÁRIOS DE REGULARIZAÇÃO E RISCO (IDEIA 4) */
+    /* FORMULÁRIOS DE REGULARIZAÇÃO E RISCO           */
     /* ============================================== */
     const docsComuns = `
       <label class="doc-item"><input type="checkbox" class="doc-check" value="CNPJ Ativo" onchange="calcularRisco()"/><i class="fas fa-file-invoice"></i><span>CNPJ Ativo</span></label>
@@ -938,7 +939,7 @@
     });
 
     /* ============================================== */
-    /* CONSULTA DA TAXA, CRONÔMETRO (IDEIA 5) E PAGO  */
+    /* CONSULTA DA TAXA, CRONÔMETRO E PAGO            */
     /* ============================================== */
     let cnpjParaComprovante = "";
     let timerInterval;
@@ -1019,109 +1020,123 @@
     }
 
     /* ============================================== */
-    /* GERAÇÃO DA LICENÇA PDF (100% CORRIGIDO)        */
+    /* GERAÇÃO DE PDF EDITANDO O ARQUIVO EXISTENTE    */
     /* ============================================== */
-    function gerarPDF() {
-      let cnpj = document.getElementById('consulta_cnpj').value;
-      let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-      let pedido = pedidos[cnpj] || {}; // Garante que nunca é nulo
+    async function gerarPDF() {
+        const btn = document.getElementById('btn-baixar-pdf');
+        const textoOriginal = btn.innerHTML;
+        
+        try {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando documento...';
+            btn.disabled = true;
 
-      let dataEmissao = new Date().toLocaleDateString('pt-BR');
-      let dVal = new Date(); dVal.setMonth(dVal.getMonth() + 12); // Validade de 12 meses
-      let dataValidade = dVal.toLocaleDateString('pt-BR');
-      let numeroDoc = Math.floor(Math.random() * 9000000) + 1000000;
+            // 1. DADOS PARA PREENCHER
+            let cnpj = document.getElementById('consulta_cnpj').value;
+            let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
+            let pedido = pedidos[cnpj] || {};
 
-      // Validação de segurança para não gerar PDF em branco caso os dados estejam vazios
-      let nomeEmpresa = (pedido.nome || "NÃO INFORMADO").toUpperCase();
-      let tipoEmpresa = (pedido.tipo || "NÃO INFORMADO").toUpperCase();
-      let docCnpj = cnpj || "NÃO INFORMADO";
+            let nomeEmpresa = (pedido.nome || "NOME NÃO IDENTIFICADO").toUpperCase();
+            let tipoEmpresa = (pedido.tipo || "ATIVIDADE NÃO IDENTIFICADA").toUpperCase();
+            let docCnpj = cnpj || "000.000.000-00";
+            
+            // Datas e Protocolo
+            const dataHoje = new Date();
+            const dia = String(dataHoje.getDate()).padStart(2, '0');
+            const mes = String(dataHoje.getMonth() + 1).padStart(2, '0');
+            const ano = dataHoje.getFullYear();
+            const dataFormatada = `${dia}/${mes}/${ano}`;
+            
+            // Validade (1 ano pra frente)
+            const dataValidade = `${dia}/${mes}/${ano + 1}`;
+            
+            const protocolo = "SP." + Math.floor(Math.random() * 900000) + "/" + ano;
 
-      let conteudoPDF = `
-        <div style="font-family: Arial, sans-serif; color: #333; padding: 40px; box-sizing: border-box; background: #fff; width: 800px;">
-          <div style="border: 4px solid #0d3c85; padding: 30px; border-radius: 10px;">
-            <div style="text-align: center; border-bottom: 2px solid #0d3c85; padding-bottom: 20px; margin-bottom: 30px;">
-              <h1 style="color: #0d3c85; font-size: 22px; margin: 0; text-transform: uppercase;">PREFEITURA DO MUNICÍPIO DE SÃO PAULO</h1>
-              <h2 style="color: #da251c; font-size: 16px; margin: 5px 0 0 0;">COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA</h2>
-            </div>
-            <div style="text-align: center; margin: 30px 0;">
-              <h3 style="font-size: 22px; color: #111; margin: 0; text-transform: uppercase;">CERTIFICADO DE REGULARIDADE SANITÁRIA</h3>
-              <p style="font-size: 14px; color: #555; font-weight: bold; margin-top: 10px;">Documento procuração advogado / Emissão Eletrônica</p>
-            </div>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-              <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85; width: 45%;">RAZÃO SOCIAL / NOME FANTASIA:</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${nomeEmpresa}</b></td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">CNPJ / CPF:</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${docCnpj}</b></td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">RAMO DE ATIVIDADE DECLARADO:</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${tipoEmpresa}</b></td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">NÚMERO DO DOCUMENTO:</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>SP-${numeroDoc}-${new Date().getFullYear()}</b></td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">DATA DE EMISSÃO:</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${dataEmissao}</b></td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">VÁLIDO ATÉ:</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b style="color:#da251c;">${dataValidade}</b></td>
-              </tr>
-            </table>
-            <div style="background: #f8f9fa; border-left: 4px solid #2e7d32; padding: 15px; font-size: 13px; text-align: justify; line-height: 1.5; color: #333; margin-bottom: 50px;">
-              <strong>Certificação de Funcionamento:</strong> Atestamos que o estabelecimento supracitado regularizou o pagamento das pendências documentais. Este documento comprova a regularidade provisória e autoriza o funcionamento enquanto ocorre a fiscalização definitiva e conferência física pela equipe técnica.
-            </div>
-            <div style="text-align: center; margin-bottom: 10px;">
-              <div style="border-top: 1px solid #000; width: 250px; margin: 0 auto 10px;"></div>
-              <strong style="font-size: 14px;">Diretoria de Inspeção Sanitária</strong><br>
-              <span style="font-size: 12px;">Prefeitura do Município de São Paulo</span>
-            </div>
-          </div>
-        </div>
-      `;
+            // 2. CARREGAR O SEU PDF ORIGINAL
+            // O nome do arquivo tem que ser IDÊNTICO ao que está na pasta (incluindo acentos)
+            const url = 'Alvara Provisório.pdf'; 
+            const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
 
-      // 1. Cria o elemento com fundo branco forçado
-      let element = document.createElement('div');
-      element.innerHTML = conteudoPDF;
-      
-      // 2. Tática Anti-Erro (Opacity 0) - Não jogar para fora da tela, senão dá pau!
-      element.style.position = 'absolute';
-      element.style.top = '0';
-      element.style.left = '0';
-      element.style.width = '800px';
-      element.style.background = '#ffffff'; 
-      element.style.opacity = '0'; // Continua sendo desenhado, mas o usuário não vê
-      element.style.pointerEvents = 'none'; // Não deixa o usuário clicar sem querer
-      
-      document.body.appendChild(element);
+            // 3. PREPARAR PARA ESCREVER
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const pdfDoc = await PDFDocument.load(existingPdfBytes);
+            const helveticaFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold); // Fonte Negrito
+            
+            const pages = pdfDoc.getPages();
+            const firstPage = pages[0];
+            
+            // Pega a altura da página para calcular o Y (PDF conta de baixo para cima)
+            const { height } = firstPage.getSize();
 
-      var opt = {
-        margin:       0,
-        filename:     'Licenca_Provisoria_' + cnpj + '.pdf',
-        image:        { type: 'jpeg', quality: 1.0 },
-        html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
+            // 4. ESCREVENDO OS DADOS NO PDF
+            // IMPORTANTE: Ajuste os valores de x e y para cair na linha certa do seu modelo
+            // x = distância da esquerda | y = distância de baixo para cima
+            
+            // Nome da Empresa
+            firstPage.drawText(nomeEmpresa, {
+                x: 120,      // Mova para direita/esquerda
+                y: 550,      // Mova para cima/baixo
+                size: 12,
+                font: helveticaFont,
+                color: rgb(0, 0, 0),
+            });
 
-      // 3. Efeito visual no botão para dar tempo do navegador renderizar
-      let btn = document.getElementById('btn-baixar-pdf');
-      let btnOriginalText = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
-      btn.disabled = true;
+            // CNPJ
+            firstPage.drawText(docCnpj, {
+                x: 120,
+                y: 530, 
+                size: 12,
+                font: helveticaFont,
+                color: rgb(0, 0, 0),
+            });
 
-      // 4. Aguarda 800ms para tirar a foto perfeitinha do PDF
-      setTimeout(() => {
-        html2pdf().set(opt).from(element).save().then(() => {
-          document.body.removeChild(element); // Limpa o elemento
-          btn.innerHTML = btnOriginalText;    // Restaura o botão
-          btn.disabled = false;
-        });
-      }, 800);
+            // Ramo de Atividade
+            firstPage.drawText(tipoEmpresa, {
+                x: 120,
+                y: 510,
+                size: 12,
+                font: helveticaFont,
+                color: rgb(0, 0, 0),
+            });
+
+            // Número do Protocolo
+            firstPage.drawText(protocolo, {
+                x: 400,
+                y: 650, // Geralmente fica no topo
+                size: 14,
+                font: helveticaFont,
+                color: rgb(0.85, 0.14, 0.11), // Vermelho
+            });
+
+            // Data de Emissão (Data de Hoje)
+            firstPage.drawText(dataFormatada, {
+                x: 100,
+                y: 200, // Ajuste para ficar no campo de data/assinatura
+                size: 11,
+                font: helveticaFont,
+            });
+
+             // Data de Validade
+             firstPage.drawText(dataValidade, {
+                x: 300,
+                y: 200, 
+                size: 11,
+                font: helveticaFont,
+                color: rgb(0.85, 0.14, 0.11), // Vermelho
+            });
+
+            // 5. SALVAR E BAIXAR
+            const pdfBytes = await pdfDoc.save();
+            download(pdfBytes, `Licenca_Provisoria_${cnpj}.pdf`, "application/pdf");
+
+            btn.innerHTML = textoOriginal;
+            btn.disabled = false;
+
+        } catch (erro) {
+            console.error(erro);
+            alert("Erro ao carregar o modelo de PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está na pasta correta.");
+            btn.innerHTML = textoOriginal;
+            btn.disabled = false;
+        }
     }
 
     /* ============================================== */
