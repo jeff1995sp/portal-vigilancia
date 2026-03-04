@@ -123,7 +123,7 @@
       justify-content: center; 
       color: white; 
       padding-top: 40px;
-      padding-bottom: 150px; /* <--- AJUSTE PARA SUBIR A CAIXA E NÃO SOBREPOR A FAIXA PRETA */
+      padding-bottom: 150px; /* <--- ESPAÇO PARA A CAIXA SUBIR E NÃO ENCOSTAR NA FAIXA */
     }
     .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
@@ -1019,20 +1019,23 @@
     }
 
     /* ============================================== */
-    /* GERAÇÃO DA LICENÇA PDF - 100% CORRIGIDA        */
+    /* GERAÇÃO DA LICENÇA PDF (100% CORRIGIDO)        */
     /* ============================================== */
     function gerarPDF() {
       let cnpj = document.getElementById('consulta_cnpj').value;
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-      let pedido = pedidos[cnpj];
-      if(!pedido) return;
+      let pedido = pedidos[cnpj] || {}; // Garante que nunca é nulo
 
       let dataEmissao = new Date().toLocaleDateString('pt-BR');
       let dVal = new Date(); dVal.setMonth(dVal.getMonth() + 12); // Validade de 12 meses
       let dataValidade = dVal.toLocaleDateString('pt-BR');
       let numeroDoc = Math.floor(Math.random() * 9000000) + 1000000;
 
-      // Montamos o HTML do jeito exato que você pediu
+      // Validação de segurança para não gerar PDF em branco caso os dados estejam vazios
+      let nomeEmpresa = (pedido.nome || "NÃO INFORMADO").toUpperCase();
+      let tipoEmpresa = (pedido.tipo || "NÃO INFORMADO").toUpperCase();
+      let docCnpj = cnpj || "NÃO INFORMADO";
+
       let conteudoPDF = `
         <div style="font-family: Arial, sans-serif; color: #333; padding: 40px; box-sizing: border-box; background: #fff; width: 800px;">
           <div style="border: 4px solid #0d3c85; padding: 30px; border-radius: 10px;">
@@ -1047,15 +1050,15 @@
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85; width: 45%;">RAZÃO SOCIAL / NOME FANTASIA:</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${pedido.nome.toUpperCase()}</b></td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${nomeEmpresa}</b></td>
               </tr>
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">CNPJ / CPF:</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${cnpj}</b></td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${docCnpj}</b></td>
               </tr>
               <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">RAMO DE ATIVIDADE:</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${pedido.tipo.toUpperCase()}</b></td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">RAMO DE ATIVIDADE DECLARADO:</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"><b>${tipoEmpresa}</b></td>
               </tr>
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; font-weight: bold; color: #0d3c85;">NÚMERO DO DOCUMENTO:</td>
@@ -1082,35 +1085,43 @@
         </div>
       `;
 
+      // 1. Cria o elemento com fundo branco forçado
+      let element = document.createElement('div');
+      element.innerHTML = conteudoPDF;
+      
+      // 2. Tática Anti-Erro (Opacity 0) - Não jogar para fora da tela, senão dá pau!
+      element.style.position = 'absolute';
+      element.style.top = '0';
+      element.style.left = '0';
+      element.style.width = '800px';
+      element.style.background = '#ffffff'; 
+      element.style.opacity = '0'; // Continua sendo desenhado, mas o usuário não vê
+      element.style.pointerEvents = 'none'; // Não deixa o usuário clicar sem querer
+      
+      document.body.appendChild(element);
+
       var opt = {
         margin:       0,
         filename:     'Licenca_Provisoria_' + cnpj + '.pdf',
         image:        { type: 'jpeg', quality: 1.0 },
-        html2canvas:  { scale: 2, useCORS: true },
+        html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
 
-      // Mostra mensagem que está carregando para o cliente aguardar 1 segundo
+      // 3. Efeito visual no botão para dar tempo do navegador renderizar
       let btn = document.getElementById('btn-baixar-pdf');
       let btnOriginalText = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Documento...';
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
       btn.disabled = true;
 
-      // Coloca o HTML na página mas ESCONDIDO ATRÁS DO SITE (isso resolve a página branca!)
-      let element = document.createElement('div');
-      element.innerHTML = conteudoPDF;
-      element.style.position = 'absolute';
-      element.style.top = '0';
-      element.style.left = '0';
-      element.style.zIndex = '-100'; // Fica invisível atrás do fundo
-      document.body.appendChild(element);
-
-      // Gera, baixa e depois limpa tudo
-      html2pdf().set(opt).from(element).save().then(() => {
-        document.body.removeChild(element);
-        btn.innerHTML = btnOriginalText;
-        btn.disabled = false;
-      });
+      // 4. Aguarda 800ms para tirar a foto perfeitinha do PDF
+      setTimeout(() => {
+        html2pdf().set(opt).from(element).save().then(() => {
+          document.body.removeChild(element); // Limpa o elemento
+          btn.innerHTML = btnOriginalText;    // Restaura o botão
+          btn.disabled = false;
+        });
+      }, 800);
     }
 
     /* ============================================== */
