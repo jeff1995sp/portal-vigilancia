@@ -1112,51 +1112,56 @@
         
         // --- COORDENADAS CALIBRADAS PARA SEU PDF ---
         
-        // 1. PROTOCOLO (Topo Direito - Na Caixa)
-        // Antes estava em 400, movi para 370 e 638 para cair na caixa ao lado de "Protocolo:"
+        // 0. DATA DE VALIDADE (Topo Direito - Na caixa ao lado de CEVS)
+        page.drawText(dataValidade, {
+          x: 420, y: 723,  
+          size: 10, font: fontBold, color: rgb(0,0,0)
+        });
+
+        // 1. PROTOCOLO (Topo Direito - Na linha de Data do Protocolo)
         page.drawText(protocolo, {
-          x: 370, y: 638,  
-          size: 14, font: fontBold, color: rgb(0.85, 0.14, 0.11) // Vermelho
+          x: 430, y: 683,  
+          size: 12, font: fontBold, color: rgb(0.85, 0.14, 0.11) // Vermelho
         });
 
         // 2. DADOS CENTRAIS (Bloco)
-        // Razão Social (X=135 para sair de cima do rótulo "RAZÃO SOCIAL:")
+        // Razão Social
         page.drawText(nomeEmpresa, {
-          x: 135, y: 440,
+          x: 135, y: 462,
           size: 10, font: fontBold, color: rgb(0,0,0)
         });
         // CNPJ
         page.drawText(docCnpj, {
-          x: 135, y: 428,
+          x: 135, y: 447,
           size: 10, font: fontBold, color: rgb(0,0,0)
         });
-        // Data Emissão (no meio)
+        // Data Emissão
         page.drawText(dataCurta, {
-          x: 135, y: 416, // Ajuste fino Y
+          x: 135, y: 432, 
           size: 10, font: fontBold, color: rgb(0,0,0)
         });
-        // Valido Até / Atividade
-        page.drawText(atividade, {
-          x: 135, y: 405, // Ajuste fino Y
+        // Válido Até
+        page.drawText(dataValidade, {
+          x: 135, y: 417, 
           size: 10, font: fontBold, color: rgb(0,0,0)
         });
 
         // 3. RODAPÉ (Círculos e Assinatura)
-        // Círculo Esquerdo (Emissão)
+        // Círculo Esquerdo (Emissão) - Movido para o centro do círculo da imagem
         page.drawText(dataCurta, {
-          x: 160, y: 200, 
+          x: 175, y: 155, 
           size: 12, font: fontBold, color: rgb(0,0,0)
         });
-        // Círculo Direito (Validade - Vermelho)
+        // Círculo Direito (Validade - Vermelho) - Movido para o centro do círculo da imagem
         page.drawText(dataValidade, {
-          x: 420, y: 200, 
+          x: 450, y: 155, 
           size: 12, font: fontBold, color: rgb(0.85, 0.14, 0.11)
         });
 
-        // Assinatura (Linha "AKI" - Texto Completo)
+        // Assinatura (Linha SÃO PAULO ___ na base da página)
         page.drawText(dataExtenso, {
-          x: 320, y: 115, // Ajuste fino da linha para não bater no logo
-          size: 9, font: fontBold, color: rgb(0,0,0)
+          x: 130, y: 65, 
+          size: 10, font: fontBold, color: rgb(0,0,0)
         });
 
         // SALVAR
