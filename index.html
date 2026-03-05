@@ -1101,19 +1101,39 @@
 
         const { PDFDocument, StandardFonts } = PDFLib;
         const pdfDoc = await PDFDocument.load(existingPdfBytes);
-        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        
+        // CARREGANDO DUAS FONTES PARA FAZER O EFEITO DO FORMULÁRIO (Igual na parte de baixo)
+        // Usando Times Roman para combinar perfeitamente com o resto do seu PDF
+        const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
         const page = pdfDoc.getPages()[0];
 
         // 4. PREENCHER A PARTE EM BRANCO
-        // Você pode ajustar os números de 'x' e 'y' para mover os textos para cima, baixo ou para os lados.
-        page.drawText(`RAZÃO SOCIAL: ${nomeEmpresa}`, { x: 40, y: 550, size: 10, font: fontBold });
-        page.drawText(`CNPJ: ${docCnpj}`, { x: 40, y: 535, size: 10, font: fontBold });
-        page.drawText(`DATA DE EMISSÃO: ${dataEmissao}`, { x: 40, y: 520, size: 10, font: fontBold });
-        page.drawText(`VÁLIDO ATÉ: ${dataValidade}`, { x: 40, y: 505, size: 10, font: fontBold });
+        // startX = Ajusta tudo para a esquerda/direita. startY = Ajusta tudo para cima/baixo.
+        const startX = 35;  // Mais para a esquerda
+        const startY = 530; // Mais para baixo para sair da linha
+        const espacoY = 15; // Espaço entre uma linha e outra
+        const valorX = 145; // Posição alinhada onde começam os dados em negrito
 
-        // 5. DATA EMBAIXO DA ANVISA
-        page.drawText(`DATA: ${dataEmissao}`, { x: 250, y: 100, size: 12, font: fontBold });
+        // Linha 1: Razão Social (Título Normal + Dado Negrito)
+        page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
+        page.drawText(`${nomeEmpresa}`, { x: valorX, y: startY, size: 10, font: fontBold });
+
+        // Linha 2: CNPJ
+        page.drawText(`CNPJ:`, { x: startX, y: startY - espacoY, size: 10, font: fontNormal });
+        page.drawText(`${docCnpj}`, { x: valorX, y: startY - espacoY, size: 10, font: fontBold });
+
+        // Linha 3: Data Emissão
+        page.drawText(`DATA DE EMISSÃO:`, { x: startX, y: startY - (espacoY * 2), size: 10, font: fontNormal });
+        page.drawText(`${dataEmissao}`, { x: valorX, y: startY - (espacoY * 2), size: 10, font: fontBold });
+
+        // Linha 4: Validade
+        page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
+        page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
+
+        // 5. DATA EMBAIXO DA ANVISA (Mais para a direita)
+        page.drawText(`DATA: ${dataEmissao}`, { x: 320, y: 100, size: 12, font: fontBold });
 
         // 6. SALVAR E BAIXAR O ARQUIVO PRONTO
         const pdfBytes = await pdfDoc.save();
