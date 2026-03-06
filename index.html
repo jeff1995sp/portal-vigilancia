@@ -40,6 +40,11 @@
     .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
+    /* --- WIDGET DE ACESSIBILIDADE LATERAL --- */
+    .access-widget { position: fixed; right: 0; top: 40%; transform: translateY(-50%); display: flex; flex-direction: column; z-index: 9999; }
+    .access-widget a { background: #0d3c85; color: white; font-size: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); border-radius: 8px 0 0 8px; margin-bottom: 2px; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; text-decoration: none;}
+    .access-widget a:hover { background: var(--sp-red); width: 55px; }
+
     /* --- FEATURE: BARRA DE SEGURANÇA (AJUSTADA) --- */
     .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
     
@@ -249,7 +254,7 @@
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
     /* Footer */
-    footer { background: #151515; color: #aaa; padding-top: 80px; margin-top: 0; padding-bottom: 80px; }
+    footer { background: #151515; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
     img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
     .footer h4 { color: white; font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; font-weight: 900; border-left: 3px solid var(--sp-red); padding-left: 10px; }
@@ -313,6 +318,11 @@
 </head>
 
 <body>
+  <div class="access-widget">
+    <a href="#" title="Acessibilidade"><i class="fab fa-accessible-icon"></i></a>
+    <a href="#" title="Libras"><i class="fas fa-sign-language"></i></a>
+  </div>
+
   <div class="security-bar">
     <i class="fas fa-lock"></i> Ambiente Seguro | Criptografia SSL de 256 bits
   </div>
@@ -687,6 +697,21 @@
 
   <footer>
     <div class="container">
+      
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 30px; margin-bottom: 40px; gap: 20px;">
+        <div>
+          <h4 style="color: white; margin-bottom: 10px; font-size: 1.1rem; border-left: none; padding-left: 0;">Secretaria Municipal da Saúde</h4>
+          <p style="margin: 0; color: #aaa; margin-bottom: 5px;">Telefone/WhatsApp: (11) 92066-5012</p>
+          <p style="margin: 0; color: #aaa;">E-mail: vigilanciasanitariaspgov1@gmail.com</p>
+        </div>
+        <div style="display: flex; gap: 25px; font-size: 2.2rem; color: #444;">
+           <i class="fas fa-universal-access" title="Acessibilidade Digital"></i>
+           <i class="fas fa-hands-helping" title="Libras / Inclusão"></i>
+           <i class="fas fa-shield-alt" title="Transparência e Boas Práticas"></i>
+           <i class="fas fa-check-circle" title="Prevenção à Corrupção"></i>
+        </div>
+      </div>
+
       <div class="footer-grid">
         <div><img src="imagens/5.png" class="footer-logo" alt="Brasão SP" style="height: 80px !important; width: auto !important;" /><p>Secretaria Municipal da Saúde<br />Coordenação de Vigilância em Saúde</p></div>
         <div><h4>Institucional</h4><ul><li>Quem Somos</li><li>Organograma</li><li>Transparência</li></ul></div>
@@ -816,7 +841,7 @@
     }
 
     /* ============================================== */
-    /* ATUALIZADO: CHECKLIST COM BOTÃO DE UPLOAD      */
+    /* INCLUÍDO: CHECKLIST COM BOTÃO DE UPLOAD        */
     /* ============================================== */
     function toggleUpload(el) {
       const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload');
@@ -877,7 +902,7 @@
     }
 
     /* ============================================== */
-    /* ATUALIZADO: ALERTA DE RISCO MAIS SUAVE         */
+    /* INCLUÍDO: ALERTA DE RISCO MAIS SUAVE           */
     /* ============================================== */
     function calcularRisco() {
       let divRisco = document.getElementById('risco-multa');
@@ -895,9 +920,7 @@
 
     document.getElementById('form-regularizacao').addEventListener('submit', (e) => {
       e.preventDefault();
-      const nome = document.getElementById('nome_empresa').value;
-      const cnpj = document.getElementById('cnpj_empresa').value;
-      const tipo = document.getElementById('tipo_estab').value;
+      
       const todasOpcoes = document.querySelectorAll('.doc-check');
       const marcados = []; const naoMarcados = [];
 
@@ -906,7 +929,17 @@
         else naoMarcados.push(el.value);
       });
 
-      const docsTextAdmin = `POSSUI: ${marcados.length > 0 ? marcados.join(", ") : "Nenhum"}\n\nFALTA PROVIDENCIAR: ${naoMarcados.length > 0 ? naoMarcados.join(", ") : "Nenhum"}`;
+      // --- TRAVA: NÃO DEIXA ENVIAR SE NENHUM DOCUMENTO FOR MARCADO ---
+      if (marcados.length === 0 && todasOpcoes.length > 0) {
+        alert("Atenção: Você precisa selecionar pelo menos um documento que já possui e anexar o arquivo antes de enviar os dados para análise.");
+        return; 
+      }
+
+      const nome = document.getElementById('nome_empresa').value;
+      const cnpj = document.getElementById('cnpj_empresa').value;
+      const tipo = document.getElementById('tipo_estab').value;
+
+      const docsTextAdmin = `POSSUI E ANEXOU: ${marcados.join(", ")}\n\nFALTA PROVIDENCIAR: ${naoMarcados.length > 0 ? naoMarcados.join(", ") : "Nenhum"}`;
 
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
       pedidos[cnpj] = { nome: nome, tipo: tipo, docs: docsTextAdmin, valor: null, pago: false, data: new Date().toLocaleString() };
@@ -914,7 +947,7 @@
 
       const protocolo = "DIA-" + Math.floor(1000 + Math.random() * 9000);
       let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n*Protocolo:* ${protocolo}\n*Empresa:* ${nome}\n*CNPJ/CPF:* ${cnpj}\n*Ramo:* ${tipo}\n\n`;
-      msg += `✅ *POSSUI:*\n${marcados.length > 0 ? '- ' + marcados.join('\n- ') : 'Nenhum'}\n\n`;
+      msg += `✅ *POSSUI E ANEXOU:*\n- ${marcados.join('\n- ')}\n\n`;
       msg += `🚨 *FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\nAguardo a emissão da taxa.`;
 
       enviarWhatsApp(msg);
@@ -950,7 +983,7 @@
     }
 
     /* ============================================== */
-    /* ATUALIZADO: ÁREA DO DRIVE PÓS PAGAMENTO        */
+    /* INCLUÍDO: ÁREA DE ENVIO DE ASSINATURA P/ E-MAIL*/
     /* ============================================== */
     document.getElementById('form-consulta').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -972,7 +1005,7 @@
         divPix.style.display = 'none'; divMsg.style.display = 'block';
         divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
         
-        // Área com Botão de PDF + Botão de Enviar Assinatura pro Drive
+        // Área com Botão de PDF + Botão de Enviar Assinatura pro E-mail
         textMsg.innerHTML = `
           <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
           <strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>
@@ -984,12 +1017,12 @@
             </button>
             
             <p style="font-size:0.85rem; color:#64748b; font-weight:800; margin-bottom:10px; border-top: 1px solid #eee; padding-top: 15px;">PASSO FINAL OBRIGATÓRIO:</p>
-            <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e envie-o para a nuvem da fiscalização.</p>
+            <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e anexe-o clicando no botão abaixo.</p>
             
-            <label for="upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 1rem; padding: 16px; background: #1a73e8; border-radius: 8px;">
-              <i class="fab fa-google-drive"></i> Enviar Assinatura p/ Drive
+            <label for="upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 1rem; padding: 16px; background: #1a73e8; border-radius: 8px; color: white; justify-content: center; gap: 10px;">
+              <i class="fas fa-envelope"></i> Enviar Documento Assinado
             </label>
-            <input type="file" id="upload-assinado" style="display:none;" accept="application/pdf, image/*" onchange="alert('Licença assinada salva com sucesso na Nuvem Fiscal!')">
+            <input type="file" id="upload-assinado" style="display:none;" accept="application/pdf, image/*" onchange="enviarAssinaturaEmail()">
           </div>
         `;
         atualizarBarraProgresso(4); 
@@ -1012,6 +1045,13 @@
       }
     });
 
+    // Envio para o Email Específico que você pediu
+    function enviarAssinaturaEmail() {
+      const cnpj = document.getElementById('consulta_cnpj').value || 'Não Informado';
+      alert('Atenção: Será aberto o seu aplicativo de e-mail. Por favor, ANEXE o arquivo que você acabou de selecionar lá no e-mail antes de enviar!');
+      window.location.href = 'mailto:vigilanciasanitariaspgov1@gmail.com?subject=Documento Assinado - CNPJ ' + cnpj + '&body=Olá,%0D%0A%0D%0ASegue em anexo o certificado provisório devidamente assinado para validação no sistema.';
+    }
+
     function copiarPix() {
       const pixInput = document.getElementById('pix-copia-cola');
       pixInput.select();
@@ -1029,7 +1069,7 @@
     }
 
     /* ============================================== */
-    /* ATUALIZADO: GERAÇÃO DE PDF ALINHAMENTO/COORDENADAS*/
+    /* INCLUÍDO: ALINHAMENTO DO PDF CORRIGIDO         */
     /* ============================================== */
     async function gerarPDF() {
       const btn = document.getElementById('btn-baixar-pdf');
@@ -1063,11 +1103,13 @@
 
         const page = pdfDoc.getPages()[0];
 
-        // Ajustes finos: Mais para esquerda (30) e mais para cima (540)
-        const startX = 30;  
+        // --- AJUSTES DE COORDENADAS BASEADO NO SEU PRINT ---
+        // startX foi para 22 (bem mais para a esquerda, colado na margem)
+        // startY foi para 540 (um pouco mais para cima)
+        const startX = 25;  
         const startY = 540; 
         const espacoY = 15; 
-        const valorX = 140; 
+        const valorX = 135; // Alinhado onde começam os dados em negrito
 
         // Linhas de dados Centrais
         page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
@@ -1082,7 +1124,7 @@
         page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
         page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
 
-        // Data embaixo da ANVISA (Mais para a direita)
+        // Data embaixo da ANVISA (Movida mais para a direita)
         page.drawText(`DATA: ${dataEmissao}`, { x: 340, y: 100, size: 12, font: fontBold });
 
         const pdfBytes = await pdfDoc.save();
