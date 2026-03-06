@@ -253,7 +253,7 @@
     .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 900; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
-    /* --- FOOTER ATUALIZADO COM COR IGUAL AO SELO.JPG --- */
+    /* --- FOOTER ATUALIZADO COM COR IGUAL AO FUNDO DAS SUAS IMAGENS (PRETO CHUMBO) --- */
     footer { background: #111318; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
     img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
@@ -262,6 +262,8 @@
     .footer a { color: #aaa; transition: 0.3s; }
     .footer a:hover { color: white; padding-left: 5px; }
     .footer-bottom { background: #090a0d; padding: 25px 0; text-align: center; border-top: 1px solid #222; font-size: 0.9rem; }
+
+    .selo-link:hover { transform: scale(1.05); }
 
     /* Chatbot */
     .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; }
@@ -313,6 +315,9 @@
       .docs-grid { grid-template-columns: 1fr; }
       .progress-container { padding: 0; }
       .lgpd-bar { flex-direction: column; gap: 10px; text-align: center; }
+      
+      .selos-container { flex-direction: column; gap: 10px !important; }
+      .selos-container a { width: 100% !important; max-width: 200px; margin: 0 auto; }
     }
   </style>
 </head>
@@ -705,13 +710,19 @@
           <p style="margin: 0; color: #aaa;">E-mail: vigilanciasanitariaspgov1@gmail.com</p>
         </div>
         
-        <div style="position: relative; display: inline-block; width: 100%; max-width: 500px;">
-            <img src="selo.jpg" alt="Selos de Qualidade, Acessibilidade e Transparência" style="width: 100%; height: auto; display: block;" />
-            
-            <a href="https://call.icom-libras.com.br/smped/chamada/video?svId=6a144745-22d2-408c-9649-356872449766&preCall=true&queue=icom" target="_blank" style="position: absolute; left: 0; top: 0; width: 25%; height: 100%; z-index: 10;" title="CIL - Central de Intermediação em Libras"></a>
-            <a href="http://selodigital.imprensaoficial.com.br/validacao/SMPED/01195459cd224b834f" target="_blank" style="position: absolute; left: 25%; top: 0; width: 25%; height: 100%; z-index: 10;" title="Selo CPA - Acessibilidade Digital"></a>
-            <a href="https://sites.tcu.gov.br/verifique-adesao-pnpc/" target="_blank" style="position: absolute; left: 50%; top: 0; width: 25%; height: 100%; z-index: 10;" title="Programa Nacional de Prevenção à Corrupção"></a>
-            <a href="https://prefeitura.sp.gov.br/web/controladoria_geral/w/a_cgm/329588" target="_blank" style="position: absolute; left: 75%; top: 0; width: 25%; height: 100%; z-index: 10;" title="Transparência e Boas Práticas de Gestão"></a>
+        <div class="selos-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 550px; gap: 15px;">
+            <a href="https://call.icom-libras.com.br/smped/chamada/video?svId=6a144745-22d2-408c-9649-356872449766&preCall=true&queue=icom" class="selo-link" target="_blank" style="flex: 1; transition: 0.3s; display: block;" title="CIL - Central de Intermediação em Libras">
+                <img src="imagens/selo1.jpg" alt="CIL" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
+            </a>
+            <a href="http://selodigital.imprensaoficial.com.br/validacao/SMPED/01195459cd224b834f" class="selo-link" target="_blank" style="flex: 1; transition: 0.3s; display: block;" title="Selo CPA - Acessibilidade Digital">
+                <img src="imagens/selo2.jpg" alt="CPA" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
+            </a>
+            <a href="https://sites.tcu.gov.br/verifique-adesao-pnpc/" class="selo-link" target="_blank" style="flex: 1; transition: 0.3s; display: block;" title="Programa Nacional de Prevenção à Corrupção">
+                <img src="imagens/selo3.jpg" alt="Prevenção" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
+            </a>
+            <a href="https://prefeitura.sp.gov.br/web/controladoria_geral/w/a_cgm/329588" class="selo-link" target="_blank" style="flex: 1; transition: 0.3s; display: block;" title="Transparência e Boas Práticas de Gestão">
+                <img src="imagens/selo4.jpg" alt="Transparência" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
+            </a>
         </div>
       </div>
 
@@ -1072,7 +1083,7 @@
     }
 
     /* ============================================== */
-    /* ALINHAMENTO DO PDF CORRIGIDO                   */
+    /* ALINHAMENTO DO PDF CORRIGIDO MANTIDO           */
     /* ============================================== */
     async function gerarPDF() {
       const btn = document.getElementById('btn-baixar-pdf');
@@ -1106,8 +1117,6 @@
 
         const page = pdfDoc.getPages()[0];
 
-        // --- AJUSTES DE COORDENADAS BASEADO NO SEU PRINT ---
-        // startX 20 joga para alinhar à esquerda igual ao Nº PROCESSO
         const startX = 20;  
         const startY = 535; 
         const espacoY = 15; 
@@ -1126,7 +1135,7 @@
         page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
         page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
 
-        // Data embaixo da ANVISA (Movida mais para a esquerda para centralizar na linha preta)
+        // Data embaixo da ANVISA
         page.drawText(`DATA: ${dataEmissao}`, { x: 270, y: 100, size: 12, font: fontBold });
 
         const pdfBytes = await pdfDoc.save();
