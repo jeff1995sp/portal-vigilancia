@@ -45,7 +45,7 @@
     .access-widget a { background: #0d3c85; color: white; font-size: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); border-radius: 8px 0 0 8px; margin-bottom: 2px; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; text-decoration: none;}
     .access-widget a:hover { background: var(--sp-red); width: 55px; }
 
-    /* --- FEATURE: BARRA DE SEGURANÇA (AJUSTADA) --- */
+    /* --- FEATURE: BARRA DE SEGURANÇA --- */
     .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
     
     /* --- FEATURE: BARRA LGPD --- */
@@ -253,18 +253,20 @@
     .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 900; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
-    /* --- FOOTER ATUALIZADO COM COR EXATA DOS SELOS (.jpg) --- */
-    footer { background: #161719; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
+    /* --- FOOTER ATUALIZADO: COR EXATA DO FUNDO DAS IMAGENS --- */
+    footer { background: #17191d; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
     img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
     .footer h4 { color: white; font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; font-weight: 900; border-left: 3px solid var(--sp-red); padding-left: 10px; }
     .footer ul li { margin-bottom: 12px; }
     .footer a { color: #aaa; transition: 0.3s; }
     .footer a:hover { color: white; padding-left: 5px; }
-    .footer-bottom { background: #0c0d0f; padding: 25px 0; text-align: center; border-top: 1px solid #222; font-size: 0.9rem; }
+    .footer-bottom { background: #0c0d10; padding: 25px 0; text-align: center; border-top: 1px solid #222; font-size: 0.9rem; }
 
-    .selo-link { display: block; transition: 0.3s; }
-    .selo-link:hover { transform: scale(1.05); }
+    /* Estilo dos selos corrigido: sem bug no fundo e com animação suave */
+    .selo-link { display: block; transition: transform 0.3s ease; }
+    .selo-link:hover { transform: translateY(-4px) scale(1.05); }
+    .selo-link img { width: 100%; height: auto; display: block; mix-blend-mode: lighten; border-radius: 8px; }
 
     /* Chatbot */
     .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; }
@@ -712,17 +714,17 @@
         </div>
         
         <div class="selos-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 550px; gap: 15px;">
-            <a href="https://call.icom-libras.com.br/smped/chamada/video?svId=6a144745-22d2-408c-9649-356872449766&preCall=true&queue=icom" class="selo-link" target="_blank" style="flex: 1; display: block;" title="CIL - Central de Intermediação em Libras">
-                <img src="imagens/selo1.jpg" alt="CIL" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
+            <a href="https://call.icom-libras.com.br/smped/chamada/video?svId=6a144745-22d2-408c-9649-356872449766&preCall=true&queue=icom" class="selo-link" target="_blank" title="CIL - Central de Intermediação em Libras">
+                <img src="imagens/selo1.jpg" alt="CIL" />
             </a>
-            <a href="http://selodigital.imprensaoficial.com.br/validacao/SMPED/01195459cd224b834f" class="selo-link" target="_blank" style="flex: 1; display: block;" title="Selo CPA - Acessibilidade Digital">
-                <img src="imagens/selo2.jpg" alt="CPA" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
+            <a href="http://selodigital.imprensaoficial.com.br/validacao/SMPED/01195459cd224b834f" class="selo-link" target="_blank" title="Selo CPA - Acessibilidade Digital">
+                <img src="imagens/selo2.jpg" alt="CPA" />
             </a>
-            <a href="https://sites.tcu.gov.br/verifique-adesao-pnpc/" class="selo-link" target="_blank" style="flex: 1; display: block;" title="Programa Nacional de Prevenção à Corrupção">
-                <img src="imagens/selo3.jpg" alt="Prevenção" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
+            <a href="https://sites.tcu.gov.br/verifique-adesao-pnpc/" class="selo-link" target="_blank" title="Programa Nacional de Prevenção à Corrupção">
+                <img src="imagens/selo3.jpg" alt="Prevenção" />
             </a>
-            <a href="https://prefeitura.sp.gov.br/web/controladoria_geral/w/a_cgm/329588" class="selo-link" target="_blank" style="flex: 1; display: block;" title="Transparência e Boas Práticas de Gestão">
-                <img src="imagens/selo4.jpg" alt="Transparência" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
+            <a href="https://prefeitura.sp.gov.br/web/controladoria_geral/w/a_cgm/329588" class="selo-link" target="_blank" title="Transparência e Boas Práticas de Gestão">
+                <img src="imagens/selo4.jpg" alt="Transparência" />
             </a>
         </div>
       </div>
@@ -855,9 +857,6 @@
       }
     }
 
-    /* ============================================== */
-    /* CHECKLIST COM BOTÃO DE UPLOAD                  */
-    /* ============================================== */
     function toggleUpload(el) {
       const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload');
       if (el.checked) {
@@ -916,9 +915,6 @@
       calcularRisco();
     }
 
-    /* ============================================== */
-    /* ALERTA DE RISCO MAIS SUAVE                     */
-    /* ============================================== */
     function calcularRisco() {
       let divRisco = document.getElementById('risco-multa');
       divRisco.style.display = 'block';
@@ -944,7 +940,6 @@
         else naoMarcados.push(el.value);
       });
 
-      // --- TRAVA: NÃO DEIXA ENVIAR SE NENHUM DOCUMENTO FOR MARCADO ---
       if (marcados.length === 0 && todasOpcoes.length > 0) {
         alert("Atenção: Você precisa selecionar pelo menos um documento que já possui e anexar o arquivo antes de enviar os dados para análise.");
         return; 
@@ -997,9 +992,6 @@
       }, 1000);
     }
 
-    /* ============================================== */
-    /* ÁREA DE ENVIO DE ASSINATURA P/ E-MAIL          */
-    /* ============================================== */
     document.getElementById('form-consulta').addEventListener('submit', (e) => {
       e.preventDefault();
       const cnpj = document.getElementById('consulta_cnpj').value;
@@ -1020,7 +1012,6 @@
         divPix.style.display = 'none'; divMsg.style.display = 'block';
         divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
         
-        // Área com Botão de PDF + Botão de Enviar Assinatura pro E-mail
         textMsg.innerHTML = `
           <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
           <strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>
@@ -1060,7 +1051,6 @@
       }
     });
 
-    // Envio para o Email Específico que você pediu
     function enviarAssinaturaEmail() {
       const cnpj = document.getElementById('consulta_cnpj').value || 'Não Informado';
       alert('Atenção: Será aberto o seu aplicativo de e-mail. Por favor, ANEXE o arquivo que você acabou de selecionar lá no e-mail antes de enviar!');
@@ -1083,9 +1073,6 @@
       enviarWhatsApp(msg);
     }
 
-    /* ============================================== */
-    /* ALINHAMENTO DO PDF CORRIGIDO MANTIDO           */
-    /* ============================================== */
     async function gerarPDF() {
       const btn = document.getElementById('btn-baixar-pdf');
       const textoOriginal = btn.innerHTML;
