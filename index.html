@@ -253,16 +253,17 @@
     .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 900; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
-    /* --- FOOTER ATUALIZADO COM COR IGUAL AO FUNDO DAS SUAS IMAGENS (PRETO CHUMBO) --- */
-    footer { background: #111318; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
+    /* --- FOOTER ATUALIZADO COM COR EXATA DOS SELOS (.jpg) --- */
+    footer { background: #161719; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
     img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
     .footer h4 { color: white; font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; font-weight: 900; border-left: 3px solid var(--sp-red); padding-left: 10px; }
     .footer ul li { margin-bottom: 12px; }
     .footer a { color: #aaa; transition: 0.3s; }
     .footer a:hover { color: white; padding-left: 5px; }
-    .footer-bottom { background: #090a0d; padding: 25px 0; text-align: center; border-top: 1px solid #222; font-size: 0.9rem; }
+    .footer-bottom { background: #0c0d0f; padding: 25px 0; text-align: center; border-top: 1px solid #222; font-size: 0.9rem; }
 
+    .selo-link { display: block; transition: 0.3s; }
     .selo-link:hover { transform: scale(1.05); }
 
     /* Chatbot */
@@ -316,8 +317,8 @@
       .progress-container { padding: 0; }
       .lgpd-bar { flex-direction: column; gap: 10px; text-align: center; }
       
-      .selos-container { flex-direction: column; gap: 10px !important; }
-      .selos-container a { width: 100% !important; max-width: 200px; margin: 0 auto; }
+      .selos-container { flex-direction: column; gap: 15px !important; }
+      .selos-container a { width: 100% !important; max-width: 250px; margin: 0 auto; }
     }
   </style>
 </head>
@@ -711,16 +712,16 @@
         </div>
         
         <div class="selos-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 550px; gap: 15px;">
-            <a href="https://call.icom-libras.com.br/smped/chamada/video?svId=6a144745-22d2-408c-9649-356872449766&preCall=true&queue=icom" class="selo-link" target="_blank" style="flex: 1; transition: 0.3s; display: block;" title="CIL - Central de Intermediação em Libras">
+            <a href="https://call.icom-libras.com.br/smped/chamada/video?svId=6a144745-22d2-408c-9649-356872449766&preCall=true&queue=icom" class="selo-link" target="_blank" style="flex: 1; display: block;" title="CIL - Central de Intermediação em Libras">
                 <img src="imagens/selo1.jpg" alt="CIL" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
             </a>
-            <a href="http://selodigital.imprensaoficial.com.br/validacao/SMPED/01195459cd224b834f" class="selo-link" target="_blank" style="flex: 1; transition: 0.3s; display: block;" title="Selo CPA - Acessibilidade Digital">
+            <a href="http://selodigital.imprensaoficial.com.br/validacao/SMPED/01195459cd224b834f" class="selo-link" target="_blank" style="flex: 1; display: block;" title="Selo CPA - Acessibilidade Digital">
                 <img src="imagens/selo2.jpg" alt="CPA" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
             </a>
-            <a href="https://sites.tcu.gov.br/verifique-adesao-pnpc/" class="selo-link" target="_blank" style="flex: 1; transition: 0.3s; display: block;" title="Programa Nacional de Prevenção à Corrupção">
+            <a href="https://sites.tcu.gov.br/verifique-adesao-pnpc/" class="selo-link" target="_blank" style="flex: 1; display: block;" title="Programa Nacional de Prevenção à Corrupção">
                 <img src="imagens/selo3.jpg" alt="Prevenção" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
             </a>
-            <a href="https://prefeitura.sp.gov.br/web/controladoria_geral/w/a_cgm/329588" class="selo-link" target="_blank" style="flex: 1; transition: 0.3s; display: block;" title="Transparência e Boas Práticas de Gestão">
+            <a href="https://prefeitura.sp.gov.br/web/controladoria_geral/w/a_cgm/329588" class="selo-link" target="_blank" style="flex: 1; display: block;" title="Transparência e Boas Práticas de Gestão">
                 <img src="imagens/selo4.jpg" alt="Transparência" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
             </a>
         </div>
