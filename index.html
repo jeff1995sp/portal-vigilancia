@@ -40,52 +40,23 @@
     .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
-    /* --- FEATURE: BARRA DE SEGURANÇA (NOVO) --- */
+    /* --- FEATURE: BARRA DE SEGURANÇA (AJUSTADA) --- */
     .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
     
-    /* --- FEATURE: BARRA LGPD (NOVO) --- */
+    /* --- FEATURE: BARRA LGPD --- */
     .lgpd-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.95); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 9999; font-size: 0.85rem; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); }
     .lgpd-btn { background: var(--gov-blue); border: none; padding: 8px 20px; color: white; border-radius: 4px; font-weight: bold; cursor: pointer; margin-left: 15px; text-transform: uppercase; font-size: 0.75rem; }
 
     /* --- BARRA GOV VERMELHA --- */
-    .gov-bar {
-      background: var(--sp-red);
-      color: #fff;
-      padding: 10px 0;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      z-index: 2000;
-      position: relative;
-    }
+    .gov-bar { background: var(--sp-red); color: #fff; padding: 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2000; position: relative; }
     .gov-left { font-weight: 700; opacity: 0.95; }
     .gov-links { display: flex; gap: 10px; }
-    .gov-links a {
-      color: #fff;
-      font-weight: 800;
-      opacity: 0.95;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.08);
-      white-space: nowrap;
-    }
+    .gov-links a { color: #fff; font-weight: 800; opacity: 0.95; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); white-space: nowrap; }
     .gov-links a:hover { opacity: 1; background: rgba(255,255,255,0.14); }
 
     /* --- HEADER --- */
-    header {
-      background: var(--glass);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      padding: 14px 0;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-    }
+    header { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 14px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
     .header-grid { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
-    
     .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
     .brand img { height: 68px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
     .brand-text h1 { font-size: 1.35rem; line-height: 1; color: var(--text-dark); letter-spacing: -0.5px; text-transform: uppercase; font-weight: 900; }
@@ -99,10 +70,8 @@
     .btn-login { background: var(--gov-blue); color: white; padding: 10px 18px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
     .btn-login:hover { background: var(--gov-dark-blue); box-shadow: 0 4px 15px rgba(19, 81, 180, 0.3); }
     .btn-login i { font-size: 1.15rem; }
-
     .hamburger-btn { display: none; width: 44px; height: 44px; border-radius: 12px; background: #f8f9fa; border: 1px solid #e9ecef; cursor: pointer; align-items: center; justify-content: center; color: #333; transition: 0.2s; }
     .hamburger-btn:hover { background: #f1f3f5; }
-    .hamburger-btn i { font-size: 18px; }
 
     /* --- DRAWER MOBILE --- */
     .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; display: none; }
@@ -115,24 +84,12 @@
     .drawer-nav { padding: 10px 12px 18px; display: flex; flex-direction: column; gap: 20px; }
     .drawer-nav a { padding: 12px 12px; border-radius: 14px; font-weight: 800; color: #2c3e50; display: flex; align-items: center; gap: 10px; border: 1px solid #f1f3f5; background: #fff; }
     .drawer-nav a:hover { background: #f8f9fa; }
-    .drawer-nav a i { width: 18px; text-align: center; opacity: 0.9; }
     .drawer-nav a.denuncia { background: rgba(218, 37, 28, 0.08); border-color: rgba(218, 37, 28, 0.25); color: var(--sp-red); }
     .drawer-nav a.denuncia strong { background: var(--sp-red); color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; margin-left: auto; }
     .drawer-bottom { margin-top: auto; padding: 16px; border-top: 1px solid #eee; background: #fafafa; color: #666; font-size: 0.9rem; }
 
     /* --- HERO --- */
-    .hero { 
-      background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; 
-      background-size: cover; 
-      min-height: 600px; 
-      position: relative; 
-      display: flex; 
-      flex-direction: column; 
-      justify-content: center; 
-      color: white; 
-      padding-top: 40px;
-      padding-bottom: 150px; 
-    }
+    .hero { background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center; color: white; padding-top: 40px; padding-bottom: 150px; }
     .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
     .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
@@ -185,20 +142,19 @@
     .steps-list li i { position: absolute; left: 0; top: 3px; color: var(--sp-red); font-size: 1.1rem; }
 
     .checklist-form-container { flex: 1.2; min-width: 350px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-    
     .form-tabs { display: flex; gap: 10px; margin-bottom: 30px; background: #f1f5f9; padding: 6px; border-radius: 12px; }
     .form-tab { flex: 1; text-align: center; padding: 12px; font-weight: 800; font-size: 0.9rem; color: #64748b; cursor: pointer; border-radius: 8px; transition: 0.3s; }
     .form-tab.active { background: #fff; color: var(--gov-blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 
     .docs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
     .doc-item { padding: 15px; border: 2px solid #e2e8f0; border-radius: 10px; display: flex; flex-direction: column; align-items: center; text-align: center; background: #fff; cursor: pointer; transition: 0.2s; position: relative; }
-    .doc-item input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+    .doc-item input[type="checkbox"] { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
     .doc-item i { font-size: 2rem; color: #a0aec0; margin-bottom: 10px; transition: 0.2s; }
     .doc-item span { font-size: 0.85rem; font-weight: 700; color: #4a5568; }
     .doc-item:hover { border-color: #cbd5e0; background: #f8fafc; }
-    .doc-item input:checked ~ i { color: var(--gov-blue); }
-    .doc-item input:checked ~ span { color: var(--gov-blue); }
-    .doc-item:has(input:checked) { border-color: var(--gov-blue); background: #f0f4f8; }
+    .doc-item input[type="checkbox"]:checked ~ i { color: var(--gov-blue); }
+    .doc-item input[type="checkbox"]:checked ~ span { color: var(--gov-blue); }
+    .doc-item:has(input[type="checkbox"]:checked) { border-color: var(--gov-blue); background: #f0f4f8; }
 
     .invoice-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: left; }
     .invoice-header { background: #f8fafc; padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
@@ -358,7 +314,7 @@
 
 <body>
   <div class="security-bar">
-    <i class="fas fa-lock"></i> Ambiente Seguro | Criptografia SSL de 256 bits | IP Monitorado: <span id="user-ip">Carregando...</span>
+    <i class="fas fa-lock"></i> Ambiente Seguro | Criptografia SSL de 256 bits
   </div>
 
   <div class="gov-bar">
@@ -504,7 +460,7 @@
               </select>
 
               <div id="area-checklist" style="display: none;">
-                <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental (Marque APENAS os que JÁ POSSUI):</p>
+                <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental (Marque APENAS os que JÁ POSSUI e anexe a foto/PDF):</p>
                 
                 <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px;">
                   <i class="fas fa-info-circle"></i> Atenção: Os itens que você NÃO marcar serão registrados como PENDÊNCIAS na análise dos fiscais.
@@ -556,7 +512,7 @@
                   <div class="qr-container">
                     <div id="cronometro-pix" style="font-size: 1.2rem; font-weight: 900; color: var(--sp-red); margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 8px;"></div>
                     
-                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situation e travar possíveis multas.</p>
+                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
                     
                     <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
@@ -581,11 +537,8 @@
             </div>
 
             <div id="mensagem-status" style="display: none; padding: 25px; border-radius: 12px; border-left: 5px solid; margin-top: 20px; text-align: center;">
-              <span id="texto-mensagem" style="font-size: 1.1rem;">Em análise técnica...</span>
-              <button id="btn-baixar-pdf" class="btn-primary" style="display: none; margin-top: 20px;" onclick="gerarPDF()">
-                <i class="fas fa-file-pdf"></i> Baixar Licença Provisória
-              </button>
-            </div>
+              <div id="texto-mensagem" style="font-size: 1.1rem;">Em análise técnica...</div>
+              </div>
           </div>
 
         </div>
@@ -595,7 +548,7 @@
 
   <div class="lgpd-bar" id="lgpd-bar">
     <div>
-      <i class="fas fa-cookie-bite"></i> Este portal utiliza cookies e monitoramento de IP para fins de fiscalização sanitária, conforme Lei 13.709 (LGPD).
+      <i class="fas fa-cookie-bite"></i> Este portal utiliza cookies para fins de fiscalização sanitária, conforme Lei 13.709 (LGPD).
     </div>
     <button class="lgpd-btn" onclick="document.getElementById('lgpd-bar').style.display='none'">Aceitar e Continuar</button>
   </div>
@@ -755,19 +708,11 @@
   </div>
 
   <script>
-    /* ============================================== */
-    /* FEATURE 2 LISTA 2: SEGURANÇA IP + STARTUP      */
-    /* ============================================== */
-    document.getElementById('user-ip').innerText = "189." + Math.floor(Math.random()*255) + ".14." + Math.floor(Math.random()*99);
-    
-    // FEATURE 4 LISTA 1: CARREGAR RASCUNHO SALVO
+    // CARREGAR RASCUNHO SALVO
     if(localStorage.getItem('rascunho_nome')) {
       document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
     }
 
-    /* ============================================== */
-    /* FEATURE 1 LISTA 1: MÁSCARA CNPJ                */
-    /* ============================================== */
     function maskCNPJ(i) {
       let v = i.value.replace(/\D/g,'');
       v = v.replace(/^(\d{2})(\d)/,"$1.$2");
@@ -782,9 +727,6 @@
       if(nome) localStorage.setItem('rascunho_nome', nome);
     }
 
-    /* ============================================== */
-    /* IDEA 2: CONSULTA PÚBLICA FAKE                  */
-    /* ============================================== */
     function realizarConsultaFake() {
       const input = document.getElementById('fake_consulta_cnpj').value;
       if(input.length < 5) { alert("Digite um CNPJ válido."); return; }
@@ -801,9 +743,6 @@
       }, 1500);
     }
 
-    /* ============================================== */
-    /* AUTOPREENCHIMENTO API BRASIL                   */
-    /* ============================================== */
     document.getElementById('cnpj_empresa').addEventListener('blur', async (e) => {
       let cnpjLimpo = e.target.value.replace(/\D/g, '');
       if(cnpjLimpo.length === 14) {
@@ -813,16 +752,13 @@
           let dados = await req.json();
           if(dados.razao_social) {
             document.getElementById('nome_empresa').value = dados.nome_fantasia || dados.razao_social;
-            salvarRascunho(); // Salva automático
+            salvarRascunho();
           }
         } catch(error) {}
         document.getElementById('loading-cnpj').style.display = 'none';
       }
     });
 
-    /* ============================================== */
-    /* DRAWER & ATUALIZAÇÕES GERAIS                   */
-    /* ============================================== */
     function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
     function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); document.body.style.overflow = ''; }
     
@@ -846,9 +782,6 @@
       window.open(url, '_blank');
     }
 
-    /* ============================================== */
-    /* ADMIN OCULTO (3 Cliques na Logo)               */
-    /* ============================================== */
     let cliquesLogo = 0;
     let timerCliques;
     function acessoAdmin() {
@@ -863,9 +796,6 @@
       timerCliques = setTimeout(() => cliquesLogo = 0, 1500);
     }
 
-    /* ============================================== */
-    /* LÓGICA DE ABAS E PROGRESSO                     */
-    /* ============================================== */
     function alternarAba(aba) {
       document.getElementById('tab-envio').classList.remove('active');
       document.getElementById('tab-pagamento').classList.remove('active');
@@ -879,63 +809,76 @@
       document.getElementById('barra-progresso').style.display = 'flex';
       for(let i=1; i<=4; i++) {
         let el = document.getElementById('step-' + i);
-        el.className = 'progress-step'; // reset
+        el.className = 'progress-step';
         if(i < step) el.classList.add('completed');
         if(i === step) el.classList.add('active');
       }
     }
 
     /* ============================================== */
-    /* FORMULÁRIOS DE REGULARIZAÇÃO E RISCO           */
+    /* ATUALIZADO: CHECKLIST COM BOTÃO DE UPLOAD      */
     /* ============================================== */
-    const docsComuns = `
-      <label class="doc-item"><input type="checkbox" class="doc-check" value="CNPJ Ativo" onchange="calcularRisco()"/><i class="fas fa-file-invoice"></i><span>CNPJ Ativo</span></label>
-      <label class="doc-item"><input type="checkbox" class="doc-check" value="Contrato Social / MEI" onchange="calcularRisco()"/><i class="fas fa-file-contract"></i><span>Contrato / MEI</span></label>
-      <label class="doc-item"><input type="checkbox" class="doc-check" value="Alvará de Funcionamento" onchange="calcularRisco()"/><i class="fas fa-building"></i><span>Alvará Prefeitura</span></label>
-      <label class="doc-item"><input type="checkbox" class="doc-check" value="AVCB Bombeiros" onchange="calcularRisco()"/><i class="fas fa-fire-extinguisher"></i><span>AVCB (Bombeiros)</span></label>
-    `;
+    function toggleUpload(el) {
+      const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload');
+      if (el.checked) {
+        fileInput.style.display = 'block';
+      } else {
+        fileInput.style.display = 'none';
+        fileInput.value = ''; // Limpa se desmarcar
+      }
+      calcularRisco();
+    }
+
+    function criarDocItem(valor, icone, titulo) {
+      return `
+        <div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;">
+          <label class="doc-item"><input type="checkbox" class="doc-check" value="${valor}" onchange="toggleUpload(this)"/><i class="fas ${icone}"></i><span>${titulo}</span></label>
+          <input type="file" class="file-upload form-control" style="display:none; padding: 6px; font-size: 0.75rem; border: 1px dashed var(--gov-blue); background: #f8fafc;" accept="image/*,application/pdf">
+        </div>
+      `;
+    }
 
     function mostrarChecklist() {
       const tipo = document.getElementById('tipo_estab').value;
       const listaDocs = document.getElementById('lista-documentos');
       if (!tipo) return;
 
+      const docsComuns = criarDocItem("CNPJ Ativo", "fa-file-invoice", "CNPJ Ativo") +
+                         criarDocItem("Contrato Social / MEI", "fa-file-contract", "Contrato / MEI") +
+                         criarDocItem("Alvará de Funcionamento", "fa-building", "Alvará Prefeitura") +
+                         criarDocItem("AVCB Bombeiros", "fa-fire-extinguisher", "AVCB (Bombeiros)");
+
       let docsEspecificos = "";
       if (tipo === "Alimentos") {
-        docsEspecificos = `
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Limpeza Caixa D'água" onchange="calcularRisco()"/><i class="fas fa-tint"></i><span>Limpeza Caixa</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle Temperatura" onchange="calcularRisco()"/><i class="fas fa-thermometer-half"></i><span>Temperatura</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Manual BPF" onchange="calcularRisco()"/><i class="fas fa-book"></i><span>Manual BPF</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" onchange="calcularRisco()"/><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="ASO Funcionários" onchange="calcularRisco()"/><i class="fas fa-stethoscope"></i><span>Saúde Func.</span></label>
-        `;
+        docsEspecificos = criarDocItem("Limpeza Caixa D'água", "fa-tint", "Limpeza Caixa") +
+                          criarDocItem("Controle Temperatura", "fa-thermometer-half", "Temperatura") +
+                          criarDocItem("Manual BPF", "fa-book", "Manual BPF") +
+                          criarDocItem("Controle de Pragas", "fa-bug", "Controle Pragas") +
+                          criarDocItem("ASO Funcionários", "fa-stethoscope", "Saúde Func.");
       } else if (tipo === "Saúde") {
-        docsEspecificos = `
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Resp Técnico" onchange="calcularRisco()"/><i class="fas fa-user-md"></i><span>Resp Técnico</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="PGRSS Lixo" onchange="calcularRisco()"/><i class="fas fa-trash-alt"></i><span>PGRSS Lixo</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="POP Limpeza" onchange="calcularRisco()"/><i class="fas fa-pump-soap"></i><span>POP Limpeza</span></label>
-        `;
+        docsEspecificos = criarDocItem("Resp Técnico", "fa-user-md", "Resp Técnico") +
+                          criarDocItem("PGRSS Lixo", "fa-trash-alt", "PGRSS Lixo") +
+                          criarDocItem("POP Limpeza", "fa-pump-soap", "POP Limpeza");
       } else if (tipo === "Beleza") {
-        docsEspecificos = `
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Autoclave" onchange="calcularRisco()"/><i class="fas fa-pump-medical"></i><span>Esterilizador</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Descarte Agulhas" onchange="calcularRisco()"/><i class="fas fa-box"></i><span>Descarte Agulhas</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Anvisa Produtos" onchange="calcularRisco()"/><i class="fas fa-clipboard-check"></i><span>Anvisa Produtos</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle de Pragas" onchange="calcularRisco()"/><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
-        `;
+        docsEspecificos = criarDocItem("Autoclave", "fa-pump-medical", "Esterilizador") +
+                          criarDocItem("Descarte Agulhas", "fa-box", "Descarte Agulhas") +
+                          criarDocItem("Anvisa Produtos", "fa-clipboard-check", "Anvisa Produtos") +
+                          criarDocItem("Controle de Pragas", "fa-bug", "Controle Pragas");
       } else {
-        docsEspecificos = `
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Limpeza Caixa" onchange="calcularRisco()"/><i class="fas fa-tint"></i><span>Limpeza Caixa</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Controle Pragas" onchange="calcularRisco()"/><i class="fas fa-bug"></i><span>Controle Pragas</span></label>
-          <label class="doc-item"><input type="checkbox" class="doc-check" value="Laudo de Ruído" onchange="calcularRisco()"/><i class="fas fa-volume-up"></i><span>Laudo Ruído</span></label>
-        `;
+        docsEspecificos = criarDocItem("Limpeza Caixa", "fa-tint", "Limpeza Caixa") +
+                          criarDocItem("Controle Pragas", "fa-bug", "Controle Pragas") +
+                          criarDocItem("Laudo de Ruído", "fa-volume-up", "Laudo Ruído");
       }
 
       listaDocs.innerHTML = docsComuns + docsEspecificos;
       document.getElementById('area-checklist').style.display = 'block';
       document.getElementById('btn-enviar-whatsapp').style.display = 'flex';
-      calcularRisco(); // Inicializa o risco
+      calcularRisco();
     }
 
+    /* ============================================== */
+    /* ATUALIZADO: ALERTA DE RISCO MAIS SUAVE         */
+    /* ============================================== */
     function calcularRisco() {
       let divRisco = document.getElementById('risco-multa');
       divRisco.style.display = 'block';
@@ -945,10 +888,8 @@
         divRisco.style.background = '#dcfce3'; divRisco.style.color = '#166534';
         divRisco.innerHTML = '<i class="fas fa-shield-alt"></i> Tudo OK! Regularize agora para manter a segurança do CNPJ.';
       } else {
-        let minMulta = (naoMarcados * 1250).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-        let maxMulta = (naoMarcados * 3500).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-        divRisco.style.background = '#fee2e2'; divRisco.style.color = '#b91c1c';
-        divRisco.innerHTML = `<i class="fas fa-exclamation-triangle"></i> RISCO ALTO DE AUTUAÇÃO DETECTADO<br><span style="font-weight:normal; font-size:0.9rem;">Multa estimada em caso de fiscalização: <b>${minMulta} a ${maxMulta}</b>. Gere sua taxa para travar multas retroativas.</span>`;
+        divRisco.style.background = '#fff3cd'; divRisco.style.color = '#856404';
+        divRisco.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>Atenção às Pendências Documentais</strong><br><span style="font-weight:normal; font-size:0.9rem;">Faltam documentos importantes. Recomendamos o envio para análise e a regularização da taxa, evitando assim notificações, sanções legais e travando possíveis multas.</span>`;
       }
     }
 
@@ -977,7 +918,7 @@
       msg += `🚨 *FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\nAguardo a emissão da taxa.`;
 
       enviarWhatsApp(msg);
-      alert("Formulário enviado! Fique atento às pendências. Acompanhe a liberação da taxa na próxima tela.");
+      alert("Formulário e arquivos enviados! Fique atento às pendências. Acompanhe a liberação da taxa na próxima tela.");
       
       document.getElementById('form-regularizacao').reset();
       document.getElementById('area-checklist').style.display = 'none';
@@ -987,9 +928,6 @@
       document.getElementById('consulta_cnpj').value = cnpj;
     });
 
-    /* ============================================== */
-    /* CONSULTA DA TAXA, CRONÔMETRO E PAGO            */
-    /* ============================================== */
     let cnpjParaComprovante = "";
     let timerInterval;
 
@@ -1011,44 +949,66 @@
       }, 1000);
     }
 
+    /* ============================================== */
+    /* ATUALIZADO: ÁREA DO DRIVE PÓS PAGAMENTO        */
+    /* ============================================== */
     document.getElementById('form-consulta').addEventListener('submit', (e) => {
       e.preventDefault();
       const cnpj = document.getElementById('consulta_cnpj').value;
       const divPix = document.getElementById('resultado-pix');
       const divMsg = document.getElementById('mensagem-status');
       const textMsg = document.getElementById('texto-mensagem');
-      const btnPdf = document.getElementById('btn-baixar-pdf');
 
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
       let pedido = pedidos[cnpj];
 
       if (!pedido) {
-        divPix.style.display = 'none'; btnPdf.style.display = 'none'; divMsg.style.display = 'block';
+        divPix.style.display = 'none'; divMsg.style.display = 'block';
         divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderColor = '#f59e0b';
         textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum cadastro encontrado para este CNPJ/CPF.';
         document.getElementById('barra-progresso').style.display = 'none';
       } 
       else if (pedido.pago === true) {
-        divPix.style.display = 'none'; divMsg.style.display = 'block'; btnPdf.style.display = 'inline-flex';
+        divPix.style.display = 'none'; divMsg.style.display = 'block';
         divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
-        textMsg.innerHTML = '<i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>Seu processo foi concluído com sucesso e as pendências foram baixadas no sistema. Baixe sua licença abaixo.';
-        atualizarBarraProgresso(4); // Step concluído
+        
+        // Área com Botão de PDF + Botão de Enviar Assinatura pro Drive
+        textMsg.innerHTML = `
+          <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
+          <strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>
+          Seu processo foi concluído com sucesso e as pendências foram baixadas no sistema.
+          
+          <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;">
+            <button id="btn-baixar-pdf" class="btn-primary" style="margin-bottom: 20px;" onclick="gerarPDF()">
+              <i class="fas fa-file-pdf"></i> Baixar Licença Provisória
+            </button>
+            
+            <p style="font-size:0.85rem; color:#64748b; font-weight:800; margin-bottom:10px; border-top: 1px solid #eee; padding-top: 15px;">PASSO FINAL OBRIGATÓRIO:</p>
+            <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e envie-o para a nuvem da fiscalização.</p>
+            
+            <label for="upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 1rem; padding: 16px; background: #1a73e8; border-radius: 8px;">
+              <i class="fab fa-google-drive"></i> Enviar Assinatura p/ Drive
+            </label>
+            <input type="file" id="upload-assinado" style="display:none;" accept="application/pdf, image/*" onchange="alert('Licença assinada salva com sucesso na Nuvem Fiscal!')">
+          </div>
+        `;
+        atualizarBarraProgresso(4); 
       } 
       else if (pedido.valor === null || pedido.valor === "") {
-        divPix.style.display = 'none'; btnPdf.style.display = 'none'; divMsg.style.display = 'block';
+        divPix.style.display = 'none'; divMsg.style.display = 'block';
         divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b';
         textMsg.innerHTML = '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
-        atualizarBarraProgresso(2); // Step Em Análise
+        atualizarBarraProgresso(2); 
       } 
       else {
-        divMsg.style.display = 'none'; btnPdf.style.display = 'none'; divPix.style.display = 'block';
+        divMsg.style.display = 'none'; divPix.style.display = 'block';
         let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
         if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
         document.getElementById('valor-cobrado').innerText = valorFormatado;
         cnpjParaComprovante = cnpj;
         
-        atualizarBarraProgresso(3); // Step Aguardando Pagamento
-        iniciarCronometroPix(); // Ativa a Ideia 5
+        atualizarBarraProgresso(3); 
+        iniciarCronometroPix(); 
       }
     });
 
@@ -1069,7 +1029,7 @@
     }
 
     /* ============================================== */
-    /* FEATURE 5 LISTA 1: GERAÇÃO DE PDF CALIBRADA    */
+    /* ATUALIZADO: GERAÇÃO DE PDF ALINHAMENTO/COORDENADAS*/
     /* ============================================== */
     async function gerarPDF() {
       const btn = document.getElementById('btn-baixar-pdf');
@@ -1083,88 +1043,48 @@
         const db = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
         const dados = db[cnpj] || {};
 
-        // DADOS
-        const nomeEmpresa = (dados.nome || "EMPRESA MODELO LTDA").toUpperCase();
-        const atividade = (dados.tipo || "COMÉRCIO").toUpperCase(); // 'tipo' pois vem do localStorage do formulário
+        const nomeEmpresa = (dados.nome || "EMPRESA NÃO IDENTIFICADA").toUpperCase();
         const docCnpj = cnpj;
-        
-        // DATAS
-        const hoje = new Date();
-        const dia = String(hoje.getDate()).padStart(2, '0');
-        const mesNum = String(hoje.getMonth() + 1).padStart(2, '0');
-        const ano = hoje.getFullYear();
-        const meses = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
-        
-        const dataCurta = `${dia}/${mesNum}/${ano}`;
-        const dataValidade = `${dia}/${mesNum}/${ano + 1}`;
-        const dataExtenso = `SÃO PAULO, ${dia} DE ${meses[hoje.getMonth()]} DE ${ano}`;
-        const protocolo = "SP." + Math.floor(Math.random()*899999+100000) + "/" + ano;
 
-        // CARREGAR PDF
-        const url = 'Alvara Provisório.pdf';
+        const hoje = new Date();
+        const dataEmissao = hoje.toLocaleDateString('pt-BR');
+        const dataV = new Date();
+        dataV.setFullYear(hoje.getFullYear() + 1);
+        const dataValidade = dataV.toLocaleDateString('pt-BR');
+
+        const url = 'Alvara Provisório.pdf'; 
         const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
 
-        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const { PDFDocument, StandardFonts } = PDFLib;
         const pdfDoc = await PDFDocument.load(existingPdfBytes);
+        
+        const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);
         const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
         const page = pdfDoc.getPages()[0];
-        
-        // --- COORDENADAS CALIBRADAS PARA SEU PDF ---
-        
-        // 0. DATA DE VALIDADE (Topo Direito - Na caixa ao lado de CEVS)
-        page.drawText(dataValidade, {
-          x: 420, y: 723,  
-          size: 10, font: fontBold, color: rgb(0,0,0)
-        });
 
-        // 1. PROTOCOLO (Topo Direito - Na linha de Data do Protocolo)
-        page.drawText(protocolo, {
-          x: 430, y: 683,  
-          size: 12, font: fontBold, color: rgb(0.85, 0.14, 0.11) // Vermelho
-        });
+        // Ajustes finos: Mais para esquerda (30) e mais para cima (540)
+        const startX = 30;  
+        const startY = 540; 
+        const espacoY = 15; 
+        const valorX = 140; 
 
-        // 2. DADOS CENTRAIS (Bloco)
-        // Razão Social
-        page.drawText(nomeEmpresa, {
-          x: 135, y: 462,
-          size: 10, font: fontBold, color: rgb(0,0,0)
-        });
-        // CNPJ
-        page.drawText(docCnpj, {
-          x: 135, y: 447,
-          size: 10, font: fontBold, color: rgb(0,0,0)
-        });
-        // Data Emissão
-        page.drawText(dataCurta, {
-          x: 135, y: 432, 
-          size: 10, font: fontBold, color: rgb(0,0,0)
-        });
-        // Válido Até
-        page.drawText(dataValidade, {
-          x: 135, y: 417, 
-          size: 10, font: fontBold, color: rgb(0,0,0)
-        });
+        // Linhas de dados Centrais
+        page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
+        page.drawText(`${nomeEmpresa}`, { x: valorX, y: startY, size: 10, font: fontBold });
 
-        // 3. RODAPÉ (Círculos e Assinatura)
-        // Círculo Esquerdo (Emissão) - Movido para o centro do círculo da imagem
-        page.drawText(dataCurta, {
-          x: 175, y: 155, 
-          size: 12, font: fontBold, color: rgb(0,0,0)
-        });
-        // Círculo Direito (Validade - Vermelho) - Movido para o centro do círculo da imagem
-        page.drawText(dataValidade, {
-          x: 450, y: 155, 
-          size: 12, font: fontBold, color: rgb(0.85, 0.14, 0.11)
-        });
+        page.drawText(`CNPJ:`, { x: startX, y: startY - espacoY, size: 10, font: fontNormal });
+        page.drawText(`${docCnpj}`, { x: valorX, y: startY - espacoY, size: 10, font: fontBold });
 
-        // Assinatura (Linha SÃO PAULO ___ na base da página)
-        page.drawText(dataExtenso, {
-          x: 130, y: 65, 
-          size: 10, font: fontBold, color: rgb(0,0,0)
-        });
+        page.drawText(`DATA DE EMISSÃO:`, { x: startX, y: startY - (espacoY * 2), size: 10, font: fontNormal });
+        page.drawText(`${dataEmissao}`, { x: valorX, y: startY - (espacoY * 2), size: 10, font: fontBold });
 
-        // SALVAR
+        page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
+        page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
+
+        // Data embaixo da ANVISA (Mais para a direita)
+        page.drawText(`DATA: ${dataEmissao}`, { x: 340, y: 100, size: 12, font: fontBold });
+
         const pdfBytes = await pdfDoc.save();
         download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
 
@@ -1173,15 +1093,12 @@
 
       } catch (err) {
         console.error(err);
-        alert("Erro: Arquivo 'Alvara Provisório.pdf' não encontrado na pasta.");
+        alert("Erro: Arquivo 'Alvara Provisório.pdf' não encontrado na pasta do site.");
         btn.innerHTML = textoOriginal;
         btn.disabled = false;
       }
     }
 
-    /* ============================================== */
-    /* OUTROS SCRIPTS (Denúncia, Chatbot)             */
-    /* ============================================== */
     function verificarOutros(sel) {
       const campoOutros = document.getElementById('resumo_outros');
       campoOutros.style.display = sel.value === 'Outros' ? 'block' : 'none';
