@@ -253,15 +253,15 @@
     .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 900; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
-    /* Footer */
-    footer { background: #151515; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
+    /* --- FOOTER ATUALIZADO COM COR IGUAL AO SELO.JPG --- */
+    footer { background: #111318; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
     img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
     .footer h4 { color: white; font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; font-weight: 900; border-left: 3px solid var(--sp-red); padding-left: 10px; }
     .footer ul li { margin-bottom: 12px; }
     .footer a { color: #aaa; transition: 0.3s; }
     .footer a:hover { color: white; padding-left: 5px; }
-    .footer-bottom { background: #000; padding: 25px 0; text-align: center; border-top: 1px solid #333; font-size: 0.9rem; }
+    .footer-bottom { background: #090a0d; padding: 25px 0; text-align: center; border-top: 1px solid #222; font-size: 0.9rem; }
 
     /* Chatbot */
     .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; }
@@ -706,7 +706,7 @@
         </div>
         
         <div style="position: relative; display: inline-block; width: 100%; max-width: 500px;">
-            <img src="selo.jpg" alt="Selos de Qualidade, Acessibilidade e Transparência" style="width: 100%; height: auto; display: block; mix-blend-mode: screen;" />
+            <img src="selo.jpg" alt="Selos de Qualidade, Acessibilidade e Transparência" style="width: 100%; height: auto; display: block;" />
             
             <a href="https://call.icom-libras.com.br/smped/chamada/video?svId=6a144745-22d2-408c-9649-356872449766&preCall=true&queue=icom" target="_blank" style="position: absolute; left: 0; top: 0; width: 25%; height: 100%; z-index: 10;" title="CIL - Central de Intermediação em Libras"></a>
             <a href="http://selodigital.imprensaoficial.com.br/validacao/SMPED/01195459cd224b834f" target="_blank" style="position: absolute; left: 25%; top: 0; width: 25%; height: 100%; z-index: 10;" title="Selo CPA - Acessibilidade Digital"></a>
@@ -844,7 +844,7 @@
     }
 
     /* ============================================== */
-    /* INCLUÍDO: CHECKLIST COM BOTÃO DE UPLOAD        */
+    /* CHECKLIST COM BOTÃO DE UPLOAD                  */
     /* ============================================== */
     function toggleUpload(el) {
       const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload');
@@ -905,7 +905,7 @@
     }
 
     /* ============================================== */
-    /* INCLUÍDO: ALERTA DE RISCO MAIS SUAVE           */
+    /* ALERTA DE RISCO MAIS SUAVE                     */
     /* ============================================== */
     function calcularRisco() {
       let divRisco = document.getElementById('risco-multa');
@@ -986,7 +986,7 @@
     }
 
     /* ============================================== */
-    /* INCLUÍDO: ÁREA DE ENVIO DE ASSINATURA P/ E-MAIL*/
+    /* ÁREA DE ENVIO DE ASSINATURA P/ E-MAIL          */
     /* ============================================== */
     document.getElementById('form-consulta').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -1072,7 +1072,7 @@
     }
 
     /* ============================================== */
-    /* INCLUÍDO: ALINHAMENTO DO PDF CORRIGIDO         */
+    /* ALINHAMENTO DO PDF CORRIGIDO                   */
     /* ============================================== */
     async function gerarPDF() {
       const btn = document.getElementById('btn-baixar-pdf');
@@ -1107,12 +1107,11 @@
         const page = pdfDoc.getPages()[0];
 
         // --- AJUSTES DE COORDENADAS BASEADO NO SEU PRINT ---
-        // startX foi para 25 (bem mais para a esquerda, colado na margem)
-        // startY foi para 540 (um pouco mais para cima)
-        const startX = 25;  
-        const startY = 540; 
+        // startX 20 joga para alinhar à esquerda igual ao Nº PROCESSO
+        const startX = 20;  
+        const startY = 535; 
         const espacoY = 15; 
-        const valorX = 135; // Alinhado onde começam os dados em negrito
+        const valorX = 130; 
 
         // Linhas de dados Centrais
         page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
@@ -1127,8 +1126,8 @@
         page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
         page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
 
-        // Data embaixo da ANVISA (Movida mais para a direita)
-        page.drawText(`DATA: ${dataEmissao}`, { x: 340, y: 100, size: 12, font: fontBold });
+        // Data embaixo da ANVISA (Movida mais para a esquerda para centralizar na linha preta)
+        page.drawText(`DATA: ${dataEmissao}`, { x: 270, y: 100, size: 12, font: fontBold });
 
         const pdfBytes = await pdfDoc.save();
         download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
