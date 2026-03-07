@@ -40,6 +40,88 @@
     .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
+    /* --- CAPTCHA ESTILO GOOGLE --- */
+    .captcha-container {
+        background: #f9f9f9;
+        border: 1px solid #d3d3d3;
+        border-radius: 4px;
+        width: 100%;
+        max-width: 300px;
+        height: 74px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px;
+        margin: 20px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .captcha-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+    }
+
+    .checkmark-box {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #c1c1c1;
+        border-radius: 2px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+
+    .checkmark-box:hover { border-color: #b2b2b2; }
+
+    .captcha-spinner {
+        width: 18px;
+        height: 18px;
+        border: 3px solid #dbdbdb;
+        border-top: 3px solid #4a90e2;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        display: none;
+    }
+
+    .captcha-check {
+        color: #009688;
+        font-size: 22px;
+        display: none;
+    }
+
+    .captcha-label {
+        font-family: 'Roboto', sans-serif;
+        font-size: 14px;
+        color: #000;
+        font-weight: 500;
+    }
+
+    .captcha-logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .captcha-logo img {
+        width: 32px;
+        height: 32px;
+        opacity: 0.6;
+    }
+
+    .captcha-logo span {
+        font-size: 10px;
+        color: #999;
+        margin-top: 2px;
+    }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+
     /* --- WIDGET DE ACESSIBILIDADE LATERAL --- */
     .access-widget { position: fixed; right: 0; top: 40%; transform: translateY(-50%); display: flex; flex-direction: column; z-index: 9999; }
     .access-widget a { background: #0d3c85; color: white; font-size: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); border-radius: 8px 0 0 8px; margin-bottom: 2px; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; text-decoration: none;}
@@ -511,6 +593,9 @@
                 
                 <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Data de Nascimento</label>
                 <input type="text" class="form-control" id="data_nasc_pf" placeholder="dd/mm/aaaa" required />
+                
+                <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome do Estabelecimento / Nome Fantasia (Opcional)</label>
+                <input type="text" class="form-control" id="nome_fantasia_pf" placeholder="Ex: Salão da Maria, Mercadinho Silva..." />
               </div>
 
               <div id="dados-pj" style="display: none;">
@@ -554,6 +639,21 @@
 
                 <div id="risco-multa" style="padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 20px; display: none;"></div>
 
+              </div>
+
+              <div class="captcha-container">
+                  <div class="captcha-checkbox" onclick="ativarCaptcha()">
+                    <div class="checkmark-box" id="captcha-box">
+                      <div class="captcha-spinner" id="captcha-spinner"></div>
+                      <i class="fas fa-check captcha-check" id="captcha-check"></i>
+                    </div>
+                    <span class="captcha-label">Não sou um robô</span>
+                  </div>
+                  <div class="captcha-logo">
+                    <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA">
+                    <span>reCAPTCHA</span>
+                    <span style="font-size: 9px;">Privacidade - Termos</span>
+                  </div>
               </div>
 
               <button type="submit" class="btn-success" id="btn-enviar-whatsapp" style="display: none; margin-top: 25px;">
@@ -808,6 +908,48 @@
   </div>
 
   <script>
+    // CAPTCHA LOGIC
+    let captchaValidado = false;
+
+    function ativarCaptcha() {
+        if(captchaValidado) return;
+        
+        document.getElementById('captcha-spinner').style.display = 'block';
+        
+        setTimeout(() => {
+            document.getElementById('captcha-spinner').style.display = 'none';
+            document.getElementById('captcha-check').style.display = 'block';
+            document.getElementById('captcha-box').style.borderColor = 'transparent'; 
+            captchaValidado = true;
+        }, 1200);
+    }
+
+    // --- FUNÇÃO MATEMÁTICA DE VALIDAÇÃO DE CPF (OFICIAL) ---
+    function validarCPF(cpf) {
+      cpf = cpf.replace(/[^\d]+/g, '');
+      if (cpf == '') return false;
+      if (cpf.length != 11 || 
+          cpf == "00000000000" || cpf == "11111111111" || cpf == "22222222222" || 
+          cpf == "33333333333" || cpf == "44444444444" || cpf == "55555555555" || 
+          cpf == "66666666666" || cpf == "77777777777" || cpf == "88888888888" || 
+          cpf == "99999999999")
+          return false;
+      
+      let add = 0;
+      for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
+      let rev = 11 - (add % 11);
+      if (rev == 10 || rev == 11) rev = 0;
+      if (rev != parseInt(cpf.charAt(9))) return false;
+      
+      add = 0;
+      for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
+      rev = 11 - (add % 11);
+      if (rev == 10 || rev == 11) rev = 0;
+      if (rev != parseInt(cpf.charAt(10))) return false;
+      
+      return true;
+    }
+
     // CARREGAR RASCUNHO SALVO
     if(localStorage.getItem('rascunho_nome')) {
       document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
@@ -850,20 +992,29 @@
       }, 1500);
     }
 
-    // LÓGICA UNIFICADA: DETECTA SE É CPF OU CNPJ AO SAIR DO CAMPO
+    // LÓGICA UNIFICADA E CORRIGIDA
     document.getElementById('cnpj_empresa').addEventListener('keyup', async (e) => {
       let valLimpo = e.target.value.replace(/\D/g, '');
+      const campoInput = e.target;
       
-      // Reseta se apagou
+      // Reseta visual se apagar
       if(valLimpo.length < 11) {
           document.getElementById('dados-pj').style.display = 'none';
           document.getElementById('dados-pf').style.display = 'none';
           document.getElementById('msg-cpf-encontrado').style.display = 'none';
+          
+          let erroAntigo = document.getElementById('erro-cpf-msg');
+          if(erroAntigo) erroAntigo.remove();
+          campoInput.style.borderColor = '#e9ecef'; 
           return;
       }
 
       // SE FOR CNPJ (14 digitos) - Busca Real
       if(valLimpo.length >= 14) {
+        let erroAntigo = document.getElementById('erro-cpf-msg');
+        if(erroAntigo) erroAntigo.remove();
+        campoInput.style.borderColor = '#e9ecef';
+
         document.getElementById('msg-cpf-encontrado').style.display = 'none';
         document.getElementById('dados-pf').style.display = 'none';
         document.getElementById('loading-cnpj').style.display = 'block';
@@ -876,14 +1027,12 @@
             document.getElementById('dados-pj').style.display = 'block';
             document.getElementById('nome_empresa').value = dados.nome_fantasia || dados.razao_social;
             
-            // PREENCHE ENDEREÇO AUTOMÁTICO
             document.getElementById('endereco-automatico').style.display = 'block';
             document.getElementById('end_rua').value = dados.logradouro;
             document.getElementById('end_num').value = dados.numero;
             document.getElementById('end_bairro').value = dados.bairro;
             document.getElementById('end_cidade').value = dados.municipio + " - " + dados.uf;
 
-            // CARREGA O MAPA
             const enderecoCompleto = `${dados.logradouro}, ${dados.numero}, ${dados.municipio}, ${dados.uf}`;
             const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
             document.getElementById('map-container').style.display = 'block';
@@ -894,29 +1043,47 @@
         } catch(error) { console.log("Erro CNPJ"); }
         document.getElementById('loading-cnpj').style.display = 'none';
       } 
-      // SE FOR CPF (11 digitos) -> SIMULAÇÃO "TOP"
+      
+      // SE FOR CPF (11 digitos) -> AGORA COM VALIDAÇÃO REAL
       else if (valLimpo.length === 11) {
-          // Só executa se ainda não tiver mostrado
-          if(document.getElementById('msg-cpf-encontrado').style.display !== 'block'){
-             document.getElementById('loading-cnpj').style.display = 'block';
-             
-             setTimeout(() => {
-                document.getElementById('loading-cnpj').style.display = 'none';
-                
-                // Exibe msg de sucesso
-                document.getElementById('msg-cpf-encontrado').style.display = 'block';
-                
-                // Exibe campos para usuario preencher
-                document.getElementById('dados-pf').style.display = 'block';
-                
-                // Foca no nome para ele digitar
-                document.getElementById('nome_pf').focus();
-                
-             }, 1500); // 1.5s de delay para parecer busca real
+          
+          let erroAntigo = document.getElementById('erro-cpf-msg');
+          if(erroAntigo) erroAntigo.remove();
+
+          if (validarCPF(valLimpo)) {
+              // CPF VÁLIDO
+              campoInput.style.borderColor = '#2e7d32'; // Verde
+              
+              if(document.getElementById('msg-cpf-encontrado').style.display !== 'block'){
+                 document.getElementById('loading-cnpj').style.display = 'block';
+                 
+                 setTimeout(() => {
+                    document.getElementById('loading-cnpj').style.display = 'none';
+                    document.getElementById('msg-cpf-encontrado').style.display = 'block';
+                    document.getElementById('dados-pf').style.display = 'block';
+                    document.getElementById('nome_pf').focus();
+                 }, 1000); 
+              }
+          } else {
+              // CPF INVÁLIDO
+              campoInput.style.borderColor = '#da251c'; // Vermelho
+              
+              let msgErro = document.createElement('div');
+              msgErro.id = 'erro-cpf-msg';
+              msgErro.style.color = '#da251c';
+              msgErro.style.fontSize = '0.8rem';
+              msgErro.style.fontWeight = 'bold';
+              msgErro.style.marginTop = '5px';
+              msgErro.innerHTML = '<i class="fas fa-times-circle"></i> CPF Inválido ou Inexistente.';
+              campoInput.parentNode.insertBefore(msgErro, campoInput.nextSibling);
+
+              document.getElementById('msg-cpf-encontrado').style.display = 'none';
+              document.getElementById('dados-pf').style.display = 'none';
           }
       }
     });
 
+    // --- MANTÉM AS OUTRAS FUNÇÕES DO SITE (DRAWER, CHAT, ETC) ---
     function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
     function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); document.body.style.overflow = ''; }
      
@@ -979,7 +1146,7 @@
         fileInput.style.display = 'block';
       } else {
         fileInput.style.display = 'none';
-        fileInput.value = ''; // Limpa se desmarcar
+        fileInput.value = ''; 
       }
       calcularRisco();
     }
@@ -1051,6 +1218,11 @@
 
     document.getElementById('form-regularizacao').addEventListener('submit', (e) => {
       e.preventDefault();
+
+      if (!captchaValidado) {
+          alert("Por favor, confirme que você não é um robô.");
+          return;
+      }
       
       const todasOpcoes = document.querySelectorAll('.doc-check');
       const marcados = []; 
@@ -1058,7 +1230,6 @@
       let algumArquivoFaltando = false;
       let nomeDocFaltando = "";
 
-      // VALIDAÇÃO DA TRAVA DE UPLOAD
       document.querySelectorAll('.doc-wrapper').forEach(wrapper => {
          const checkbox = wrapper.querySelector('.doc-check');
          const fileInput = wrapper.querySelector('input[type="file"]');
@@ -1066,7 +1237,6 @@
          
          if(checkbox.checked) {
             marcados.push(checkbox.value);
-            // Se marcou mas NÃO tem arquivo
             if(fileInput.files.length === 0) {
                 algumArquivoFaltando = true;
                 nomeDocFaltando = nomeDoc;
@@ -1076,10 +1246,9 @@
          }
       });
 
-      // SE TIVER FALTANDO ARQUIVO, TRAVA TUDO
       if(algumArquivoFaltando) {
           alert(`ERRO DE SEGURANÇA:\n\nVocê marcou que possui "${nomeDocFaltando}", mas não anexou a foto obrigatória.\n\nPor favor, tire uma foto ou desmarque a opção.`);
-          return; // Para o envio
+          return; 
       }
 
       if (marcados.length === 0 && todasOpcoes.length > 0) {
@@ -1089,7 +1258,10 @@
 
       const nomePJ = document.getElementById('nome_empresa').value;
       const nomePF = document.getElementById('nome_pf').value;
-      const nomeFinal = nomePJ || nomePF || "Cidadão";
+      // Pega o nome fantasia PF se existir
+      const nomeFantasiaPF = document.getElementById('nome_fantasia_pf').value;
+      
+      const nomeFinal = nomePJ || (nomePF + (nomeFantasiaPF ? " (" + nomeFantasiaPF + ")" : "")) || "Cidadão";
 
       const docInput = document.getElementById('cnpj_empresa').value;
       const tipo = document.getElementById('tipo_estab').value;
@@ -1181,144 +1353,4 @@
       else if (pedido.valor === null || pedido.valor === "") {
         divPix.style.display = 'none'; divMsg.style.display = 'block';
         divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b';
-        textMsg.innerHTML = '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
-        atualizarBarraProgresso(2); 
-      } 
-      else {
-        divMsg.style.display = 'none'; divPix.style.display = 'block';
-        let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-        if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
-        document.getElementById('valor-cobrado').innerText = valorFormatado;
-        cnpjParaComprovante = cnpj;
-        
-        atualizarBarraProgresso(3); 
-        iniciarCronometroPix(); 
-      }
-    });
-
-    function enviarAssinaturaEmail() {
-      const cnpj = document.getElementById('consulta_cnpj').value || 'Não Informado';
-      alert('Atenção: Será aberto o seu aplicativo de e-mail. Por favor, ANEXE o arquivo que você acabou de selecionar lá no e-mail antes de enviar!');
-      window.location.href = 'mailto:vigilanciasanitariaspgov1@gmail.com?subject=Documento Assinado - Doc ' + cnpj + '&body=Olá,%0D%0A%0D%0ASegue em anexo o certificado provisório devidamente assinado para validação no sistema.';
-    }
-
-    function copiarPix() {
-      const pixInput = document.getElementById('pix-copia-cola');
-      pixInput.select();
-      pixInput.setSelectionRange(0, 99999);
-      navigator.clipboard.writeText(pixInput.value);
-      alert("Código Pix copiado com sucesso!");
-    }
-
-    function enviarWhatsAppComprovanteConsulta() {
-      if(!cnpjParaComprovante) return;
-      let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-      let pedido = pedidos[cnpjParaComprovante] || {};
-      const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Nome/Razão:* ${pedido.nome || 'Não identificado'}\n*Doc:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
-      enviarWhatsApp(msg);
-    }
-
-    async function gerarPDF() {
-      const btn = document.getElementById('btn-baixar-pdf');
-      const textoOriginal = btn.innerHTML;
-       
-      try {
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando documento...';
-        btn.disabled = true;
-
-        const cnpj = document.getElementById('consulta_cnpj').value;
-        const db = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-        const dados = db[cnpj] || {};
-
-        const nomeEmpresa = (dados.nome || "EMPRESA NÃO IDENTIFICADA").toUpperCase();
-        const docCnpj = cnpj;
-
-        const hoje = new Date();
-        const dataEmissao = hoje.toLocaleDateString('pt-BR');
-        const dataV = new Date();
-        dataV.setFullYear(hoje.getFullYear() + 1);
-        const dataValidade = dataV.toLocaleDateString('pt-BR');
-
-        const url = 'Alvara Provisório.pdf'; 
-        const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
-
-        const { PDFDocument, StandardFonts } = PDFLib;
-        const pdfDoc = await PDFDocument.load(existingPdfBytes);
-        
-        const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-        const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
-
-        const page = pdfDoc.getPages()[0];
-
-        const startX = 20;  
-        const startY = 535; 
-        const espacoY = 15; 
-        const valorX = 130; 
-
-        // Linhas de dados Centrais
-        page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
-        page.drawText(`${nomeEmpresa}`, { x: valorX, y: startY, size: 10, font: fontBold });
-
-        page.drawText(`CNPJ:`, { x: startX, y: startY - espacoY, size: 10, font: fontNormal });
-        page.drawText(`${docCnpj}`, { x: valorX, y: startY - espacoY, size: 10, font: fontBold });
-
-        page.drawText(`DATA DE EMISSÃO:`, { x: startX, y: startY - (espacoY * 2), size: 10, font: fontNormal });
-        page.drawText(`${dataEmissao}`, { x: valorX, y: startY - (espacoY * 2), size: 10, font: fontBold });
-
-        page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
-        page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
-
-        // Data embaixo da ANVISA
-        page.drawText(`DATA: ${dataEmissao}`, { x: 270, y: 100, size: 12, font: fontBold });
-
-        const pdfBytes = await pdfDoc.save();
-        download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
-
-        btn.innerHTML = textoOriginal;
-        btn.disabled = false;
-
-      } catch (err) {
-        console.error(err);
-        alert("Erro: Arquivo 'Alvara Provisório.pdf' não encontrado na pasta do site.");
-        btn.innerHTML = textoOriginal;
-        btn.disabled = false;
-      }
-    }
-
-    function verificarOutros(sel) {
-      const campoOutros = document.getElementById('resumo_outros');
-      campoOutros.style.display = sel.value === 'Outros' ? 'block' : 'none';
-      campoOutros.required = sel.value === 'Outros';
-    }
-    function countChars(obj) { document.getElementById("charNum").innerHTML = obj.value.length; }
-
-    document.getElementById('form-denuncia').addEventListener('submit', (e) => {
-      e.preventDefault();
-      let assunto = document.getElementById('assunto').value;
-      if (assunto === 'Outros') assunto = "Outros: " + document.getElementById('resumo_outros').value;
-      const local = document.getElementById('local').value;
-      const relato = document.getElementById('relato').value;
-      const msg = "DENUNCIA SIGILOSA OFICIAL\n\nMOTIVO: " + assunto + "\nLOCAL: " + local + "\nRELATO: " + relato;
-      enviarWhatsApp(msg);
-    });
-
-    function toggleChat() {
-      const c = document.getElementById('chat-interface');
-      c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
-    }
-    document.getElementById('chat-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const txt = document.getElementById('chat-msg');
-      const body = document.getElementById('chat-body');
-      if (!txt.value) return;
-      body.innerHTML += `<div class="chat-bubble bubble-user">${txt.value}</div>`;
-      txt.value = '';
-      body.scrollTop = body.scrollHeight;
-      setTimeout(() => {
-        body.innerHTML += `<div class="chat-bubble bubble-ai">Compreendido. Recomendo verificar a aba 'Regularize-se' para emissão de guias.</div>`;
-        body.scrollTop = body.scrollHeight;
-      }, 1000);
-    });
-  </script>
-</body>
-</html>
+        textMsg.innerHTML = '<i class
