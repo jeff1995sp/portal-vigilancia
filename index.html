@@ -1157,10 +1157,11 @@
          
         // --- CORREÇÃO DE ALINHAMENTO DEFINITIVA ---
         const startX = 20;
-        // Ajuste Y: 525 (Ponto médio ideal entre 500 e 532)
-        const startY = 525; 
+        // Ajuste Y: 538 (Para encostar na linha de cima e sair da de baixo)
+        const startY = 538; 
         const espacoY = 18; 
-        const valorX = 165; 
+        // Ajuste X: 175 (Para afastar da etiqueta "RAZÃO SOCIAL:")
+        const valorX = 175; 
 
         page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
         page.drawText(`${nomeEmpresa}`, { x: valorX, y: startY, size: 10, font: fontBold });
@@ -1175,9 +1176,9 @@
         page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
         
         // --- CORREÇÃO DA DATA DE BAIXO ---
-        // Y = 88 (Sobe só um pouco em relação a 80 para não cortar a linha)
-        // X = 315 (Depois de "DATA:")
-        page.drawText(`DATA: ${dataEmissao}`, { x: 315, y: 88, size: 12, font: fontBold });
+        // Y = 88 (Altura aprovada)
+        // X = 335 (Empurrando para a direita)
+        page.drawText(`DATA: ${dataEmissao}`, { x: 335, y: 88, size: 12, font: fontBold });
 
         const pdfBytes = await pdfDoc.save();
         download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
