@@ -3,240 +3,404 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Administrativo - COVISA</title>
+  <title>Painel Administrativo - COVISA (Online)</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
   <style>
     :root {
-      --bg-color: #f8fafc;
+      --bg-color: #f1f5f9;
       --card-bg: #ffffff;
       --text-main: #1e293b;
       --text-muted: #64748b;
-      --primary: #0284c7;
-      --primary-hover: #0369a1;
+      --primary: #0f172a;
+      --primary-hover: #334155;
+      --accent: #0ea5e9;
       --danger: #ef4444;
-      --danger-hover: #dc2626;
       --success: #10b981;
-      --success-hover: #059669;
       --warning: #f59e0b;
       --border: #e2e8f0;
     }
 
     body { font-family: 'Roboto', sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; }
     
-    /* Cabeçalho Premium */
-    header { background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-    header h1 { margin: 0; font-size: 1.6rem; display: flex; align-items: center; gap: 12px; font-weight: 900; letter-spacing: -0.5px; }
-    header h1 i { color: #da251c; font-size: 1.8rem; }
-    .btn-voltar { background: rgba(255,255,255,0.1); color: white; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; transition: 0.3s; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.1); }
-    .btn-voltar:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    /* Header */
+    header { background: #1e293b; color: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    header h1 { margin: 0; font-size: 1.4rem; display: flex; align-items: center; gap: 12px; font-weight: 700; }
+    .badge-online { background: #22c55e; color: #fff; font-size: 0.7rem; padding: 2px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: 1px; }
+    .btn-sair { color: #cbd5e0; text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+    .btn-sair:hover { color: white; }
 
-    .container { max-width: 1300px; margin: 40px auto; padding: 0 20px; }
+    .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
     
-    /* Cards do Dashboard */
-    .dashboard-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
-    .card { background: var(--card-bg); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 20px; border: 1px solid var(--border); transition: 0.3s; }
-    .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.06); }
-    .card-icon { width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; }
-    .card-info h3 { margin: 0 0 5px 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
-    .card-info p { margin: 0; font-size: 2.2rem; font-weight: 900; color: var(--text-main); line-height: 1; }
+    /* Cards */
+    .dashboard-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card-icon { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; }
+    .card-info h3 { margin: 0 0 5px 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; }
+    .card-info p { margin: 0; font-size: 1.8rem; font-weight: 900; color: var(--text-main); line-height: 1; }
 
-    /* Tabela Premium */
-    .table-container { background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid var(--border); overflow: hidden; }
-    .table-header { padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff; }
-    .table-header h2 { margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
-    .btn-limpar { background: #fee2e2; color: #b91c1c; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-    .btn-limpar:hover { background: #fca5a5; }
-
+    /* Tabela */
+    .table-container { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .table-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff; }
+    .table-header h2 { margin: 0; font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+    
     table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 20px 30px; text-align: left; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-    th { background: #f8fafc; font-weight: 800; color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
-    tr { transition: 0.2s; }
+    th, td { padding: 16px 20px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+    th { background: #f8fafc; font-weight: 700; color: var(--text-muted); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.5px; }
+    tr { transition: 0.2s; cursor: pointer; }
     tr:hover { background: #f8fafc; }
     
-    /* Badges de Status */
-    .status-badge { padding: 6px 14px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .status-pendente { background: #fef3c7; color: #b45309; }
-    .status-aguardando { background: #e0f2fe; color: #0369a1; }
-    .status-pago { background: #dcfce3; color: #166534; }
+    /* Status Badges */
+    .status-badge { padding: 4px 10px; border-radius: 99px; font-size: 0.7rem; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase; }
+    .status-pendente { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+    .status-aguardando { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }
+    .status-pago { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce3; }
 
-    /* Inputs e Botões da Tabela */
-    .input-valor { padding: 10px 15px; border: 2px solid var(--border); border-radius: 8px; width: 130px; font-weight: 700; font-size: 1rem; color: var(--text-main); outline: none; transition: 0.3s; }
-    .input-valor:focus { border-color: var(--primary); }
-    
-    .btn-salvar { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 800; transition: 0.3s; display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; }
-    .btn-salvar:hover { background: var(--primary-hover); transform: translateY(-2px); }
-    
-    .btn-confirmar { background: var(--success); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 800; transition: 0.3s; display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; }
-    .btn-confirmar:hover { background: var(--success-hover); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+    /* Botões de Ação */
+    .action-btn { width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; color: white; font-size: 0.9rem; margin-right: 5px; }
+    .btn-view { background: #64748b; }
+    .btn-view:hover { background: #475569; }
+    .btn-zap { background: #22c55e; }
+    .btn-zap:hover { background: #16a34a; }
 
-    .docs-text { font-size: 0.85rem; color: #475569; white-space: pre-line; background: #f1f5f9; padding: 12px; border-radius: 8px; border: 1px solid var(--border); margin-top: 8px; max-height: 100px; overflow-y: auto; line-height: 1.5; font-weight: 500; }
+    /* --- MODAL (Ideias 10 e 15) --- */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .modal-content { background: white; width: 95%; max-width: 650px; border-radius: 16px; padding: 0; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: slideUp 0.3s ease; display: flex; flex-direction: column; max-height: 90vh; }
     
-    .empty-state { text-align: center; padding: 80px 20px; color: var(--text-muted); }
-    .empty-state i { font-size: 4rem; margin-bottom: 20px; color: #cbd5e0; }
-    .empty-state h3 { font-size: 1.2rem; font-weight: 800; margin: 0; }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-radius: 16px 16px 0 0; }
+    .modal-header h3 { margin: 0; font-size: 1.1rem; color: var(--text-main); }
+    .close-modal { background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; }
+    
+    .modal-body { padding: 25px; overflow-y: auto; }
+    
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+    .detail-group label { display: block; font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+    .detail-value { font-size: 0.95rem; font-weight: 500; color: #334155; background: #f1f5f9; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; }
+    .detail-value-edit { width: 100%; padding: 10px; border: 2px solid #cbd5e0; border-radius: 6px; font-size: 0.95rem; outline: none; transition: 0.3s; }
+    .detail-value-edit:focus { border-color: var(--accent); }
+
+    /* Área de Evidências (Ideia 15) */
+    .evidence-section { background: #f8fafc; border: 2px dashed #cbd5e0; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 25px; }
+    .evidence-title { font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 10px; display: block; }
+    .evidence-gallery { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .evidence-item { width: 60px; height: 60px; background: #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.2rem; cursor: pointer; transition: 0.2s; position: relative; }
+    .evidence-item:hover { background: #cbd5e0; color: #475569; }
+    .evidence-item::after { content: '\f00e'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; font-size: 0.6rem; top: 4px; right: 4px; }
+
+    .modal-footer { padding: 20px; border-top: 1px solid var(--border); background: #f8fafc; border-radius: 0 0 16px 16px; display: flex; justify-content: space-between; align-items: center; }
+    .btn-danger { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; padding: 10px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-danger:hover { background: #fca5a5; }
+    .btn-primary { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      .dashboard-cards { grid-template-columns: 1fr 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .container { padding: 0 10px; margin: 20px auto; }
+      header { padding: 15px 20px; }
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <h1><i class="fas fa-shield-alt"></i> Painel de Controle - COVISA</h1>
-    <a href="index.html" class="btn-voltar"><i class="fas fa-external-link-alt"></i> Ver Site</a>
+    <h1><i class="fas fa-user-shield"></i> Painel Admin <span class="badge-online">Online</span></h1>
+    <a href="index.html" class="btn-sair">Sair</a>
   </header>
 
   <div class="container">
     <div class="dashboard-cards">
       <div class="card">
         <div class="card-icon" style="background: var(--warning);"><i class="fas fa-search"></i></div>
-        <div class="card-info">
-          <h3>Falta Análise</h3>
-          <p id="count-pendente">0</p>
-        </div>
+        <div class="card-info"><h3>Pendentes</h3><p id="count-pendente">--</p></div>
       </div>
       <div class="card">
-        <div class="card-icon" style="background: var(--primary);"><i class="fas fa-file-invoice-dollar"></i></div>
-        <div class="card-info">
-          <h3>Aguard. Pgto</h3>
-          <p id="count-aguardando">0</p>
-        </div>
+        <div class="card-icon" style="background: var(--accent);"><i class="fas fa-file-invoice-dollar"></i></div>
+        <div class="card-info"><h3>Aguard. Pix</h3><p id="count-aguardando">--</p></div>
       </div>
       <div class="card">
-        <div class="card-icon" style="background: var(--success);"><i class="fas fa-check-double"></i></div>
-        <div class="card-info">
-          <h3>Pagos</h3>
-          <p id="count-pago">0</p>
-        </div>
+        <div class="card-icon" style="background: var(--success);"><i class="fas fa-check-circle"></i></div>
+        <div class="card-info"><h3>Regularizados</h3><p id="count-pago">--</p></div>
       </div>
       <div class="card">
-        <div class="card-icon" style="background: #475569;"><i class="fas fa-users"></i></div>
-        <div class="card-info">
-          <h3>Total de Cadastros</h3>
-          <p id="count-total">0</p>
-        </div>
+        <div class="card-icon" style="background: #475569;"><i class="fas fa-database"></i></div>
+        <div class="card-info"><h3>Total</h3><p id="count-total">--</p></div>
       </div>
     </div>
 
     <div class="table-container">
       <div class="table-header">
-        <h2>Gerenciamento de Taxas e Cadastros</h2>
-        <button class="btn-limpar" onclick="limparRegistros()"><i class="fas fa-trash-alt"></i> Limpar Tudo</button>
+        <h2><i class="fas fa-list"></i> Solicitações Recentes</h2>
+        <div style="font-size: 0.8rem; color: #94a3b8;"><i class="fas fa-bolt"></i> Tempo Real</div>
       </div>
       
       <table>
         <thead>
           <tr>
-            <th width="15%">Cadastro</th>
-            <th width="20%">Estabelecimento</th>
-            <th width="35%">Análise Documental</th>
-            <th width="12%">Status</th>
-            <th width="18%">Ação</th>
+            <th width="30%">Empresa / CNPJ</th>
+            <th width="20%">Ramo</th>
+            <th width="15%">Status</th>
+            <th width="15%">Valor</th>
+            <th width="20%">Ação</th>
           </tr>
         </thead>
         <tbody id="tabela-corpo">
-          </tbody>
+          <tr><td colspan="5" style="text-align: center; padding: 40px; color: #94a3b8;">Carregando dados do servidor...</td></tr>
+        </tbody>
       </table>
     </div>
   </div>
 
-  <script>
-    function carregarDados() {
-      const corpoTabela = document.getElementById('tabela-corpo');
-      let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
+  <div class="modal-overlay" id="modalDetalhes">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-file-alt"></i> Detalhes do Processo</h3>
+        <button class="close-modal" onclick="fecharModal()">&times;</button>
+      </div>
       
-      corpoTabela.innerHTML = '';
-      let contPendente = 0; let contAguardando = 0; let contPago = 0;
-      let chaves = Object.keys(pedidos);
+      <div class="modal-body">
+        <div class="detail-grid">
+          <div class="detail-group">
+            <label>CNPJ / CPF</label>
+            <div class="detail-value" id="modal-cnpj">...</div>
+          </div>
+          <div class="detail-group">
+            <label>Nome / Razão Social</label>
+            <div class="detail-value" id="modal-nome">...</div>
+          </div>
+          <div class="detail-group">
+            <label>Data Solicitação</label>
+            <div class="detail-value" id="modal-data">...</div>
+          </div>
+          <div class="detail-group">
+            <label>Ramo de Atividade</label>
+            <div class="detail-value" id="modal-ramo">...</div>
+          </div>
+        </div>
 
-      if(chaves.length === 0) {
-        corpoTabela.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-folder-open"></i><h3>Nenhum registro encontrado</h3><p>Os formulários enviados pelos clientes aparecerão aqui.</p></td></tr>`;
-      } else {
-        chaves.reverse().forEach(cnpj => {
-          let req = pedidos[cnpj];
-          
-          let classeStatus, txtStatus, iconStatus, acoesHtml;
+        <div class="detail-group" style="margin-bottom: 20px;">
+          <label>Documentação Declarada</label>
+          <div class="detail-value" id="modal-docs" style="white-space: pre-line; font-size: 0.85rem; height: auto;">...</div>
+        </div>
 
-          if (req.pago) {
-            contPago++;
-            classeStatus = 'status-pago';
-            iconStatus = 'fa-check-circle';
-            txtStatus = 'Confirmado';
-            acoesHtml = `<span style="color: var(--success); font-weight: 900; font-size: 0.95rem;"><i class="fas fa-shield-check"></i> Processo Liberado</span>`;
-          } else if (req.valor) {
-            contAguardando++;
-            classeStatus = 'status-aguardando';
-            iconStatus = 'fa-clock';
-            txtStatus = 'Aguardando Pix';
-            acoesHtml = `
-              <div style="display:flex; flex-direction: column; gap: 8px;">
-                <span style="font-weight: 800; color: var(--text-main); font-size: 0.95rem;">Valor: R$ ${req.valor}</span>
-                <button class="btn-confirmar" onclick="confirmarPagamento('${cnpj}')"><i class="fas fa-check"></i> Confirmar Pgto</button>
-              </div>
-            `;
-          } else {
-            contPendente++;
-            classeStatus = 'status-pendente';
-            iconStatus = 'fa-exclamation-circle';
-            txtStatus = 'Falta Valor';
-            acoesHtml = `
-              <div style="display:flex; flex-direction: column; gap: 8px;">
-                <input type="text" id="valor-${cnpj}" class="input-valor" placeholder="Ex: 137,90">
-                <button class="btn-salvar" onclick="salvarValor('${cnpj}')"><i class="fas fa-paper-plane"></i> Enviar Cobrança</button>
-              </div>
-            `;
-          }
+        <div class="evidence-section">
+          <span class="evidence-title"><i class="fas fa-camera"></i> Evidências Anexadas (Ideia 15)</span>
+          <div class="evidence-gallery">
+            <div class="evidence-item" title="Fachada"><i class="fas fa-store"></i></div>
+            <div class="evidence-item" title="Alvará"><i class="fas fa-file-contract"></i></div>
+            <div class="evidence-item" title="Cozinha/Área"><i class="fas fa-utensils"></i></div>
+            <div class="evidence-item" title="Extintores"><i class="fas fa-fire-extinguisher"></i></div>
+          </div>
+          <small style="color: #94a3b8; font-size: 0.7rem; margin-top: 5px; display: block;">Clique para ampliar (Simulação)</small>
+        </div>
 
-          let tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td><strong style="font-size: 1rem; color: var(--primary);">${cnpj}</strong><br><small style="color: var(--text-muted); font-weight: 600;">${req.data || 'Recente'}</small></td>
-            <td><strong style="font-size: 1.05rem;">${req.nome}</strong><br><span style="color:var(--text-muted); font-size: 0.85rem; font-weight: 600;">Ramo: ${req.tipo}</span></td>
-            <td>
-              <div class="docs-text">${req.docs}</div>
-            </td>
-            <td><span class="status-badge ${classeStatus}"><i class="fas ${iconStatus}"></i> ${txtStatus}</span></td>
-            <td>${acoesHtml}</td>
-          `;
-          corpoTabela.appendChild(tr);
-        });
-      }
+        <div style="background: #eff6ff; border: 1px solid #dbeafe; padding: 20px; border-radius: 10px;">
+          <h4 style="margin: 0 0 15px 0; color: #1e40af; font-size: 0.9rem;">Financeiro & Status</h4>
+          <div class="detail-grid" style="margin-bottom: 0;">
+            <div class="detail-group">
+              <label>Valor da Taxa (R$)</label>
+              <input type="text" class="detail-value-edit" id="modal-valor-input" placeholder="0,00">
+            </div>
+            <div class="detail-group">
+              <label>Status Atual</label>
+              <select class="detail-value-edit" id="modal-status-select">
+                <option value="pendente">🟠 Pendente (Cobrar)</option>
+                <option value="aguardando">🔵 Aguardando Pix</option>
+                <option value="pago">🟢 Pago (Liberar)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-danger" onclick="deletarProcessoAtual()"><i class="fas fa-trash"></i> Excluir</button>
+        <button class="btn-primary" onclick="salvarEdicaoModal()"><i class="fas fa-save"></i> Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // IMPORTAÇÕES DO FIREBASE (CDN)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+    // --- 1. COLE AQUI O CÓDIGO QUE VOCÊ COPIOU DO FIREBASE ---
+    const firebaseConfig = {
+      // APAGUE ESTAS LINHAS E COLE SUA CHAVE AQUI
+      apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
+      authDomain: "site-8dfaf.firebaseapp.com",
+      projectId: "site-8dfaf",
+      storageBucket: "site-8dfaf.firebasestorage.app",
+      messagingSenderId: "76689989548",
+      appId: "1:76689989548:web:5c86741e60ce385102a409"
+    };
+    // ---------------------------------------------------------
+
+    // INICIALIZA O APP
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let idProcessoAtual = null;
+
+    // --- IDEIA 6: ORDENAÇÃO (Mostra os mais novos primeiro) ---
+    const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
+
+    // OUVINTE EM TEMPO REAL (Atualiza sozinho quando cai pedido novo)
+    onSnapshot(q, (snapshot) => {
+      const tbody = document.getElementById("tabela-corpo");
+      tbody.innerHTML = "";
       
-      document.getElementById('count-total').innerText = chaves.length;
-      document.getElementById('count-pendente').innerText = contPendente;
-      document.getElementById('count-aguardando').innerText = contAguardando;
-      document.getElementById('count-pago').innerText = contPago;
-    }
+      let pendente = 0, aguardando = 0, pago = 0;
 
-    function salvarValor(cnpj) {
-      let inputValor = document.getElementById(`valor-${cnpj}`).value;
-      if(inputValor.trim() === "") { alert("Digite um valor válido para cobrar do cliente."); return; }
-
-      let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-      if(pedidos[cnpj]) {
-        pedidos[cnpj].valor = inputValor;
-        localStorage.setItem('covisa_pedidos', JSON.stringify(pedidos));
-        carregarDados();
+      if(snapshot.empty) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:#94a3b8;"><i class="fas fa-inbox" style="font-size:2rem; margin-bottom:10px; display:block;"></i>Nenhum pedido recebido ainda.</td></tr>';
+        atualizarCards(0,0,0,0);
+        return;
       }
-    }
 
-    function confirmarPagamento(cnpj) {
-      if(confirm("Tem certeza que deseja confirmar o pagamento deste cliente? Isso liberará o processo no site principal.")) {
-        let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-        if(pedidos[cnpj]) {
-          pedidos[cnpj].pago = true;
-          localStorage.setItem('covisa_pedidos', JSON.stringify(pedidos));
-          carregarDados();
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const id = docSnap.id;
+
+        // Contadores
+        if(data.pago) pago++;
+        else if(data.valor) aguardando++;
+        else pendente++;
+
+        // Status Visual
+        let badge = '<span class="status-badge status-pendente"><i class="fas fa-exclamation-circle"></i> Pendente</span>';
+        if(data.valor) badge = '<span class="status-badge status-aguardando"><i class="fas fa-clock"></i> Aguard. Pix</span>';
+        if(data.pago) badge = '<span class="status-badge status-pago"><i class="fas fa-check-circle"></i> Regularizado</span>';
+
+        // --- IDEIA 7: WHATSAPP INTELIGENTE ---
+        let msgZap = "";
+        let btnText = "Cobrar";
+        
+        if(!data.valor && !data.pago) {
+            msgZap = `Olá *${data.nome}*.\n\nRecebemos sua solicitação de regularização (CNPJ ${data.cnpj}).\n\nIdentificamos pendências documentais. Por favor, aguarde a emissão da taxa para análise.`;
+        } else if (data.valor && !data.pago) {
+            msgZap = `Olá *${data.nome}*.\n\nSua documentação foi pré-analisada.\n\nPara prosseguir com a liberação, segue o valor da taxa administrativa: *R$ ${data.valor}*.\n\nEfetue o pagamento via Pix no site para liberar sua licença.`;
+            btnText = "Enviar Pix";
+        } else {
+            msgZap = `Parabéns *${data.nome}*!\n\nSua Licença Provisória foi *APROVADA* e liberada no sistema.\n\nAcesse o portal para baixar seu documento.`;
+            btnText = "Avisar";
         }
-      }
+        
+        const linkZap = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(msgZap)}`;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td onclick="window.abrirModal('${id}')">
+            <strong>${data.nome}</strong><br>
+            <span style="color:#64748b; font-size:0.8rem;">${data.cnpj || 'CPF não inf.'}</span>
+          </td>
+          <td onclick="window.abrirModal('${id}')">${data.tipo}</td>
+          <td onclick="window.abrirModal('${id}')">${badge}</td>
+          <td onclick="window.abrirModal('${id}')"><strong>${data.valor ? 'R$ '+data.valor : '--'}</strong></td>
+          <td>
+            <button class="action-btn btn-view" onclick="window.abrirModal('${id}')" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
+            <a href="${linkZap}" target="_blank" class="action-btn btn-zap" title="${btnText}" style="text-decoration:none;"><i class="fab fa-whatsapp"></i></a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      atualizarCards(pendente, aguardando, pago, snapshot.size);
+    });
+
+    function atualizarCards(pen, agu, pag, tot) {
+        document.getElementById("count-pendente").innerText = pen;
+        document.getElementById("count-aguardando").innerText = agu;
+        document.getElementById("count-pago").innerText = pag;
+        document.getElementById("count-total").innerText = tot;
     }
 
-    function limparRegistros() {
-      if(confirm("ATENÇÃO: Tem certeza que deseja APAGAR TODOS os registros do sistema? Esta ação não pode ser desfeita.")) {
-        localStorage.removeItem('covisa_pedidos');
-        carregarDados();
+    // --- FUNÇÕES GLOBAIS (Necessário window. para funcionar com module) ---
+    
+    // Abrir Modal (Ideia 10)
+    window.abrirModal = async (id) => {
+      idProcessoAtual = id;
+      const docSnap = await getDoc(doc(db, "pedidos", id));
+      
+      if (docSnap.exists()) {
+        const d = docSnap.data();
+        
+        // Preencher Textos
+        document.getElementById("modal-cnpj").innerText = d.cnpj;
+        document.getElementById("modal-nome").innerText = d.nome;
+        document.getElementById("modal-data").innerText = d.data;
+        document.getElementById("modal-ramo").innerText = d.tipo;
+        document.getElementById("modal-docs").innerText = d.docs || "Nenhuma documentação registrada.";
+        
+        // Preencher Inputs de Edição
+        document.getElementById("modal-valor-input").value = d.valor || "";
+        
+        let statusVal = "pendente";
+        if(d.valor) statusVal = "aguardando";
+        if(d.pago) statusVal = "pago";
+        document.getElementById("modal-status-select").value = statusVal;
+
+        document.getElementById("modalDetalhes").style.display = "flex";
+      }
+    };
+
+    window.fecharModal = () => {
+      document.getElementById("modalDetalhes").style.display = "none";
+      idProcessoAtual = null;
+    };
+
+    // Salvar Edição (Ideia 2)
+    window.salvarEdicaoModal = async () => {
+      if(!idProcessoAtual) return;
+      
+      const btn = document.querySelector('.btn-primary');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+      
+      const novoValor = document.getElementById("modal-valor-input").value;
+      const status = document.getElementById("modal-status-select").value;
+      
+      // Lógica de Status
+      let isPago = false;
+      let valorFinal = novoValor;
+      
+      if(status === "pago") { isPago = true; }
+      if(status === "pendente") { valorFinal = null; isPago = false; } // Se voltar pra pendente, limpa o valor
+
+      const ref = doc(db, "pedidos", idProcessoAtual);
+      
+      try {
+        await updateDoc(ref, {
+            valor: valorFinal,
+            pago: isPago
+        });
+        window.fecharModal();
+      } catch (error) {
+        alert("Erro ao salvar: " + error);
+      } finally {
+        btn.innerHTML = originalText;
+      }
+    };
+
+    // Excluir (Ideia 1)
+    window.deletarProcessoAtual = async () => {
+      if(!idProcessoAtual) return;
+      if(confirm("Tem certeza que deseja EXCLUIR este registro?")) {
+        await deleteDoc(doc(db, "pedidos", idProcessoAtual));
+        window.fecharModal();
+      }
+    };
+
+    // Fechar ao clicar fora
+    window.onclick = function(event) {
+      if (event.target == document.getElementById("modalDetalhes")) {
+        window.fecharModal();
       }
     }
-    
-    window.onload = carregarDados;
   </script>
 </body>
 </html>
