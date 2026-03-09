@@ -3,192 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin COVISA | Dashboard</title>
+  <title>Admin COVISA | Painel de Controle</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
    
   <style>
     :root {
-      --primary: #0f172a; /* Azul Escuro Profundo */
-      --accent: #3b82f6;  /* Azul Destaque */
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --bg: #f1f5f9;
-      --card: #ffffff;
+      --primary: #1e293b;   /* Cinza Escuro */
+      --secondary: #3b82f6; /* Azul Royal */
+      --success: #10b981;   /* Verde */
+      --warning: #f59e0b;   /* Laranja */
+      --danger: #ef4444;    /* Vermelho */
+      --bg: #f8fafc;        /* Fundo claro */
       --text: #334155;
+      --white: #ffffff;
       --border: #e2e8f0;
     }
     
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
-    body { background: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--text); }
-
-    /* SIDEBAR (Menu Lateral) */
-    aside { width: 260px; background: var(--primary); color: white; display: flex; flex-direction: column; padding: 25px; box-shadow: 4px 0 15px rgba(0,0,0,0.1); transition: 0.3s; }
-    aside h1 { font-size: 1.5rem; margin-bottom: 40px; display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: -0.5px; }
-    aside h1 i { color: var(--danger); }
     
-    aside nav a { display: flex; align-items: center; gap: 12px; padding: 14px 15px; color: #94a3b8; text-decoration: none; border-radius: 10px; margin-bottom: 8px; transition: 0.3s; font-weight: 500; }
-    aside nav a:hover, aside nav a.active { background: rgba(255,255,255,0.1); color: white; transform: translateX(5px); }
-    
-    aside .logout { margin-top: auto; color: #cbd5e1; cursor: pointer; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; transition: 0.3s; }
-    aside .logout:hover { color: var(--danger); }
+    body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; }
 
-    /* MAIN CONTENT */
-    main { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
+    /* --- LOGIN OVERLAY --- */
+    #login-screen {
+        position: fixed; inset: 0; background: var(--primary); z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        color: white; transition: 0.5s;
+    }
+    .login-box { text-align: center; width: 100%; max-width: 350px; padding: 20px; }
+    .login-box img { width: 80px; margin-bottom: 20px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3)); }
+    .login-box input {
+        width: 100%; padding: 15px; border-radius: 8px; border: none; margin-bottom: 15px;
+        font-size: 1.1rem; text-align: center; background: rgba(255,255,255,0.1); color: white;
+    }
+    .login-box input::placeholder { color: rgba(255,255,255,0.5); }
+    .login-box button {
+        width: 100%; padding: 15px; border-radius: 8px; border: none; background: var(--secondary);
+        color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.3s;
+    }
+    .login-box button:hover { background: #2563eb; transform: translateY(-2px); }
+
+    /* --- SIDEBAR --- */
+    aside {
+        width: 260px; background: var(--primary); color: white;
+        display: flex; flex-direction: column; padding: 25px;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.05); z-index: 10;
+    }
+    aside h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+    aside h2 i { color: var(--danger); }
+    
+    .menu-item {
+        display: flex; align-items: center; gap: 12px; padding: 14px 15px;
+        color: #94a3b8; text-decoration: none; border-radius: 10px;
+        margin-bottom: 5px; transition: 0.3s; font-weight: 500; cursor: pointer;
+    }
+    .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: white; transform: translateX(5px); }
+    
+    .logout-btn {
+        margin-top: auto; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1);
+        color: #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* --- MAIN CONTENT --- */
+    main { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
     
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-    header h2 { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
-    .btn-site { background: white; border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; color: var(--text); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-    .btn-site:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .header-title h1 { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+    .header-title p { font-size: 0.9rem; color: #64748b; }
+    
+    .btn-portal {
+        background: white; border: 1px solid var(--border); padding: 10px 20px;
+        border-radius: 8px; color: var(--text); text-decoration: none; font-weight: 600;
+        display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+    .btn-portal:hover { border-color: var(--secondary); color: var(--secondary); transform: translateY(-2px); }
 
-    /* CARDS DE RESUMO */
-    .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
-    .card { background: var(--card); padding: 25px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; align-items: center; gap: 20px; border: 1px solid var(--border); transition: 0.3s; }
-    .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
-    .card-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-    .card-info h3 { font-size: 0.85rem; color: #64748b; margin-bottom: 5px; text-transform: uppercase; font-weight: 600; }
-    .card-info p { font-size: 2rem; font-weight: 800; color: var(--primary); line-height: 1; }
+    /* --- CARDS --- */
+    .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card {
+        background: var(--white); padding: 25px; border-radius: 16px;
+        border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        display: flex; align-items: center; gap: 20px; transition: 0.3s;
+    }
+    .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+    
+    .stat-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .stat-info h3 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 5px; }
+    .stat-info p { font-size: 1.8rem; font-weight: 800; color: var(--primary); line-height: 1; }
 
-    /* TABELA ESTILOSA */
-    .table-container { background: var(--card); border-radius: 16px; padding: 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid var(--border); overflow: hidden; }
-    .table-header-control { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    .table-header-control h3 { font-size: 1.1rem; color: var(--primary); }
+    /* --- TABLE --- */
+    .table-wrapper {
+        background: var(--white); border-radius: 16px; border: 1px solid var(--border);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow: hidden;
+    }
+    .table-controls { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .table-controls h3 { font-size: 1.1rem; color: var(--primary); font-weight: 700; }
     
     table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 18px 25px; background: #f8fafc; color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
-    td { padding: 18px 25px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text); font-size: 0.95rem; }
+    th { text-align: left; padding: 18px 25px; background: #f8fafc; color: #64748b; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    td { padding: 18px 25px; border-bottom: 1px solid var(--border); vertical-align: middle; font-size: 0.95rem; }
     tr:last-child td { border-bottom: none; }
-    tr:hover { background: #f8fafc; }
+    tr:hover { background: #f1f5f9; }
 
-    /* BADGES (ETIQUETAS) */
-    .badge { padding: 6px 12px; border-radius: 30px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; }
-    .badge.pendente { background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; }
+    /* --- BADGES & BUTTONS --- */
+    .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase; }
+    .badge.pendente { background: #fff7ed; color: #b45309; border: 1px solid #fed7aa; }
     .badge.aguardando { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
     .badge.pago { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
 
-    /* BOTÕES DE AÇÃO */
-    .actions { display: flex; gap: 8px; }
-    .btn-icon { width: 36px; height: 36px; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; font-size: 1rem; }
-    .btn-view { background: #f1f5f9; color: var(--text); } .btn-view:hover { background: #e2e8f0; }
-    .btn-charge { background: #eff6ff; color: var(--accent); } .btn-charge:hover { background: #dbeafe; }
-    .btn-confirm { background: #f0fdf4; color: var(--success); } .btn-confirm:hover { background: #dcfce7; }
-    .btn-del { background: #fef2f2; color: var(--danger); } .btn-del:hover { background: #fee2e2; }
-    
-    /* MODAL (POP-UP) */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2000; animation: fadeIn 0.2s ease; }
-    .modal { background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 16px; position: relative; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); animation: slideUp 0.3s ease; }
-    .modal h2 { margin-bottom: 20px; color: var(--primary); font-size: 1.4rem; }
-    .modal-close { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.2rem; color: #94a3b8; transition: 0.2s; }
-    .modal-close:hover { color: var(--danger); }
-    
-    .detail-row { margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
-    .detail-row label { display: block; font-size: 0.75rem; color: #64748b; font-weight: 700; uppercase; margin-bottom: 4px; }
-    .detail-row span { font-size: 1rem; color: var(--text); font-weight: 500; }
-    .docs-box { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e0; font-family: monospace; font-size: 0.9rem; color: #334155; }
+    .action-group { display: flex; gap: 8px; }
+    .btn-act { width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: 0.2s; }
+    .btn-view { background: #e2e8f0; color: var(--text); } .btn-view:hover { background: #cbd5e1; }
+    .btn-money { background: #dbeafe; color: var(--secondary); } .btn-money:hover { background: #bfdbfe; }
+    .btn-ok { background: #dcfce7; color: var(--success); } .btn-ok:hover { background: #bbf7d0; }
+    .btn-trash { background: #fee2e2; color: var(--danger); } .btn-trash:hover { background: #fecaca; }
+    .btn-zap { background: #25D366; color: white; text-decoration: none; } .btn-zap:hover { opacity: 0.8; }
 
-    .input-valor { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1.2rem; font-weight: bold; text-align: center; margin: 20px 0; }
-    .input-valor:focus { border-color: var(--accent); }
-    .btn-modal-action { width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.3s; }
-    .btn-send-charge { background: var(--accent); color: white; } .btn-send-charge:hover { background: #2563eb; }
+    /* --- MODAL --- */
+    .modal-overlay {
+        position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+        display: none; align-items: center; justify-content: center; z-index: 2000; animation: fadeIn 0.2s;
+    }
+    .modal-box {
+        background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 16px;
+        position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: slideUp 0.3s;
+    }
+    .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.2rem; color: #94a3b8; }
+    .close-modal:hover { color: var(--danger); }
+    
+    .modal-title { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-bottom: 20px; }
+    .detail-item { border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px; }
+    .detail-item label { display: block; font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+    .detail-item span { font-size: 1rem; color: var(--text); font-weight: 500; }
+    
+    .doc-list-box { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e0; color: #475569; font-size: 0.9rem; line-height: 1.5; }
+    
+    .input-money { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1.5rem; text-align: center; font-weight: 700; margin: 20px 0; color: var(--primary); }
+    .input-money:focus { border-color: var(--secondary); }
+    
+    .btn-full { width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; background: var(--primary); color: white; transition: 0.3s; }
+    .btn-full:hover { background: var(--secondary); }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-    /* RESPONSIVIDADE */
-    @media (max-width: 1000px) {
-        body { flex-direction: column; height: auto; overflow: auto; }
-        aside { width: 100%; padding: 15px; flex-direction: row; justify-content: space-between; align-items: center; }
-        aside h1 { margin: 0; font-size: 1.2rem; }
-        aside nav { display: none; }
-        aside .logout { margin: 0; border: none; padding: 0; }
-        .cards-grid { grid-template-columns: repeat(2, 1fr); }
-        .table-container { overflow-x: auto; }
+    /* MOBILE */
+    @media (max-width: 900px) {
+        body { flex-direction: column; overflow: auto; height: auto; }
+        aside { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; padding: 15px; }
+        aside h2 { margin: 0; font-size: 1.2rem; }
+        aside nav { display: none; } 
+        .table-wrapper { overflow-x: auto; }
     }
   </style>
 </head>
 <body>
 
+  <div id="login-screen">
+    <div class="login-box">
+      <img src="imagens/5.png" alt="Brasão">
+      <h2 style="margin-bottom:20px;">Acesso Restrito</h2>
+      <input type="password" id="admin-pass" placeholder="Digite a senha de acesso">
+      <button onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
+    </div>
+  </div>
+
   <aside>
-    <h1><i class="fas fa-shield-alt"></i> COVISA <span style="font-size:0.6rem; background:rgba(255,255,255,0.2); padding:2px 6px; border-radius:4px; margin-left:8px;">ADMIN</span></h1>
+    <h2><i class="fas fa-shield-alt"></i> COVISA <span style="font-size:0.6rem; background:rgba(255,255,255,0.2); padding:3px 6px; border-radius:4px; margin-left:5px;">ADM</span></h2>
     <nav>
-      <a href="#" class="active"><i class="fas fa-th-large"></i> Visão Geral</a>
-      <a href="#"><i class="fas fa-inbox"></i> Solicitações</a>
-      <a href="#"><i class="fas fa-users"></i> Fiscais</a>
-      <a href="#"><i class="fas fa-cog"></i> Configurações</a>
+      <div class="menu-item active"><i class="fas fa-columns"></i> Dashboard</div>
+      <div class="menu-item"><i class="fas fa-inbox"></i> Solicitações</div>
+      <div class="menu-item"><i class="fas fa-users"></i> Fiscais</div>
+      <div class="menu-item"><i class="fas fa-cog"></i> Configurações</div>
     </nav>
-    <div class="logout" onclick="window.limparTudo()">
-      <i class="fas fa-trash-alt"></i> Limpar Banco de Dados
+    <div class="logout-btn" onclick="window.limparTudo()">
+      <i class="fas fa-trash-alt"></i> RESETAR BANCO
     </div>
   </aside>
 
   <main>
     <header>
-      <h2>Dashboard de Controle</h2>
-      <a href="index.html" target="_blank" class="btn-site"><i class="fas fa-external-link-alt"></i> Acessar Portal</a>
+      <div class="header-title">
+        <h1>Dashboard Geral</h1>
+        <p>Visão geral dos processos de licenciamento.</p>
+      </div>
+      <a href="index.html" target="_blank" class="btn-portal"><i class="fas fa-external-link-alt"></i> Ver Portal</a>
     </header>
 
-    <div class="cards-grid">
-      <div class="card">
-        <div class="card-icon" style="background:#fffbeb; color:#d97706;"><i class="fas fa-file-contract"></i></div>
-        <div class="card-info"><h3>Pendentes</h3><p id="c-pendente">0</p></div>
+    <div class="dashboard-cards">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#fff7ed; color:#d97706;"><i class="fas fa-hourglass-half"></i></div>
+        <div class="stat-info"><h3>Pendentes</h3><p id="count-p">0</p></div>
       </div>
-      <div class="card">
-        <div class="card-icon" style="background:#eff6ff; color:#2563eb;"><i class="fas fa-clock"></i></div>
-        <div class="card-info"><h3>Aguardando Pix</h3><p id="c-aguardando">0</p></div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#eff6ff; color:#2563eb;"><i class="fas fa-dollar-sign"></i></div>
+        <div class="stat-info"><h3>Aguardando</h3><p id="count-a">0</p></div>
       </div>
-      <div class="card">
-        <div class="card-icon" style="background:#f0fdf4; color:#16a34a;"><i class="fas fa-check-circle"></i></div>
-        <div class="card-info"><h3>Regularizados</h3><p id="c-pago">0</p></div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#f0fdf4; color:#16a34a;"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info"><h3>Concluídos</h3><p id="count-c">0</p></div>
       </div>
-      <div class="card">
-        <div class="card-icon" style="background:#f8fafc; color:#64748b;"><i class="fas fa-chart-bar"></i></div>
-        <div class="card-info"><h3>Total Geral</h3><p id="c-total">0</p></div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#f1f5f9; color:#475569;"><i class="fas fa-database"></i></div>
+        <div class="stat-info"><h3>Total</h3><p id="count-t">0</p></div>
       </div>
     </div>
 
-    <div class="table-container">
-      <div class="table-header-control">
-        <h3>Solicitações Recentes</h3>
-        <span style="font-size:0.8rem; color:#64748b;"><i class="fas fa-sync fa-spin"></i> Atualização em tempo real</span>
+    <div class="table-wrapper">
+      <div class="table-controls">
+        <h3>Últimas Solicitações</h3>
+        <span style="font-size:0.8rem; color:#64748b;"><i class="fas fa-circle" style="color:#10b981; font-size:0.6rem;"></i> Online</span>
       </div>
       <table>
         <thead>
           <tr>
-            <th width="25%">Empresa / CNPJ</th>
-            <th width="15%">Atividade</th>
-            <th width="20%">Documentação</th>
-            <th width="15%">Status</th>
-            <th width="25%">Ações Rápidas</th>
+            <th>Empresa / CNPJ</th>
+            <th>Ramo</th>
+            <th>Documentação</th>
+            <th>Status Atual</th>
+            <th style="text-align:right;">Ações</th>
           </tr>
         </thead>
         <tbody id="tabela-corpo">
-          </tbody>
+            </tbody>
       </table>
     </div>
   </main>
 
-  <div class="modal-overlay" id="modal-detalhes">
-    <div class="modal">
-        <i class="fas fa-times modal-close" onclick="window.fecharModais()"></i>
-        <h2><i class="fas fa-info-circle"></i> Detalhes do Pedido</h2>
-        <div class="modal-body" id="detalhes-conteudo">
-            </div>
+  <div class="modal-overlay" id="modal-info">
+    <div class="modal-box">
+        <i class="fas fa-times close-modal" onclick="fecharModais()"></i>
+        <h3 class="modal-title">Detalhes do Pedido</h3>
+        <div id="info-content"></div>
+        <div style="margin-top:20px; padding:10px; background:#fef2f2; color:#b91c1c; border-radius:8px; font-size:0.85rem;">
+            <i class="fas fa-exclamation-circle"></i> Verifique as fotos enviadas no WhatsApp antes de aprovar.
+        </div>
     </div>
   </div>
 
-  <div class="modal-overlay" id="modal-cobranca">
-    <div class="modal">
-        <i class="fas fa-times modal-close" onclick="window.fecharModais()"></i>
-        <h2><i class="fas fa-dollar-sign"></i> Emitir Taxa</h2>
-        <p>Defina o valor da taxa para liberação do alvará.</p>
-        <p style="margin-top:10px;">Cliente: <strong id="cobranca-nome">...</strong></p>
+  <div class="modal-overlay" id="modal-money">
+    <div class="modal-box">
+        <i class="fas fa-times close-modal" onclick="fecharModais()"></i>
+        <h3 class="modal-title">Emitir Taxa de Alvará</h3>
+        <p>Defina o valor que o cliente deve pagar via Pix.</p>
+        <p style="margin-top:10px; color:#64748b;">Cliente: <strong id="money-nome" style="color:var(--text);">...</strong></p>
         
-        <input type="text" id="valor-input" class="input-valor" placeholder="Ex: 150,00" autofocus>
+        <input type="text" id="valor-input" class="input-money" placeholder="0,00">
         
-        <button class="btn-modal-action btn-send-charge" onclick="window.enviarCobranca()">
-            <i class="fas fa-paper-plane"></i> Enviar Cobrança Agora
+        <button class="btn-full" onclick="enviarCobrancaFinal()">
+            <i class="fas fa-paper-plane"></i> ENVIAR COBRANÇA
         </button>
     </div>
   </div>
@@ -197,7 +263,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // 2. CONFIGURAÇÃO (SITE-8DFAF)
+    // CONFIGURAÇÃO FIREBASE (SITE-8DFAF)
     const firebaseConfig = {
       apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
       authDomain: "site-8dfaf.firebaseapp.com",
@@ -209,151 +275,165 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    let currentId = null;
+    let idSelecionado = null;
 
-    // --- ESCUTA EM TEMPO REAL ---
+    // --- SISTEMA DE LOGIN SIMPLES ---
+    window.fazerLogin = function() {
+        const pass = document.getElementById('admin-pass').value;
+        if(pass === "1533") {
+            document.getElementById('login-screen').style.opacity = '0';
+            setTimeout(() => { document.getElementById('login-screen').style.display = 'none'; }, 500);
+        } else {
+            alert("Senha incorreta!");
+        }
+    }
+
+    // --- ESCUTA O BANCO DE DADOS ---
     onSnapshot(collection(db, "pedidos"), (snapshot) => {
         const tabela = document.getElementById('tabela-corpo');
         tabela.innerHTML = '';
         let p=0, a=0, c=0;
 
         if(snapshot.empty) {
-            tabela.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px; color:#94a3b8;">Nenhuma solicitação encontrada.</td></tr>`;
+            tabela.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:50px; color:#94a3b8;">Nenhum registro encontrado.</td></tr>`;
         }
 
-        // Ordena para os mais recentes aparecerem primeiro (se o timestamp permitir, aqui é ordem padrão)
-        snapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            const id = docSnap.id;
+        snapshot.forEach(docItem => {
+            const data = docItem.data();
+            const id = docItem.id; // CNPJ
 
-            // Define Status e Botões
-            let badgeHtml = '';
-            let btnPrincipal = '';
+            // Contadores
+            if(data.pago) c++;
+            else if(data.valor) a++;
+            else p++;
+
+            // Lógica de Status e Botões
+            let statusBadge = '';
+            let buttons = '';
+
+            // Link WhatsApp Inteligente
+            const textoZap = `Olá ${data.nome}, referente ao processo do CNPJ ${id}...`;
+            const btnZap = `<a href="https://api.whatsapp.com/send?phone=&text=${encodeURIComponent(textoZap)}" target="_blank" class="btn-act btn-zap" title="Chamar no WhatsApp"><i class="fab fa-whatsapp"></i></a>`;
 
             if(data.pago) {
-                c++;
-                badgeHtml = `<span class="badge pago"><i class="fas fa-check"></i> Regularizado</span>`;
-                btnPrincipal = `<button class="btn-icon btn-del" onclick="window.apagar('${id}')" title="Arquivar"><i class="fas fa-archive"></i></button>`;
+                // STATUS: PAGO
+                statusBadge = `<span class="badge pago"><i class="fas fa-check"></i> Regularizado</span>`;
+                buttons = `
+                    <button class="btn-act btn-view" onclick="window.abrirDetalhes('${id}', '${data.nome}', '${data.tipo}', '${data.docs}')" title="Ver"><i class="fas fa-eye"></i></button>
+                    ${btnZap}
+                    <button class="btn-act btn-trash" onclick="window.excluir('${id}')" title="Arquivar"><i class="fas fa-archive"></i></button>
+                `;
             } else if(data.valor) {
-                a++;
-                badgeHtml = `<span class="badge aguardando"><i class="fas fa-clock"></i> R$ ${data.valor}</span>`;
-                btnPrincipal = `<button class="btn-icon btn-confirm" onclick="window.confirmarPgto('${id}')" title="Confirmar Pagamento"><i class="fas fa-check-double"></i></button>`;
+                // STATUS: AGUARDANDO PAGAMENTO
+                statusBadge = `<span class="badge aguardando"><i class="fas fa-clock"></i> R$ ${data.valor}</span>`;
+                buttons = `
+                    <button class="btn-act btn-view" onclick="window.abrirDetalhes('${id}', '${data.nome}', '${data.tipo}', '${data.docs}')" title="Ver"><i class="fas fa-eye"></i></button>
+                    <button class="btn-act btn-ok" onclick="window.confirmar('${id}')" title="Confirmar Pagamento"><i class="fas fa-check-double"></i></button>
+                    ${btnZap}
+                `;
             } else {
-                p++;
-                badgeHtml = `<span class="badge pendente"><i class="fas fa-search"></i> Análise</span>`;
-                btnPrincipal = `<button class="btn-icon btn-charge" onclick="window.abrirModalCobranca('${id}', '${data.nome}')" title="Cobrar Taxa"><i class="fas fa-dollar-sign"></i></button>`;
+                // STATUS: PENDENTE (ANÁLISE)
+                statusBadge = `<span class="badge pendente"><i class="fas fa-search"></i> Análise</span>`;
+                buttons = `
+                    <button class="btn-act btn-view" onclick="window.abrirDetalhes('${id}', '${data.nome}', '${data.tipo}', '${data.docs}')" title="Ver"><i class="fas fa-eye"></i></button>
+                    <button class="btn-act btn-money" onclick="window.abrirCobranca('${id}', '${data.nome}')" title="Cobrar"><i class="fas fa-dollar-sign"></i></button>
+                    ${btnZap}
+                    <button class="btn-act btn-trash" onclick="window.excluir('${id}')" title="Recusar/Excluir"><i class="fas fa-times"></i></button>
+                `;
             }
 
-            // Link WhatsApp (Tenta usar o ID como telefone se possível, ou link genérico)
-            // Aqui assumimos que o Admin vai ver o número nos detalhes, mas deixamos um link genérico
-            const zapBtn = `<a href="https://api.whatsapp.com/send?phone=&text=Ola, falo da COVISA sobre a empresa ${data.nome}" target="_blank" class="btn-icon btn-view" style="color:#25D366" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>`;
-
+            // Inserir na tabela
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>
                     <div style="font-weight:700; color:var(--primary);">${data.nome}</div>
                     <div style="font-size:0.8rem; color:#64748b;">${id}</div>
-                    <div style="font-size:0.7rem; color:#94a3b8;">${data.data || ''}</div>
+                    <div style="font-size:0.7rem; color:#94a3b8;">${data.data || 'Sem data'}</div>
                 </td>
                 <td>${data.tipo}</td>
-                <td><span style="font-size:0.8rem; color:#475569; display:block; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${data.docs}</span></td>
-                <td>${badgeHtml}</td>
                 <td>
-                    <div class="actions">
-                        <button class="btn-icon btn-view" onclick="window.verDetalhes('${id}', '${data.nome}', '${data.tipo}', '${data.docs}')" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
-                        ${btnPrincipal}
-                        ${zapBtn}
-                        <button class="btn-icon btn-del" onclick="window.apagar('${id}')" title="Excluir"><i class="fas fa-trash"></i></button>
+                    <div style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#475569;">
+                        ${data.docs}
                     </div>
+                </td>
+                <td>${statusBadge}</td>
+                <td style="text-align:right;">
+                    <div class="action-group" style="justify-content: flex-end;">${buttons}</div>
                 </td>
             `;
             tabela.appendChild(tr);
         });
 
-        // Atualiza Cards
-        document.getElementById('c-pendente').innerText = p;
-        document.getElementById('c-aguardando').innerText = a;
-        document.getElementById('c-pago').innerText = c;
-        document.getElementById('c-total').innerText = snapshot.size;
+        // Atualizar Dashboard
+        document.getElementById('count-p').innerText = p;
+        document.getElementById('count-a').innerText = a;
+        document.getElementById('count-c').innerText = c;
+        document.getElementById('count-t').innerText = snapshot.size;
     });
 
-    // --- FUNÇÕES GLOBAIS (MODAIS E AÇÕES) ---
+    // --- FUNÇÕES DE AÇÃO ---
 
-    // 1. Ver Detalhes
-    window.verDetalhes = function(id, nome, tipo, docs) {
-        const modal = document.getElementById('modal-detalhes');
-        const conteudo = document.getElementById('detalhes-conteudo');
-        
-        conteudo.innerHTML = `
-            <div class="detail-row"><label>Razão Social / Nome</label><span>${nome}</span></div>
-            <div class="detail-row"><label>CPF / CNPJ</label><span>${id}</span></div>
-            <div class="detail-row"><label>Atividade</label><span>${tipo}</span></div>
-            <div class="detail-row"><label>Documentos Declarados</label>
-                <div class="docs-box">${docs}</div>
-            </div>
-            <div style="margin-top:20px; font-size:0.8rem; color:#666;">
-                * As fotos devem ser conferidas no WhatsApp da central.
+    window.abrirDetalhes = function(id, nome, tipo, docs) {
+        document.getElementById('info-content').innerHTML = `
+            <div class="detail-item"><label>Nome / Razão Social</label><span>${nome}</span></div>
+            <div class="detail-item"><label>Documento (CNPJ/CPF)</label><span>${id}</span></div>
+            <div class="detail-item"><label>Ramo de Atividade</label><span>${tipo}</span></div>
+            <div class="detail-item"><label>Itens Declarados</label>
+                <div class="doc-list-box">${docs}</div>
             </div>
         `;
-        modal.style.display = 'flex';
+        document.getElementById('modal-info').style.display = 'flex';
     };
 
-    // 2. Abrir Cobrança
-    window.abrirModalCobranca = function(id, nome) {
-        currentId = id;
-        document.getElementById('cobranca-nome').innerText = nome;
+    window.abrirCobranca = function(id, nome) {
+        idSelecionado = id;
+        document.getElementById('money-nome').innerText = nome;
         document.getElementById('valor-input').value = "";
-        document.getElementById('modal-cobranca').style.display = 'flex';
+        document.getElementById('modal-money').style.display = 'flex';
         document.getElementById('valor-input').focus();
     };
 
-    // 3. Enviar Cobrança (Escrever no Firebase)
-    window.enviarCobranca = async function() {
-        const val = document.getElementById('valor-input').value;
-        if(!val) return alert("Digite o valor!");
+    window.enviarCobrancaFinal = async function() {
+        const valor = document.getElementById('valor-input').value;
+        if(!valor) return alert("Digite o valor da taxa!");
         
         try {
-            await updateDoc(doc(db, "pedidos", currentId), { valor: val });
+            await updateDoc(doc(db, "pedidos", idSelecionado), { valor: valor });
             window.fecharModais();
-        } catch(e) { alert("Erro ao atualizar."); }
+        } catch(e) { console.log(e); alert("Erro ao enviar cobrança."); }
     };
 
-    // 4. Confirmar Pagamento
-    window.confirmarPgto = async function(id) {
-        if(confirm("Confirmar recebimento do PIX e liberar Alvará?")) {
+    window.confirmar = async function(id) {
+        if(confirm("Confirma que recebeu o PIX e deseja liberar o Alvará?")) {
             await updateDoc(doc(db, "pedidos", id), { pago: true });
         }
     };
 
-    // 5. Apagar
-    window.apagar = async function(id) {
-        if(confirm("Tem certeza que deseja EXCLUIR este registro?")) {
+    window.excluir = async function(id) {
+        if(confirm("Tem certeza que deseja apagar este registro do sistema?")) {
             await deleteDoc(doc(db, "pedidos", id));
         }
     };
 
-    // 6. Limpar Tudo (Perigo)
     window.limparTudo = async function() {
-        if(confirm("ATENÇÃO MÁXIMA:\nIsso vai apagar TODOS os registros do banco de dados.\n\nDeseja continuar?")) {
+        if(confirm("PERIGO: Isso vai apagar TODOS os registros do banco de dados.\nDeseja continuar?")) {
             const q = await getDocs(collection(db, "pedidos"));
             const batch = writeBatch(db);
             q.forEach(d => batch.delete(d.ref));
             await batch.commit();
-            alert("Banco de dados resetado.");
+            alert("Banco limpo com sucesso.");
         }
     };
 
-    // Fechar Modais
     window.fecharModais = function() {
-        document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    };
+    
+    // Fechar clicando fora
+    window.onclick = function(e) {
+        if(e.target.classList.contains('modal-overlay')) window.fecharModais();
     };
 
-    // Fechar ao clicar fora
-    window.onclick = function(event) {
-        if (event.target.classList.contains('modal-overlay')) {
-            window.fecharModais();
-        }
-    }
   </script>
 </body>
 </html>
