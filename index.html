@@ -2,23 +2,18 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal Oficial de Vigilância Sanitária | SP</title>
   <meta name="description" content="Portal de Gestão, Licenciamento e Fiscalização Sanitária da Prefeitura de São Paulo." />
 
   <link rel="icon" href="imagens/5.png" type="image/png" />
-  
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@400;500;600;700;800&family=Times+New+Roman&display=swap" rel="stylesheet" />
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
    
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
 
   <style>
-    /* ==========================================================================
-       1. VARIÁVEIS E RESET
-       ========================================================================== */
     :root {
       --sp-red: #da251c;
       --sp-dark-red: #a81009;
@@ -31,41 +26,138 @@
       --white: #ffffff;
       --glass: rgba(255, 255, 255, 0.95);
       --shadow: 0 10px 30px rgba(0,0,0,0.08);
-      --radius: 12px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+    /* --- RESET GERAL --- */
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Roboto', sans-serif; background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; line-height: 1.6; padding-bottom: 60px; margin: 0; }
-    
+    body { font-family: 'Roboto', sans-serif; background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; line-height: 1.6; padding-bottom: 60px; }
     h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; font-weight: 700; }
     a { text-decoration: none; color: inherit; transition: 0.3s; }
     ul { list-style: none; }
     img { max-width: 100%; display: block; }
-    
+
     .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
-    /* ==========================================================================
-       2. COMPONENTES GLOBAIS (Header, Nav, GovBar)
-       ========================================================================== */
-    
-    /* Barra de Segurança */
-    .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 6px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; display: flex; justify-content: center; gap: 15px; }
-    
-    /* Barra Governamental */
+    /* --- CAPTCHA --- */
+    .captcha-container {
+        background: #f9f9f9;
+        border: 1px solid #d3d3d3;
+        border-radius: 4px;
+        width: 100%;
+        max-width: 300px;
+        height: 74px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px;
+        margin: 20px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        user-select: none;
+    }
+
+    .captcha-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        height: 100%;
+        flex-grow: 1;
+    }
+
+    .checkmark-box {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #c1c1c1;
+        border-radius: 2px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+
+    .checkmark-box:hover { border-color: #b2b2b2; }
+
+    .captcha-spinner {
+        width: 18px;
+        height: 18px;
+        border: 3px solid #dbdbdb;
+        border-top: 3px solid #4a90e2;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        display: none;
+    }
+
+    .captcha-check {
+        color: #009688;
+        font-size: 22px;
+        display: none;
+    }
+
+    .captcha-label {
+        font-family: 'Roboto', sans-serif;
+        font-size: 14px;
+        color: #000;
+        font-weight: 500;
+    }
+
+    .captcha-logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .captcha-logo img {
+        width: 32px;
+        height: 32px;
+        opacity: 0.6;
+    }
+
+    .captcha-logo span {
+        font-size: 10px;
+        color: #999;
+        margin-top: 2px;
+    }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* --- ESTILO PARA MENSAGEM DE SUCESSO DO CPF --- */
+    .cpf-success-msg {
+        background: #dcfce3;
+        color: #166534;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 800;
+        margin-top: 10px;
+        display: none;
+        border: 1px solid #22c55e;
+        text-align: center;
+    }
+
+    /* --- WIDGET DE ACESSIBILIDADE LATERAL --- */
+    .access-widget { position: fixed; right: 0; top: 40%; transform: translateY(-50%); display: flex; flex-direction: column; z-index: 9999; }
+    .access-widget a { background: #0d3c85; color: white; font-size: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); border-radius: 8px 0 0 8px; margin-bottom: 2px; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; text-decoration: none;}
+    .access-widget a:hover { background: var(--sp-red); width: 55px; }
+
+    /* --- FEATURE: BARRA DE SEGURANÇA --- */
+    .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
+     
+    /* --- BARRA GOV VERMELHA --- */
     .gov-bar { background: var(--sp-red); color: #fff; padding: 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2000; position: relative; }
     .gov-left { font-weight: 700; opacity: 0.95; }
     .gov-links { display: flex; gap: 10px; }
-    .gov-links a { color: #fff; font-weight: 800; opacity: 0.95; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); white-space: nowrap; }
+    .gov-links a { color: #fff; font-weight: 800; opacity: 0.95; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); white-space: nowrap; }
     .gov-links a:hover { opacity: 1; background: rgba(255,255,255,0.14); }
 
-    /* Header Principal */
+    /* --- HEADER --- */
     header { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 14px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
     .header-grid { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
-    
     .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
-    .brand img { height: 60px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+    .brand img { height: 68px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
     .brand-text h1 { font-size: 1.35rem; line-height: 1; color: var(--text-dark); letter-spacing: -0.5px; text-transform: uppercase; font-weight: 900; }
     .brand-text span { font-size: 0.75rem; color: var(--sp-red); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
 
@@ -76,48 +168,67 @@
     .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
     .btn-login { background: var(--gov-blue); color: white; padding: 10px 18px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
     .btn-login:hover { background: var(--gov-dark-blue); box-shadow: 0 4px 15px rgba(19, 81, 180, 0.3); }
+    .btn-login i { font-size: 1.15rem; }
     .hamburger-btn { display: none; width: 44px; height: 44px; border-radius: 12px; background: #f8f9fa; border: 1px solid #e9ecef; cursor: pointer; align-items: center; justify-content: center; color: #333; transition: 0.2s; }
+    .hamburger-btn:hover { background: #f1f3f5; }
 
-    /* ==========================================================================
-       3. HERO SECTION (BANNER)
-       ========================================================================== */
+    /* --- DRAWER MOBILE --- */
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; display: none; }
+    .drawer { position: fixed; top: 0; left: 0; height: 100%; width: 310px; max-width: 86vw; background: #fff; z-index: 10000; transform: translateX(-110%); transition: transform 0.25s ease; box-shadow: 0 20px 60px rgba(0,0,0,0.25); display: flex; flex-direction: column; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-overlay.open { display: block; }
+    .drawer-top { padding: 18px 18px 14px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .drawer-title { font-weight: 900; color: var(--text-dark); letter-spacing: -0.2px; }
+    .drawer-close { width: 40px; height: 40px; border-radius: 12px; border: 1px solid #e9ecef; background: #f8f9fa; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+    .drawer-nav { padding: 10px 12px 18px; display: flex; flex-direction: column; gap: 20px; }
+    .drawer-nav a { padding: 12px 12px; border-radius: 14px; font-weight: 800; color: #2c3e50; display: flex; align-items: center; gap: 10px; border: 1px solid #f1f3f5; background: #fff; }
+    .drawer-nav a:hover { background: #f8f9fa; }
+    .drawer-nav a.denuncia { background: rgba(218, 37, 28, 0.08); border-color: rgba(218, 37, 28, 0.25); color: var(--sp-red); }
+    .drawer-nav a.denuncia strong { background: var(--sp-red); color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; margin-left: auto; }
+    .drawer-bottom { margin-top: auto; padding: 16px; border-top: 1px solid #eee; background: #fafafa; color: #666; font-size: 0.9rem; }
+
+    /* --- HERO --- */
     .hero { background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center; color: white; padding-top: 40px; padding-bottom: 150px; }
     .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
     .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
-    
     .search-box { background: white; padding: 8px; border-radius: 50px; display: flex; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 600px; margin: 0 auto 10px; }
     .search-box input { border: none; flex: 1; padding: 15px 25px; font-size: 1.1rem; color: #333; outline: none; }
     .search-box button { background: var(--sp-red); color: white; border: none; padding: 0 35px; border-radius: 50px; cursor: pointer; font-weight: 900; font-size: 1rem; transition: 0.3s; }
     .search-box button:hover { background: var(--sp-dark-red); }
 
-    /* Stats em Tempo Real (Rodapé do Hero) */
+    /* --- SIMULAÇÃO EM TEMPO REAL --- */
     .live-stats-bar { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 25px 0; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; position: absolute; bottom: 0; }
     .live-grid { display: flex; justify-content: center; gap: 60px; text-align: center; color: white; }
     .live-item h4 { font-size: 2.8rem; font-weight: 900; margin: 0; color: #ffeb3b; font-family: 'Courier New', monospace; line-height: 1; }
     .live-item span { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 800; }
 
-    /* ==========================================================================
-       4. STATUS CARDS
-       ========================================================================== */
+    /* --- STATUS CARDS --- */
     .status-bar { margin-top: 60px; padding-bottom: 60px; background: white; }
     .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
-    .status-card { background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #eee; display: flex; align-items: center; gap: 15px; transition: 0.3s; box-shadow: var(--shadow); cursor: default; }
+    .status-card { background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #eee; display: flex; align-items: center; gap: 15px; transition: 0.3s; box-shadow: var(--shadow); }
     .status-card:hover { transform: translateY(-5px); border-color: var(--sp-red); }
     .icon-box { width: 60px; height: 60px; background: #f0f4ff; color: var(--gov-blue); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
     .status-info h4 { font-size: 0.9rem; color: var(--text-light); margin-bottom: 5px; text-transform: uppercase; font-weight: 900; }
     .status-info strong { font-size: 1.2rem; color: var(--text-dark); display: block; font-weight: 900; }
 
-    /* ==========================================================================
-       5. ÁREA DE REGULARIZAÇÃO (CORE)
-       ========================================================================== */
+    /* --- ESTILOS GERAIS DE FORMULÁRIO --- */
+    .form-control { width: 100%; padding: 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; margin-bottom: 15px; transition: 0.3s; font-family: 'Roboto', sans-serif; background: #fff; }
+    .form-control:focus { border-color: var(--gov-blue); outline: none; }
+    .form-control[readonly] { background-color: #f1f3f5; color: #6c757d; cursor: not-allowed; }
+    .btn-success { background: var(--success-color); color: white; border: none; padding: 20px; border-radius: 10px; font-weight: 900; font-size: 1.2rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+    .btn-success:hover { background: #1b5e20; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2); }
+    .btn-primary { background: var(--gov-blue); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: 900; font-size: 1.1rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; text-transform: uppercase; }
+    .btn-primary:hover { background: var(--gov-dark-blue); transform: translateY(-2px); }
+
+    /* --- REGULARIZE SECTION --- */
     .checklist-section { padding: 100px 0; background: #f4f7fa; border-top: 1px solid #e1e8ed; border-bottom: 1px solid #e1e8ed; }
     .checklist-wrapper { display: flex; gap: 60px; flex-wrap: wrap; align-items: flex-start; }
     .checklist-intro { flex: 1; min-width: 320px; }
     .checklist-intro h2 { font-size: 2.8rem; color: var(--gov-dark-blue); margin-bottom: 20px; font-family: 'Montserrat', sans-serif; font-weight: 900; line-height: 1.2; }
     .checklist-intro p.lead { font-size: 1.15rem; color: #4a5568; margin-bottom: 30px; line-height: 1.7; }
-    
+     
     .process-steps { display: flex; gap: 15px; margin-bottom: 35px; }
     .process-step { background: #fff; padding: 18px 15px; border-radius: 12px; border-top: 4px solid var(--gov-blue); box-shadow: 0 6px 15px rgba(0,0,0,0.04); flex: 1; text-align: center; }
     .process-step i { font-size: 1.8rem; color: var(--gov-blue); margin-bottom: 12px; display: block; }
@@ -125,6 +236,7 @@
 
     .steps-box { background: #fff5f5; padding: 30px; border-radius: 12px; border-left: 6px solid var(--sp-red); box-shadow: 0 5px 20px rgba(218, 37, 28, 0.08); margin-bottom: 30px; }
     .steps-box h4 { color: var(--sp-red); margin-bottom: 15px; font-size: 1.35rem; font-weight: 900; display: flex; align-items: center; gap: 10px; line-height: 1.3; }
+    .steps-box p { font-size: 1.05rem; color: #4a5568; margin-bottom: 20px; line-height: 1.6; }
     .steps-list { list-style: none; padding: 0; margin: 0; }
     .steps-list li { position: relative; padding-left: 30px; margin-bottom: 15px; font-weight: 600; font-size: 0.95rem; color: #2d3748; line-height: 1.5; }
     .steps-list li i { position: absolute; left: 0; top: 3px; color: var(--sp-red); font-size: 1.1rem; }
@@ -134,44 +246,40 @@
     .form-tab { flex: 1; text-align: center; padding: 12px; font-weight: 800; font-size: 0.9rem; color: #64748b; cursor: pointer; border-radius: 8px; transition: 0.3s; }
     .form-tab.active { background: #fff; color: var(--gov-blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 
-    /* Inputs do Formulário */
-    .form-control { width: 100%; padding: 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; margin-bottom: 15px; transition: 0.3s; font-family: 'Roboto', sans-serif; background: #fff; }
-    .form-control:focus { border-color: var(--gov-blue); outline: none; }
-    .form-control[readonly] { background-color: #f1f3f5; color: #6c757d; cursor: not-allowed; }
-    
-    .btn-success { background: var(--success-color); color: white; border: none; padding: 20px; border-radius: 10px; font-weight: 900; font-size: 1.2rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
-    .btn-success:hover { background: #1b5e20; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2); }
-    .btn-primary { background: var(--gov-blue); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: 900; font-size: 1.1rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; text-transform: uppercase; }
-    .btn-primary:hover { background: var(--gov-dark-blue); transform: translateY(-2px); }
-
-    /* Docs Grid com Upload */
     .docs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-    .doc-wrapper { background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px; text-align: center; transition: 0.2s; position: relative; }
-    .doc-label { display: block; font-weight: 700; font-size: 0.9rem; color: #4a5568; margin-bottom: 10px; cursor: pointer; }
-    .doc-wrapper:has(input[type="checkbox"]:checked) { border-color: var(--gov-blue); background: #f0f7ff; }
-    
-    .file-input-container { display: none; margin-top: 8px; }
-    .custom-file-upload { display: inline-block; padding: 10px 12px; cursor: pointer; background: #e2e8f0; border-radius: 6px; font-size: 0.85rem; font-weight: 700; color: #475569; width: 100%; transition: 0.2s; }
-    .custom-file-upload:hover { background: #cbd5e0; }
-    .custom-file-upload i { margin-right: 5px; }
+    .doc-item { padding: 15px; border: 2px solid #e2e8f0; border-radius: 10px; display: flex; flex-direction: column; align-items: center; text-align: center; background: #fff; cursor: pointer; transition: 0.2s; position: relative; }
+    .doc-item input[type="checkbox"] { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+    .doc-item i { font-size: 2rem; color: #a0aec0; margin-bottom: 10px; transition: 0.2s; }
+    .doc-item span { font-size: 0.85rem; font-weight: 700; color: #4a5568; }
+    .doc-item:hover { border-color: #cbd5e0; background: #f8fafc; }
+    .doc-item input[type="checkbox"]:checked ~ i { color: var(--gov-blue); }
+    .doc-item input[type="checkbox"]:checked ~ span { color: var(--gov-blue); }
+    .doc-item:has(input[type="checkbox"]:checked) { border-color: var(--gov-blue); background: #f0f4f8; }
 
-    /* Mapa Embed */
-    #map-container { width: 100%; height: 250px; background: #e9ecef; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; display: none; overflow: hidden; position: relative; }
-    .map-legend { background: #fff; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; color: var(--sp-red); border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 5px; }
+    /* Map Styles */
+    #map-container {
+        width: 100%;
+        height: 250px;
+        background: #e9ecef;
+        margin-top: 15px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        display: none; 
+        overflow: hidden;
+        position: relative;
+    }
+    .map-legend {
+        background: #fff;
+        padding: 5px 10px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        color: var(--sp-red);
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
 
-    /* Captcha Visual */
-    .captcha-container { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 4px; width: 100%; max-width: 300px; height: 74px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); user-select: none; }
-    .captcha-checkbox { display: flex; align-items: center; gap: 12px; cursor: pointer; height: 100%; flex-grow: 1; }
-    .checkmark-box { width: 24px; height: 24px; border: 2px solid #c1c1c1; border-radius: 2px; background: #fff; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-    .checkmark-box:hover { border-color: #b2b2b2; }
-    .captcha-spinner { width: 18px; height: 18px; border: 3px solid #dbdbdb; border-top: 3px solid #4a90e2; border-radius: 50%; animation: spin 1s linear infinite; display: none; }
-    .captcha-check { color: #009688; font-size: 22px; display: none; }
-    .captcha-label { font-family: 'Roboto', sans-serif; font-size: 14px; color: #000; font-weight: 500; }
-    .captcha-logo { display: flex; flex-direction: column; align-items: center; text-align: center; }
-    .captcha-logo img { width: 32px; height: 32px; opacity: 0.6; }
-    .captcha-logo span { font-size: 10px; color: #999; margin-top: 2px; }
-
-    /* Pagamento & Invoice */
     .invoice-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: left; }
     .invoice-header { background: #f8fafc; padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
     .invoice-header h4 { margin: 0; color: var(--gov-dark-blue); font-size: 1.1rem; }
@@ -181,7 +289,8 @@
     .invoice-value span { display: block; font-size: 0.9rem; color: #718096; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
     .invoice-value h2 { font-size: 2.5rem; color: #2d3748; margin: 0; }
     .qr-container { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e0; text-align: center; margin-bottom: 25px; position: relative;}
-    
+
+    /* --- BARRA DE PROGRESSO VISUAL --- */
     .progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 35px; margin-top: 10px; padding: 0 20px;}
     .progress-container::before { content: ''; position: absolute; top: 50%; left: 30px; right: 30px; height: 4px; background: #e2e8f0; z-index: 0; transform: translateY(-50%); }
     .progress-step { position: relative; z-index: 1; background: white; border: 4px solid #e2e8f0; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #cbd5e0; }
@@ -189,41 +298,7 @@
     .progress-step.completed { border-color: var(--success-color); background: var(--success-color); color: white; }
     .progress-label { position: absolute; top: 55px; font-size: 0.75rem; text-align: center; width: 100px; left: -27px; font-weight: 800; color: #64748b; line-height: 1.2;}
 
-    /* ==========================================================================
-       6. MÓDULO AVANÇADO (FERRAMENTAS EXTRAS)
-       ========================================================================== */
-    .advanced-section { padding: 80px 0; background: #fff; border-top: 1px solid #e2e8f0; }
-    .advanced-title { text-align: center; margin-bottom: 60px; }
-    .advanced-title h2 { font-size: 2.5rem; color: var(--text-dark); margin-bottom: 15px; }
-    
-    /* Calculadora */
-    .calc-container { background: #f8fafc; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #cbd5e1; max-width: 900px; margin: 0 auto 80px; }
-    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-    .calc-range { width: 100%; margin-bottom: 20px; cursor: pointer; }
-    .calc-result { background: #1e293b; color: white; padding: 30px; border-radius: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
-    .calc-result .price { font-size: 3rem; font-weight: 900; color: #ffeb3b; }
-    
-    /* Biblioteca Jurídica */
-    .law-library { max-width: 1000px; margin: 0 auto; }
-    .law-item { margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
-    .law-header { background: #f1f5f9; padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; transition: 0.3s; }
-    .law-header:hover { background: #e2e8f0; color: var(--gov-blue); }
-    .law-body { display: none; padding: 30px; background: #fff; line-height: 1.8; color: #475569; font-size: 0.95rem; text-align: justify; }
-    .law-body.open { display: block; animation: fadeIn 0.5s; }
-
-    /* Galeria de Denúncia */
-    .infraction-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 50px; }
-    .infraction-card { border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; }
-    .infraction-card:hover { transform: translateY(-5px); border-color: var(--sp-red); }
-    .infraction-icon { height: 120px; background: #fef2f2; display: flex; align-items: center; justify-content: center; color: var(--sp-red); }
-    .infraction-icon svg { width: 60px; height: 60px; }
-    .infraction-title { padding: 15px; text-align: center; font-weight: 800; font-size: 0.9rem; color: #333; }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    /* ==========================================================================
-       7. SEÇÕES DE INFORMAÇÃO (News, FAQ, Footer)
-       ========================================================================== */
+    /* --- OUTRAS SEÇÕES --- */
     .areas-section { padding: 100px 0; background: #fff; text-align: center; }
     .areas-header { max-width: 700px; margin: 0 auto 60px; }
     .areas-header h2 { font-size: 2.5rem; color: var(--text-dark); margin-bottom: 15px; }
@@ -297,7 +372,7 @@
     .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 900; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
-    /* --- FOOTER --- */
+    /* --- FOOTER ATUALIZADO --- */
     footer { background: #17191d; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
     img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
@@ -306,12 +381,13 @@
     .footer a { color: #aaa; transition: 0.3s; }
     .footer a:hover { color: white; padding-left: 5px; }
     .footer-bottom { background: #0c0d10; padding: 25px 0; text-align: center; border-top: 1px solid #222; font-size: 0.9rem; }
-    
+
+    /* Estilo dos selos */
     .selo-link { display: block; transition: transform 0.3s ease; }
     .selo-link:hover { transform: translateY(-4px) scale(1.05); }
     .selo-link img { width: 100%; height: auto; display: block; mix-blend-mode: lighten; border-radius: 8px; }
 
-    /* --- CHATBOT --- */
+    /* Chatbot */
     .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; }
     .chat-interface { position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9998; display: none; flex-direction: column; border: 1px solid #eee; }
     .chat-header { background: var(--sp-red); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
@@ -322,12 +398,13 @@
     .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
 
-    /* --- MEDIA QUERIES (MOBILE) --- */
+    /* --- MOBILE AJUSTES --- */
     @media (max-width: 900px) {
       .gov-bar { font-size: 10px; padding: 8px 0; }
       .flex-between { align-items: flex-start; }
       .gov-left { display: block; max-width: 62%; line-height: 1.2; }
       .gov-links { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+      .gov-links a { padding: 6px 10px; }
       header { padding: 10px 0; }
       nav { display: none; } 
       .hamburger-btn { display: inline-flex; }
@@ -336,8 +413,10 @@
       .brand-text h1 { font-size: 1.05rem; }
       .brand-text span { font-size: 0.68rem; }
       .btn-login { padding: 10px 12px; font-size: 0.88rem; border-radius: 12px; gap: 8px; }
+      .btn-login i { font-size: 1.05rem; }
       .hero { min-height: 610px; padding-top: 18px; padding-bottom: 120px; }
       .hero h2 { font-size: 2.2rem; }
+      .hero p { font-size: 1.05rem; margin-bottom: 22px; }
       .search-box { border-radius: 18px; padding: 10px; flex-direction: column; gap: 10px; max-width: 92%; }
       .search-box input { padding: 14px 16px; font-size: 1rem; border-radius: 14px; border: 1px solid #eee; }
       .search-box button { height: 52px; border-radius: 14px; width: 100%; }
@@ -357,9 +436,9 @@
       .process-steps { flex-direction: column; }
       .docs-grid { grid-template-columns: 1fr; }
       .progress-container { padding: 0; }
+       
       .selos-container { flex-direction: column; gap: 15px !important; }
       .selos-container a { width: 100% !important; max-width: 250px; margin: 0 auto; }
-      .calc-grid, .infraction-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -503,7 +582,7 @@
                
               <input type="text" class="form-control" id="cnpj_empresa" placeholder="Digite seu CPF ou CNPJ" required style="margin-bottom: 10px;" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
                
-              <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px; background: #e0f2fe; padding: 10px; border-radius: 8px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados e localização via Satélite...</div>
+              <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados e localização via Satélite...</div>
                
               <div id="msg-cpf-encontrado" class="cpf-success-msg">
                 <i class="fas fa-check-circle"></i> CPF LOCALIZADO NA BASE DA RECEITA!<br>
@@ -553,8 +632,8 @@
               <div id="area-checklist" style="display: none;">
                 <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental (Marque APENAS os que JÁ POSSUI):</p>
                  
-                <div style="background: #e0f7fa; color: #006064; padding: 15px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; border: 1px solid #b2ebf2;">
-                  <i class="fas fa-camera"></i> <strong>Instrução:</strong> Marque o documento e use o botão "Anexar / Tirar Foto" que aparecerá.
+                <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px;">
+                  <i class="fas fa-info-circle"></i> Atenção: Se você marcar a caixa, será OBRIGATÓRIO anexar a foto do documento.
                 </div>
 
                 <div class="docs-grid" id="lista-documentos">
@@ -617,12 +696,14 @@
 
                   <div class="qr-container">
                     <div id="cronometro-pix" style="font-size: 1.2rem; font-weight: 900; color: var(--sp-red); margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 8px;"></div>
-                    
-                    <img id="img-qr-dinamico" src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
+                     
+                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
+                     
+                    <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
                     <div style="display: flex; gap: 8px;">
-                      <input type="text" id="pix-copia-cola" value="Aguardando geração..." class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
+                      <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
                       <button onclick="window.copiarPix()" style="background: var(--gov-blue); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
                     </div>
                   </div>
@@ -643,182 +724,12 @@
             <div id="mensagem-status" style="display: none; padding: 25px; border-radius: 12px; border-left: 5px solid; margin-top: 20px; text-align: center;">
               <div id="texto-mensagem" style="font-size: 1.1rem;">Em análise técnica...</div>
             </div>
-            
-            <div id="status-aprovado" style="display:none; text-align:center; margin-top:20px; background:#ecfdf5; padding:30px 20px; border-radius:16px; border:1px solid #10b981;">
-                <div style="width: 70px; height: 70px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
-                    <i class="fas fa-check" style="font-size: 2.5rem; color: #059669;"></i>
-                </div>
-                <h3 style="color:#047857; margin-bottom: 10px; font-size: 1.5rem;">Licença Aprovada!</h3>
-                <p style="font-size: 1rem; color: #064e3b; margin-bottom: 25px;">Seu estabelecimento está regularizado provisoriamente.</p>
-                <button id="btn-baixar-pdf" class="btn-primary" onclick="window.gerarPDF()">
-                    <i class="fas fa-file-pdf"></i> Baixar Alvará PDF
-                </button>
-            </div>
           </div>
 
         </div>
       </div>
     </div>
   </section>
-
-  <section class="advanced-section">
-    <div class="container">
-      
-      <div class="advanced-title">
-        <h2>Simulador de Penalidades</h2>
-        <p>Calcule o risco financeiro de manter seu estabelecimento irregular.</p>
-      </div>
-
-      <div class="calc-container">
-        <div class="calc-grid">
-          <div class="calc-inputs">
-            <div class="calc-input-group">
-              <label>Porte do Estabelecimento (m²)</label>
-              <input type="range" min="10" max="500" value="50" class="calc-range" id="range-area" oninput="calcularMulta()">
-              <span id="label-area">50 m²</span>
-            </div>
-            
-            <div class="calc-input-group">
-              <label>Risco Sanitário (CNAE)</label>
-              <select class="form-control" id="select-risco" onchange="calcularMulta()">
-                <option value="1">Baixo (Comércio s/ Alimentos)</option>
-                <option value="1.5">Médio (Salões, Estética)</option>
-                <option value="3">Alto (Restaurantes, Clínicas)</option>
-                <option value="5">Crítico (Hospitais, Indústrias)</option>
-              </select>
-            </div>
-
-            <div class="calc-input-group">
-              <label>Reincidência</label>
-              <select class="form-control" id="select-reincidencia" onchange="calcularMulta()">
-                <option value="1">Primeira Autuação</option>
-                <option value="2">Reincidente</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="calc-result">
-            <h3>Multa Estimada Diária:</h3>
-            <div class="price" id="resultado-multa" style="font-size: 3rem; font-weight: 900; color: #ffeb3b;">R$ 4.500,00</div>
-            <div class="calc-warning">
-                *Valor baseado na Lei Municipal 13.725/04. Sujeito a interdição imediata.
-                <br><br>
-                <button class="btn-success" onclick="window.location.href='#regularize'">REGULARIZAR POR R$ 150,00</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="advanced-title">
-        <h2>Tipos de Infrações Comuns</h2>
-        <p>Identifique visualmente o problema para sua denúncia.</p>
-      </div>
-
-      <div class="infraction-grid">
-        <div class="infraction-card" onclick="alert('Selecione ALIMENTOS no formulário acima.')">
-            <div class="infraction-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-                    <line x1="6" y1="1" x2="6" y2="4"></line>
-                    <line x1="10" y1="1" x2="10" y2="4"></line>
-                    <line x1="14" y1="1" x2="14" y2="4"></line>
-                </svg>
-            </div>
-            <div class="infraction-title">Alimentos Estragados</div>
-        </div>
-
-        <div class="infraction-card" onclick="alert('Selecione PRAGAS no formulário acima.')">
-            <div class="infraction-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2c0 5 .5 8 4 11"></path>
-                    <path d="M12 2c0 5-.5 8-4 11"></path>
-                    <path d="M12 14c-4 0-7 2-8 6"></path>
-                    <path d="M12 14c4 0 7 2 8 6"></path>
-                    <path d="M12 14v4"></path>
-                    <line x1="8" y1="8" x2="4" y2="8"></line>
-                    <line x1="16" y1="8" x2="20" y2="8"></line>
-                </svg>
-            </div>
-            <div class="infraction-title">Insetos e Roedores</div>
-        </div>
-
-        <div class="infraction-card" onclick="alert('Selecione HIGIENE no formulário acima.')">
-            <div class="infraction-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                </svg>
-            </div>
-            <div class="infraction-title">Descarte Irregular</div>
-        </div>
-
-        <div class="infraction-card" onclick="alert('Selecione CLANDESTINO no formulário acima.')">
-            <div class="infraction-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-            </div>
-            <div class="infraction-title">Sem Licença/Alvará</div>
-        </div>
-      </div>
-
-      <div class="advanced-title" style="margin-top: 80px;">
-        <h2>Base Legal e Normativa</h2>
-        <p>Consulte os textos integrais que regem a vigilância sanitária.</p>
-      </div>
-
-      <div class="law-library">
-        <div class="law-item">
-            <div class="law-header" onclick="this.nextElementSibling.classList.toggle('open')">
-                <span>LEI Nº 13.725 - CÓDIGO SANITÁRIO MUNICIPAL</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="law-body">
-                <p><strong>Art. 1º</strong> Esta lei institui o Código Sanitário do Município de São Paulo, estabelecendo normas de ordem pública e interesse social para a promoção, defesa e recuperação da saúde, no que compete à Vigilância Sanitária.</p>
-                <br>
-                <p><strong>Art. 2º</strong> As ações de vigilância sanitária abrangem o controle de bens de consumo que, direta ou indiretamente, se relacionem com a saúde, compreendidas todas as etapas e processos, da produção ao consumo, e o controle da prestação de serviços que se relacionam direta ou indiretamente com a saúde.</p>
-                <br>
-                <p>A inobservância ao disposto nesta Lei configura infração de natureza sanitária, sujeitando o infrator às penalidades previstas, que variam de advertência a multa de até R$ 200.000,00, interdição do estabelecimento e cancelamento do CMVS.</p>
-            </div>
-        </div>
-
-        <div class="law-item">
-            <div class="law-header" onclick="this.nextElementSibling.classList.toggle('open')">
-                <span>RDC Nº 216 - ANVISA (SERVIÇOS DE ALIMENTAÇÃO)</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="law-body">
-                <p>Esta Resolução estabelece procedimentos de Boas Práticas para serviços de alimentação a fim de garantir as condições higiênico-sanitárias do alimento preparado.</p>
-                <br>
-                <p><strong>4.1 Edificação e Instalações:</strong> A edificação e as instalações devem ser projetadas de forma a possibilitar um fluxo ordenado e sem cruzamentos em todas as etapas da preparação de alimentos e a facilitar as operações de manutenção, limpeza e, quando for o caso, desinfecção.</p>
-                <br>
-                <p><strong>4.11 Documentação:</strong> Os serviços de alimentação devem dispor de Manual de Boas Práticas e de Procedimentos Operacionais Padronizados (POP). Esses documentos devem estar acessíveis aos funcionários envolvidos e disponíveis à autoridade sanitária, quando requerido.</p>
-            </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <script>
-    function calcularMulta() {
-        const area = document.getElementById('range-area').value;
-        const risco = document.getElementById('select-risco').value;
-        const reincidencia = document.getElementById('select-reincidencia').value;
-        document.getElementById('label-area').innerText = area + " m²";
-        let base = 1500;
-        let valor = (base + (area * 10)) * risco * reincidencia;
-        const valorFormatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        document.getElementById('resultado-multa').innerText = valorFormatado;
-    }
-  </script>
 
   <section class="areas-section">
     <div class="container">
@@ -998,60 +909,9 @@
     </form>
   </div>
 
-  <script type="module">
-    // 1. IMPORTAR FIREBASE
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-  
-    // 2. CONFIGURAÇÃO (SUA CONTA)
-    const firebaseConfig = {
-      apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
-      authDomain: "site-8dfaf.firebaseapp.com",
-      projectId: "site-8dfaf",
-      storageBucket: "site-8dfaf.firebasestorage.app",
-      messagingSenderId: "76689989548",
-      appId: "1:76689989548:web:5c86741e60ce385102a409"
-    };
-  
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // ==========================================
-    // CONFIGURAÇÃO DO PIX AUTOMÁTICO (DINÂMICO)
-    // ==========================================
-    const MINHA_CHAVE_PIX = "299713b0-c73d-4649-98ca-bb73764cdfe2"; // << SUA CHAVE AQUI
-    const MEU_NOME_PIX = "GILIARD DE OLIVEIRA SANTI";
-    const MINHA_CIDADE_PIX = "DIADEMA";
-
-    function gerarPayloadPix(chave, nome, cidade, valor, txid="***") {
-        const format = (id, val) => id + (val.length.toString().padStart(2, '0')) + val;
-        let payload = "000201";
-        payload += format("26", "0014BR.GOV.BCB.PIX" + format("01", chave));
-        payload += "52040000";
-        payload += "5303986"; // BRL
-        if (valor) payload += format("54", valor);
-        payload += "5802BR";
-        payload += format("59", nome);
-        payload += format("60", cidade);
-        payload += format("62", format("05", txid));
-        payload += "6304"; // ID do CRC
-        let polinomio = 0x1021;
-        let resultado = 0xFFFF;
-        for (let i = 0; i < payload.length; i++) {
-            resultado ^= (payload.charCodeAt(i) << 8);
-            for (let j = 0; j < 8; j++) {
-                if ((resultado & 0x8000) !== 0) resultado = (resultado << 1) ^ polinomio;
-                else resultado <<= 1;
-            }
-        }
-        resultado &= 0xFFFF;
-        return payload + resultado.toString(16).toUpperCase().padStart(4, '0');
-    }
-  
-    // --- FUNÇÕES GLOBAIS ---
+  <script>
     window.captchaValidado = false;
-    let timerInterval;
-  
+     
     window.ativarCaptcha = function() {
         if(window.captchaValidado) return;
         document.getElementById('captcha-spinner').style.display = 'block';
@@ -1062,31 +922,42 @@
             window.captchaValidado = true;
         }, 1200);
     };
-  
+
     window.maskCPFinCNPJ = function(i) {
       let v = i.value.replace(/\D/g,'');
       if (v.length <= 11) { 
-        v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
       } else { 
-        v = v.replace(/^(\d{2})(\d)/, '$1.$2'); v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3'); v = v.replace(/\.(\d{3})(\d)/, '.$1/$2'); v = v.replace(/(\d{4})(\d)/, '$1-$2');
+        v = v.replace(/^(\d{2})(\d)/, '$1.$2');
+        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+        v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
+        v = v.replace(/(\d{4})(\d)/, '$1-$2');
       }
       i.value = v;
     };
-  
+
     window.validarCPF = function(cpf) {
       if (cpf == "00000000000" || cpf == "11111111111") return false;
-      let add = 0; for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
-      let rev = 11 - (add % 11); if (rev == 10 || rev == 11) rev = 0; if (rev != parseInt(cpf.charAt(9))) return false;
-      add = 0; for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
-      rev = 11 - (add % 11); if (rev == 10 || rev == 11) rev = 0; if (rev != parseInt(cpf.charAt(10))) return false;
+      let add = 0;
+      for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
+      let rev = 11 - (add % 11);
+      if (rev == 10 || rev == 11) rev = 0;
+      if (rev != parseInt(cpf.charAt(9))) return false;
+      add = 0;
+      for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
+      rev = 11 - (add % 11);
+      if (rev == 10 || rev == 11) rev = 0;
+      if (rev != parseInt(cpf.charAt(10))) return false;
       return true;
     };
-  
+
     window.salvarRascunho = function() {
       const nome = document.getElementById('nome_empresa').value;
       if(nome) localStorage.setItem('rascunho_nome', nome);
     };
-  
+
     window.limparCamposEndereco = function() {
       document.getElementById('nome_empresa').value = '';
       document.getElementById('end_rua').value = '';
@@ -1099,24 +970,26 @@
       document.getElementById('google-map-frame').src = '';
       localStorage.removeItem('rascunho_nome');
     };
-  
+
     window.realizarConsultaFake = function() {
       const input = document.getElementById('fake_consulta_cnpj').value;
       if(input.length < 5) { alert("Digite um CPF/CNPJ válido."); return; }
+       
       let res = document.getElementById('fake_consulta_resultado');
       res.style.display = 'block';
       res.style.background = '#e0f2fe'; res.style.color = '#0369a1';
       res.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando no sistema de fiscalização estadual...';
+       
       setTimeout(() => {
         res.style.background = '#fee2e2';
         res.style.color = '#b91c1c';
         res.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>STATUS: PENDENTE DE REGULARIZAÇÃO</strong><br><span style="font-size:0.95rem; font-weight:normal; display:block; margin-top:5px;">Este CPF/CNPJ encontra-se irregular e sujeito a notificação. <a href="#regularize" style="color: #991b1b; text-decoration: underline; font-weight: 900;">Clique aqui e Regularize agora</a>.</span>';
       }, 1500);
     };
-  
+
     window.openDrawer = function() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; };
     window.closeDrawer = function() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); document.body.style.overflow = ''; };
-      
+     
     let cliquesLogo = 0; let timerCliques;
     window.acessoAdmin = function() {
       cliquesLogo++; clearTimeout(timerCliques);
@@ -1128,7 +1001,7 @@
       }
       timerCliques = setTimeout(() => cliquesLogo = 0, 1500);
     };
-  
+
     window.alternarAba = function(aba) {
       document.getElementById('tab-envio').classList.remove('active');
       document.getElementById('tab-pagamento').classList.remove('active');
@@ -1137,8 +1010,7 @@
       document.getElementById('tab-' + aba).classList.add('active');
       document.getElementById('area-' + aba).style.display = 'block';
     };
-  
-    // FUNÇÃO PARA EXIBIR/OCULTAR INPUT DE ARQUIVO
+
     window.toggleUpload = function(el) {
       const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload');
       if (el.checked) {
@@ -1149,11 +1021,12 @@
       }
       window.calcularRisco();
     };
-  
+
     window.calcularRisco = function() {
       let divRisco = document.getElementById('risco-multa');
       divRisco.style.display = 'block';
       let naoMarcados = document.querySelectorAll('.doc-check:not(:checked)').length;
+       
       if(naoMarcados === 0) {
         divRisco.style.background = '#dcfce3'; divRisco.style.color = '#166534';
         divRisco.innerHTML = '<i class="fas fa-shield-alt"></i> Tudo OK! Regularize agora para manter a segurança do CPF/CNPJ.';
@@ -1162,7 +1035,7 @@
         divRisco.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>Atenção às Pendências Documentais</strong><br><span style="font-weight:normal; font-size:0.9rem;">Faltam documentos importantes. Recomendamos o envio para análise e a regularização da taxa, evitando assim notificações, sanções legais e travando possíveis multas.</span>`;
       }
     };
-  
+
     function criarDocItem(valor, icone, titulo) {
       return `
         <div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;">
@@ -1174,17 +1047,17 @@
         </div>
       `;
     }
-  
+
     window.mostrarChecklist = function() {
       const tipo = document.getElementById('tipo_estab').value;
       const listaDocs = document.getElementById('lista-documentos');
       if (!tipo) return;
-  
+
       const docsComuns = criarDocItem("CNPJ Ativo", "fa-file-invoice", "CNPJ Ativo") +
                          criarDocItem("Contrato Social / MEI", "fa-file-contract", "Contrato / MEI") +
                          criarDocItem("Alvará de Funcionamento", "fa-building", "Alvará Prefeitura") +
                          criarDocItem("AVCB Bombeiros", "fa-fire-extinguisher", "AVCB (Bombeiros)");
-  
+
       let docsEspecificos = "";
       if (tipo === "Alimentos") {
         docsEspecificos = criarDocItem("Limpeza Caixa D'água", "fa-tint", "Limpeza Caixa") +
@@ -1206,13 +1079,13 @@
                           criarDocItem("Controle Pragas", "fa-bug", "Controle Pragas") +
                           criarDocItem("Laudo de Ruído", "fa-volume-up", "Laudo Ruído");
       }
-  
+
       listaDocs.innerHTML = docsComuns + docsEspecificos;
       document.getElementById('area-checklist').style.display = 'block';
       document.getElementById('btn-enviar-whatsapp').style.display = 'flex';
       window.calcularRisco();
     };
-  
+
     window.copiarPix = function() {
       const pixInput = document.getElementById('pix-copia-cola');
       pixInput.select();
@@ -1220,45 +1093,134 @@
       navigator.clipboard.writeText(pixInput.value);
       alert("Código Pix copiado com sucesso!");
     };
-  
-    window.enviarWhatsAppComprovanteConsulta = async function() {
+
+    window.enviarWhatsAppComprovanteConsulta = function() {
       if(!cnpjParaComprovante) return;
-      const docRef = doc(db, "pedidos", cnpjParaComprovante);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-          const pedido = docSnap.data();
-          const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${pedido.nome || 'Não identificado'}\n*CNPJ/CPF:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
-          window.enviarWhatsApp(msg);
-      }
+      let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
+      let pedido = pedidos[cnpjParaComprovante] || {};
+      const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${pedido.nome || 'Não identificado'}\n*CNPJ/CPF:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
+      enviarWhatsApp(msg);
     };
-  
+
     window.enviarAssinaturaEmail = function() {
       const cnpj = document.getElementById('consulta_cnpj').value || 'Não Informado';
       alert('Atenção: Será aberto o seu aplicativo de e-mail. Por favor, ANEXE o arquivo que você acabou de selecionar lá no e-mail antes de enviar!');
       window.location.href = 'mailto:vigilanciasanitariaspgov1@gmail.com?subject=Documento Assinado - CNPJ ' + cnpj + '&body=Olá,%0D%0A%0D%0ASegue em anexo o certificado provisório devidamente assinado para validação no sistema.';
     };
-  
+
     window.verificarOutros = function(sel) {
       const campoOutros = document.getElementById('resumo_outros');
       campoOutros.style.display = sel.value === 'Outros' ? 'block' : 'none';
       campoOutros.required = sel.value === 'Outros';
     };
-  
+
     window.countChars = function(obj) { 
         document.getElementById("charNum").innerHTML = obj.value.length; 
     };
-  
+
     window.toggleChat = function() {
       const c = document.getElementById('chat-interface');
       c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
     };
-  
-    window.enviarWhatsApp = function(texto) {
+
+    window.gerarPDF = async function() {
+      const btn = document.getElementById('btn-baixar-pdf');
+      const textoOriginal = btn.innerHTML;
+      try {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando documento...';
+        btn.disabled = true;
+
+        const cnpj = document.getElementById('consulta_cnpj').value;
+        const db = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
+        const dados = db[cnpj] || {};
+
+        const nomeEmpresa = (dados.nome || "EMPRESA NÃO IDENTIFICADA").toUpperCase();
+        const docCnpj = cnpj;
+
+        const hoje = new Date();
+        const dataEmissao = hoje.toLocaleDateString('pt-BR');
+        const dataV = new Date();
+        dataV.setFullYear(hoje.getFullYear() + 1);
+        const dataValidade = dataV.toLocaleDateString('pt-BR');
+
+        // Adicionei timestamp para evitar cache do navegador e garantir que pegue o novo script
+        const url = 'Alvara Provisório.pdf?v=' + new Date().getTime(); 
+        const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
+
+        const { PDFDocument, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.load(existingPdfBytes);
+         
+        const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+
+        const page = pdfDoc.getPages()[0];
+         
+        // --- CORREÇÃO DE ALINHAMENTO DEFINITIVA ---
+        const startX = 20;
+        // Ajuste Y: 538 (Para encostar na linha de cima e sair da de baixo)
+        const startY = 538; 
+        const espacoY = 18; 
+        // Ajuste X: 175 (Para afastar da etiqueta "RAZÃO SOCIAL:")
+        const valorX = 175; 
+
+        page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
+        page.drawText(`${nomeEmpresa}`, { x: valorX, y: startY, size: 10, font: fontBold });
+
+        page.drawText(`CNPJ:`, { x: startX, y: startY - espacoY, size: 10, font: fontNormal });
+        page.drawText(`${docCnpj}`, { x: valorX, y: startY - espacoY, size: 10, font: fontBold });
+
+        page.drawText(`DATA DE EMISSÃO:`, { x: startX, y: startY - (espacoY * 2), size: 10, font: fontNormal });
+        page.drawText(`${dataEmissao}`, { x: valorX, y: startY - (espacoY * 2), size: 10, font: fontBold });
+
+        page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
+        page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
+        
+        // --- CORREÇÃO DA DATA DE BAIXO ---
+        // Y = 88 (Altura aprovada)
+        // X = 335 (Empurrando para a direita)
+        page.drawText(`DATA: ${dataEmissao}`, { x: 335, y: 88, size: 12, font: fontBold });
+
+        const pdfBytes = await pdfDoc.save();
+        download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
+
+        btn.innerHTML = textoOriginal;
+        btn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        alert("Erro: Arquivo 'Alvara Provisório.pdf' não encontrado na pasta do site.");
+        btn.innerHTML = textoOriginal;
+        btn.disabled = false;
+      }
+    };
+
+    // --- EVENTOS QUE PRECISAM CARREGAR JUNTO COM A PÁGINA ---
+    document.addEventListener('DOMContentLoaded', () => {
+
+      if(localStorage.getItem('rascunho_nome')) {
+        document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
+      }
+
+      function atualizarDadosReais() {
+        const hora = new Date().getHours();
+        document.getElementById('count-fiscal').innerText = 1246 + Math.floor(hora / 8);
+        document.getElementById('count-multa').innerText = Math.min(30, Math.floor((hora / 24) * 25) + Math.floor(Math.random() * 5));
+      }
+      atualizarDadosReais();
+
+      document.querySelectorAll('.faq-question').forEach(q => {
+        q.addEventListener('click', () => {
+          const item = q.parentElement; item.classList.toggle('active');
+          const ans = item.querySelector('.faq-answer');
+          ans.style.maxHeight = item.classList.contains('active') ? ans.scrollHeight + "px" : null;
+        });
+      });
+
+      function enviarWhatsApp(texto) {
         const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(texto);
         window.open(url, '_blank');
-    };
-  
-    window.atualizarBarraProgresso = function(step) {
+      }
+
+      function atualizarBarraProgresso(step) {
         document.getElementById('barra-progresso').style.display = 'flex';
         for(let i=1; i<=4; i++) {
           let el = document.getElementById('step-' + i);
@@ -1266,9 +1228,12 @@
           if(i < step) el.classList.add('completed');
           if(i === step) el.classList.add('active');
         }
-    };
-  
-    window.iniciarCronometroPix = function() {
+      }
+
+      let cnpjParaComprovante = "";
+      let timerInterval;
+
+      function iniciarCronometroPix() {
         clearInterval(timerInterval);
         let time = 1800; 
         let display = document.getElementById('cronometro-pix');
@@ -1283,98 +1248,9 @@
             display.textContent = "Tempo expirado! Sujeito a fiscalização física.";
           }
         }, 1000);
-    };
-  
-    // --- GERAÇÃO DE PDF ---
-    window.gerarPDF = async function() {
-      const btn = document.getElementById('btn-baixar-pdf');
-      const textoOriginal = btn.innerHTML;
-      try {
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando documento...';
-        btn.disabled = true;
-  
-        const cnpj = document.getElementById('consulta_cnpj').value;
-        const docRef = doc(db, "pedidos", cnpj);
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) { throw new Error("Cadastro não encontrado"); }
-        const dados = docSnap.data();
-  
-        const nomeEmpresa = (dados.nome || "EMPRESA NÃO IDENTIFICADA").toUpperCase();
-        const docCnpj = cnpj;
-        const hoje = new Date();
-        const dataEmissao = hoje.toLocaleDateString('pt-BR');
-        const dataV = new Date();
-        dataV.setFullYear(hoje.getFullYear() + 1);
-        const dataValidade = dataV.toLocaleDateString('pt-BR');
-  
-        // Tenta carregar PDF base, se não tiver cria branco
-        let pdfDoc;
-        try {
-            const url = 'Alvara Provisório.pdf?v=' + new Date().getTime(); 
-            const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
-            const { PDFDocument, StandardFonts } = window.PDFLib;
-            pdfDoc = await PDFDocument.load(existingPdfBytes);
-        } catch(e) {
-            const { PDFDocument, StandardFonts } = window.PDFLib;
-            pdfDoc = await PDFDocument.create();
-            pdfDoc.addPage([600, 800]);
-        }
+      }
 
-        const { StandardFonts } = window.PDFLib;
-        const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-        const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
-        const page = pdfDoc.getPages()[0];
-        
-        const startX = 20;
-        const startY = 538; 
-        const espacoY = 18; 
-        const valorX = 175; 
-  
-        page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
-        page.drawText(`${nomeEmpresa}`, { x: valorX, y: startY, size: 10, font: fontBold });
-        page.drawText(`CNPJ:`, { x: startX, y: startY - espacoY, size: 10, font: fontNormal });
-        page.drawText(`${docCnpj}`, { x: valorX, y: startY - espacoY, size: 10, font: fontBold });
-        page.drawText(`DATA DE EMISSÃO:`, { x: startX, y: startY - (espacoY * 2), size: 10, font: fontNormal });
-        page.drawText(`${dataEmissao}`, { x: valorX, y: startY - (espacoY * 2), size: 10, font: fontBold });
-        page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
-        page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
-        page.drawText(`DATA: ${dataEmissao}`, { x: 335, y: 88, size: 12, font: fontBold });
-  
-        const pdfBytes = await pdfDoc.save();
-        download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
-  
-        btn.innerHTML = textoOriginal;
-        btn.disabled = false;
-      } catch (err) {
-        console.error(err);
-        alert("Erro ao gerar PDF.");
-        btn.innerHTML = textoOriginal;
-        btn.disabled = false;
-      }
-    };
-  
-    // --- EVENT LISTENER DO DOM ---
-    document.addEventListener('DOMContentLoaded', () => {
-  
-      if(localStorage.getItem('rascunho_nome')) {
-        document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
-      }
-  
-      function atualizarDadosReais() {
-        const hora = new Date().getHours();
-        document.getElementById('count-fiscal').innerText = 1246 + Math.floor(hora / 8);
-        document.getElementById('count-multa').innerText = Math.min(30, Math.floor((hora / 24) * 25) + Math.floor(Math.random() * 5));
-      }
-      atualizarDadosReais();
-  
-      document.querySelectorAll('.faq-question').forEach(q => {
-        q.addEventListener('click', () => {
-          const item = q.parentElement; item.classList.toggle('active');
-          const ans = item.querySelector('.faq-answer');
-          ans.style.maxHeight = item.classList.contains('active') ? ans.scrollHeight + "px" : null;
-        });
-      });
-  
+      // Validação em tempo real do CPF/CNPJ com lógica de limpeza
       const docInput = document.getElementById('cnpj_empresa');
       docInput.addEventListener('keyup', async function(e) {
           let valLimpo = this.value.replace(/\D/g, '');
@@ -1389,13 +1265,15 @@
               let erroAntigo = document.getElementById('erro-cpf-msg');
               if(erroAntigo) erroAntigo.remove();
               docInput.style.borderColor = '#e9ecef';
+              
+              // RESETA todos os campos caso você apague os números e digite outro
               window.limparCamposEndereco();
           }
-  
+
           if (valLimpo.length === 11) {
               let erroAntigo = document.getElementById('erro-cpf-msg');
               if(erroAntigo) erroAntigo.remove();
-  
+
               if (window.validarCPF(valLimpo)) {
                   this.style.borderColor = '#2e7d32'; 
                   document.getElementById('nome_empresa').removeAttribute('required');
@@ -1418,6 +1296,7 @@
                   msgErro.style.fontWeight = 'bold';
                   msgErro.style.marginTop = '5px';
                   msgErro.innerHTML = '<i class="fas fa-times-circle"></i> CPF Inválido ou Inexistente.';
+                  
                   if(!document.getElementById('erro-cpf-msg')) {
                       this.parentNode.insertBefore(msgErro, this.nextSibling);
                   }
@@ -1428,152 +1307,167 @@
               if(erroAntigo) erroAntigo.remove();
               this.style.borderColor = '#e9ecef';
               document.getElementById('nome_empresa').setAttribute('required', 'true');
+
               document.getElementById('loading-cnpj').style.display = 'block';
               
               try {
+                // Antes de puxar novos dados, limpa os antigos
                 window.limparCamposEndereco();
+                
                 let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`);
                 let dados = await req.json();
+                
                 if(dados.razao_social) {
                   document.getElementById('dados-pj').style.display = 'block';
                   document.getElementById('nome_empresa').value = dados.nome_fantasia || dados.razao_social;
+                  
                   document.getElementById('endereco-automatico').style.display = 'block';
                   document.getElementById('end_rua').value = dados.logradouro;
                   document.getElementById('end_num').value = dados.numero;
                   document.getElementById('end_bairro').value = dados.bairro;
                   document.getElementById('end_cidade').value = dados.municipio + " - " + dados.uf;
-  
-                  // LINK SEGURO GOOGLE MAPS EMBED
+
+                  // Atualização do link do Mapa para a versão que funciona perfeitamente no iFrame
                   const enderecoCompleto = `${dados.logradouro}, ${dados.numero}, ${dados.municipio}, ${dados.uf}`;
-                  const mapUrl = `http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=m&z=17&output=embed&iwloc=near`;
+                  const mapUrl = `http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
                   
                   document.getElementById('map-container').style.display = 'block';
                   document.getElementById('google-map-frame').src = mapUrl;
+
                   window.salvarRascunho();
                 }
               } catch(error) { console.log("Erro ao buscar CNPJ"); }
               document.getElementById('loading-cnpj').style.display = 'none';
           }
       });
-  
-      // --- SUBMIT DO FORMULÁRIO (SALVA NO FIREBASE) ---
-      document.getElementById('form-regularizacao').addEventListener('submit', async (e) => {
+
+      // Submit do Formulário de Regularização
+      document.getElementById('form-regularizacao').addEventListener('submit', (e) => {
         e.preventDefault();
         
-        if(!window.captchaValidado) { alert("Por favor, confirme que você não é um robô."); return; }
-  
+        if(!window.captchaValidado) {
+            alert("Por favor, confirme que você não é um robô.");
+            return;
+        }
+
         const todasOpcoes = document.querySelectorAll('.doc-check');
         const marcados = []; const naoMarcados = [];
-        let erroUpload = false; let nomeDocErro = "";
-  
+        let erroUpload = false;
+        let nomeDocErro = "";
+
         todasOpcoes.forEach(el => {
           if(el.checked) {
               marcados.push(el.value);
-              // Como estamos no Firebase, o upload real é feito via WhatsApp, então não bloqueamos aqui se não tiver arquivo
-              // Mas verificamos se o usuário pelo menos marcou
-          } else { naoMarcados.push(el.value); }
+              const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload input[type="file"]');
+              const nomeDoc = el.nextElementSibling.nextElementSibling.innerText;
+              if(fileInput && fileInput.files.length === 0) {
+                  erroUpload = true;
+                  nomeDocErro = nomeDoc;
+              }
+          }
+          else {
+              naoMarcados.push(el.value);
+          }
         });
-  
-        if (marcados.length === 0 && todasOpcoes.length > 0) { alert("Selecione pelo menos um documento."); return; }
-  
+
+        if(erroUpload) {
+            alert(`ERRO DE SEGURANÇA:\nVocê marcou que possui "${nomeDocErro}", mas não anexou a foto.\nAnexe o arquivo ou desmarque a opção.`);
+            return;
+        }
+
+        if (marcados.length === 0 && todasOpcoes.length > 0) {
+          alert("Atenção: Você precisa selecionar pelo menos um documento que já possui e anexar o arquivo antes de enviar os dados para análise.");
+          return; 
+        }
+
         const nomePJ = document.getElementById('nome_empresa').value;
         const nomePF = document.getElementById('nome_pf').value;
         const nomeFantasiaPF = document.getElementById('nome_fantasia_pf').value;
         const nomeFinal = nomePJ || (nomePF + (nomeFantasiaPF ? " (" + nomeFantasiaPF + ")" : "")) || "Cidadão";
+              
         const cnpj = document.getElementById('cnpj_empresa').value;
         const tipo = document.getElementById('tipo_estab').value;
-  
-        const docsTextAdmin = `POSSUI: ${marcados.join(", ")}\n\nFALTA: ${naoMarcados.length > 0 ? naoMarcados.join(", ") : "Nenhum"}`;
-  
-        // SALVAR NO FIREBASE
-        try {
-            await setDoc(doc(db, "pedidos", cnpj), {
-                nome: nomeFinal,
-                tipo: tipo,
-                docs: docsTextAdmin,
-                valor: null,
-                pago: false,
-                data: new Date().toLocaleString()
-            });
-  
-            const protocolo = "DIA-" + Math.floor(1000 + Math.random() * 9000);
-            let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n*Protocolo:* ${protocolo}\n*Nome/Razão:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n*Ramo:* ${tipo}\n\n`;
-            msg += `✅ *DOCUMENTOS SELECIONADOS:*\n- ${marcados.join('\n- ')}\n\n`;
-            msg += `🚨 *FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\n*SEGUE ABAIXO AS FOTOS DOS DOCUMENTOS:* 👇`;
-  
-            window.enviarWhatsApp(msg);
-            alert("Dados enviados com sucesso! Você será redirecionado ao WhatsApp para enviar as fotos.");
-            
-            document.getElementById('form-regularizacao').reset();
-            document.getElementById('area-checklist').style.display = 'none';
-            document.getElementById('btn-enviar-whatsapp').style.display = 'none';
-            window.limparCamposEndereco();
-            
-            window.alternarAba('pagamento');
-            document.getElementById('consulta_cnpj').value = cnpj;
-            
-        } catch (error) {
-            console.error("Erro ao salvar no Firebase:", error);
-            alert("Erro de conexão. Tente novamente.");
-        }
+
+        const docsTextAdmin = `POSSUI E ANEXOU: ${marcados.join(", ")}\n\nFALTA PROVIDENCIAR: ${naoMarcados.length > 0 ? naoMarcados.join(", ") : "Nenhum"}`;
+
+        let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
+        pedidos[cnpj] = { nome: nomeFinal, tipo: tipo, docs: docsTextAdmin, valor: null, pago: false, data: new Date().toLocaleString() };
+        localStorage.setItem('covisa_pedidos', JSON.stringify(pedidos));
+
+        const protocolo = "DIA-" + Math.floor(1000 + Math.random() * 9000);
+        let msg = `*NOVO ENVIO DE DOCUMENTAÇÃO*\n\n*Protocolo:* ${protocolo}\n*Nome/Razão:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n*Ramo:* ${tipo}\n\n`;
+        msg += `✅ *POSSUI E ANEXOU:*\n- ${marcados.join('\n- ')}\n\n`;
+        msg += `🚨 *FALTA PROVIDENCIAR:*\n${naoMarcados.length > 0 ? '❌ ' + naoMarcados.join('\n❌ ') : 'Nenhuma pendência'}\n\nAguardo a emissão da taxa.`;
+
+        enviarWhatsApp(msg);
+        alert("Formulário e arquivos enviados! Fique atento às pendências. Acompanhe a liberação da taxa na próxima tela.");
+        
+        document.getElementById('form-regularizacao').reset();
+        document.getElementById('area-checklist').style.display = 'none';
+        document.getElementById('btn-enviar-whatsapp').style.display = 'none';
+        window.limparCamposEndereco();
+        
+        window.alternarAba('pagamento');
+        document.getElementById('consulta_cnpj').value = cnpj;
       });
-  
-      // --- CONSULTA EM TEMPO REAL NO FIREBASE ---
+
+      // Submit do Formulário de Consulta de Guia/Pix
       document.getElementById('form-consulta').addEventListener('submit', (e) => {
         e.preventDefault();
         const cnpj = document.getElementById('consulta_cnpj').value;
         const divPix = document.getElementById('resultado-pix');
         const divMsg = document.getElementById('mensagem-status');
         const textMsg = document.getElementById('texto-mensagem');
-        const statusAprovado = document.getElementById('status-aprovado');
-  
-        // Escuta as mudanças no documento específico em Tempo Real
-        onSnapshot(doc(db, "pedidos", cnpj), (docSnap) => {
-            if (!docSnap.exists()) {
-              divPix.style.display = 'none'; divMsg.style.display = 'block'; statusAprovado.style.display = 'none';
-              divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderColor = '#f59e0b';
-              textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum cadastro encontrado para este CNPJ/CPF.';
-              document.getElementById('barra-progresso').style.display = 'none';
-            } else {
-              const pedido = docSnap.data();
-  
-              if (pedido.pago === true) {
-                // STATUS: PAGO / APROVADO
-                divPix.style.display = 'none'; divMsg.style.display = 'none';
-                statusAprovado.style.display = 'block';
-                window.atualizarBarraProgresso(4); 
-              } 
-              else if (pedido.valor === null || pedido.valor === "") {
-                // STATUS: EM ANÁLISE
-                divPix.style.display = 'none'; divMsg.style.display = 'block'; statusAprovado.style.display = 'none';
-                divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b';
-                textMsg.innerHTML = '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
-                window.atualizarBarraProgresso(2); 
-              } 
-              else {
-                // STATUS: AGUARDANDO PAGAMENTO
-                divMsg.style.display = 'none'; statusAprovado.style.display = 'none'; divPix.style.display = 'block';
-                let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-                if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
-                document.getElementById('valor-cobrado').innerText = valorFormatado;
-                cnpjParaComprovante = cnpj;
-                
-                // GERA O PIX COM O VALOR RECEBIDO DO FIREBASE
-                let valorLimpo = pedido.valor.replace(',', '.');
-                let codigoPix = gerarPayloadPix(MINHA_CHAVE_PIX, MEU_NOME_PIX, MINHA_CIDADE_PIX, valorLimpo, "TAXA01");
-                document.getElementById('pix-copia-cola').value = codigoPix;
 
-                // GERA O QR CODE DINÂMICO
-                let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(codigoPix)}`;
-                document.getElementById('img-qr-dinamico').src = qrUrl;
+        let pedidos = JSON.parse(localStorage.getItem('covisa_pedidos')) || {};
+        let pedido = pedidos[cnpj];
 
-                window.atualizarBarraProgresso(3); 
-                window.iniciarCronometroPix(); 
-              }
-            }
-        });
+        if (!pedido) {
+          divPix.style.display = 'none'; divMsg.style.display = 'block';
+          divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderColor = '#f59e0b';
+          textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum cadastro encontrado para este CNPJ/CPF.';
+          document.getElementById('barra-progresso').style.display = 'none';
+        } 
+        else if (pedido.pago === true) {
+          divPix.style.display = 'none'; divMsg.style.display = 'block';
+          divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
+          textMsg.innerHTML = `
+            <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
+            <strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>
+            Seu processo foi concluído com sucesso e as pendências foram baixadas no sistema.
+            <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;">
+              <button id="btn-baixar-pdf" class="btn-primary" style="margin-bottom: 20px;" onclick="window.gerarPDF()">
+                <i class="fas fa-file-pdf"></i> Baixar Licença Provisória
+              </button>
+              <p style="font-size:0.85rem; color:#64748b; font-weight:800; margin-bottom:10px; border-top: 1px solid #eee; padding-top: 15px;">PASSO FINAL OBRIGATÓRIO:</p>
+              <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e anexe-o clicando no botão abaixo.</p>
+              <label for="upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 1rem; padding: 16px; background: #1a73e8; border-radius: 8px; color: white; justify-content: center; gap: 10px;">
+                <i class="fas fa-envelope"></i> Enviar Documento Assinado
+              </label>
+              <input type="file" id="upload-assinado" style="display:none;" accept="application/pdf, image/*" onchange="window.enviarAssinaturaEmail()">
+            </div>
+          `;
+          atualizarBarraProgresso(4); 
+        } 
+        else if (pedido.valor === null || pedido.valor === "") {
+          divPix.style.display = 'none'; divMsg.style.display = 'block';
+          divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b';
+          textMsg.innerHTML = '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
+          atualizarBarraProgresso(2); 
+        } 
+        else {
+          divMsg.style.display = 'none'; divPix.style.display = 'block';
+          let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+          if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
+          document.getElementById('valor-cobrado').innerText = valorFormatado;
+          cnpjParaComprovante = cnpj;
+          
+          atualizarBarraProgresso(3); 
+          iniciarCronometroPix(); 
+        }
       });
-  
+
+      // Submit do Formulário de Denúncia
       document.getElementById('form-denuncia').addEventListener('submit', (e) => {
         e.preventDefault();
         let assunto = document.getElementById('assunto').value;
@@ -1581,9 +1475,10 @@
         const local = document.getElementById('local').value;
         const relato = document.getElementById('relato').value;
         const msg = "DENUNCIA SIGILOSA OFICIAL\n\nMOTIVO: " + assunto + "\nLOCAL: " + local + "\nRELATO: " + relato;
-        window.enviarWhatsApp(msg);
+        enviarWhatsApp(msg);
       });
-  
+
+      // Submit do Chatbot
       document.getElementById('chat-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const txt = document.getElementById('chat-msg');
@@ -1597,7 +1492,7 @@
           body.scrollTop = body.scrollHeight;
         }, 1000);
       });
-  
+
     });
   </script>
 </body>
