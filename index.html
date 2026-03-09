@@ -1143,7 +1143,7 @@
         dataV.setFullYear(hoje.getFullYear() + 1);
         const dataValidade = dataV.toLocaleDateString('pt-BR');
 
-        // Adicionei timestamp para evitar cache do navegador
+        // Adicionei timestamp para evitar cache do navegador e garantir que pegue o novo script
         const url = 'Alvara Provisório.pdf?v=' + new Date().getTime(); 
         const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
 
@@ -1155,11 +1155,11 @@
 
         const page = pdfDoc.getPages()[0];
          
-        // --- CORREÇÃO DE ALINHAMENTO ---
+        // --- CORREÇÃO DE ALINHAMENTO DEFINITIVA ---
         const startX = 20;
-        // Ajuste Y agressivo para baixo (de 532 para 500)
-        const startY = 500; 
-        const espacoY = 16; 
+        // Ajuste Y: 525 (Ponto médio ideal entre 500 e 532)
+        const startY = 525; 
+        const espacoY = 18; 
         const valorX = 165; 
 
         page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
@@ -1175,9 +1175,9 @@
         page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
         
         // --- CORREÇÃO DA DATA DE BAIXO ---
-        // Baixei o Y de 62 para 52 (para encostar na linha)
-        // Movi X de 390 para 410 (bem para a direita)
-        page.drawText(`DATA: ${dataEmissao}`, { x: 410, y: 52, size: 12, font: fontBold });
+        // Y = 88 (Sobe só um pouco em relação a 80 para não cortar a linha)
+        // X = 315 (Depois de "DATA:")
+        page.drawText(`DATA: ${dataEmissao}`, { x: 315, y: 88, size: 12, font: fontBold });
 
         const pdfBytes = await pdfDoc.save();
         download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
