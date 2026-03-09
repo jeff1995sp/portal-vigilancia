@@ -145,7 +145,7 @@
 
     /* --- FEATURE: BARRA DE SEGURANÇA --- */
     .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
-    
+     
     /* --- BARRA GOV VERMELHA --- */
     .gov-bar { background: var(--sp-red); color: #fff; padding: 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2000; position: relative; }
     .gov-left { font-weight: 700; opacity: 0.95; }
@@ -228,7 +228,7 @@
     .checklist-intro { flex: 1; min-width: 320px; }
     .checklist-intro h2 { font-size: 2.8rem; color: var(--gov-dark-blue); margin-bottom: 20px; font-family: 'Montserrat', sans-serif; font-weight: 900; line-height: 1.2; }
     .checklist-intro p.lead { font-size: 1.15rem; color: #4a5568; margin-bottom: 30px; line-height: 1.7; }
-    
+     
     .process-steps { display: flex; gap: 15px; margin-bottom: 35px; }
     .process-step { background: #fff; padding: 18px 15px; border-radius: 12px; border-top: 4px solid var(--gov-blue); box-shadow: 0 6px 15px rgba(0,0,0,0.04); flex: 1; text-align: center; }
     .process-step i { font-size: 1.8rem; color: var(--gov-blue); margin-bottom: 12px; display: block; }
@@ -436,7 +436,7 @@
       .process-steps { flex-direction: column; }
       .docs-grid { grid-template-columns: 1fr; }
       .progress-container { padding: 0; }
-      
+       
       .selos-container { flex-direction: column; gap: 15px !important; }
       .selos-container a { width: 100% !important; max-width: 250px; margin: 0 auto; }
     }
@@ -551,7 +551,7 @@
         <div class="checklist-intro">
           <h2>Regularização e<br>Análise Documental</h2>
           <p class="lead">O processo de Regularização Sanitária garante que seu estabelecimento opere dentro das normas de saúde, promovendo segurança para seus clientes e evitando sanções legais rigorosas.</p>
-          
+           
           <div class="process-steps">
             <div class="process-step"><i class="fas fa-file-signature"></i><span>1. Enviar<br>Documentos</span></div>
             <div class="process-step"><i class="fas fa-search"></i><span>2. Análise<br>Técnica</span></div>
@@ -570,7 +570,7 @@
         </div>
 
         <div class="checklist-form-container">
-          
+           
           <div class="form-tabs">
             <div class="form-tab active" id="tab-envio" onclick="window.alternarAba('envio')">1. Enviar Dados</div>
             <div class="form-tab" id="tab-pagamento" onclick="window.alternarAba('pagamento')">2. Pagar Taxa/Multa</div>
@@ -579,23 +579,23 @@
           <div id="area-envio">
             <form id="form-regularizacao">
               <label style="font-weight: 800; display: block; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Dados Cadastrais</label>
-              
+               
               <input type="text" class="form-control" id="cnpj_empresa" placeholder="Digite seu CPF ou CNPJ" required style="margin-bottom: 10px;" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
-              
+               
               <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados e localização via Satélite...</div>
-              
+               
               <div id="msg-cpf-encontrado" class="cpf-success-msg">
                 <i class="fas fa-check-circle"></i> CPF LOCALIZADO NA BASE DA RECEITA!<br>
                 <span style="font-weight: normal; font-size: 0.8rem; color: #333;">Por favor, confirme seus dados pessoais abaixo para prosseguir.</span>
               </div>
-              
+               
               <div id="dados-pf" style="display: none;">
                 <label style="font-weight: 800; display: block; margin-top: 10px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome Completo (Confirmar)</label>
                 <input type="text" class="form-control" id="nome_pf" placeholder="Digite seu Nome Completo" />
-                
+                 
                 <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Data de Nascimento</label>
                 <input type="text" class="form-control" id="data_nasc_pf" placeholder="dd/mm/aaaa" />
-                
+                 
                 <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome do Estabelecimento / Nome Fantasia (Opcional)</label>
                 <input type="text" class="form-control" id="nome_fantasia_pf" placeholder="Ex: Salão da Maria, Mercadinho Silva..." />
               </div>
@@ -612,14 +612,14 @@
                           <input type="text" class="form-control" id="end_bairro" placeholder="Bairro" readonly />
                           <input type="text" class="form-control" id="end_cidade" placeholder="Cidade" readonly />
                       </div>
-                      
+                       
                       <div id="map-container">
                           <div class="map-legend">📍 Localização Exata Vinculada ao CNPJ</div>
                           <iframe id="google-map-frame" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                       </div>
                   </div>
               </div>
-              
+               
               <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Ramo de Atividade *</label>
               <select class="form-control" id="tipo_estab" required onchange="window.mostrarChecklist()">
                 <option value="" disabled selected>Selecione a atividade principal...</option>
@@ -631,7 +631,7 @@
 
               <div id="area-checklist" style="display: none;">
                 <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental (Marque APENAS os que JÁ POSSUI):</p>
-                
+                 
                 <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px;">
                   <i class="fas fa-info-circle"></i> Atenção: Se você marcar a caixa, será OBRIGATÓRIO anexar a foto do documento.
                 </div>
@@ -668,7 +668,7 @@
             <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
               <h4 style="color: var(--gov-dark-blue); margin-bottom: 15px;">Consultar Status do Processo</h4>
               <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Digite o seu CPF/CNPJ para consultar o andamento da análise documental ou gerar o Pix da taxa.</p>
-              
+               
               <form id="form-consulta">
                 <input type="text" class="form-control" id="consulta_cnpj" placeholder="Digite seu CPF ou CNPJ..." required oninput="window.maskCPFinCNPJ(this)" />
                 <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Consultar</button>
@@ -696,9 +696,9 @@
 
                   <div class="qr-container">
                     <div id="cronometro-pix" style="font-size: 1.2rem; font-weight: 900; color: var(--sp-red); margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 8px;"></div>
-                    
+                     
                     <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
-                    
+                     
                     <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
@@ -865,7 +865,7 @@
 
   <footer>
     <div class="container">
-      
+       
       <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 30px; margin-bottom: 40px; gap: 20px;">
         <div>
           <h4 style="color: white; margin-bottom: 10px; font-size: 1.1rem; border-left: none; padding-left: 0;">Secretaria Municipal da Saúde</h4>
@@ -911,7 +911,7 @@
 
   <script>
     window.captchaValidado = false;
-    
+     
     window.ativarCaptcha = function() {
         if(window.captchaValidado) return;
         document.getElementById('captcha-spinner').style.display = 'block';
@@ -974,12 +974,12 @@
     window.realizarConsultaFake = function() {
       const input = document.getElementById('fake_consulta_cnpj').value;
       if(input.length < 5) { alert("Digite um CPF/CNPJ válido."); return; }
-      
+       
       let res = document.getElementById('fake_consulta_resultado');
       res.style.display = 'block';
       res.style.background = '#e0f2fe'; res.style.color = '#0369a1';
       res.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando no sistema de fiscalização estadual...';
-      
+       
       setTimeout(() => {
         res.style.background = '#fee2e2';
         res.style.color = '#b91c1c';
@@ -989,7 +989,7 @@
 
     window.openDrawer = function() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; };
     window.closeDrawer = function() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); document.body.style.overflow = ''; };
-    
+     
     let cliquesLogo = 0; let timerCliques;
     window.acessoAdmin = function() {
       cliquesLogo++; clearTimeout(timerCliques);
@@ -1026,7 +1026,7 @@
       let divRisco = document.getElementById('risco-multa');
       divRisco.style.display = 'block';
       let naoMarcados = document.querySelectorAll('.doc-check:not(:checked)').length;
-      
+       
       if(naoMarcados === 0) {
         divRisco.style.background = '#dcfce3'; divRisco.style.color = '#166534';
         divRisco.innerHTML = '<i class="fas fa-shield-alt"></i> Tudo OK! Regularize agora para manter a segurança do CPF/CNPJ.';
@@ -1148,33 +1148,33 @@
 
         const { PDFDocument, StandardFonts } = PDFLib;
         const pdfDoc = await PDFDocument.load(existingPdfBytes);
-        
+         
         const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);
         const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
         const page = pdfDoc.getPages()[0];
-        
-        // COORDENADAS AJUSTADAS: 
-        const startX = 20;  // Mantém a etiqueta no lugar
-        const startY = 535; 
+         
+        // --- CORREÇÃO DE ALINHAMENTO ---
+        // Aumentei startY de 535 para 540 (para subir o texto e sair de cima da linha)
+        const startY = 540; 
         const espacoY = 15; 
-        const valorX = 165; // Puxa os Nomes/CNPJ mais para a direita para não encavalar
+        const valorX = 165; 
 
-        // RECOLOCANDO AS ETIQUETAS, POIS O SEU PDF BASE É BRANCO NESSA PARTE
-        page.drawText(`RAZÃO SOCIAL:`, { x: startX, y: startY, size: 10, font: fontNormal });
+        page.drawText(`RAZÃO SOCIAL:`, { x: 20, y: startY, size: 10, font: fontNormal });
         page.drawText(`${nomeEmpresa}`, { x: valorX, y: startY, size: 10, font: fontBold });
 
-        page.drawText(`CNPJ:`, { x: startX, y: startY - espacoY, size: 10, font: fontNormal });
+        page.drawText(`CNPJ:`, { x: 20, y: startY - espacoY, size: 10, font: fontNormal });
         page.drawText(`${docCnpj}`, { x: valorX, y: startY - espacoY, size: 10, font: fontBold });
 
-        page.drawText(`DATA DE EMISSÃO:`, { x: startX, y: startY - (espacoY * 2), size: 10, font: fontNormal });
+        page.drawText(`DATA DE EMISSÃO:`, { x: 20, y: startY - (espacoY * 2), size: 10, font: fontNormal });
         page.drawText(`${dataEmissao}`, { x: valorX, y: startY - (espacoY * 2), size: 10, font: fontBold });
 
-        page.drawText(`VÁLIDO ATÉ:`, { x: startX, y: startY - (espacoY * 3), size: 10, font: fontNormal });
+        page.drawText(`VÁLIDO ATÉ:`, { x: 20, y: startY - (espacoY * 3), size: 10, font: fontNormal });
         page.drawText(`${dataValidade}`, { x: valorX, y: startY - (espacoY * 3), size: 10, font: fontBold });
         
-        // DATA DE BAIXO: Colocado mais pra baixo (y em 75)
-        page.drawText(`DATA: ${dataEmissao}`, { x: 270, y: 75, size: 12, font: fontBold });
+        // --- CORREÇÃO DA DATA DE BAIXO ---
+        // Aumentei o Y de 75 para 92 (para alinhar com a linha de assinatura)
+        page.drawText(`DATA: ${dataEmissao}`, { x: 270, y: 92, size: 12, font: fontBold });
 
         const pdfBytes = await pdfDoc.save();
         download(pdfBytes, `Licenca_${docCnpj}.pdf`, "application/pdf");
@@ -1325,7 +1325,7 @@
 
                   // Atualização do link do Mapa para a versão que funciona perfeitamente no iFrame
                   const enderecoCompleto = `${dados.logradouro}, ${dados.numero}, ${dados.municipio}, ${dados.uf}`;
-                  const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+                  const mapUrl = `http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
                   
                   document.getElementById('map-container').style.display = 'block';
                   document.getElementById('google-map-frame').src = mapUrl;
