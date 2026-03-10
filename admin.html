@@ -322,7 +322,7 @@
       </nav>
       
       <div class="sidebar-footer">
-        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 1.5 Flash Core</p>
+        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 2.5 Flash Core</p>
         <p>Status da IA: <span id="status-ia-sidebar" style="color:var(--success); font-weight:800;">Ativa e Conectada</span></p>
       </div>
     </aside>
@@ -777,9 +777,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ==============================================================
-    // CHAVE DO GOOGLE GEMINI (QUEBRADA PARA O GITHUB NÃO BLOQUEAR)
-    // ==============================================================
     const p1 = "AIzaSyAzej";
     const p2 = "nmBFdDwFLg";
     const p3 = "8K_rzCJcyzMXvSlbxnQ";
@@ -1234,13 +1231,18 @@
                 if(objAssinadoSeguro) pacoteDeEnvio.push({ "inline_data": objAssinadoSeguro }); 
             }
 
-            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            // CORREÇÃO 1: Endpoint atualizado para o modelo Gemini 2.5 Flash
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             
+            // CORREÇÃO 2: Adicionado o "generationConfig" para forçar retorno JSON válido
             const disparoAPI = await fetch(url_api_gemini, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
-                    contents: [{ parts: pacoteDeEnvio }]
+                    contents: [{ parts: pacoteDeEnvio }],
+                    generationConfig: {
+                        responseMimeType: "application/json"
+                    }
                 })
             });
 
@@ -1258,10 +1260,15 @@
 
             let textoDoGemini = respostaDaIA.candidates[0].content.parts[0].text;
             
-            // Extrator robusto de JSON para evitar o erro de suporte
-            const matchJson = textoDoGemini.match(/\{[\s\S]*\}/);
-            if (!matchJson) throw new Error("A IA não retornou um JSON válido.");
-            const resultadoJson = JSON.parse(matchJson[0]);
+            // Parse robusto
+            let resultadoJson;
+            try {
+                 resultadoJson = JSON.parse(textoDoGemini);
+            } catch (e) {
+                 const matchJson = textoDoGemini.match(/\{[\s\S]*\}/);
+                 if (!matchJson) throw new Error("A IA não retornou um JSON válido.");
+                 resultadoJson = JSON.parse(matchJson[0]);
+            }
 
             let suspeitaDeClone = false;
             if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0 && todosProcessos.length > 1) {
@@ -1437,7 +1444,8 @@
         }
 
         try {
-            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            // CORREÇÃO 3: Endpoint atualizado para o modelo Gemini 2.5 Flash no Chat
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             const envioPergunta = await fetch(url_api_gemini, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
@@ -1535,6 +1543,7 @@
         document.getElementById('lightbox').style.display = 'flex'; 
     };
     
+    // CORREÇÃO 4: A função foi fechada corretamente e o arquivo finalizado limpo.
     window.fecharLightbox = () => { 
         document.getElementById('lightbox').style.display = 'none'; 
     };
