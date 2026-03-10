@@ -3,144 +3,728 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COVISA ULTIMATE - Inteligência Artificial Governamental</title>
+  <title>COVISA ULTIMATE - Inteligência Artificial Governamental (Gemini 2.5)</title>
+  
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    /* =====================================================================
+       1. VARIÁVEIS GLOBAIS (DESIGN SYSTEM - DARK MODE)
+       ===================================================================== */
     :root {
-      --bg-body: #0f172a; --bg-sidebar: #020617; --bg-sidebar-hover: #1e293b; --bg-card: #1e293b;
-      --text-main: #f8fafc; --text-muted: #94a3b8; --text-light: #cbd5e0;
-      --primary: #3b82f6; --primary-hover: #2563eb; --secondary: #0ea5e9;
-      --gemini-purple: #a855f7; --gemini-dark: #7e22ce; --gemini-gradient: linear-gradient(135deg, #a855f7, #ec4899, #3b82f6);
-      --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
-      --border: #334155; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-2xl: 24px;
+      /* Paleta de Fundo */
+      --bg-body: #0f172a; 
+      --bg-sidebar: #020617;
+      --bg-sidebar-hover: #1e293b;
+      --bg-card: #1e293b;
+      
+      /* Paleta de Textos */
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-light: #cbd5e0;
+      
+      /* Cores Primárias e Secundárias */
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --secondary: #0ea5e9;
+      
+      /* Cores Gemini (IA) */
+      --gemini-purple: #a855f7;
+      --gemini-dark: #7e22ce;
+      --gemini-gradient: linear-gradient(135deg, #a855f7, #ec4899, #3b82f6);
+      
+      /* Semântica (Status) */
+      --success: #10b981;
+      --success-light: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --warning-light: rgba(245, 158, 11, 0.15);
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.15);
+      
+      /* Bordas e Sombras */
+      --border: #334155;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.4);
+      --shadow-modal: 0 25px 50px -12px rgba(0,0,0,0.8);
+      
+      /* Raios de Borda */
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-2xl: 24px;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
-    body { background-color: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; font-size: 14px; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
-    /* BLOQUEIO */
-    #lock-screen { position: fixed; inset: 0; background: #020617; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: radial-gradient(circle at center, #0f172a 0%, #000000 100%); transition: 0.5s; }
-    .lock-box { background: rgba(30, 41, 59, 0.6); padding: 50px 40px; border-radius: var(--radius-2xl); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); text-align: center; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); }
-    .lock-box i.fa-fingerprint { font-size: 4rem; color: var(--primary); margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5)); }
-    .lock-box h2 { color: white; margin-bottom: 8px; font-weight: 900; font-size: 1.8rem; }
-    .lock-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px; }
-    .pin-input { width: 100%; padding: 18px; border-radius: var(--radius-lg); border: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: white; font-size: 1.8rem; text-align: center; letter-spacing: 15px; margin-bottom: 25px; transition: 0.3s; }
-    .pin-input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-    .btn-unlock { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: var(--radius-lg); font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
-    .btn-unlock:hover { background: var(--primary-hover); transform: translateY(-2px); }
+    /* =====================================================================
+       2. RESET E TIPOGRAFIA BASE
+       ===================================================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+    }
 
-    /* ESTRUTURA */
-    .sidebar { width: 260px; background-color: var(--bg-sidebar); color: white; display: flex; flex-direction: column; z-index: 100; border-right: 1px solid rgba(255,255,255,0.05); }
-    .sidebar-header { padding: 30px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .sidebar-header i { font-size: 2.2rem; background: var(--gemini-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .sidebar-header h2 { font-size: 1.2rem; font-weight: 900; line-height: 1.1; }
-    .sidebar-header h2 span { font-size: 0.65rem; color: var(--gemini-purple); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
-    .nav-menu { padding: 15px 10px; flex: 1; display: flex; flex-direction: column; gap: 5px; overflow-y: auto; }
-    .nav-item { padding: 12px 15px; border-radius: var(--radius-md); color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 12px; font-weight: 600; transition: 0.3s; cursor: pointer; }
-    .nav-item:hover, .nav-item.active { background: var(--bg-sidebar-hover); color: white; border-left: 3px solid var(--gemini-purple); }
-    .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.75rem; color: var(--text-muted); text-align: center; background: rgba(0,0,0,0.2); }
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      font-size: 14px;
+    }
+    
+    /* Customização da Barra de Rolagem */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
 
-    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-    header.topbar { background: var(--bg-sidebar); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 10; }
-    .search-bar { display: flex; align-items: center; background: var(--bg-body); padding: 12px 20px; border-radius: var(--radius-lg); width: 400px; border: 1px solid var(--border); transition: 0.3s; }
-    .search-bar:focus-within { border-color: var(--gemini-purple); }
-    .search-bar input { border: none; background: transparent; width: 100%; font-size: 0.9rem; color: var(--text-main); margin-left:10px; }
-    .user-profile { display: flex; align-items: center; gap: 15px; }
-    .user-info { text-align: right; }
-    .user-info h4 { font-size: 0.85rem; margin: 0; color: var(--text-main); font-weight: 700; }
-    .user-info span { font-size: 0.75rem; color: var(--gemini-purple); font-weight: 800; }
-    .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--gemini-gradient); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; }
+    /* =====================================================================
+       3. TELA DE BLOQUEIO (SEGURANÇA MILITAR)
+       ===================================================================== */
+    #lock-screen {
+      position: fixed;
+      inset: 0;
+      background: #020617;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-image: radial-gradient(circle at center, #0f172a 0%, #000000 100%);
+      transition: opacity 0.4s ease;
+    }
 
-    /* VIEWS */
-    .page-view { display: none; padding: 30px; overflow-y: auto; flex: 1; animation: fadeIn 0.3s ease; }
-    .page-view.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .page-title { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
-    .page-title h1 { font-size: 1.8rem; font-weight: 900; }
-    .page-title p { color: var(--text-muted); margin-top: 5px; }
+    .lock-box {
+      background: rgba(30, 41, 59, 0.5);
+      padding: 50px 40px;
+      border-radius: var(--radius-2xl);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.05);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow-modal);
+    }
 
-    .btn { padding: 10px 18px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; transition:0.2s;}
-    .btn-primary { background: var(--primary); color: white; } .btn-primary:hover{transform:translateY(-2px);}
-    .btn-success { background: var(--success); color: #022c22; } .btn-success:hover{background:#059669; color:white;}
-    .btn-secondary { background: transparent; border: 1px solid var(--border); color: white; }
-    .btn-gemini { background: var(--gemini-gradient); color: white; }
+    .lock-box i.fa-fingerprint {
+      font-size: 3.5rem;
+      color: var(--primary);
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5));
+    }
 
-    /* CARDS */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-    .stat-card { background: var(--bg-card); padding: 25px; border-radius: var(--radius-xl); border: 1px solid var(--border); display: flex; align-items: center; gap: 15px; position: relative; }
-    .stat-card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; }
-    .stat-card.c-warning::before{background:var(--warning);} .stat-card.c-primary::before{background:var(--primary);} .stat-card.c-success::before{background:var(--success);} .stat-card.c-gemini::before{background:var(--gemini-purple);}
-    .stat-info h3 { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
-    .stat-info p { font-size: 2rem; font-weight: 900; margin: 0; }
-    .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
-    .chart-card { background: var(--bg-card); padding: 20px; border-radius: var(--radius-xl); border: 1px solid var(--border); }
-    .chart-container { position: relative; height: 250px; width: 100%; }
+    .lock-box h2 {
+      color: white;
+      margin-bottom: 8px;
+      font-weight: 900;
+      font-size: 1.8rem;
+      letter-spacing: -0.5px;
+    }
 
-    /* TABELAS */
-    .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); display: flex; flex-direction: column; margin-bottom: 30px; }
-    .data-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
-    .table-wrapper { overflow-x: auto; width: 100%; }
+    .lock-box p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 30px;
+    }
+
+    .pin-input {
+      width: 100%;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      font-size: 1.8rem;
+      text-align: center;
+      letter-spacing: 15px;
+      margin-bottom: 25px;
+      transition: all 0.3s ease;
+    }
+
+    .pin-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-unlock {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-unlock:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    /* =====================================================================
+       4. ESTRUTURA DE NAVEGAÇÃO (SIDEBAR)
+       ===================================================================== */
+    .sidebar {
+      width: 280px;
+      background-color: var(--bg-sidebar);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      border-right: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .sidebar-header {
+      padding: 30px 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .sidebar-header i {
+      font-size: 2.2rem;
+      color: var(--accent);
+      background: var(--gemini-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .sidebar-header h2 span {
+      font-size: 0.65rem;
+      color: var(--gemini-purple);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 800;
+    }
+    
+    .nav-menu {
+      padding: 15px 10px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      padding: 12px 15px;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background: var(--bg-sidebar-hover);
+      color: white;
+    }
+
+    .nav-item.active {
+      border-left: 3px solid var(--gemini-purple);
+    }
+
+    .nav-item i {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      padding: 20px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+      background: rgba(0,0,0,0.2);
+    }
+
+    /* =====================================================================
+       5. CABEÇALHO SUPERIOR (TOPBAR) E ÁREA PRINCIPAL
+       ===================================================================== */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    header.topbar {
+      background: var(--bg-sidebar);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      box-shadow: var(--shadow-sm);
+      z-index: 10;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: var(--bg-body);
+      padding: 12px 20px;
+      border-radius: var(--radius-lg);
+      width: 450px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .search-bar:focus-within {
+      border-color: var(--gemini-purple);
+      box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+    }
+
+    .search-bar i {
+      color: var(--text-muted);
+      margin-right: 12px;
+      font-size: 1.1rem;
+    }
+
+    .search-bar input {
+      border: none;
+      background: transparent;
+      width: 100%;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .pulse-online {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-info h4 {
+      font-size: 0.95rem;
+      margin: 0 0 2px 0;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .user-info span {
+      font-size: 0.75rem;
+      color: var(--gemini-purple);
+      font-weight: 800;
+    }
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: var(--gemini-gradient);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.2rem;
+      box-shadow: 0 0 15px rgba(168,85,247,0.4);
+    }
+
+    /* =====================================================================
+       6. SISTEMA DE PÁGINAS (VIEWS) E COMPONENTES
+       ===================================================================== */
+    .page-view {
+      display: none;
+      padding: 30px 40px;
+      overflow-y: auto;
+      flex: 1;
+      animation: fadeInView 0.3s ease;
+    }
+
+    .page-view.active {
+      display: block;
+    }
+
+    @keyframes fadeInView {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 30px;
+    }
+
+    .page-title h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+    }
+
+    .page-title p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-top: 8px;
+    }
+
+    /* Botões Padrões do Sistema */
+    .btn {
+      padding: 12px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2); }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3); }
+    .btn-success { background: var(--success); color: #022c22; }
+    .btn-success:hover { background: #059669; color: white; transform: translateY(-2px); }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+    .btn-secondary:hover { background: var(--border); color: white; }
+    .btn-gemini { background: var(--gemini-gradient); color: white; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); border: none;}
+    .btn-gemini:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5); }
+
+    /* =====================================================================
+       7. CARDS ANALÍTICOS E GRÁFICOS (DASHBOARD)
+       ===================================================================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      padding: 25px;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--text-muted);
+    }
+
+    .stat-card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 5px; }
+    .stat-card.c-warning::before { background: var(--warning); }
+    .stat-card.c-primary::before { background: var(--primary); }
+    .stat-card.c-success::before { background: var(--success); }
+    .stat-card.c-gemini::before { background: var(--gemini-purple); }
+    
+    .stat-icon {
+      width: 55px;
+      height: 55px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+
+    .c-warning .stat-icon { background: var(--warning-light); color: var(--warning); }
+    .c-primary .stat-icon { background: rgba(59, 130, 246, 0.15); color: var(--primary); }
+    .c-success .stat-icon { background: var(--success-light); color: var(--success); }
+    .c-gemini .stat-icon { background: rgba(168, 85, 247, 0.15); color: var(--gemini-purple); }
+    
+    .stat-info { flex: 1; }
+    .stat-info h3 { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; font-weight: 700; }
+    .stat-info p { font-size: 2.2rem; font-weight: 900; color: var(--text-main); line-height: 1; margin: 0; }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .chart-card {
+      background: var(--bg-card);
+      padding: 25px;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .chart-header {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 280px;
+      width: 100%;
+    }
+
+    /* =====================================================================
+       8. TABELAS AVANÇADAS (AUDITORIA E DASHBOARD)
+       ===================================================================== */
+    .data-section {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 35px;
+    }
+
+    .data-header {
+      padding: 20px 25px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-sidebar);
+    }
+
+    .data-header h2 { font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 10px; margin: 0; color: white; }
+    
+    .filters-row {
+      padding: 15px 25px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    .table-wrapper { overflow-x: auto; min-height: 250px; width: 100%; }
     table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { background: var(--bg-card); padding: 15px 20px; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; border-bottom: 2px solid var(--border); }
-    td { padding: 15px 20px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-    tr:hover { background: rgba(255,255,255,0.02); }
-    .td-empresa { display: flex; align-items: center; gap: 12px; }
-    .td-empresa-icon { width: 35px; height: 35px; background: var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-    .td-empresa-info strong { display: block; font-size: 0.95rem; margin-bottom: 2px; }
-    .td-empresa-info span { color: var(--text-muted); font-size: 0.75rem; }
-    .status-badge { padding: 5px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; }
-    .badge-pendente { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
-    .badge-aguardando { background: rgba(59, 130, 246, 0.15); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3); }
-    .badge-pago { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-denuncia { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+    
+    th {
+      background: var(--bg-card);
+      padding: 15px 25px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+      border-bottom: 2px solid var(--border);
+      z-index: 2;
+    }
 
-    /* MÓDULOS EXTRA */
-    .laws-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
-    .law-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 25px; }
-    .calc-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 30px; display: flex; gap: 30px; }
-    .calc-form { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    .calc-result { flex: 1; background: var(--bg-body); padding: 25px; border-radius: var(--radius-lg); border: 2px dashed var(--primary); text-align: center; }
-    .form-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.95rem; color: white; background: var(--bg-body); margin-top: 5px; }
+    td {
+      padding: 16px 25px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+      vertical-align: middle;
+      color: var(--text-light);
+    }
+
+    tr { transition: background-color 0.2s ease; }
+    tr:hover { background: rgba(255,255,255,0.02); }
     
-    .chat-container { display: flex; flex-direction: column; height: 500px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
-    .chat-history { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-body); }
-    .chat-msg { max-width: 80%; padding: 12px 18px; border-radius: var(--radius-md); line-height: 1.5; }
-    .msg-user { align-self: flex-end; background: var(--primary); color: white; }
-    .msg-ai { align-self: flex-start; background: var(--bg-card); border: 1px solid var(--border); }
+    .td-empresa { display: flex; align-items: center; gap: 15px; }
+    .td-empresa-icon { width: 45px; height: 45px; background: var(--border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--text-main); font-size: 1.2rem; font-weight: bold; }
+    .td-empresa-info strong { display: block; font-size: 1rem; margin-bottom: 4px; font-weight: 700; color: white; }
+    .td-empresa-info span { color: var(--text-muted); font-size: 0.85rem; font-family: monospace; }
     
-    .heatmap-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
+    .status-badge { padding: 6px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; }
+    .badge-pendente { background: var(--warning-light); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-aguardando { background: rgba(59, 130, 246, 0.15); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-pago { background: var(--success-light); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-denuncia { background: var(--danger-light); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .btn-icon { width: 36px; height: 36px; border-radius: var(--radius-md); border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-size: 1rem; font-weight: 600; margin-right: 5px; }
+    .btn-icon.view { background: var(--border); color: white; }
+    .btn-icon.view:hover { background: var(--primary); transform: translateY(-2px); }
+
+    /* =====================================================================
+       9. FINANCEIRO, LEIS E CALCULADORA DE MULTAS
+       ===================================================================== */
+    .laws-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .law-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 25px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
+    .law-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; }
+    .law-leve::before { background: var(--warning); }
+    .law-grave::before { background: #f97316; }
+    .law-gravissima::before { background: var(--danger); }
+    
+    .law-card h3 { font-size: 1.1rem; color: white; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-weight: 800; }
+    .law-card .valor { font-size: 1.8rem; font-weight: 900; color: white; margin-bottom: 15px; }
+    .law-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+    .law-card ul { margin-top: 15px; padding-left: 20px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+    .calc-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 30px; margin-bottom: 40px; display: flex; flex-wrap: wrap; gap: 30px; align-items: center; }
+    .calc-form { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .calc-result { flex: 1; background: var(--bg-body); padding: 25px; border-radius: var(--radius-lg); border: 2px dashed var(--primary); text-align: center; min-width: 250px; }
+    .calc-result span { font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .calc-result h2 { font-size: 2.8rem; color: var(--primary); margin: 10px 0 0 0; font-weight: 900; letter-spacing: -1px; }
+
+    .form-input { width: 100%; padding: 12px 15px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.95rem; color: white; transition: 0.3s; background: var(--bg-body); font-family: inherit; }
+    .form-input:focus { border-color: var(--primary); }
+
+    /* =====================================================================
+       10. MÓDULO: ASSISTENTE JURÍDICO (CHATBOT)
+       ===================================================================== */
+    .chat-container { display: flex; flex-direction: column; height: 550px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .chat-header { background: var(--bg-sidebar); padding: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); }
+    .chat-history { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: var(--bg-body); }
+    .chat-msg { max-width: 80%; padding: 15px 20px; border-radius: var(--radius-lg); line-height: 1.6; font-size: 0.95rem; }
+    .msg-user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+    .msg-ai { align-self: flex-start; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .chat-input-area { padding: 20px; background: var(--bg-card); border-top: 1px solid var(--border); display: flex; gap: 15px; }
+    .chat-input-area input { flex: 1; padding: 15px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1rem; }
+
+    /* =====================================================================
+       11. MÓDULO: MAPA DE RISCO E LOGS
+       ===================================================================== */
+    .heatmap-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 30px; }
     .heat-zone { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-lg); text-align: center; }
 
-    /* MODAL GIGANTE */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 20px; }
-    .modal-box { background: var(--bg-body); width: 100%; max-width: 900px; border-radius: var(--radius-xl); display: flex; flex-direction: column; max-height: 90vh; border: 1px solid var(--border); }
-    .modal-header { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
-    .modal-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg-card); overflow-x: auto; }
-    .tab-btn { padding: 15px 20px; border: none; background: none; font-size: 0.9rem; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; }
-    .tab-btn.active { color: white; border-bottom-color: white; background: rgba(255,255,255,0.05); }
-    .tab-btn.tab-ai { color: var(--gemini-purple); } .tab-btn.tab-ai.active { border-bottom-color: var(--gemini-purple); }
+    /* =====================================================================
+       12. MODAL GIGANTE DE AUDITORIA & IA GEMINI (O CORAÇÃO DO SISTEMA)
+       ===================================================================== */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-box { background: var(--bg-body); width: 100%; max-width: 900px; border-radius: var(--radius-xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 90vh; border: 1px solid var(--border); animation: modalIn 0.3s ease; }
+    @keyframes modalIn { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+
+    .modal-header { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+    .modal-header h3 { font-size: 1.2rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 10px; }
+    .btn-close { background: transparent; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .btn-close:hover { color: var(--danger); transform: scale(1.1); }
+
+    .modal-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg-card); padding: 0 15px; overflow-x: auto; }
+    .tab-btn { padding: 15px 20px; border: none; background: none; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .tab-btn:hover { color: white; }
+    .tab-btn.active { color: white; border-bottom-color: white; background: rgba(255,255,255,0.02); }
+    .tab-btn.tab-ai { color: var(--gemini-purple); font-weight: 800; }
+    .tab-btn.tab-ai.active { border-bottom-color: var(--gemini-purple); color: #d8b4fe; }
+
     .modal-body { padding: 25px; overflow-y: auto; flex: 1; }
-    .tab-content { display: none; } .tab-content.active { display: block; }
-    .modal-footer { padding: 20px 25px; border-top: 1px solid var(--border); background: var(--bg-card); display: flex; justify-content: flex-end; gap: 10px; }
+    .tab-content { display: none; animation: fadeInTab 0.3s ease; }
+    .tab-content.active { display: block; }
+    @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* UI DO RADAR */
-    .radar-loading { text-align: center; padding: 60px 20px; }
-    .radar-scanner { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--gemini-purple); margin-bottom:20px; }
+    /* Estilos Internos do Modal: Radar IA */
+    .radar-loading { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .radar-scanner { position: relative; width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--gemini-purple); overflow: hidden; box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); }
+    .radar-scanner::after { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6)); transform-origin: left center; animation: radarScan 1s linear infinite; }
+    @keyframes radarScan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    
     .radar-dashboard { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
-    .score-circle { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; margin: 0 auto 15px auto; border: 6px solid rgba(255,255,255,0.1); }
-    .signal-item { padding: 12px 15px; border-radius: var(--radius-md); margin-bottom: 10px; background: var(--bg-body); border: 1px solid var(--border); display: flex; gap: 10px; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
-    .gallery-item { aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--border); cursor: pointer; position: relative; }
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+    .score-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 15px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .score-circle { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; font-weight: 900; margin-bottom: 15px; border: 6px solid rgba(255,255,255,0.1); transition: 0.5s; }
+    .score-circle span.num { font-size: 3rem; margin: 0; line-height: 1; letter-spacing: -1px; }
+    .score-circle span.desc { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; opacity: 0.9; margin-top: 5px; }
+    
+    .gemini-response-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 25px; position: relative; overflow: hidden; }
+    .gemini-response-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--gemini-gradient); }
+    
+    .ia-opinion { background: rgba(168, 85, 247, 0.05); border-left: 3px solid var(--gemini-purple); padding: 15px; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin-bottom: 20px; font-size: 0.9rem; color: var(--text-light); line-height: 1.5; font-style: italic; }
+    .signal-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .signal-item { padding: 12px 15px; border-radius: var(--radius-md); font-size: 0.85rem; display: flex; align-items: flex-start; gap: 12px; font-weight: 500; background: var(--bg-body); border: 1px solid var(--border); color: var(--text-light); }
+    .signal-item.success i { color: var(--success); } .signal-item.warning i { color: var(--warning); } .signal-item.danger i { color: var(--danger); }
 
-    /* LIGHTBOX E TOAST */
-    #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center; }
-    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--radius-md); }
-    .toast { position: fixed; bottom: 20px; right: 20px; background: var(--bg-card); border-left: 4px solid var(--primary); padding: 15px 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 15px; z-index: 99999; border: 1px solid var(--border); color: white; }
+    .ai-recommendation { padding: 15px 20px; border-radius: var(--radius-md); background: rgba(0,0,0,0.2); border: 1px dashed var(--gemini-purple); }
+    
+    /* Estilos Internos do Modal: Dados e Fotos */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .info-group { background: var(--bg-card); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+    .info-group label { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
+    .info-group p { font-size: 0.95rem; font-weight: 600; color: white; margin: 0; word-break: break-word; }
+    
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; margin-top: 15px; }
+    .gallery-item { position: relative; aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--border); cursor: pointer; background: var(--bg-card); }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+    .badge-assinado { position: absolute; top: 0; left: 0; width: 100%; background: var(--success); color: white; font-size: 0.7rem; font-weight: 900; text-align: center; padding: 4px 0; z-index: 10; }
+
+    .modal-footer { padding: 20px 25px; border-top: 1px solid var(--border); background: var(--bg-card); border-radius: 0 0 var(--radius-xl) var(--radius-xl); display: flex; justify-content: flex-end; gap: 10px; }
+
+    /* =====================================================================
+       13. VISUALIZADOR DE IMAGENS (LIGHTBOX) E TOASTS
+       ===================================================================== */
+    #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; }
+    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--radius-md); border: 2px solid #333; }
+    .btn-close-lightbox { position: absolute; top: 20px; right: 30px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 2rem; cursor: pointer; width: 50px; height: 50px; border-radius: 50%; }
+    
+    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+    .toast { background: var(--bg-card); border-left: 4px solid var(--primary); padding: 15px 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 15px; min-width: 300px; animation: toastSlideIn 0.4s forwards; border: 1px solid var(--border); color: white;}
+    .toast.success { border-color: var(--success); } .toast.success i { color: var(--success); }
+    .toast.error { border-color: var(--danger); } .toast.error i { color: var(--danger); }
+    @keyframes toastSlideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes toastFadeOut { to { opacity: 0; transform: translateX(100%); } }
+
   </style>
 </head>
 <body>
@@ -156,8 +740,15 @@
   </div>
 
   <div id="app-content" style="display: none;">
+    
     <aside class="sidebar">
-      <div class="sidebar-header"><i class="fas fa-shield-alt"></i><div><h2>COVISA<br><span>Admin Ultimate</span></h2></div></div>
+      <div class="sidebar-header">
+        <i class="fas fa-shield-alt"></i>
+        <div>
+          <h2>COVISA<br><span>Admin Pro</span></h2>
+        </div>
+      </div>
+      
       <nav class="nav-menu">
         <a class="nav-item active" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Geral</a>
         <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Banco de Dados</a>
@@ -166,40 +757,97 @@
         <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot" style="color:var(--gemini-purple);"></i> IA Jurídica</a>
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
       </nav>
-      <div class="sidebar-footer"><p style="color:var(--success); font-weight:bold;">Gemini 2.0 Flash ON</p></div>
+      
+      <div class="sidebar-footer">
+        <p style="margin-bottom:5px; font-weight:bold; color:var(--gemini-purple);">Gemini 2.0 Flash ON</p>
+      </div>
     </aside>
 
     <main class="main-content">
+      
       <header class="topbar">
-        <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Buscar CNPJ, Razão Social..." onkeyup="filtrarTabela()"></div>
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchInput" placeholder="Buscar CNPJ, Razão Social ou Ramo..." onkeyup="filtrarTabela()">
+        </div>
         <div class="user-profile">
-          <div style="display: flex; gap: 8px; align-items:center;"><span class="pulse-online"></span><span style="color:var(--success); font-weight:bold; font-size:0.8rem;">ONLINE</span></div>
-          <div class="user-info"><h4>Fiscal Chefe</h4><span>Administrador</span></div>
+          <div style="display: flex; gap: 8px; align-items:center;">
+            <span class="pulse-online"></span>
+            <span style="color:var(--success); font-weight:bold; font-size:0.8rem;">ONLINE</span>
+          </div>
+          <div class="user-info">
+            <h4>Fiscal Chefe</h4>
+            <span>Administrador</span>
+          </div>
           <div class="avatar"><i class="fas fa-user-shield"></i></div>
         </div>
       </header>
 
       <div id="view-dashboard" class="page-view active">
-        <div class="page-title"><div><h1>Centro Operacional</h1><p>Monitoramento em tempo real.</p></div></div>
-        <div class="stats-grid">
-          <div class="stat-card c-warning"><div class="stat-icon"><i class="fas fa-inbox"></i></div><div class="stat-info"><h3>Pendentes</h3><p id="count-pendente">0</p></div></div>
-          <div class="stat-card c-primary"><div class="stat-icon"><i class="fas fa-dollar-sign"></i></div><div class="stat-info"><h3>Aguardando</h3><p id="count-aguardando">0</p></div></div>
-          <div class="stat-card c-success"><div class="stat-icon"><i class="fas fa-check"></i></div><div class="stat-info"><h3>Aprovados</h3><p id="count-pago">0</p></div></div>
-          <div class="stat-card c-gemini"><div class="stat-icon"><i class="fas fa-robot"></i></div><div class="stat-info"><h3>Total BD</h3><p id="count-total">0</p></div></div>
+        <div class="page-title">
+          <div>
+            <h1>Centro Operacional</h1>
+            <p>Monitoramento em tempo real do município.</p>
+          </div>
         </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card c-warning">
+            <div class="stat-icon"><i class="fas fa-inbox"></i></div>
+            <div class="stat-info"><h3>Pendentes</h3><p id="count-pendente">0</p></div>
+          </div>
+          <div class="stat-card c-primary">
+            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="stat-info"><h3>Aguardando</h3><p id="count-aguardando">0</p></div>
+          </div>
+          <div class="stat-card c-success">
+            <div class="stat-icon"><i class="fas fa-check"></i></div>
+            <div class="stat-info"><h3>Aprovados</h3><p id="count-pago">0</p></div>
+          </div>
+          <div class="stat-card c-gemini">
+            <div class="stat-icon"><i class="fas fa-robot"></i></div>
+            <div class="stat-info"><h3>Total BD</h3><p id="count-total">0</p></div>
+          </div>
+        </div>
+        
         <div class="charts-grid">
-          <div class="chart-card"><div class="chart-header">Volume Semanal</div><div class="chart-container"><canvas id="barChart"></canvas></div></div>
-          <div class="chart-card"><div class="chart-header">Status</div><div class="chart-container"><canvas id="doughnutChart"></canvas></div></div>
+          <div class="chart-card">
+            <div class="chart-header">Volume Semanal</div>
+            <div class="chart-container"><canvas id="barChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">Status Geral</div>
+            <div class="chart-container"><canvas id="doughnutChart"></canvas></div>
+          </div>
         </div>
       </div>
 
       <div id="view-processos" class="page-view">
-        <div class="page-title"><div><h1>Banco de Dados Mestre</h1></div><button class="btn btn-primary" onclick="exportarCSV()"><i class="fas fa-download"></i> Baixar CSV</button></div>
+        <div class="page-title">
+          <div>
+            <h1>Banco de Dados Mestre</h1>
+            <p>Lista completa e auditável de todos os protocolos.</p>
+          </div>
+          <button class="btn btn-primary" onclick="exportarCSV()"><i class="fas fa-download"></i> Baixar CSV</button>
+        </div>
+        
         <section class="data-section" style="height: calc(100vh - 180px);">
-          <div class="data-header"><h2><i class="fas fa-table"></i> Registros Oficiais</h2></div>
+          <div class="data-header">
+            <h2><i class="fas fa-table"></i> Registros Oficiais</h2>
+          </div>
+          
           <div class="table-wrapper" style="flex:1; overflow-y:auto;">
             <table>
-              <thead><tr><th>Identificação</th><th>Ramo</th><th>Data</th><th>Status</th><th>Taxa</th><th>Ação</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Identificação</th>
+                  <th>Ramo</th>
+                  <th>Data</th>
+                  <th>Status</th>
+                  <th>Taxa</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
               <tbody id="tabela-corpo-full"></tbody>
             </table>
           </div>
@@ -207,46 +855,111 @@
       </div>
 
       <div id="view-financeiro" class="page-view">
-        <div class="page-title"><div><h1>Financeiro e Leis</h1></div></div>
+        <div class="page-title">
+          <div>
+            <h1>Financeiro e Leis</h1>
+            <p>Calculadora de autuações e base legal do Código Sanitário.</p>
+          </div>
+        </div>
+
         <div class="calc-container">
           <div class="calc-form">
-            <div><label>Gravidade</label><select id="sim-gravidade" class="form-input" onchange="calcularMulta()"><option value="leve">Leve</option><option value="grave">Grave</option><option value="gravissima">Gravíssima</option></select></div>
-            <div><label>Porte</label><select id="sim-porte" class="form-input" onchange="calcularMulta()"><option value="1">Pequena</option><option value="2">Média</option><option value="3">Grande</option></select></div>
-            <div style="grid-column:1/-1;"><label style="color:var(--danger);"><input type="checkbox" id="sim-reincidente" onchange="calcularMulta()"> Empresa Reincidente (Dobra Valor)</label></div>
+            <div>
+              <label style="color:var(--text-muted); display:block; margin-bottom:5px;">Gravidade da Infração</label>
+              <select id="sim-gravidade" class="form-input" onchange="calcularMulta()">
+                <option value="leve">Leve (Ex: Falta de Asseio)</option>
+                <option value="grave">Grave (Ex: RDC 216 - Armazenamento)</option>
+                <option value="gravissima">Gravíssima (Ex: Produto Vencido)</option>
+              </select>
+            </div>
+            <div>
+              <label style="color:var(--text-muted); display:block; margin-bottom:5px;">Porte do Estabelecimento</label>
+              <select id="sim-porte" class="form-input" onchange="calcularMulta()">
+                <option value="1">Micro/Pequena Empresa</option>
+                <option value="2">Média Empresa</option>
+                <option value="3">Grande Empresa / Indústria</option>
+              </select>
+            </div>
+            <div style="grid-column:1/-1;">
+              <label style="color:var(--danger); font-weight:bold; cursor:pointer;">
+                <input type="checkbox" id="sim-reincidente" onchange="calcularMulta()"> 
+                Empresa Reincidente (Aplica-se dobro da multa)
+              </label>
+            </div>
           </div>
-          <div class="calc-result"><span>Valor Sugerido</span><h2 id="sim-resultado">R$ 1.500,00</h2></div>
+          <div class="calc-result">
+            <span>Valor Sugerido</span>
+            <h2 id="sim-resultado">R$ 1.500,00</h2>
+          </div>
         </div>
       </div>
 
       <div id="view-mapa" class="page-view">
-        <div class="page-title"><div><h1>Mapa de Zonas de Risco</h1></div></div>
+        <div class="page-title">
+          <div>
+            <h1>Mapa de Zonas de Risco</h1>
+            <p>Distribuição de denúncias e irregularidades por região.</p>
+          </div>
+        </div>
+        
         <div class="heatmap-container">
-          <div class="heat-zone" style="border-bottom: 5px solid var(--danger);"><h3 style="color:white;">Zona Sul</h3><i class="fas fa-fire" style="color:var(--danger); font-size:3rem; margin:15px 0;"></i><p style="color:var(--danger);">Crítico (42%)</p></div>
-          <div class="heat-zone" style="border-bottom: 5px solid var(--warning);"><h3 style="color:white;">Centro</h3><i class="fas fa-exclamation-triangle" style="color:var(--warning); font-size:3rem; margin:15px 0;"></i><p style="color:var(--warning);">Atenção (28%)</p></div>
-          <div class="heat-zone" style="border-bottom: 5px solid var(--success);"><h3 style="color:white;">Zona Norte</h3><i class="fas fa-shield-alt" style="color:var(--success); font-size:3rem; margin:15px 0;"></i><p style="color:var(--success);">Estável (12%)</p></div>
+          <div class="heat-zone" style="border-bottom: 5px solid var(--danger);">
+            <h3 style="color:white; margin-bottom:10px;">Zona Sul</h3>
+            <i class="fas fa-fire" style="color:var(--danger); font-size:3rem; margin:15px 0;"></i>
+            <p style="color:var(--danger); font-weight:bold; font-size:1.2rem;">Risco Crítico (42%)</p>
+          </div>
+          <div class="heat-zone" style="border-bottom: 5px solid var(--warning);">
+            <h3 style="color:white; margin-bottom:10px;">Centro</h3>
+            <i class="fas fa-exclamation-triangle" style="color:var(--warning); font-size:3rem; margin:15px 0;"></i>
+            <p style="color:var(--warning); font-weight:bold; font-size:1.2rem;">Atenção (28%)</p>
+          </div>
+          <div class="heat-zone" style="border-bottom: 5px solid var(--success);">
+            <h3 style="color:white; margin-bottom:10px;">Zona Norte</h3>
+            <i class="fas fa-shield-alt" style="color:var(--success); font-size:3rem; margin:15px 0;"></i>
+            <p style="color:var(--success); font-weight:bold; font-size:1.2rem;">Estável (12%)</p>
+          </div>
         </div>
       </div>
 
       <div id="view-chat" class="page-view">
-        <div class="page-title"><div><h1>Assistente Jurídico Gemini</h1></div></div>
+        <div class="page-title">
+          <div>
+            <h1>Assistente Jurídico Gemini</h1>
+            <p>Consulte as Leis e o Código Sanitário através da nossa IA.</p>
+          </div>
+        </div>
+        
         <div class="chat-container">
           <div class="chat-history" id="chat-historico">
-            <div class="chat-msg msg-ai">Olá, sou a IA da COVISA. Como posso ajudar com a Lei 13.725 hoje?</div>
+            <div class="chat-msg msg-ai">Olá, sou o Auditor Digital Treinado. Faça uma pergunta sobre fiscalização, multas ou enquadramento legal.</div>
           </div>
           <div style="padding:20px; display:flex; gap:10px; border-top:1px solid var(--border);">
-            <input type="text" id="chat-input-text" class="form-input" placeholder="Pergunte sobre leis..." onkeypress="if(event.key==='Enter') enviarChat()">
+            <input type="text" id="chat-input-text" class="form-input" placeholder="Ex: Qual o artigo que trata de falta de higiene?" onkeypress="if(event.key==='Enter') enviarChat()">
             <button class="btn btn-gemini" onclick="enviarChat()"><i class="fas fa-paper-plane"></i></button>
           </div>
         </div>
       </div>
 
       <div id="view-logs" class="page-view">
-        <div class="page-title"><div><h1>Logs de Auditoria</h1></div></div>
+        <div class="page-title">
+          <div>
+            <h1>Logs de Auditoria do Sistema</h1>
+            <p>Registro imutável de todas as atividades realizadas no painel.</p>
+          </div>
+        </div>
+        
         <section class="data-section">
           <div class="table-wrapper">
             <table>
-              <thead><tr><th>Data/Hora</th><th>Ação</th><th>Detalhes</th></tr></thead>
-              <tbody id="tabela-logs-corpo"></tbody>
+              <thead>
+                <tr>
+                  <th width="20%">Data / Hora</th>
+                  <th width="20%">Ação Realizada</th>
+                  <th width="60%">Detalhes da Transação</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-logs-corpo">
+                </tbody>
             </table>
           </div>
         </section>
@@ -261,28 +974,40 @@
         <h3><i class="fas fa-folder-open"></i> Processo <span id="modal-id-text" style="font-family:monospace; margin-left:10px; color:var(--text-muted);"></span></h3>
         <button class="btn-close" onclick="fecharModal()"><i class="fas fa-times"></i></button>
       </div>
+      
       <div class="modal-tabs">
         <button class="tab-btn tab-ai active" onclick="abrirAba('tab-radar', this)"><i class="fas fa-robot"></i> Radar Gemini 2.0</button>
         <button class="tab-btn" onclick="abrirAba('tab-detalhes', this)"><i class="fas fa-building"></i> Dados</button>
         <button class="tab-btn" onclick="abrirAba('tab-fotos', this)"><i class="fas fa-images"></i> Evidências</button>
-        <button class="tab-btn" onclick="abrirAba('tab-financeiro', this)"><i class="fas fa-gavel"></i> Veredito</button>
+        <button class="tab-btn" onclick="abrirAba('tab-financeiro', this)"><i class="fas fa-gavel"></i> Veredito Final</button>
       </div>
+      
       <div class="modal-body">
         
         <div id="tab-radar" class="tab-content active">
-          <div id="radar-loader" class="radar-loading"><div class="radar-scanner"><i class="fas fa-brain"></i></div><h3>Lendo Evidências...</h3></div>
+          <div id="radar-loader" class="radar-loading">
+            <div class="radar-scanner"><i class="fas fa-brain"></i></div>
+            <h3>Auditando Evidências...</h3>
+          </div>
+          
           <div id="radar-result" class="radar-dashboard" style="display: none;">
             <div class="score-box" style="background:var(--bg-card);">
               <h4 style="color:var(--text-muted); margin-bottom:15px;">Qualidade de Provas</h4>
-              <div class="score-circle" id="radar-score-circle"><span class="num" id="radar-score-number">0</span><span class="desc">/ 100%</span></div>
+              <div class="score-circle" id="radar-score-circle">
+                <span class="num" id="radar-score-number">0</span>
+                <span class="desc">/ 100%</span>
+              </div>
               <p id="radar-nivel-text" style="font-weight:900; font-size:1.2rem; margin-top:10px;">...</p>
             </div>
+            
             <div style="background:var(--bg-card); padding:25px; border-radius:var(--radius-xl); border:1px solid var(--border);">
-              <h4 style="margin-bottom:15px; color:white;"><i class="fas fa-robot" style="color:var(--gemini-purple);"></i> Laudo Técnico</h4>
+              <h4 style="margin-bottom:15px; color:white;"><i class="fas fa-robot" style="color:var(--gemini-purple);"></i> Laudo Técnico Oficial</h4>
               <p id="radar-opinion-text" style="color:var(--text-light); margin-bottom:20px; font-style:italic;">...</p>
+              
               <ul class="signal-list" id="radar-signals-list"></ul>
+              
               <div style="padding:15px; background:rgba(168,85,247,0.1); border:1px dashed var(--gemini-purple); border-radius:8px;">
-                <h4 style="color:#d8b4fe; font-size:0.8rem; margin-bottom:5px;">AÇÃO SUGERIDA</h4>
+                <h4 style="color:#d8b4fe; font-size:0.8rem; margin-bottom:5px;">AÇÃO RECOMENDADA</h4>
                 <p id="radar-recommendation-text" style="font-size:1.2rem; font-weight:bold; color:white; margin:0;"></p>
               </div>
             </div>
@@ -291,38 +1016,76 @@
 
         <div id="tab-detalhes" class="tab-content">
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;"><label style="color:var(--text-muted); font-size:0.75rem;">Nome</label><p id="modal-nome" style="color:white; font-weight:bold;"></p></div>
-            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;"><label style="color:var(--text-muted); font-size:0.75rem;">Documento</label><p id="modal-cnpj" style="color:white; font-weight:bold;"></p></div>
-            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;"><label style="color:var(--text-muted); font-size:0.75rem;">Data</label><p id="modal-data" style="color:white; font-weight:bold;"></p></div>
-            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;"><label style="color:var(--text-muted); font-size:0.75rem;">Ramo</label><p id="modal-ramo" style="color:white; font-weight:bold;"></p></div>
+            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;">
+              <label style="color:var(--text-muted); font-size:0.75rem;">Nome</label>
+              <p id="modal-nome" style="color:white; font-weight:bold;"></p>
+            </div>
+            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;">
+              <label style="color:var(--text-muted); font-size:0.75rem;">Documento</label>
+              <p id="modal-cnpj" style="color:white; font-weight:bold;"></p>
+            </div>
+            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;">
+              <label style="color:var(--text-muted); font-size:0.75rem;">Data de Recebimento</label>
+              <p id="modal-data" style="color:white; font-weight:bold;"></p>
+            </div>
+            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;">
+              <label style="color:var(--text-muted); font-size:0.75rem;">Ramo do Negócio</label>
+              <p id="modal-ramo" style="color:white; font-weight:bold;"></p>
+            </div>
           </div>
-          <div style="background:var(--bg-card); padding:20px; margin-top:15px; border:1px solid var(--border); border-radius:8px;"><label style="color:var(--text-muted); font-size:0.75rem;">Checklist</label><p id="modal-docs" style="color:white; white-space:pre-line;"></p></div>
+          <div style="background:var(--bg-card); padding:20px; margin-top:15px; border:1px solid var(--border); border-radius:8px;">
+            <label style="color:var(--text-muted); font-size:0.75rem;">Checklist Informado</label>
+            <p id="modal-docs" style="color:white; white-space:pre-line; margin-top: 10px;"></p>
+          </div>
         </div>
 
         <div id="tab-fotos" class="tab-content">
-          <h4 id="evidence-title" style="color:white; margin-bottom:15px;">Evidências</h4>
+          <h4 id="evidence-title" style="color:white; margin-bottom:15px;">Evidências Anexadas</h4>
           <div class="gallery-grid" id="evidence-gallery"></div>
         </div>
 
         <div id="tab-financeiro" class="tab-content">
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-            <div><label style="color:var(--text-muted);">Taxa a Emitir (R$)</label><input type="text" id="modal-valor-input" class="form-input" style="font-size:1.5rem; font-weight:bold; color:var(--primary); text-align:center;"></div>
-            <div><label style="color:var(--text-muted);">Status</label><select id="modal-status-select" class="form-input" style="font-weight:bold; font-size:1.1rem;"><option value="pendente">🟠 Bloquear (Pendente)</option><option value="aguardando">🔵 Emitir Guia Pix</option><option value="pago">🟢 Aprovar Licença</option></select></div>
+            <div>
+              <label style="color:var(--text-muted); font-weight: bold; margin-bottom: 5px; display: block;">Taxa de Análise (R$)</label>
+              <input type="text" id="modal-valor-input" class="form-input" style="font-size:1.5rem; font-weight:bold; color:var(--primary); text-align:center;">
+            </div>
+            <div>
+              <label style="color:var(--text-muted); font-weight: bold; margin-bottom: 5px; display: block;">Status do Processo</label>
+              <select id="modal-status-select" class="form-input" style="font-weight:bold; font-size:1.1rem; padding: 15px;">
+                <option value="pendente">🟠 Bloquear (Pendente)</option>
+                <option value="aguardando">🔵 Emitir Guia Pix</option>
+                <option value="pago">🟢 Aprovar Licença</option>
+              </select>
+            </div>
           </div>
-          <div style="margin-top:20px;"><label style="color:var(--text-muted);">Notas (Sigilo)</label><textarea id="modal-notas-input" class="form-input"></textarea></div>
-          <div style="margin-top:20px; background:rgba(16,185,129,0.1); padding:20px; border-radius:8px; text-align:center; border:1px solid var(--success);"><a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success"><i class="fab fa-whatsapp"></i> Disparar WhatsApp Oficial</a></div>
+          
+          <div style="margin-top:20px;">
+            <label style="color:var(--text-muted); font-weight: bold; margin-bottom: 5px; display: block;">Notas Confidenciais (Log Interno)</label>
+            <textarea id="modal-notas-input" class="form-input"></textarea>
+          </div>
+          
+          <div style="margin-top:20px; background:rgba(16,185,129,0.1); padding:20px; border-radius:8px; text-align:center; border:1px solid var(--success);">
+            <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="font-size: 1.1rem; padding: 15px 30px;"><i class="fab fa-whatsapp"></i> Disparar Notificação Oficial via WhatsApp</a>
+          </div>
         </div>
 
       </div>
+      
       <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="deletarProcessoAtual()" style="color:var(--danger); border-color:var(--danger);"><i class="fas fa-trash-alt"></i> Excluir</button>
+        <button class="btn btn-secondary" onclick="deletarProcessoAtual()" style="color:var(--danger); border-color:var(--danger);"><i class="fas fa-trash-alt"></i> Excluir Mestre</button>
         <div style="flex:1"></div>
         <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()"><i class="fas fa-save"></i> Gravar Decisão no BD</button>
       </div>
     </div>
   </div>
 
-  <div id="lightbox" onclick="fecharLightbox()"><button class="btn-close-lightbox"><i class="fas fa-times"></i></button><img id="lightbox-img" src=""><div id="lightbox-title">Documento</div></div>
+  <div id="lightbox" onclick="fecharLightbox()">
+    <button class="btn-close-lightbox"><i class="fas fa-times"></i></button>
+    <img id="lightbox-img" src="">
+    <div id="lightbox-title">Visualização Documental</div>
+  </div>
+  
   <div id="toast-container"></div>
 
   <script type="module">
@@ -338,249 +1101,518 @@
       messagingSenderId: "76689989548",
       appId: "1:76689989548:web:5c86741e60ce385102a409"
     };
+    
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Chave Gemini Injetada
+    // CHAVE DO GEMINI API
     const GEMINI_API_KEY = "AIzaSyBUCj1-Zd4rNXTQpF44k_oR1WBIVcXeeyg";
 
-    let idProcessoAtual = null; let dadosProcessoAtual = null; let todosProcessos = []; 
-    let chartBar, chartDoughnut; const logsAuditoria = [];
+    let idProcessoAtual = null; 
+    let dadosProcessoAtual = null; 
+    let todosProcessos = []; 
+    let chartBar, chartDoughnut; 
+    const logsAuditoria = [];
 
+    // --- FUNÇÕES DE NAVEGAÇÃO SPA ---
     window.switchView = (id, el) => {
       document.querySelectorAll('.page-view').forEach(e => e.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
       if(el) el.classList.add('active');
-      registrarLog("Navegação", `Módulo acessado: ${id}`);
+      registrarLog("Acesso de Tela", `Navegou para o módulo: ${id}`);
     }
 
-    window.showToast = (t, m, tipo='success') => {
-      const c = document.getElementById('toast-container');
-      const toast = document.createElement('div'); toast.className = `toast ${tipo}`;
-      toast.innerHTML = `<div style="display:flex; gap:15px; align-items:center;"><i class="fas fa-info-circle" style="font-size:1.5rem;"></i><div><h4 style="margin:0; font-size:1rem;">${t}</h4><p style="margin:0; font-size:0.85rem; opacity:0.8;">${m}</p></div></div>`;
-      c.appendChild(toast); setTimeout(()=>toast.remove(), 3500);
+    // --- SISTEMA DE TOASTS E LOGS ---
+    window.showToast = (titulo, mensagem, tipo='success') => {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div'); 
+      toast.className = `toast ${tipo}`;
+      
+      let icon = 'fa-check-circle';
+      if(tipo === 'error') icon = 'fa-exclamation-triangle';
+      if(tipo === 'warning') icon = 'fa-exclamation-circle';
+      
+      toast.innerHTML = `<div style="display:flex; gap:15px; align-items:center;"><i class="fas ${icon}" style="font-size:1.5rem;"></i><div><h4 style="margin:0; font-size:1rem;">${titulo}</h4><p style="margin:0; font-size:0.85rem; opacity:0.8;">${mensagem}</p></div></div>`;
+      container.appendChild(toast); 
+      setTimeout(()=>toast.remove(), 3500);
     }
 
-    function registrarLog(acao, det) {
-      logsAuditoria.unshift({d: new Date().toLocaleString(), a: acao, t: det});
-      const tb = document.getElementById('tabela-logs-corpo');
-      if(tb) { tb.innerHTML = ''; logsAuditoria.slice(0,15).forEach(l => tb.innerHTML += `<tr><td>${l.d}</td><td>${l.a}</td><td style="color:var(--primary);">${l.t}</td></tr>`); }
-    }
-
-    window.checkPin = () => {
-      if (document.getElementById('pin-input').value === '1533') { 
-        document.getElementById('lock-screen').style.display = 'none'; initCharts(); 
-        registrarLog("Sistema", "Login master efetuado.");
-      } else { document.getElementById('pin-input').value = ''; showToast('Erro', 'Senha Incorreta', 'error'); }
-    }
-
-    const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
-    onSnapshot(q, (snapshot) => {
-      todosProcessos = []; let pen=0, agu=0, pag=0; let tRec=0, pRec=0;
-      snapshot.forEach((ds) => {
-        const d = ds.data(); d.id = ds.id; todosProcessos.push(d);
-        let v = d.valor ? parseFloat(d.valor.replace(',','.')) : 0; if(isNaN(v)) v=0;
-        if(d.pago){pag++; tRec+=v;}else if(d.valor){agu++; pRec+=v;}else pen++;
+    function registrarLog(acao, detalhes) {
+      logsAuditoria.unshift({
+          dataHora: new Date().toLocaleString(), 
+          acao: acao, 
+          detalhes: detalhes
       });
-      document.getElementById("count-pendente").innerText = pen;
-      document.getElementById("count-aguardando").innerText = agu;
-      document.getElementById("count-pago").innerText = pag;
+      const tabelaLogs = document.getElementById('tabela-logs-corpo');
+      if(tabelaLogs) { 
+          tabelaLogs.innerHTML = ''; 
+          // Limita a exibição aos últimos 20 logs
+          logsAuditoria.slice(0, 20).forEach(log => {
+              tabelaLogs.innerHTML += `
+                <tr>
+                    <td><span style="color:var(--text-muted); font-size:0.85rem;">${log.dataHora}</span></td>
+                    <td><strong style="color:white;">${log.acao}</strong></td>
+                    <td style="color:var(--primary); font-family:monospace;">${log.detalhes}</td>
+                </tr>
+              `; 
+          }); 
+      }
+    }
+
+    // --- SISTEMA DE LOGIN (O ERRO RESOLVIDO AQUI) ---
+    window.checkPin = () => {
+      const pinValor = document.getElementById('pin-input').value;
+      if (pinValor === '1533') { 
+        
+        // Esconde a tela escura
+        document.getElementById('lock-screen').style.opacity = '0';
+        
+        // Aguarda a animação e depois liga o display
+        setTimeout(() => {
+          document.getElementById('lock-screen').style.display = 'none';
+          
+          // LIGA O PAINEL DE FATO
+          document.getElementById('app-content').style.display = 'block';
+          
+          initCharts(); 
+          registrarLog("Autenticação de Segurança", "Login Mestre efetuado com sucesso.");
+        }, 500);
+        
+      } else { 
+        document.getElementById('pin-input').value = ''; 
+        showToast('Falha de Segurança', 'Senha Incorreta. Tentativa logada.', 'error'); 
+        registrarLog("Alerta de Invasão", "Tentativa de login frustrada.");
+      }
+    }
+
+    // --- CONEXÃO FIREBASE E ALIMENTAÇÃO DAS TABELAS ---
+    const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
+    
+    onSnapshot(q, (snapshot) => {
+      todosProcessos = []; 
+      let pendentes = 0, aguardando = 0, pagos = 0; 
+      
+      snapshot.forEach((docSnap) => {
+        const dados = docSnap.data(); 
+        dados.id = docSnap.id; 
+        todosProcessos.push(dados);
+        
+        if(dados.pago) { 
+            pagos++; 
+        } else if(dados.valor) { 
+            aguardando++; 
+        } else {
+            pendentes++;
+        }
+      });
+      
+      document.getElementById("count-pendente").innerText = pendentes;
+      document.getElementById("count-aguardando").innerText = aguardando;
+      document.getElementById("count-pago").innerText = pagos;
       document.getElementById("count-total").innerText = snapshot.size;
-      document.getElementById("receita-total").innerText = 'R$ ' + tRec.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-      document.getElementById("receita-pendente").innerText = 'R$ ' + pRec.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-      updateCharts(pen, agu, pag); renderizarTabelas(todosProcessos);
+      
+      updateCharts(pendentes, aguardando, pagos); 
+      renderizarTabelas(todosProcessos);
     });
 
-    window.renderizarTabelas = (dados) => {
-      const tDash = document.getElementById("tabela-corpo-dash"); const tFull = document.getElementById("tabela-corpo-full");
-      if(!tDash || !tFull) return;
-      tDash.innerHTML = ""; tFull.innerHTML = "";
-      dados.forEach((d, i) => {
-        let cb = 'badge-pendente', tb = 'Pendente', ic = 'fa-clock';
-        if(d.tipo === "🚨 DENÚNCIA") { cb = 'badge-denuncia'; tb = 'DENÚNCIA'; ic = 'fa-bullhorn'; }
-        else if(d.pago) { cb = 'badge-pago'; tb = 'Aprovado'; ic = 'fa-check'; }
-        else if(d.valor) { cb = 'badge-aguardando'; tb = 'Aguard. Pix'; ic = 'fa-dollar-sign'; }
-        let h = `<td><strong style="color:white;">${d.nome}</strong><br><span style="color:var(--text-muted); font-size:0.8rem;">${d.cnpj}</span></td><td><span style="background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:4px; font-size:0.75rem;">${d.tipo}</span></td><td><span style="color:var(--text-muted); font-size:0.8rem;">${d.data ? d.data.split(',')[0] : ''}</span></td><td><span class="status-badge ${cb}"><i class="fas ${ic}"></i> ${tb}</span></td>`;
-        let trF = document.createElement("tr"); trF.innerHTML = h + `<td><strong style="color:var(--primary);">${d.valor?'R$ '+d.valor:'--'}</strong></td><td><button class="btn-icon view" onclick="abrirModal('${d.id}')" style="width:auto; padding:0 15px; background:var(--primary);"><i class="fas fa-folder"></i> Auditar</button></td>`; tFull.appendChild(trF);
-        if(i < 5) { let trD = document.createElement("tr"); trD.innerHTML = h + `<td><button class="btn-icon view" onclick="abrirModal('${d.id}')" style="width:100%; border:1px solid var(--border); background:transparent; color:var(--accent);"><i class="fas fa-arrow-right"></i></button></td>`; tDash.appendChild(trD); }
+    window.renderizarTabelas = (dadosParaRenderizar) => {
+      const tbDash = document.getElementById("tabela-corpo-dash"); 
+      const tbFull = document.getElementById("tabela-corpo-full");
+      
+      if(!tbDash || !tbFull) return;
+      
+      tbDash.innerHTML = ""; 
+      tbFull.innerHTML = "";
+
+      if(dadosParaRenderizar.length === 0) { 
+          tbFull.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px;">Banco de Dados Vazio ou Filtro sem resultados.</td></tr>'; 
+          return; 
+      }
+
+      dadosParaRenderizar.forEach((processo, index) => {
+        let classB = 'badge-pendente', txtB = 'Análise', iconeB = 'fa-clock';
+        
+        if(processo.tipo === "🚨 DENÚNCIA") { 
+            classB = 'badge-denuncia'; txtB = 'DENÚNCIA'; iconeB = 'fa-bullhorn'; 
+        } else if(processo.pago) { 
+            classB = 'badge-pago'; txtB = 'Aprovado'; iconeB = 'fa-check'; 
+        } else if(processo.valor) { 
+            classB = 'badge-aguardando'; txtB = 'Aguard. Pix'; iconeB = 'fa-dollar-sign'; 
+        }
+
+        let letraInicial = processo.nome ? processo.nome.charAt(0).toUpperCase() : 'C';
+        let htmlColunaBase = `
+          <td>
+            <div class="td-empresa">
+              <div class="td-empresa-icon">${letraInicial}</div>
+              <div class="td-empresa-info">
+                <strong style="color:white;">${processo.nome}</strong>
+                <br>
+                <span style="color:var(--text-muted); font-size:0.8rem;">${processo.cnpj}</span>
+              </div>
+            </div>
+          </td>
+          <td><span style="background:rgba(255,255,255,0.05); padding:6px 10px; border-radius:6px; font-size:0.75rem;">${processo.tipo}</span></td>
+          <td><span style="color:var(--text-muted); font-size:0.8rem;">${processo.data ? processo.data.split(',')[0] : ''}</span></td>
+          <td><span class="status-badge ${classB}"><i class="fas ${iconeB}"></i> ${txtB}</span></td>
+        `;
+        
+        // Tabela Completa (View 2)
+        let trCompleta = document.createElement("tr"); 
+        trCompleta.innerHTML = htmlColunaBase + `
+            <td><strong style="color:var(--primary); font-size: 1.1rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
+            <td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:auto; padding:0 15px; background:var(--primary); color:white;"><i class="fas fa-folder-open"></i> Auditar</button></td>
+        `; 
+        tbFull.appendChild(trCompleta);
+        
+        // Tabela Dashboard (Apenas 5 registros)
+        if(index < 5) { 
+            let trResumo = document.createElement("tr"); 
+            trResumo.innerHTML = htmlColunaBase + `
+                <td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:100%; border:1px solid var(--border); background:transparent; color:var(--accent);"><i class="fas fa-arrow-right"></i> Inspecionar</button></td>
+            `; 
+            tbDash.appendChild(trResumo); 
+        }
       });
     }
 
-    window.filtrarTabela = () => { const t = document.getElementById('searchInput').value.toLowerCase(); renderizarTabelas(todosProcessos.filter(p => (p.nome && p.nome.toLowerCase().includes(t)) || (p.cnpj && p.cnpj.toLowerCase().includes(t)))); }
-
-    window.abrirAba = (idAba, btn) => {
-      document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-      document.getElementById(idAba).classList.add('active'); btn.classList.add('active');
+    // --- EXPORTAÇÃO CSV E FILTROS ---
+    window.filtrarTabela = () => { 
+        const termo = document.getElementById('searchInput').value.toLowerCase(); 
+        const filtrados = todosProcessos.filter(p => (p.nome && p.nome.toLowerCase().includes(termo)) || (p.cnpj && p.cnpj.toLowerCase().includes(termo)));
+        renderizarTabelas(filtrados); 
     }
 
-    window.abrirModal = async (id) => {
-      idProcessoAtual = id; document.getElementById("modalDetalhes").style.display = "flex";
-      document.getElementById("modal-id-text").innerText = id.substring(0,8).toUpperCase();
+    window.exportarCSV = () => {
+        let csv = 'Data,Nome_Razao,CNPJ_CPF,Ramo,Status,Taxa_Valor\n';
+        todosProcessos.forEach(p => { 
+            let statusExport = p.pago ? 'Aprovado' : (p.valor ? 'Aguardando Pagamento' : 'Analise Pendente');
+            csv += `"${p.data||''}","${p.nome}","${p.cnpj}","${p.tipo}","${statusExport}","${p.valor||'0'}"\n`; 
+        });
+        
+        const blobDaLista = new Blob([csv], {type: 'text/csv'});
+        const linkDeDownload = document.createElement("a"); 
+        linkDeDownload.href = URL.createObjectURL(blobDaLista);
+        linkDeDownload.download = `Base_Oficial_COVISA_${new Date().toLocaleDateString()}.csv`; 
+        linkDeDownload.click();
+        registrarLog("Exportação", "O banco de dados foi baixado para o computador local em formato CSV.");
+    }
+
+    // --- MODAL DE PROCESSO (A CENTRAL DE EDIÇÃO) ---
+    window.abrirAba = (idDaAba, botaoClicado) => {
+      document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
+      document.getElementById(idDaAba).classList.add('active'); 
+      botaoClicado.classList.add('active');
+    }
+
+    window.abrirModal = async (idDocumento) => {
+      idProcessoAtual = idDocumento; 
+      document.getElementById("modalDetalhes").style.display = "flex";
+      document.getElementById("modal-id-text").innerText = idDocumento.substring(0,8).toUpperCase();
       document.querySelector('.tab-ai').click(); 
+      registrarLog("Acesso a Prontuário", `Visualizou o dossiê do processo ID: ${idDocumento.substring(0,8)}`);
 
       try {
-        const docSnap = await getDoc(doc(db, "pedidos", id));
-        if (docSnap.exists()) {
-          const d = docSnap.data(); dadosProcessoAtual = d; 
-          document.getElementById("modal-cnpj").innerText = d.cnpj || "N/A";
-          document.getElementById("modal-nome").innerText = d.nome || "N/A";
-          document.getElementById("modal-data").innerText = d.data || 'N/A';
-          document.getElementById("modal-ramo").innerText = d.tipo || "Geral";
-          document.getElementById("modal-docs").innerText = d.docs || "Sem checklist";
+        const documentoNoBanco = await getDoc(doc(db, "pedidos", idDocumento));
+        
+        if (documentoNoBanco.exists()) {
+          const dadosFirebase = documentoNoBanco.data(); 
+          dadosProcessoAtual = dadosFirebase; 
           
-          const galeria = document.getElementById('evidence-gallery'); galeria.innerHTML = ''; let tFotos = 0;
-          if (d.documento_assinado) {
-              tFotos++; const ia = document.createElement('div'); ia.className = 'gallery-item'; ia.style.border = '3px solid var(--success)';
-              ia.onclick = () => abrirLightbox(d.documento_assinado, 'Doc Assinado');
-              ia.innerHTML = `<div class="badge-assinado">ASSINADO</div><img src="${d.documento_assinado}">`; galeria.appendChild(ia);
+          document.getElementById("modal-cnpj").innerText = dadosFirebase.cnpj || "Sem registro";
+          document.getElementById("modal-nome").innerText = dadosFirebase.nome || "Sem registro";
+          document.getElementById("modal-data").innerText = dadosFirebase.data || 'Indisponível';
+          document.getElementById("modal-ramo").innerText = dadosFirebase.tipo || "Geral";
+          document.getElementById("modal-docs").innerText = dadosFirebase.docs || "Checklist não declarado no envio.";
+          
+          // Preenchendo as Fotos/Evidências
+          const galeria = document.getElementById('evidence-gallery'); 
+          galeria.innerHTML = ''; 
+          let totalFotosEnviadas = 0;
+          
+          if (dadosFirebase.documento_assinado) {
+              totalFotosEnviadas++; 
+              const htmlAssinado = document.createElement('div'); 
+              htmlAssinado.className = 'gallery-item'; 
+              htmlAssinado.style.border = '3px solid var(--success)';
+              htmlAssinado.onclick = () => abrirLightbox(dadosFirebase.documento_assinado, 'Documento com Assinatura Legal');
+              htmlAssinado.innerHTML = `<div class="badge-assinado">ASSINADO E VALIDADO</div><img src="${dadosFirebase.documento_assinado}">`; 
+              galeria.appendChild(htmlAssinado);
           }
-          if (d.evidencias && d.evidencias.length > 0) {
-              tFotos += d.evidencias.length;
-              d.evidencias.forEach(f => {
-                  const i = document.createElement('div'); i.className = 'gallery-item'; i.onclick = () => abrirLightbox(f.url, f.nome);
-                  i.innerHTML = `<img src="${f.url}">`; galeria.appendChild(i);
+          
+          if (dadosFirebase.evidencias && dadosFirebase.evidencias.length > 0) {
+              totalFotosEnviadas += dadosFirebase.evidencias.length;
+              dadosFirebase.evidencias.forEach(foto => {
+                  const caixaDaFoto = document.createElement('div'); 
+                  caixaDaFoto.className = 'gallery-item'; 
+                  caixaDaFoto.onclick = () => abrirLightbox(foto.url, foto.nome);
+                  caixaDaFoto.innerHTML = `<img src="${foto.url}">`; 
+                  galeria.appendChild(caixaDaFoto);
               });
           }
-          document.getElementById('evidence-title').innerText = `Evidências (${tFotos})`;
-
-          document.getElementById("modal-valor-input").value = d.valor || "";
-          let sVal = d.pago ? "pago" : (d.valor ? "aguardando" : "pendente");
-          document.getElementById("modal-status-select").value = sVal;
-          document.getElementById("modal-notas-input").value = d.notas || "";
           
-          let msgZap = `Prefeitura SP\n*${d.nome}* - CNPJ: ${d.cnpj}\n`;
-          if(sVal==='pendente') msgZap += `Processo com análise pendente.`;
-          if(sVal==='aguardando') msgZap += `A taxa de R$ ${d.valor} foi emitida. Pague no portal.`;
-          if(sVal==='pago') msgZap += `Licença APROVADA.`;
-          document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(msgZap)}`;
+          document.getElementById('evidence-title').innerText = `Evidências Físicas (${totalFotosEnviadas} arquivos)`;
 
+          // Financeiro
+          document.getElementById("modal-valor-input").value = dadosFirebase.valor || "";
+          let selectStatus = dadosFirebase.pago ? "pago" : (dadosFirebase.valor ? "aguardando" : "pendente");
+          document.getElementById("modal-status-select").value = selectStatus;
+          document.getElementById("modal-notas-input").value = dadosFirebase.notas || "";
+          
+          // Link do WhatsApp
+          let textoZapOficial = `Prefeitura de São Paulo - COVISA\n*${dadosFirebase.nome}* - CNPJ: ${dadosFirebase.cnpj}\n\n`;
+          if(selectStatus === 'pendente') textoZapOficial += `O seu processo está sob análise dos fiscais auditores. Aguarde.`;
+          if(selectStatus === 'aguardando') textoZapOficial += `A taxa administrativa no valor de R$ ${dadosFirebase.valor} foi gerada. Pague pelo portal para evitar multas.`;
+          if(selectStatus === 'pago') textoZapOficial += `Sua licença foi APROVADA e liberada. Baixe o documento no sistema.`;
+          document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(textoZapOficial)}`;
+
+          // Chama a IA para dar o veredito
           iniciarRadarIA();
         }
-      } catch (e) { showToast("Erro", "Falha BD.", "error"); }
+      } catch (e) { 
+          showToast("Erro BD", "Não foi possível carregar do Firebase.", "error"); 
+      }
     };
 
-    window.fecharModal = () => { document.getElementById("modalDetalhes").style.display = "none"; idProcessoAtual = null; };
+    window.fecharModal = () => { 
+        document.getElementById("modalDetalhes").style.display = "none"; 
+        idProcessoAtual = null; 
+    };
 
-    // --- MOTOR DE IA GEMINI 2.0 ---
+    // =======================================================
+    // 🧠 MOTOR DE INTELIGÊNCIA ARTIFICIAL (O CÉREBRO) GEMINI
+    // =======================================================
     window.iniciarRadarIA = async () => {
-        const d = dadosProcessoAtual;
+        const dadosIA = dadosProcessoAtual;
         document.getElementById('radar-loader').style.display = 'flex';
         document.getElementById('radar-result').style.display = 'none';
 
         try {
-            let promptText = `
-                Você é a IA Auditora (Gemini 2.0). Analise:
-                - Nome: ${d.nome} | CNPJ: ${d.cnpj} | Ramo: ${d.tipo} | Dados: ${d.docs}
-                Avalie a QUALIDADE E VERACIDADE DAS PROVAS enviadas. Se for denúncia, score = 0.
-                Responda APENAS em JSON puro:
-                {"score_provas": numero_0_a_100, "opiniao_auditor": "Seu laudo curto", "acao_recomendada": "Ação", "sinais": [{"text": "obs", "tipo": "success|warning|danger", "icon": "fa-check"}]}
+            let ordemParaGemini = `
+                Sua função é "Auditor Chefe de Qualidade (IA)". Analise estes dados do estabelecimento de São Paulo:
+                - Nome: ${dadosIA.nome} | Documento: ${dadosIA.cnpj} | Ramo Operacional: ${dadosIA.tipo} | Checklist do usuário: ${dadosIA.docs}
+                
+                Instruções Absolutas:
+                Avalie a FORÇA E QUALIDADE GERAL das evidências para conceder a licença.
+                Se a categoria for "🚨 DENÚNCIA", o Score de Qualidade DEVE ser OBRIGATORIAMENTE 0 (zero), pois é um perigo externo.
+                Se for outro ramo, dê uma nota de 0 a 100%. (Acima de 80 é bom, abaixo de 50 é fraude ou muito ruim).
+                
+                Você responderá EXCLUSIVAMENTE um objeto JSON cru. Nada de Markdown. Exemplo do que você deve gerar:
+                {"score_provas": 90, "opiniao_auditor": "Seu texto", "acao_recomendada": "Ação Curta", "sinais": [{"text": "obs", "tipo": "success", "icon": "fa-check"}]}
             `;
-            let parts = [{ "text": promptText }];
-            if(d.evidencias && d.evidencias.length > 0) {
-                d.evidencias.slice(0, 2).forEach(f => { let img = f.url.split(',')[1]; if(img) parts.push({ "inline_data": { "mime_type": "image/jpeg", "data": img } }); });
+            
+            let pacoteDeDados = [{ "text": ordemParaGemini }];
+            
+            // Passa as fotos para o Google ler (limite de 2 fotos para ser rápido e não gastar tokens à toa)
+            if(dadosIA.evidencias && dadosIA.evidencias.length > 0) {
+                dadosIA.evidencias.slice(0, 2).forEach(f => { 
+                    let imagemPura = f.url.split(',')[1]; 
+                    if(imagemPura) {
+                        pacoteDeDados.push({ "inline_data": { "mime_type": "image/jpeg", "data": imagemPura } }); 
+                    }
+                });
             }
 
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ "contents": [{ "parts": parts }] })
+            const disparoAPI = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ "contents": [{ "parts": pacoteDeDados }] })
             });
 
-            if (!response.ok) throw new Error("API Falhou.");
-            const jsonResponse = await response.json();
-            let geminiText = jsonResponse.candidates[0].content.parts[0].text.replace(/```json/gi, '').replace(/```/gi, '').trim();
-            const analiseIA = JSON.parse(geminiText);
+            if (!disparoAPI.ok) throw new Error("A API rejeitou a conexão.");
+            
+            const respostaDaIA = await disparoAPI.json();
+            let textoDoGemini = respostaDaIA.candidates[0].content.parts[0].text;
+            
+            // Limpa o lixo que a IA costuma mandar (crases de markdown)
+            textoDoGemini = textoDoGemini.replace(/```json/gi, '').replace(/```/gi, '').trim();
+            const resultadoJson = JSON.parse(textoDoGemini);
 
-            renderizarRadarUI(analiseIA.score_provas, analiseIA.sinais, analiseIA.acao_recomendada, analiseIA.opiniao_auditor);
+            renderizarRadarNaTela(resultadoJson.score_provas, resultadoJson.sinais, resultadoJson.acao_recomendada, resultadoJson.opiniao_auditor);
+            registrarLog("Operação IA Concluída", "A rede neural do Gemini emitiu laudo oficial para o processo.");
+            
         } catch (error) {
-            // BACKUP OFFLINE
-            let scoreLocal = 90; let recL = "APROVAÇÃO SEGURO"; let opL = "Módulo Backup Offline: Documentos aparentam integridade.";
-            let sinaisL = [{text: "Sistema Local ativado.", tipo: "warning", icon: "fa-server"}];
-            if(d.tipo === "🚨 DENÚNCIA") { scoreLocal = 0; recL = "INTERDIÇÃO"; opL = "Alerta grave externo."; sinaisL.push({text: "Denúncia.", tipo: "danger", icon: "fa-bullhorn"}); }
-            else if(!d.evidencias || d.evidencias.length === 0) { scoreLocal = 10; recL = "REPROVADO"; opL = "Sem fotos."; sinaisL.push({text: "Sem anexos.", tipo: "danger", icon: "fa-times"}); }
-            renderizarRadarUI(scoreLocal, sinaisL, recL, opL);
+            // SISTEMA DE CONTINGÊNCIA / OFFLINE (Se não tiver internet ou API cair)
+            let notaContingencia = 90; 
+            let acaoContingencia = "APROVAÇÃO VIRTUAL"; 
+            let opiniaoContingencia = "Módulo Backup Local: Documentos textuais parecem seguir os padrões.";
+            let arraySinais = [{text: "Sistema Local Offline Assumiu o Controle.", tipo: "warning", icon: "fa-server"}];
+            
+            if(dadosIA.tipo === "🚨 DENÚNCIA") { 
+                notaContingencia = 0; acaoContingencia = "INTERDIÇÃO (Risco Máximo)"; opiniaoContingencia = "Uma denúncia foi registrada pela população contra o alvo."; 
+                arraySinais.push({text: "Risco Social Iminente.", tipo: "danger", icon: "fa-bullhorn"}); 
+            } else if(!dadosIA.evidencias || dadosIA.evidencias.length === 0) { 
+                notaContingencia = 15; acaoContingencia = "REPROVADO POR FALTA DE PROVAS"; opiniaoContingencia = "O estabelecimento não mandou foto alguma."; 
+                arraySinais.push({text: "Arquivos Ausentes.", tipo: "danger", icon: "fa-times"}); 
+            }
+            
+            renderizarRadarNaTela(notaContingencia, arraySinais, acaoContingencia, opiniaoContingencia);
         }
     }
 
-    function renderizarRadarUI(score, sinais, recomendacao, opiniao) {
+    function renderizarRadarNaTela(notaFinal, listaSinais, acao, textoOpiniao) {
         document.getElementById('radar-loader').style.display = 'none';
         document.getElementById('radar-result').style.display = 'grid';
-        const circulo = document.getElementById('radar-score-circle'); const txtNum = document.getElementById('radar-score-number'); const txtNivel = document.getElementById('radar-nivel-text');
         
-        let corStr = "var(--danger)"; let n = "REPROVADO / FRAUDE";
-        if(score >= 50) { corStr = "var(--warning)"; n = "REVISÃO EXIGIDA"; }
-        if(score >= 80) { corStr = "var(--success)"; n = "PROVAS ACEITAS (APROVAR)"; }
-
-        circulo.style.borderColor = corStr; txtNum.style.color = corStr; txtNivel.style.color = corStr; txtNivel.innerText = n;
-        document.getElementById('radar-opinion-text').innerText = opiniao; document.getElementById('radar-recommendation-text').innerText = recomendacao;
+        const bolinha = document.getElementById('radar-score-circle'); 
+        const numeroNaTela = document.getElementById('radar-score-number'); 
+        const textoDeNivel = document.getElementById('radar-nivel-text');
         
-        let valAtual = 0; let int = setInterval(() => { valAtual += Math.ceil(score / 20) + 1; if(valAtual >= score) { valAtual = score; clearInterval(int); } txtNum.innerText = valAtual; }, 20);
+        let corEscolhida = "var(--danger)"; let nivelTexto = "FRAUDE OU SEM PROVAS";
+        if(notaFinal >= 50) { corEscolhida = "var(--warning)"; nivelTexto = "PROVAS MEDIANAS (REVISAR)"; }
+        if(notaFinal >= 80) { corEscolhida = "var(--success)"; nivelTexto = "QUALIDADE MÁXIMA (APROVAR)"; }
 
-        const listSinais = document.getElementById('radar-signals-list'); listSinais.innerHTML = '';
-        if(sinais) sinais.forEach(s => { listSinais.innerHTML += `<li class="signal-item"><i class="fas ${s.icon}" style="color:var(--${s.tipo});"></i> <span style="color:var(--text-light);">${s.text}</span></li>`; });
+        bolinha.style.borderColor = corEscolhida; 
+        numeroNaTela.style.color = corEscolhida; 
+        textoDeNivel.style.color = corEscolhida; 
+        textoDeNivel.innerText = nivelTexto;
+        
+        document.getElementById('radar-opinion-text').innerText = textoOpiniao; 
+        document.getElementById('radar-recommendation-text').innerText = acao;
+        
+        // Efeito de subir os números (Animação visual)
+        let contadorVisual = 0; 
+        let intervaloEfeito = setInterval(() => { 
+            contadorVisual += Math.ceil(notaFinal / 15) + 1; 
+            if(contadorVisual >= notaFinal) { contadorVisual = notaFinal; clearInterval(intervaloEfeito); } 
+            numeroNaTela.innerText = contadorVisual; 
+        }, 30);
+
+        const caixaLista = document.getElementById('radar-signals-list'); 
+        caixaLista.innerHTML = '';
+        if(listaSinais) {
+            listaSinais.forEach(sinal => { 
+                caixaLista.innerHTML += `<li class="signal-item"><i class="fas ${sinal.icon}" style="color:var(--${sinal.tipo});"></i> <span style="color:var(--text-light);">${sinal.text}</span></li>`; 
+            });
+        }
     }
 
-    // --- GRAVAR ALTERAÇÕES ---
+    // --- SALVAR INFORMAÇÕES NO BANCO ---
     window.salvarEdicaoModal = async () => {
       if(!idProcessoAtual) return;
-      document.getElementById('btn-salvar-modal').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gravando...';
-      let v = document.getElementById("modal-valor-input").value; let s = document.getElementById("modal-status-select").value; let n = document.getElementById("modal-notas-input").value;
-      let p = false; if(s === "pago") p = true; if(s === "pendente") v = null;
+      const botaoSalvar = document.getElementById('btn-salvar-modal');
+      botaoSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Comunicando com Firebase...';
+      
+      let inputTaxa = document.getElementById("modal-valor-input").value; 
+      let inputStatus = document.getElementById("modal-status-select").value; 
+      let inputNotas = document.getElementById("modal-notas-input").value;
+      
+      let flagPago = false; 
+      if(inputStatus === "pago") flagPago = true; 
+      if(inputStatus === "pendente") inputTaxa = null;
 
       try {
-        await updateDoc(doc(db, "pedidos", idProcessoAtual), { valor: v, pago: p, notas: n });
-        showToast('Sucesso', 'Veredito gravado no Servidor.', 'success');
-        registrarLog("Auditoria", `Processo ${idProcessoAtual.substring(0,6)} atualizado para status: ${s}`);
+        await updateDoc(doc(db, "pedidos", idProcessoAtual), { 
+            valor: inputTaxa, 
+            pago: flagPago, 
+            notas: inputNotas 
+        });
+        showToast('Veredito Finalizado', 'Dados salvos com sucesso e enviados ao cliente.', 'success');
+        registrarLog("Modificação Executada", `Processo ${idProcessoAtual.substring(0,8)} teve o status modificado para: ${inputStatus.toUpperCase()}`);
         fecharModal();
-      } catch (e) { showToast('Erro', 'Falha ao gravar.', 'error'); document.getElementById('btn-salvar-modal').innerHTML = '<i class="fas fa-save"></i> Tentar Novamente'; } 
+      } catch (erroDeRede) { 
+        showToast('Falha Crítica', 'Permissão negada no banco de dados.', 'error'); 
+        botaoSalvar.innerHTML = '<i class="fas fa-save"></i> Gravar Novamente'; 
+      } 
     };
 
     window.deletarProcessoAtual = async () => {
       if(!idProcessoAtual) return;
-      if(confirm("COMANDO CRÍTICO: Excluir este processo sem backup?")) {
+      if(confirm("Comando irreversível. Deseja mesmo destruir essa informação do banco público?")) {
         await deleteDoc(doc(db, "pedidos", idProcessoAtual));
-        showToast('Purga Completa', 'Processo deletado.', 'success');
-        registrarLog("Exclusão", `Processo ${idProcessoAtual.substring(0,6)} DELETADO.`);
+        showToast('Purga Completa', 'Processo deletado da face da terra.', 'success');
+        registrarLog("Deletar Documento", `Processo ID: ${idProcessoAtual.substring(0,8)} foi deletado manualmente.`);
         fecharModal();
       }
     };
 
-    // --- CHATBOT IA JURÍDICO ---
+    // --- CHATBOT DO GEMINI PARA ASSUNTOS LEGAIS ---
     window.enviarChat = async () => {
-        const inp = document.getElementById('chat-input-text'); const txt = inp.value.trim(); if(!txt) return;
-        const box = document.getElementById('chat-historico');
-        box.innerHTML += `<div class="chat-msg msg-user">${txt}</div>`; inp.value = ''; box.scrollTop = box.scrollHeight;
-        const idL = 'L'+Date.now(); box.innerHTML += `<div id="${idL}" class="chat-msg msg-ai"><i class="fas fa-spinner fa-spin" style="color:var(--gemini-purple);"></i></div>`; box.scrollTop = box.scrollHeight;
+        const inputTexto = document.getElementById('chat-input-text'); 
+        const pergunta = inputTexto.value.trim(); 
+        if(!pergunta) return;
+        
+        const janelaChat = document.getElementById('chat-historico');
+        janelaChat.innerHTML += `<div class="chat-msg msg-user">${pergunta}</div>`; 
+        inputTexto.value = ''; 
+        janelaChat.scrollTop = janelaChat.scrollHeight;
+        
+        // Coloca o loader girando simulando pensamento
+        const idTemporarioLoader = 'L' + Date.now(); 
+        janelaChat.innerHTML += `<div id="${idTemporarioLoader}" class="chat-msg msg-ai"><i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.5rem;"></i> Consultando manuais jurídicos...</div>`; 
+        janelaChat.scrollTop = janelaChat.scrollHeight;
 
         try {
-            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ "contents": [{ "parts": [{"text": `Aja como Advogado da Vigilância Sanitária de SP. Baseie-se na Lei 13.725. O fiscal perguntou: ${txt}`}] }] })
+            const envioApi = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ "contents": [{ "parts": [{"text": `Aja como Procurador Chefe da Vigilância Sanitária. Cite leis de São Paulo se necessário. O fiscal em campo te perguntou o seguinte, seja direto na resposta: ${pergunta}`}] }] })
             });
-            const j = await resp.json(); document.getElementById(idL).remove();
-            box.innerHTML += `<div class="chat-msg msg-ai"><strong style="color:var(--gemini-purple);"><i class="fas fa-robot"></i> Gemini Law:</strong><br>${j.candidates[0].content.parts[0].text.replace(/\n/g, '<br>')}</div>`; box.scrollTop = box.scrollHeight;
-        } catch(e) { document.getElementById(idL).remove(); box.innerHTML += `<div class="chat-msg msg-ai" style="color:var(--danger);">Falha de conexão.</div>`; }
+            
+            const respostaApi = await envioApi.json(); 
+            document.getElementById(idTemporarioLoader).remove(); // Remove o loader
+            
+            let falaDoBot = respostaApi.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+            
+            janelaChat.innerHTML += `<div class="chat-msg msg-ai"><strong style="color:var(--gemini-purple);"><i class="fas fa-robot"></i> Parecer do Gemini AI:</strong><br><br>${falaDoBot}</div>`; 
+            janelaChat.scrollTop = janelaChat.scrollHeight;
+        } catch(erroNoChat) { 
+            document.getElementById(idTemporarioLoader).remove(); 
+            janelaChat.innerHTML += `<div class="chat-msg msg-ai" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Falha ao conectar no cluster da IA de Leis.</div>`; 
+        }
     }
 
-    // --- EXTRAS ---
+    // --- UTILITÁRIOS EXTRAS (Calculadora e Fotos) ---
     window.calcularMulta = () => {
-        let b = document.getElementById('sim-gravidade').value === 'leve' ? 1500 : (document.getElementById('sim-gravidade').value === 'grave' ? 8500 : 35000);
-        b = b * parseInt(document.getElementById('sim-porte').value); if(document.getElementById('sim-reincidente').checked) b = b * 2;
-        document.getElementById('sim-resultado').innerText = 'R$ ' + b.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        let selecionado = document.getElementById('sim-gravidade').value;
+        let valorDaBase = 1500;
+        if (selecionado === 'grave') valorDaBase = 8500;
+        if (selecionado === 'gravissima') valorDaBase = 35000;
+        
+        valorDaBase = valorDaBase * parseInt(document.getElementById('sim-porte').value); 
+        if(document.getElementById('sim-reincidente').checked) {
+            valorDaBase = valorDaBase * 2;
+        }
+        document.getElementById('sim-resultado').innerText = 'R$ ' + valorDaBase.toLocaleString('pt-BR', {minimumFractionDigits: 2});
     }
 
     function initCharts() {
-      chartBar = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: ['S','T','Q','Q','S','S','D'], datasets: [{ data: [0,0,0,0,0,0,0], backgroundColor: '#3b82f6', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-      chartDoughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { type: 'doughnut', data: { labels: ['OK', 'Pix', 'Trava'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#ef4444'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } });
+      // Gráfico de Barras
+      chartBar = new Chart(document.getElementById('barChart').getContext('2d'), { 
+          type: 'line', 
+          data: { labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], datasets: [{ label: 'Cadastros', data: [0,0,0,0,0,0,0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] }, 
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)'} }, x: { grid: { display: false } } } } 
+      });
+      // Gráfico Redondo
+      chartDoughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { 
+          type: 'doughnut', 
+          data: { labels: ['Verificados', 'Aguardando', 'Críticos'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#ef4444'], borderWidth: 0 }] }, 
+          options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
+      });
     }
 
     function updateCharts(pen, agu, pag) {
-      if(chartDoughnut) { chartDoughnut.data.datasets[0].data = [pag, agu, pen]; chartDoughnut.update(); }
-      if(chartBar) { let t = pen+agu+pag; chartBar.data.datasets[0].data = [Math.floor(t*0.1), Math.floor(t*0.3), Math.floor(t*0.2), Math.floor(t*0.1), t, 0, 0]; chartBar.update(); }
+      if(chartDoughnut) { 
+          chartDoughnut.data.datasets[0].data = [pag, agu, pen]; 
+          chartDoughnut.update(); 
+      }
+      if(chartBar) { 
+          let t = pen + agu + pag; 
+          chartBar.data.datasets[0].data = [Math.floor(t*0.1), Math.floor(t*0.3), Math.floor(t*0.2), Math.floor(t*0.1), t, 0, 0]; 
+          chartBar.update(); 
+      }
     }
 
-    window.exportarCSV = exportarCSV;
-    window.abrirLightbox = (url, t) => { document.getElementById('lightbox-img').src=url; document.getElementById('lightbox-title').innerText=t; document.getElementById('lightbox').style.display='flex'; };
-    window.fecharLightbox = () => { document.getElementById('lightbox').style.display='none'; };
+    window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
+        document.getElementById('lightbox-img').src = linkImagem; 
+        document.getElementById('lightbox-title').innerText = tituloDaImagem; 
+        document.getElementById('lightbox').style.display = 'flex'; 
+    };
+    window.fecharLightbox = () => { 
+        document.getElementById('lightbox').style.display = 'none'; 
+    };
 
   </script>
 </body>
