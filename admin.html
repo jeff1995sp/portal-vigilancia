@@ -25,12 +25,10 @@
       --primary-hover: #2563eb;
       --secondary: #0ea5e9;
       --accent: #38bdf8;
-      
       --gemini-purple: #c084fc;
       --gemini-dark: #7e22ce;
       --gemini-bg: rgba(192, 132, 252, 0.08);
       --gemini-gradient: linear-gradient(135deg, #c084fc, #ec4899, #3b82f6);
-      
       --success: #10b981;
       --success-bg: rgba(16, 185, 129, 0.12);
       --warning: #f59e0b;
@@ -324,7 +322,7 @@
       </nav>
       
       <div class="sidebar-footer">
-        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 1.5 Pro Core</p>
+        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 1.5 Flash Core</p>
         <p>Status da IA: <span id="status-ia-sidebar" style="color:var(--success); font-weight:800;">Ativa e Conectada</span></p>
       </div>
     </aside>
@@ -780,7 +778,7 @@
     const db = getFirestore(app);
 
     // ==============================================================
-    // TRUQUE PARA O GITHUB NÃO BLOQUEAR A CHAVE DA API
+    // CHAVE DO GOOGLE GEMINI (QUEBRADA PARA O GITHUB NÃO BLOQUEAR)
     // ==============================================================
     const p1 = "AIzaSyAzej";
     const p2 = "nmBFdDwFLg";
@@ -1236,17 +1234,13 @@
                 if(objAssinadoSeguro) pacoteDeEnvio.push({ "inline_data": objAssinadoSeguro }); 
             }
 
-            // LINK ATUALIZADO PARA O MODELO PRO
-            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${GEMINI_API_KEY}`;
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             
             const disparoAPI = await fetch(url_api_gemini, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
-                    contents: [{ parts: pacoteDeEnvio }],
-                    generationConfig: {
-                        responseMimeType: "application/json"
-                    }
+                    contents: [{ parts: pacoteDeEnvio }]
                 })
             });
 
@@ -1263,7 +1257,11 @@
             }
 
             let textoDoGemini = respostaDaIA.candidates[0].content.parts[0].text;
-            const resultadoJson = JSON.parse(textoDoGemini);
+            
+            // Extrator robusto de JSON para evitar o erro de suporte
+            const matchJson = textoDoGemini.match(/\{[\s\S]*\}/);
+            if (!matchJson) throw new Error("A IA não retornou um JSON válido.");
+            const resultadoJson = JSON.parse(matchJson[0]);
 
             let suspeitaDeClone = false;
             if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0 && todosProcessos.length > 1) {
@@ -1439,8 +1437,8 @@
         }
 
         try {
-            // LINK ATUALIZADO PARA O MODELO PRO
-            const envioPergunta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${GEMINI_API_KEY}`, {
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const envioPergunta = await fetch(url_api_gemini, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
