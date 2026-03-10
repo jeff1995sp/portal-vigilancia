@@ -3,819 +3,255 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COVISA ULTIMATE V5 - Auditoria IA e Perícia Forense</title>
+  <title>COVISA ULTIMATE - Perícia Forense e IA (Gemini 2.0)</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    /* =====================================================================
+       1. ARQUITETURA CSS ENTERPRISE (VARIÁVEIS CORRIGIDAS)
+       ===================================================================== */
     :root {
-      /* Fundo e Estrutura Principal */
-      --bg-body: #050b14; 
-      --bg-sidebar: #02060d;
-      --bg-card: #0f172a;
-      --bg-card-hover: #1e293b;
+      --bg-body: #06090f; 
+      --bg-sidebar: #02040a;
+      --bg-card: #0d131f;
+      --bg-card-hover: #151e2e;
       
-      /* Textos e Tipografia */
       --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-light: #e2e8f0;
-      --font-base: 'Inter', sans-serif;
+      --text-muted: #64748b;
+      --text-light: #cbd5e0;
       --font-code: 'JetBrains Mono', monospace;
       
-      /* Cores de Ação (Botões e Destaques) */
       --primary: #3b82f6;
       --primary-hover: #2563eb;
       --secondary: #0ea5e9;
       --accent: #38bdf8;
       
-      /* Identidade do Motor de IA (Gemini) */
-      --gemini-purple: #c084fc;
+      --gemini-purple: #a855f7;
       --gemini-dark: #7e22ce;
-      --gemini-bg: rgba(192, 132, 252, 0.08);
+      --gemini-glow: rgba(192, 132, 252, 0.15);
       --gemini-gradient: linear-gradient(135deg, #c084fc, #ec4899, #3b82f6);
       
-      /* Semântica (Avisos e Status) */
       --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.12);
+      --success-bg: rgba(16, 185, 129, 0.1);
       --warning: #f59e0b;
-      --warning-bg: rgba(245, 158, 11, 0.12);
+      --warning-bg: rgba(245, 158, 11, 0.1);
       --danger: #ef4444;
-      --danger-bg: rgba(239, 68, 68, 0.12);
+      --danger-bg: rgba(239, 68, 68, 0.1);
       --info: #3b82f6;
+      --info-light: rgba(59, 130, 246, 0.15);
       
-      /* Geometria: Bordas, Sombras e Raios */
       --border: #1e293b;
       --border-light: #334155;
-      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
-      --shadow-modal: 0 30px 60px -15px rgba(0, 0, 0, 0.9);
-      --shadow-glow: 0 0 25px rgba(192, 132, 252, 0.2);
+      
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.4);
+      --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.6);
+      --shadow-modal: 0 25px 50px -12px rgba(0,0,0,0.9);
+      --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.2);
       
       --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 16px;
-      --radius-xl: 24px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-2xl: 24px;
     }
 
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-      font-family: var(--font-base); 
-      outline: none; 
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* Trava do Body para evitar colapso de Layout */
-    body { 
-      background-color: var(--bg-body); 
-      color: var(--text-main); 
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden; 
-      font-size: 14px; 
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; -webkit-font-smoothing: antialiased; }
     
-    /* Scrollbar Tecnológico */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    body { background-color: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; width: 100vw; overflow: hidden; font-size: 14px; }
+    
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
     /* =====================================================================
-       SISTEMA DE SEGURANÇA: TELA DE LOCK (LOGIN)
+       2. LOGIN MILITAR
        ===================================================================== */
-    #lock-screen {
-      position: fixed; 
-      inset: 0; 
-      background: #02040a; 
-      z-index: 99999; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center;
-      background-image: radial-gradient(circle at center, #0f172a 0%, #000000 100%); 
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-
-    .lock-box { 
-      background: rgba(15, 23, 42, 0.8); 
-      padding: 60px 50px; 
-      border-radius: var(--radius-xl); 
-      backdrop-filter: blur(20px); 
-      border: 1px solid rgba(255,255,255,0.05); 
-      text-align: center; 
-      width: 100%; 
-      max-width: 440px; 
-      box-shadow: var(--shadow-modal); 
-    }
-
-    .lock-box i.fa-fingerprint { 
-      font-size: 5rem; 
-      color: var(--primary); 
-      margin-bottom: 25px; 
-      filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.5)); 
-    }
-
-    .lock-box h2 { 
-      color: white; 
-      margin-bottom: 12px; 
-      font-weight: 900; 
-      font-size: 2.2rem; 
-      letter-spacing: -1px; 
-    }
-
-    .lock-box p { 
-      color: var(--text-muted); 
-      font-size: 1.05rem; 
-      margin-bottom: 35px; 
-      line-height: 1.5;
-    }
-
-    .pin-input { 
-      width: 100%; 
-      padding: 22px; 
-      border-radius: var(--radius-md); 
-      border: 2px solid var(--border); 
-      background: rgba(0,0,0,0.6); 
-      color: white; 
-      font-size: 2.5rem; 
-      text-align: center; 
-      letter-spacing: 20px; 
-      margin-bottom: 30px; 
-      transition: all 0.3s ease; 
-      font-family: var(--font-code);
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-    }
-
-    .pin-input:focus { 
-      border-color: var(--primary); 
-      box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); 
-    }
-
-    .btn-unlock { 
-      width: 100%; 
-      background: var(--primary); 
-      color: white; 
-      border: none; 
-      padding: 20px; 
-      border-radius: var(--radius-md); 
-      font-weight: 800; 
-      font-size: 1.2rem; 
-      cursor: pointer; 
-      transition: all 0.3s ease; 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      gap: 12px; 
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .btn-unlock:hover { 
-      background: var(--primary-hover); 
-      transform: translateY(-2px); 
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4); 
-    }
+    #lock-screen { position: fixed; inset: 0; background: var(--bg-sidebar); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: radial-gradient(circle at center, #0f172a 0%, #02040a 100%); transition: opacity 0.5s ease, visibility 0.5s ease; }
+    .lock-box { background: rgba(13, 19, 31, 0.8); padding: 60px 50px; border-radius: var(--radius-2xl); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); text-align: center; width: 100%; max-width: 450px; box-shadow: var(--shadow-modal); }
+    .lock-box i.fa-fingerprint { font-size: 4.5rem; color: var(--primary); margin-bottom: 25px; filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.4)); }
+    .lock-box h2 { color: white; margin-bottom: 10px; font-weight: 900; font-size: 2rem; letter-spacing: -0.5px; }
+    .lock-box p { color: var(--text-muted); font-size: 1rem; margin-bottom: 35px; }
+    .pin-input { width: 100%; padding: 20px; border-radius: var(--radius-md); border: 2px solid var(--border); background: rgba(0,0,0,0.4); color: white; font-size: 2.5rem; text-align: center; letter-spacing: 20px; margin-bottom: 30px; transition: all 0.3s ease; font-family: var(--font-code); box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+    .pin-input:focus { border-color: var(--primary); box-shadow: var(--shadow-glow); }
+    .btn-unlock { width: 100%; background: var(--primary); color: white; border: none; padding: 20px; border-radius: var(--radius-md); font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .btn-unlock:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3); }
 
     /* =====================================================================
-       ARQUITETURA DE LAYOUT (FLEXBOX CONTAINER - EVITA TELA AZUL)
+       3. ESTRUTURA GERAL (FLEXBOX SEGURO)
        ===================================================================== */
-    #app-container {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-body);
-    }
+    #app-container { display: flex; width: 100%; height: 100%; background: var(--bg-body); }
+
+    .sidebar { width: 280px; height: 100%; background-color: var(--bg-sidebar); display: flex; flex-direction: column; z-index: 100; border-right: 1px solid var(--border); flex-shrink: 0; }
+    .sidebar-header { padding: 35px 25px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); }
+    .sidebar-header i.logo-icon { font-size: 2.2rem; background: var(--gemini-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .sidebar-header h2 { font-size: 1.5rem; font-weight: 900; line-height: 1.1; color: white;}
+    .sidebar-header h2 span { font-size: 0.75rem; color: var(--gemini-purple); text-transform: uppercase; letter-spacing: 2px; font-weight: 800; display: block; margin-top: 4px; }
     
-    /* BARRA LATERAL (SIDEBAR) */
-    .sidebar { 
-      width: 290px; 
-      height: 100%;
-      background-color: var(--bg-sidebar); 
-      display: flex; 
-      flex-direction: column; 
-      z-index: 100; 
-      border-right: 1px solid var(--border); 
-      flex-shrink: 0;
-    }
+    .nav-menu { padding: 25px 15px; flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+    .nav-item { padding: 15px 20px; border-radius: var(--radius-md); color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 15px; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; cursor: pointer; border: 1px solid transparent; }
+    .nav-item:hover { background: var(--bg-card); color: white; border-color: var(--border); }
+    .nav-item.active { background: var(--gemini-glow); color: white; border-color: rgba(192, 132, 252, 0.3); box-shadow: inset 4px 0 0 var(--gemini-purple); }
+    .nav-item i { font-size: 1.2rem; width: 24px; text-align: center; }
 
-    .sidebar-header { 
-      padding: 40px 30px; 
-      display: flex; 
-      align-items: center; 
-      gap: 18px; 
-      border-bottom: 1px solid var(--border); 
-    }
+    .sidebar-footer { padding: 25px; border-top: 1px solid var(--border); text-align: center; background: var(--bg-card); }
 
-    .sidebar-header i.logo-icon { 
-      font-size: 2.8rem; 
-      background: var(--gemini-gradient); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-    }
-
-    .sidebar-header h2 { 
-      font-size: 1.6rem; 
-      font-weight: 900; 
-      line-height: 1.1; 
-      color: white;
-    }
-
-    .sidebar-header h2 span { 
-      font-size: 0.8rem; 
-      color: var(--gemini-purple); 
-      text-transform: uppercase; 
-      letter-spacing: 2px; 
-      font-weight: 800; 
-      display: block;
-      margin-top: 4px;
-    }
+    .main-content { flex: 1; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; }
     
-    .nav-menu { 
-      padding: 30px 20px; 
-      flex: 1; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 10px; 
-      overflow-y: auto;
-    }
-
-    .nav-item { 
-      padding: 16px 20px; 
-      border-radius: var(--radius-md); 
-      color: var(--text-muted); 
-      text-decoration: none; 
-      display: flex; 
-      align-items: center; 
-      gap: 15px; 
-      font-weight: 600; 
-      font-size: 1.05rem; 
-      transition: all 0.3s ease; 
-      cursor: pointer; 
-      border: 1px solid transparent;
-    }
-
-    .nav-item:hover { 
-      background: rgba(255,255,255,0.03); 
-      color: white; 
-      border-color: var(--border);
-    }
-
-    .nav-item.active { 
-      background: var(--gemini-bg);
-      color: white;
-      border-color: rgba(192, 132, 252, 0.2);
-      box-shadow: inset 4px 0 0 var(--gemini-purple);
-    }
-
-    .nav-item i { 
-      font-size: 1.3rem; 
-      width: 25px; 
-      text-align: center; 
-    }
-
-    .sidebar-footer { 
-      padding: 25px; 
-      border-top: 1px solid var(--border); 
-      text-align: center; 
-      background: rgba(0,0,0,0.3); 
-    }
-
-    /* ÁREA CENTRAL */
-    .main-content { 
-      flex: 1; 
-      height: 100%;
-      display: flex; 
-      flex-direction: column; 
-      overflow: hidden; 
-      position: relative; 
-      background: var(--bg-body);
-    }
-
-    header.topbar { 
-      background: var(--bg-card); 
-      padding: 20px 50px; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      border-bottom: 1px solid var(--border); 
-      z-index: 10; 
-      flex-shrink: 0;
-    }
-
-    .search-bar { 
-      display: flex; 
-      align-items: center; 
-      background: var(--bg-sidebar); 
-      padding: 15px 25px; 
-      border-radius: 50px; 
-      width: 550px; 
-      border: 1px solid var(--border); 
-      transition: all 0.3s ease; 
-    }
-
-    .search-bar:focus-within { 
-      border-color: var(--gemini-purple); 
-      box-shadow: 0 0 0 3px var(--gemini-bg); 
-    }
-
-    .search-bar i { 
-      color: var(--text-muted); 
-      margin-right: 15px; 
-      font-size: 1.2rem; 
-    }
-
-    .search-bar input { 
-      border: none; 
-      background: transparent; 
-      width: 100%; 
-      font-size: 0.95rem; 
-      color: white; 
-      font-weight: 500; 
-    }
+    header.topbar { background: var(--bg-sidebar); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); z-index: 10; flex-shrink: 0; }
+    .search-bar { display: flex; align-items: center; background: var(--bg-body); padding: 14px 25px; border-radius: 50px; width: 500px; border: 1px solid var(--border); transition: all 0.3s ease; }
+    .search-bar:focus-within { border-color: var(--gemini-purple); box-shadow: 0 0 0 3px var(--gemini-glow); }
+    .search-bar i { color: var(--text-muted); margin-right: 15px; font-size: 1.1rem; }
+    .search-bar input { border: none; background: transparent; width: 100%; font-size: 0.95rem; color: white; font-weight: 500; }
     
-    .user-profile { 
-      display: flex; 
-      align-items: center; 
-      gap: 20px; 
-    }
-
-    .pulse-online { 
-      display: inline-block; 
-      width: 10px; 
-      height: 10px; 
-      background: var(--success); 
-      border-radius: 50%; 
-      box-shadow: 0 0 0 rgba(16, 185, 129, 0.4); 
-      animation: pulse 2s infinite; 
-    }
-
-    @keyframes pulse { 
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 
-      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } 
-    }
-
+    .user-profile { display: flex; align-items: center; gap: 20px; }
+    .pulse-online { display: inline-block; width: 10px; height: 10px; background: var(--success); border-radius: 50%; box-shadow: 0 0 0 rgba(16, 185, 129, 0.4); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
     .user-info { text-align: right; }
     .user-info h4 { font-size: 0.95rem; margin: 0 0 4px 0; color: white; font-weight: 800; }
     .user-info span { font-size: 0.8rem; color: var(--gemini-purple); font-weight: 800; }
-    
-    .avatar { 
-      width: 48px; 
-      height: 48px; 
-      border-radius: 50%; 
-      background: var(--gemini-gradient); 
-      color: white; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-weight: 900; 
-      font-size: 1.2rem; 
-      box-shadow: 0 0 15px rgba(192, 132, 252, 0.3); 
-    }
+    .avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--gemini-gradient); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 15px rgba(192, 132, 252, 0.3); }
 
     /* =====================================================================
-       MÓDULOS DE RENDERIZAÇÃO (SPA VIEWS)
+       4. SPA VIEWS E COMPONENTES
        ===================================================================== */
-    .view-container { 
-      flex: 1; 
-      overflow-y: auto; 
-      position: relative; 
-      padding: 50px 60px; 
-    }
-
-    .page-view { 
-      display: none; 
-      animation: fadeInView 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
-    }
-
+    .view-container { flex: 1; overflow-y: auto; position: relative; padding: 40px 50px; }
+    .page-view { display: none; animation: fadeInView 0.4s ease; }
     .page-view.active { display: block; }
+    @keyframes fadeInView { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-    @keyframes fadeInView { 
-      from { opacity: 0; transform: translateY(20px); } 
-      to { opacity: 1; transform: translateY(0); } 
-    }
+    .page-title { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 35px; }
+    .page-title h1 { font-size: 2.2rem; font-weight: 900; color: white; letter-spacing: -1px; }
+    .page-title p { color: var(--text-muted); font-size: 1.05rem; margin-top: 8px; }
 
-    .page-title { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: flex-end; 
-      margin-bottom: 40px; 
-    }
-
-    .page-title h1 { font-size: 2.5rem; font-weight: 900; color: white; letter-spacing: -1px; line-height: 1.2;}
-    .page-title p { color: var(--text-muted); font-size: 1.15rem; margin-top: 8px; font-weight: 500; }
-
-    /* =====================================================================
-       BOTÕES GLOBAIS E ESTILIZAÇÃO COMPARTILHADA
-       ===================================================================== */
-    .btn { 
-      padding: 15px 30px; 
-      border-radius: var(--radius-md); 
-      font-weight: 700; 
-      font-size: 1rem; 
-      cursor: pointer; 
-      transition: all 0.2s ease; 
-      border: none; 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center; 
-      gap: 12px; 
-    }
-
-    .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
-    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
-    
-    .btn-success { background: var(--success); color: #022c22; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
-    .btn-success:hover { background: #059669; color: white; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
-    
-    .btn-gemini { background: var(--gemini-gradient); color: white; box-shadow: 0 4px 15px rgba(192, 132, 252, 0.3); }
-    .btn-gemini:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(192, 132, 252, 0.5); }
-    
+    .btn { padding: 14px 28px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4); }
+    .btn-success { background: var(--success); color: #022c22; }
+    .btn-success:hover { background: #059669; color: white; transform: translateY(-2px); }
+    .btn-gemini { background: var(--gemini-gradient); color: white; box-shadow: 0 4px 15px rgba(192, 132, 252, 0.3); border: none;}
+    .btn-gemini:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(192, 132, 252, 0.5); }
     .btn-secondary { background: var(--bg-card); border: 1px solid var(--border-light); color: white; }
     .btn-secondary:hover { background: var(--border); border-color: var(--text-muted); }
 
-    .form-input { 
-      width: 100%; 
-      padding: 18px 22px; 
-      border: 1px solid var(--border); 
-      border-radius: var(--radius-md); 
-      font-size: 1.05rem; 
-      color: white; 
-      background: var(--bg-sidebar); 
-      font-family: inherit; 
-      transition: 0.3s; 
-    }
-    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+    .form-input { width: 100%; padding: 16px 20px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 1.05rem; color: white; background: var(--bg-sidebar); font-family: inherit; transition: 0.3s; }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
     select.form-input { cursor: pointer; }
 
     /* =====================================================================
-       DASHBOARD - CARDS ANALÍTICOS E GRÁFICOS
+       5. DASHBOARD
        ===================================================================== */
-    .stats-grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
-      gap: 30px; 
-      margin-bottom: 50px; 
-    }
-
-    .stat-card { 
-      background: var(--bg-card); 
-      padding: 35px; 
-      border-radius: var(--radius-lg); 
-      border: 1px solid var(--border); 
-      box-shadow: var(--shadow-sm); 
-      display: flex; 
-      align-items: center; 
-      gap: 25px; 
-      position: relative; 
-      overflow: hidden; 
-      transition: all 0.3s ease; 
-    }
-
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin-bottom: 40px; }
+    .stat-card { background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 20px; position: relative; overflow: hidden; transition: all 0.3s ease; }
     .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--border-light); }
     .stat-card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 5px; }
-
-    .stat-card.c-warning::before { background: var(--warning); } 
-    .stat-card.c-primary::before { background: var(--primary); } 
-    .stat-card.c-success::before { background: var(--success); } 
-    .stat-card.c-gemini::before { background: var(--gemini-purple); }
+    .stat-card.c-warning::before { background: var(--warning); } .stat-card.c-primary::before { background: var(--primary); } .stat-card.c-success::before { background: var(--success); } .stat-card.c-gemini::before { background: var(--gemini-purple); }
     
-    .stat-icon { 
-      width: 75px; 
-      height: 75px; 
-      border-radius: var(--radius-md); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-size: 2.5rem; 
-    }
-
-    .c-warning .stat-icon { background: var(--warning-bg); color: var(--warning); }
-    .c-primary .stat-icon { background: var(--info-light); color: var(--primary); }
-    .c-success .stat-icon { background: var(--success-bg); color: var(--success); }
-    .c-gemini .stat-icon { background: var(--gemini-bg); color: var(--gemini-purple); }
+    .stat-icon { width: 65px; height: 65px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
+    .c-warning .stat-icon { background: var(--warning-bg); color: var(--warning); } .c-primary .stat-icon { background: var(--info-light); color: var(--primary); } .c-success .stat-icon { background: var(--success-bg); color: var(--success); } .c-gemini .stat-icon { background: var(--gemini-glow); color: var(--gemini-purple); }
     
     .stat-info { flex: 1; }
-    .stat-info h3 { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; }
-    .stat-info p { font-size: 3rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
+    .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; }
+    .stat-info p { font-size: 2.5rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
 
-    .charts-grid { 
-      display: grid; 
-      grid-template-columns: 2fr 1fr; 
-      gap: 30px; 
-      margin-bottom: 50px; 
-    }
-
-    .chart-card { 
-      background: var(--bg-card); 
-      padding: 35px; 
-      border-radius: var(--radius-xl); 
-      border: 1px solid var(--border); 
-      box-shadow: var(--shadow-sm); 
-    }
-
-    .chart-header { font-size: 1.3rem; font-weight: 800; color: white; margin-bottom: 25px; }
-    .chart-container { position: relative; height: 350px; width: 100%; }
+    .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; margin-bottom: 40px; }
+    .chart-card { background: var(--bg-card); padding: 30px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+    .chart-header { font-size: 1.2rem; font-weight: 800; color: white; margin-bottom: 25px; }
+    .chart-container { position: relative; height: 320px; width: 100%; }
 
     /* =====================================================================
-       TABELAS: AUDITORIA E BANCO DE DADOS
+       6. TABELAS DE DADOS
        ===================================================================== */
-    .data-section { 
-      background: var(--bg-card); 
-      border-radius: var(--radius-xl); 
-      border: 1px solid var(--border); 
-      overflow: hidden; 
-      display: flex; 
-      flex-direction: column; 
-      margin-bottom: 50px; 
-      box-shadow: var(--shadow-md);
-    }
-
-    .data-header { 
-      padding: 30px 40px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: var(--bg-sidebar); 
-    }
-
-    .data-header h2 { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 15px; margin: 0; color: white; }
+    .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; margin-bottom: 40px; box-shadow: var(--shadow-md);}
+    .data-header { padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
+    .data-header h2 { font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; gap: 12px; margin: 0; color: white; }
     
-    .filters-row { 
-      padding: 25px 40px; 
-      background: rgba(255,255,255,0.01); 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      gap: 25px; 
-    }
-
+    .filters-row { padding: 20px 30px; background: rgba(255,255,255,0.01); border-bottom: 1px solid var(--border); display: flex; gap: 20px; }
     .filters-row select { flex: 1; }
     
     .table-wrapper { overflow-x: auto; width: 100%; }
     table { width: 100%; border-collapse: collapse; text-align: left; }
-    
-    th { 
-      background: rgba(0,0,0,0.4); 
-      padding: 20px 40px; 
-      font-size: 0.85rem; 
-      font-weight: 800; 
-      color: var(--text-muted); 
-      text-transform: uppercase; 
-      letter-spacing: 1px; 
-      border-bottom: 2px solid var(--border); 
-      position: sticky; 
-      top: 0;
-      z-index: 2; 
-    }
-
-    td { 
-      padding: 25px 40px; 
-      border-bottom: 1px solid var(--border); 
-      font-size: 1.05rem; 
-      color: var(--text-light); 
-      vertical-align: middle;
-    }
-
+    th { background: rgba(0,0,0,0.4); padding: 20px 30px; font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 2; }
+    td { padding: 20px 30px; border-bottom: 1px solid var(--border); font-size: 1.05rem; color: var(--text-light); vertical-align: middle; }
     tr { transition: background-color 0.2s ease; }
     tr:hover { background: rgba(255,255,255,0.03); }
     
     .td-empresa { display: flex; align-items: center; gap: 18px; }
-    .td-empresa-icon { 
-      width: 50px; 
-      height: 50px; 
-      background: var(--border); 
-      border-radius: var(--radius-md); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      color: white; 
-      font-size: 1.3rem; 
-      font-weight: 900; 
-    }
-
+    .td-empresa-icon { width: 50px; height: 50px; background: var(--border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; font-weight: 900; }
     .td-empresa-info strong { display: block; font-size: 1.1rem; margin-bottom: 6px; font-weight: 700; color: white; }
     .td-empresa-info span { color: var(--text-muted); font-size: 0.9rem; font-family: var(--font-code); }
     
-    .status-badge { 
-      padding: 8px 16px; 
-      border-radius: 50px; 
-      font-size: 0.8rem; 
-      font-weight: 800; 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 8px; 
-      text-transform: uppercase; 
-      letter-spacing: 0.5px;
-    }
-
+    .status-badge { padding: 8px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
     .badge-pendente { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
     .badge-aguardando { background: var(--info-light); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3); }
     .badge-pago { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-denuncia { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
-    .btn-icon { 
-      width: 45px; 
-      height: 45px; 
-      border-radius: var(--radius-md); 
-      border: none; 
-      cursor: pointer; 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center; 
-      transition: all 0.2s ease; 
-      font-size: 1.2rem; 
-      color: white; 
-    }
-
+    .btn-icon { width: 45px; height: 45px; border-radius: var(--radius-md); border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-size: 1.2rem; color: white; }
     .btn-icon.view { background: var(--border-light); } 
     .btn-icon.view:hover { background: var(--primary); transform: translateY(-2px); }
 
     /* =====================================================================
-       FINANCEIRO, LEIS E CALCULADORA
+       7. FINANCEIRO E LEIS
        ===================================================================== */
-    .laws-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 50px; }
+    .laws-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px; }
     .law-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 35px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
     .law-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; }
     .law-leve::before { background: var(--warning); } .law-grave::before { background: #f97316; } .law-gravissima::before { background: var(--danger); }
+    .law-card h3 { font-size: 1.2rem; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 800; }
+    .law-card .valor { font-size: 2.2rem; font-weight: 900; color: white; margin-bottom: 15px; }
+    .law-card p { font-size: 1rem; color: var(--text-muted); line-height: 1.6; }
     
-    .law-card h3 { font-size: 1.3rem; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 800; }
-    .law-card .valor { font-size: 2.5rem; font-weight: 900; color: white; margin-bottom: 20px; }
-    .law-card p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; }
-    
-    .calc-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 40px; display: flex; flex-wrap: wrap; gap: 50px; align-items: center; margin-bottom: 50px; box-shadow: var(--shadow-md);}
+    .calc-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 40px; display: flex; flex-wrap: wrap; gap: 40px; align-items: center; margin-bottom: 50px; box-shadow: var(--shadow-md);}
     .calc-form { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
     .calc-result { flex: 1; background: var(--bg-sidebar); padding: 40px; border-radius: var(--radius-md); border: 2px dashed var(--primary); text-align: center; display: flex; flex-direction: column; justify-content: center;}
 
     /* =====================================================================
-       MAPA DE CALOR (HEATMAP REAL)
+       8. MAPA DE CALOR
        ===================================================================== */
-    .heatmap-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
+    .heatmap-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; }
     .heat-zone { background: var(--bg-card); border: 1px solid var(--border); padding: 35px 20px; border-radius: var(--radius-xl); text-align: center; transition: 0.3s; position: relative; box-shadow: var(--shadow-sm);}
     .heat-zone:hover { transform: translateY(-5px); border-color: var(--text-muted); box-shadow: var(--shadow-md);}
-    .progress-bar-bg { width: 100%; height: 10px; background: var(--bg-sidebar); border-radius: 10px; margin-top: 25px; overflow: hidden; }
+    .progress-bar-bg { width: 100%; height: 8px; background: rgba(0,0,0,0.4); border-radius: 10px; margin-top: 25px; overflow: hidden; }
     .progress-bar-fill { height: 100%; border-radius: 10px; transition: width 1.5s ease-out; }
 
     /* =====================================================================
-       CHATBOT JURÍDICO (REFEITO E BLINDADO PARA NÃO QUEBRAR CSS)
+       9. CHATBOT JURÍDICO (CORRIGIDO PARA FLEXBOX PERFEITO)
        ===================================================================== */
-    .chat-container { 
-      display: flex; 
-      flex-direction: column; 
-      height: 700px; 
-      background: var(--bg-card); 
-      border: 1px solid var(--border); 
-      border-radius: var(--radius-xl); 
-      overflow: hidden; 
-      box-shadow: var(--shadow-md); 
-    }
-
-    .chat-header { 
-      background: var(--bg-sidebar); 
-      padding: 25px 40px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      border-bottom: 1px solid var(--border); 
-    }
-
-    .chat-history { 
-      flex: 1; 
-      padding: 40px; 
-      overflow-y: auto; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 25px; 
-      background: var(--bg-body); 
-      scroll-behavior: smooth;
-    }
-
-    /* Balões Formatados (Tipo WhatsApp / GPT) */
-    .chat-msg { 
-      width: fit-content; 
-      max-width: 80%; 
-      padding: 18px 25px; 
-      border-radius: 20px; 
-      line-height: 1.6; 
-      font-size: 1.05rem; 
-      position: relative; 
-      word-break: break-word;
-    }
-
-    .msg-user { 
-      align-self: flex-end; 
-      background: var(--primary); 
-      color: white; 
-      border-bottom-right-radius: 4px; 
-      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); 
-    }
-
-    .msg-ai { 
-      align-self: flex-start; 
-      background: var(--bg-card); 
-      color: var(--text-light); 
-      border: 1px solid var(--border); 
-      border-bottom-left-radius: 4px; 
-      box-shadow: var(--shadow-sm); 
-    }
+    .chat-container { display: flex; flex-direction: column; height: 700px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); }
+    .chat-header { background: var(--bg-sidebar); padding: 25px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
     
-    .chat-input-area { 
-      padding: 25px 40px; 
-      background: var(--bg-sidebar); 
-      border-top: 1px solid var(--border); 
-      display: flex; 
-      gap: 20px; 
-      align-items: center; 
-    }
-
-    .chat-input-area select { 
-      width: 300px; 
-      padding: 18px 20px; 
-      border-radius: var(--radius-md); 
-      background: var(--bg-body); 
-      color: white; 
-      border: 1px solid var(--border); 
-      font-weight: 600;
-    }
-
-    .chat-input-area input { 
-      flex: 1; 
-      padding: 20px 30px; 
-      border-radius: 50px; 
-      border: 1px solid var(--border); 
-      background: var(--bg-body); 
-      color: white; 
-      font-size: 1.1rem; 
-    }
-    .chat-input-area input:focus { border-color: var(--gemini-purple); }
+    .chat-history { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; background: var(--bg-body); scroll-behavior: smooth; }
+    
+    /* Balões Formato ChatGPT */
+    .chat-msg { width: fit-content; max-width: 85%; padding: 18px 24px; border-radius: 20px; line-height: 1.6; font-size: 1.05rem; word-break: break-word; }
+    .msg-user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2); }
+    .msg-ai { align-self: flex-start; background: var(--bg-card); color: var(--text-light); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm); }
+    
+    .chat-input-area { padding: 25px 40px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; gap: 20px; align-items: center; }
+    .chat-input-area select { width: 300px; padding: 18px 20px; border-radius: var(--radius-md); background: var(--bg-body); color: white; border: 1px solid var(--border); font-weight: 600; }
+    .chat-input-area input { flex: 1; padding: 18px 25px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; transition: 0.3s;}
+    .chat-input-area input:focus { border-color: var(--gemini-purple); box-shadow: 0 0 10px rgba(168,85,247,0.2); }
 
     /* =====================================================================
-       MODAL GIGANTE DE AUDITORIA & IA FORENSE (O CORAÇÃO)
+       10. MODAL GIGANTE DE AUDITORIA & IA FORENSE
        ===================================================================== */
-    .modal-overlay { 
-      position: fixed; 
-      inset: 0; 
-      background: rgba(0, 0, 0, 0.85); 
-      backdrop-filter: blur(8px); 
-      z-index: 20000; 
-      display: none; 
-      align-items: center; 
-      justify-content: center; 
-      padding: 30px; 
-    }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
+    .modal-box { background: var(--bg-body); width: 100%; max-width: 1200px; border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border); animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes modalIn { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
-    .modal-box { 
-      background: var(--bg-body); 
-      width: 100%; 
-      max-width: 1100px; 
-      border-radius: var(--radius-2xl); 
-      box-shadow: var(--shadow-modal); 
-      display: flex; 
-      flex-direction: column; 
-      max-height: 95vh; 
-      border: 1px solid var(--border); 
-      animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-    }
-
-    @keyframes modalIn { 
-      from { transform: translateY(40px) scale(0.95); opacity: 0; } 
-      to { transform: translateY(0) scale(1); opacity: 1; } 
-    }
-
-    .modal-header { 
-      padding: 30px 40px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: var(--bg-sidebar); 
-      border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; 
-    }
-
+    .modal-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; }
     .modal-header h3 { font-size: 1.5rem; font-weight: 900; color: white; display: flex; align-items: center; gap: 15px; }
     .modal-header .protocol-id { background: var(--border); padding: 8px 15px; border-radius: 8px; font-size: 0.95rem; font-family: var(--font-code); color: var(--text-light); }
     
-    .btn-close { 
-      background: transparent; border: none; width: 45px; height: 45px; border-radius: 50%; 
-      cursor: pointer; color: var(--text-muted); font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; 
-    }
+    .btn-close { background: transparent; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
     .btn-close:hover { color: var(--danger); transform: rotate(90deg); }
 
-    .modal-tabs { 
-      display: flex; border-bottom: 1px solid var(--border); background: var(--bg-card); padding: 0 20px; overflow-x: auto; 
-    }
-
-    .tab-btn { 
-      padding: 22px 30px; border: none; background: none; font-size: 1.05rem; font-weight: 700; color: var(--text-muted); 
-      cursor: pointer; border-bottom: 4px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 10px; white-space: nowrap; 
-    }
-
+    .modal-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg-card); padding: 0 15px; overflow-x: auto; }
+    .tab-btn { padding: 22px 30px; border: none; background: none; font-size: 1.05rem; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 4px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
     .tab-btn:hover { color: white; background: rgba(255,255,255,0.02); }
     .tab-btn.active { color: white; border-bottom-color: white; background: rgba(255,255,255,0.05); }
     .tab-btn.tab-ai { color: var(--gemini-purple); font-weight: 900; }
@@ -826,13 +262,12 @@
     .tab-content.active { display: block; }
     @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Radar IA Visual (Loading Detalhado Forense) */
+    /* Radar IA Visual */
     .radar-loading { text-align: center; padding: 80px 20px; display: flex; flex-direction: column; align-items: center; gap: 25px; }
-    .radar-scanner { position: relative; width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 5rem; color: var(--gemini-purple); overflow: hidden; box-shadow: 0 0 40px rgba(168, 85, 247, 0.2); }
+    .radar-scanner { position: relative; width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 5rem; color: var(--gemini-purple); overflow: hidden; box-shadow: 0 0 50px rgba(168, 85, 247, 0.2); }
     .radar-scanner::after { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6)); transform-origin: left center; animation: radarScan 1.5s linear infinite; }
     @keyframes radarScan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     
-    /* Layout do Resultado da IA */
     .radar-dashboard { display: grid; grid-template-columns: 1.2fr 2.8fr; gap: 40px; }
     .score-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 50px 30px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); }
     .score-circle { width: 180px; height: 180px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; font-weight: 900; margin-bottom: 25px; box-shadow: inset 0 0 40px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.2); border: 10px solid rgba(255,255,255,0.1); transition: border-color 1s ease;}
@@ -842,7 +277,6 @@
     .gemini-response-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 45px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); }
     .gemini-response-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--gemini-gradient); }
     
-    /* Blocos de Laudo Pericial Detalhados */
     .ia-laudo-block { background: var(--bg-body); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 25px; margin-bottom: 25px; border-left: 4px solid var(--gemini-purple); }
     .ia-laudo-block h5 { font-size: 0.95rem; text-transform: uppercase; color: var(--gemini-purple); margin-bottom: 12px; font-weight: 800; display: flex; align-items: center; gap: 10px;}
     .ia-laudo-block p { font-size: 1.1rem; color: var(--text-light); line-height: 1.6; }
@@ -851,11 +285,10 @@
     .ai-recommendation h4 { font-size: 0.9rem; text-transform: uppercase; color: #d8b4fe; margin-bottom: 10px; font-weight: 800;}
     .ai-recommendation p { font-size: 1.6rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
 
-    /* Outras Abas do Modal */
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-    .info-group { background: var(--bg-card); padding: 25px; border-radius: var(--radius-md); border: 1px solid var(--border); }
-    .info-group label { display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px;}
-    .info-group p { font-size: 1.2rem; font-weight: 600; color: white; margin: 0; word-break: break-word; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .info-group { background: var(--bg-card); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+    .info-group label { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;}
+    .info-group p { font-size: 1.1rem; font-weight: 600; color: white; margin: 0; word-break: break-word; }
     
     .docs-list { background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-top: 30px; box-shadow: var(--shadow-sm); }
     .docs-list p { white-space: pre-line; font-size: 1.1rem; line-height: 1.7; color: var(--text-light); margin-top: 15px; }
@@ -870,19 +303,19 @@
     
     .badge-assinado { position: absolute; top: 0; left: 0; width: 100%; background: var(--success); color: white; font-size: 0.8rem; font-weight: 900; text-align: center; padding: 8px 0; z-index: 10; text-transform: uppercase; letter-spacing: 1px;}
 
-    .modal-footer { padding: 30px 40px; border-top: 1px solid var(--border); background: var(--bg-sidebar); border-radius: 0 0 var(--radius-2xl) var(--radius-2xl); display: flex; justify-content: flex-end; gap: 20px; }
+    .modal-footer { padding: 25px 40px; border-top: 1px solid var(--border); background: var(--bg-sidebar); border-radius: 0 0 var(--radius-2xl) var(--radius-2xl); display: flex; justify-content: flex-end; gap: 20px; }
 
     /* =====================================================================
-       VISUALIZADOR DE IMAGENS E TOASTS
+       11. VISUALIZADOR DE IMAGENS E TOASTS
        ===================================================================== */
     #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(10px);}
-    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--radius-lg); border: 2px solid #333; box-shadow: 0 0 60px rgba(0,0,0,0.8);}
-    #lightbox-title { color: white; margin-top: 25px; font-size: 1.5rem; font-weight: 800; letter-spacing: 0.5px; }
-    .btn-close-lightbox { position: absolute; top: 30px; right: 50px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 3rem; cursor: pointer; width: 70px; height: 70px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
-    .btn-close-lightbox:hover { background: var(--danger); border-color: var(--danger); transform: rotate(90deg); }
+    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--radius-lg); border: 2px solid #333; box-shadow: 0 0 50px rgba(0,0,0,0.8);}
+    #lightbox-title { color: white; margin-top: 20px; font-size: 1.3rem; font-weight: 800; letter-spacing: 0.5px; }
+    .btn-close-lightbox { position: absolute; top: 25px; right: 40px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 2.5rem; cursor: pointer; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
+    .btn-close-lightbox:hover { background: var(--danger); border-color: var(--danger); transform: rotate(90deg) scale(1.1); }
 
     #toast-container { position: fixed; bottom: 35px; right: 35px; z-index: 99999; display: flex; flex-direction: column; gap: 15px; pointer-events: none; }
-    .toast { background: var(--bg-card); border-left: 6px solid var(--primary); padding: 25px 30px; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 20px; min-width: 400px; animation: toastSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; border: 1px solid var(--border); color: white; box-shadow: var(--shadow-modal); pointer-events: auto;}
+    .toast { background: var(--bg-card); border-left: 5px solid var(--primary); padding: 20px 25px; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 20px; min-width: 400px; animation: toastSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; border: 1px solid var(--border); color: white; box-shadow: var(--shadow-modal); pointer-events: auto;}
     .toast.success { border-color: var(--success); } .toast.success i { color: var(--success); }
     .toast.error { border-color: var(--danger); } .toast.error i { color: var(--danger); }
     .toast.warning { border-color: var(--warning); } .toast.warning i { color: var(--warning); }
@@ -891,7 +324,7 @@
     @keyframes toastFadeOut { to { opacity: 0; transform: translateX(120%); } }
 
     /* =====================================================================
-       ESCUDO ANTI-CRASH (SE O CÓDIGO FOR CORTADO)
+       12. ESCUDO ANTI-CRASH (SE O CÓDIGO FOR CORTADO)
        ===================================================================== */
     #error-log-shield { position: fixed; top: 0; left: 0; width: 100%; padding: 25px; background: var(--danger); color: white; font-weight: 900; text-align: center; z-index: 999999; display: none; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); }
   </style>
@@ -902,7 +335,7 @@
   <script>
     window.onerror = function(msg, url, line) {
         document.getElementById('error-log-shield').style.display = 'block';
-        document.getElementById('error-log-shield').innerHTML = `<i class="fas fa-exclamation-triangle"></i> ERRO CRÍTICO NA LINHA ${line}: O CÓDIGO HTML ESTÁ INCOMPLETO. CLIQUE EM "COPY CODE" LÁ EM CIMA E COLE TUDO NOVAMENTE.`;
+        document.getElementById('error-log-shield').innerHTML = `<i class="fas fa-exclamation-triangle"></i> ERRO CRÍTICO NA LINHA ${line}: O CÓDIGO HTML ESTÁ CORTADO. USE O BOTÃO "COPY CODE" LÁ EM CIMA E COLE NOVAMENTE TUDO NO SEU ARQUIVO.`;
     };
   </script>
 
@@ -936,7 +369,7 @@
       </nav>
       
       <div class="sidebar-footer">
-        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 1.5 Flash Core</p>
+        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 2.0 Flash Core</p>
         <p>Status da IA: <span style="color:var(--success); font-weight:800;">Ativa e Conectada</span></p>
       </div>
     </aside>
@@ -952,7 +385,7 @@
         <div class="user-profile">
           <div style="display: flex; gap: 10px; align-items:center;">
             <span class="pulse-online"></span>
-            <span style="color:var(--success); font-weight:900; font-size:0.9rem; letter-spacing:1px;">SISTEMA ONLINE</span>
+            <span style="color:var(--success); font-weight:900; font-size:0.85rem; letter-spacing:1px;">SISTEMA ONLINE</span>
           </div>
           <div class="user-info">
             <h4>Fiscal Chefe</h4>
@@ -1102,7 +535,7 @@
             </div>
           </div>
 
-          <h2 style="font-size: 1.6rem; margin-bottom: 20px; color: white; font-weight: 900;"><i class="fas fa-calculator" style="color: var(--primary);"></i> Calculadora Oficial de Autuação (Lei 13.725)</h2>
+          <h2 style="font-size: 1.6rem; margin-bottom: 25px; color: white; font-weight: 900;"><i class="fas fa-calculator" style="color: var(--primary);"></i> Calculadora Oficial de Autuação (Lei 13.725)</h2>
           <div class="calc-container">
             <div class="calc-form">
               <div>
@@ -1121,7 +554,7 @@
                   <option value="3">Grande Empresa / Indústria</option>
                 </select>
               </div>
-              <div style="grid-column: 1 / -1; background: rgba(239, 68, 68, 0.1); padding: 25px; border-radius: var(--radius-md); border: 1px solid var(--danger);">
+              <div style="grid-column: 1 / -1; background: rgba(239, 68, 68, 0.1); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--danger);">
                 <label style="display: flex; align-items: center; gap: 15px; cursor: pointer; font-weight: 800; color: var(--danger); font-size: 1.2rem;">
                   <input type="checkbox" id="sim-reincidente" style="width: 25px; height: 25px;" onchange="calcularMulta()">
                   Marcar se o estabelecimento for REINCIDENTE (Dobra o valor da multa base)
@@ -1131,7 +564,7 @@
             <div class="calc-result">
               <span>Valor Sugerido para Auto de Infração</span>
               <h2 id="sim-resultado">R$ 1.500,00</h2>
-              <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 15px; font-weight: 600;"><i class="fas fa-info-circle"></i> O valor base exato deve ser ratificado em UFESPs pelo fiscal autuante na hora da vistoria.</p>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 15px; font-weight: 600;"><i class="fas fa-info-circle"></i> O valor base exato deve ser ratificado em UFESPs pelo fiscal autuante na hora da vistoria.</p>
             </div>
           </div>
 
@@ -1166,7 +599,7 @@
             </div>
           </div>
 
-          <div style="background: var(--bg-card); padding: 50px; border-radius: var(--radius-xl); border: 1px solid var(--border);">
+          <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-xl); border: 1px solid var(--border);">
             <div class="heatmap-container" id="mapa-zonas-reais">
               </div>
             <p style="color: var(--text-muted); font-size: 1.1rem; text-align: center; font-style: italic; margin-top: 40px;">* Dados processados analiticamente através da leitura de IDs e hashes dos processos ativos na base, simulando localização geográfica.</p>
@@ -1183,7 +616,7 @@
 
           <div class="chat-container">
             <div class="chat-header">
-              <div class="avatar" style="width: 55px; height: 55px; font-size: 2rem;"><i class="fas fa-robot"></i></div>
+              <div class="avatar" style="width: 55px; height: 55px; font-size: 1.8rem;"><i class="fas fa-robot"></i></div>
               <div style="flex: 1;">
                 <h3 style="color: white; margin: 0; font-size: 1.3rem;">Gemini Legal Assistant</h3>
                 <span style="color: var(--success); font-size: 0.9rem; font-weight: bold;">Rede Neural Conectada</span>
@@ -1200,7 +633,7 @@
             <div class="chat-history" id="chat-historico">
               <div class="chat-msg msg-ai">
                 <strong style="color:var(--gemini-purple); font-size: 1.2rem;"><i class="fas fa-robot"></i> Sistema Auditor AI:</strong><br><br>
-                Olá, Auditor Fiscal. Eu sou a IA da Vigilância Sanitária.<br><br>Você pode me fazer perguntas genéricas sobre leis, ou pode <strong>selecionar um processo na caixa ali em cima</strong> e me mandar um comando como "Resuma o caso", para que eu leia todo o banco de dados daquela empresa e te dê o laudo de perícia detalhado.
+                Olá, Auditor Fiscal. Eu sou o Gemini.<br><br>Você pode me fazer perguntas genéricas sobre leis, ou pode <strong>selecionar um processo na caixa ali em cima</strong> e me mandar um comando como "Resuma o caso", para que eu leia todo o banco de dados daquela empresa e te dê o laudo de perícia detalhado.
               </div>
             </div>
 
@@ -1250,7 +683,7 @@
       </div>
       
       <div class="modal-tabs">
-        <button class="tab-btn tab-ai active" onclick="abrirAba('tab-radar', this)"><i class="fas fa-robot"></i> Auditoria Forense IA (Gemini)</button>
+        <button class="tab-btn tab-ai active" onclick="abrirAba('tab-radar', this)"><i class="fas fa-robot"></i> Auditoria Forense IA</button>
         <button class="tab-btn" onclick="abrirAba('tab-detalhes', this)"><i class="fas fa-building"></i> Dados Empresariais</button>
         <button class="tab-btn" onclick="abrirAba('tab-fotos', this)"><i class="fas fa-images"></i> Provas Documentais</button>
         <button class="tab-btn" onclick="abrirAba('tab-financeiro', this)"><i class="fas fa-file-invoice-dollar"></i> Decisão Fiscal & Taxas</button>
@@ -1263,14 +696,14 @@
           <div id="radar-loader" class="radar-loading">
             <div class="radar-scanner"><i class="fas fa-brain"></i></div>
             <div>
-              <h3 style="font-size: 1.8rem; font-weight: 900; color: var(--gemini-purple); margin-bottom: 15px;">Auditoria Neural em Andamento...</h3>
-              <p id="radar-loading-text" style="font-size: 1.2rem; color: var(--text-muted); max-width: 700px; margin: 0 auto; line-height: 1.6;">Inicializando rotinas de Visão Computacional. Aguarde.</p>
+              <h3 style="font-size: 1.8rem; font-weight: 900; color: var(--gemini-purple); margin-bottom: 10px;">Auditoria Neural em Andamento...</h3>
+              <p id="radar-loading-text" style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6;">Inicializando rotinas de Visão Computacional. Aguarde.</p>
             </div>
           </div>
 
           <div id="radar-result" class="radar-dashboard" style="display: none;">
             <div class="score-box">
-              <h4 style="color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; font-weight: 800;">Confiabilidade das Provas</h4>
+              <h4 style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; font-weight: 800;">Confiabilidade das Provas</h4>
               <div class="score-circle" id="radar-score-circle" style="border-color: var(--success);">
                 <span class="num" id="radar-score-number" style="color: var(--success);">0</span>
                 <span class="desc">/ 100%<br>Confiável</span>
@@ -1281,7 +714,7 @@
             
             <div>
               <div class="gemini-response-box">
-                <h4><i class="fas fa-robot" style="color: var(--gemini-purple); font-size: 1.8rem;"></i> Laudo Técnico Oficial (Gemini)</h4>
+                <h4><i class="fas fa-robot" style="color: var(--gemini-purple); font-size: 1.8rem;"></i> Laudo Técnico Oficial (Gemini 2.0)</h4>
                 
                 <div class="ia-laudo-block">
                     <h5><i class="fas fa-file-contract"></i> 1. Verificação Documental Integrada</h5>
@@ -1318,26 +751,26 @@
         </div>
 
         <div id="tab-fotos" class="tab-content">
-          <div style="background: rgba(14, 165, 233, 0.1); padding: 30px; border-radius: var(--radius-lg); border-left: 5px solid var(--secondary); margin-bottom: 30px; display: flex; align-items: center; gap: 20px;">
-            <i class="fas fa-search-plus" style="font-size: 3rem; color: var(--secondary);"></i>
+          <div style="background: rgba(14, 165, 233, 0.1); padding: 25px; border-radius: var(--radius-lg); border-left: 5px solid var(--secondary); margin-bottom: 25px; display: flex; align-items: center; gap: 20px;">
+            <i class="fas fa-search-plus" style="font-size: 2.5rem; color: var(--secondary);"></i>
             <div>
-              <strong style="display: block; color: white; font-size: 1.3rem; margin-bottom: 8px;">Central de Inspeção Visual Expandida</strong>
-              <p style="margin: 0; font-size: 1.1rem; color: var(--text-light);">Clique nas imagens para expandir em tela cheia. O documento oficial assinado pelo contribuinte aparecerá com destaque em verde.</p>
+              <strong style="display: block; color: white; font-size: 1.2rem; margin-bottom: 5px;">Central de Inspeção Visual Expandida</strong>
+              <p style="margin: 0; font-size: 1rem; color: var(--text-light);">Clique nas imagens para expandir em tela cheia. O documento oficial assinado pelo contribuinte aparecerá com destaque em verde.</p>
             </div>
           </div>
-          <h4 id="evidence-title" style="font-size: 1.4rem; font-weight: 900; color: white; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">Evidências Fotográficas (0)</h4>
+          <h4 id="evidence-title" style="font-size: 1.3rem; font-weight: 900; color: white; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">Evidências Fotográficas (0)</h4>
           <div class="gallery-grid" id="evidence-gallery"></div>
         </div>
 
         <div id="tab-financeiro" class="tab-content">
           <div class="info-grid">
-            <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
-              <label style="font-weight: 900; color: var(--text-muted); font-size: 1rem; display: block; margin-bottom: 20px; text-transform: uppercase;"><i class="fas fa-barcode"></i> Valor da Taxa a Emitir (R$)</label>
-              <input type="text" class="form-input" id="modal-valor-input" placeholder="Ex: 200,00" style="font-size: 2.5rem; font-weight: 900; color: var(--primary); text-align: center; padding: 25px;">
+            <div style="background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+              <label style="font-weight: 900; color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 15px; text-transform: uppercase;"><i class="fas fa-barcode"></i> Valor da Taxa a Emitir (R$)</label>
+              <input type="text" class="form-input" id="modal-valor-input" placeholder="Ex: 200,00" style="font-size: 2rem; font-weight: 900; color: var(--primary); text-align: center; padding: 20px;">
             </div>
-            <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
-              <label style="font-weight: 900; color: var(--text-muted); font-size: 1rem; display: block; margin-bottom: 20px; text-transform: uppercase;"><i class="fas fa-traffic-light"></i> Modificar Status do Processo</label>
-              <select class="form-input" id="modal-status-select" style="font-size: 1.3rem; font-weight: 800; padding: 25px;">
+            <div style="background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+              <label style="font-weight: 900; color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 15px; text-transform: uppercase;"><i class="fas fa-traffic-light"></i> Modificar Status do Processo</label>
+              <select class="form-input" id="modal-status-select" style="font-size: 1.2rem; font-weight: 800; padding: 20px;">
                 <option value="pendente">🟠 BLOQUEAR (Análise Pendente)</option>
                 <option value="aguardando">🔵 AÇÃO: Cobrar Taxa (Aguardar Pix)</option>
                 <option value="pago">🟢 SUCESSO: Aprovar Licença</option>
@@ -1345,15 +778,15 @@
             </div>
           </div>
           
-          <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-top: 30px;">
-            <label style="font-weight: 900; color: var(--danger); font-size: 1rem; display: block; margin-bottom: 20px; text-transform: uppercase;"><i class="fas fa-user-secret"></i> Notas Privadas do Auditor (Dossiê Interno)</label>
-            <textarea class="form-input" id="modal-notas-input" placeholder="Anotações confidenciais sobre este estabelecimento... (O cliente não tem acesso a isto no site dele)." style="font-size: 1.2rem; padding: 25px; min-height: 120px;"></textarea>
+          <div style="background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-top: 25px;">
+            <label style="font-weight: 900; color: var(--danger); font-size: 0.9rem; display: block; margin-bottom: 15px; text-transform: uppercase;"><i class="fas fa-user-secret"></i> Notas Privadas do Auditor (Dossiê Interno)</label>
+            <textarea class="form-input" id="modal-notas-input" placeholder="Anotações confidenciais sobre este estabelecimento... (O cliente não tem acesso a isto no site dele)." style="font-size: 1.1rem; padding: 20px;"></textarea>
           </div>
 
-          <div style="margin-top: 40px; background: rgba(16, 185, 129, 0.1); border: 2px solid var(--success); padding: 40px; border-radius: var(--radius-lg); text-align: center;">
-            <h4 style="font-size: 1.6rem; margin-bottom: 15px; color: var(--success); font-weight: 900;"><i class="fab fa-whatsapp"></i> Automação de Disparo Oficial</h4>
-            <p style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 30px;">Acione o botão abaixo para abrir o WhatsApp Web. O sistema já vai escrever a mensagem oficial correta baseada no status que está salvo agora no Firebase.</p>
-            <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="font-size: 1.4rem; padding: 20px 50px; border-radius: 50px;"><i class="fab fa-whatsapp" style="font-size: 2rem;"></i> Acionar Contribuinte via WhatsApp</a>
+          <div style="margin-top: 30px; background: rgba(16, 185, 129, 0.1); border: 2px solid var(--success); padding: 30px; border-radius: var(--radius-lg); text-align: center;">
+            <h4 style="font-size: 1.4rem; margin-bottom: 10px; color: var(--success); font-weight: 900;"><i class="fab fa-whatsapp"></i> Automação de Disparo Oficial</h4>
+            <p style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 25px;">Acione o botão abaixo para abrir o WhatsApp Web. O sistema já vai escrever a mensagem oficial correta baseada no status atual.</p>
+            <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="font-size: 1.3rem; padding: 18px 40px; border-radius: 50px;"><i class="fab fa-whatsapp" style="font-size: 1.8rem;"></i> Acionar Contribuinte via WhatsApp</a>
           </div>
         </div>
 
@@ -1363,7 +796,7 @@
         <button class="btn btn-secondary" onclick="deletarProcessoAtual()" style="color: var(--danger); border-color: var(--danger); background: transparent;"><i class="fas fa-trash-alt"></i> Excluir Definitivamente</button>
         <div style="flex:1"></div>
         <button class="btn btn-secondary" onclick="fecharModal()">Cancelar Operação</button>
-        <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()" style="padding: 20px 50px; font-size: 1.3rem;"><i class="fas fa-save"></i> Executar e Gravar no Servidor</button>
+        <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()" style="padding: 18px 40px; font-size: 1.2rem;"><i class="fas fa-save"></i> Executar e Gravar no Servidor</button>
       </div>
     </div>
   </div>
@@ -1377,6 +810,7 @@
   <div id="toast-container"></div>
 
   <script type="module">
+    // Importações CDN do Google Cloud
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
@@ -1393,10 +827,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // CHAVE DO GEMINI API
+    // CHAVE DA IA DO GOOGLE
     const GEMINI_API_KEY = "AIzaSyBUCj1-Zd4rNXTQpF44k_oR1WBIVcXeeyg";
 
-    // Variáveis de Estado Global
     let idProcessoAtual = null;
     let dadosProcessoAtual = null; 
     let todosProcessos = []; 
@@ -1414,7 +847,7 @@
             logsAuditoria.slice(0, 30).forEach(l => {
                 tabelaLogs.innerHTML += `
                   <tr>
-                      <td><span style="color:var(--text-muted); font-size:0.95rem;">${l.dataHora}</span></td>
+                      <td><span style="color:var(--text-muted); font-size:0.85rem;">${l.dataHora}</span></td>
                       <td><strong style="color:white; font-size:1.05rem;">Fiscal Chefe (Admin)</strong></td>
                       <td><strong style="color:var(--secondary); font-size:1.05rem;">${l.acao}</strong></td>
                       <td style="color:var(--text-light); line-height: 1.6; font-size:1.05rem;">${l.detalhes}</td>
@@ -1453,14 +886,17 @@
       setTimeout(() => { toast.remove(); }, 4500);
     }
 
-    // --- SEGURANÇA E TELA DE BLOQUEIO ---
+    // --- SEGURANÇA E TELA DE BLOQUEIO (RESOLVIDO TELA AZUL AQUI COM DISPLAY FLEX) ---
     window.checkPin = () => {
       const pinValor = document.getElementById('pin-input').value;
       if (pinValor === '1533') { 
         document.getElementById('lock-screen').style.opacity = '0';
         setTimeout(() => {
           document.getElementById('lock-screen').style.display = 'none';
+          
+          // LIGA A TELA PRINCIPAL CORRETAMENTE MANTENDO A ARQUITETURA FLEXBOX
           document.getElementById('app-container').style.display = 'flex'; 
+          
           initCharts(); 
           registrarLog("Autenticação de Segurança", "Login Mestre efetuado com sucesso via PIN.");
         }, 500);
@@ -1472,13 +908,11 @@
       }
     }
 
-    // =====================================================================
-    // EXTRAÇÃO SEGURA DE IMAGENS (CONSERTA ERRO 404 DO GEMINI)
-    // =====================================================================
+    // --- EXTRATOR DE IMAGEM SEGURO (CONSERTO DO ERRO 404 DO GEMINI) ---
     async function obterDadosImagemSeguro(urlOuBase64) {
         if (!urlOuBase64) return null;
         
-        // Se a string já for um Base64 gerado pelo seu site na hora do cadastro
+        // Se já for Base64 gerado pelo seu site
         if (urlOuBase64.startsWith('data:image')) {
             try {
                 const mime = urlOuBase64.split(';')[0].split(':')[1];
@@ -1487,26 +921,8 @@
             } catch(e) { return null; }
         }
         
-        // Se o Firebase tiver guardado como um link HTTP (Processos muito antigos)
-        if (urlOuBase64.startsWith('http')) {
-            try {
-                const resposta = await fetch(urlOuBase64);
-                const blob = await resposta.blob();
-                return new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        const b64 = reader.result.split(',')[1];
-                        const m = blob.type || 'image/jpeg';
-                        resolve({ mime_type: m, data: b64 });
-                    };
-                    reader.readAsDataURL(blob);
-                });
-            } catch (e) {
-                console.warn("CORS bloqueou a leitura do link da imagem. A IA vai analisar apenas o texto.", e);
-                return null;
-            }
-        }
-        return null;
+        // Proteção contra links externos sem CORS
+        return null; 
     }
 
     // --- SINCRONIZAÇÃO EM TEMPO REAL COM FIREBASE E TABELAS ---
@@ -1561,6 +977,7 @@
     window.renderizarTabelas = (arrayDeDados) => {
       const tbDash = document.getElementById("tabela-corpo-dash"); 
       const tbFull = document.getElementById("tabela-corpo-full");
+      
       if(!tbDash || !tbFull) return;
       
       tbDash.innerHTML = ""; 
@@ -1600,13 +1017,15 @@
           <td><span class="status-badge ${classBadge}"><i class="fas ${iconeBadge}"></i> ${txtBadge}</span></td>
         `;
         
+        // Tabela Completa (View 2)
         let trCompleta = document.createElement("tr"); 
         trCompleta.innerHTML = htmlColunaBase + `
-            <td><strong style="color:var(--primary); font-size: 1.2rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
+            <td><strong style="color:var(--primary); font-size: 1.1rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
             <td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:auto; padding:0 20px; background:var(--primary); color:white;"><i class="fas fa-search-plus"></i> Auditar Processo</button></td>
         `; 
         tbFull.appendChild(trCompleta);
         
+        // Tabela Dashboard (Apenas 5 registros)
         if(index < 5) { 
             let trResumo = document.createElement("tr"); 
             trResumo.innerHTML = htmlColunaBase + `
@@ -1757,7 +1176,7 @@
               htmlAssinado.className = 'gallery-item'; 
               htmlAssinado.style.border = '4px solid var(--success)';
               htmlAssinado.onclick = () => abrirLightbox(dadosDoCliente.documento_assinado, 'Documento Legal Assinado');
-              htmlAssinado.innerHTML = `<div class="badge-assinado"><i class="fas fa-check-circle"></i> VALIDADO</div><img src="${dadosDoCliente.documento_assinado}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`; 
+              htmlAssinado.innerHTML = `<div class="badge-assinado"><i class="fas fa-check-circle"></i> VALIDADO</div><img src="${dadosDoCliente.documento_assinado}">`; 
               galeriaHTML.appendChild(htmlAssinado);
           }
           
@@ -1767,7 +1186,7 @@
                   const caixaDaFoto = document.createElement('div'); 
                   caixaDaFoto.className = 'gallery-item'; 
                   caixaDaFoto.onclick = () => abrirLightbox(fotoObject.url, fotoObject.nome);
-                  caixaDaFoto.innerHTML = `<img src="${fotoObject.url}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`; 
+                  caixaDaFoto.innerHTML = `<img src="${fotoObject.url}">`; 
                   galeriaHTML.appendChild(caixaDaFoto);
               });
           }
@@ -1798,7 +1217,7 @@
     };
 
     // =====================================================================
-    // O VERDADEIRO MOTOR FORENSE DO GEMINI (BLINDADO CONTRA ERRO 404)
+    // O VERDADEIRO MOTOR FORENSE DO GEMINI (COM OCR E JSON SCHEMA)
     // =====================================================================
     let loaderInterval;
     window.iniciarRadarIAGemini = async () => {
@@ -1811,7 +1230,7 @@
             "Extraindo dados do processo do Firebase...",
             "Iniciando Visão Computacional Avançada nas imagens...",
             "Processando OCR (Extração de Textos das Imagens)...",
-            "Cruzando informações ópticas com o Banco de Dados Cidadão...",
+            "Cruzando informações ópticas com o Banco de Dados...",
             "Avaliando condições visuais e físicas com o Ramo da Empresa...",
             "Construindo Laudo Forense Final..."
         ];
@@ -1829,43 +1248,33 @@
         }, 1500);
 
         try {
-            // PROMPT MASTER: Removida a trava de mime_type que dava erro, a instrução agora FORÇA no texto.
+            // PROMPT MASTER (Instrução direta sem exigir marcação de JSON no texto, pois o Google vai forçar na config)
             let promptDaIA = `
                 ATENÇÃO: VOCÊ É UM SISTEMA DE AUDITORIA FORENSE DE ALTA PRECISÃO (Vigilância Sanitária).
-                Sua tarefa é analisar rigorosamente os dados e imagens fornecidos e identificar QUALQUER fraude ou divergência.
+                Analise os dados e imagens (se houver) e identifique fraudes ou inconsistências.
 
-                DADOS DECLARADOS PELO USUÁRIO:
+                DADOS DECLARADOS:
                 - Razão Social / Nome: ${dadosDoProcesso.nome}
                 - CNPJ / CPF: ${dadosDoProcesso.cnpj}
                 - Ramo de Atividade: ${dadosDoProcesso.tipo}
                 - O que ele marcou no Checklist: ${dadosDoProcesso.docs}
 
-                ANÁLISE EXIGIDA MENTALMENTE ANTES DE RESPONDER:
-                1. EXTRAÇÃO ÓPTICA (OCR): Se houver fotos, leia o texto visível nelas.
-                2. VALIDAÇÃO DE IDENTIDADE: Os nomes ou CNPJs legíveis nas fotos batem EXATAMENTE com os dados declarados acima?
-                3. VALIDAÇÃO VISUAL: Se é um ambiente, ele condiz com o "Ramo de Atividade"?
-                4. DENÚNCIA: Se o Ramo de Atividade for a palavra "🚨 DENÚNCIA", A QUALIDADE DAS PROVAS DEVE SER OBRIGATORIAMENTE 0 (ZERO).
+                ANÁLISE EXIGIDA MENTALMENTE:
+                1. EXTRAÇÃO ÓPTICA (OCR): Leia todo o texto visível nas imagens enviadas.
+                2. VALIDAÇÃO: O nome/CNPJ da foto bate perfeitamente com os dados declarados?
+                3. VALIDAÇÃO VISUAL: A imagem condiz com o "Ramo de Atividade"? (Ex: restaurante mostra foto de cozinha?).
+                4. DENÚNCIA: Se o Ramo for "🚨 DENÚNCIA", a nota OBRIGATORIAMENTE é 0 (zero).
 
                 REGRAS DE PONTUAÇÃO (Score de 0 a 100):
-                - 80 a 100: Tudo perfeito, o documento bate, boas fotos.
-                - 50 a 70: Ele anexou poucas coisas. Talvez só o CNPJ, mas faltam fotos do ambiente.
-                - 0 a 40: Suspeita de fraude, o nome na foto do documento NÃO bate, as fotos não provam nada, não mandou foto NENHUMA, ou é uma Denúncia.
-
-                RETORNE ÚNICA E EXCLUSIVAMENTE UM OBJETO JSON VALIDO, SEGUINDO ESTRITAMENTE A ESTRUTURA ABAIXO. NÃO USE MARCAÇÕES DE CÓDIGO (NÃO COLOQUE \`\`\`json):
-                {
-                  "score_confiabilidade": 90,
-                  "verificacao_documental": "Relatório detalhado se o que você leu na foto bate com o que o usuário escreveu no sistema.",
-                  "inspecao_visual": "Relatório do que você enxergou nas fotos em relação à higiene ou tipo de documento.",
-                  "divergencias_encontradas": "Liste as mentiras, fraudes ou inconsistências encontradas. Se não houver, diga 'Nenhuma divergência grave aparente'.",
-                  "veredito_final": "APROVAR LICENÇA"
-                }
+                - 100: Tudo perfeito, documento bate, boas fotos.
+                - 50 a 70: Mandou fotos, mas falta foto do local ou alvará.
+                - 0 a 40: Suspeita de fraude, nome na foto não bate, não mandou foto NENHUMA, ou é Denúncia.
             `;
             
             let pacoteDeEnvio = [{ "text": promptDaIA }];
             
-            // UTILIZA A FUNÇÃO SEGURA PARA NÃO ENVIAR LIXO PRA API (Evita Erro 400/404)
+            // UTILIZA A FUNÇÃO SEGURA PARA NÃO ENVIAR LIXO PRA API E DAR 404
             if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0) {
-                // Para não estourar a cota da API Gratuita, manda no máximo 3 fotos
                 for (let i = 0; i < Math.min(dadosDoProcesso.evidencias.length, 3); i++) {
                     let objImagemSegura = await obterDadosImagemSeguro(dadosDoProcesso.evidencias[i].url);
                     if(objImagemSegura) {
@@ -1881,34 +1290,44 @@
                 }
             }
 
-            // Chamada da API usando o endpoint oficial e estável gemini-1.5-flash
+            // Chamada Blindada da API usando gemini-1.5-flash com JSON Schema Oficial
             const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             
+            const payloadData = { 
+                "contents": [{ "parts": pacoteDeEnvio }],
+                "generationConfig": {
+                    "response_mime_type": "application/json",
+                    "response_schema": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "score_confiabilidade": { "type": "INTEGER" },
+                            "verificacao_documental": { "type": "STRING" },
+                            "inspecao_visual": { "type": "STRING" },
+                            "divergencias_encontradas": { "type": "STRING" },
+                            "veredito_final": { "type": "STRING" }
+                        },
+                        "required": ["score_confiabilidade", "verificacao_documental", "inspecao_visual", "divergencias_encontradas", "veredito_final"]
+                    }
+                }
+            };
+
             const disparoAPI = await fetch(url_api_gemini, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ 
-                    "contents": [{ "parts": pacoteDeEnvio }]
-                    // Removido o response_mime_type para evitar o 404 em contas free restritas
-                })
+                body: JSON.stringify(payloadData)
             });
 
             if (!disparoAPI.ok) throw new Error(`Erro na API do Google. Status: ${disparoAPI.status}`);
             
             const respostaDaIA = await disparoAPI.json();
             
-            // Validação de Segurança da Estrutura de Retorno para evitar erro de .text indefinido
             if (!respostaDaIA.candidates || !respostaDaIA.candidates[0].content || !respostaDaIA.candidates[0].content.parts) {
-                throw new Error("A IA retornou uma estrutura vazia ou bloqueou o conteúdo (Safety).");
+                throw new Error("A IA retornou uma estrutura vazia.");
             }
 
+            // Pega o texto puro (que a API já garante que é JSON pelo schema)
             let textoDoGemini = respostaDaIA.candidates[0].content.parts[0].text;
-            
-            // Extração Cirúrgica Anti-Erro
-            const matchJson = textoDoGemini.match(/\{[\s\S]*\}/);
-            if (!matchJson) throw new Error("A IA gerou uma resposta que não é JSON reconhecível.");
-            
-            const resultadoJson = JSON.parse(matchJson[0]);
+            const resultadoJson = JSON.parse(textoDoGemini);
 
             // Motor de Segurança Interno: Checa se a pessoa usou a MESMA foto de outro CNPJ
             let suspeitaDeClone = false;
@@ -1923,7 +1342,7 @@
                 }
                 if(suspeitaDeClone) {
                     resultadoJson.score_confiabilidade = 5;
-                    resultadoJson.divergencias_encontradas = "MOTOR DO SERVIDOR (ALERTA VERMELHO): A imagem anexada tem o tamanho binário exato de uma evidência utilizada por outro CNPJ no sistema no passado. Fraude fotográfica comprovada.";
+                    resultadoJson.divergencias_encontradas = "MOTOR DO SERVIDOR (ALERTA VERMELHO): A imagem anexada tem o tamanho binário exato de uma evidência utilizada por outro CNPJ no sistema. Fraude fotográfica comprovada.";
                     resultadoJson.veredito_final = "BLOQUEIO IMEDIATO (CRIME)";
                 }
             }
@@ -1943,13 +1362,13 @@
             // ==========================================
             let notasFallback = {
                 score_confiabilidade: 90,
-                verificacao_documental: "Modo Offline ativo (A API recusou a conexão). O sistema validou apenas a presença de caracteres textuais no banco de dados.",
-                inspecao_visual: "Inspeção por visão computacional indisponível momentaneamente. As fotos constam no banco mas não puderam ser lidas pela IA.",
-                divergencias_encontradas: "A API do Google falhou, porém os documentos básicos parecem ter sido enviados. Recomenda-se verificação humana das imagens na aba ao lado.",
+                verificacao_documental: "Modo Offline ativo (A API Google falhou ou bloqueou a imagem). O sistema validou apenas a presença de caracteres textuais no banco de dados.",
+                inspecao_visual: "Inspeção por visão computacional indisponível momentaneamente.",
+                divergencias_encontradas: "A API do Google falhou, porém os documentos básicos parecem ter sido enviados. Recomenda-se verificação humana.",
                 veredito_final: "APROVAÇÃO VIRTUAL"
             };
             
-            // Aplica as lógicas severas caso a IA tenha caído
+            // Lógicas severas caso a IA tenha caído
             if(dadosDoProcesso.tipo === "🚨 DENÚNCIA") { 
                 notasFallback.score_confiabilidade = 0; 
                 notasFallback.veredito_final = "INTERDIÇÃO CAUTELAR"; 
@@ -1957,11 +1376,11 @@
             } else if(!dadosDoProcesso.evidencias || dadosDoProcesso.evidencias.length === 0) { 
                 notasFallback.score_confiabilidade = 10; 
                 notasFallback.veredito_final = "REPROVAR E BLOQUEAR"; 
-                notasFallback.divergencias_encontradas = "O requerente não enviou ABSOLUTAMENTE NENHUMA foto ou comprovante visual. É impossível expedir licença às cegas."; 
+                notasFallback.divergencias_encontradas = "O requerente não enviou ABSOLUTAMENTE NENHUMA foto ou comprovante visual. Impossível expedir licença às cegas."; 
             } else if(dadosDoProcesso.evidencias.length === 1) { 
                 notasFallback.score_confiabilidade = 40; 
                 notasFallback.veredito_final = "REVISÃO OBRIGATÓRIA (Faltam Provas)"; 
-                notasFallback.divergencias_encontradas = "O requerente anexou apenas 1 imagem. Pode ser apenas o papel do CNPJ e não a foto do local. Isso não prova que o ambiente é seguro."; 
+                notasFallback.divergencias_encontradas = "O requerente anexou apenas 1 imagem. É estatisticamente impossível atestar a segurança de um estabelecimento apenas com 1 foto. Pode ser apenas o papel do CNPJ."; 
             }
             
             setTimeout(() => {
@@ -1990,9 +1409,9 @@
         txtNivelQualidade.innerText = nivelTexto;
         
         // Popula os Laudos
-        document.getElementById('radar-doc-check').innerHTML = dadosIA.verificacao_documental;
-        document.getElementById('radar-visual-check').innerHTML = dadosIA.inspecao_visual;
-        document.getElementById('radar-risk-check').innerHTML = dadosIA.divergencias_encontradas;
+        document.getElementById('radar-doc-check').innerText = dadosIA.verificacao_documental;
+        document.getElementById('radar-visual-check').innerText = dadosIA.inspecao_visual;
+        document.getElementById('radar-risk-check').innerText = dadosIA.divergencias_encontradas;
         document.getElementById('radar-recommendation-text').innerText = dadosIA.veredito_final;
         
         // Animação dos Números da IA Subindo
@@ -2004,7 +1423,7 @@
         }, 30);
     }
 
-    // --- AÇÃO DE SALVAR MUDANÇAS NO BANCO DE DADOS ---
+    // --- AÇÃO DE SALVAR MUDANÇAS (FINANCEIRO E STATUS) ---
     window.salvarEdicaoModal = async () => {
       if(!idProcessoAtual) return;
       const botaoDeSalvar = document.getElementById('btn-salvar-modal');
@@ -2045,7 +1464,7 @@
     };
 
     // =====================================================================
-    // 💬 CHATBOT JURÍDICO INTEGRADO (CONSERTADO: NUNCA MAIS QUEBRA O LAYOUT)
+    // 💬 CHATBOT JURÍDICO INTEGRADO E PROTEGIDO CONTRA ERROS
     // =====================================================================
     window.enviarChat = async () => {
         const campoDeTexto = document.getElementById('chat-input-text'); 
@@ -2054,7 +1473,7 @@
         
         const areaHistorico = document.getElementById('chat-historico');
         
-        // Criando balão do usuário de forma segura (Sem innerHTML +=)
+        // Renderização segura do balão do usuário
         const bolhaUser = document.createElement('div');
         bolhaUser.className = 'chat-msg msg-user';
         bolhaUser.innerText = perguntaDoFiscal;
@@ -2063,7 +1482,7 @@
         campoDeTexto.value = ''; 
         areaHistorico.scrollTop = areaHistorico.scrollHeight;
         
-        // Criando Loader da IA de forma segura
+        // Loader da IA
         const idLoaderChat = 'loader_' + Date.now(); 
         const bolhaLoader = document.createElement('div');
         bolhaLoader.id = idLoaderChat;
@@ -2080,7 +1499,7 @@
         if (idProcessoSelecionadoNoChat && idProcessoSelecionadoNoChat !== "") {
             let p = todosProcessos.find(proc => proc.id === idProcessoSelecionadoNoChat);
             if(p) {
-                promptFinal = `Aja como Auditor Chefe da Vigilância Sanitária de SP. O fiscal selecionou a empresa "${p.nome}" (CNPJ: ${p.cnpj}, Ramo: ${p.tipo}). O checklist alegado foi: ${p.docs}. Mensagem do fiscal para você sobre este caso específico: "${perguntaDoFiscal}". Faça um resumo crítico focado no que ele pediu e cite leis de punição se houver infração aparente nos dados listados. Responda em texto puro, sem usar asteriscos ou formatação.`;
+                promptFinal = `Aja como Auditor Chefe da Vigilância Sanitária de SP. O fiscal selecionou a empresa "${p.nome}" (CNPJ: ${p.cnpj}, Ramo: ${p.tipo}). O checklist alegado foi: ${p.docs}. Mensagem do fiscal para você sobre este caso específico: "${perguntaDoFiscal}". Faça um resumo crítico focado no que ele pediu e cite leis de punição se houver infração aparente nos dados listados. Responda em texto puro, sem usar asteriscos ou formatação markdown.`;
             }
         }
 
