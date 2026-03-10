@@ -41,102 +41,20 @@
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
     /* --- CAPTCHA --- */
-    .captcha-container {
-        background: #f9f9f9;
-        border: 1px solid #d3d3d3;
-        border-radius: 4px;
-        width: 100%;
-        max-width: 300px;
-        height: 74px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 12px;
-        margin: 20px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        user-select: none;
-    }
-
-    .captcha-checkbox {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-        height: 100%;
-        flex-grow: 1;
-    }
-
-    .checkmark-box {
-        width: 24px;
-        height: 24px;
-        border: 2px solid #c1c1c1;
-        border-radius: 2px;
-        background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: 0.2s;
-    }
-
+    .captcha-container { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 4px; width: 100%; max-width: 300px; height: 74px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); user-select: none; }
+    .captcha-checkbox { display: flex; align-items: center; gap: 12px; cursor: pointer; height: 100%; flex-grow: 1; }
+    .checkmark-box { width: 24px; height: 24px; border: 2px solid #c1c1c1; border-radius: 2px; background: #fff; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
     .checkmark-box:hover { border-color: #b2b2b2; }
-
-    .captcha-spinner {
-        width: 18px;
-        height: 18px;
-        border: 3px solid #dbdbdb;
-        border-top: 3px solid #4a90e2;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        display: none;
-    }
-
-    .captcha-check {
-        color: #009688;
-        font-size: 22px;
-        display: none;
-    }
-
-    .captcha-label {
-        font-family: 'Roboto', sans-serif;
-        font-size: 14px;
-        color: #000;
-        font-weight: 500;
-    }
-
-    .captcha-logo {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .captcha-logo img {
-        width: 32px;
-        height: 32px;
-        opacity: 0.6;
-    }
-
-    .captcha-logo span {
-        font-size: 10px;
-        color: #999;
-        margin-top: 2px;
-    }
-
+    .captcha-spinner { width: 18px; height: 18px; border: 3px solid #dbdbdb; border-top: 3px solid #4a90e2; border-radius: 50%; animation: spin 1s linear infinite; display: none; }
+    .captcha-check { color: #009688; font-size: 22px; display: none; }
+    .captcha-label { font-family: 'Roboto', sans-serif; font-size: 14px; color: #000; font-weight: 500; }
+    .captcha-logo { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .captcha-logo img { width: 32px; height: 32px; opacity: 0.6; }
+    .captcha-logo span { font-size: 10px; color: #999; margin-top: 2px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* --- ESTILO PARA MENSAGEM DE SUCESSO DO CPF --- */
-    .cpf-success-msg {
-        background: #dcfce3;
-        color: #166534;
-        padding: 10px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        font-weight: 800;
-        margin-top: 10px;
-        display: none;
-        border: 1px solid #22c55e;
-        text-align: center;
-    }
+    .cpf-success-msg { background: #dcfce3; color: #166534; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; margin-top: 10px; display: none; border: 1px solid #22c55e; text-align: center; }
 
     /* --- WIDGET DE ACESSIBILIDADE LATERAL --- */
     .access-widget { position: fixed; right: 0; top: 40%; transform: translateY(-50%); display: flex; flex-direction: column; z-index: 9999; }
@@ -343,12 +261,15 @@
     .input-with-icon .form-control { padding-left: 55px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .char-counter { text-align: right; font-size: 0.85rem; color: #999; margin-top: -10px; margin-bottom: 15px; }
-    .fake-upload-zone { border: 3px dashed #e0e0e0; border-radius: 15px; padding: 30px; text-align: center; background: #fafafa; cursor: pointer; transition: 0.3s; margin-bottom: 25px; }
-    .fake-upload-zone:hover { border-color: var(--sp-red); background: #fff5f5; }
-    .fake-upload-zone i { font-size: 3rem; color: var(--sp-red); margin-bottom: 15px; }
-    .fake-upload-zone h4 { color: var(--text-dark); margin-bottom: 5px; }
-    .fake-upload-zone p { color: #666; font-size: 0.9rem; }
-    .upload-warning { background: #fff3cd; color: #856404; padding: 10px 20px; border-radius: 50px; font-size: 0.85rem; display: inline-block; margin-top: 15px; font-weight: 800; }
+    
+    /* Novo estilo de Upload para Denúncia */
+    .file-upload-zone { border: 3px dashed #cbd5e0; border-radius: 15px; padding: 25px; text-align: center; background: #f8fafc; transition: 0.3s; margin-bottom: 25px; position: relative; }
+    .file-upload-zone:hover { border-color: var(--sp-red); background: #fff5f5; }
+    .file-upload-zone i { font-size: 2.5rem; color: var(--sp-red); margin-bottom: 10px; }
+    .file-upload-zone h4 { color: var(--text-dark); margin-bottom: 5px; font-size: 1.1rem; }
+    .file-upload-zone p { color: #64748b; font-size: 0.85rem; }
+    .file-upload-zone input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    
     .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 900; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
@@ -392,6 +313,11 @@
       .brand img { height: 52px; }
       .brand-text h1 { font-size: 1.05rem; }
       .brand-text span { font-size: 0.68rem; }
+      
+      /* Aumentando botões e inputs no mobile */
+      .form-control { padding: 18px 16px; font-size: 1.05rem; }
+      .btn-primary, .btn-success, .btn-report { padding: 20px 15px; font-size: 1.1rem; }
+      
       .btn-login { padding: 10px 12px; font-size: 0.88rem; border-radius: 12px; gap: 8px; }
       .btn-login i { font-size: 1.05rem; }
       .hero { min-height: 610px; padding-top: 18px; padding-bottom: 120px; }
@@ -574,7 +500,7 @@
                 <input type="text" class="form-control" id="nome_pf" placeholder="Digite seu Nome Completo" />
                   
                 <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Data de Nascimento</label>
-                <input type="text" class="form-control" id="data_nasc_pf" placeholder="dd/mm/aaaa" />
+                <input type="text" class="form-control" id="data_nasc_pf" placeholder="DD/MM/AAAA" maxlength="10" oninput="window.maskData(this)" />
                   
                 <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome do Estabelecimento / Nome Fantasia (Opcional)</label>
                 <input type="text" class="form-control" id="nome_fantasia_pf" placeholder="Ex: Salão da Maria, Mercadinho Silva..." />
@@ -639,7 +565,7 @@
               </div>
 
               <button type="submit" class="btn-success" id="btn-enviar-whatsapp" style="display: none; margin-top: 25px;">
-                <i class="fab fa-whatsapp"></i> Enviar Formulário de Análise
+                <i class="fas fa-paper-plane"></i> Enviar Formulário de Análise
               </button>
             </form>
           </div>
@@ -794,14 +720,14 @@
 
   <section id="contato" class="report-section">
     <div class="container">
-      <div class="report-header"><h2>Central de Denúncias 2.0</h2><p>Canal oficial para comunicar irregularidades sanitárias. Sua identidade é protegida por lei e o sigilo é absoluto.</p></div>
+      <div class="report-header"><h2>Central de Denúncias</h2><p>Canal oficial para comunicar irregularidades sanitárias. Sua identidade é protegida por lei e o sigilo é absoluto.</p></div>
       <div class="report-grid">
         <div class="report-guide">
           <h3><i class="fas fa-info-circle"></i> Guia do Denunciante</h3>
           <ol class="guide-steps">
             <li>Deturpe o Problema<p>Seja específico: o que, onde e quando ocorreu.</p></li>
-            <li>Anexe Evidências<p>Fotos e vídeos aumentam a eficácia da fiscalização.</p></li>
-            <li>Acompanhe<p>O protocolo será gerado via WhatsApp para acompanhamento.</p></li>
+            <li>Anexe Evidências<p>Apenas fotos são aceitas no sistema online.</p></li>
+            <li>Acompanhe<p>A denúncia será enviada diretamente à base de dados dos fiscais de plantão.</p></li>
           </ol>
           <div class="anon-badge"><i class="fas fa-user-secret"></i> Anonimato Garantido pela Lei 12.527</div>
         </div>
@@ -823,20 +749,33 @@
               </div>
             </div>
             <input type="text" class="form-control" id="resumo_outros" placeholder="Descreva o motivo (máx 50 letras)" style="display: none;" maxlength="50" />
+            
+            <div class="input-with-icon">
+              <i class="fas fa-search"></i>
+              <input type="text" class="form-control" id="cnpj_denuncia" placeholder="CNPJ do local (Opcional - Busca Automática)" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
+            </div>
+            <div id="loading-cnpj-denuncia" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px; margin-top: -10px; margin-left: 10px;"><i class="fas fa-spinner fa-spin"></i> Localizando endereço...</div>
+
             <div class="input-with-icon">
               <i class="fas fa-map-marker-alt"></i>
               <input type="text" class="form-control" id="local" placeholder="Nome do estabelecimento e endereço completo *" required />
             </div>
+            
             <div class="input-with-icon">
               <i class="fas fa-pencil-alt"></i>
               <textarea id="relato" class="form-control" rows="4" placeholder="Descreva a situação com o máximo de detalhes possível... *" maxlength="500" onkeyup="window.countChars(this)"></textarea>
             </div>
             <div class="char-counter"><span id="charNum">0</span>/500 caracteres</div>
-            <div class="fake-upload-zone" onclick="alert('O envio de fotos sera feito na conversa do WhatsApp na proxima etapa.')">
-              <i class="fas fa-cloud-upload-alt"></i><h4>Evidencias (Fotos/Videos)</h4><p>Clique para adicionar midias a sua denuncia.</p>
-              <span class="upload-warning">O envio real sera feito via WhatsApp na proxima tela.</span>
+            
+            <div class="file-upload-zone" style="cursor: pointer; position: relative;">
+              <i class="fas fa-camera"></i>
+              <h4>Evidências (Apenas Fotos)</h4>
+              <p>Toque para abrir a Câmera ou Galeria</p>
+              <input type="file" id="evidencia_denuncia" accept="image/*" multiple style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" onchange="window.mostrarQtdFotosDenuncia(this)">
+              <div id="qtd-fotos-denuncia" style="margin-top: 10px; font-weight: bold; color: var(--sp-red);"></div>
             </div>
-            <button type="submit" class="btn-report">Registrar Denuncia Segura <i class="fab fa-whatsapp"></i></button>
+            
+            <button type="submit" class="btn-report" id="btn-submit-denuncia">Registrar Denúncia Segura <i class="fas fa-paper-plane"></i></button>
           </form>
         </div>
       </div>
@@ -890,9 +829,9 @@
   </div>
 
   <script type="module">
-    // 1. IMPORTAÇÕES FIREBASE (SEM O STORAGE, SÓ O BANCO DE DADOS)
+    // IMPORTAÇÕES FIREBASE
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
     // --- CHAVES DO FIREBASE ---
     const firebaseConfig = {
@@ -903,13 +842,14 @@
       messagingSenderId: "76689989548",
       appId: "1:76689989548:web:5c86741e60ce385102a409"
     };
-    // --------------------------
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     // FUNÇÕES GLOBAIS GERAIS
+    window.idPedidoConsultaAtual = null; 
     window.captchaValidado = false;
+    
     window.ativarCaptcha = function() {
         if(window.captchaValidado) return;
         document.getElementById('captcha-spinner').style.display = 'block';
@@ -929,6 +869,17 @@
         v = v.replace(/^(\d{2})(\d)/, '$1.$2'); v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3'); v = v.replace(/\.(\d{3})(\d)/, '.$1/$2'); v = v.replace(/(\d{4})(\d)/, '$1-$2');
       }
       i.value = v;
+    };
+
+    // MÁSCARA DATA DE NASCIMENTO (NOVO)
+    window.maskData = function(i) {
+        let v = i.value.replace(/\D/g,'');
+        if(v.length >= 5) {
+            v = v.replace(/(\d{2})(\d{2})(\d{1,4})/, '$1/$2/$3');
+        } else if(v.length >= 3) {
+            v = v.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+        }
+        i.value = v;
     };
 
     window.validarCPF = function(cpf) {
@@ -1030,8 +981,8 @@
           <div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;">
             <label class="doc-item"><input type="checkbox" class="doc-check" value="${valor}" onchange="window.toggleUpload(this)"/><i class="fas ${icone}"></i><span>${titulo}</span></label>
             <div class="file-upload" style="display:none;">
-              <p style="font-size:0.75rem; color:#666; margin-bottom:5px;">Tire uma foto legível:</p>
-              <input type="file" class="form-control" style="padding: 6px; font-size: 0.75rem; border: 1px dashed var(--gov-blue); background: #f8fafc;" accept="image/*" capture="environment">
+              <p style="font-size:0.75rem; color:#666; margin-bottom:5px;">Anexe a foto do documento (Câmera ou Galeria):</p>
+              <input type="file" class="form-control" style="padding: 6px; font-size: 0.75rem; border: 1px dashed var(--gov-blue); background: #f8fafc;" accept="image/*">
             </div>
           </div>
         `;
@@ -1091,10 +1042,64 @@
       window.open(url, '_blank');
     };
 
-    window.enviarAssinaturaEmail = function() {
-      const cnpj = document.getElementById('consulta_cnpj').value || 'Não Informado';
-      alert('Atenção: Será aberto o seu aplicativo de e-mail. Por favor, ANEXE o arquivo que você acabou de selecionar lá no e-mail antes de enviar!');
-      window.location.href = 'mailto:vigilanciasanitariaspgov1@gmail.com?subject=Documento Assinado - CNPJ ' + cnpj + '&body=Olá,%0D%0A%0D%0ASegue em anexo o certificado provisório devidamente assinado para validação no sistema.';
+    // FUNÇÃO QUE ESPREME QUALQUER IMAGEM PARA CABER NO FIREBASE
+    const comprimirEConverterFoto = (file) => {
+      return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = (event) => {
+              const img = new Image();
+              img.src = event.target.result;
+              img.onload = () => {
+                  const canvas = document.createElement('canvas');
+                  const MAX_WIDTH = 700;
+                  let width = img.width;
+                  let height = img.height;
+
+                  if (width > MAX_WIDTH) {
+                      height = Math.round((height * MAX_WIDTH) / width);
+                      width = MAX_WIDTH;
+                  }
+                  canvas.width = width;
+                  canvas.height = height;
+                  const ctx = canvas.getContext('2d');
+                  ctx.drawImage(img, 0, 0, width, height);
+                  const base64Reduzido = canvas.toDataURL('image/jpeg', 0.5);
+                  resolve(base64Reduzido);
+              };
+          };
+      });
+    };
+
+    // ENVIA A FOTO DO DOCUMENTO ASSINADO PRO ADMIN
+    window.enviarAssinatura = async function(inputElement) {
+        if (!inputElement.files || inputElement.files.length === 0) return;
+        if (!window.idPedidoConsultaAtual) return alert("Erro: Protocolo não encontrado.");
+
+        const labelBtn = document.getElementById('label-upload-assinado');
+        const textoOriginal = labelBtn.innerHTML;
+        
+        labelBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando para o Fiscal...';
+        labelBtn.style.pointerEvents = 'none';
+        
+        try {
+            const arquivo = inputElement.files[0];
+            const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+            
+            const docRef = doc(db, "pedidos", window.idPedidoConsultaAtual);
+            await updateDoc(docRef, {
+                documento_assinado: fotoTextoBase64
+            });
+            
+            labelBtn.innerHTML = '<i class="fas fa-check-circle"></i> Documento Recebido com Sucesso!';
+            labelBtn.style.background = '#10b981'; // Fica verde escuro
+            alert("Perfeito! A foto do documento assinado foi enviada diretamente para o sistema da COVISA.");
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao enviar o documento. Tente novamente.");
+            labelBtn.innerHTML = textoOriginal;
+            labelBtn.style.pointerEvents = 'auto';
+        }
     };
 
     window.verificarOutros = function(sel) {
@@ -1107,44 +1112,22 @@
         document.getElementById("charNum").innerHTML = obj.value.length; 
     };
 
+    window.mostrarQtdFotosDenuncia = function(input) {
+        const div = document.getElementById('qtd-fotos-denuncia');
+        if(input.files.length > 0) {
+            div.innerText = `${input.files.length} foto(s) selecionada(s) prontas para envio.`;
+        } else {
+            div.innerText = '';
+        }
+    }
+
     window.toggleChat = function() {
       const c = document.getElementById('chat-interface');
       c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
     };
 
     window.gerarPDF = async function() {
-        alert("Função de PDF disponível após pagamento.");
-    };
-
-    // --- FUNÇÃO MÁGICA: COMPRIME A FOTO E VIRA BASE64 ---
-    const comprimirEConverterFoto = (file) => {
-      return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = (event) => {
-              const img = new Image();
-              img.src = event.target.result;
-              img.onload = () => {
-                  const canvas = document.createElement('canvas');
-                  const MAX_WIDTH = 700; // Deixa a imagem leve mas visível
-                  let width = img.width;
-                  let height = img.height;
-
-                  if (width > MAX_WIDTH) {
-                      height = Math.round((height * MAX_WIDTH) / width);
-                      width = MAX_WIDTH;
-                  }
-                  canvas.width = width;
-                  canvas.height = height;
-                  const ctx = canvas.getContext('2d');
-                  ctx.drawImage(img, 0, 0, width, height);
-                  
-                  // Qualidade 50% para garantir que cabe no Firebase
-                  const base64Reduzido = canvas.toDataURL('image/jpeg', 0.5);
-                  resolve(base64Reduzido);
-              };
-          };
-      });
+        alert("Função de PDF disponível. Prepare a impressão!");
     };
 
     // --- EVENTOS E LOGICA PRINCIPAL ---
@@ -1168,11 +1151,6 @@
           ans.style.maxHeight = item.classList.contains('active') ? ans.scrollHeight + "px" : null;
         });
       });
-
-      function enviarWhatsApp(texto) {
-        const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(texto);
-        window.open(url, '_blank');
-      }
 
       function atualizarBarraProgresso(step) {
         document.getElementById('barra-progresso').style.display = 'flex';
@@ -1202,6 +1180,26 @@
         }, 1000);
       }
 
+      // BUSCA DE CNPJ PARA A ÁREA DE DENÚNCIA
+      const docInputDenuncia = document.getElementById('cnpj_denuncia');
+      docInputDenuncia.addEventListener('keyup', async function(e) {
+          let valLimpo = this.value.replace(/\D/g, '');
+          if (valLimpo.length === 14) {
+              document.getElementById('loading-cnpj-denuncia').style.display = 'block';
+              try {
+                let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`);
+                let dados = await req.json();
+                if(dados.razao_social) {
+                  let nomeEstabelecimento = dados.nome_fantasia || dados.razao_social;
+                  let enderecoFull = `${dados.logradouro}, ${dados.numero} - ${dados.bairro}, ${dados.municipio} - ${dados.uf}`;
+                  document.getElementById('local').value = `${nomeEstabelecimento} | ${enderecoFull}`;
+                }
+              } catch(error) { console.log("CNPJ Denúncia não encontrado"); }
+              document.getElementById('loading-cnpj-denuncia').style.display = 'none';
+          }
+      });
+
+      // BUSCA DE CNPJ PARA A ÁREA DE REGULARIZAÇÃO
       const docInput = document.getElementById('cnpj_empresa');
       docInput.addEventListener('keyup', async function(e) {
           let valLimpo = this.value.replace(/\D/g, '');
@@ -1276,7 +1274,7 @@
 
                   const enderecoCompleto = `${dados.logradouro}, ${dados.numero}, ${dados.municipio}, ${dados.uf}`;
                   // CORREÇÃO DO HTTP PARA HTTPS AQUI
-                  const mapUrl = `https://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+                  const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
                   
                   document.getElementById('map-container').style.display = 'block';
                   document.getElementById('google-map-frame').src = mapUrl;
@@ -1288,14 +1286,10 @@
           }
       });
 
-      // --- LOGICA DE ENVIO DO FORMULARIO (MÉTODO BASE64 - SEM CARTÃO) ---
+      // ENVIO REGULARIZAÇÃO
       document.getElementById('form-regularizacao').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        if(!window.captchaValidado) {
-            alert("Por favor, confirme que você não é um robô.");
-            return;
-        }
+        if(!window.captchaValidado) { alert("Por favor, confirme que você não é um robô."); return; }
 
         const btnSubmit = document.getElementById('btn-enviar-whatsapp');
         const textoOriginal = btnSubmit.innerHTML;
@@ -1304,13 +1298,10 @@
 
         try {
             const todasOpcoes = document.querySelectorAll('.doc-check');
-            const marcados = []; 
-            const naoMarcados = [];
-            let erroUpload = false;
-            let nomeDocErro = "";
+            const marcados = []; const naoMarcados = [];
+            let erroUpload = false; let nomeDocErro = "";
             const listaEvidencias = [];
 
-            // Validação e Coleta de Fotos (Compressão Máxima)
             for (const el of todasOpcoes) {
                 if(el.checked) {
                     marcados.push(el.value);
@@ -1320,29 +1311,21 @@
                     if(fileInput && fileInput.files.length === 0) {
                         erroUpload = true; nomeDocErro = nomeDoc;
                     } else if (fileInput && fileInput.files.length > 0) {
-                        // USA NOSSA FUNÇÃO PARA TRANSFORMAR EM TEXTO E DIMINUIR TAMANHO
                         const arquivo = fileInput.files[0];
                         const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
-                        
                         listaEvidencias.push({ nome: nomeDoc, url: fotoTextoBase64 });
                     }
-                } else {
-                    naoMarcados.push(el.value);
-                }
+                } else { naoMarcados.push(el.value); }
             }
 
             if(erroUpload) {
                 alert(`ERRO DE SEGURANÇA:\nVocê marcou que possui "${nomeDocErro}", mas não anexou a foto.\nAnexe o arquivo ou desmarque a opção.`);
-                btnSubmit.innerHTML = textoOriginal;
-                btnSubmit.disabled = false;
-                return;
+                btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return;
             }
 
             if (marcados.length === 0 && todasOpcoes.length > 0) {
                 alert("Selecione e comprove pelo menos um documento.");
-                btnSubmit.innerHTML = textoOriginal;
-                btnSubmit.disabled = false;
-                return; 
+                btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return; 
             }
 
             const nomePJ = document.getElementById('nome_empresa').value;
@@ -1353,25 +1336,17 @@
             const tipo = document.getElementById('tipo_estab').value;
             const docsTextAdmin = `POSSUI: ${marcados.join(", ")}\nFALTA: ${naoMarcados.join(", ")}`;
 
-            // SALVA DIRETO NO FIRESTORE (SEM STORAGE)
             await addDoc(collection(db, "pedidos"), {
-                nome: nomeFinal,
-                cnpj: cnpj,
-                tipo: tipo,
-                docs: docsTextAdmin,
-                evidencias: listaEvidencias, 
-                valor: null,
-                pago: false,
+                nome: nomeFinal, cnpj: cnpj, tipo: tipo, docs: docsTextAdmin,
+                evidencias: listaEvidencias, valor: null, pago: false,
                 data: new Date().toLocaleString()
             });
 
             alert("Sucesso! Documentos enviados para análise.");
-            
             document.getElementById('form-regularizacao').reset();
             document.getElementById('area-checklist').style.display = 'none';
             document.getElementById('btn-enviar-whatsapp').style.display = 'none';
             window.limparCamposEndereco();
-            
             window.alternarAba('pagamento');
             document.getElementById('consulta_cnpj').value = cnpj;
 
@@ -1379,12 +1354,64 @@
             console.error(error);
             alert("Erro ao enviar. Verifique se anexou muitas fotos grandes de uma vez.");
         } finally {
+            btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false;
+        }
+      });
+
+      // ENVIO DENÚNCIA DIRETO PRO ADMIN (NOVO)
+      document.getElementById('form-denuncia').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btnSubmit = document.getElementById('btn-submit-denuncia');
+        const textoOriginal = btnSubmit.innerHTML;
+        btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando Sigilosamente...';
+        btnSubmit.disabled = true;
+
+        try {
+            let assunto = document.getElementById('assunto').value;
+            if (assunto === 'Outros') assunto = "Outros: " + document.getElementById('resumo_outros').value;
+            const local = document.getElementById('local').value;
+            const relato = document.getElementById('relato').value;
+            const cnpj_denuncia = document.getElementById('cnpj_denuncia').value;
+            
+            const fileInputDenuncia = document.getElementById('evidencia_denuncia');
+            const listaEvidenciasDenuncia = [];
+
+            if (fileInputDenuncia.files.length > 0) {
+                // Loop por todas as fotos de denúncia anexadas
+                for (let i = 0; i < fileInputDenuncia.files.length; i++) {
+                    const arquivo = fileInputDenuncia.files[i];
+                    const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+                    listaEvidenciasDenuncia.push({ nome: `Evidência ${i+1}`, url: fotoTextoBase64 });
+                }
+            }
+
+            // SALVA A DENÚNCIA NA MESMA COLEÇÃO "pedidos" DO ADMIN
+            await addDoc(collection(db, "pedidos"), {
+                nome: "DENÚNCIA: " + assunto,
+                cnpj: cnpj_denuncia || "Não informado",
+                tipo: "🚨 DENÚNCIA",
+                docs: `Local: ${local}\n\nRelato: ${relato}`,
+                evidencias: listaEvidenciasDenuncia,
+                valor: null,
+                pago: false,
+                data: new Date().toLocaleString()
+            });
+
+            alert("Denúncia registrada com sucesso! A base central de fiscalização já recebeu seu protocolo anonimamente.");
+            document.getElementById('form-denuncia').reset();
+            document.getElementById('qtd-fotos-denuncia').innerText = "";
+
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao enviar a denúncia. Tente novamente.");
+        } finally {
             btnSubmit.innerHTML = textoOriginal;
             btnSubmit.disabled = false;
         }
       });
 
-      // --- LÓGICA DE CONSULTA ---
+      // CONSULTA STATUS
       document.getElementById('form-consulta').addEventListener('submit', async (e) => {
         e.preventDefault();
         const cnpj = document.getElementById('consulta_cnpj').value;
@@ -1406,10 +1433,12 @@
                 document.getElementById('barra-progresso').style.display = 'none';
             } else {
                 const pedido = snapshot.docs[0].data();
+                window.idPedidoConsultaAtual = snapshot.docs[0].id;
                 
                 if (pedido.pago === true) {
                     divPix.style.display = 'none'; divMsg.style.display = 'block';
                     divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
+                    
                     textMsg.innerHTML = `
                         <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
                         <strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>
@@ -1419,11 +1448,13 @@
                             <i class="fas fa-file-pdf"></i> Baixar Licença Provisória
                         </button>
                         <p style="font-size:0.85rem; color:#64748b; font-weight:800; margin-bottom:10px; border-top: 1px solid #eee; padding-top: 15px;">PASSO FINAL OBRIGATÓRIO:</p>
-                        <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e anexe-o clicando no botão abaixo.</p>
-                        <label for="upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 1rem; padding: 16px; background: #1a73e8; border-radius: 8px; color: white; justify-content: center; gap: 10px;">
-                            <i class="fas fa-envelope"></i> Enviar Documento Assinado
+                        <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e tire uma foto clicando no botão abaixo.</p>
+                        
+                        <label for="upload-assinado" id="label-upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 1rem; padding: 16px; background: #1a73e8; border-radius: 8px; color: white; justify-content: center; gap: 10px; transition: 0.3s;">
+                            <i class="fas fa-file-upload"></i> Enviar Foto do Documento Assinado
                         </label>
-                        <input type="file" id="upload-assinado" style="display:none;" accept="application/pdf, image/*" onchange="window.enviarAssinaturaEmail()">
+                        <input type="file" id="upload-assinado" style="display:none;" accept="image/*" onchange="window.enviarAssinatura(this)">
+                        
                         </div>
                     `;
                     atualizarBarraProgresso(4); 
@@ -1448,16 +1479,6 @@
         } finally {
             btnConsulta.innerHTML = '<i class="fas fa-search"></i> Consultar';
         }
-      });
-
-      document.getElementById('form-denuncia').addEventListener('submit', (e) => {
-        e.preventDefault();
-        let assunto = document.getElementById('assunto').value;
-        if (assunto === 'Outros') assunto = "Outros: " + document.getElementById('resumo_outros').value;
-        const local = document.getElementById('local').value;
-        const relato = document.getElementById('relato').value;
-        const msg = "DENUNCIA SIGILOSA OFICIAL\n\nMOTIVO: " + assunto + "\nLOCAL: " + local + "\nRELATO: " + relato;
-        enviarWhatsApp(msg);
       });
 
       document.getElementById('chat-form').addEventListener('submit', (e) => {
