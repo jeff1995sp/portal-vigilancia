@@ -11,31 +11,24 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    /* =====================================================================
-       VARIÁVEIS GLOBAIS DE ESTILO (THEME ENGINE)
-       ===================================================================== */
     :root {
       --bg-body: #050b14; 
       --bg-sidebar: #02060d;
       --bg-card: #0f172a;
       --bg-card-hover: #1e293b;
-      
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --text-light: #e2e8f0;
       --font-base: 'Inter', sans-serif;
       --font-code: 'JetBrains Mono', monospace;
-      
       --primary: #3b82f6;
       --primary-hover: #2563eb;
       --secondary: #0ea5e9;
       --accent: #38bdf8;
-      
       --gemini-purple: #c084fc;
       --gemini-dark: #7e22ce;
       --gemini-bg: rgba(192, 132, 252, 0.08);
       --gemini-gradient: linear-gradient(135deg, #c084fc, #ec4899, #3b82f6);
-      
       --success: #10b981;
       --success-bg: rgba(16, 185, 129, 0.12);
       --warning: #f59e0b;
@@ -44,14 +37,12 @@
       --danger-bg: rgba(239, 68, 68, 0.12);
       --info: #3b82f6;
       --info-light: rgba(59, 130, 246, 0.12);
-      
       --border: #1e293b;
       --border-light: #334155;
       --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
       --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
       --shadow-modal: 0 30px 60px -15px rgba(0, 0, 0, 0.9);
-      
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 16px;
@@ -60,7 +51,6 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-base); outline: none; -webkit-font-smoothing: antialiased; }
-
     body { background-color: var(--bg-body); color: var(--text-main); width: 100vw; height: 100vh; overflow: hidden; font-size: 14px; }
     
     ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -68,9 +58,6 @@
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-    /* =====================================================================
-       TELA DE LOGIN / LOCK SCREEN
-       ===================================================================== */
     #lock-screen {
       position: fixed; inset: 0; background: #02040a; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
       background-image: radial-gradient(circle at center, #0f172a 0%, #000000 100%); transition: opacity 0.5s ease, visibility 0.5s ease;
@@ -84,9 +71,6 @@
     .btn-unlock { width: 100%; background: var(--primary); color: white; border: none; padding: 20px; border-radius: var(--radius-md); font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 12px; text-transform: uppercase; letter-spacing: 1px; }
     .btn-unlock:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4); }
 
-    /* =====================================================================
-       ESTRUTURA PRINCIPAL (LAYOUT)
-       ===================================================================== */
     #app-container { display: flex; width: 100%; height: 100%; background: var(--bg-body); }
     
     .sidebar { width: 290px; height: 100%; background-color: var(--bg-sidebar); display: flex; flex-direction: column; z-index: 100; border-right: 1px solid var(--border); flex-shrink: 0; }
@@ -119,9 +103,6 @@
     .user-info span { font-size: 0.8rem; color: var(--gemini-purple); font-weight: 800; }
     .avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--gemini-gradient); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 15px rgba(192, 132, 252, 0.3); }
 
-    /* =====================================================================
-       COMPONENTES REUTILIZÁVEIS E VIEWS
-       ===================================================================== */
     .view-container { flex: 1; overflow-y: auto; position: relative; padding: 50px 60px; }
     .page-view { display: none; animation: fadeInView 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
     .page-view.active { display: block; }
@@ -147,9 +128,6 @@
     .form-input { width: 100%; padding: 18px 22px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 1.05rem; color: white; background: var(--bg-sidebar); font-family: inherit; transition: 0.3s; }
     .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
 
-    /* =====================================================================
-       CARDS E GRÁFICOS
-       ===================================================================== */
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; margin-bottom: 50px; }
     .stat-card { background: var(--bg-card); padding: 35px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 25px; position: relative; overflow: hidden; transition: all 0.3s ease; }
     .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--border-light); }
@@ -166,9 +144,6 @@
     .chart-header { font-size: 1.3rem; font-weight: 800; color: white; margin-bottom: 25px; }
     .chart-container { position: relative; height: 350px; width: 100%; }
 
-    /* =====================================================================
-       TABELAS DE DADOS
-       ===================================================================== */
     .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; margin-bottom: 50px; box-shadow: var(--shadow-md); }
     .data-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
     .data-header h2 { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 15px; margin: 0; color: white; }
@@ -193,9 +168,6 @@
     .badge-pago { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-denuncia { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
-    /* =====================================================================
-       FINANCEIRO, LEIS E CALCULADORA
-       ===================================================================== */
     .laws-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 50px; }
     .law-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 35px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
     .law-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; }
@@ -208,18 +180,12 @@
     .calc-form { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
     .calc-result { flex: 1; background: var(--bg-sidebar); padding: 40px; border-radius: var(--radius-md); border: 2px dashed var(--primary); text-align: center; display: flex; flex-direction: column; justify-content: center;}
 
-    /* =====================================================================
-       MAPA DE CALOR
-       ===================================================================== */
     .heatmap-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
     .heat-zone { background: var(--bg-card); border: 1px solid var(--border); padding: 35px 20px; border-radius: var(--radius-xl); text-align: center; transition: 0.3s; position: relative; box-shadow: var(--shadow-sm);}
     .heat-zone:hover { transform: translateY(-5px); border-color: var(--text-muted); box-shadow: var(--shadow-md);}
     .progress-bar-bg { width: 100%; height: 10px; background: var(--bg-sidebar); border-radius: 10px; margin-top: 25px; overflow: hidden; }
     .progress-bar-fill { height: 100%; border-radius: 10px; transition: width 1.5s ease-out; }
 
-    /* =====================================================================
-       CHATBOT JURÍDICO E BALÕES
-       ===================================================================== */
     .chat-container { display: flex; flex-direction: column; height: 700px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); }
     .chat-header { background: var(--bg-sidebar); padding: 25px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
     .chat-history { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; background: var(--bg-body); scroll-behavior: smooth; }
@@ -233,9 +199,6 @@
     .chat-input-area input { flex: 1; padding: 20px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; }
     .chat-input-area input:focus { border-color: var(--gemini-purple); }
 
-    /* =====================================================================
-       MODAL DE AUDITORIA FORENSE E ABAS
-       ===================================================================== */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
     .modal-box { background: var(--bg-body); width: 100%; max-width: 1100px; border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border); animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes modalIn { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
@@ -258,7 +221,6 @@
     .tab-content.active { display: block; }
     @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Radar IA Visual */
     .radar-loading { text-align: center; padding: 80px 20px; display: flex; flex-direction: column; align-items: center; gap: 25px; }
     .radar-scanner { position: relative; width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 5rem; color: var(--gemini-purple); overflow: hidden; box-shadow: 0 0 40px rgba(168, 85, 247, 0.2); }
     .radar-scanner::after { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6)); transform-origin: left center; animation: radarScan 1.5s linear infinite; }
@@ -281,7 +243,6 @@
     .ai-recommendation h4 { font-size: 0.9rem; text-transform: uppercase; color: #d8b4fe; margin-bottom: 10px; font-weight: 800;}
     .ai-recommendation p { font-size: 1.6rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
     
-    /* Alerta de Modo Offline / Erro de API visível */
     .alerta-offline { display: flex; align-items: center; gap: 15px; padding: 20px; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--warning); border-radius: var(--radius-md); color: var(--warning); font-weight: bold; margin-bottom: 25px; }
 
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
@@ -303,9 +264,6 @@
 
     .modal-footer { padding: 30px 40px; border-top: 1px solid var(--border); background: var(--bg-sidebar); border-radius: 0 0 var(--radius-2xl) var(--radius-2xl); display: flex; justify-content: flex-end; gap: 20px; }
 
-    /* =====================================================================
-       LIGHTBOX E TOASTS (NOTIFICAÇÕES)
-       ===================================================================== */
     #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(10px);}
     #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--radius-lg); border: 2px solid #333; box-shadow: 0 0 60px rgba(0,0,0,0.8);}
     #lightbox-title { color: white; margin-top: 25px; font-size: 1.5rem; font-weight: 800; letter-spacing: 0.5px; }
@@ -807,7 +765,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-    // CHAVES OFICIAIS DO BANCO DE DADOS FIREBASE
     const firebaseConfig = {
       apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
       authDomain: "site-8dfaf.firebaseapp.com",
@@ -820,17 +777,15 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // CHAVE DO GEMINI API (Exposta no front conforme instruído, mas ciente dos riscos)
+    // A CHAVE NOVA JÁ ESTÁ AQUI
     const GEMINI_API_KEY = "AIzaSyAzejnmBFdDwFLg8K_rzCJcyzMXvSlbxnQ";
 
-    // Variáveis de Estado Global
     let idProcessoAtual = null;
     let dadosProcessoAtual = null; 
     let todosProcessos = []; 
     let chartBar, chartDoughnut;
     const logsAuditoria = [];
     
-    // --- SISTEMA DE LOGS DE AUDITORIA ---
     function registrarLog(acaoRealizada, detalhesTecnicos, nivel = "INFO") {
         const log = { dataHora: new Date().toLocaleString(), acao: acaoRealizada, detalhes: detalhesTecnicos, nivel };
         logsAuditoria.unshift(log);
@@ -852,7 +807,6 @@
         }
     }
 
-    // --- NAVEGAÇÃO SPA ---
     window.switchView = (viewId, elementClicked) => {
         document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
@@ -861,7 +815,6 @@
         registrarLog("Navegação", `Acessou o módulo: ${viewId}`);
     }
 
-    // --- MENSAGENS TOASTS ---
     window.showToast = (titulo, mensagem, tipo = 'success') => {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -881,7 +834,6 @@
       setTimeout(() => { toast.remove(); }, 4500);
     }
 
-    // --- SEGURANÇA E LOCK SCREEN ---
     window.checkPin = () => {
       const pinValor = document.getElementById('pin-input').value;
       if (pinValor === '1533') { 
@@ -900,7 +852,6 @@
       }
     }
 
-    // --- EXTRAÇÃO SEGURA DE IMAGENS (PREVINE CORS) ---
     async function obterDadosImagemSeguro(urlOuBase64) {
         if (!urlOuBase64) return null;
         
@@ -933,7 +884,6 @@
         return null;
     }
 
-    // --- SINCRONIZAÇÃO EM TEMPO REAL COM FIREBASE ---
     const fireQuery = query(collection(db, "pedidos"), orderBy("data", "desc"));
     
     onSnapshot(fireQuery, (snapshot) => {
@@ -1085,7 +1035,6 @@
         });
     }
 
-    // --- FILTROS E CSV ---
     window.aplicarFiltros = () => {
         const selectStatus = document.getElementById('filtro-status').value;
         const selectRamo = document.getElementById('filtro-ramo').value;
@@ -1133,9 +1082,6 @@
         showToast("Download Concluído", "Base exportada com sucesso.", "success");
     }
 
-    // =======================================================
-    // MOTOR DE INTELIGÊNCIA ARTIFICIAL GEMINI E MODAL (BLINDADO)
-    // =======================================================
     window.abrirAba = (idDaAba, botaoClicado) => {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
@@ -1201,9 +1147,7 @@
           if(selectStatus === 'pago') textoZap += `PARABÉNS! Sua licença sanitária foi *APROVADA*.`;
           document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(textoZap)}`;
 
-          // Reset do container de alerta offline
           document.getElementById('alerta-offline-container').innerHTML = '';
-          
           iniciarRadarIAGemini();
         }
       } catch (e) { 
@@ -1216,9 +1160,6 @@
         idProcessoAtual = null; 
     };
 
-    // =====================================================================
-    // MOTOR FORENSE GEMINI (COM TRATAMENTO DE ERRO AVANÇADO E JSON NATIVO)
-    // =====================================================================
     let loaderInterval;
     window.iniciarRadarIAGemini = async () => {
         const dadosDoProcesso = dadosProcessoAtual;
@@ -1245,8 +1186,6 @@
         }, 1500);
 
         try {
-            // Atualização: O prompt agora é puramente estrutural, sem pedir pra não usar Markdown,
-            // pois usaremos a configuração nativa da API para forçar o JSON (responseMimeType)
             let promptDaIA = `
                 VOCÊ É UM SISTEMA DE AUDITORIA FORENSE DE ALTA PRECISÃO (Vigilância Sanitária).
                 Sua tarefa é analisar rigorosamente os dados e imagens fornecidos e identificar QUALQUER fraude ou divergência.
@@ -1280,7 +1219,6 @@
             
             let pacoteDeEnvio = [{ "text": promptDaIA }];
             
-            // Adiciona imagens se existirem
             if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0) {
                 for (let i = 0; i < Math.min(dadosDoProcesso.evidencias.length, 3); i++) {
                     let objImagemSegura = await obterDadosImagemSeguro(dadosDoProcesso.evidencias[i].url);
@@ -1293,22 +1231,20 @@
                 if(objAssinadoSeguro) pacoteDeEnvio.push({ "inline_data": objAssinadoSeguro }); 
             }
 
-            // NOVA ESTRUTURA BLINDADA PARA O FETCH DO GEMINI
-            const url_api_gemini = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+            // O LINK OFICIAL JÁ ESTÁ AQUI
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             
             const disparoAPI = await fetch(url_api_gemini, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
                     contents: [{ parts: pacoteDeEnvio }],
-                    // AQUI ESTÁ A CORREÇÃO PRINCIPAL: Forçar a saída como JSON pela própria API!
                     generationConfig: {
                         responseMimeType: "application/json"
                     }
                 })
             });
 
-            // Tratamento REAL do erro (Lê o JSON de erro do Google para você saber se foi cota excedida, key errada, etc)
             if (!disparoAPI.ok) {
                 const erroDoGoogle = await disparoAPI.json();
                 console.error("[GEMINI API ERRO DETALHADO]", erroDoGoogle);
@@ -1321,11 +1257,9 @@
                 throw new Error("A IA retornou uma estrutura vazia ou bloqueou por Safety (conteúdo sensível).");
             }
 
-            // Agora o texto SEMPRE virá como um JSON válido, não precisa daquele Regex maluco.
             let textoDoGemini = respostaDaIA.candidates[0].content.parts[0].text;
             const resultadoJson = JSON.parse(textoDoGemini);
 
-            // Motor de Segurança Interno: Suspeita de Clone
             let suspeitaDeClone = false;
             if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0 && todosProcessos.length > 1) {
                 let tamanhoDaFotoAtual = dadosDoProcesso.evidencias[0].url.length;
@@ -1355,10 +1289,6 @@
             document.getElementById('status-ia-sidebar').innerText = 'Desconectada / Falha';
             document.getElementById('status-ia-sidebar').style.color = 'var(--danger)';
             
-            // ==========================================
-            // MODO DE CONTINGÊNCIA VÍSIVEL (CORRIGIDO)
-            // ==========================================
-            // Avisa o administrador claramente que a IA falhou.
             document.getElementById('alerta-offline-container').innerHTML = `
                 <div class="alerta-offline">
                     <i class="fas fa-plug" style="font-size: 2rem;"></i>
@@ -1430,7 +1360,6 @@
         }, 30);
     }
 
-    // --- AÇÃO DE SALVAR MUDANÇAS NO BANCO DE DADOS ---
     window.salvarEdicaoModal = async () => {
       if(!idProcessoAtual) return;
       const botaoDeSalvar = document.getElementById('btn-salvar-modal');
@@ -1460,7 +1389,6 @@
       } 
     };
 
-    // --- AÇÃO DE DELETAR PROCESSO ---
     window.deletarProcessoAtual = async () => {
       if(!idProcessoAtual) return;
       if(confirm("COMANDO IRREVERSÍVEL DA JUSTIÇA:\nDeseja destruir as informações deste processo permanentemente da base governamental?")) {
@@ -1471,9 +1399,6 @@
       }
     };
 
-    // =====================================================================
-    // CHATBOT JURÍDICO INTEGRADO (CORRIGIDO TAMBÉM)
-    // =====================================================================
     window.enviarChat = async () => {
         const campoDeTexto = document.getElementById('chat-input-text'); 
         const perguntaDoFiscal = campoDeTexto.value.trim(); 
@@ -1509,7 +1434,8 @@
         }
 
         try {
-            const envioPergunta = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
+            // O LINK OFICIAL TAMBÉM JÁ ESTÁ AQUI
+            const envioPergunta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
@@ -1555,7 +1481,6 @@
         }
     }
 
-    // --- CALCULADORA DE INFRAÇÕES ---
     window.calcularMulta = () => {
         let gravidadeDefinida = document.getElementById('sim-gravidade').value;
         let valorBaseEmReais = 1500;
@@ -1569,7 +1494,6 @@
         document.getElementById('sim-resultado').innerText = 'R$ ' + valorBaseEmReais.toLocaleString('pt-BR', {minimumFractionDigits: 2});
     }
 
-    // --- GRÁFICOS INICIAIS ---
     function initCharts() {
       try {
           const contextoBarra = document.getElementById('barChart').getContext('2d');
@@ -1602,7 +1526,6 @@
       }
     }
 
-    // --- CONTROLE DA LIGHTBOX (FOTOS EM TELA CHEIA) ---
     window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
         document.getElementById('lightbox-img').src = linkImagem; 
         document.getElementById('lightbox-title').innerText = tituloDaImagem; 
