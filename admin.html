@@ -11,33 +11,31 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    /* =====================================================================
+       VARIÁVEIS GLOBAIS DE ESTILO (THEME ENGINE)
+       ===================================================================== */
     :root {
-      /* Fundo e Estrutura Principal */
       --bg-body: #050b14; 
       --bg-sidebar: #02060d;
       --bg-card: #0f172a;
       --bg-card-hover: #1e293b;
       
-      /* Textos e Tipografia */
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --text-light: #e2e8f0;
       --font-base: 'Inter', sans-serif;
       --font-code: 'JetBrains Mono', monospace;
       
-      /* Cores de Ação (Botões e Destaques) */
       --primary: #3b82f6;
       --primary-hover: #2563eb;
       --secondary: #0ea5e9;
       --accent: #38bdf8;
       
-      /* Identidade do Motor de IA (Gemini) */
       --gemini-purple: #c084fc;
       --gemini-dark: #7e22ce;
       --gemini-bg: rgba(192, 132, 252, 0.08);
       --gemini-gradient: linear-gradient(135deg, #c084fc, #ec4899, #3b82f6);
       
-      /* Semântica (Avisos e Status) */
       --success: #10b981;
       --success-bg: rgba(16, 185, 129, 0.12);
       --warning: #f59e0b;
@@ -45,597 +43,155 @@
       --danger: #ef4444;
       --danger-bg: rgba(239, 68, 68, 0.12);
       --info: #3b82f6;
+      --info-light: rgba(59, 130, 246, 0.12);
       
-      /* Geometria: Bordas, Sombras e Raios */
       --border: #1e293b;
       --border-light: #334155;
       --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
       --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
       --shadow-modal: 0 30px 60px -15px rgba(0, 0, 0, 0.9);
-      --shadow-glow: 0 0 25px rgba(192, 132, 252, 0.2);
       
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 16px;
       --radius-xl: 24px;
+      --radius-2xl: 32px;
     }
 
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-      font-family: var(--font-base); 
-      outline: none; 
-      -webkit-font-smoothing: antialiased;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-base); outline: none; -webkit-font-smoothing: antialiased; }
 
-    /* Trava do Body para evitar colapso de Layout */
-    body { 
-      background-color: var(--bg-body); 
-      color: var(--text-main); 
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden; 
-      font-size: 14px; 
-    }
+    body { background-color: var(--bg-body); color: var(--text-main); width: 100vw; height: 100vh; overflow: hidden; font-size: 14px; }
     
-    /* Scrollbar Tecnológico */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
     /* =====================================================================
-       SISTEMA DE SEGURANÇA: TELA DE LOCK (LOGIN)
+       TELA DE LOGIN / LOCK SCREEN
        ===================================================================== */
     #lock-screen {
-      position: fixed; 
-      inset: 0; 
-      background: #02040a; 
-      z-index: 99999; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center;
-      background-image: radial-gradient(circle at center, #0f172a 0%, #000000 100%); 
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      position: fixed; inset: 0; background: #02040a; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background-image: radial-gradient(circle at center, #0f172a 0%, #000000 100%); transition: opacity 0.5s ease, visibility 0.5s ease;
     }
-
-    .lock-box { 
-      background: rgba(15, 23, 42, 0.8); 
-      padding: 60px 50px; 
-      border-radius: var(--radius-xl); 
-      backdrop-filter: blur(20px); 
-      border: 1px solid rgba(255,255,255,0.05); 
-      text-align: center; 
-      width: 100%; 
-      max-width: 440px; 
-      box-shadow: var(--shadow-modal); 
-    }
-
-    .lock-box i.fa-fingerprint { 
-      font-size: 5rem; 
-      color: var(--primary); 
-      margin-bottom: 25px; 
-      filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.5)); 
-    }
-
-    .lock-box h2 { 
-      color: white; 
-      margin-bottom: 12px; 
-      font-weight: 900; 
-      font-size: 2.2rem; 
-      letter-spacing: -1px; 
-    }
-
-    .lock-box p { 
-      color: var(--text-muted); 
-      font-size: 1.05rem; 
-      margin-bottom: 35px; 
-      line-height: 1.5;
-    }
-
-    .pin-input { 
-      width: 100%; 
-      padding: 22px; 
-      border-radius: var(--radius-md); 
-      border: 2px solid var(--border); 
-      background: rgba(0,0,0,0.6); 
-      color: white; 
-      font-size: 2.5rem; 
-      text-align: center; 
-      letter-spacing: 20px; 
-      margin-bottom: 30px; 
-      transition: all 0.3s ease; 
-      font-family: var(--font-code);
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-    }
-
-    .pin-input:focus { 
-      border-color: var(--primary); 
-      box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); 
-    }
-
-    .btn-unlock { 
-      width: 100%; 
-      background: var(--primary); 
-      color: white; 
-      border: none; 
-      padding: 20px; 
-      border-radius: var(--radius-md); 
-      font-weight: 800; 
-      font-size: 1.2rem; 
-      cursor: pointer; 
-      transition: all 0.3s ease; 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      gap: 12px; 
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .btn-unlock:hover { 
-      background: var(--primary-hover); 
-      transform: translateY(-2px); 
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4); 
-    }
+    .lock-box { background: rgba(15, 23, 42, 0.8); padding: 60px 50px; border-radius: var(--radius-xl); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); text-align: center; width: 100%; max-width: 440px; box-shadow: var(--shadow-modal); }
+    .lock-box i.fa-fingerprint { font-size: 5rem; color: var(--primary); margin-bottom: 25px; filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.5)); }
+    .lock-box h2 { color: white; margin-bottom: 12px; font-weight: 900; font-size: 2.2rem; letter-spacing: -1px; }
+    .lock-box p { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 35px; line-height: 1.5; }
+    .pin-input { width: 100%; padding: 22px; border-radius: var(--radius-md); border: 2px solid var(--border); background: rgba(0,0,0,0.6); color: white; font-size: 2.5rem; text-align: center; letter-spacing: 20px; margin-bottom: 30px; transition: all 0.3s ease; font-family: var(--font-code); box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+    .pin-input:focus { border-color: var(--primary); box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); }
+    .btn-unlock { width: 100%; background: var(--primary); color: white; border: none; padding: 20px; border-radius: var(--radius-md); font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .btn-unlock:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4); }
 
     /* =====================================================================
-       ARQUITETURA DE LAYOUT (FLEXBOX CONTAINER - EVITA TELA AZUL)
+       ESTRUTURA PRINCIPAL (LAYOUT)
        ===================================================================== */
-    #app-container {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-body);
-    }
+    #app-container { display: flex; width: 100%; height: 100%; background: var(--bg-body); }
     
-    /* BARRA LATERAL (SIDEBAR) */
-    .sidebar { 
-      width: 290px; 
-      height: 100%;
-      background-color: var(--bg-sidebar); 
-      display: flex; 
-      flex-direction: column; 
-      z-index: 100; 
-      border-right: 1px solid var(--border); 
-      flex-shrink: 0;
-    }
-
-    .sidebar-header { 
-      padding: 40px 30px; 
-      display: flex; 
-      align-items: center; 
-      gap: 18px; 
-      border-bottom: 1px solid var(--border); 
-    }
-
-    .sidebar-header i.logo-icon { 
-      font-size: 2.8rem; 
-      background: var(--gemini-gradient); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-    }
-
-    .sidebar-header h2 { 
-      font-size: 1.6rem; 
-      font-weight: 900; 
-      line-height: 1.1; 
-      color: white;
-    }
-
-    .sidebar-header h2 span { 
-      font-size: 0.8rem; 
-      color: var(--gemini-purple); 
-      text-transform: uppercase; 
-      letter-spacing: 2px; 
-      font-weight: 800; 
-      display: block;
-      margin-top: 4px;
-    }
+    .sidebar { width: 290px; height: 100%; background-color: var(--bg-sidebar); display: flex; flex-direction: column; z-index: 100; border-right: 1px solid var(--border); flex-shrink: 0; }
+    .sidebar-header { padding: 40px 30px; display: flex; align-items: center; gap: 18px; border-bottom: 1px solid var(--border); }
+    .sidebar-header i.logo-icon { font-size: 2.8rem; background: var(--gemini-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .sidebar-header h2 { font-size: 1.6rem; font-weight: 900; line-height: 1.1; color: white; }
+    .sidebar-header h2 span { font-size: 0.8rem; color: var(--gemini-purple); text-transform: uppercase; letter-spacing: 2px; font-weight: 800; display: block; margin-top: 4px; }
     
-    .nav-menu { 
-      padding: 30px 20px; 
-      flex: 1; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 10px; 
-      overflow-y: auto;
-    }
-
-    .nav-item { 
-      padding: 16px 20px; 
-      border-radius: var(--radius-md); 
-      color: var(--text-muted); 
-      text-decoration: none; 
-      display: flex; 
-      align-items: center; 
-      gap: 15px; 
-      font-weight: 600; 
-      font-size: 1.05rem; 
-      transition: all 0.3s ease; 
-      cursor: pointer; 
-      border: 1px solid transparent;
-    }
-
-    .nav-item:hover { 
-      background: rgba(255,255,255,0.03); 
-      color: white; 
-      border-color: var(--border);
-    }
-
-    .nav-item.active { 
-      background: var(--gemini-bg);
-      color: white;
-      border-color: rgba(192, 132, 252, 0.2);
-      box-shadow: inset 4px 0 0 var(--gemini-purple);
-    }
-
-    .nav-item i { 
-      font-size: 1.3rem; 
-      width: 25px; 
-      text-align: center; 
-    }
-
-    .sidebar-footer { 
-      padding: 25px; 
-      border-top: 1px solid var(--border); 
-      text-align: center; 
-      background: rgba(0,0,0,0.3); 
-    }
-
-    /* ÁREA CENTRAL */
-    .main-content { 
-      flex: 1; 
-      height: 100%;
-      display: flex; 
-      flex-direction: column; 
-      overflow: hidden; 
-      position: relative; 
-      background: var(--bg-body);
-    }
-
-    header.topbar { 
-      background: var(--bg-card); 
-      padding: 20px 50px; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      border-bottom: 1px solid var(--border); 
-      z-index: 10; 
-      flex-shrink: 0;
-    }
-
-    .search-bar { 
-      display: flex; 
-      align-items: center; 
-      background: var(--bg-sidebar); 
-      padding: 15px 25px; 
-      border-radius: 50px; 
-      width: 550px; 
-      border: 1px solid var(--border); 
-      transition: all 0.3s ease; 
-    }
-
-    .search-bar:focus-within { 
-      border-color: var(--gemini-purple); 
-      box-shadow: 0 0 0 3px var(--gemini-bg); 
-    }
-
-    .search-bar i { 
-      color: var(--text-muted); 
-      margin-right: 15px; 
-      font-size: 1.2rem; 
-    }
-
-    .search-bar input { 
-      border: none; 
-      background: transparent; 
-      width: 100%; 
-      font-size: 0.95rem; 
-      color: white; 
-      font-weight: 500; 
-    }
+    .nav-menu { padding: 30px 20px; flex: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+    .nav-item { padding: 16px 20px; border-radius: var(--radius-md); color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 15px; font-weight: 600; font-size: 1.05rem; transition: all 0.3s ease; cursor: pointer; border: 1px solid transparent; }
+    .nav-item:hover { background: rgba(255,255,255,0.03); color: white; border-color: var(--border); }
+    .nav-item.active { background: var(--gemini-bg); color: white; border-color: rgba(192, 132, 252, 0.2); box-shadow: inset 4px 0 0 var(--gemini-purple); }
+    .nav-item i { font-size: 1.3rem; width: 25px; text-align: center; }
     
-    .user-profile { 
-      display: flex; 
-      align-items: center; 
-      gap: 20px; 
-    }
+    .sidebar-footer { padding: 25px; border-top: 1px solid var(--border); text-align: center; background: rgba(0,0,0,0.3); }
 
-    .pulse-online { 
-      display: inline-block; 
-      width: 10px; 
-      height: 10px; 
-      background: var(--success); 
-      border-radius: 50%; 
-      box-shadow: 0 0 0 rgba(16, 185, 129, 0.4); 
-      animation: pulse 2s infinite; 
-    }
-
-    @keyframes pulse { 
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 
-      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } 
-    }
-
+    .main-content { flex: 1; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; background: var(--bg-body); }
+    header.topbar { background: var(--bg-card); padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); z-index: 10; flex-shrink: 0; }
+    
+    .search-bar { display: flex; align-items: center; background: var(--bg-sidebar); padding: 15px 25px; border-radius: 50px; width: 550px; border: 1px solid var(--border); transition: all 0.3s ease; }
+    .search-bar:focus-within { border-color: var(--gemini-purple); box-shadow: 0 0 0 3px var(--gemini-bg); }
+    .search-bar i { color: var(--text-muted); margin-right: 15px; font-size: 1.2rem; }
+    .search-bar input { border: none; background: transparent; width: 100%; font-size: 0.95rem; color: white; font-weight: 500; }
+    
+    .user-profile { display: flex; align-items: center; gap: 20px; }
+    .pulse-online { display: inline-block; width: 10px; height: 10px; background: var(--success); border-radius: 50%; box-shadow: 0 0 0 rgba(16, 185, 129, 0.4); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
     .user-info { text-align: right; }
     .user-info h4 { font-size: 0.95rem; margin: 0 0 4px 0; color: white; font-weight: 800; }
     .user-info span { font-size: 0.8rem; color: var(--gemini-purple); font-weight: 800; }
-    
-    .avatar { 
-      width: 48px; 
-      height: 48px; 
-      border-radius: 50%; 
-      background: var(--gemini-gradient); 
-      color: white; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-weight: 900; 
-      font-size: 1.2rem; 
-      box-shadow: 0 0 15px rgba(192, 132, 252, 0.3); 
-    }
+    .avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--gemini-gradient); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 15px rgba(192, 132, 252, 0.3); }
 
     /* =====================================================================
-       MÓDULOS DE RENDERIZAÇÃO (SPA VIEWS)
+       COMPONENTES REUTILIZÁVEIS E VIEWS
        ===================================================================== */
-    .view-container { 
-      flex: 1; 
-      overflow-y: auto; 
-      position: relative; 
-      padding: 50px 60px; 
-    }
-
-    .page-view { 
-      display: none; 
-      animation: fadeInView 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
-    }
-
+    .view-container { flex: 1; overflow-y: auto; position: relative; padding: 50px 60px; }
+    .page-view { display: none; animation: fadeInView 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
     .page-view.active { display: block; }
+    @keyframes fadeInView { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-    @keyframes fadeInView { 
-      from { opacity: 0; transform: translateY(20px); } 
-      to { opacity: 1; transform: translateY(0); } 
-    }
-
-    .page-title { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: flex-end; 
-      margin-bottom: 40px; 
-    }
-
+    .page-title { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
     .page-title h1 { font-size: 2.5rem; font-weight: 900; color: white; letter-spacing: -1px; line-height: 1.2;}
     .page-title p { color: var(--text-muted); font-size: 1.15rem; margin-top: 8px; font-weight: 500; }
 
-    /* =====================================================================
-       BOTÕES GLOBAIS E ESTILIZAÇÃO COMPARTILHADA
-       ===================================================================== */
-    .btn { 
-      padding: 15px 30px; 
-      border-radius: var(--radius-md); 
-      font-weight: 700; 
-      font-size: 1rem; 
-      cursor: pointer; 
-      transition: all 0.2s ease; 
-      border: none; 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center; 
-      gap: 12px; 
-    }
-
+    .btn { padding: 15px 30px; border-radius: var(--radius-md); font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s ease; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
     .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
     .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
-    
     .btn-success { background: var(--success); color: #022c22; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
     .btn-success:hover { background: #059669; color: white; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
-    
     .btn-gemini { background: var(--gemini-gradient); color: white; box-shadow: 0 4px 15px rgba(192, 132, 252, 0.3); }
     .btn-gemini:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(192, 132, 252, 0.5); }
-    
     .btn-secondary { background: var(--bg-card); border: 1px solid var(--border-light); color: white; }
     .btn-secondary:hover { background: var(--border); border-color: var(--text-muted); }
+    .btn-icon { width: 45px; height: 45px; border-radius: var(--radius-md); border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-size: 1.2rem; color: white; }
+    .btn-icon.view { background: var(--border-light); } 
+    .btn-icon.view:hover { background: var(--primary); transform: translateY(-2px); }
 
-    .form-input { 
-      width: 100%; 
-      padding: 18px 22px; 
-      border: 1px solid var(--border); 
-      border-radius: var(--radius-md); 
-      font-size: 1.05rem; 
-      color: white; 
-      background: var(--bg-sidebar); 
-      font-family: inherit; 
-      transition: 0.3s; 
-    }
+    .form-input { width: 100%; padding: 18px 22px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 1.05rem; color: white; background: var(--bg-sidebar); font-family: inherit; transition: 0.3s; }
     .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
-    select.form-input { cursor: pointer; }
 
     /* =====================================================================
-       DASHBOARD - CARDS ANALÍTICOS E GRÁFICOS
+       CARDS E GRÁFICOS
        ===================================================================== */
-    .stats-grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
-      gap: 30px; 
-      margin-bottom: 50px; 
-    }
-
-    .stat-card { 
-      background: var(--bg-card); 
-      padding: 35px; 
-      border-radius: var(--radius-lg); 
-      border: 1px solid var(--border); 
-      box-shadow: var(--shadow-sm); 
-      display: flex; 
-      align-items: center; 
-      gap: 25px; 
-      position: relative; 
-      overflow: hidden; 
-      transition: all 0.3s ease; 
-    }
-
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; margin-bottom: 50px; }
+    .stat-card { background: var(--bg-card); padding: 35px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 25px; position: relative; overflow: hidden; transition: all 0.3s ease; }
     .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--border-light); }
     .stat-card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 5px; }
-
-    .stat-card.c-warning::before { background: var(--warning); } 
-    .stat-card.c-primary::before { background: var(--primary); } 
-    .stat-card.c-success::before { background: var(--success); } 
-    .stat-card.c-gemini::before { background: var(--gemini-purple); }
-    
-    .stat-icon { 
-      width: 75px; 
-      height: 75px; 
-      border-radius: var(--radius-md); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-size: 2.5rem; 
-    }
-
-    .c-warning .stat-icon { background: var(--warning-bg); color: var(--warning); }
-    .c-primary .stat-icon { background: var(--info-light); color: var(--primary); }
-    .c-success .stat-icon { background: var(--success-bg); color: var(--success); }
-    .c-gemini .stat-icon { background: var(--gemini-bg); color: var(--gemini-purple); }
-    
+    .stat-card.c-warning::before { background: var(--warning); } .stat-card.c-primary::before { background: var(--primary); } .stat-card.c-success::before { background: var(--success); } .stat-card.c-gemini::before { background: var(--gemini-purple); }
+    .stat-icon { width: 75px; height: 75px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+    .c-warning .stat-icon { background: var(--warning-bg); color: var(--warning); } .c-primary .stat-icon { background: var(--info-light); color: var(--primary); } .c-success .stat-icon { background: var(--success-bg); color: var(--success); } .c-gemini .stat-icon { background: var(--gemini-bg); color: var(--gemini-purple); }
     .stat-info { flex: 1; }
     .stat-info h3 { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; }
     .stat-info p { font-size: 3rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
 
-    .charts-grid { 
-      display: grid; 
-      grid-template-columns: 2fr 1fr; 
-      gap: 30px; 
-      margin-bottom: 50px; 
-    }
-
-    .chart-card { 
-      background: var(--bg-card); 
-      padding: 35px; 
-      border-radius: var(--radius-xl); 
-      border: 1px solid var(--border); 
-      box-shadow: var(--shadow-sm); 
-    }
-
+    .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 50px; }
+    .chart-card { background: var(--bg-card); padding: 35px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
     .chart-header { font-size: 1.3rem; font-weight: 800; color: white; margin-bottom: 25px; }
     .chart-container { position: relative; height: 350px; width: 100%; }
 
     /* =====================================================================
-       TABELAS: AUDITORIA E BANCO DE DADOS
+       TABELAS DE DADOS
        ===================================================================== */
-    .data-section { 
-      background: var(--bg-card); 
-      border-radius: var(--radius-xl); 
-      border: 1px solid var(--border); 
-      overflow: hidden; 
-      display: flex; 
-      flex-direction: column; 
-      margin-bottom: 50px; 
-      box-shadow: var(--shadow-md);
-    }
-
-    .data-header { 
-      padding: 30px 40px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: var(--bg-sidebar); 
-    }
-
+    .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; margin-bottom: 50px; box-shadow: var(--shadow-md); }
+    .data-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
     .data-header h2 { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 15px; margin: 0; color: white; }
-    
-    .filters-row { 
-      padding: 25px 40px; 
-      background: rgba(255,255,255,0.01); 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      gap: 25px; 
-    }
-
+    .filters-row { padding: 25px 40px; background: rgba(255,255,255,0.01); border-bottom: 1px solid var(--border); display: flex; gap: 25px; }
     .filters-row select { flex: 1; }
     
     .table-wrapper { overflow-x: auto; width: 100%; }
     table { width: 100%; border-collapse: collapse; text-align: left; }
-    
-    th { 
-      background: rgba(0,0,0,0.4); 
-      padding: 20px 40px; 
-      font-size: 0.85rem; 
-      font-weight: 800; 
-      color: var(--text-muted); 
-      text-transform: uppercase; 
-      letter-spacing: 1px; 
-      border-bottom: 2px solid var(--border); 
-      position: sticky; 
-      top: 0;
-      z-index: 2; 
-    }
-
-    td { 
-      padding: 25px 40px; 
-      border-bottom: 1px solid var(--border); 
-      font-size: 1.05rem; 
-      color: var(--text-light); 
-      vertical-align: middle;
-    }
-
+    th { background: rgba(0,0,0,0.4); padding: 20px 40px; font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 2; }
+    td { padding: 25px 40px; border-bottom: 1px solid var(--border); font-size: 1.05rem; color: var(--text-light); vertical-align: middle; }
     tr { transition: background-color 0.2s ease; }
     tr:hover { background: rgba(255,255,255,0.03); }
     
     .td-empresa { display: flex; align-items: center; gap: 18px; }
-    .td-empresa-icon { 
-      width: 50px; 
-      height: 50px; 
-      background: var(--border); 
-      border-radius: var(--radius-md); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      color: white; 
-      font-size: 1.3rem; 
-      font-weight: 900; 
-    }
-
+    .td-empresa-icon { width: 50px; height: 50px; background: var(--border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; font-weight: 900; }
     .td-empresa-info strong { display: block; font-size: 1.1rem; margin-bottom: 6px; font-weight: 700; color: white; }
     .td-empresa-info span { color: var(--text-muted); font-size: 0.9rem; font-family: var(--font-code); }
     
-    .status-badge { 
-      padding: 8px 16px; 
-      border-radius: 50px; 
-      font-size: 0.8rem; 
-      font-weight: 800; 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 8px; 
-      text-transform: uppercase; 
-      letter-spacing: 0.5px;
-    }
-
+    .status-badge { padding: 8px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
     .badge-pendente { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
     .badge-aguardando { background: var(--info-light); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3); }
     .badge-pago { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-denuncia { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
-
-    .btn-icon { 
-      width: 45px; 
-      height: 45px; 
-      border-radius: var(--radius-md); 
-      border: none; 
-      cursor: pointer; 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center; 
-      transition: all 0.2s ease; 
-      font-size: 1.2rem; 
-      color: white; 
-    }
-
-    .btn-icon.view { background: var(--border-light); } 
-    .btn-icon.view:hover { background: var(--primary); transform: translateY(-2px); }
 
     /* =====================================================================
        FINANCEIRO, LEIS E CALCULADORA
@@ -644,7 +200,6 @@
     .law-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 35px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
     .law-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; }
     .law-leve::before { background: var(--warning); } .law-grave::before { background: #f97316; } .law-gravissima::before { background: var(--danger); }
-    
     .law-card h3 { font-size: 1.3rem; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 800; }
     .law-card .valor { font-size: 2.5rem; font-weight: 900; color: white; margin-bottom: 20px; }
     .law-card p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; }
@@ -654,7 +209,7 @@
     .calc-result { flex: 1; background: var(--bg-sidebar); padding: 40px; border-radius: var(--radius-md); border: 2px dashed var(--primary); text-align: center; display: flex; flex-direction: column; justify-content: center;}
 
     /* =====================================================================
-       MAPA DE CALOR (HEATMAP REAL)
+       MAPA DE CALOR
        ===================================================================== */
     .heatmap-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
     .heat-zone { background: var(--bg-card); border: 1px solid var(--border); padding: 35px 20px; border-radius: var(--radius-xl); text-align: center; transition: 0.3s; position: relative; box-shadow: var(--shadow-sm);}
@@ -663,159 +218,36 @@
     .progress-bar-fill { height: 100%; border-radius: 10px; transition: width 1.5s ease-out; }
 
     /* =====================================================================
-       CHATBOT JURÍDICO (REFEITO E BLINDADO PARA NÃO QUEBRAR CSS)
+       CHATBOT JURÍDICO E BALÕES
        ===================================================================== */
-    .chat-container { 
-      display: flex; 
-      flex-direction: column; 
-      height: 700px; 
-      background: var(--bg-card); 
-      border: 1px solid var(--border); 
-      border-radius: var(--radius-xl); 
-      overflow: hidden; 
-      box-shadow: var(--shadow-md); 
-    }
-
-    .chat-header { 
-      background: var(--bg-sidebar); 
-      padding: 25px 40px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      border-bottom: 1px solid var(--border); 
-    }
-
-    .chat-history { 
-      flex: 1; 
-      padding: 40px; 
-      overflow-y: auto; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 25px; 
-      background: var(--bg-body); 
-      scroll-behavior: smooth;
-    }
-
-    /* Balões Formatados (Tipo WhatsApp / GPT) */
-    .chat-msg { 
-      width: fit-content; 
-      max-width: 80%; 
-      padding: 18px 25px; 
-      border-radius: 20px; 
-      line-height: 1.6; 
-      font-size: 1.05rem; 
-      position: relative; 
-      word-break: break-word;
-    }
-
-    .msg-user { 
-      align-self: flex-end; 
-      background: var(--primary); 
-      color: white; 
-      border-bottom-right-radius: 4px; 
-      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); 
-    }
-
-    .msg-ai { 
-      align-self: flex-start; 
-      background: var(--bg-card); 
-      color: var(--text-light); 
-      border: 1px solid var(--border); 
-      border-bottom-left-radius: 4px; 
-      box-shadow: var(--shadow-sm); 
-    }
+    .chat-container { display: flex; flex-direction: column; height: 700px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); }
+    .chat-header { background: var(--bg-sidebar); padding: 25px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .chat-history { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; background: var(--bg-body); scroll-behavior: smooth; }
     
-    .chat-input-area { 
-      padding: 25px 40px; 
-      background: var(--bg-sidebar); 
-      border-top: 1px solid var(--border); 
-      display: flex; 
-      gap: 20px; 
-      align-items: center; 
-    }
-
-    .chat-input-area select { 
-      width: 300px; 
-      padding: 18px 20px; 
-      border-radius: var(--radius-md); 
-      background: var(--bg-body); 
-      color: white; 
-      border: 1px solid var(--border); 
-      font-weight: 600;
-    }
-
-    .chat-input-area input { 
-      flex: 1; 
-      padding: 20px 30px; 
-      border-radius: 50px; 
-      border: 1px solid var(--border); 
-      background: var(--bg-body); 
-      color: white; 
-      font-size: 1.1rem; 
-    }
+    .chat-msg { width: fit-content; max-width: 80%; padding: 18px 25px; border-radius: 20px; line-height: 1.6; font-size: 1.05rem; position: relative; word-break: break-word; }
+    .msg-user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
+    .msg-ai { align-self: flex-start; background: var(--bg-card); color: var(--text-light); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm); }
+    
+    .chat-input-area { padding: 25px 40px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; gap: 20px; align-items: center; }
+    .chat-input-area select { width: 300px; padding: 18px 20px; border-radius: var(--radius-md); background: var(--bg-body); color: white; border: 1px solid var(--border); font-weight: 600; }
+    .chat-input-area input { flex: 1; padding: 20px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; }
     .chat-input-area input:focus { border-color: var(--gemini-purple); }
 
     /* =====================================================================
-       MODAL GIGANTE DE AUDITORIA & IA FORENSE (O CORAÇÃO)
+       MODAL DE AUDITORIA FORENSE E ABAS
        ===================================================================== */
-    .modal-overlay { 
-      position: fixed; 
-      inset: 0; 
-      background: rgba(0, 0, 0, 0.85); 
-      backdrop-filter: blur(8px); 
-      z-index: 20000; 
-      display: none; 
-      align-items: center; 
-      justify-content: center; 
-      padding: 30px; 
-    }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
+    .modal-box { background: var(--bg-body); width: 100%; max-width: 1100px; border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border); animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes modalIn { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
-    .modal-box { 
-      background: var(--bg-body); 
-      width: 100%; 
-      max-width: 1100px; 
-      border-radius: var(--radius-2xl); 
-      box-shadow: var(--shadow-modal); 
-      display: flex; 
-      flex-direction: column; 
-      max-height: 95vh; 
-      border: 1px solid var(--border); 
-      animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-    }
-
-    @keyframes modalIn { 
-      from { transform: translateY(40px) scale(0.95); opacity: 0; } 
-      to { transform: translateY(0) scale(1); opacity: 1; } 
-    }
-
-    .modal-header { 
-      padding: 30px 40px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: var(--bg-sidebar); 
-      border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; 
-    }
-
+    .modal-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; }
     .modal-header h3 { font-size: 1.5rem; font-weight: 900; color: white; display: flex; align-items: center; gap: 15px; }
     .modal-header .protocol-id { background: var(--border); padding: 8px 15px; border-radius: 8px; font-size: 0.95rem; font-family: var(--font-code); color: var(--text-light); }
-    
-    .btn-close { 
-      background: transparent; border: none; width: 45px; height: 45px; border-radius: 50%; 
-      cursor: pointer; color: var(--text-muted); font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; 
-    }
+    .btn-close { background: transparent; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
     .btn-close:hover { color: var(--danger); transform: rotate(90deg); }
 
-    .modal-tabs { 
-      display: flex; border-bottom: 1px solid var(--border); background: var(--bg-card); padding: 0 20px; overflow-x: auto; 
-    }
-
-    .tab-btn { 
-      padding: 22px 30px; border: none; background: none; font-size: 1.05rem; font-weight: 700; color: var(--text-muted); 
-      cursor: pointer; border-bottom: 4px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 10px; white-space: nowrap; 
-    }
-
+    .modal-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg-card); padding: 0 20px; overflow-x: auto; }
+    .tab-btn { padding: 22px 30px; border: none; background: none; font-size: 1.05rem; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 4px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
     .tab-btn:hover { color: white; background: rgba(255,255,255,0.02); }
     .tab-btn.active { color: white; border-bottom-color: white; background: rgba(255,255,255,0.05); }
     .tab-btn.tab-ai { color: var(--gemini-purple); font-weight: 900; }
@@ -826,13 +258,12 @@
     .tab-content.active { display: block; }
     @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Radar IA Visual (Loading Detalhado Forense) */
+    /* Radar IA Visual */
     .radar-loading { text-align: center; padding: 80px 20px; display: flex; flex-direction: column; align-items: center; gap: 25px; }
     .radar-scanner { position: relative; width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 5rem; color: var(--gemini-purple); overflow: hidden; box-shadow: 0 0 40px rgba(168, 85, 247, 0.2); }
     .radar-scanner::after { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6)); transform-origin: left center; animation: radarScan 1.5s linear infinite; }
     @keyframes radarScan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     
-    /* Layout do Resultado da IA */
     .radar-dashboard { display: grid; grid-template-columns: 1.2fr 2.8fr; gap: 40px; }
     .score-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 50px 30px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); }
     .score-circle { width: 180px; height: 180px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; font-weight: 900; margin-bottom: 25px; box-shadow: inset 0 0 40px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.2); border: 10px solid rgba(255,255,255,0.1); transition: border-color 1s ease;}
@@ -842,7 +273,6 @@
     .gemini-response-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 45px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); }
     .gemini-response-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--gemini-gradient); }
     
-    /* Blocos de Laudo Pericial Detalhados */
     .ia-laudo-block { background: var(--bg-body); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 25px; margin-bottom: 25px; border-left: 4px solid var(--gemini-purple); }
     .ia-laudo-block h5 { font-size: 0.95rem; text-transform: uppercase; color: var(--gemini-purple); margin-bottom: 12px; font-weight: 800; display: flex; align-items: center; gap: 10px;}
     .ia-laudo-block p { font-size: 1.1rem; color: var(--text-light); line-height: 1.6; }
@@ -850,8 +280,10 @@
     .ai-recommendation { padding: 30px 35px; border-radius: var(--radius-md); background: rgba(0,0,0,0.3); border: 1px dashed var(--gemini-purple); display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 15px;}
     .ai-recommendation h4 { font-size: 0.9rem; text-transform: uppercase; color: #d8b4fe; margin-bottom: 10px; font-weight: 800;}
     .ai-recommendation p { font-size: 1.6rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+    
+    /* Alerta de Modo Offline / Erro de API visível */
+    .alerta-offline { display: flex; align-items: center; gap: 15px; padding: 20px; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--warning); border-radius: var(--radius-md); color: var(--warning); font-weight: bold; margin-bottom: 25px; }
 
-    /* Outras Abas do Modal */
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
     .info-group { background: var(--bg-card); padding: 25px; border-radius: var(--radius-md); border: 1px solid var(--border); }
     .info-group label { display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px;}
@@ -867,13 +299,12 @@
     .gallery-item:hover img { transform: scale(1.1); filter: brightness(0.6); }
     .gallery-item .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; opacity: 0; transition: 0.3s; }
     .gallery-item:hover .overlay { opacity: 1; }
-    
     .badge-assinado { position: absolute; top: 0; left: 0; width: 100%; background: var(--success); color: white; font-size: 0.8rem; font-weight: 900; text-align: center; padding: 8px 0; z-index: 10; text-transform: uppercase; letter-spacing: 1px;}
 
     .modal-footer { padding: 30px 40px; border-top: 1px solid var(--border); background: var(--bg-sidebar); border-radius: 0 0 var(--radius-2xl) var(--radius-2xl); display: flex; justify-content: flex-end; gap: 20px; }
 
     /* =====================================================================
-       VISUALIZADOR DE IMAGENS E TOASTS
+       LIGHTBOX E TOASTS (NOTIFICAÇÕES)
        ===================================================================== */
     #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(10px);}
     #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--radius-lg); border: 2px solid #333; box-shadow: 0 0 60px rgba(0,0,0,0.8);}
@@ -890,9 +321,6 @@
     @keyframes toastSlideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes toastFadeOut { to { opacity: 0; transform: translateX(120%); } }
 
-    /* =====================================================================
-       ESCUDO ANTI-CRASH (SE O CÓDIGO FOR CORTADO)
-       ===================================================================== */
     #error-log-shield { position: fixed; top: 0; left: 0; width: 100%; padding: 25px; background: var(--danger); color: white; font-weight: 900; text-align: center; z-index: 999999; display: none; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); }
   </style>
 </head>
@@ -902,7 +330,7 @@
   <script>
     window.onerror = function(msg, url, line) {
         document.getElementById('error-log-shield').style.display = 'block';
-        document.getElementById('error-log-shield').innerHTML = `<i class="fas fa-exclamation-triangle"></i> ERRO CRÍTICO NA LINHA ${line}: O CÓDIGO HTML ESTÁ INCOMPLETO. CLIQUE EM "COPY CODE" LÁ EM CIMA E COLE TUDO NOVAMENTE.`;
+        document.getElementById('error-log-shield').innerHTML = `<i class="fas fa-exclamation-triangle"></i> ERRO CRÍTICO NA LINHA ${line}: O CÓDIGO HTML ESTÁ INCOMPLETO.`;
     };
   </script>
 
@@ -937,7 +365,7 @@
       
       <div class="sidebar-footer">
         <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 1.5 Flash Core</p>
-        <p>Status da IA: <span style="color:var(--success); font-weight:800;">Ativa e Conectada</span></p>
+        <p>Status da IA: <span id="status-ia-sidebar" style="color:var(--success); font-weight:800;">Ativa e Conectada</span></p>
       </div>
     </aside>
 
@@ -966,7 +394,6 @@
       <div class="view-container">
         
         <div id="view-dashboard" class="page-view active">
-          
           <div class="page-title">
             <div>
               <h1>Centro Operacional</h1>
@@ -1165,10 +592,8 @@
               <p>Mapeamento de densidade de denúncias e irregularidades com base nos dados do Firebase em tempo real.</p>
             </div>
           </div>
-
           <div style="background: var(--bg-card); padding: 50px; border-radius: var(--radius-xl); border: 1px solid var(--border);">
-            <div class="heatmap-container" id="mapa-zonas-reais">
-              </div>
+            <div class="heatmap-container" id="mapa-zonas-reais"></div>
             <p style="color: var(--text-muted); font-size: 1.1rem; text-align: center; font-style: italic; margin-top: 40px;">* Dados processados analiticamente através da leitura de IDs e hashes dos processos ativos na base, simulando localização geográfica.</p>
           </div>
         </div>
@@ -1186,14 +611,13 @@
               <div class="avatar" style="width: 55px; height: 55px; font-size: 2rem;"><i class="fas fa-robot"></i></div>
               <div style="flex: 1;">
                 <h3 style="color: white; margin: 0; font-size: 1.3rem;">Gemini Legal Assistant</h3>
-                <span style="color: var(--success); font-size: 0.9rem; font-weight: bold;">Rede Neural Conectada</span>
+                <span id="chat-header-status" style="color: var(--success); font-size: 0.9rem; font-weight: bold;">Rede Neural Conectada</span>
               </div>
-              
               <div style="text-align: right;">
                   <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 8px;">Analisar Processo Específico:</label>
                   <select id="chat-process-selector" class="form-input" style="width: 350px; margin: 0; font-size: 1rem; padding: 15px 20px; border-color: var(--gemini-purple);">
                     <option value="">Geral (Falar apenas sobre Leis)</option>
-                    </select>
+                  </select>
               </div>
             </div>
             
@@ -1231,14 +655,14 @@
                     <th width="45%">Registro de Detalhes da Transação</th>
                   </tr>
                 </thead>
-                <tbody id="tabela-logs-corpo">
-                  </tbody>
+                <tbody id="tabela-logs-corpo"></tbody>
               </table>
             </div>
           </section>
         </div>
 
-      </div> </main>
+      </div> 
+    </main>
   </div>
 
   <div class="modal-overlay" id="modalDetalhes">
@@ -1269,6 +693,7 @@
           </div>
 
           <div id="radar-result" class="radar-dashboard" style="display: none;">
+            
             <div class="score-box">
               <h4 style="color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; font-weight: 800;">Confiabilidade das Provas</h4>
               <div class="score-circle" id="radar-score-circle" style="border-color: var(--success);">
@@ -1281,6 +706,8 @@
             
             <div>
               <div class="gemini-response-box">
+                <div id="alerta-offline-container"></div>
+
                 <h4><i class="fas fa-robot" style="color: var(--gemini-purple); font-size: 1.8rem;"></i> Laudo Técnico Oficial (Gemini)</h4>
                 
                 <div class="ia-laudo-block">
@@ -1380,7 +807,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-    // ⚠️ CHAVES OFICIAIS DO BANCO DE DADOS FIREBASE ⚠️
+    // CHAVES OFICIAIS DO BANCO DE DADOS FIREBASE
     const firebaseConfig = {
       apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
       authDomain: "site-8dfaf.firebaseapp.com",
@@ -1393,7 +820,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // CHAVE DO GEMINI API
+    // CHAVE DO GEMINI API (Exposta no front conforme instruído, mas ciente dos riscos)
     const GEMINI_API_KEY = "AIzaSyBUCj1-Zd4rNXTQpF44k_oR1WBIVcXeeyg";
 
     // Variáveis de Estado Global
@@ -1404,36 +831,37 @@
     const logsAuditoria = [];
     
     // --- SISTEMA DE LOGS DE AUDITORIA ---
-    function registrarLog(acaoRealizada, detalhesTecnicos) {
-        const log = { dataHora: new Date().toLocaleString(), acao: acaoRealizada, detalhes: detalhesTecnicos };
+    function registrarLog(acaoRealizada, detalhesTecnicos, nivel = "INFO") {
+        const log = { dataHora: new Date().toLocaleString(), acao: acaoRealizada, detalhes: detalhesTecnicos, nivel };
         logsAuditoria.unshift(log);
         
         const tabelaLogs = document.getElementById('tabela-logs-corpo');
         if(tabelaLogs) { 
             tabelaLogs.innerHTML = ''; 
-            logsAuditoria.slice(0, 30).forEach(l => {
+            logsAuditoria.slice(0, 50).forEach(l => {
+                let corDetalhe = l.nivel === "ERRO" ? "color: var(--danger);" : "color: var(--text-light);";
                 tabelaLogs.innerHTML += `
                   <tr>
                       <td><span style="color:var(--text-muted); font-size:0.95rem;">${l.dataHora}</span></td>
                       <td><strong style="color:white; font-size:1.05rem;">Fiscal Chefe (Admin)</strong></td>
                       <td><strong style="color:var(--secondary); font-size:1.05rem;">${l.acao}</strong></td>
-                      <td style="color:var(--text-light); line-height: 1.6; font-size:1.05rem;">${l.detalhes}</td>
+                      <td style="${corDetalhe} line-height: 1.6; font-size:1.05rem;">${l.detalhes}</td>
                   </tr>
                 `; 
             }); 
         }
     }
 
-    // --- FUNÇÕES DE NAVEGAÇÃO DE PÁGINA ÚNICA (SPA FLEX) ---
+    // --- NAVEGAÇÃO SPA ---
     window.switchView = (viewId, elementClicked) => {
         document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         if(elementClicked) elementClicked.classList.add('active');
-        registrarLog("Navegação do Usuário", `Acessou o módulo restrito: ${viewId}`);
+        registrarLog("Navegação", `Acessou o módulo: ${viewId}`);
     }
 
-    // --- FUNÇÃO DE MENSAGENS FLUTUANTES (TOASTS) ---
+    // --- MENSAGENS TOASTS ---
     window.showToast = (titulo, mensagem, tipo = 'success') => {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -1453,7 +881,7 @@
       setTimeout(() => { toast.remove(); }, 4500);
     }
 
-    // --- SEGURANÇA E TELA DE BLOQUEIO ---
+    // --- SEGURANÇA E LOCK SCREEN ---
     window.checkPin = () => {
       const pinValor = document.getElementById('pin-input').value;
       if (pinValor === '1533') { 
@@ -1462,23 +890,20 @@
           document.getElementById('lock-screen').style.display = 'none';
           document.getElementById('app-container').style.display = 'flex'; 
           initCharts(); 
-          registrarLog("Autenticação de Segurança", "Login Mestre efetuado com sucesso via PIN.");
+          registrarLog("Autenticação", "Login Mestre efetuado com sucesso via PIN.");
         }, 500);
         showToast('Acesso Permitido', 'Sessão administrativa iniciada.', 'success');
       } else { 
         document.getElementById('pin-input').value = ''; 
         showToast('Alerta de Invasão', 'Senha incorreta registrada no log.', 'error'); 
-        registrarLog("Falha Crítica de Autenticação", "Tentativa de login com senha inválida detectada.");
+        registrarLog("Falha Crítica de Autenticação", "Tentativa de login com senha inválida.", "ERRO");
       }
     }
 
-    // =====================================================================
-    // EXTRAÇÃO SEGURA DE IMAGENS (CONSERTA ERRO 404 DO GEMINI)
-    // =====================================================================
+    // --- EXTRAÇÃO SEGURA DE IMAGENS (PREVINE CORS) ---
     async function obterDadosImagemSeguro(urlOuBase64) {
         if (!urlOuBase64) return null;
         
-        // Se a string já for um Base64 gerado pelo seu site na hora do cadastro
         if (urlOuBase64.startsWith('data:image')) {
             try {
                 const mime = urlOuBase64.split(';')[0].split(':')[1];
@@ -1487,7 +912,6 @@
             } catch(e) { return null; }
         }
         
-        // Se o Firebase tiver guardado como um link HTTP (Processos muito antigos)
         if (urlOuBase64.startsWith('http')) {
             try {
                 const resposta = await fetch(urlOuBase64);
@@ -1509,7 +933,7 @@
         return null;
     }
 
-    // --- SINCRONIZAÇÃO EM TEMPO REAL COM FIREBASE E TABELAS ---
+    // --- SINCRONIZAÇÃO EM TEMPO REAL COM FIREBASE ---
     const fireQuery = query(collection(db, "pedidos"), orderBy("data", "desc"));
     
     onSnapshot(fireQuery, (snapshot) => {
@@ -1617,14 +1041,11 @@
       });
     }
 
-    // --- MAPA DE CALOR REAL (MAPA DE ZONAS) ---
     function atualizarMapaDeCalor(dados) {
         const mapaContainer = document.getElementById('mapa-zonas-reais');
         if(!mapaContainer) return;
 
-        let zonas = {
-            "Sul (Grajaú)": 0, "Centro (Sé)": 0, "Leste (Itaquera)": 0, "Norte (Santana)": 0, "Oeste (Pinheiros)": 0
-        };
+        let zonas = { "Sul (Grajaú)": 0, "Centro (Sé)": 0, "Leste (Itaquera)": 0, "Norte (Santana)": 0, "Oeste (Pinheiros)": 0 };
         let totalProblemas = 0;
 
         dados.forEach(p => {
@@ -1642,15 +1063,12 @@
         if (totalProblemas === 0) totalProblemas = 1; 
 
         mapaContainer.innerHTML = '';
-        
-        let zonasArray = Object.keys(zonas).map(nome => {
-            return { nome: nome, valor: zonas[nome] };
-        }).sort((a, b) => b.valor - a.valor);
+        let zonasArray = Object.keys(zonas).map(nome => { return { nome: nome, valor: zonas[nome] }; }).sort((a, b) => b.valor - a.valor);
 
         zonasArray.forEach(z => {
             let porcentagem = Math.round((z.valor / totalProblemas) * 100);
-            
             let cor = "var(--success)"; let icone = "fa-shield-alt"; let textoStatus = "Estável / Monitorado";
+            
             if (porcentagem > 15) { cor = "var(--warning)"; icone = "fa-exclamation-triangle"; textoStatus = "Alerta Operacional"; }
             if (porcentagem > 30) { cor = "var(--danger)"; icone = "fa-fire"; textoStatus = "Risco Crítico Iminente"; }
             if (z.valor === 0) porcentagem = 0; 
@@ -1661,13 +1079,13 @@
               <i class="fas ${icone}" style="font-size: 4rem; color: ${cor}; margin: 25px 0; filter: drop-shadow(0 0 15px rgba(0,0,0,0.5));"></i>
               <p style="color: ${cor}; font-weight: 900; font-size: 1.4rem;">${textoStatus}</p>
               <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${porcentagem}%; background: ${cor};"></div></div>
-              <span style="color: var(--text-muted); font-size: 1rem; display: block; margin-top: 15px; font-weight:bold;">${porcentagem}% das pendências da base (${z.valor} Casos)</span>
+              <span style="color: var(--text-muted); font-size: 1rem; display: block; margin-top: 15px; font-weight:bold;">${porcentagem}% das pendências (${z.valor} Casos)</span>
             </div>
             `;
         });
     }
 
-    // --- FILTROS AVANÇADOS E EXPORTAÇÃO CSV ---
+    // --- FILTROS E CSV ---
     window.aplicarFiltros = () => {
         const selectStatus = document.getElementById('filtro-status').value;
         const selectRamo = document.getElementById('filtro-ramo').value;
@@ -1701,7 +1119,6 @@
         todosProcessos.forEach(p => { 
             let statusExport = p.pago ? 'Aprovado' : (p.valor ? 'Aguardando Pagamento' : 'Analise Pendente');
             if (p.tipo === "🚨 DENÚNCIA") statusExport = 'Denúncia Externa';
-            
             let notaLimpa = p.notas ? p.notas.replace(/(\r\n|\n|\r)/gm, " ") : "";
             stringCSV += `"${p.data||''}","${p.nome}","${p.cnpj}","${p.tipo}","${statusExport}","${p.valor||'0'}","${notaLimpa}"\n`; 
         });
@@ -1712,12 +1129,12 @@
         linkDownload.download = `Base_Mestra_COVISA_${new Date().toLocaleDateString()}.csv`; 
         linkDownload.click();
         
-        registrarLog("Exportação de Dados", "A base de dados oficial foi exportada para CSV pelo administrador.", "ALTO");
-        showToast("Download Concluído", "Base de dados exportada com sucesso.", "success");
+        registrarLog("Exportação", "Base de dados exportada para CSV.");
+        showToast("Download Concluído", "Base exportada com sucesso.", "success");
     }
 
     // =======================================================
-    // 🧠 MOTOR DE INTELIGÊNCIA ARTIFICIAL GEMINI E MODAL
+    // MOTOR DE INTELIGÊNCIA ARTIFICIAL GEMINI E MODAL (BLINDADO)
     // =======================================================
     window.abrirAba = (idDaAba, botaoClicado) => {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
@@ -1731,7 +1148,6 @@
       document.getElementById("modalDetalhes").style.display = "flex";
       document.getElementById("modal-id-text").innerText = idDoProtocolo.substring(0,8).toUpperCase();
       document.querySelector('.tab-ai').click(); 
-      registrarLog("Acesso Restrito", `Auditor abriu o dossiê do processo ID: ${idDoProtocolo.substring(0,8)}`);
 
       try {
         const documentoNoBanco = await getDoc(doc(db, "pedidos", idDoProtocolo));
@@ -1779,12 +1195,15 @@
           document.getElementById("modal-status-select").value = selectStatus;
           document.getElementById("modal-notas-input").value = dadosDoCliente.notas || "";
           
-          let textoZapOficial = `Prefeitura de São Paulo - COVISA\n*${dadosDoCliente.nome}* - CNPJ/CPF: ${dadosDoCliente.cnpj}\n\n`;
-          if(selectStatus === 'pendente') textoZapOficial += `Aviso: Seu processo passou pela triagem inicial e encontra-se sob análise dos fiscais da base. Por favor, aguarde novas instruções no portal.`;
-          if(selectStatus === 'aguardando') textoZapOficial += `NOTIFICAÇÃO OFICIAL: A taxa administrativa de regularização no valor de *R$ ${dadosDoCliente.valor}* já foi emitida e aguarda pagamento. Acesse o portal e gere o seu Pix para liberação da licença sanitária.`;
-          if(selectStatus === 'pago') textoZapOficial += `PARABÉNS! Sua licença sanitária foi *APROVADA* e liberada no sistema. O certificado provisório está disponível para download e assinatura no portal oficial.`;
-          document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(textoZapOficial)}`;
+          let textoZap = `Prefeitura de São Paulo - COVISA\n*${dadosDoCliente.nome}* - CNPJ/CPF: ${dadosDoCliente.cnpj}\n\n`;
+          if(selectStatus === 'pendente') textoZap += `Aviso: Seu processo passou pela triagem inicial e encontra-se sob análise.`;
+          if(selectStatus === 'aguardando') textoZap += `A taxa administrativa no valor de *R$ ${dadosDoCliente.valor}* já foi emitida.`;
+          if(selectStatus === 'pago') textoZap += `PARABÉNS! Sua licença sanitária foi *APROVADA*.`;
+          document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(textoZap)}`;
 
+          // Reset do container de alerta offline
+          document.getElementById('alerta-offline-container').innerHTML = '';
+          
           iniciarRadarIAGemini();
         }
       } catch (e) { 
@@ -1798,7 +1217,7 @@
     };
 
     // =====================================================================
-    // O VERDADEIRO MOTOR FORENSE DO GEMINI (BLINDADO CONTRA ERRO 404)
+    // MOTOR FORENSE GEMINI (COM TRATAMENTO DE ERRO AVANÇADO E JSON NATIVO)
     // =====================================================================
     let loaderInterval;
     window.iniciarRadarIAGemini = async () => {
@@ -1808,11 +1227,10 @@
         document.getElementById('radar-result').style.display = 'none';
         
         const textosLoading = [
-            "Extraindo dados do processo do Firebase...",
-            "Iniciando Visão Computacional Avançada nas imagens...",
-            "Processando OCR (Extração de Textos das Imagens)...",
-            "Cruzando informações ópticas com o Banco de Dados Cidadão...",
-            "Avaliando condições visuais e físicas com o Ramo da Empresa...",
+            "Extraindo dados do Firebase...",
+            "Iniciando Visão Computacional Avançada...",
+            "Processando OCR Óptico nas evidências...",
+            "Cruzando informações com o Código Sanitário...",
             "Construindo Laudo Forense Final..."
         ];
         
@@ -1823,15 +1241,14 @@
         
         loaderInterval = setInterval(() => {
             contadorTxt++;
-            if(contadorTxt < textosLoading.length) {
-                pText.innerText = textosLoading[contadorTxt];
-            }
+            if(contadorTxt < textosLoading.length) { pText.innerText = textosLoading[contadorTxt]; }
         }, 1500);
 
         try {
-            // PROMPT MASTER: Removida a trava de mime_type que dava erro, a instrução agora FORÇA no texto.
+            // Atualização: O prompt agora é puramente estrutural, sem pedir pra não usar Markdown,
+            // pois usaremos a configuração nativa da API para forçar o JSON (responseMimeType)
             let promptDaIA = `
-                ATENÇÃO: VOCÊ É UM SISTEMA DE AUDITORIA FORENSE DE ALTA PRECISÃO (Vigilância Sanitária).
+                VOCÊ É UM SISTEMA DE AUDITORIA FORENSE DE ALTA PRECISÃO (Vigilância Sanitária).
                 Sua tarefa é analisar rigorosamente os dados e imagens fornecidos e identificar QUALQUER fraude ou divergência.
 
                 DADOS DECLARADOS PELO USUÁRIO:
@@ -1842,75 +1259,73 @@
 
                 ANÁLISE EXIGIDA MENTALMENTE ANTES DE RESPONDER:
                 1. EXTRAÇÃO ÓPTICA (OCR): Se houver fotos, leia o texto visível nelas.
-                2. VALIDAÇÃO DE IDENTIDADE: Os nomes ou CNPJs legíveis nas fotos batem EXATAMENTE com os dados declarados acima?
+                2. VALIDAÇÃO DE IDENTIDADE: Os nomes/CNPJs nas fotos batem com os dados declarados?
                 3. VALIDAÇÃO VISUAL: Se é um ambiente, ele condiz com o "Ramo de Atividade"?
-                4. DENÚNCIA: Se o Ramo de Atividade for a palavra "🚨 DENÚNCIA", A QUALIDADE DAS PROVAS DEVE SER OBRIGATORIAMENTE 0 (ZERO).
+                4. DENÚNCIA: Se o Ramo de Atividade for a palavra "🚨 DENÚNCIA", A QUALIDADE DAS PROVAS É ZERO.
 
                 REGRAS DE PONTUAÇÃO (Score de 0 a 100):
                 - 80 a 100: Tudo perfeito, o documento bate, boas fotos.
-                - 50 a 70: Ele anexou poucas coisas. Talvez só o CNPJ, mas faltam fotos do ambiente.
-                - 0 a 40: Suspeita de fraude, o nome na foto do documento NÃO bate, as fotos não provam nada, não mandou foto NENHUMA, ou é uma Denúncia.
+                - 50 a 70: Faltam fotos do ambiente, só mandou documento.
+                - 0 a 40: Suspeita de fraude, nomes não batem, ou é uma Denúncia.
 
-                RETORNE ÚNICA E EXCLUSIVAMENTE UM OBJETO JSON VALIDO, SEGUINDO ESTRITAMENTE A ESTRUTURA ABAIXO. NÃO USE MARCAÇÕES DE CÓDIGO (NÃO COLOQUE \`\`\`json):
+                Crie a resposta JSON estritamente usando o seguinte schema (preencha todos os campos):
                 {
-                  "score_confiabilidade": 90,
-                  "verificacao_documental": "Relatório detalhado se o que você leu na foto bate com o que o usuário escreveu no sistema.",
-                  "inspecao_visual": "Relatório do que você enxergou nas fotos em relação à higiene ou tipo de documento.",
-                  "divergencias_encontradas": "Liste as mentiras, fraudes ou inconsistências encontradas. Se não houver, diga 'Nenhuma divergência grave aparente'.",
-                  "veredito_final": "APROVAR LICENÇA"
+                  "score_confiabilidade": "numero de 0 a 100",
+                  "verificacao_documental": "texto detalhado",
+                  "inspecao_visual": "texto detalhado do que enxergou nas fotos",
+                  "divergencias_encontradas": "texto das divergências ou 'Nenhuma divergência grave aparente'",
+                  "veredito_final": "texto curto de decisao (ex: APROVAR LICENÇA)"
                 }
             `;
             
             let pacoteDeEnvio = [{ "text": promptDaIA }];
             
-            // UTILIZA A FUNÇÃO SEGURA PARA NÃO ENVIAR LIXO PRA API (Evita Erro 400/404)
+            // Adiciona imagens se existirem
             if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0) {
-                // Para não estourar a cota da API Gratuita, manda no máximo 3 fotos
                 for (let i = 0; i < Math.min(dadosDoProcesso.evidencias.length, 3); i++) {
                     let objImagemSegura = await obterDadosImagemSeguro(dadosDoProcesso.evidencias[i].url);
-                    if(objImagemSegura) {
-                        pacoteDeEnvio.push({ "inline_data": objImagemSegura }); 
-                    }
+                    if(objImagemSegura) pacoteDeEnvio.push({ "inline_data": objImagemSegura }); 
                 }
             }
 
             if(dadosDoProcesso.documento_assinado) {
                 let objAssinadoSeguro = await obterDadosImagemSeguro(dadosDoProcesso.documento_assinado);
-                if(objAssinadoSeguro) {
-                    pacoteDeEnvio.push({ "inline_data": objAssinadoSeguro }); 
-                }
+                if(objAssinadoSeguro) pacoteDeEnvio.push({ "inline_data": objAssinadoSeguro }); 
             }
 
-            // Chamada da API usando o endpoint oficial e estável gemini-1.5-flash
+            // NOVA ESTRUTURA BLINDADA PARA O FETCH DO GEMINI
             const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             
             const disparoAPI = await fetch(url_api_gemini, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
-                    "contents": [{ "parts": pacoteDeEnvio }]
-                    // Removido o response_mime_type para evitar o 404 em contas free restritas
+                    contents: [{ parts: pacoteDeEnvio }],
+                    // AQUI ESTÁ A CORREÇÃO PRINCIPAL: Forçar a saída como JSON pela própria API!
+                    generationConfig: {
+                        responseMimeType: "application/json"
+                    }
                 })
             });
 
-            if (!disparoAPI.ok) throw new Error(`Erro na API do Google. Status: ${disparoAPI.status}`);
+            // Tratamento REAL do erro (Lê o JSON de erro do Google para você saber se foi cota excedida, key errada, etc)
+            if (!disparoAPI.ok) {
+                const erroDoGoogle = await disparoAPI.json();
+                console.error("[GEMINI API ERRO DETALHADO]", erroDoGoogle);
+                throw new Error(erroDoGoogle.error?.message || `Erro HTTP ${disparoAPI.status}`);
+            }
             
             const respostaDaIA = await disparoAPI.json();
             
-            // Validação de Segurança da Estrutura de Retorno para evitar erro de .text indefinido
             if (!respostaDaIA.candidates || !respostaDaIA.candidates[0].content || !respostaDaIA.candidates[0].content.parts) {
-                throw new Error("A IA retornou uma estrutura vazia ou bloqueou o conteúdo (Safety).");
+                throw new Error("A IA retornou uma estrutura vazia ou bloqueou por Safety (conteúdo sensível).");
             }
 
+            // Agora o texto SEMPRE virá como um JSON válido, não precisa daquele Regex maluco.
             let textoDoGemini = respostaDaIA.candidates[0].content.parts[0].text;
-            
-            // Extração Cirúrgica Anti-Erro
-            const matchJson = textoDoGemini.match(/\{[\s\S]*\}/);
-            if (!matchJson) throw new Error("A IA gerou uma resposta que não é JSON reconhecível.");
-            
-            const resultadoJson = JSON.parse(matchJson[0]);
+            const resultadoJson = JSON.parse(textoDoGemini);
 
-            // Motor de Segurança Interno: Checa se a pessoa usou a MESMA foto de outro CNPJ
+            // Motor de Segurança Interno: Suspeita de Clone
             let suspeitaDeClone = false;
             if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0 && todosProcessos.length > 1) {
                 let tamanhoDaFotoAtual = dadosDoProcesso.evidencias[0].url.length;
@@ -1928,46 +1343,59 @@
                 }
             }
 
-            // Delay estratégico para a barra de loading terminar a animação com calma
             setTimeout(() => {
                 clearInterval(loaderInterval);
                 renderizarRadarNaTela(resultadoJson);
-                registrarLog("Laudo Forense (IA)", `Gemini processou o caso de ${dadosDoProcesso.cnpj} com score de confiabilidade de ${resultadoJson.score_confiabilidade}%.`);
-            }, 2000);
+                registrarLog("Laudo Forense (IA)", `Gemini processou ID ${dadosDoProcesso.cnpj} com ${resultadoJson.score_confiabilidade}% de confiança.`);
+            }, 1000);
             
         } catch (error) {
             console.error("Falha Sistêmica no Gemini:", error);
+            registrarLog("FALHA NA API IA", error.message, "ERRO");
+            document.getElementById('status-ia-sidebar').innerText = 'Desconectada / Falha';
+            document.getElementById('status-ia-sidebar').style.color = 'var(--danger)';
             
             // ==========================================
-            // SISTEMA DE CONTINGÊNCIA V5 (MOTOR OFFLINE)
+            // MODO DE CONTINGÊNCIA VÍSIVEL (CORRIGIDO)
             // ==========================================
+            // Avisa o administrador claramente que a IA falhou.
+            document.getElementById('alerta-offline-container').innerHTML = `
+                <div class="alerta-offline">
+                    <i class="fas fa-plug" style="font-size: 2rem;"></i>
+                    <div>
+                        <h4 style="margin: 0; font-size: 1.1rem; color: white;">Conexão Neural Interrompida</h4>
+                        <p style="margin: 0; font-size: 0.95rem;">Falha ao comunicar com o Google Gemini. Motivo técnico: ${error.message.substring(0, 80)}...</p>
+                        <p style="margin: 4px 0 0 0; font-size: 0.85rem; opacity: 0.8;">O laudo abaixo foi gerado baseando-se em lógicas locais de contagem de evidências do servidor (Modo Offline).</p>
+                    </div>
+                </div>
+            `;
+
             let notasFallback = {
                 score_confiabilidade: 90,
-                verificacao_documental: "Modo Offline ativo (A API recusou a conexão). O sistema validou apenas a presença de caracteres textuais no banco de dados.",
-                inspecao_visual: "Inspeção por visão computacional indisponível momentaneamente. As fotos constam no banco mas não puderam ser lidas pela IA.",
-                divergencias_encontradas: "A API do Google falhou, porém os documentos básicos parecem ter sido enviados. Recomenda-se verificação humana das imagens na aba ao lado.",
-                veredito_final: "APROVAÇÃO VIRTUAL"
+                verificacao_documental: "Modo Offline: O sistema validou localmente apenas a presença de caracteres no BD.",
+                inspecao_visual: "Inspeção por Visão Computacional bloqueada devido à falha de comunicação com o Google AI.",
+                divergencias_encontradas: "A API falhou, porém os documentos básicos parecem existir no Firebase. Verifique as fotos manualmente na aba ao lado.",
+                veredito_final: "APROVAÇÃO VIRTUAL RESTRITA"
             };
             
-            // Aplica as lógicas severas caso a IA tenha caído
             if(dadosDoProcesso.tipo === "🚨 DENÚNCIA") { 
                 notasFallback.score_confiabilidade = 0; 
                 notasFallback.veredito_final = "INTERDIÇÃO CAUTELAR"; 
-                notasFallback.divergencias_encontradas = "Processo trata-se de Denúncia Criminal reportada pelo Cidadão. Risco severo à saúde da população. Exige intervenção imediata."; 
+                notasFallback.divergencias_encontradas = "Denúncia reportada pelo Cidadão. Risco severo à saúde da população."; 
             } else if(!dadosDoProcesso.evidencias || dadosDoProcesso.evidencias.length === 0) { 
                 notasFallback.score_confiabilidade = 10; 
                 notasFallback.veredito_final = "REPROVAR E BLOQUEAR"; 
-                notasFallback.divergencias_encontradas = "O requerente não enviou ABSOLUTAMENTE NENHUMA foto ou comprovante visual. É impossível expedir licença às cegas."; 
+                notasFallback.divergencias_encontradas = "O requerente não enviou absolutamente NENHUMA foto ou comprovante visual."; 
             } else if(dadosDoProcesso.evidencias.length === 1) { 
                 notasFallback.score_confiabilidade = 40; 
                 notasFallback.veredito_final = "REVISÃO OBRIGATÓRIA (Faltam Provas)"; 
-                notasFallback.divergencias_encontradas = "O requerente anexou apenas 1 imagem. Pode ser apenas o papel do CNPJ e não a foto do local. Isso não prova que o ambiente é seguro."; 
+                notasFallback.divergencias_encontradas = "O requerente anexou apenas 1 imagem. Exige-se validação humana das evidências visuais."; 
             }
             
             setTimeout(() => {
                 clearInterval(loaderInterval);
                 renderizarRadarNaTela(notasFallback);
-            }, 3000);
+            }, 1500);
         }
     }
 
@@ -1989,13 +1417,11 @@
         txtNivelQualidade.style.color = corEscolhida; 
         txtNivelQualidade.innerText = nivelTexto;
         
-        // Popula os Laudos
         document.getElementById('radar-doc-check').innerHTML = dadosIA.verificacao_documental;
         document.getElementById('radar-visual-check').innerHTML = dadosIA.inspecao_visual;
         document.getElementById('radar-risk-check').innerHTML = dadosIA.divergencias_encontradas;
         document.getElementById('radar-recommendation-text').innerText = dadosIA.veredito_final;
         
-        // Animação dos Números da IA Subindo
         let contadorAparente = 0; 
         let intervaloEfeito = setInterval(() => { 
             contadorAparente += Math.ceil(notaFinal / 15) + 1; 
@@ -2008,6 +1434,7 @@
     window.salvarEdicaoModal = async () => {
       if(!idProcessoAtual) return;
       const botaoDeSalvar = document.getElementById('btn-salvar-modal');
+      const textOriginalBotao = botaoDeSalvar.innerHTML;
       botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sincronizando BD Central...';
       
       let valorInputado = document.getElementById("modal-valor-input").value; 
@@ -2024,28 +1451,28 @@
             pago: flagPago, 
             notas: notasDigitadas 
         });
-        showToast('Veredito Finalizado', 'A base de dados foi atualizada com sucesso no Gov Br.', 'success');
-        registrarLog("Autuação/Veredito Executado", `Protocolo de ID ${idProcessoAtual.substring(0,8)} modificado para o status sistêmico: ${statusSelecionado.toUpperCase()}`);
+        showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase.', 'success');
+        registrarLog("Veredito Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
         fecharModal();
       } catch (erroDeRede) { 
         showToast('Falha Crítica', 'Acesso negado no banco de dados da nuvem.', 'error'); 
-        botaoDeSalvar.innerHTML = '<i class="fas fa-save"></i> Tentar Gravar Novamente'; 
+        botaoDeSalvar.innerHTML = textOriginalBotao; 
       } 
     };
 
     // --- AÇÃO DE DELETAR PROCESSO ---
     window.deletarProcessoAtual = async () => {
       if(!idProcessoAtual) return;
-      if(confirm("COMANDO IRREVERSÍVEL DA JUSTIÇA:\nDeseja destruir as informações deste processo permanentemente da base governamental? Não existe botão de desfazer.")) {
+      if(confirm("COMANDO IRREVERSÍVEL DA JUSTIÇA:\nDeseja destruir as informações deste processo permanentemente da base governamental?")) {
         await deleteDoc(doc(db, "pedidos", idProcessoAtual));
         showToast('Base Limpa', 'O dossiê foi erradicado do sistema.', 'success');
-        registrarLog("Destruição de Dossiê", `O documento mestre do processo ID: ${idProcessoAtual.substring(0,8)} foi desintegrado sem deixar rastros operacionais.`);
+        registrarLog("Destruição de Dossiê", `O documento mestre do processo ID: ${idProcessoAtual.substring(0,8)} foi apagado.`, "ERRO");
         fecharModal();
       }
     };
 
     // =====================================================================
-    // 💬 CHATBOT JURÍDICO INTEGRADO (CONSERTADO: NUNCA MAIS QUEBRA O LAYOUT)
+    // CHATBOT JURÍDICO INTEGRADO (CORRIGIDO TAMBÉM)
     // =====================================================================
     window.enviarChat = async () => {
         const campoDeTexto = document.getElementById('chat-input-text'); 
@@ -2054,7 +1481,6 @@
         
         const areaHistorico = document.getElementById('chat-historico');
         
-        // Criando balão do usuário de forma segura (Sem innerHTML +=)
         const bolhaUser = document.createElement('div');
         bolhaUser.className = 'chat-msg msg-user';
         bolhaUser.innerText = perguntaDoFiscal;
@@ -2063,24 +1489,22 @@
         campoDeTexto.value = ''; 
         areaHistorico.scrollTop = areaHistorico.scrollHeight;
         
-        // Criando Loader da IA de forma segura
         const idLoaderChat = 'loader_' + Date.now(); 
         const bolhaLoader = document.createElement('div');
         bolhaLoader.id = idLoaderChat;
         bolhaLoader.className = 'chat-msg msg-ai';
-        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.5rem; margin-right: 10px;"></i> Analisando Código de Leis Municipais e Processos...`;
+        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.5rem; margin-right: 10px;"></i> Analisando Código de Leis e Processos...`;
         areaHistorico.appendChild(bolhaLoader);
         
         areaHistorico.scrollTop = areaHistorico.scrollHeight;
 
-        let promptFinal = `Aja estritamente como Advogado Chefe da Vigilância Sanitária de SP. Cite a Lei Municipal 13.725 ou resoluções da ANVISA nas respostas se necessário. O fiscal perguntou: "${perguntaDoFiscal}". Seja direto, didático e não use caracteres de marcação markdown.`;
+        let promptFinal = `Aja como Auditor/Advogado da Vigilância Sanitária de SP. Cite a Lei Municipal 13.725 ou RDC 216 nas respostas. O fiscal perguntou: "${perguntaDoFiscal}". Seja direto, sem enrolação. Formate as respostas em HTML básico (use tags <b> para negrito e <br> para quebras, não use asteriscos markdown).`;
 
-        const idProcessoSelecionadoNoChat = document.getElementById('chat-process-selector').value;
-        
-        if (idProcessoSelecionadoNoChat && idProcessoSelecionadoNoChat !== "") {
-            let p = todosProcessos.find(proc => proc.id === idProcessoSelecionadoNoChat);
+        const idProcChat = document.getElementById('chat-process-selector').value;
+        if (idProcChat && idProcChat !== "") {
+            let p = todosProcessos.find(proc => proc.id === idProcChat);
             if(p) {
-                promptFinal = `Aja como Auditor Chefe da Vigilância Sanitária de SP. O fiscal selecionou a empresa "${p.nome}" (CNPJ: ${p.cnpj}, Ramo: ${p.tipo}). O checklist alegado foi: ${p.docs}. Mensagem do fiscal para você sobre este caso específico: "${perguntaDoFiscal}". Faça um resumo crítico focado no que ele pediu e cite leis de punição se houver infração aparente nos dados listados. Responda em texto puro, sem usar asteriscos ou formatação.`;
+                promptFinal = `Aja como Auditor Chefe da Vigilância Sanitária de SP. O fiscal abriu a empresa "${p.nome}" (CNPJ: ${p.cnpj}, Ramo: ${p.tipo}). Checklist base: ${p.docs}. Mensagem: "${perguntaDoFiscal}". Responda em HTML básico (<b> para destaques, <br> para quebras) e cite leis cabíveis. Não use marcações markdown (* ou **).`;
             }
         }
 
@@ -2089,27 +1513,32 @@
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
-                    "contents": [{ "parts": [{"text": promptFinal}] }] 
+                    contents: [{ parts: [{text: promptFinal}] }] 
                 })
             });
             
-            if(!envioPergunta.ok) throw new Error("A API rejeitou a conexão do Chat.");
-            const respostaCompleta = await envioPergunta.json(); 
+            if(!envioPergunta.ok) {
+                const erroDoGoogle = await envioPergunta.json();
+                throw new Error(erroDoGoogle.error?.message || "Erro desconhecido na API do Chat.");
+            }
             
+            const respostaCompleta = await envioPergunta.json(); 
             document.getElementById(idLoaderChat).remove(); 
             
             let textoDoAssistente = respostaCompleta.candidates[0].content.parts[0].text;
-            textoDoAssistente = textoDoAssistente.replace(/\*\*/g, '').replace(/\*/g, '-').replace(/\n/g, '<br>');
             
-            // Criação Segura do Balão da IA
             const bolhaIA = document.createElement('div');
             bolhaIA.className = 'chat-msg msg-ai';
             bolhaIA.innerHTML = `<strong style="color:var(--gemini-purple); font-size: 1.1rem;"><i class="fas fa-robot"></i> Parecer Oficial Gemini:</strong><br><br>${textoDoAssistente}`;
             areaHistorico.appendChild(bolhaIA);
 
             areaHistorico.scrollTop = areaHistorico.scrollHeight;
-            registrarLog("Consulta Jurídica IA", "O Fiscal conversou com a Inteligência Artificial no módulo Chatbot.");
+            registrarLog("Consulta Jurídica IA", "Fiscal interagiu com o Chatbot.");
+            document.getElementById('chat-header-status').innerText = 'Rede Neural Conectada';
+            document.getElementById('chat-header-status').style.color = 'var(--success)';
+
         } catch(erroNoChat) { 
+            console.error("Erro no Chatbot:", erroNoChat);
             const loaderElement = document.getElementById(idLoaderChat);
             if(loaderElement) loaderElement.remove(); 
             
@@ -2117,13 +1546,16 @@
             erroBolha.className = 'chat-msg msg-ai';
             erroBolha.style.color = "var(--danger)";
             erroBolha.style.border = "1px solid var(--danger)";
-            erroBolha.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Falha de comunicação com a rede neural do Google. Servidor sobrecarregado ou erro de API.`;
+            erroBolha.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Falha de comunicação com o Google. Motivo: ${erroNoChat.message}`;
             areaHistorico.appendChild(erroBolha);
             areaHistorico.scrollTop = areaHistorico.scrollHeight;
+            
+            document.getElementById('chat-header-status').innerText = 'Falha de Conexão';
+            document.getElementById('chat-header-status').style.color = 'var(--danger)';
         }
     }
 
-    // --- CALCULADORA DE INFRAÇÕES (VIEW 3) ---
+    // --- CALCULADORA DE INFRAÇÕES ---
     window.calcularMulta = () => {
         let gravidadeDefinida = document.getElementById('sim-gravidade').value;
         let valorBaseEmReais = 1500;
@@ -2137,7 +1569,7 @@
         document.getElementById('sim-resultado').innerText = 'R$ ' + valorBaseEmReais.toLocaleString('pt-BR', {minimumFractionDigits: 2});
     }
 
-    // --- RENDERIZAÇÃO DOS GRÁFICOS (CHART.JS) ---
+    // --- GRÁFICOS INICIAIS ---
     function initCharts() {
       try {
           const contextoBarra = document.getElementById('barChart').getContext('2d');
@@ -2170,7 +1602,7 @@
       }
     }
 
-    // --- MANIPULAÇÃO DO VISUALIZADOR DE DOCUMENTOS (LIGHTBOX) ---
+    // --- CONTROLE DA LIGHTBOX (FOTOS EM TELA CHEIA) ---
     window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
         document.getElementById('lightbox-img').src = linkImagem; 
         document.getElementById('lightbox-title').innerText = tituloDaImagem; 
