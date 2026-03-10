@@ -26,7 +26,6 @@
       --secondary: #0ea5e9;
       --accent: #38bdf8;
       
-      /* Cores restauradas para o Gemini (Roxo) */
       --gemini-purple: #c084fc;
       --gemini-dark: #7e22ce;
       --gemini-bg: rgba(192, 132, 252, 0.08);
@@ -325,7 +324,7 @@
       </nav>
       
       <div class="sidebar-footer">
-        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 1.5 Flash Core</p>
+        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 1.5 Pro Core</p>
         <p>Status da IA: <span id="status-ia-sidebar" style="color:var(--success); font-weight:800;">Ativa e Conectada</span></p>
       </div>
     </aside>
@@ -1237,7 +1236,8 @@
                 if(objAssinadoSeguro) pacoteDeEnvio.push({ "inline_data": objAssinadoSeguro }); 
             }
 
-            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            // LINK ATUALIZADO PARA O MODELO PRO
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${GEMINI_API_KEY}`;
             
             const disparoAPI = await fetch(url_api_gemini, {
                 method: 'POST', 
@@ -1439,7 +1439,8 @@
         }
 
         try {
-            const envioPergunta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            // LINK ATUALIZADO PARA O MODELO PRO
+            const envioPergunta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${GEMINI_API_KEY}`, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
