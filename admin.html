@@ -46,7 +46,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
     body { background-color: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
     
-    /* Scrollbar customizada */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
@@ -101,9 +100,12 @@
     .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; }
 
     /* =========================================
-       4. ÁREA DE CONTEÚDO E CARDS
+       4. ÁREA DE CONTEÚDO (VIEWS)
        ========================================= */
-    .dashboard-area { padding: 30px; overflow-y: auto; flex: 1; }
+    .page-view { display: none; padding: 30px; overflow-y: auto; flex: 1; animation: fadeIn 0.3s ease; }
+    .page-view.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     .page-title { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
     .page-title h1 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); }
     .page-title p { color: var(--text-muted); font-size: 0.95rem; margin-top: 5px; }
@@ -111,6 +113,7 @@
     .btn-export { background: white; color: var(--text-main); border: 1px solid var(--border); padding: 10px 15px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; box-shadow: var(--shadow-sm); }
     .btn-export:hover { background: #f8fafc; border-color: #cbd5e0; }
 
+    /* CARDS DE STATS */
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
     .stat-card { background: var(--bg-card); padding: 25px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 20px; transition: 0.3s; position: relative; overflow: hidden; }
     .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
@@ -130,14 +133,14 @@
     .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
     .stat-info p { font-size: 2rem; font-weight: 800; color: var(--text-main); line-height: 1; margin: 0; }
 
-    /* Gráficos Area */
+    /* Gráficos */
     .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
     .chart-card { background: var(--bg-card); padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
     .chart-header { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 20px; display: flex; justify-content: space-between; }
     .chart-container { position: relative; height: 250px; width: 100%; }
 
     /* =========================================
-       5. TABELA DE DADOS AVANÇADA
+       5. TABELAS E DADOS
        ========================================= */
     .data-section { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow: hidden; display: flex; flex-direction: column; }
     .data-header { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff; }
@@ -145,7 +148,7 @@
     
     .table-wrapper { overflow-x: auto; min-height: 300px;}
     table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { background: #f8fafc; padding: 15px 25px; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; border-bottom: 2px solid var(--border); }
+    th { background: #f8fafc; padding: 15px 25px; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; border-bottom: 2px solid var(--border); z-index: 2; }
     td { padding: 16px 25px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; vertical-align: middle; }
     tr { transition: 0.2s; }
     tr:hover { background: #f8fafc; }
@@ -166,14 +169,34 @@
     .btn-icon.view:hover { background: #e2e8f0; transform: translateY(-2px); }
     .btn-icon.zap { background: var(--success-light); color: var(--success); text-decoration: none; }
     .btn-icon.zap:hover { background: #bbf7d0; transform: translateY(-2px); }
-    .btn-icon.del { background: var(--danger-light); color: var(--danger); }
-    .btn-icon.del:hover { background: #fecaca; transform: translateY(-2px); }
 
     /* =========================================
-       6. MODAL SUPERIOR (TABS E DETALHES)
+       6. NOVA TELA: FINANCEIRO E LEIS (View 3)
+       ========================================= */
+    .laws-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+    .law-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 25px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
+    .law-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; }
+    .law-leve::before { background: var(--warning); }
+    .law-grave::before { background: #f97316; } /* Laranja */
+    .law-gravissima::before { background: var(--danger); }
+    
+    .law-card h3 { font-size: 1.1rem; color: var(--text-main); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .law-card .valor { font-size: 1.8rem; font-weight: 900; color: var(--text-main); margin-bottom: 15px; }
+    .law-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+    .law-card ul { margin-top: 15px; padding-left: 20px; font-size: 0.85rem; color: var(--text-muted); }
+    .law-card ul li { margin-bottom: 5px; }
+
+    .calc-container { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-sm); margin-bottom: 30px; display: flex; gap: 30px; align-items: center; }
+    .calc-form { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .calc-result { background: #f8fafc; padding: 20px; border-radius: var(--radius-md); border: 2px dashed var(--primary); text-align: center; min-width: 250px; }
+    .calc-result span { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .calc-result h2 { font-size: 2.5rem; color: var(--primary); margin: 5px 0 0 0; font-weight: 900; }
+
+    /* =========================================
+       7. MODAL DE EDIÇÃO (PROCESSOS)
        ========================================= */
     .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(5px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
-    .modal-box { background: var(--bg-card); width: 100%; max-width: 800px; border-radius: var(--radius-xl); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); display: flex; flex-direction: column; max-height: 90vh; animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .modal-box { background: var(--bg-card); width: 100%; max-width: 800px; border-radius: var(--radius-xl); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); display: flex; flex-direction: column; max-height: 90vh; animation: modalIn 0.3s ease; }
     @keyframes modalIn { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
     .modal-header { padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
@@ -181,7 +204,6 @@
     .btn-close { background: white; border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; box-shadow: var(--shadow-sm); }
     .btn-close:hover { background: #f1f5f9; color: var(--danger); transform: rotate(90deg); }
 
-    /* Abas (Tabs) */
     .modal-tabs { display: flex; border-bottom: 1px solid var(--border); padding: 0 30px; background: #fff; }
     .tab-btn { padding: 15px 20px; border: none; background: none; font-size: 0.95rem; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
     .tab-btn:hover { color: var(--primary); }
@@ -190,9 +212,7 @@
     .modal-body { padding: 30px; overflow-y: auto; flex: 1; background: #fff; }
     .tab-content { display: none; animation: fadeIn 0.3s ease; }
     .tab-content.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Estilo dos campos internos */
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .info-group { background: #f8fafc; padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--border); }
     .info-group label { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
@@ -201,15 +221,13 @@
     .docs-list { background: #f8fafc; padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border); margin-top: 20px; }
     .docs-list p { white-space: pre-line; font-size: 0.95rem; line-height: 1.6; color: #334155; }
 
-    /* Formulários Internos */
     .form-input { width: 100%; padding: 12px 15px; border: 1px solid #cbd5e0; border-radius: var(--radius-md); font-size: 1rem; color: var(--text-main); font-weight: 500; transition: 0.3s; background: #fff; }
     .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-    select.form-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 15px; }
+    select.form-input { cursor: pointer; }
     textarea.form-input { resize: vertical; min-height: 120px; font-family: inherit; }
 
-    /* Galeria Visual (Evidências) */
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-top: 15px; }
-    .gallery-item { position: relative; aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--border); cursor: pointer; group; background: #f1f5f9; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    .gallery-item { position: relative; aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--border); cursor: pointer; background: #f1f5f9; display: flex; align-items: center; justify-content: center; flex-direction: column; }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
     .gallery-item:hover img { transform: scale(1.1); filter: brightness(0.7); }
     .gallery-item .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; opacity: 0; transition: 0.3s; }
@@ -221,10 +239,10 @@
     .btn-secondary:hover { background: #f1f5f9; }
     .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
     .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); }
+    .btn-danger { background: #fee2e2; color: var(--danger); border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fca5a5; }
 
-    /* =========================================
-       7. LIGHTBOX (VISUALIZADOR DE FOTOS) E TOASTS
-       ========================================= */
+    /* Lightbox e Toasts */
     #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; display: none; align-items: center; justify-content: center; flex-direction: column; }
     #lightbox img { max-width: 90%; max-height: 85vh; border-radius: var(--radius-md); box-shadow: 0 0 30px rgba(0,0,0,0.5); border: 2px solid #333; }
     #lightbox-title { color: white; margin-top: 15px; font-size: 1.2rem; font-weight: bold; }
@@ -267,31 +285,28 @@
         </div>
       </div>
       <nav class="nav-menu">
-        <a href="#" class="nav-item active"><i class="fas fa-chart-pie"></i> Dashboard</a>
-        <a href="#" class="nav-item"><i class="fas fa-folder-open"></i> Processos</a>
-        <a href="#" class="nav-item"><i class="fas fa-wallet"></i> Financeiro</a>
-        <a href="#" class="nav-item" onclick="limparRegistros()"><i class="fas fa-trash-alt"></i> Resetar Banco</a>
+        <a class="nav-item active" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-folder-open"></i> Todos Processos</a>
+        <a class="nav-item" onclick="switchView('view-financeiro', this)"><i class="fas fa-gavel"></i> Leis e Financeiro</a>
       </nav>
       <div class="sidebar-footer">
-        <p>Versão 2.5.0 Enterprise</p>
+        <p>Versão 3.0 Enterprise</p>
       </div>
     </aside>
 
     <main class="main-content">
-      
       <header class="topbar">
         <div class="search-bar">
           <i class="fas fa-search"></i>
           <input type="text" id="searchInput" placeholder="Buscar CNPJ, Nome ou Ramo..." onkeyup="filtrarTabela()">
         </div>
-        
         <div class="user-profile">
           <div style="display: flex; align-items: center; gap: 8px;">
             <span class="pulse-online"></span>
             <span style="font-size: 0.8rem; font-weight: bold; color: var(--success);">ONLINE</span>
           </div>
           <div class="user-info">
-            <h4>Fiscalização COVISA</h4>
+            <h4>Fiscalização Central</h4>
             <span>Administrador</span>
           </div>
           <div class="avatar">AD</div>
@@ -299,61 +314,81 @@
         </div>
       </header>
 
-      <div class="dashboard-area">
-        
+      <div id="view-dashboard" class="page-view active">
         <div class="page-title">
           <div>
             <h1>Visão Geral do Sistema</h1>
             <p>Monitoramento em tempo real de licenças e taxas da Vigilância Sanitária.</p>
           </div>
-          <button class="btn-export" onclick="exportarCSV()"><i class="fas fa-file-excel" style="color: #10b981;"></i> Exportar Relatório</button>
+          <button class="btn-export" onclick="exportarCSV()"><i class="fas fa-file-excel" style="color: #10b981;"></i> Relatório CSV</button>
         </div>
 
         <div class="stats-grid">
           <div class="stat-card c-warning">
             <div class="stat-icon"><i class="fas fa-file-signature"></i></div>
-            <div class="stat-info"><h3>Pendentes (Falta Análise)</h3><p id="count-pendente">0</p></div>
+            <div class="stat-info"><h3>Falta Análise</h3><p id="count-pendente">0</p></div>
           </div>
           <div class="stat-card c-primary">
             <div class="stat-icon"><i class="fas fa-hand-holding-dollar"></i></div>
-            <div class="stat-info"><h3>Aguardando Pagamento</h3><p id="count-aguardando">0</p></div>
+            <div class="stat-info"><h3>Aguardando Pix</h3><p id="count-aguardando">0</p></div>
           </div>
           <div class="stat-card c-success">
             <div class="stat-icon"><i class="fas fa-check-double"></i></div>
-            <div class="stat-info"><h3>Processos Finalizados</h3><p id="count-pago">0</p></div>
+            <div class="stat-info"><h3>Aprovados</h3><p id="count-pago">0</p></div>
           </div>
           <div class="stat-card c-dark">
             <div class="stat-icon"><i class="fas fa-server"></i></div>
-            <div class="stat-info"><h3>Total no Banco</h3><p id="count-total">0</p></div>
+            <div class="stat-info"><h3>Total BD</h3><p id="count-total">0</p></div>
           </div>
         </div>
 
         <div class="charts-grid">
           <div class="chart-card">
-            <div class="chart-header">
-              <span><i class="fas fa-chart-bar" style="color: var(--primary);"></i> Fluxo de Entrada (Últimos Dias)</span>
-            </div>
-            <div class="chart-container">
-              <canvas id="barChart"></canvas>
-            </div>
+            <div class="chart-header"><span><i class="fas fa-chart-bar" style="color: var(--primary);"></i> Fluxo de Entrada Semanal</span></div>
+            <div class="chart-container"><canvas id="barChart"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-header">
-              <span><i class="fas fa-chart-pie" style="color: var(--accent);"></i> Status Geral</span>
-            </div>
-            <div class="chart-container">
-              <canvas id="doughnutChart"></canvas>
-            </div>
+            <div class="chart-header"><span><i class="fas fa-chart-pie" style="color: var(--accent);"></i> Status Geral</span></div>
+            <div class="chart-container"><canvas id="doughnutChart"></canvas></div>
           </div>
         </div>
-
-        <section class="data-section">
+        
+        <section class="data-section" style="margin-bottom: 30px;">
           <div class="data-header">
-            <h2><i class="fas fa-list-ul" style="color: var(--primary);"></i> Fila de Atendimento</h2>
-            <span style="font-size: 0.8rem; background: #f1f5f9; padding: 5px 10px; border-radius: 6px; font-weight: bold; color: var(--text-muted);"><i class="fas fa-sync fa-spin"></i> Sincronizado</span>
+            <h2><i class="fas fa-clock" style="color: var(--primary);"></i> Últimas Solicitações</h2>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="document.querySelectorAll('.nav-item')[1].click()">Ver Tudo</button>
           </div>
-          <div class="table-wrapper">
-            <table id="tabela-dados">
+          <div class="table-wrapper" style="min-height: auto; max-height: 350px;">
+            <table id="tabela-dashboard">
+              <thead>
+                <tr>
+                  <th width="30%">Empresa / Requerente</th>
+                  <th width="15%">Ramo</th>
+                  <th width="15%">Data Entrada</th>
+                  <th width="15%">Status Atual</th>
+                  <th width="15%">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-corpo-dash"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div id="view-processos" class="page-view">
+        <div class="page-title">
+          <div>
+            <h1>Gerenciador de Processos</h1>
+            <p>Lista completa de todos os estabelecimentos cadastrados no sistema.</p>
+          </div>
+        </div>
+        <section class="data-section" style="height: calc(100vh - 180px);">
+          <div class="data-header">
+            <h2><i class="fas fa-list-ul" style="color: var(--primary);"></i> Tabela Mestra</h2>
+            <span style="font-size: 0.8rem; background: #f1f5f9; padding: 5px 10px; border-radius: 6px; font-weight: bold; color: var(--text-muted);"><i class="fas fa-sync fa-spin"></i> Live Sync</span>
+          </div>
+          <div class="table-wrapper" style="flex:1; overflow-y: auto;">
+            <table>
               <thead>
                 <tr>
                   <th width="30%">Empresa / Requerente</th>
@@ -364,14 +399,140 @@
                   <th width="15%">Ações Rápidas</th>
                 </tr>
               </thead>
-              <tbody id="tabela-corpo">
-                <tr><td colspan="6" style="text-align: center; padding: 50px; color: var(--text-light);"><i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i> Conectando ao Banco de Dados...</td></tr>
+              <tbody id="tabela-corpo-full"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div id="view-financeiro" class="page-view">
+        <div class="page-title">
+          <div>
+            <h1>Gestão Financeira & Base Legal</h1>
+            <p>Auditoria de receitas, simulador de infrações e manuais do código sanitário.</p>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="stat-card c-success" style="padding: 30px;">
+            <div class="stat-icon" style="width: 70px; height: 70px; font-size: 2rem;"><i class="fas fa-sack-dollar"></i></div>
+            <div class="stat-info">
+              <h3 style="font-size: 1rem;">Receita Total Arrecadada (Taxas Pagas)</h3>
+              <p id="receita-total" style="font-size: 2.8rem; color: var(--success);">R$ 0,00</p>
+            </div>
+          </div>
+          <div class="stat-card c-primary" style="padding: 30px;">
+            <div class="stat-icon" style="width: 70px; height: 70px; font-size: 2rem;"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="stat-info">
+              <h3 style="font-size: 1rem;">Receita Pendente (Aguardando Pix)</h3>
+              <p id="receita-pendente" style="font-size: 2.8rem; color: var(--primary);">R$ 0,00</p>
+            </div>
+          </div>
+        </div>
+
+        <h2 style="font-size: 1.3rem; margin-bottom: 15px; color: var(--text-main);"><i class="fas fa-calculator"></i> Simulador de Autuação (Lei 13.725/04)</h2>
+        <div class="calc-container">
+          <div class="calc-form">
+            <div>
+              <label style="font-weight: 700; font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Classificação da Infração</label>
+              <select id="sim-gravidade" class="form-input" onchange="calcularMulta()">
+                <option value="leve">Infração Leve (Ex: Asseio, Docs)</option>
+                <option value="grave">Infração Grave (Ex: Alimento Vencido)</option>
+                <option value="gravissima">Infração Gravíssima (Ex: Risco de Morte)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-weight: 700; font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Porte do Estabelecimento</label>
+              <select id="sim-porte" class="form-input" onchange="calcularMulta()">
+                <option value="1">Micro/Pequena Empresa (ME/EPP)</option>
+                <option value="2">Média Empresa</option>
+                <option value="3">Grande Empresa</option>
+              </select>
+            </div>
+            <div style="grid-column: 1 / -1;">
+              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; color: var(--danger);">
+                <input type="checkbox" id="sim-reincidente" style="width: 20px; height: 20px;" onchange="calcularMulta()">
+                Empresa Reincidente (Dobra o valor da multa base)
+              </label>
+            </div>
+          </div>
+          <div class="calc-result">
+            <span>Valor Estimado da Multa</span>
+            <h2 id="sim-resultado">R$ 1.500,00</h2>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 10px;">Valores baseados na UFESP vigente.</p>
+          </div>
+        </div>
+
+        <h2 style="font-size: 1.3rem; margin-bottom: 15px; color: var(--text-main);"><i class="fas fa-book"></i> Tabela Base de Infrações e Penalidades</h2>
+        <div class="laws-grid">
+          <div class="law-card law-leve">
+            <h3><i class="fas fa-exclamation-circle" style="color: var(--warning);"></i> Infração Leve</h3>
+            <div class="valor">R$ 150 a 2.000</div>
+            <p>Penalidade base para irregularidades administrativas e documentais simples que não afetam diretamente a saúde pública.</p>
+            <ul>
+              <li>Falta de licença visível.</li>
+              <li>Sujidade leve estrutural.</li>
+              <li>Atraso na renovação do CMVS (até 30 dias).</li>
+            </ul>
+          </div>
+          <div class="law-card law-grave">
+            <h3><i class="fas fa-exclamation-triangle" style="color: #f97316;"></i> Infração Grave</h3>
+            <div class="valor">R$ 2.000 a 15.000</div>
+            <p>Risco moderado à saúde. Envolve armazenamento incorreto, falta de higiene severa ou manipulação inadequada.</p>
+            <ul>
+              <li>Alimentos fora da temperatura (RDC 216).</li>
+              <li>Falta de controle de pragas ativo.</li>
+              <li>Produtos estéticos sem registro Anvisa.</li>
+            </ul>
+          </div>
+          <div class="law-card law-gravissima">
+            <h3><i class="fas fa-radiation-alt" style="color: var(--danger);"></i> Infração Gravíssima</h3>
+            <div class="valor">R$ 15.000 a 500.000</div>
+            <p>Risco iminente de morte ou contaminação grave. Sujeito a Interdição Cautelar imediata do local.</p>
+            <ul>
+              <li>Venda de produtos vencidos/apodrecidos.</li>
+              <li>Falsificação de medicamentos/alimentos.</li>
+              <li>Descarte de lixo infectante comum (RDC 222).</li>
+            </ul>
+          </div>
+        </div>
+
+        <section class="data-section">
+          <div class="data-header">
+            <h2>Normas Técnicas (Consulta Rápida)</h2>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th width="20%">Norma / Artigo</th>
+                  <th width="50%">Descrição Legal</th>
+                  <th width="30%">Ação Fiscal Prevista</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Lei Mun. 13.725/04 (Art. 110)</strong></td>
+                  <td>Construir, instalar ou fazer funcionar estabelecimentos sem licença do órgão sanitário competente.</td>
+                  <td><span class="status-badge badge-pendente">Advertência</span> <span class="status-badge badge-aguardando">Multa</span></td>
+                </tr>
+                <tr>
+                  <td><strong>RDC Anvisa nº 216/2004</strong></td>
+                  <td>Regulamento Técnico de Boas Práticas para Serviços de Alimentação (Cozinhas, Restaurantes).</td>
+                  <td><span class="status-badge badge-aguardando">Multa Grave</span> <span class="status-badge badge-pago">Apreensão</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Lei Fed. 6.437/77 (Art. 10)</strong></td>
+                  <td>Fraudar, falsificar ou adulterar alimentos, medicamentos e cosméticos.</td>
+                  <td><span class="status-badge badge-pendente" style="background:var(--danger-light); color:var(--danger);">Interdição Total</span> <span class="status-badge badge-aguardando">Cassação CMVS</span></td>
+                </tr>
               </tbody>
             </table>
           </div>
         </section>
 
       </div>
+
     </main>
   </div>
 
@@ -383,40 +544,39 @@
       </div>
       
       <div class="modal-tabs">
-        <button class="tab-btn active" onclick="abrirAba('tab-detalhes')"><i class="fas fa-info-circle"></i> Detalhes</button>
-        <button class="tab-btn" onclick="abrirAba('tab-fotos')"><i class="fas fa-camera"></i> Evidências</button>
-        <button class="tab-btn" onclick="abrirAba('tab-financeiro')"><i class="fas fa-dollar-sign"></i> Financeiro</button>
-        <button class="tab-btn" onclick="abrirAba('tab-notas')"><i class="fas fa-lock"></i> Notas Internas</button>
+        <button class="tab-btn active" onclick="abrirAba('tab-detalhes', this)"><i class="fas fa-info-circle"></i> Detalhes</button>
+        <button class="tab-btn" onclick="abrirAba('tab-fotos', this)"><i class="fas fa-camera"></i> Evidências</button>
+        <button class="tab-btn" onclick="abrirAba('tab-financeiro', this)"><i class="fas fa-dollar-sign"></i> Financeiro</button>
+        <button class="tab-btn" onclick="abrirAba('tab-notas', this)"><i class="fas fa-lock"></i> Notas Internas</button>
       </div>
 
       <div class="modal-body">
         
         <div id="tab-detalhes" class="tab-content active">
           <div class="info-grid">
-            <div class="info-group"><label>Requerente (Razão Social/Nome)</label><p id="modal-nome">Carregando...</p></div>
-            <div class="info-group"><label>Documento (CNPJ/CPF)</label><p id="modal-cnpj">...</p></div>
+            <div class="info-group"><label>Requerente</label><p id="modal-nome">...</p></div>
+            <div class="info-group"><label>Documento</label><p id="modal-cnpj">...</p></div>
             <div class="info-group"><label>Data de Registro</label><p id="modal-data">...</p></div>
-            <div class="info-group"><label>Classificação / Ramo</label><p id="modal-ramo">...</p></div>
+            <div class="info-group"><label>Ramo</label><p id="modal-ramo">...</p></div>
           </div>
           <div class="docs-list">
-            <label style="font-size: 0.75rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Inventário Documental Declarado</label>
+            <label style="font-size: 0.75rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Inventário Documental</label>
             <p id="modal-docs" style="margin-top: 10px;">...</p>
           </div>
         </div>
 
         <div id="tab-fotos" class="tab-content">
           <div style="background: #eff6ff; padding: 15px; border-radius: var(--radius-md); border-left: 4px solid var(--secondary); margin-bottom: 20px;">
-            <p style="margin: 0; font-size: 0.9rem; color: #1e40af;"><i class="fas fa-info-circle"></i> <strong>Atenção Fiscal:</strong> Verifique as imagens para liberar a documentação técnica.</p>
+            <p style="margin: 0; font-size: 0.9rem; color: #1e40af;"><i class="fas fa-info-circle"></i> Clique nas imagens para ampliar na tela de auditoria.</p>
           </div>
           <h4 id="evidence-title" style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 10px;">Evidências Anexadas</h4>
-          <div class="gallery-grid" id="evidence-gallery">
-            </div>
+          <div class="gallery-grid" id="evidence-gallery"></div>
         </div>
 
         <div id="tab-financeiro" class="tab-content">
           <div class="info-grid">
             <div>
-              <label style="font-weight: 700; color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 8px;">Definir Valor da Taxa (R$)</label>
+              <label style="font-weight: 700; color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 8px;">Valor da Taxa / Multa (R$)</label>
               <input type="text" class="form-input" id="modal-valor-input" placeholder="Ex: 150,00">
             </div>
             <div>
@@ -429,21 +589,20 @@
             </div>
           </div>
           <div style="margin-top: 30px; background: #f8fafc; padding: 20px; border-radius: var(--radius-md); border: 1px dashed var(--border);">
-            <h4 style="font-size: 0.95rem; margin-bottom: 10px;"><i class="fab fa-whatsapp" style="color: #25D366;"></i> Ação de Comunicação</h4>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Ao enviar mensagem, o sistema gera automaticamente o texto baseado no status atual (Cobrança ou Aprovação).</p>
-            <a href="#" id="modal-btn-zap" target="_blank" class="btn" style="background: #25D366; color: white; display: inline-flex; width: fit-content;"><i class="fab fa-whatsapp"></i> Abrir WhatsApp do Cliente</a>
+            <h4 style="font-size: 0.95rem; margin-bottom: 10px;"><i class="fab fa-whatsapp" style="color: #25D366;"></i> Central de Comunicação</h4>
+            <a href="#" id="modal-btn-zap" target="_blank" class="btn" style="background: #25D366; color: white; display: inline-flex; width: fit-content;"><i class="fab fa-whatsapp"></i> Enviar Mensagem do Status Atual</a>
           </div>
         </div>
 
         <div id="tab-notas" class="tab-content">
-          <label style="font-weight: 700; color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 8px;">Observações Confidenciais (O Cliente NÃO vê isso)</label>
-          <textarea class="form-input" id="modal-notas-input" placeholder="Digite aqui anotações sobre o fiscal, irregularidades ou pendências específicas..."></textarea>
+          <label style="font-weight: 700; color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 8px;">Observações Oficiais (O Cliente NÃO vê)</label>
+          <textarea class="form-input" id="modal-notas-input" placeholder="Anote pendências estruturais, histórico de fiscalização, etc..."></textarea>
         </div>
 
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="deletarProcessoAtual()" style="color: var(--danger); border-color: var(--danger-light);"><i class="fas fa-trash-alt"></i> Apagar Processo</button>
+        <button class="btn btn-danger" onclick="deletarProcessoAtual()"><i class="fas fa-trash-alt"></i> Apagar Processo</button>
         <div style="flex:1"></div>
         <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
         <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()"><i class="fas fa-save"></i> Salvar e Atualizar</button>
@@ -460,12 +619,11 @@
   <div id="toast-container"></div>
 
   <script type="module">
-    // --- IMPORTAÇÕES DO FIREBASE (NÃO APAGUE) ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
     // =========================================================================
-    // AS SUAS CHAVES DO FIREBASE JÁ ESTÃO CONFIGURADAS AQUI
+    // COLE SUAS CHAVES AQUI
     // =========================================================================
     const firebaseConfig = {
       apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
@@ -477,311 +635,259 @@
     };
     // =========================================================================
 
-    // Inicialização do Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Variáveis Globais
     let idProcessoAtual = null;
     let chartBar, chartDoughnut;
     let todosProcessos = []; 
 
-    // ==========================================
-    // SISTEMA DE SEGURANÇA (BLOQUEIO)
-    // ==========================================
+    // --- NAVEGAÇÃO SPA (PÁGINA ÚNICA) ---
+    window.switchView = (viewId, element) => {
+        document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        if(element) element.classList.add('active');
+    }
+
+    // --- CALCULADORA DE MULTAS ---
+    window.calcularMulta = () => {
+        const grav = document.getElementById('sim-gravidade').value;
+        const porte = parseInt(document.getElementById('sim-porte').value);
+        const reincidente = document.getElementById('sim-reincidente').checked;
+        
+        let base = 0;
+        if(grav === 'leve') base = 1500;
+        if(grav === 'grave') base = 8500;
+        if(grav === 'gravissima') base = 35000;
+        
+        base = base * porte;
+        if(reincidente) base = base * 2;
+        
+        document.getElementById('sim-resultado').innerText = 'R$ ' + base.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+    }
+
+    // --- SISTEMA DE LOGIN ---
     window.checkPin = () => {
-      const pin = document.getElementById('pin-input').value;
-      if (pin === '1533') { // Sua senha 
+      if (document.getElementById('pin-input').value === '1533') { 
         document.getElementById('lock-screen').style.opacity = '0';
         setTimeout(() => {
           document.getElementById('lock-screen').style.display = 'none';
           document.getElementById('app-content').style.display = 'flex';
-          initCharts(); // Inicia gráficos só quando logar
+          initCharts();
+          calcularMulta(); // Inicia calc
         }, 300);
         showToast('Login Efetuado', 'Bem-vindo ao painel COVISA.', 'success');
       } else {
-        showToast('Acesso Negado', 'Senha incorreta. Tente novamente.', 'error');
+        showToast('Acesso Negado', 'Senha incorreta.', 'error');
         document.getElementById('pin-input').value = '';
       }
     }
 
-    // ==========================================
-    // NOTIFICAÇÕES TOAST
-    // ==========================================
+    // --- TOASTS ---
     window.showToast = (titulo, mensagem, tipo = 'success') => {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = `toast ${tipo}`;
-      
       const icon = tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
-      
-      toast.innerHTML = `
-        <div class="toast-icon"><i class="fas ${icon}"></i></div>
-        <div class="toast-content">
-          <h4>${titulo}</h4>
-          <p>${mensagem}</p>
-        </div>
-      `;
-      
+      toast.innerHTML = `<div class="toast-icon"><i class="fas ${icon}"></i></div><div class="toast-content"><h4>${titulo}</h4><p>${mensagem}</p></div>`;
       container.appendChild(toast);
       setTimeout(() => { toast.style.animation = 'toastFadeOut 0.4s forwards'; }, 3000);
       setTimeout(() => { toast.remove(); }, 3400);
     }
 
-    // ==========================================
-    // INICIALIZAÇÃO DOS GRÁFICOS (CHART.JS)
-    // ==========================================
+    // --- GRÁFICOS ---
     function initCharts() {
       const ctxBar = document.getElementById('barChart').getContext('2d');
       chartBar = new Chart(ctxBar, {
         type: 'bar',
-        data: {
-          labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-          datasets: [{
-            label: 'Processos Recebidos',
-            data: [0, 0, 0, 0, 0, 0, 0], 
-            backgroundColor: '#3b82f6',
-            borderRadius: 6
-          }]
-        },
+        data: { labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], datasets: [{ label: 'Processos', data: [0,0,0,0,0,0,0], backgroundColor: '#3b82f6', borderRadius: 4 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
       });
 
       const ctxDough = document.getElementById('doughnutChart').getContext('2d');
       chartDoughnut = new Chart(ctxDough, {
         type: 'doughnut',
-        data: {
-          labels: ['Pagos', 'Aguardando', 'Pendentes'],
-          datasets: [{
-            data: [1, 1, 1],
-            backgroundColor: ['#10b981', '#0ea5e9', '#f59e0b'],
-            borderWidth: 0,
-            hoverOffset: 4
-          }]
-        },
+        data: { labels: ['Pagos', 'Aguardando', 'Pendentes'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#f59e0b'], borderWidth: 0 }] },
         options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom' } } }
       });
     }
 
-    function updateCharts(pendente, aguardando, pago) {
-      if(chartDoughnut) {
-        chartDoughnut.data.datasets[0].data = [pago, aguardando, pendente];
-        chartDoughnut.update();
-      }
-      
+    function updateCharts(pen, agu, pag) {
+      if(chartDoughnut) { chartDoughnut.data.datasets[0].data = [pag, agu, pen]; chartDoughnut.update(); }
       if(chartBar) {
-        let total = pendente + aguardando + pago;
-        chartBar.data.datasets[0].data = [Math.floor(total*0.1), Math.floor(total*0.15), Math.floor(total*0.2), Math.floor(total*0.3), total, Math.floor(total*0.05), Math.floor(total*0.05)];
+        let t = pen + agu + pag;
+        chartBar.data.datasets[0].data = [Math.floor(t*0.1), Math.floor(t*0.2), Math.floor(t*0.3), Math.floor(t*0.15), t, Math.floor(t*0.05), 0];
         chartBar.update();
       }
     }
 
-    // ==========================================
-    // BUSCA DE DADOS EM TEMPO REAL (FIREBASE)
-    // ==========================================
+    // --- FIREBASE SYNC ---
     const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
-
     onSnapshot(q, (snapshot) => {
       todosProcessos = []; 
       let pendente = 0, aguardando = 0, pago = 0;
+      let totalReceita = 0; let pendenteReceita = 0;
 
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         data.id = docSnap.id;
         todosProcessos.push(data);
 
-        if(data.pago) pago++;
-        else if(data.valor) aguardando++;
+        let valNum = data.valor ? parseFloat(data.valor.replace(',','.')) : 0;
+        if(isNaN(valNum)) valNum = 0;
+
+        if(data.pago) { pago++; totalReceita += valNum; }
+        else if(data.valor) { aguardando++; pendenteReceita += valNum; }
         else pendente++;
       });
 
-      // Atualiza os Cards 
+      // Atualiza Cards Dashboard
       document.getElementById("count-pendente").innerText = pendente;
       document.getElementById("count-aguardando").innerText = aguardando;
       document.getElementById("count-pago").innerText = pago;
       document.getElementById("count-total").innerText = snapshot.size;
 
-      // Atualiza Gráficos
-      updateCharts(pendente, aguardando, pago);
+      // Atualiza Cards Financeiro
+      document.getElementById("receita-total").innerText = 'R$ ' + totalReceita.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+      document.getElementById("receita-pendente").innerText = 'R$ ' + pendenteReceita.toLocaleString('pt-BR', {minimumFractionDigits: 2});
 
-      // Renderiza Tabela
-      renderizarTabela(todosProcessos);
+      updateCharts(pendente, aguardando, pago);
+      renderizarTabelas(todosProcessos);
     });
 
-    // ==========================================
-    // RENDERIZAR TABELA E FILTRO
-    // ==========================================
-    window.renderizarTabela = (dados) => {
-      const tbody = document.getElementById("tabela-corpo");
-      tbody.innerHTML = "";
+    // --- RENDERIZAÇÃO DAS DUAS TABELAS ---
+    window.renderizarTabelas = (dados) => {
+      const tDash = document.getElementById("tabela-corpo-dash");
+      const tFull = document.getElementById("tabela-corpo-full");
+      tDash.innerHTML = ""; tFull.innerHTML = "";
 
       if(dados.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fas fa-folder-open" style="font-size:2.5rem; margin-bottom:15px; display:block; color:#cbd5e0;"></i>Nenhum registro encontrado.</td></tr>';
+        tFull.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-muted);">Nenhum processo no banco de dados.</td></tr>';
         return;
       }
 
-      dados.forEach(data => {
+      dados.forEach((data, index) => {
         let classBadge = 'badge-pendente', txtBadge = 'Pendente', iconBadge = 'fa-clock';
         if(data.valor) { classBadge = 'badge-aguardando'; txtBadge = 'Aguard. Pix'; iconBadge = 'fa-hourglass-half'; }
         if(data.pago) { classBadge = 'badge-pago'; txtBadge = 'Aprovado'; iconBadge = 'fa-check'; }
 
-        // Letra do Avatar
         let letra = data.nome ? data.nome.charAt(0).toUpperCase() : 'C';
 
-        // Lógica do WhatsApp Direto na Tabela
         let msgZap = `Olá *${data.nome}*.\n\n`;
-        if(!data.valor && !data.pago) msgZap += `Aviso da COVISA: Seu processo (CNPJ ${data.cnpj}) tem pendências documentais aguardando análise.`;
-        else if(data.valor && !data.pago) msgZap += `Aviso da COVISA: A taxa administrativa de R$ ${data.valor} referente ao seu protocolo foi emitida e aguarda pagamento para liberação.`;
-        else msgZap += `Excelente notícia! Sua Licença Provisória foi APROVADA e liberada.`;
+        if(!data.valor && !data.pago) msgZap += `Seu processo (CNPJ ${data.cnpj}) tem pendências documentais aguardando análise.`;
+        else if(data.valor && !data.pago) msgZap += `A taxa de R$ ${data.valor} referente ao seu protocolo aguarda pagamento.`;
+        else msgZap += `Sua Licença Provisória foi APROVADA e liberada.`;
         const linkZap = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(msgZap)}`;
 
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td onclick="abrirModal('${data.id}')">
-            <div class="td-empresa">
-              <div class="td-empresa-icon">${letra}</div>
-              <div class="td-empresa-info">
-                <strong>${data.nome}</strong>
-                <span>${data.cnpj || 'CPF não inf.'}</span>
-              </div>
-            </div>
-          </td>
-          <td onclick="abrirModal('${data.id}')"><span style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; color: #475569; font-weight:600;">${data.tipo}</span></td>
-          <td onclick="abrirModal('${data.id}')"><span style="color: var(--text-muted); font-size: 0.85rem;">${data.data ? data.data.split(',')[0] : 'Hoje'}</span></td>
-          <td onclick="abrirModal('${data.id}')"><span class="status-badge ${classBadge}"><i class="fas ${iconBadge}"></i> ${txtBadge}</span></td>
-          <td onclick="abrirModal('${data.id}')"><strong style="color: var(--text-main); font-size: 1rem;">${data.valor ? 'R$ '+data.valor : '--'}</strong></td>
-          <td>
-            <div class="actions-group">
-              <button class="btn-icon view" onclick="abrirModal('${data.id}')" title="Analisar Processo"><i class="fas fa-search-plus"></i></button>
-              <a href="${linkZap}" target="_blank" class="btn-icon zap" title="Cobrar/Avisar Cliente"><i class="fab fa-whatsapp"></i></a>
-            </div>
-          </td>
+        // HTML base da linha
+        const htmlRow = `
+          <td><div class="td-empresa"><div class="td-empresa-icon">${letra}</div><div class="td-empresa-info"><strong>${data.nome}</strong><span>${data.cnpj || 'CPF n/ inf.'}</span></div></div></td>
+          <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:0.8rem; font-weight:600;">${data.tipo}</span></td>
+          <td><span style="color:var(--text-muted); font-size:0.85rem;">${data.data ? data.data.split(',')[0] : 'Hoje'}</span></td>
+          <td><span class="status-badge ${classBadge}"><i class="fas ${iconBadge}"></i> ${txtBadge}</span></td>
         `;
-        tbody.appendChild(tr);
+
+        // Renderiza na FULL (Processos)
+        const trFull = document.createElement("tr");
+        trFull.innerHTML = htmlRow + `
+          <td><strong style="color:var(--text-main); font-size:1rem;">${data.valor ? 'R$ '+data.valor : '--'}</strong></td>
+          <td><div class="actions-group"><button class="btn-icon view" onclick="abrirModal('${data.id}')"><i class="fas fa-search-plus"></i></button><a href="${linkZap}" target="_blank" class="btn-icon zap"><i class="fab fa-whatsapp"></i></a></div></td>
+        `;
+        tFull.appendChild(trFull);
+
+        // Renderiza na DASHBOARD (Apenas os 5 mais recentes)
+        if(index < 5) {
+            const trDash = document.createElement("tr");
+            trDash.innerHTML = htmlRow + `
+              <td><button class="btn-icon view" onclick="abrirModal('${data.id}')"><i class="fas fa-eye"></i> Analisar</button></td>
+            `;
+            tDash.appendChild(trDash);
+        }
       });
     }
 
     window.filtrarTabela = () => {
       const termo = document.getElementById('searchInput').value.toLowerCase();
-      const filtrados = todosProcessos.filter(p => 
-        (p.nome && p.nome.toLowerCase().includes(termo)) || 
-        (p.cnpj && p.cnpj.toLowerCase().includes(termo)) ||
-        (p.tipo && p.tipo.toLowerCase().includes(termo))
-      );
-      renderizarTabela(filtrados);
+      const filtrados = todosProcessos.filter(p => (p.nome && p.nome.toLowerCase().includes(termo)) || (p.cnpj && p.cnpj.toLowerCase().includes(termo)));
+      renderizarTabelas(filtrados);
     }
 
-    // ==========================================
-    // EXPORTAR EXCEL (CSV)
-    // ==========================================
+    // --- CSV EXPORT ---
     window.exportarCSV = () => {
-      if(todosProcessos.length === 0) { showToast('Erro', 'Não há dados para exportar.', 'error'); return; }
-      
-      let csv = 'Data,Nome,Documento,Ramo,Status,Valor Cobrado,Notas\n';
+      if(todosProcessos.length === 0) return showToast('Erro', 'Sem dados para exportar.', 'error');
+      let csv = 'Data,Nome,Documento,Ramo,Status,Valor,Notas\n';
       todosProcessos.forEach(p => {
-        let status = p.pago ? 'Aprovado' : (p.valor ? 'Aguardando Pix' : 'Pendente');
+        let status = p.pago ? 'Aprovado' : (p.valor ? 'Aguardando' : 'Pendente');
         let notaLimpa = p.notas ? p.notas.replace(/(\r\n|\n|\r)/gm, " ") : "";
-        csv += `"${p.data || ''}","${p.nome}","${p.cnpj}","${p.tipo}","${status}","${p.valor || '0'}","${notaLimpa}"\n`;
+        csv += `"${p.data||''}","${p.nome}","${p.cnpj}","${p.tipo}","${status}","${p.valor||'0'}","${notaLimpa}"\n`;
       });
-
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", `Relatorio_COVISA_${new Date().toLocaleDateString()}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
+      link.href = URL.createObjectURL(blob);
+      link.download = `COVISA_${new Date().toLocaleDateString()}.csv`;
       link.click();
-      document.body.removeChild(link);
-      showToast('Sucesso', 'Relatório baixado com sucesso.', 'success');
+      showToast('Sucesso', 'Relatório baixado.', 'success');
     }
 
-    // ==========================================
-    // MODAL COM ABAS E EDIÇÃO
-    // ==========================================
-    window.abrirAba = (idAba) => {
+    // --- MODAL DE EDIÇÃO (COM ABAS E FOTOS) ---
+    window.abrirAba = (idAba, btn) => {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(idAba).classList.add('active');
-      event.currentTarget.classList.add('active');
+      btn.classList.add('active');
     }
 
     window.abrirModal = async (id) => {
       idProcessoAtual = id;
-      document.getElementById('btn-salvar-modal').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Carregando...';
+      document.getElementById('btn-salvar-modal').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
       document.getElementById("modalDetalhes").style.display = "flex";
-      
-      // Simula o clique na primeira aba para garantir que ela abre
-      const primeiraAba = document.querySelector('.tab-btn');
-      if (primeiraAba) primeiraAba.click();
+      document.querySelector('.tab-btn').click(); // Foca na aba 1
 
       try {
         const docSnap = await getDoc(doc(db, "pedidos", id));
         if (docSnap.exists()) {
           const d = docSnap.data();
           
-          // Aba 1: Detalhes
           document.getElementById("modal-cnpj").innerText = d.cnpj;
           document.getElementById("modal-nome").innerText = d.nome;
           document.getElementById("modal-data").innerText = d.data || 'Sem data';
           document.getElementById("modal-ramo").innerText = d.tipo;
           document.getElementById("modal-docs").innerText = d.docs || "Sem dados";
           
-          // Aba 2: Fotos (Base64) - Com visualização no Lightbox Integrado
+          // FOTOS BASE64 REAIS
           const galeria = document.getElementById('evidence-gallery');
           galeria.innerHTML = '';
-          
           if (d.evidencias && d.evidencias.length > 0) {
               d.evidencias.forEach(foto => {
                   const item = document.createElement('div');
                   item.className = 'gallery-item';
                   item.onclick = () => abrirLightbox(foto.url, foto.nome);
-                  item.innerHTML = `
-                    <img src="${foto.url}">
-                    <div class="overlay"><i class="fas fa-search-plus"></i></div>
-                  `;
+                  item.innerHTML = `<img src="${foto.url}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`;
                   galeria.appendChild(item);
               });
               document.getElementById('evidence-title').innerText = `Evidências Anexadas (${d.evidencias.length})`;
           } else {
-              galeria.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted); font-size: 0.9rem;"><i class="fas fa-camera-slash"></i> O cliente não enviou fotografias neste protocolo.</p>';
-              document.getElementById('evidence-title').innerText = `Evidências Anexadas (0)`;
+              galeria.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;"><i class="fas fa-camera-slash"></i> Sem fotos do cliente.</p>';
           }
 
-          // Aba 3: Financeiro
           document.getElementById("modal-valor-input").value = d.valor || "";
           let statusVal = "pendente";
           if(d.valor) statusVal = "aguardando";
           if(d.pago) statusVal = "pago";
           document.getElementById("modal-status-select").value = statusVal;
 
-          // Monta zap do Modal
-          let msgZap = `Olá *${d.nome}*.\nReferente ao processo CNPJ ${d.cnpj}:\n\n`;
-          if(statusVal==='pendente') msgZap += `Identificamos pendências. Em breve enviaremos a taxa para andamento.`;
-          if(statusVal==='aguardando') msgZap += `A taxa de *R$ ${d.valor}* já está liberada para pagamento via Pix no site.`;
-          if(statusVal==='pago') msgZap += `Sua licença foi APROVADA com sucesso! Acesse o site para imprimir.`;
-          document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(msgZap)}`;
-
-          // Aba 4: Notas
           document.getElementById("modal-notas-input").value = d.notas || "";
-
           document.getElementById('btn-salvar-modal').innerHTML = '<i class="fas fa-save"></i> Salvar e Atualizar';
         }
-      } catch (e) {
-        showToast('Erro', 'Falha ao carregar dados do banco.', 'error');
-      }
+      } catch (e) { showToast('Erro', 'Falha na conexão.', 'error'); }
     };
 
-    window.fecharModal = () => {
-      document.getElementById("modalDetalhes").style.display = "none";
-      idProcessoAtual = null;
-    };
+    window.fecharModal = () => { document.getElementById("modalDetalhes").style.display = "none"; idProcessoAtual = null; };
 
     window.salvarEdicaoModal = async () => {
       if(!idProcessoAtual) return;
-      
-      const btn = document.getElementById('btn-salvar-modal');
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+      document.getElementById('btn-salvar-modal').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
       
       const novoValor = document.getElementById("modal-valor-input").value;
       const status = document.getElementById("modal-status-select").value;
@@ -792,46 +898,25 @@
       if(status === "pendente") { valorFinal = null; isPago = false; } 
 
       try {
-        await updateDoc(doc(db, "pedidos", idProcessoAtual), {
-            valor: valorFinal,
-            pago: isPago,
-            notas: notas
-        });
-        showToast('Processo Atualizado', 'As alterações foram salvas e já refletem no site do cliente.', 'success');
+        await updateDoc(doc(db, "pedidos", idProcessoAtual), { valor: valorFinal, pago: isPago, notas: notas });
+        showToast('Processo Atualizado', 'As alterações já refletem no site do cliente.', 'success');
         fecharModal();
-      } catch (error) {
-        showToast('Erro', 'Falha ao atualizar o banco de dados.', 'error');
-      } finally {
-        btn.innerHTML = '<i class="fas fa-save"></i> Salvar e Atualizar';
-      }
+      } catch (error) { showToast('Erro', 'Falha ao atualizar.', 'error'); } 
     };
 
     window.deletarProcessoAtual = async () => {
       if(!idProcessoAtual) return;
-      if(confirm("ATENÇÃO: Deseja apagar este protocolo PARA SEMPRE? Esta ação é irreversível.")) {
-        try {
-          await deleteDoc(doc(db, "pedidos", idProcessoAtual));
-          showToast('Excluído', 'O processo foi removido do sistema.', 'success');
-          fecharModal();
-        } catch (e) {
-          showToast('Erro', 'Falha ao excluir.', 'error');
-        }
+      if(confirm("ATENÇÃO: Deseja apagar este protocolo PARA SEMPRE?")) {
+        await deleteDoc(doc(db, "pedidos", idProcessoAtual));
+        showToast('Excluído', 'Processo removido.', 'success');
+        fecharModal();
       }
     };
-    
-    // Função para limpar tudo (Resetar Banco)
-    window.limparRegistros = () => {
-        if(confirm("PERIGO: Deseja apagar a tabela inteira? Esta função não afeta o banco de dados real por segurança no front-end, ela existe apenas como placeholder. Exclua processo por processo no modal.")) {
-            // Apenas um placeholder de segurança para evitar apagar o Firebase inteiro por engano no clique.
-        }
-    }
 
-    // ==========================================
-    // LIGHTBOX DE FOTOS
-    // ==========================================
+    // --- FOTOS LIGHTBOX ---
     window.abrirLightbox = (url, titulo) => {
       document.getElementById('lightbox-img').src = url;
-      document.getElementById('lightbox-title').innerText = titulo || 'Documento';
+      document.getElementById('lightbox-title').innerText = titulo;
       document.getElementById('lightbox').style.display = 'flex';
     };
     window.fecharLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
