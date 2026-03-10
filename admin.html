@@ -3,1096 +3,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COVISA ULTIMATE - Inteligência Artificial Governamental (Gemini 2.0)</title>
-  
+  <title>COVISA ULTIMATE - Inteligência Artificial Governamental</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    /* =====================================================================
-       1. ARQUITETURA DE DESIGN SYSTEM (ENTERPRISE DARK)
-       ===================================================================== */
     :root {
-      /* Fundo da Tela e Elementos */
-      --bg-body: #0f172a; 
-      --bg-sidebar: #020617;
-      --bg-sidebar-hover: #1e293b;
-      --bg-card: #1e293b;
-      
-      /* Tipografia e Textos */
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-light: #cbd5e0;
-      
-      /* Identidade Visual */
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --secondary: #0ea5e9;
-      --gemini-purple: #a855f7;
-      --gemini-dark: #7e22ce;
-      --gemini-gradient: linear-gradient(135deg, #a855f7, #ec4899, #3b82f6);
-      
-      /* Semântica Universal */
-      --success: #10b981;
-      --success-light: rgba(16, 185, 129, 0.15);
-      --warning: #f59e0b;
-      --warning-light: rgba(245, 158, 11, 0.15);
-      --danger: #ef4444;
-      --danger-light: rgba(239, 68, 68, 0.15);
-      
-      /* Estruturas Físicas */
-      --border: #334155;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-      --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.4);
-      --shadow-modal: 0 25px 50px -12px rgba(0,0,0,0.8);
-      
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-      --radius-xl: 16px;
-      --radius-2xl: 24px;
-    }
-
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-      font-family: 'Inter', sans-serif; 
-      outline: none; 
-    }
-
-    body { 
-      background-color: var(--bg-body); 
-      color: var(--text-main); 
-      display: flex; 
-      height: 100vh; 
-      overflow: hidden; 
-      font-size: 14px; 
-    }
-    
-    ::-webkit-scrollbar { 
-      width: 8px; 
-      height: 8px; 
-    }
-
-    ::-webkit-scrollbar-track { 
-      background: transparent; 
-    }
-
-    ::-webkit-scrollbar-thumb { 
-      background: #475569; 
-      border-radius: 10px; 
-    }
-
-    ::-webkit-scrollbar-thumb:hover { 
-      background: #64748b; 
-    }
-
-    /* =====================================================================
-       2. TELA DE SEGURANÇA (LOGIN BIOMÉTRICO/PIN)
-       ===================================================================== */
-    #lock-screen {
-      position: fixed; 
-      inset: 0; 
-      background: #020617; 
-      z-index: 99999; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center;
-      background-image: radial-gradient(circle at center, #0f172a 0%, #000000 100%); 
-      transition: opacity 0.5s ease;
-    }
-
-    .lock-box { 
-      background: rgba(30, 41, 59, 0.6); 
-      padding: 50px 40px; 
-      border-radius: var(--radius-2xl); 
-      backdrop-filter: blur(20px); 
-      border: 1px solid rgba(255,255,255,0.05); 
-      text-align: center; 
-      width: 100%; 
-      max-width: 400px; 
-      box-shadow: var(--shadow-modal); 
-    }
-
-    .lock-box i.fa-fingerprint { 
-      font-size: 4rem; 
-      color: var(--primary); 
-      margin-bottom: 20px; 
-      filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5)); 
-    }
-
-    .lock-box h2 { 
-      color: white; 
-      margin-bottom: 8px; 
-      font-weight: 900; 
-      font-size: 1.8rem; 
-      letter-spacing: -0.5px; 
-    }
-
-    .lock-box p { 
-      color: var(--text-muted); 
-      font-size: 0.95rem; 
-      margin-bottom: 30px; 
-    }
-
-    .pin-input { 
-      width: 100%; 
-      padding: 18px; 
-      border-radius: var(--radius-lg); 
-      border: 2px solid rgba(255,255,255,0.1); 
-      background: rgba(0,0,0,0.5); 
-      color: white; 
-      font-size: 1.8rem; 
-      text-align: center; 
-      letter-spacing: 15px; 
-      margin-bottom: 25px; 
-      transition: all 0.3s ease; 
-    }
-
-    .pin-input:focus { 
-      border-color: var(--primary); 
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); 
-    }
-
-    .btn-unlock { 
-      width: 100%; 
-      background: var(--primary); 
-      color: white; 
-      border: none; 
-      padding: 18px; 
-      border-radius: var(--radius-lg); 
-      font-weight: 800; 
-      font-size: 1.1rem; 
-      cursor: pointer; 
-      transition: all 0.3s ease; 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      gap: 10px; 
-    }
-
-    .btn-unlock:hover { 
-      background: var(--primary-hover); 
-      transform: translateY(-2px); 
-      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4); 
-    }
-
-    /* =====================================================================
-       3. NAVEGAÇÃO E ESTRUTURA GERAL (SIDEBAR E TOPBAR)
-       ===================================================================== */
-    .sidebar { 
-      width: 280px; 
-      background-color: var(--bg-sidebar); 
-      color: white; 
-      display: flex; 
-      flex-direction: column; 
-      z-index: 100; 
-      border-right: 1px solid rgba(255,255,255,0.05); 
-    }
-
-    .sidebar-header { 
-      padding: 30px 25px; 
-      display: flex; 
-      align-items: center; 
-      gap: 15px; 
-      border-bottom: 1px solid rgba(255,255,255,0.05); 
-    }
-
-    .sidebar-header i { 
-      font-size: 2.5rem; 
-      color: var(--accent); 
-      background: var(--gemini-gradient); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-    }
-
-    .sidebar-header h2 { 
-      font-size: 1.4rem; 
-      font-weight: 900; 
-      line-height: 1.1; 
-    }
-
-    .sidebar-header h2 span { 
-      font-size: 0.75rem; 
-      color: var(--gemini-purple); 
-      text-transform: uppercase; 
-      letter-spacing: 1.5px; 
-      font-weight: 800; 
-    }
-    
-    .nav-menu { 
-      padding: 25px 15px; 
-      flex: 1; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 8px; 
-    }
-
-    .nav-item { 
-      padding: 14px 18px; 
-      border-radius: var(--radius-md); 
-      color: var(--text-muted); 
-      text-decoration: none; 
-      display: flex; 
-      align-items: center; 
-      gap: 15px; 
-      font-weight: 600; 
-      font-size: 0.95rem; 
-      transition: all 0.3s ease; 
-      cursor: pointer; 
-    }
-
-    .nav-item:hover, .nav-item.active { 
-      background: var(--bg-sidebar-hover); 
-      color: white; 
-    }
-
-    .nav-item.active { 
-      border-left: 4px solid var(--gemini-purple); 
-    }
-
-    .nav-item i { 
-      font-size: 1.2rem; 
-      width: 24px; 
-      text-align: center; 
-    }
-
-    .sidebar-footer { 
-      padding: 25px; 
-      border-top: 1px solid rgba(255,255,255,0.05); 
-      font-size: 0.8rem; 
-      color: var(--text-muted); 
-      text-align: center; 
-      background: rgba(0,0,0,0.2); 
-    }
-
-    .main-content { 
-      flex: 1; 
-      display: flex; 
-      flex-direction: column; 
-      overflow: hidden; 
-      position: relative; 
-    }
-
-    header.topbar { 
-      background: var(--bg-sidebar); 
-      padding: 18px 40px; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      border-bottom: 1px solid rgba(255,255,255,0.05); 
-      box-shadow: var(--shadow-sm); 
-      z-index: 10; 
-    }
-
-    .search-bar { 
-      display: flex; 
-      align-items: center; 
-      background: var(--bg-body); 
-      padding: 12px 20px; 
-      border-radius: var(--radius-lg); 
-      width: 450px; 
-      border: 1px solid var(--border); 
-      transition: all 0.3s ease; 
-    }
-
-    .search-bar:focus-within { 
-      border-color: var(--gemini-purple); 
-      box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2); 
-    }
-
-    .search-bar i { 
-      color: var(--text-muted); 
-      margin-right: 12px; 
-      font-size: 1.1rem; 
-    }
-
-    .search-bar input { 
-      border: none; 
-      background: transparent; 
-      width: 100%; 
-      font-size: 1rem; 
-      color: var(--text-main); 
-      font-weight: 500; 
-    }
-    
-    .user-profile { 
-      display: flex; 
-      align-items: center; 
-      gap: 20px; 
-    }
-
-    .pulse-online { 
-      display: inline-block; 
-      width: 10px; 
-      height: 10px; 
-      background: var(--success); 
-      border-radius: 50%; 
-      box-shadow: 0 0 0 rgba(16, 185, 129, 0.4); 
-      animation: pulse 2s infinite; 
-    }
-
-    @keyframes pulse { 
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 
-      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } 
-    }
-
-    .user-info { 
-      text-align: right; 
-    }
-
-    .user-info h4 { 
-      font-size: 0.95rem; 
-      margin: 0 0 2px 0; 
-      color: var(--text-main); 
-      font-weight: 700; 
-    }
-
-    .user-info span { 
-      font-size: 0.8rem; 
-      color: var(--gemini-purple); 
-      font-weight: 800; 
-    }
-
-    .avatar { 
-      width: 45px; 
-      height: 45px; 
-      border-radius: 50%; 
-      background: var(--gemini-gradient); 
-      color: white; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-weight: 900; 
-      font-size: 1.2rem; 
-      box-shadow: 0 0 15px rgba(168,85,247,0.4); 
-    }
-
-    /* =====================================================================
-       4. SISTEMA DE NAVEGAÇÃO DE PÁGINAS (SINGLE PAGE APP)
-       ===================================================================== */
-    .page-view { 
-      display: none; 
-      padding: 35px 40px; 
-      overflow-y: auto; 
-      flex: 1; 
-      animation: fadeInView 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-    }
-
-    .page-view.active { 
-      display: block; 
-    }
-
-    @keyframes fadeInView { 
-      from { opacity: 0; transform: translateY(15px); } 
-      to { opacity: 1; transform: translateY(0); } 
-    }
-
-    .page-title { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: flex-end; 
-      margin-bottom: 30px; 
-    }
-
-    .page-title h1 { 
-      font-size: 2rem; 
-      font-weight: 900; 
-      color: var(--text-main); 
-      letter-spacing: -0.5px; 
-    }
-
-    .page-title p { 
-      color: var(--text-muted); 
-      font-size: 1rem; 
-      margin-top: 8px; 
-    }
-
-    /* Botões Globais */
-    .btn { 
-      padding: 12px 24px; 
-      border-radius: var(--radius-md); 
-      font-weight: 700; 
-      font-size: 0.95rem; 
-      cursor: pointer; 
-      transition: all 0.2s ease; 
-      border: none; 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center; 
-      gap: 10px; 
-    }
-
-    .btn-primary { 
-      background: var(--primary); 
-      color: white; 
-      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2); 
-    }
-
-    .btn-primary:hover { 
-      background: var(--primary-hover); 
-      transform: translateY(-2px); 
-      box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3); 
-    }
-
-    .btn-success { 
-      background: var(--success); 
-      color: #022c22; 
-    }
-
-    .btn-success:hover { 
-      background: #059669; 
-      color: white; 
-      transform: translateY(-2px); 
-    }
-
-    .btn-secondary { 
-      background: transparent; 
-      border: 1px solid var(--border); 
-      color: var(--text-main); 
-    }
-
-    .btn-secondary:hover { 
-      background: var(--border); 
-      color: white; 
-    }
-
-    /* =====================================================================
-       5. DASHBOARD: CARDS ANALÍTICOS E GRÁFICOS
-       ===================================================================== */
-    .stats-grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-      gap: 25px; 
-      margin-bottom: 35px; 
-    }
-
-    .stat-card { 
-      background: var(--bg-card); 
-      padding: 30px; 
-      border-radius: var(--radius-xl); 
-      border: 1px solid var(--border); 
-      box-shadow: var(--shadow-sm); 
-      display: flex; 
-      align-items: center; 
-      gap: 25px; 
-      transition: all 0.3s ease; 
-      position: relative; 
-      overflow: hidden; 
-    }
-
-    .stat-card:hover { 
-      transform: translateY(-5px); 
-      box-shadow: var(--shadow-md); 
-      border-color: #cbd5e0; 
-    }
-
-    .stat-card::before { 
-      content: ''; 
-      position: absolute; 
-      left: 0; 
-      top: 0; 
-      height: 100%; 
-      width: 5px; 
-    }
-
-    .stat-card.c-warning::before { background: var(--warning); }
-    .stat-card.c-primary::before { background: var(--primary); }
-    .stat-card.c-success::before { background: var(--success); }
-    .stat-card.c-gemini::before { background: var(--gemini-purple); }
-    
-    .stat-icon { 
-      width: 65px; 
-      height: 65px; 
-      border-radius: var(--radius-lg); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-size: 2rem; 
-    }
-
-    .c-warning .stat-icon { background: var(--warning-light); color: var(--warning); }
-    .c-primary .stat-icon { background: rgba(59, 130, 246, 0.15); color: var(--primary); }
-    .c-success .stat-icon { background: var(--success-light); color: var(--success); }
-    .c-gemini .stat-icon { background: rgba(168, 85, 247, 0.15); color: var(--gemini-purple); }
-    
-    .stat-info { flex: 1; }
-    
-    .stat-info h3 { 
-      font-size: 0.9rem; 
-      color: var(--text-muted); 
-      text-transform: uppercase; 
-      letter-spacing: 0.5px; 
-      margin-bottom: 8px; 
-      font-weight: 700; 
-    }
-
-    .stat-info p { 
-      font-size: 2.5rem; 
-      font-weight: 900; 
-      color: var(--text-main); 
-      line-height: 1; 
-      margin: 0; 
-    }
-
-    .charts-grid { 
-      display: grid; 
-      grid-template-columns: 2fr 1fr; 
-      gap: 25px; 
-      margin-bottom: 35px; 
-    }
-
-    .chart-card { 
-      background: var(--bg-card); 
-      padding: 25px; 
-      border-radius: var(--radius-xl); 
-      border: 1px solid var(--border); 
-      box-shadow: var(--shadow-sm); 
-    }
-
-    .chart-header { 
-      font-size: 1.15rem; 
-      font-weight: 800; 
-      color: var(--text-main); 
-      margin-bottom: 25px; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-    }
-
-    .chart-container { 
-      position: relative; 
-      height: 300px; 
-      width: 100%; 
-    }
-
-    /* =====================================================================
-       6. TABELAS: BANCO DE DADOS E FILA DE AUDITORIA
-       ===================================================================== */
-    .data-section { 
-      background: var(--bg-card); 
-      border-radius: var(--radius-xl); 
-      border: 1px solid var(--border); 
-      box-shadow: var(--shadow-md); 
-      overflow: hidden; 
-      display: flex; 
-      flex-direction: column; 
-      margin-bottom: 35px; 
-    }
-
-    .data-header { 
-      padding: 25px 30px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: var(--bg-sidebar); 
-    }
-
-    .data-header h2 { 
-      font-size: 1.3rem; 
-      font-weight: 800; 
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      margin: 0; 
-      color: white; 
-    }
-    
-    .table-wrapper { 
-      overflow-x: auto; 
-      min-height: 300px; 
-      width: 100%; 
-    }
-
-    table { 
-      width: 100%; 
-      border-collapse: collapse; 
-      text-align: left; 
-    }
-
-    th { 
-      background: var(--bg-card); 
-      padding: 18px 30px; 
-      font-size: 0.8rem; 
-      font-weight: 800; 
-      color: var(--text-muted); 
-      text-transform: uppercase; 
-      letter-spacing: 0.5px; 
-      position: sticky; 
-      top: 0; 
-      border-bottom: 2px solid var(--border); 
-      z-index: 2; 
-    }
-
-    td { 
-      padding: 20px 30px; 
-      border-bottom: 1px solid var(--border); 
-      font-size: 1rem; 
-      vertical-align: middle; 
-      color: var(--text-main); 
-    }
-
-    tr { transition: background-color 0.2s ease; }
+      --bg-body: #0f172a; --bg-sidebar: #020617; --bg-sidebar-hover: #1e293b; --bg-card: #1e293b;
+      --text-main: #f8fafc; --text-muted: #94a3b8; --text-light: #cbd5e0;
+      --primary: #3b82f6; --primary-hover: #2563eb; --secondary: #0ea5e9;
+      --gemini-purple: #a855f7; --gemini-dark: #7e22ce; --gemini-gradient: linear-gradient(135deg, #a855f7, #ec4899, #3b82f6);
+      --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+      --border: #334155; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-2xl: 24px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
+    body { background-color: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; font-size: 14px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+    /* BLOQUEIO */
+    #lock-screen { position: fixed; inset: 0; background: #020617; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: radial-gradient(circle at center, #0f172a 0%, #000000 100%); transition: 0.5s; }
+    .lock-box { background: rgba(30, 41, 59, 0.6); padding: 50px 40px; border-radius: var(--radius-2xl); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); text-align: center; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); }
+    .lock-box i.fa-fingerprint { font-size: 4rem; color: var(--primary); margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5)); }
+    .lock-box h2 { color: white; margin-bottom: 8px; font-weight: 900; font-size: 1.8rem; }
+    .lock-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px; }
+    .pin-input { width: 100%; padding: 18px; border-radius: var(--radius-lg); border: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: white; font-size: 1.8rem; text-align: center; letter-spacing: 15px; margin-bottom: 25px; transition: 0.3s; }
+    .pin-input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+    .btn-unlock { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: var(--radius-lg); font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+    .btn-unlock:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+    /* ESTRUTURA */
+    .sidebar { width: 260px; background-color: var(--bg-sidebar); color: white; display: flex; flex-direction: column; z-index: 100; border-right: 1px solid rgba(255,255,255,0.05); }
+    .sidebar-header { padding: 30px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .sidebar-header i { font-size: 2.2rem; background: var(--gemini-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .sidebar-header h2 { font-size: 1.2rem; font-weight: 900; line-height: 1.1; }
+    .sidebar-header h2 span { font-size: 0.65rem; color: var(--gemini-purple); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+    .nav-menu { padding: 15px 10px; flex: 1; display: flex; flex-direction: column; gap: 5px; overflow-y: auto; }
+    .nav-item { padding: 12px 15px; border-radius: var(--radius-md); color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 12px; font-weight: 600; transition: 0.3s; cursor: pointer; }
+    .nav-item:hover, .nav-item.active { background: var(--bg-sidebar-hover); color: white; border-left: 3px solid var(--gemini-purple); }
+    .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.75rem; color: var(--text-muted); text-align: center; background: rgba(0,0,0,0.2); }
+
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+    header.topbar { background: var(--bg-sidebar); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 10; }
+    .search-bar { display: flex; align-items: center; background: var(--bg-body); padding: 12px 20px; border-radius: var(--radius-lg); width: 400px; border: 1px solid var(--border); transition: 0.3s; }
+    .search-bar:focus-within { border-color: var(--gemini-purple); }
+    .search-bar input { border: none; background: transparent; width: 100%; font-size: 0.9rem; color: var(--text-main); margin-left:10px; }
+    .user-profile { display: flex; align-items: center; gap: 15px; }
+    .user-info { text-align: right; }
+    .user-info h4 { font-size: 0.85rem; margin: 0; color: var(--text-main); font-weight: 700; }
+    .user-info span { font-size: 0.75rem; color: var(--gemini-purple); font-weight: 800; }
+    .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--gemini-gradient); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; }
+
+    /* VIEWS */
+    .page-view { display: none; padding: 30px; overflow-y: auto; flex: 1; animation: fadeIn 0.3s ease; }
+    .page-view.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .page-title { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
+    .page-title h1 { font-size: 1.8rem; font-weight: 900; }
+    .page-title p { color: var(--text-muted); margin-top: 5px; }
+
+    .btn { padding: 10px 18px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; transition:0.2s;}
+    .btn-primary { background: var(--primary); color: white; } .btn-primary:hover{transform:translateY(-2px);}
+    .btn-success { background: var(--success); color: #022c22; } .btn-success:hover{background:#059669; color:white;}
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: white; }
+    .btn-gemini { background: var(--gemini-gradient); color: white; }
+
+    /* CARDS */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: var(--bg-card); padding: 25px; border-radius: var(--radius-xl); border: 1px solid var(--border); display: flex; align-items: center; gap: 15px; position: relative; }
+    .stat-card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; }
+    .stat-card.c-warning::before{background:var(--warning);} .stat-card.c-primary::before{background:var(--primary);} .stat-card.c-success::before{background:var(--success);} .stat-card.c-gemini::before{background:var(--gemini-purple);}
+    .stat-info h3 { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+    .stat-info p { font-size: 2rem; font-weight: 900; margin: 0; }
+    .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
+    .chart-card { background: var(--bg-card); padding: 20px; border-radius: var(--radius-xl); border: 1px solid var(--border); }
+    .chart-container { position: relative; height: 250px; width: 100%; }
+
+    /* TABELAS */
+    .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); display: flex; flex-direction: column; margin-bottom: 30px; }
+    .data-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
+    .table-wrapper { overflow-x: auto; width: 100%; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: var(--bg-card); padding: 15px 20px; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; border-bottom: 2px solid var(--border); }
+    td { padding: 15px 20px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
     tr:hover { background: rgba(255,255,255,0.02); }
-    
-    .td-empresa { display: flex; align-items: center; gap: 15px; }
-    
-    .td-empresa-icon { 
-      width: 45px; 
-      height: 45px; 
-      background: var(--border); 
-      border-radius: var(--radius-md); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      color: var(--text-main); 
-      font-size: 1.2rem; 
-      font-weight: bold; 
-    }
-
-    .td-empresa-info strong { 
-      display: block; 
-      font-size: 1.05rem; 
-      margin-bottom: 4px; 
-      font-weight: 700; 
-      color: white; 
-    }
-
-    .td-empresa-info span { 
-      color: var(--text-muted); 
-      font-size: 0.85rem; 
-      font-family: monospace; 
-    }
-    
-    .status-badge { 
-      padding: 8px 14px; 
-      border-radius: 50px; 
-      font-size: 0.8rem; 
-      font-weight: 800; 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 8px; 
-      text-transform: uppercase; 
-    }
-
-    .badge-pendente { background: var(--warning-light); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .td-empresa { display: flex; align-items: center; gap: 12px; }
+    .td-empresa-icon { width: 35px; height: 35px; background: var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .td-empresa-info strong { display: block; font-size: 0.95rem; margin-bottom: 2px; }
+    .td-empresa-info span { color: var(--text-muted); font-size: 0.75rem; }
+    .status-badge { padding: 5px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; }
+    .badge-pendente { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
     .badge-aguardando { background: rgba(59, 130, 246, 0.15); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3); }
-    .badge-pago { background: var(--success-light); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-denuncia { background: var(--danger-light); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-pago { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-denuncia { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
-    .btn-icon { 
-      width: 40px; 
-      height: 40px; 
-      border-radius: var(--radius-md); 
-      border: none; 
-      cursor: pointer; 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center; 
-      transition: all 0.2s ease; 
-      font-size: 1.1rem; 
-      font-weight: 600; 
-    }
-
-    .btn-icon.view { background: var(--border); color: white; }
-    .btn-icon.view:hover { background: var(--primary); transform: translateY(-2px); }
-
-    /* =====================================================================
-       7. MÓDULOS DE FINANCEIRO E LEIS MUNICIPAIS
-       ===================================================================== */
-    .laws-grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-      gap: 25px; 
-      margin-bottom: 40px; 
-    }
-
-    .law-card { 
-      background: var(--bg-card); 
-      border: 1px solid var(--border); 
-      border-radius: var(--radius-xl); 
-      padding: 30px; 
-      box-shadow: var(--shadow-sm); 
-      position: relative; 
-      overflow: hidden; 
-    }
-
-    .law-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; }
-    .law-leve::before { background: var(--warning); }
-    .law-grave::before { background: #f97316; }
-    .law-gravissima::before { background: var(--danger); }
+    /* MÓDULOS EXTRA */
+    .laws-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
+    .law-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 25px; }
+    .calc-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 30px; display: flex; gap: 30px; }
+    .calc-form { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .calc-result { flex: 1; background: var(--bg-body); padding: 25px; border-radius: var(--radius-lg); border: 2px dashed var(--primary); text-align: center; }
+    .form-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.95rem; color: white; background: var(--bg-body); margin-top: 5px; }
     
-    .law-card h3 { font-size: 1.2rem; color: white; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; font-weight: 800; }
-    .law-card .valor { font-size: 2rem; font-weight: 900; color: white; margin-bottom: 15px; }
-    .law-card p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
-    .law-card ul { margin-top: 20px; padding-left: 20px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
-    .law-card ul li { margin-bottom: 8px; }
-
-    .calc-container { 
-      background: var(--bg-card); 
-      border: 1px solid var(--border); 
-      border-radius: var(--radius-xl); 
-      padding: 35px; 
-      box-shadow: var(--shadow-sm); 
-      margin-bottom: 40px; 
-      display: flex; 
-      flex-wrap: wrap; 
-      gap: 40px; 
-      align-items: center; 
-    }
-
-    .calc-form { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .calc-result { flex: 1; background: var(--bg-body); padding: 30px; border-radius: var(--radius-lg); border: 2px dashed var(--primary); text-align: center; min-width: 250px; }
-    .calc-result span { font-size: 0.9rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .calc-result h2 { font-size: 3rem; color: var(--primary); margin: 10px 0 0 0; font-weight: 900; letter-spacing: -1px; }
-
-    /* =====================================================================
-       8. MODAL GIGANTE E O CÉREBRO DO GEMINI (RADAR IA)
-       ===================================================================== */
-    .modal-overlay { 
-      position: fixed; 
-      inset: 0; 
-      background: rgba(0, 0, 0, 0.85); 
-      backdrop-filter: blur(8px); 
-      z-index: 20000; 
-      display: none; 
-      align-items: center; 
-      justify-content: center; 
-      padding: 20px; 
-    }
-
-    .modal-box { 
-      background: var(--bg-body); 
-      width: 100%; 
-      max-width: 1000px; 
-      border-radius: var(--radius-2xl); 
-      box-shadow: var(--shadow-modal); 
-      display: flex; 
-      flex-direction: column; 
-      max-height: 95vh; 
-      animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-      overflow: hidden; 
-      border: 1px solid var(--border); 
-    }
-
-    @keyframes modalIn { 
-      from { transform: translateY(40px) scale(0.95); opacity: 0; } 
-      to { transform: translateY(0) scale(1); opacity: 1; } 
-    }
-
-    .modal-header { 
-      padding: 25px 35px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: var(--bg-sidebar); 
-    }
-
-    .modal-header h3 { font-size: 1.5rem; font-weight: 900; color: white; display: flex; align-items: center; gap: 12px; }
-    .modal-header .protocol-id { background: var(--border); padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; font-family: monospace; color: var(--text-light); }
+    .chat-container { display: flex; flex-direction: column; height: 500px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .chat-history { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-body); }
+    .chat-msg { max-width: 80%; padding: 12px 18px; border-radius: var(--radius-md); line-height: 1.5; }
+    .msg-user { align-self: flex-end; background: var(--primary); color: white; }
+    .msg-ai { align-self: flex-start; background: var(--bg-card); border: 1px solid var(--border); }
     
-    .btn-close { 
-      background: transparent; 
-      border: none; 
-      width: 40px; 
-      height: 40px; 
-      border-radius: 50%; 
-      cursor: pointer; 
-      color: var(--text-muted); 
-      font-size: 1.5rem; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      transition: 0.2s; 
-    }
+    .heatmap-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
+    .heat-zone { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-lg); text-align: center; }
 
-    .btn-close:hover { color: var(--danger); transform: rotate(90deg); }
-
-    /* Abas do Modal */
-    .modal-tabs { 
-      display: flex; 
-      border-bottom: 1px solid var(--border); 
-      background: var(--bg-card); 
-      padding: 0 20px; 
-      overflow-x: auto; 
-    }
-
-    .tab-btn { 
-      padding: 20px 25px; 
-      border: none; 
-      background: none; 
-      font-size: 1rem; 
-      font-weight: 700; 
-      color: var(--text-muted); 
-      cursor: pointer; 
-      border-bottom: 3px solid transparent; 
-      transition: all 0.2s ease; 
-      display: flex; 
-      align-items: center; 
-      gap: 10px; 
-      white-space: nowrap; 
-    }
-
-    .tab-btn:hover { color: white; background: #f8fafc11; }
+    /* MODAL GIGANTE */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-box { background: var(--bg-body); width: 100%; max-width: 900px; border-radius: var(--radius-xl); display: flex; flex-direction: column; max-height: 90vh; border: 1px solid var(--border); }
+    .modal-header { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
+    .modal-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg-card); overflow-x: auto; }
+    .tab-btn { padding: 15px 20px; border: none; background: none; font-size: 0.9rem; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; }
     .tab-btn.active { color: white; border-bottom-color: white; background: rgba(255,255,255,0.05); }
-    .tab-btn.tab-ai { color: var(--gemini-purple); font-weight: 900; }
-    .tab-btn.tab-ai.active { border-bottom-color: var(--gemini-purple); color: #d8b4fe; }
+    .tab-btn.tab-ai { color: var(--gemini-purple); } .tab-btn.tab-ai.active { border-bottom-color: var(--gemini-purple); }
+    .modal-body { padding: 25px; overflow-y: auto; flex: 1; }
+    .tab-content { display: none; } .tab-content.active { display: block; }
+    .modal-footer { padding: 20px 25px; border-top: 1px solid var(--border); background: var(--bg-card); display: flex; justify-content: flex-end; gap: 10px; }
 
-    .modal-body { padding: 35px; overflow-y: auto; flex: 1; }
-    .tab-content { display: none; animation: fadeInTab 0.4s ease; }
-    .tab-content.active { display: block; }
-    @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* UI DO RADAR */
+    .radar-loading { text-align: center; padding: 60px 20px; }
+    .radar-scanner { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--gemini-purple); margin-bottom:20px; }
+    .radar-dashboard { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+    .score-circle { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; margin: 0 auto 15px auto; border: 6px solid rgba(255,255,255,0.1); }
+    .signal-item { padding: 12px 15px; border-radius: var(--radius-md); margin-bottom: 10px; background: var(--bg-body); border: 1px solid var(--border); display: flex; gap: 10px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
+    .gallery-item { aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--border); cursor: pointer; position: relative; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* UI do Radar IA */
-    .radar-loading { text-align: center; padding: 80px 20px; display: flex; flex-direction: column; align-items: center; gap: 25px; }
-    .radar-scanner { position: relative; width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--gemini-purple); overflow: hidden; box-shadow: 0 0 40px rgba(168, 85, 247, 0.2); }
-    .radar-scanner::after { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6)); transform-origin: left center; animation: radarScan 1.2s linear infinite; }
-    @keyframes radarScan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    
-    .radar-dashboard { display: grid; grid-template-columns: 1fr 2.5fr; gap: 25px; }
-    .score-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 30px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); }
-    .score-circle { width: 160px; height: 160px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; font-weight: 900; margin-bottom: 20px; box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.15); border: 8px solid rgba(255,255,255,0.1); transition: border-color 1s ease;}
-    .score-circle span.num { font-size: 4rem; margin: 0; line-height: 1; letter-spacing: -2px; }
-    .score-circle span.desc { font-size: 0.95rem; font-weight: 800; text-transform: uppercase; opacity: 0.9; margin-top: 5px; text-align: center; line-height: 1.1;}
-    
-    .gemini-response-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 35px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
-    .gemini-response-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--gemini-gradient); }
-    .gemini-response-box h4 { font-size: 1.3rem; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; color: white; font-weight: 900; }
-    
-    .ia-opinion { background: rgba(168, 85, 247, 0.05); border-left: 3px solid var(--gemini-purple); padding: 15px; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin-bottom: 20px; font-size: 1rem; color: var(--text-light); line-height: 1.6; }
-
-    .signal-list { list-style: none; display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
-    .signal-item { padding: 18px 25px; border-radius: var(--radius-md); font-size: 1.05rem; display: flex; align-items: flex-start; gap: 18px; font-weight: 500; line-height: 1.5; background: var(--bg-body); border: 1px solid var(--border); color: var(--text-light); }
-    .signal-item i { margin-top: 3px; font-size: 1.4rem; }
-    
-    .signal-item.success i { color: var(--success); }
-    .signal-item.warning i { color: var(--warning); }
-    .signal-item.danger i { color: var(--danger); }
-
-    .ai-recommendation { padding: 25px 30px; border-radius: var(--radius-lg); background: rgba(168, 85, 247, 0.1); border: 1px dashed var(--gemini-purple); text-align: left; }
-    .ai-recommendation h4 { font-size: 0.95rem; text-transform: uppercase; color: #d8b4fe; margin-bottom: 10px; letter-spacing: 1px; font-weight: 800;}
-    .ai-recommendation p { font-size: 1.3rem; font-weight: 800; color: white; margin: 0; line-height: 1.4; }
-
-    /* Demais Formulários e Estruturas Internas do Modal */
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-    .info-group { background: var(--bg-card); padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border); }
-    .info-group label { display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
-    .info-group p { font-size: 1.1rem; font-weight: 600; color: white; margin: 0; word-break: break-word; }
-    
-    .docs-list { background: var(--bg-card); padding: 25px; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-top: 25px; }
-    .docs-list p { white-space: pre-line; font-size: 1rem; line-height: 1.7; color: var(--text-light); }
-
-    .form-input { width: 100%; padding: 15px 20px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 1.05rem; color: white; font-weight: 500; transition: 0.3s; background: var(--bg-body); font-family: inherit; }
-    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
-    select.form-input { cursor: pointer; }
-    textarea.form-input { resize: vertical; min-height: 150px; line-height: 1.6; }
-
-    /* Galeria de Fotos Evidenciais */
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-top: 20px; }
-    .gallery-item { position: relative; aspect-ratio: 1; border-radius: var(--radius-lg); overflow: hidden; border: 2px solid var(--border); cursor: pointer; background: var(--bg-card); transition: 0.3s; }
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-    .gallery-item:hover { border-color: var(--primary); transform: translateY(-3px); }
-    .gallery-item:hover img { transform: scale(1.1); filter: brightness(0.6); }
-    .gallery-item .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; opacity: 0; transition: 0.3s; }
-    .gallery-item:hover .overlay { opacity: 1; }
-    .badge-assinado { position: absolute; top: 0; left: 0; width: 100%; background: var(--success); color: white; font-size: 0.75rem; font-weight: 900; text-align: center; padding: 6px 0; z-index: 10; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);}
-
-    .modal-footer { padding: 25px 35px; border-top: 1px solid var(--border); background: var(--bg-card); border-radius: 0 0 var(--radius-2xl) var(--radius-2xl); display: flex; justify-content: flex-end; gap: 15px; }
-
-    /* =====================================================================
-       9. VISUALIZADOR POPUP (LIGHTBOX) E TOASTS DE MENSAGEM
-       ===================================================================== */
-    #lightbox { 
-      position: fixed; 
-      inset: 0; 
-      background: rgba(0,0,0,0.95); 
-      z-index: 30000; 
-      display: none; 
-      align-items: center; 
-      justify-content: center; 
-      flex-direction: column; 
-      backdrop-filter: blur(10px); 
-    }
-    
-    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--radius-lg); box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 2px solid #333; }
-    #lightbox-title { color: white; margin-top: 20px; font-size: 1.4rem; font-weight: 800; letter-spacing: 0.5px; }
-    .btn-close-lightbox { position: absolute; top: 25px; right: 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 2rem; cursor: pointer; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
-    .btn-close-lightbox:hover { background: var(--danger); border-color: var(--danger); transform: rotate(90deg) scale(1.1); }
-
-    #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 99999; display: flex; flex-direction: column; gap: 15px; pointer-events: none; }
-    .toast { background: var(--bg-card); border-left: 6px solid var(--primary); box-shadow: var(--shadow-modal); padding: 20px 25px; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 20px; min-width: 350px; animation: toastSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: auto; border: 1px solid var(--border); color: white;}
-    .toast.success { border-color: var(--success); } .toast.success i { color: var(--success); }
-    .toast.error { border-color: var(--danger); } .toast.error i { color: var(--danger); }
-    .toast-icon { font-size: 2rem; }
-    .toast-content h4 { font-size: 1.1rem; margin: 0 0 5px 0; font-weight: 800; }
-    .toast-content p { font-size: 0.95rem; margin: 0; color: var(--text-muted); }
-    
-    @keyframes toastSlideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes toastFadeOut { to { opacity: 0; transform: translateX(120%); } }
-
-    /* =====================================================================
-       10. MÓDULO EXTRA: LOGS E PROTEÇÃO CONTRA ERROS DE TELA AZUL
-       ===================================================================== */
-    #error-log-shield {
-        position: fixed; top: 0; left: 0; width: 100%; padding: 15px; background: var(--danger); color: white; font-weight: bold; text-align: center; z-index: 999999; display: none;
-    }
+    /* LIGHTBOX E TOAST */
+    #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center; }
+    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--radius-md); }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: var(--bg-card); border-left: 4px solid var(--primary); padding: 15px 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 15px; z-index: 99999; border: 1px solid var(--border); color: white; }
   </style>
 </head>
 <body>
-
-  <div id="error-log-shield"></div>
-  <script>
-    // Impede a famosa tela azul se algo falhar na cópia
-    window.onerror = function(msg, url, line) {
-        const shield = document.getElementById('error-log-shield');
-        shield.style.display = 'block';
-        shield.innerHTML = `⚠️ ALERTA DE SISTEMA: Foi detectado um erro no código na linha ${line}. O arquivo HTML pode estar cortado ou incompleto. Copie novamente!`;
-    };
-  </script>
 
   <div id="lock-screen">
     <div class="lock-box">
       <i class="fas fa-fingerprint"></i>
       <h2>Auditoria Central</h2>
-      <p>Acesso restrito a Auditores Fiscais</p>
+      <p>Acesso restrito a Fiscais COVISA</p>
       <input type="password" id="pin-input" class="pin-input" placeholder="••••" maxlength="4" autocomplete="off" onkeypress="if(event.key === 'Enter') checkPin()">
       <button class="btn-unlock" onclick="checkPin()"><i class="fas fa-unlock-alt"></i> Iniciar Sessão Segura</button>
     </div>
   </div>
 
   <div id="app-content" style="display: none;">
-    
     <aside class="sidebar">
-      <div class="sidebar-header">
-        <i class="fas fa-shield-alt"></i>
-        <div>
-          <h2>COVISA<br><span>Admin Ultimate</span></h2>
-        </div>
-      </div>
+      <div class="sidebar-header"><i class="fas fa-shield-alt"></i><div><h2>COVISA<br><span>Admin Ultimate</span></h2></div></div>
       <nav class="nav-menu">
         <a class="nav-item active" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Geral</a>
         <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Banco de Dados</a>
         <a class="nav-item" onclick="switchView('view-financeiro', this)"><i class="fas fa-balance-scale"></i> Leis & Caixa</a>
+        <a class="nav-item" onclick="switchView('view-mapa', this)"><i class="fas fa-map-marked-alt"></i> Zonas de Risco</a>
+        <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot" style="color:var(--gemini-purple);"></i> IA Jurídica</a>
+        <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
       </nav>
-      <div class="sidebar-footer">
-        <p style="margin-bottom:5px; font-weight:bold; color:var(--gemini-purple);">Gemini 2.0 Flash Core</p>
-        <p>Status da IA: <span style="color:var(--success); font-weight:800;">Conectada</span></p>
-      </div>
+      <div class="sidebar-footer"><p style="color:var(--success); font-weight:bold;">Gemini 2.0 Flash ON</p></div>
     </aside>
 
     <main class="main-content">
-      
       <header class="topbar">
-        <div class="search-bar">
-          <i class="fas fa-search"></i>
-          <input type="text" id="searchInput" placeholder="Investigar CNPJ, Razão Social ou Ramo de Atividade..." onkeyup="filtrarTabela()">
-        </div>
+        <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Buscar CNPJ, Razão Social..." onkeyup="filtrarTabela()"></div>
         <div class="user-profile">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <span class="pulse-online"></span>
-            <span style="font-size: 0.85rem; font-weight: 900; color: var(--success); letter-spacing: 1px;">SISTEMA ONLINE</span>
-          </div>
-          <div class="user-info">
-            <h4>Fiscal Chefe</h4>
-            <span>Nível: Administrador</span>
-          </div>
+          <div style="display: flex; gap: 8px; align-items:center;"><span class="pulse-online"></span><span style="color:var(--success); font-weight:bold; font-size:0.8rem;">ONLINE</span></div>
+          <div class="user-info"><h4>Fiscal Chefe</h4><span>Administrador</span></div>
           <div class="avatar"><i class="fas fa-user-shield"></i></div>
-          <a href="index.html" class="btn-icon view" title="Sair do Sistema" style="margin-left: 15px; color: var(--danger); background: transparent; border-color: var(--danger);"><i class="fas fa-power-off"></i></a>
         </div>
       </header>
 
       <div id="view-dashboard" class="page-view active">
-        <div class="page-title">
-          <div>
-            <h1>Centro de Comando Operacional</h1>
-            <p>Monitoramento em tempo real de licenças, arrecadações e alertas antifraude.</p>
-          </div>
-          <button class="btn btn-secondary" onclick="exportarCSV()"><i class="fas fa-file-csv" style="color: var(--success); font-size: 1.2rem;"></i> Exportar Relatório CSV</button>
-        </div>
-
+        <div class="page-title"><div><h1>Centro Operacional</h1><p>Monitoramento em tempo real.</p></div></div>
         <div class="stats-grid">
-          <div class="stat-card c-warning">
-            <div class="stat-icon"><i class="fas fa-inbox"></i></div>
-            <div class="stat-info"><h3>Fila de Análise</h3><p id="count-pendente">0</p></div>
-          </div>
-          <div class="stat-card c-primary">
-            <div class="stat-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-            <div class="stat-info"><h3>Aguardando Pix</h3><p id="count-aguardando">0</p></div>
-          </div>
-          <div class="stat-card c-success">
-            <div class="stat-icon"><i class="fas fa-check-double"></i></div>
-            <div class="stat-info"><h3>Licenças Emitidas</h3><p id="count-pago">0</p></div>
-          </div>
-          <div class="stat-card c-gemini">
-            <div class="stat-icon"><i class="fas fa-robot"></i></div>
-            <div class="stat-info"><h3>Processos Lidos</h3><p id="count-total">0</p></div>
-          </div>
+          <div class="stat-card c-warning"><div class="stat-icon"><i class="fas fa-inbox"></i></div><div class="stat-info"><h3>Pendentes</h3><p id="count-pendente">0</p></div></div>
+          <div class="stat-card c-primary"><div class="stat-icon"><i class="fas fa-dollar-sign"></i></div><div class="stat-info"><h3>Aguardando</h3><p id="count-aguardando">0</p></div></div>
+          <div class="stat-card c-success"><div class="stat-icon"><i class="fas fa-check"></i></div><div class="stat-info"><h3>Aprovados</h3><p id="count-pago">0</p></div></div>
+          <div class="stat-card c-gemini"><div class="stat-icon"><i class="fas fa-robot"></i></div><div class="stat-info"><h3>Total BD</h3><p id="count-total">0</p></div></div>
         </div>
-
         <div class="charts-grid">
-          <div class="chart-card">
-            <div class="chart-header"><span><i class="fas fa-chart-area" style="color: var(--primary);"></i> Volume de Demandas Recentes</span></div>
-            <div class="chart-container"><canvas id="barChart"></canvas></div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-header"><span><i class="fas fa-chart-pie" style="color: var(--accent);"></i> Distribuição Operacional</span></div>
-            <div class="chart-container"><canvas id="doughnutChart"></canvas></div>
-          </div>
+          <div class="chart-card"><div class="chart-header">Volume Semanal</div><div class="chart-container"><canvas id="barChart"></canvas></div></div>
+          <div class="chart-card"><div class="chart-header">Status</div><div class="chart-container"><canvas id="doughnutChart"></canvas></div></div>
         </div>
-
-        <section class="data-section">
-          <div class="data-header">
-            <h2><i class="fas fa-bolt" style="color: var(--warning);"></i> Fila Expressa (Últimas Entradas)</h2>
-            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;" onclick="document.querySelectorAll('.nav-item')[1].click()">Ir para Base Completa</button>
-          </div>
-          <div class="table-wrapper" style="min-height: auto;">
-            <table id="tabela-dashboard">
-              <thead>
-                <tr>
-                  <th width="35%">Identificação da Empresa</th>
-                  <th width="15%">Classificação</th>
-                  <th width="15%">Data Registro</th>
-                  <th width="15%">Situação</th>
-                  <th width="20%">Ação de Auditoria</th>
-                </tr>
-              </thead>
-              <tbody id="tabela-corpo-dash"></tbody>
-            </table>
-          </div>
-        </section>
       </div>
 
       <div id="view-processos" class="page-view">
-        <div class="page-title">
-          <div>
-            <h1>Banco de Dados Mestre</h1>
-            <p>Acesso total irrestrito a todos os processos já registrados na plataforma governamental.</p>
-          </div>
-          <button class="btn btn-primary" onclick="exportarCSV()"><i class="fas fa-download"></i> Fazer Backup da Base</button>
-        </div>
-        <section class="data-section" style="height: calc(100vh - 180px); display: flex; flex-direction: column;">
-          <div class="data-header">
-            <h2><i class="fas fa-table" style="color: var(--primary);"></i> Tabela de Registros Oficiais</h2>
-            <span style="font-size: 0.85rem; background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 8px 15px; border-radius: 50px; font-weight: 800; border: 1px solid var(--success);"><i class="fas fa-sync fa-spin"></i> Conexão Firebase Sincronizada</span>
-          </div>
-          <div class="table-wrapper" style="flex:1; overflow-y: auto;">
+        <div class="page-title"><div><h1>Banco de Dados Mestre</h1></div><button class="btn btn-primary" onclick="exportarCSV()"><i class="fas fa-download"></i> Baixar CSV</button></div>
+        <section class="data-section" style="height: calc(100vh - 180px);">
+          <div class="data-header"><h2><i class="fas fa-table"></i> Registros Oficiais</h2></div>
+          <div class="table-wrapper" style="flex:1; overflow-y:auto;">
             <table>
-              <thead>
-                <tr>
-                  <th width="30%">Identificação da Empresa</th>
-                  <th width="15%">Ramo / Risco</th>
-                  <th width="15%">Data Entrada</th>
-                  <th width="15%">Status Atual</th>
-                  <th width="10%">Taxa / Guia</th>
-                  <th width="15%">Acionar IA</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Identificação</th><th>Ramo</th><th>Data</th><th>Status</th><th>Taxa</th><th>Ação</th></tr></thead>
               <tbody id="tabela-corpo-full"></tbody>
             </table>
           </div>
@@ -1100,62 +207,49 @@
       </div>
 
       <div id="view-financeiro" class="page-view">
-        <div class="page-title">
-          <div>
-            <h1>Painel Financeiro & Base Legal</h1>
-            <p>Auditoria de valores arrecadados, simulador de infrações e manuais do código sanitário municipal.</p>
-          </div>
-        </div>
-
-        <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
-          <div class="stat-card c-success" style="padding: 40px 30px;">
-            <div class="stat-icon" style="width: 80px; height: 80px; font-size: 2.5rem;"><i class="fas fa-sack-dollar"></i></div>
-            <div class="stat-info">
-              <h3 style="font-size: 1.1rem; color: var(--text-muted);">Caixa Real (Guias Pagas)</h3>
-              <p id="receita-total" style="font-size: 3.5rem; color: var(--success); letter-spacing: -1px;">R$ 0,00</p>
-            </div>
-          </div>
-          <div class="stat-card c-primary" style="padding: 40px 30px;">
-            <div class="stat-icon" style="width: 80px; height: 80px; font-size: 2.5rem;"><i class="fas fa-money-bill-wave"></i></div>
-            <div class="stat-info">
-              <h3 style="font-size: 1.1rem; color: var(--text-muted);">Projeção Pendente (Aguardando Pix)</h3>
-              <p id="receita-pendente" style="font-size: 3.5rem; color: var(--primary); letter-spacing: -1px;">R$ 0,00</p>
-            </div>
-          </div>
-        </div>
-
-        <h2 style="font-size: 1.5rem; margin-bottom: 20px; color: white; font-weight: 900;"><i class="fas fa-calculator" style="color: var(--primary);"></i> Calculadora Oficial de Autuação (Lei 13.725)</h2>
+        <div class="page-title"><div><h1>Financeiro e Leis</h1></div></div>
         <div class="calc-container">
           <div class="calc-form">
-            <div>
-              <label style="font-weight: 800; font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Gravidade do Risco Sanitário</label>
-              <select id="sim-gravidade" class="form-input" onchange="calcularMulta()">
-                <option value="leve">Infração LEVE (Documental, Asseio Simples)</option>
-                <option value="grave">Infração GRAVE (RDC 216, Armazenamento Incorreto)</option>
-                <option value="gravissima">Infração GRAVÍSSIMA (Risco de Morte, Produto Vencido)</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-weight: 800; font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Porte Econômico da Empresa</label>
-              <select id="sim-porte" class="form-input" onchange="calcularMulta()">
-                <option value="1">ME / EPP (Micro e Pequena Empresa)</option>
-                <option value="2">Média Empresa (Faturamento > 4.8M)</option>
-                <option value="3">Grande Empresa / Indústria</option>
-              </select>
-            </div>
-            <div style="grid-column: 1 / -1; background: rgba(239, 68, 68, 0.1); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--danger);">
-              <label style="display: flex; align-items: center; gap: 15px; cursor: pointer; font-weight: 800; color: var(--danger); font-size: 1.1rem;">
-                <input type="checkbox" id="sim-reincidente" style="width: 25px; height: 25px;" onchange="calcularMulta()">
-                Marcar se o estabelecimento for REINCIDENTE (Dobra o valor da multa)
-              </label>
-            </div>
+            <div><label>Gravidade</label><select id="sim-gravidade" class="form-input" onchange="calcularMulta()"><option value="leve">Leve</option><option value="grave">Grave</option><option value="gravissima">Gravíssima</option></select></div>
+            <div><label>Porte</label><select id="sim-porte" class="form-input" onchange="calcularMulta()"><option value="1">Pequena</option><option value="2">Média</option><option value="3">Grande</option></select></div>
+            <div style="grid-column:1/-1;"><label style="color:var(--danger);"><input type="checkbox" id="sim-reincidente" onchange="calcularMulta()"> Empresa Reincidente (Dobra Valor)</label></div>
           </div>
-          <div class="calc-result">
-            <span>Valor Sugerido para Auto de Infração</span>
-            <h2 id="sim-resultado">R$ 1.500,00</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 15px; font-weight: 600;"><i class="fas fa-info-circle"></i> O valor base exato deve ser ratificado em UFESPs pelo fiscal autuante.</p>
+          <div class="calc-result"><span>Valor Sugerido</span><h2 id="sim-resultado">R$ 1.500,00</h2></div>
+        </div>
+      </div>
+
+      <div id="view-mapa" class="page-view">
+        <div class="page-title"><div><h1>Mapa de Zonas de Risco</h1></div></div>
+        <div class="heatmap-container">
+          <div class="heat-zone" style="border-bottom: 5px solid var(--danger);"><h3 style="color:white;">Zona Sul</h3><i class="fas fa-fire" style="color:var(--danger); font-size:3rem; margin:15px 0;"></i><p style="color:var(--danger);">Crítico (42%)</p></div>
+          <div class="heat-zone" style="border-bottom: 5px solid var(--warning);"><h3 style="color:white;">Centro</h3><i class="fas fa-exclamation-triangle" style="color:var(--warning); font-size:3rem; margin:15px 0;"></i><p style="color:var(--warning);">Atenção (28%)</p></div>
+          <div class="heat-zone" style="border-bottom: 5px solid var(--success);"><h3 style="color:white;">Zona Norte</h3><i class="fas fa-shield-alt" style="color:var(--success); font-size:3rem; margin:15px 0;"></i><p style="color:var(--success);">Estável (12%)</p></div>
+        </div>
+      </div>
+
+      <div id="view-chat" class="page-view">
+        <div class="page-title"><div><h1>Assistente Jurídico Gemini</h1></div></div>
+        <div class="chat-container">
+          <div class="chat-history" id="chat-historico">
+            <div class="chat-msg msg-ai">Olá, sou a IA da COVISA. Como posso ajudar com a Lei 13.725 hoje?</div>
+          </div>
+          <div style="padding:20px; display:flex; gap:10px; border-top:1px solid var(--border);">
+            <input type="text" id="chat-input-text" class="form-input" placeholder="Pergunte sobre leis..." onkeypress="if(event.key==='Enter') enviarChat()">
+            <button class="btn btn-gemini" onclick="enviarChat()"><i class="fas fa-paper-plane"></i></button>
           </div>
         </div>
+      </div>
+
+      <div id="view-logs" class="page-view">
+        <div class="page-title"><div><h1>Logs de Auditoria</h1></div></div>
+        <section class="data-section">
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Data/Hora</th><th>Ação</th><th>Detalhes</th></tr></thead>
+              <tbody id="tabela-logs-corpo"></tbody>
+            </table>
+          </div>
+        </section>
       </div>
 
     </main>
@@ -1164,138 +258,78 @@
   <div class="modal-overlay" id="modalDetalhes">
     <div class="modal-box">
       <div class="modal-header">
-        <h3><i class="fas fa-folder-open" style="color: var(--primary);"></i> Processo de Fiscalização Eletrônica</h3>
-        <div class="protocol-id">Protocolo ID: <span id="modal-id-text" style="color: white; font-weight: bold;">...</span></div>
+        <h3><i class="fas fa-folder-open"></i> Processo <span id="modal-id-text" style="font-family:monospace; margin-left:10px; color:var(--text-muted);"></span></h3>
         <button class="btn-close" onclick="fecharModal()"><i class="fas fa-times"></i></button>
       </div>
-      
       <div class="modal-tabs">
-        <button class="tab-btn tab-ai active" onclick="abrirAba('tab-radar', this)"><i class="fas fa-robot"></i> Auditoria de IA (Gemini 2.0)</button>
-        <button class="tab-btn" onclick="abrirAba('tab-detalhes', this)"><i class="fas fa-building"></i> Dados do Estabelecimento</button>
-        <button class="tab-btn" onclick="abrirAba('tab-fotos', this)"><i class="fas fa-images"></i> Provas Documentais</button>
-        <button class="tab-btn" onclick="abrirAba('tab-financeiro', this)"><i class="fas fa-file-invoice-dollar"></i> Decisão Fiscal & Taxas</button>
+        <button class="tab-btn tab-ai active" onclick="abrirAba('tab-radar', this)"><i class="fas fa-robot"></i> Radar Gemini 2.0</button>
+        <button class="tab-btn" onclick="abrirAba('tab-detalhes', this)"><i class="fas fa-building"></i> Dados</button>
+        <button class="tab-btn" onclick="abrirAba('tab-fotos', this)"><i class="fas fa-images"></i> Evidências</button>
+        <button class="tab-btn" onclick="abrirAba('tab-financeiro', this)"><i class="fas fa-gavel"></i> Veredito</button>
       </div>
-
-      <div class="modal-body" style="background: var(--bg-body);">
+      <div class="modal-body">
         
         <div id="tab-radar" class="tab-content active">
-          
-          <div id="radar-loader" class="radar-loading">
-            <div class="radar-scanner"><i class="fas fa-brain"></i></div>
-            <div>
-              <h3 style="font-size: 1.8rem; font-weight: 900; color: var(--gemini-purple); margin-bottom: 10px;">Avaliando Robustez das Provas...</h3>
-              <p id="radar-loading-text" style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6;">O algoritmo está analisando a veracidade das imagens anexadas e cruzando as exigências do ramo de atividade com o banco de dados oficial.</p>
-            </div>
-          </div>
-
+          <div id="radar-loader" class="radar-loading"><div class="radar-scanner"><i class="fas fa-brain"></i></div><h3>Lendo Evidências...</h3></div>
           <div id="radar-result" class="radar-dashboard" style="display: none;">
-            <div class="score-box">
-              <h4 style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; font-weight: 800;">Qualidade e Força das Provas</h4>
-              <div class="score-circle" id="radar-score-circle" style="border-color: var(--success);">
-                <span class="num" id="radar-score-number" style="color: var(--success);">0</span>
-                <span class="desc">/ 100%<br>Qualidade</span>
-              </div>
-              <p id="radar-nivel-text" style="font-weight: 900; font-size: 1.4rem; margin-top: 15px; text-transform: uppercase; text-align: center;">Aprovação Segura</p>
-              <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 50px; margin-top: 15px; font-size: 0.85rem; font-weight: bold; color: var(--gemini-purple); border: 1px solid var(--border);"><i class="fas fa-fingerprint"></i> IA Gemini 2.0 Flash</div>
+            <div class="score-box" style="background:var(--bg-card);">
+              <h4 style="color:var(--text-muted); margin-bottom:15px;">Qualidade de Provas</h4>
+              <div class="score-circle" id="radar-score-circle"><span class="num" id="radar-score-number">0</span><span class="desc">/ 100%</span></div>
+              <p id="radar-nivel-text" style="font-weight:900; font-size:1.2rem; margin-top:10px;">...</p>
             </div>
-            
-            <div>
-              <div class="gemini-response-box">
-                <h4><i class="fas fa-robot" style="color: var(--gemini-purple); font-size: 1.8rem;"></i> Laudo Técnico Gerado por IA</h4>
-                
-                <div class="ia-opinion">
-                  <strong style="color: white; font-style: normal; display: block; margin-bottom: 5px;">Parecer Detalhado da IA:</strong>
-                  <span id="radar-opinion-text">...</span>
-                </div>
-                
-                <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px;">Fatores Encontrados na Varredura:</div>
-                <ul class="signal-list" id="radar-signals-list">
-                  </ul>
-                
-                <div class="ai-recommendation">
-                  <h4>Veredito Recomendado para Execução</h4>
-                  <p id="radar-recommendation-text">...</p>
-                </div>
+            <div style="background:var(--bg-card); padding:25px; border-radius:var(--radius-xl); border:1px solid var(--border);">
+              <h4 style="margin-bottom:15px; color:white;"><i class="fas fa-robot" style="color:var(--gemini-purple);"></i> Laudo Técnico</h4>
+              <p id="radar-opinion-text" style="color:var(--text-light); margin-bottom:20px; font-style:italic;">...</p>
+              <ul class="signal-list" id="radar-signals-list"></ul>
+              <div style="padding:15px; background:rgba(168,85,247,0.1); border:1px dashed var(--gemini-purple); border-radius:8px;">
+                <h4 style="color:#d8b4fe; font-size:0.8rem; margin-bottom:5px;">AÇÃO SUGERIDA</h4>
+                <p id="radar-recommendation-text" style="font-size:1.2rem; font-weight:bold; color:white; margin:0;"></p>
               </div>
             </div>
           </div>
         </div>
 
         <div id="tab-detalhes" class="tab-content">
-          <div class="info-grid">
-            <div class="info-group"><label>Razão Social / Nome</label><p id="modal-nome">...</p></div>
-            <div class="info-group"><label>CNPJ / CPF Vinculado</label><p id="modal-cnpj">...</p></div>
-            <div class="info-group"><label>Data da Autuação</label><p id="modal-data">...</p></div>
-            <div class="info-group"><label>Ramo de Atividade Fiscal</label><p id="modal-ramo">...</p></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;"><label style="color:var(--text-muted); font-size:0.75rem;">Nome</label><p id="modal-nome" style="color:white; font-weight:bold;"></p></div>
+            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;"><label style="color:var(--text-muted); font-size:0.75rem;">Documento</label><p id="modal-cnpj" style="color:white; font-weight:bold;"></p></div>
+            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;"><label style="color:var(--text-muted); font-size:0.75rem;">Data</label><p id="modal-data" style="color:white; font-weight:bold;"></p></div>
+            <div style="background:var(--bg-card); padding:15px; border:1px solid var(--border); border-radius:8px;"><label style="color:var(--text-muted); font-size:0.75rem;">Ramo</label><p id="modal-ramo" style="color:white; font-weight:bold;"></p></div>
           </div>
-          <div class="docs-list"><label>Documentação Declarada na Entrada</label><p id="modal-docs">...</p></div>
+          <div style="background:var(--bg-card); padding:20px; margin-top:15px; border:1px solid var(--border); border-radius:8px;"><label style="color:var(--text-muted); font-size:0.75rem;">Checklist</label><p id="modal-docs" style="color:white; white-space:pre-line;"></p></div>
         </div>
 
         <div id="tab-fotos" class="tab-content">
-          <div style="background: rgba(14, 165, 233, 0.1); padding: 25px; border-radius: var(--radius-lg); border-left: 5px solid var(--secondary); margin-bottom: 25px; display: flex; align-items: center; gap: 20px;">
-            <i class="fas fa-search-plus" style="font-size: 2.5rem; color: var(--secondary);"></i>
-            <div>
-              <strong style="display: block; color: white; font-size: 1.2rem; margin-bottom: 5px;">Central de Inspeção Visual</strong>
-              <p style="margin: 0; font-size: 1rem; color: var(--text-light);">Clique nas imagens para expandir em tela cheia. O documento oficial assinado aparecerá com destaque em verde.</p>
-            </div>
-          </div>
-          <h4 id="evidence-title" style="font-size: 1.3rem; font-weight: 900; color: white; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">Evidências Fotográficas (0)</h4>
+          <h4 id="evidence-title" style="color:white; margin-bottom:15px;">Evidências</h4>
           <div class="gallery-grid" id="evidence-gallery"></div>
         </div>
 
         <div id="tab-financeiro" class="tab-content">
-          <div class="info-grid">
-            <div style="background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
-              <label style="font-weight: 900; color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 15px; text-transform: uppercase;"><i class="fas fa-barcode"></i> Valor da Taxa a Emitir (R$)</label>
-              <input type="text" class="form-input" id="modal-valor-input" placeholder="Ex: 200,00" style="font-size: 2rem; font-weight: 900; color: var(--primary); text-align: center; padding: 20px;">
-            </div>
-            <div style="background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
-              <label style="font-weight: 900; color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 15px; text-transform: uppercase;"><i class="fas fa-traffic-light"></i> Mudar Status do Processo</label>
-              <select class="form-input" id="modal-status-select" style="font-size: 1.2rem; font-weight: 800; padding: 20px;">
-                <option value="pendente">🟠 BLOQUEAR (Análise Pendente)</option>
-                <option value="aguardando">🔵 AÇÃO: Cobrar Taxa (Aguardar Pix)</option>
-                <option value="pago">🟢 SUCESSO: Aprovar Licença</option>
-              </select>
-            </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+            <div><label style="color:var(--text-muted);">Taxa a Emitir (R$)</label><input type="text" id="modal-valor-input" class="form-input" style="font-size:1.5rem; font-weight:bold; color:var(--primary); text-align:center;"></div>
+            <div><label style="color:var(--text-muted);">Status</label><select id="modal-status-select" class="form-input" style="font-weight:bold; font-size:1.1rem;"><option value="pendente">🟠 Bloquear (Pendente)</option><option value="aguardando">🔵 Emitir Guia Pix</option><option value="pago">🟢 Aprovar Licença</option></select></div>
           </div>
-          
-          <div style="background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-top: 25px;">
-            <label style="font-weight: 900; color: var(--danger); font-size: 0.9rem; display: block; margin-bottom: 15px; text-transform: uppercase;"><i class="fas fa-user-secret"></i> Notas Privadas do Auditor (Dossiê Interno)</label>
-            <textarea class="form-input" id="modal-notas-input" placeholder="Anotações confidenciais sobre este estabelecimento... (O cliente não tem acesso a isto)." style="font-size: 1.1rem; padding: 20px;"></textarea>
-          </div>
-
-          <div style="margin-top: 30px; background: rgba(16, 185, 129, 0.1); border: 2px solid var(--success); padding: 30px; border-radius: var(--radius-lg); text-align: center;">
-            <h4 style="font-size: 1.4rem; margin-bottom: 10px; color: var(--success); font-weight: 900;"><i class="fab fa-whatsapp"></i> Automação de Disparo Oficial</h4>
-            <p style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 25px;">Acione o botão abaixo para abrir o WhatsApp Web. O sistema já vai escrever a mensagem oficial correta baseada no status que está salvo agora no Firebase.</p>
-            <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="font-size: 1.3rem; padding: 18px 40px; border-radius: 50px;"><i class="fab fa-whatsapp" style="font-size: 1.8rem;"></i> Acionar Contribuinte via WhatsApp</a>
-          </div>
+          <div style="margin-top:20px;"><label style="color:var(--text-muted);">Notas (Sigilo)</label><textarea id="modal-notas-input" class="form-input"></textarea></div>
+          <div style="margin-top:20px; background:rgba(16,185,129,0.1); padding:20px; border-radius:8px; text-align:center; border:1px solid var(--success);"><a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success"><i class="fab fa-whatsapp"></i> Disparar WhatsApp Oficial</a></div>
         </div>
 
       </div>
-
       <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="deletarProcessoAtual()" style="color: var(--danger); border-color: var(--danger); background: transparent;"><i class="fas fa-trash-alt"></i> Excluir Base</button>
+        <button class="btn btn-secondary" onclick="deletarProcessoAtual()" style="color:var(--danger); border-color:var(--danger);"><i class="fas fa-trash-alt"></i> Excluir</button>
         <div style="flex:1"></div>
-        <button class="btn btn-secondary" onclick="fecharModal()">Cancelar Operação</button>
-        <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()" style="padding: 18px 40px; font-size: 1.2rem;"><i class="fas fa-save"></i> Executar e Gravar no Servidor</button>
+        <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()"><i class="fas fa-save"></i> Gravar Decisão no BD</button>
       </div>
     </div>
   </div>
 
-  <div id="lightbox" onclick="fecharLightbox()">
-    <button class="btn-close-lightbox"><i class="fas fa-times"></i></button>
-    <img id="lightbox-img" src="">
-    <div id="lightbox-title">Documento Digitalizado</div>
-  </div>
-
+  <div id="lightbox" onclick="fecharLightbox()"><button class="btn-close-lightbox"><i class="fas fa-times"></i></button><img id="lightbox-img" src=""><div id="lightbox-title">Documento</div></div>
   <div id="toast-container"></div>
 
   <script type="module">
-    // Importações Diretas da CDN do Google
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-    // ⚠️ CHAVES OFICIAIS DO SEU BANCO DE DADOS FIREBASE ⚠️
+    // ⚠️ SUAS CHAVES DO FIREBASE ⚠️
     const firebaseConfig = {
       apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
       authDomain: "site-8dfaf.firebaseapp.com",
@@ -1304,412 +338,247 @@
       messagingSenderId: "76689989548",
       appId: "1:76689989548:web:5c86741e60ce385102a409"
     };
-
-    // Inicialização segura
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Chave do Gemini 2.0 Flash Embutida Diretamente
+    // Chave Gemini Injetada
     const GEMINI_API_KEY = "AIzaSyBUCj1-Zd4rNXTQpF44k_oR1WBIVcXeeyg";
 
-    // Variáveis de Estado Global
-    let idProcessoAtual = null;
-    let dadosProcessoAtual = null; 
-    let todosProcessos = []; 
-    let chartBar, chartDoughnut;
-    
-    // --- FUNÇÕES DE NAVEGAÇÃO DE PÁGINA ÚNICA (SPA) ---
-    window.switchView = (viewId, element) => {
-        document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        if(element) element.classList.add('active');
+    let idProcessoAtual = null; let dadosProcessoAtual = null; let todosProcessos = []; 
+    let chartBar, chartDoughnut; const logsAuditoria = [];
+
+    window.switchView = (id, el) => {
+      document.querySelectorAll('.page-view').forEach(e => e.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+      if(el) el.classList.add('active');
+      registrarLog("Navegação", `Módulo acessado: ${id}`);
     }
 
-    // --- FUNÇÃO DE MENSAGENS FLUTUANTES (TOASTS) ---
-    window.showToast = (titulo, mensagem, tipo = 'success') => {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = `toast ${tipo}`;
-      const icon = tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
-      toast.innerHTML = `<div class="toast-icon"><i class="fas ${icon}"></i></div><div class="toast-content"><h4>${titulo}</h4><p>${mensagem}</p></div>`;
-      container.appendChild(toast);
-      setTimeout(() => { toast.style.animation = 'toastFadeOut 0.5s forwards'; }, 3000);
-      setTimeout(() => { toast.remove(); }, 3500);
+    window.showToast = (t, m, tipo='success') => {
+      const c = document.getElementById('toast-container');
+      const toast = document.createElement('div'); toast.className = `toast ${tipo}`;
+      toast.innerHTML = `<div style="display:flex; gap:15px; align-items:center;"><i class="fas fa-info-circle" style="font-size:1.5rem;"></i><div><h4 style="margin:0; font-size:1rem;">${t}</h4><p style="margin:0; font-size:0.85rem; opacity:0.8;">${m}</p></div></div>`;
+      c.appendChild(toast); setTimeout(()=>toast.remove(), 3500);
     }
 
-    // --- SEGURANÇA E TELA DE BLOQUEIO ---
+    function registrarLog(acao, det) {
+      logsAuditoria.unshift({d: new Date().toLocaleString(), a: acao, t: det});
+      const tb = document.getElementById('tabela-logs-corpo');
+      if(tb) { tb.innerHTML = ''; logsAuditoria.slice(0,15).forEach(l => tb.innerHTML += `<tr><td>${l.d}</td><td>${l.a}</td><td style="color:var(--primary);">${l.t}</td></tr>`); }
+    }
+
     window.checkPin = () => {
       if (document.getElementById('pin-input').value === '1533') { 
-        document.getElementById('lock-screen').style.opacity = '0';
-        setTimeout(() => {
-          document.getElementById('lock-screen').style.display = 'none';
-          initCharts(); 
-        }, 500);
-        showToast('Acesso Permitido', 'Sessão iniciada com segurança.', 'success');
-      } else {
-        showToast('Alerta de Segurança', 'Senha incorreta. Acesso bloqueado.', 'error');
-        document.getElementById('pin-input').value = '';
-      }
+        document.getElementById('lock-screen').style.display = 'none'; initCharts(); 
+        registrarLog("Sistema", "Login master efetuado.");
+      } else { document.getElementById('pin-input').value = ''; showToast('Erro', 'Senha Incorreta', 'error'); }
     }
 
-    // --- SINCRONIZAÇÃO EM TEMPO REAL COM FIREBASE ---
     const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
     onSnapshot(q, (snapshot) => {
-      todosProcessos = []; 
-      let pen=0, agu=0, pag=0; 
-      let totalReceita = 0, pendenteReceita = 0;
-
-      snapshot.forEach((docSnap) => {
-        const d = docSnap.data(); d.id = docSnap.id;
-        todosProcessos.push(d);
-        
-        let valNum = d.valor ? parseFloat(d.valor.replace(',','.')) : 0;
-        if(isNaN(valNum)) valNum = 0;
-
-        if(d.pago) { pag++; totalReceita += valNum; } 
-        else if(d.valor) { agu++; pendenteReceita += valNum; } 
-        else pen++;
+      todosProcessos = []; let pen=0, agu=0, pag=0; let tRec=0, pRec=0;
+      snapshot.forEach((ds) => {
+        const d = ds.data(); d.id = ds.id; todosProcessos.push(d);
+        let v = d.valor ? parseFloat(d.valor.replace(',','.')) : 0; if(isNaN(v)) v=0;
+        if(d.pago){pag++; tRec+=v;}else if(d.valor){agu++; pRec+=v;}else pen++;
       });
-
       document.getElementById("count-pendente").innerText = pen;
       document.getElementById("count-aguardando").innerText = agu;
       document.getElementById("count-pago").innerText = pag;
       document.getElementById("count-total").innerText = snapshot.size;
-      
-      document.getElementById("receita-total").innerText = 'R$ ' + totalReceita.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-      document.getElementById("receita-pendente").innerText = 'R$ ' + pendenteReceita.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-
-      updateCharts(pen, agu, pag);
-      renderizarTabelas(todosProcessos);
+      document.getElementById("receita-total").innerText = 'R$ ' + tRec.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+      document.getElementById("receita-pendente").innerText = 'R$ ' + pRec.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+      updateCharts(pen, agu, pag); renderizarTabelas(todosProcessos);
     });
 
     window.renderizarTabelas = (dados) => {
-      const tDash = document.getElementById("tabela-corpo-dash");
-      const tFull = document.getElementById("tabela-corpo-full");
+      const tDash = document.getElementById("tabela-corpo-dash"); const tFull = document.getElementById("tabela-corpo-full");
       if(!tDash || !tFull) return;
-
       tDash.innerHTML = ""; tFull.innerHTML = "";
-
-      if(dados.length === 0) { tFull.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px;">Sem dados na base.</td></tr>'; return; }
-
-      dados.forEach((data, index) => {
+      dados.forEach((d, i) => {
         let cb = 'badge-pendente', tb = 'Pendente', ic = 'fa-clock';
-        if(data.tipo === "🚨 DENÚNCIA") { cb = 'badge-denuncia'; tb = 'DENÚNCIA'; ic = 'fa-exclamation-triangle'; }
-        else if(data.pago) { cb = 'badge-pago'; tb = 'Aprovado'; ic = 'fa-check'; }
-        else if(data.valor) { cb = 'badge-aguardando'; tb = 'Aguard. Pix'; ic = 'fa-hourglass-half'; }
-
-        let letIcon = data.nome ? data.nome.charAt(0).toUpperCase() : 'C';
-        let styleName = data.tipo === "🚨 DENÚNCIA" ? 'color: var(--danger); font-weight: 900;' : '';
-
-        let rowHTML = `
-          <td><div class="td-empresa"><div class="td-empresa-icon">${letIcon}</div><div class="td-empresa-info"><strong style="${styleName}">${data.nome}</strong><span>${data.cnpj}</span></div></div></td>
-          <td><span style="background: rgba(255,255,255,0.05); border:1px solid var(--border); padding:6px 10px; border-radius:6px; font-size:0.85rem; font-weight:700; color:white;">${data.tipo}</span></td>
-          <td><span style="color:var(--text-muted); font-size:0.9rem; font-weight:600;">${data.data ? data.data.split(',')[0] : ''}</span></td>
-          <td><span class="status-badge ${cb}"><i class="fas ${ic}"></i> ${tb}</span></td>
-        `;
-
-        const trFull = document.createElement("tr");
-        trFull.innerHTML = rowHTML + `<td><strong style="color:var(--primary); font-size:1.1rem;">${data.valor ? 'R$ '+data.valor : '--'}</strong></td><td><button class="btn-icon view" onclick="abrirModal('${data.id}')" style="width:auto; padding:0 20px; background:var(--primary); color:white; border:none;"><i class="fas fa-folder-open"></i> Auditar</button></td>`;
-        tFull.appendChild(trFull);
-
-        if(index < 5) {
-            const trDash = document.createElement("tr");
-            trDash.innerHTML = rowHTML + `<td><button class="btn-icon view" onclick="abrirModal('${data.id}')" style="width:100%; border:none; background:rgba(255,255,255,0.05); color:var(--accent);"><i class="fas fa-arrow-right"></i> Avaliar</button></td>`;
-            tDash.appendChild(trDash);
-        }
+        if(d.tipo === "🚨 DENÚNCIA") { cb = 'badge-denuncia'; tb = 'DENÚNCIA'; ic = 'fa-bullhorn'; }
+        else if(d.pago) { cb = 'badge-pago'; tb = 'Aprovado'; ic = 'fa-check'; }
+        else if(d.valor) { cb = 'badge-aguardando'; tb = 'Aguard. Pix'; ic = 'fa-dollar-sign'; }
+        let h = `<td><strong style="color:white;">${d.nome}</strong><br><span style="color:var(--text-muted); font-size:0.8rem;">${d.cnpj}</span></td><td><span style="background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:4px; font-size:0.75rem;">${d.tipo}</span></td><td><span style="color:var(--text-muted); font-size:0.8rem;">${d.data ? d.data.split(',')[0] : ''}</span></td><td><span class="status-badge ${cb}"><i class="fas ${ic}"></i> ${tb}</span></td>`;
+        let trF = document.createElement("tr"); trF.innerHTML = h + `<td><strong style="color:var(--primary);">${d.valor?'R$ '+d.valor:'--'}</strong></td><td><button class="btn-icon view" onclick="abrirModal('${d.id}')" style="width:auto; padding:0 15px; background:var(--primary);"><i class="fas fa-folder"></i> Auditar</button></td>`; tFull.appendChild(trF);
+        if(i < 5) { let trD = document.createElement("tr"); trD.innerHTML = h + `<td><button class="btn-icon view" onclick="abrirModal('${d.id}')" style="width:100%; border:1px solid var(--border); background:transparent; color:var(--accent);"><i class="fas fa-arrow-right"></i></button></td>`; tDash.appendChild(trD); }
       });
     }
 
-    // --- FILTRO E EXPORTAÇÃO ---
-    window.filtrarTabela = () => {
-      const texto = document.getElementById('searchInput').value.toLowerCase();
-      let filtrados = todosProcessos;
-      if(texto) { filtrados = filtrados.filter(p => (p.nome && p.nome.toLowerCase().includes(texto)) || (p.cnpj && p.cnpj.toLowerCase().includes(texto))); }
-      renderizarTabelas(filtrados);
-    }
+    window.filtrarTabela = () => { const t = document.getElementById('searchInput').value.toLowerCase(); renderizarTabelas(todosProcessos.filter(p => (p.nome && p.nome.toLowerCase().includes(t)) || (p.cnpj && p.cnpj.toLowerCase().includes(t)))); }
 
-    window.exportarCSV = () => {
-      let csv = 'Data,Nome,Documento,Ramo,Status,Valor,Notas\n';
-      todosProcessos.forEach(p => { 
-          let st = p.pago ? 'Aprovado' : (p.valor ? 'Aguardando' : 'Pendente');
-          let n = p.notas ? p.notas.replace(/(\r\n|\n|\r)/gm, " ") : "";
-          csv += `"${p.data||''}","${p.nome}","${p.cnpj}","${p.tipo}","${st}","${p.valor||'0'}","${n}"\n`; 
-      });
-      const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'}));
-      link.download = `Base_Mestra_COVISA_${new Date().toLocaleDateString()}.csv`; link.click();
-      showToast("Download Concluído", "Base de dados exportada com sucesso.", "success");
-    }
-
-    // =======================================================
-    // 🧠 MOTOR DE INTELIGÊNCIA ARTIFICIAL GEMINI 2.0 (O CÉREBRO)
-    // =======================================================
     window.abrirAba = (idAba, btn) => {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById(idAba).classList.add('active');
-      btn.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
+      document.getElementById(idAba).classList.add('active'); btn.classList.add('active');
     }
 
     window.abrirModal = async (id) => {
-      idProcessoAtual = id;
-      document.getElementById("modalDetalhes").style.display = "flex";
+      idProcessoAtual = id; document.getElementById("modalDetalhes").style.display = "flex";
       document.getElementById("modal-id-text").innerText = id.substring(0,8).toUpperCase();
       document.querySelector('.tab-ai').click(); 
 
       try {
         const docSnap = await getDoc(doc(db, "pedidos", id));
         if (docSnap.exists()) {
-          const d = docSnap.data();
-          dadosProcessoAtual = d; 
-
-          // Preenche Detalhes
+          const d = docSnap.data(); dadosProcessoAtual = d; 
           document.getElementById("modal-cnpj").innerText = d.cnpj || "N/A";
           document.getElementById("modal-nome").innerText = d.nome || "N/A";
-          document.getElementById("modal-data").innerText = d.data || 'Data indisponível';
+          document.getElementById("modal-data").innerText = d.data || 'N/A';
           document.getElementById("modal-ramo").innerText = d.tipo || "Geral";
-          document.getElementById("modal-docs").innerText = d.docs || "Sem check-list declarado.";
+          document.getElementById("modal-docs").innerText = d.docs || "Sem checklist";
           
-          // Preenche Fotos e Evidências
-          const galeria = document.getElementById('evidence-gallery');
-          galeria.innerHTML = '';
-          let tFotos = 0;
-
+          const galeria = document.getElementById('evidence-gallery'); galeria.innerHTML = ''; let tFotos = 0;
           if (d.documento_assinado) {
-              tFotos++;
-              const ia = document.createElement('div'); ia.className = 'gallery-item'; ia.style.border = '4px solid var(--success)';
-              ia.onclick = () => abrirLightbox(d.documento_assinado, 'Documento Oficial Assinado');
-              ia.innerHTML = `<div class="badge-assinado"><i class="fas fa-check-circle"></i> ASSINADO E VÁLIDO</div><img src="${d.documento_assinado}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`;
-              galeria.appendChild(ia);
+              tFotos++; const ia = document.createElement('div'); ia.className = 'gallery-item'; ia.style.border = '3px solid var(--success)';
+              ia.onclick = () => abrirLightbox(d.documento_assinado, 'Doc Assinado');
+              ia.innerHTML = `<div class="badge-assinado">ASSINADO</div><img src="${d.documento_assinado}">`; galeria.appendChild(ia);
           }
           if (d.evidencias && d.evidencias.length > 0) {
               tFotos += d.evidencias.length;
               d.evidencias.forEach(f => {
                   const i = document.createElement('div'); i.className = 'gallery-item'; i.onclick = () => abrirLightbox(f.url, f.nome);
-                  i.innerHTML = `<img src="${f.url}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`;
-                  galeria.appendChild(i);
+                  i.innerHTML = `<img src="${f.url}">`; galeria.appendChild(i);
               });
           }
-          document.getElementById('evidence-title').innerText = tFotos > 0 ? `Evidências Digitais (${tFotos} Anexos)` : `Nenhuma Evidência Anexada (0)`;
+          document.getElementById('evidence-title').innerText = `Evidências (${tFotos})`;
 
-          // Preenche Financeiro e Notas
           document.getElementById("modal-valor-input").value = d.valor || "";
           let sVal = d.pago ? "pago" : (d.valor ? "aguardando" : "pendente");
           document.getElementById("modal-status-select").value = sVal;
           document.getElementById("modal-notas-input").value = d.notas || "";
           
-          // Zap Dinâmico Oficial
-          let msgZap = `Prefeitura de SP - COVISA\nOlá *${d.nome}*.\nReferente ao seu protocolo CNPJ: ${d.cnpj}\n\n`;
-          if(sVal==='pendente') msgZap += `Aviso: Seu processo encontra-se com análise pendente na mesa do auditor. Aguarde instruções.`;
-          if(sVal==='aguardando') msgZap += `NOTIFICAÇÃO OFICIAL: A taxa de regularização no valor de *R$ ${d.valor}* já foi emitida e aguarda pagamento no portal para liberação da licença.`;
-          if(sVal==='pago') msgZap += `PARABÉNS! Sua licença sanitária foi *APROVADA*. O certificado está disponível para download e assinatura no portal oficial.`;
+          let msgZap = `Prefeitura SP\n*${d.nome}* - CNPJ: ${d.cnpj}\n`;
+          if(sVal==='pendente') msgZap += `Processo com análise pendente.`;
+          if(sVal==='aguardando') msgZap += `A taxa de R$ ${d.valor} foi emitida. Pague no portal.`;
+          if(sVal==='pago') msgZap += `Licença APROVADA.`;
           document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(msgZap)}`;
 
-          // CHAMA A INTELIGÊNCIA ARTIFICIAL
           iniciarRadarIA();
         }
-      } catch (e) { showToast("Erro Crítico", "Não foi possível conectar ao Firebase.", "error"); }
+      } catch (e) { showToast("Erro", "Falha BD.", "error"); }
     };
 
     window.fecharModal = () => { document.getElementById("modalDetalhes").style.display = "none"; idProcessoAtual = null; };
 
+    // --- MOTOR DE IA GEMINI 2.0 ---
     window.iniciarRadarIA = async () => {
         const d = dadosProcessoAtual;
-        
         document.getElementById('radar-loader').style.display = 'flex';
         document.getElementById('radar-result').style.display = 'none';
 
         try {
             let promptText = `
-                Você é o Motor de Inteligência Artificial Avançada (Gemini 2.0 Flash) atuando como Auditor Chefe da Vigilância Sanitária.
-                Sua missão é validar e dar uma nota de QUALIDADE às provas deste estabelecimento.
-                
-                DADOS DO PROCESSO:
-                - Nome da Empresa/Pessoa: ${d.nome}
-                - CNPJ/CPF: ${d.cnpj}
-                - Ramo Declarado: ${d.tipo}
-                - Relatório de Envio: ${d.docs}
-                
-                INSTRUÇÕES ESTRITAS DE AVALIAÇÃO:
-                Avalie a QUALIDADE, VERACIDADE E FORÇA das provas. A nota é de 0 a 100%.
-                Se for classificado como DENÚNCIA, o score de prova deve ser OBRIGATORIAMENTE 0 (zero) para bloquear o local e recomendar interdição.
-                - 80% a 100%: Provas perfeitas, consistentes com o ramo. Tudo excelente. Recomendação: APROVAÇÃO EXPRESSA.
-                - 50% a 79%: Faltam documentos vitais para este ramo. Necessita revisão. Recomendação: REVISÃO DE ANEXOS.
-                - 0% a 49%: Risco altíssimo, fraude, vazio ou DENÚNCIA GRAVE. Recomendação: BLOQUEIO / REPROVAR.
-
-                Responda ÚNICA E EXCLUSIVAMENTE em formato JSON puro, sem crases de markdown (NÃO COLOQUE \`\`\`json no início). Apenas isto:
-                {
-                  "score_provas": numero_inteiro_entre_0_e_100,
-                  "opiniao_auditor": "Seu laudo oficial técnico.",
-                  "acao_recomendada": "Veredito curto (Ex: APROVAR LICENÇA)",
-                  "sinais": [
-                    {"text": "fato 1 detectado na análise visual", "tipo": "success ou warning ou danger", "icon": "fa-check ou fa-exclamation-triangle ou fa-times-circle"}
-                  ],
-                  "confianca": "Ex: 98%"
-                }
+                Você é a IA Auditora (Gemini 2.0). Analise:
+                - Nome: ${d.nome} | CNPJ: ${d.cnpj} | Ramo: ${d.tipo} | Dados: ${d.docs}
+                Avalie a QUALIDADE E VERACIDADE DAS PROVAS enviadas. Se for denúncia, score = 0.
+                Responda APENAS em JSON puro:
+                {"score_provas": numero_0_a_100, "opiniao_auditor": "Seu laudo curto", "acao_recomendada": "Ação", "sinais": [{"text": "obs", "tipo": "success|warning|danger", "icon": "fa-check"}]}
             `;
-
             let parts = [{ "text": promptText }];
-
-            // Anexa as imagens reais para a IA ler
             if(d.evidencias && d.evidencias.length > 0) {
-                // Limitamos a 3 imagens para garantir rapidez na API
-                d.evidencias.slice(0, 3).forEach(foto => {
-                    let imgData = foto.url.split(',')[1];
-                    if(imgData) { parts.push({ "inline_data": { "mime_type": "image/jpeg", "data": imgData } }); }
-                });
-            }
-            if(d.documento_assinado) {
-                let imgDataAss = d.documento_assinado.split(',')[1];
-                if(imgDataAss) { parts.push({ "inline_data": { "mime_type": "image/jpeg", "data": imgDataAss } }); }
+                d.evidencias.slice(0, 2).forEach(f => { let img = f.url.split(',')[1]; if(img) parts.push({ "inline_data": { "mime_type": "image/jpeg", "data": img } }); });
             }
 
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ "contents": [{ "parts": parts }] })
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ "contents": [{ "parts": parts }] })
             });
 
-            if (!response.ok) throw new Error("A API recusou a requisição ou limite excedido.");
-
+            if (!response.ok) throw new Error("API Falhou.");
             const jsonResponse = await response.json();
-            let geminiText = jsonResponse.candidates[0].content.parts[0].text;
-            
-            // Limpa o markdown caso o Gemini ainda o mande
-            geminiText = geminiText.replace(/```json/gi, '').replace(/```/gi, '').trim();
+            let geminiText = jsonResponse.candidates[0].content.parts[0].text.replace(/```json/gi, '').replace(/```/gi, '').trim();
             const analiseIA = JSON.parse(geminiText);
 
-            // Regra Hashing Interno de Clonagem (Se a pessoa usar a mesma foto de outro cadastro para fraudar)
-            let suspeitaClone = false;
-            if(d.evidencias && d.evidencias.length > 0 && todosProcessos.length > 1) {
-                let fotoLength = d.evidencias[0].url.length;
-                for(let proc of todosProcessos) {
-                    if(proc.id !== d.id && proc.evidencias) {
-                        for(let img of proc.evidencias) { if(img.url.length === fotoLength) suspeitaClone = true; }
-                    }
-                }
-                if(suspeitaClone) {
-                    analiseIA.score_provas = 5;
-                    analiseIA.sinais.unshift({ text: "SISTEMA INTERNO: Imagem detectada como CLONE EXATO de um processo passado. Fraude confirmada.", tipo: 'danger', icon: 'fa-fingerprint' });
-                    analiseIA.acao_recomendada = "BLOQUEIO IMEDIATO.";
-                    analiseIA.opiniao_auditor = "A foto utilizada já pertence a outro CNPJ do sistema. Suspeita fortíssima de falsificação ideológica ou evasão.";
-                }
-            }
-
-            renderizarRadarUI(analiseIA.score_provas, analiseIA.sinais, analiseIA.acao_recomendada, analiseIA.opiniao_auditor, analiseIA.confianca);
-
+            renderizarRadarUI(analiseIA.score_provas, analiseIA.sinais, analiseIA.acao_recomendada, analiseIA.opiniao_auditor);
         } catch (error) {
-            console.error("Erro na API do Gemini:", error);
-            // Fallback (Se o Google der pau, o motor local salva o dia pra você não ficar travado)
-            let scoreLocal = 90; let recL = "APROVAÇÃO EXPRESSA"; let opL = "Os documentos parecem aptos para liberação padrão.";
-            let sinaisL = [{text: "Sistema Lógico de Contingência ativado (API Cloud Offline)", tipo: "warning", icon: "fa-server"}];
-            
-            if(d.tipo === "🚨 DENÚNCIA") { scoreLocal = 0; recL = "INTERDIÇÃO URGENTE"; opL = "Alerta grave. Omitido por questões de segurança."; sinaisL.push({text: "Denúncia registrada.", tipo: "danger", icon: "fa-bullhorn"}); }
-            else if(!d.evidencias || d.evidencias.length === 0) { scoreLocal = 30; recL = "REPROVADO"; opL = "Impossível analisar sem fotos."; sinaisL.push({text: "Falta de anexos.", tipo: "warning", icon: "fa-camera-slash"}); }
-            else { sinaisL.push({text: "Arquivos recebidos.", tipo: "success", icon: "fa-check"}); }
-            
-            renderizarRadarUI(scoreLocal, sinaisL, recL, opL, "90%");
+            // BACKUP OFFLINE
+            let scoreLocal = 90; let recL = "APROVAÇÃO SEGURO"; let opL = "Módulo Backup Offline: Documentos aparentam integridade.";
+            let sinaisL = [{text: "Sistema Local ativado.", tipo: "warning", icon: "fa-server"}];
+            if(d.tipo === "🚨 DENÚNCIA") { scoreLocal = 0; recL = "INTERDIÇÃO"; opL = "Alerta grave externo."; sinaisL.push({text: "Denúncia.", tipo: "danger", icon: "fa-bullhorn"}); }
+            else if(!d.evidencias || d.evidencias.length === 0) { scoreLocal = 10; recL = "REPROVADO"; opL = "Sem fotos."; sinaisL.push({text: "Sem anexos.", tipo: "danger", icon: "fa-times"}); }
+            renderizarRadarUI(scoreLocal, sinaisL, recL, opL);
         }
     }
 
-    function renderizarRadarUI(score, sinais, recomendacao, opiniao, conf) {
+    function renderizarRadarUI(score, sinais, recomendacao, opiniao) {
         document.getElementById('radar-loader').style.display = 'none';
         document.getElementById('radar-result').style.display = 'grid';
-
-        const circulo = document.getElementById('radar-score-circle');
-        const txtNum = document.getElementById('radar-score-number');
-        const txtNivel = document.getElementById('radar-nivel-text');
+        const circulo = document.getElementById('radar-score-circle'); const txtNum = document.getElementById('radar-score-number'); const txtNivel = document.getElementById('radar-nivel-text');
         
-        let corStr = "var(--danger)"; let n = "FRAUDE / SEM PROVAS";
-        if(score >= 50) { corStr = "var(--warning)"; n = "PROVAS INCOMPLETAS"; }
-        if(score >= 80) { corStr = "var(--success)"; n = "QUALIDADE EXCELENTE"; }
+        let corStr = "var(--danger)"; let n = "REPROVADO / FRAUDE";
+        if(score >= 50) { corStr = "var(--warning)"; n = "REVISÃO EXIGIDA"; }
+        if(score >= 80) { corStr = "var(--success)"; n = "PROVAS ACEITAS (APROVAR)"; }
 
-        circulo.style.borderColor = corStr;
-        txtNivel.style.color = corStr; 
-        txtNivel.innerText = n;
-        document.getElementById('radar-conf').innerText = conf || "98%";
+        circulo.style.borderColor = corStr; txtNum.style.color = corStr; txtNivel.style.color = corStr; txtNivel.innerText = n;
+        document.getElementById('radar-opinion-text').innerText = opiniao; document.getElementById('radar-recommendation-text').innerText = recomendacao;
         
-        document.getElementById('radar-opinion-text').innerText = opiniao || "Nenhum parecer emitido.";
-        document.getElementById('radar-recommendation-text').innerText = recomendacao || "Revisar Anexos.";
-        
-        let valAtual = 0;
-        let int = setInterval(() => {
-            valAtual += Math.ceil(score / 20) + 1;
-            if(valAtual >= score) { valAtual = score; clearInterval(int); }
-            txtNum.innerText = valAtual;
-            txtNum.style.color = corStr;
-        }, 20);
+        let valAtual = 0; let int = setInterval(() => { valAtual += Math.ceil(score / 20) + 1; if(valAtual >= score) { valAtual = score; clearInterval(int); } txtNum.innerText = valAtual; }, 20);
 
-        const listSinais = document.getElementById('radar-signals-list');
-        listSinais.innerHTML = '';
-        if(sinais) {
-            sinais.forEach(s => { listSinais.innerHTML += `<li class="signal-item ${s.tipo}"><i class="fas ${s.icon}"></i> <div>${s.text}</div></li>`; });
-        }
+        const listSinais = document.getElementById('radar-signals-list'); listSinais.innerHTML = '';
+        if(sinais) sinais.forEach(s => { listSinais.innerHTML += `<li class="signal-item"><i class="fas ${s.icon}" style="color:var(--${s.tipo});"></i> <span style="color:var(--text-light);">${s.text}</span></li>`; });
     }
 
-    // --- GRAVAR ALTERAÇÕES NO FIREBASE ---
+    // --- GRAVAR ALTERAÇÕES ---
     window.salvarEdicaoModal = async () => {
       if(!idProcessoAtual) return;
-      const btn = document.getElementById('btn-salvar-modal');
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando...';
-      
-      let v = document.getElementById("modal-valor-input").value;
-      let s = document.getElementById("modal-status-select").value;
-      let n = document.getElementById("modal-notas-input").value;
-      
-      let p = false; 
-      if(s === "pago") p = true; 
-      if(s === "pendente") v = null;
+      document.getElementById('btn-salvar-modal').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gravando...';
+      let v = document.getElementById("modal-valor-input").value; let s = document.getElementById("modal-status-select").value; let n = document.getElementById("modal-notas-input").value;
+      let p = false; if(s === "pago") p = true; if(s === "pendente") v = null;
 
       try {
         await updateDoc(doc(db, "pedidos", idProcessoAtual), { valor: v, pago: p, notas: n });
-        showToast('Sucesso Operacional', 'O Veredito foi gravado no Servidor Central.', 'success');
+        showToast('Sucesso', 'Veredito gravado no Servidor.', 'success');
+        registrarLog("Auditoria", `Processo ${idProcessoAtual.substring(0,6)} atualizado para status: ${s}`);
         fecharModal();
-      } catch (e) { 
-        showToast('Erro Crítico', 'Falha ao gravar.', 'error'); 
-        btn.innerHTML = '<i class="fas fa-save"></i> Gravar Decisão no Servidor'; 
-      } 
+      } catch (e) { showToast('Erro', 'Falha ao gravar.', 'error'); document.getElementById('btn-salvar-modal').innerHTML = '<i class="fas fa-save"></i> Tentar Novamente'; } 
     };
 
     window.deletarProcessoAtual = async () => {
       if(!idProcessoAtual) return;
-      if(confirm("COMANDO DE ALTA SEGURANÇA:\nTem certeza absoluta que deseja destruir este processo da base de dados municipal? Não há backup após o clique.")) {
+      if(confirm("COMANDO CRÍTICO: Excluir este processo sem backup?")) {
         await deleteDoc(doc(db, "pedidos", idProcessoAtual));
-        showToast('Purga Completa', 'Processo deletado permanentemente.', 'success');
+        showToast('Purga Completa', 'Processo deletado.', 'success');
+        registrarLog("Exclusão", `Processo ${idProcessoAtual.substring(0,6)} DELETADO.`);
         fecharModal();
       }
     };
 
-    // --- CALCULADORA DE MULTAS ---
+    // --- CHATBOT IA JURÍDICO ---
+    window.enviarChat = async () => {
+        const inp = document.getElementById('chat-input-text'); const txt = inp.value.trim(); if(!txt) return;
+        const box = document.getElementById('chat-historico');
+        box.innerHTML += `<div class="chat-msg msg-user">${txt}</div>`; inp.value = ''; box.scrollTop = box.scrollHeight;
+        const idL = 'L'+Date.now(); box.innerHTML += `<div id="${idL}" class="chat-msg msg-ai"><i class="fas fa-spinner fa-spin" style="color:var(--gemini-purple);"></i></div>`; box.scrollTop = box.scrollHeight;
+
+        try {
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ "contents": [{ "parts": [{"text": `Aja como Advogado da Vigilância Sanitária de SP. Baseie-se na Lei 13.725. O fiscal perguntou: ${txt}`}] }] })
+            });
+            const j = await resp.json(); document.getElementById(idL).remove();
+            box.innerHTML += `<div class="chat-msg msg-ai"><strong style="color:var(--gemini-purple);"><i class="fas fa-robot"></i> Gemini Law:</strong><br>${j.candidates[0].content.parts[0].text.replace(/\n/g, '<br>')}</div>`; box.scrollTop = box.scrollHeight;
+        } catch(e) { document.getElementById(idL).remove(); box.innerHTML += `<div class="chat-msg msg-ai" style="color:var(--danger);">Falha de conexão.</div>`; }
+    }
+
+    // --- EXTRAS ---
     window.calcularMulta = () => {
-        const grav = document.getElementById('sim-gravidade').value;
-        const porte = parseInt(document.getElementById('sim-porte').value);
-        const rein = document.getElementById('sim-reincidente').checked;
-        let b = grav === 'leve' ? 1500 : (grav === 'grave' ? 8500 : 35000);
-        b = b * porte; if(rein) b = b * 2;
+        let b = document.getElementById('sim-gravidade').value === 'leve' ? 1500 : (document.getElementById('sim-gravidade').value === 'grave' ? 8500 : 35000);
+        b = b * parseInt(document.getElementById('sim-porte').value); if(document.getElementById('sim-reincidente').checked) b = b * 2;
         document.getElementById('sim-resultado').innerText = 'R$ ' + b.toLocaleString('pt-BR', {minimumFractionDigits: 2});
     }
 
-    // --- GRÁFICOS INICIAIS DA DASHBOARD ---
     function initCharts() {
-      const ctxBar = document.getElementById('barChart').getContext('2d');
-      chartBar = new Chart(ctxBar, {
-        type: 'bar', data: { labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], datasets: [{ label: 'Demandas', data: [0,0,0,0,0,0,0], backgroundColor: '#3b82f6', borderRadius: 4 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
-      });
-      const ctxDough = document.getElementById('doughnutChart').getContext('2d');
-      chartDoughnut = new Chart(ctxDough, {
-        type: 'doughnut', data: { labels: ['Aprovados', 'Aguardando', 'Bloqueados'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#f59e0b'], borderWidth: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom' } } }
-      });
+      chartBar = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: ['S','T','Q','Q','S','S','D'], datasets: [{ data: [0,0,0,0,0,0,0], backgroundColor: '#3b82f6', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+      chartDoughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { type: 'doughnut', data: { labels: ['OK', 'Pix', 'Trava'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#ef4444'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } });
     }
 
     function updateCharts(pen, agu, pag) {
       if(chartDoughnut) { chartDoughnut.data.datasets[0].data = [pag, agu, pen]; chartDoughnut.update(); }
-      if(chartBar) { let t = pen+agu+pag; chartBar.data.datasets[0].data = [Math.floor(t*0.1), Math.floor(t*0.2), Math.floor(t*0.3), Math.floor(t*0.15), t, Math.floor(t*0.05), 0]; chartBar.update(); }
+      if(chartBar) { let t = pen+agu+pag; chartBar.data.datasets[0].data = [Math.floor(t*0.1), Math.floor(t*0.3), Math.floor(t*0.2), Math.floor(t*0.1), t, 0, 0]; chartBar.update(); }
     }
 
-    // --- VISUALIZADOR DE FOTOS ---
+    window.exportarCSV = exportarCSV;
     window.abrirLightbox = (url, t) => { document.getElementById('lightbox-img').src=url; document.getElementById('lightbox-title').innerText=t; document.getElementById('lightbox').style.display='flex'; };
     window.fecharLightbox = () => { document.getElementById('lightbox').style.display='none'; };
 
