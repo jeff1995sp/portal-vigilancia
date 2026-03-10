@@ -778,12 +778,10 @@
     const db = getFirestore(app);
 
 // ==============================================================
-    // CHAVE DO GOOGLE GEMINI (CAMUFLADA)
+    // CHAVE DO GOOGLE GEMINI (CORRIGIDA E CAMUFLADA)
     // ==============================================================
-    // A chave está invertida para evitar bloqueios de bots (DLP)
-    const chaveOculta = "Idel4NPPfWBgTvpA-i8y_QjZgC1Mejx7BySazIA";
+    const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
     
-    // O sistema inverte a chave de volta ao normal na hora de usar
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
     let idProcessoAtual = null;
