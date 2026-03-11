@@ -1641,9 +1641,9 @@ memoriaChatCidadao.pop();
     });
   </script>
 
-  <script type="module">
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
@@ -1654,28 +1654,27 @@ memoriaChatCidadao.pop();
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Registra a visita no exato momento que o cidadão abre o site
-    async function registrarVisitaReal() {
-        const hoje = new Date();
-        // Pega a data de hoje (ex: 2026-03-11)
-        const dataIso = hoje.toISOString().split('T')[0]; 
-        // Pega a hora atual (ex: 08, 14, 21)
-        const horaAtual = hoje.getHours().toString().padStart(2, '0'); 
-        const docRef = doc(db, "estatisticas", dataIso);
+    // 1. Registra +1 no total do dia assim que abre
+    const dataIso = new Date().toISOString().split('T')[0]; 
+    setDoc(doc(db, "estatisticas", dataIso), { total: increment(1) }, { merge: true }).catch(()=>{});
 
-        try {
-            // Incrementa +1 visita no total do dia e +1 na hora específica
-            await setDoc(docRef, {
-                total: increment(1),
-                [`hora_${horaAtual}`]: increment(1)
-            }, { merge: true });
-        } catch(e) {
-            console.log("Erro ao registrar analytics:", e);
-        }
+    // 2. Cria uma sessão "Ao Vivo" para este cliente
+    const sessionId = "sessao_" + Math.random().toString(36).substring(2, 15);
+    const sessionRef = doc(db, "trafego_aovivo", sessionId);
+
+    // Função que avisa o Admin que este cara está online
+    function avisarEstouOnline() {
+        setDoc(sessionRef, { ultima_acao: Date.now() }).catch(()=>{});
     }
 
-    // Dispara a contagem assim que o script carrega
-    registrarVisitaReal();
+    avisarEstouOnline();
+    // Continua avisando a cada 10 segundos
+    setInterval(avisarEstouOnline, 10000);
+
+    // Tenta apagar o rastro quando ele fechar a aba
+    window.addEventListener('beforeunload', () => {
+        deleteDoc(sessionRef).catch(()=>{});
+    });
   </script>
 </body>
 </html>
