@@ -105,18 +105,20 @@
     .drawer-nav a.denuncia strong { background: var(--sp-red); color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; margin-left: auto; }
     .drawer-bottom { margin-top: auto; padding: 16px; border-top: 1px solid #eee; background: #fafafa; color: #666; font-size: 0.9rem; }
 
-    /* --- HERO & PESQUISA IA --- */
+    /* --- HERO --- */
     .hero { background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center; color: white; padding-top: 40px; padding-bottom: 150px; }
     .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
     .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
     
+    /* --- BARRA DE PESQUISA (Agora com IA Integrada) --- */
     .search-box { background: white; padding: 8px; border-radius: 50px; display: flex; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 600px; margin: 0 auto 10px; transition: 0.3s; border: 2px solid transparent;}
     .search-box:focus-within { border-color: var(--sp-red); box-shadow: 0 10px 40px rgba(218, 37, 28, 0.3); }
     .search-box input { border: none; flex: 1; padding: 15px 25px; font-size: 1.1rem; color: #333; outline: none; background: transparent; }
     .search-box button { background: var(--sp-red); color: white; border: none; padding: 0 35px; border-radius: 50px; cursor: pointer; font-weight: 900; font-size: 1rem; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-    .search-box button:hover { background: var(--sp-dark-red); }
+    .search-box button:hover:not(:disabled) { background: var(--sp-dark-red); }
+    .search-box button:disabled { background: #ccc; cursor: not-allowed; }
 
     /* --- SIMULAÇÃO EM TEMPO REAL --- */
     .live-stats-bar { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 25px 0; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; position: absolute; bottom: 0; }
@@ -288,21 +290,23 @@
     .selo-link:hover { transform: translateY(-4px) scale(1.05); }
     .selo-link img { width: 100%; height: auto; display: block; mix-blend-mode: lighten; border-radius: 8px; }
 
-    /* Chatbot Otimizado GEMINI IA */
+    /* CHATBOT OTIMIZADO GEMINI IA E ANTI-BLOQUEIO */
     .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; transition: 0.3s;}
     .chat-widget-btn:hover { transform: scale(1.1); }
     .chat-interface { position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9998; display: none; flex-direction: column; border: 1px solid #eee; overflow: hidden; }
     .chat-header { background: var(--sp-red); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
     .chat-body { flex: 1; padding: 20px; overflow-y: auto; background: #f8f9fa; display: flex; flex-direction: column; gap: 10px; }
     .chat-input { padding: 15px; background: white; display: flex; border-top: 1px solid #eee; gap: 10px; }
-    .chat-input input { flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; font-family: var(--font-base); }
+    .chat-input input { flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; font-family: var(--font-base); transition: 0.3s; }
+    .chat-input input:disabled { background: #f1f1f1; cursor: not-allowed; }
     .chat-input button { background: var(--sp-red); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: 0.3s; }
-    .chat-input button:hover { background: var(--sp-dark-red); }
+    .chat-input button:disabled { background: #ccc; cursor: not-allowed; }
+    .chat-input button:hover:not(:disabled) { background: var(--sp-dark-red); }
     .chat-bubble { padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; word-wrap: break-word; }
     .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333; border: 1px solid #eee;}
     .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(218,37,28,0.2); }
 
-    /* --- MOBILE AJUSTES OTIMIZADOS --- */
+    /* --- MOBILE AJUSTES OTIMIZADOS E PERFEITOS --- */
     @media (max-width: 900px) {
       .gov-bar { font-size: 10px; padding: 8px 0; }
       .flex-between { align-items: flex-start; }
@@ -325,23 +329,27 @@
       .hero h2 { font-size: 2.2rem; }
       .hero p { font-size: 1.05rem; margin-bottom: 22px; }
       
-      /* AJUSTE RESPONSIVO DA BARRA DE PESQUISA */
+      /* AJUSTE RESPONSIVO DA BARRA DE PESQUISA NA TELA INICIAL */
       .search-box { flex-direction: column; background: transparent; padding: 0; box-shadow: none; gap: 10px; max-width: 95%; margin: 0 auto; border: none;}
-      .search-box input { border-radius: 12px; padding: 16px; background: white; width: 100%; border: 1px solid #ccc;}
-      .search-box button { border-radius: 12px; padding: 16px; width: 100%; height: auto; }
+      .search-box input { border-radius: 12px; padding: 16px; background: white; width: 100%; border: 1px solid #ccc; font-size: 1rem;}
+      .search-box button { border-radius: 12px; padding: 16px; width: 100%; height: auto; font-size: 1.1rem; justify-content: center;}
       
-      /* AJUSTE RESPONSIVO DA CAIXA DE RESULTADO DA IA */
+      /* AJUSTE RESPONSIVO DA CAIXA DE RESULTADO DA IA (TELA INICIAL) */
       #search-result-area { max-width: 95% !important; margin: 15px auto !important; font-size: 0.95rem; }
 
       .live-stats-bar { position: relative; background: rgba(0,0,0,0.78); }
       .live-grid { flex-direction: column; gap: 16px; }
       .live-item h4 { font-size: 2.4rem; }
-      .status-grid, .news-grid, .stats-grid-bottom, .areas-grid, .footer-grid, .docs-grid { grid-template-columns: 1fr; }
+      .status-grid { grid-template-columns: 1fr; }
+      .news-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .areas-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
       .checklist-form-container { padding: 22px; min-width: auto; }
       .report-grid { grid-template-columns: 1fr; gap: 25px; }
       .report-header h2 { font-size: 2.2rem; }
       
-      /* CHATBOT TELA CHEIA NO MOBILE */
+      /* CHATBOT TELA CHEIA NO MOBILE PARA FICAR PERFEITO */
       .chat-interface { right: 0; left: 0; bottom: 0; width: 100%; height: 85vh; border-radius: 20px 20px 0 0; z-index: 100000; position: fixed;}
       .chat-widget-btn { right: 16px; bottom: 18px; width: 60px; height: 60px; z-index: 99999;}
       
@@ -425,7 +433,7 @@
       
       <div class="search-box">
         <input type="text" id="main-search-input" placeholder="Buscar protocolos, legislação ou pergunte à IA..." onkeypress="if(event.key === 'Enter') window.realizarPesquisaIA()" />
-        <button onclick="window.realizarPesquisaIA()"><i class="fas fa-search"></i> Pesquisar</button>
+        <button onclick="window.realizarPesquisaIA()" id="main-search-btn"><i class="fas fa-search"></i> Pesquisar</button>
       </div>
       
       <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
@@ -616,7 +624,7 @@
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
                     <div style="display: flex; gap: 8px;">
-                      <input type="text" id="pix-copia-cola" value="" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
+                      <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
                       <button onclick="window.copiarPix()" style="background: var(--gov-blue); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
                     </div>
                   </div>
@@ -661,7 +669,7 @@
   <section class="impact-section">
     <div class="container">
       <div class="impact-title"><h2>Balanço de Fiscalização 2025/2026</h2><p>Combate rigoroso a irregularidades para proteger você.</p></div>
-      <div class="stats-grid-bottom">
+      <div class="stats-grid">
         <div class="stat-item"><h3>+15.400</h3><p>Vistorias Realizadas</p></div>
         <div class="stat-item"><h3>120 Ton</h3><p>Alimentos Apreendidos</p></div>
         <div class="stat-item"><h3>2.100</h3><p>Interdições Cautelares</p></div>
@@ -831,7 +839,7 @@
     <div class="chat-body" id="chat-body"><div class="chat-bubble bubble-ai">Olá! Sou a Ana, a Inteligência Artificial da COVISA. Como posso orientá-lo hoje sobre nossos serviços?</div></div>
     <form class="chat-input" id="chat-form">
       <input type="text" id="chat-msg" placeholder="Digite sua dúvida..." required />
-      <button type="submit"><i class="fas fa-paper-plane"></i></button>
+      <button type="submit" id="btn-send-chat"><i class="fas fa-paper-plane"></i></button>
     </form>
   </div>
 
@@ -1143,11 +1151,18 @@
         alert("Função de PDF disponível. Prepare a impressão!");
     };
 
-    // --- NOVA FUNÇÃO: PESQUISA DA TELA INICIAL INTEGRADA COM IA ---
+    // --- NOVA FUNÇÃO: PESQUISA DA TELA INICIAL INTEGRADA COM IA E ANTI-BLOQUEIO ---
     window.realizarPesquisaIA = async function() {
         const input = document.getElementById('main-search-input');
+        const btn = document.getElementById('main-search-btn');
         const query = input.value.trim();
         if(!query) return;
+
+        // Anti-Bloqueio Cooldown
+        btn.disabled = true;
+        input.disabled = true;
+        const textoAntigoBtn = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
         const resultArea = document.getElementById('search-result-area');
         resultArea.style.display = 'block';
@@ -1185,9 +1200,15 @@
             console.error("Erro Pesquisa:", e);
             resultArea.innerHTML = `
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:var(--sp-red); font-weight:bold;"><i class="fas fa-exclamation-triangle"></i> Sistema congestionado (Muitos acessos). Aguarde 1 minuto e tente pesquisar novamente.</span> 
+                <span style="color:var(--sp-red); font-weight:bold;"><i class="fas fa-exclamation-triangle"></i> Sistema congestionado (Muitos acessos). Aguarde alguns segundos e tente pesquisar novamente.</span> 
                 <i class="fas fa-times" style="cursor:pointer; color:#999; font-size:1.2rem;" onclick="document.getElementById('search-result-area').style.display='none'"></i>
               </div>`;
+        } finally {
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = textoAntigoBtn;
+                input.disabled = false;
+            }, 3000);
         }
     };
 
@@ -1543,15 +1564,21 @@
         }
       });
 
-      // CÓDIGO DO CHATBOT GEMINI CORRIGIDO E APRIMORADO
+      // ==============================================================================
+      // CHATBOT GEMINI - COM ANTI-BLOQUEIO (COOLDOWN de 3 Segundos)
+      // ==============================================================================
       let memoriaChatCidadao = [];
-
+      
       document.getElementById('chat-form').addEventListener('submit', async (e) => {
           e.preventDefault();
           const txtInput = document.getElementById('chat-msg');
+          const btnSend = document.getElementById('btn-send-chat'); 
           const body = document.getElementById('chat-body');
           const userMsg = txtInput.value.trim();
           if (!userMsg) return;
+          
+          txtInput.disabled = true;
+          btnSend.disabled = true;
           
           body.innerHTML += `<div class="chat-bubble bubble-user">${userMsg}</div>`;
           txtInput.value = '';
@@ -1561,7 +1588,6 @@
           body.innerHTML += `<div id="${idLoader}" class="chat-bubble bubble-ai"><i class="fas fa-spinner fa-spin"></i> Pensando...</div>`;
           body.scrollTop = body.scrollHeight;
 
-          // Envia usando a arquitetura moderna (systemInstruction separado dos contents)
           memoriaChatCidadao.push({ role: "user", parts: [{ text: userMsg }] });
 
           try {
@@ -1580,11 +1606,7 @@
                   body: JSON.stringify(payload)
               });
 
-              if(!response.ok) {
-                  const erroDetalhado = await response.json();
-                  console.error("ERRO GEMINI:", erroDetalhado);
-                  throw new Error("Erro na API.");
-              }
+              if(!response.ok) throw new Error("Erro na API.");
 
               const data = await response.json();
               document.getElementById(idLoader).remove();
@@ -1597,16 +1619,22 @@
               body.scrollTop = body.scrollHeight;
 
           } catch (error) {
-              console.error(error);
               const loader = document.getElementById(idLoader);
               if (loader) loader.remove();
               
               memoriaChatCidadao.pop(); 
               
               body.innerHTML += `<div class="chat-bubble bubble-ai" style="color: var(--sp-red); border: 1px solid var(--sp-red);">
-                  <i class="fas fa-exclamation-triangle"></i> Sistema congestionado (Muitos acessos simultâneos). Por favor, aguarde 1 minuto e tente novamente.
+                  <i class="fas fa-exclamation-triangle"></i> Muitos acessos ao mesmo tempo. Aguarde uns segundos e tente novamente.
               </div>`;
               body.scrollTop = body.scrollHeight;
+          } finally {
+              // ANTI-BLOQUEIO: Espera 3 segundos antes de liberar o botão e o input.
+              setTimeout(() => {
+                  txtInput.disabled = false;
+                  btnSend.disabled = false;
+                  txtInput.focus();
+              }, 3000);
           }
       });
 
