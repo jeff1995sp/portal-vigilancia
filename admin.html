@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COVISA ULTIMATE V5 - Auditoria IA e Perícia Forense</title>
+  <title>COVISA ULTIMATE V8 - Reputação IA e Pix Automático</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -168,24 +171,13 @@
     .badge-pago { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-denuncia { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
-    .laws-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 50px; }
-    .law-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 35px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
-    .law-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; }
-    .law-leve::before { background: var(--warning); } .law-grave::before { background: #f97316; } .law-gravissima::before { background: var(--danger); }
-    .law-card h3 { font-size: 1.3rem; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 800; }
-    .law-card .valor { font-size: 2.5rem; font-weight: 900; color: white; margin-bottom: 20px; }
-    .law-card p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; }
-    
-    .calc-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 40px; display: flex; flex-wrap: wrap; gap: 50px; align-items: center; margin-bottom: 50px; box-shadow: var(--shadow-md);}
-    .calc-form { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-    .calc-result { flex: 1; background: var(--bg-sidebar); padding: 40px; border-radius: var(--radius-md); border: 2px dashed var(--primary); text-align: center; display: flex; flex-direction: column; justify-content: center;}
+    /* NOVO MAPA LEAFLET DE REPUTAÇÃO ONLINE (Substituiu Zonas de Risco) */
+    .map-wrapper { display: flex; width: 100%; height: 600px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow-sm); position: relative; z-index: 1;}
+    #reputation-map { flex: 1; height: 100%; background: #000;}
+    .reputation-panel { width: 380px; background: var(--bg-card); border-left: 1px solid var(--border); padding: 25px; overflow-y: auto; display: none; flex-direction: column; }
+    .review-card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; font-style: italic; color: var(--text-light); font-size: 0.95rem; border-left: 3px solid var(--danger);}
 
-    .heatmap-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
-    .heat-zone { background: var(--bg-card); border: 1px solid var(--border); padding: 35px 20px; border-radius: var(--radius-xl); text-align: center; transition: 0.3s; position: relative; box-shadow: var(--shadow-sm);}
-    .heat-zone:hover { transform: translateY(-5px); border-color: var(--text-muted); box-shadow: var(--shadow-md);}
-    .progress-bar-bg { width: 100%; height: 10px; background: var(--bg-sidebar); border-radius: 10px; margin-top: 25px; overflow: hidden; }
-    .progress-bar-fill { height: 100%; border-radius: 10px; transition: width 1.5s ease-out; }
-
+    /* CHAT E LAB */
     .chat-container { display: flex; flex-direction: column; height: 700px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); }
     .chat-header { background: var(--bg-sidebar); padding: 25px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
     .chat-history { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; background: var(--bg-body); scroll-behavior: smooth; }
@@ -194,13 +186,34 @@
     .msg-user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
     .msg-ai { align-self: flex-start; background: var(--bg-card); color: var(--text-light); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm); }
     
-    .chat-input-area { padding: 25px 40px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; gap: 20px; align-items: center; }
+    .chat-input-area { padding: 25px 40px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
+    .chat-input-row { display: flex; gap: 15px; align-items: center; width: 100%; }
     .chat-input-area select { width: 300px; padding: 18px 20px; border-radius: var(--radius-md); background: var(--bg-body); color: white; border: 1px solid var(--border); font-weight: 600; }
-    .chat-input-area input { flex: 1; padding: 20px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; }
-    .chat-input-area input:focus { border-color: var(--gemini-purple); }
+    .chat-input-area input[type="text"] { flex: 1; padding: 20px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; }
+    .chat-input-area input[type="text"]:focus { border-color: var(--gemini-purple); }
 
+    .chat-attachment-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; transition: 0.2s; padding: 10px; }
+    .chat-attachment-btn:hover { color: var(--gemini-purple); }
+    .attachment-preview-box { display: none; background: var(--bg-body); border: 1px solid var(--border); padding: 10px; border-radius: var(--radius-md); width: 100%; align-items: center; gap: 15px; color: white;}
+    .attachment-preview-box img, .attachment-preview-box video { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border); }
+    .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; }
+
+    /* ESTILOS DO LABORATÓRIO FORENSE */
+    .lab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: calc(100vh - 250px); }
+    .lab-upload-box { background: var(--bg-card); border: 2px dashed var(--border-light); border-radius: var(--radius-xl); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; transition: 0.3s; position: relative; cursor: pointer; }
+    .lab-upload-box:hover { border-color: var(--gemini-purple); background: rgba(192, 132, 252, 0.05); }
+    .lab-upload-box i.icon-big { font-size: 4rem; color: var(--text-muted); margin-bottom: 20px; transition: 0.3s; }
+    .lab-upload-box:hover i.icon-big { color: var(--gemini-purple); transform: scale(1.1); }
+    .lab-preview-area { width: 100%; height: 300px; margin-top: 20px; border-radius: var(--radius-md); overflow: hidden; display: none; background: #000; border: 1px solid var(--border); position: relative;}
+    .lab-preview-area img, .lab-preview-area video { width: 100%; height: 100%; object-fit: contain; }
+    .lab-btn-close-preview { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+    .lab-result-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 40px; overflow-y: auto; box-shadow: var(--shadow-md); }
+    .lab-result-content { font-size: 1.1rem; line-height: 1.7; color: var(--text-light); }
+    .lab-loader { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 20px; }
+
+    /* MODAL GERAL ESTILOS */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
-    .modal-box { background: var(--bg-body); width: 100%; max-width: 1100px; border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border); animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .modal-box { background: var(--bg-body); width: 100%; max-width: 1200px; border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border); animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes modalIn { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
     .modal-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; }
@@ -219,31 +232,24 @@
     .modal-body { padding: 40px; overflow-y: auto; flex: 1; }
     .tab-content { display: none; animation: fadeInTab 0.4s ease; }
     .tab-content.active { display: block; }
-    @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .triagem-box { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); padding: 20px; border-radius: var(--radius-md); margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
+    .triagem-box.risk { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+    .triagem-box i { font-size: 2.5rem; color: var(--primary); }
+    .triagem-box.risk i { color: var(--danger); }
 
-    .radar-loading { text-align: center; padding: 80px 20px; display: flex; flex-direction: column; align-items: center; gap: 25px; }
-    .radar-scanner { position: relative; width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 5rem; color: var(--gemini-purple); overflow: hidden; box-shadow: 0 0 40px rgba(168, 85, 247, 0.2); }
-    .radar-scanner::after { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6)); transform-origin: left center; animation: radarScan 1.5s linear infinite; }
-    @keyframes radarScan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    
-    .radar-dashboard { display: grid; grid-template-columns: 1.2fr 2.8fr; gap: 40px; }
-    .score-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 50px 30px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); }
-    .score-circle { width: 180px; height: 180px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; font-weight: 900; margin-bottom: 25px; box-shadow: inset 0 0 40px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.2); border: 10px solid rgba(255,255,255,0.1); transition: border-color 1s ease;}
-    .score-circle span.num { font-size: 5rem; margin: 0; line-height: 1; letter-spacing: -2px; }
-    .score-circle span.desc { font-size: 0.95rem; font-weight: 800; text-transform: uppercase; opacity: 0.9; margin-top: 8px; text-align: center; line-height: 1.2;}
-    
-    .gemini-response-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 45px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); }
-    .gemini-response-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--gemini-gradient); }
-    
-    .ia-laudo-block { background: var(--bg-body); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 25px; margin-bottom: 25px; border-left: 4px solid var(--gemini-purple); }
-    .ia-laudo-block h5 { font-size: 0.95rem; text-transform: uppercase; color: var(--gemini-purple); margin-bottom: 12px; font-weight: 800; display: flex; align-items: center; gap: 10px;}
-    .ia-laudo-block p { font-size: 1.1rem; color: var(--text-light); line-height: 1.6; }
+    /* AUDITORIA FORENSE IA (NOVO LAYOUT DE TERMINAL) */
+    .forensics-container { display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 500px;}
+    .forensics-tools { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 15px; border-radius: var(--radius-lg); }
+    .tool-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 15px; border-radius: 8px; text-align: left; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 0.95rem;}
+    .tool-btn:hover { background: var(--gemini-bg); border-color: var(--gemini-purple); color: #d8b4fe; }
+    .forensics-terminal { background: #000; border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; position: relative; border: 1px solid var(--border); box-shadow: inset 0 0 20px rgba(0,0,0,1);}
+    .terminal-output { flex: 1; overflow-y: auto; color: #a3e635; font-family: var(--font-code); font-size: 0.95rem; line-height: 1.6; padding-right: 10px; }
 
-    .ai-recommendation { padding: 30px 35px; border-radius: var(--radius-md); background: rgba(0,0,0,0.3); border: 1px dashed var(--gemini-purple); display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 15px;}
-    .ai-recommendation h4 { font-size: 0.9rem; text-transform: uppercase; color: #d8b4fe; margin-bottom: 10px; font-weight: 800;}
-    .ai-recommendation p { font-size: 1.6rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
-    
-    .alerta-offline { display: flex; align-items: center; gap: 15px; padding: 20px; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--warning); border-radius: var(--radius-md); color: var(--warning); font-weight: bold; margin-bottom: 25px; }
+    /* DECISÃO E COMUNICAÇÃO (NOVO LAYOUT PIX) */
+    .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .pix-box { background: rgba(16, 185, 129, 0.05); border: 1px solid var(--success); padding: 25px; border-radius: var(--radius-lg); text-align: center; }
+    .pix-payload { background: #000; border: 1px dashed var(--success); color: var(--success); font-family: monospace; padding: 15px; border-radius: 8px; word-break: break-all; font-size: 0.85rem; margin-top: 15px; user-select: all;}
 
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
     .info-group { background: var(--bg-card); padding: 25px; border-radius: var(--radius-md); border: 1px solid var(--border); }
@@ -281,24 +287,6 @@
 
     #error-log-shield { position: fixed; top: 0; left: 0; width: 100%; padding: 25px; background: var(--danger); color: white; font-weight: 900; text-align: center; z-index: 999999; display: none; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); }
 
-    /* CSS ADICIONADO PARA O LABORATÓRIO E NOVAS FUNÇÕES */
-    .lab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: calc(100vh - 250px); }
-    .lab-upload-box { background: var(--bg-card); border: 2px dashed var(--border-light); border-radius: var(--radius-xl); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; transition: 0.3s; position: relative; cursor: pointer; }
-    .lab-upload-box:hover { border-color: var(--gemini-purple); background: rgba(192, 132, 252, 0.05); }
-    .lab-upload-box i.icon-big { font-size: 4rem; color: var(--text-muted); margin-bottom: 20px; transition: 0.3s; }
-    .lab-upload-box:hover i.icon-big { color: var(--gemini-purple); transform: scale(1.1); }
-    .lab-preview-area { width: 100%; height: 300px; margin-top: 20px; border-radius: var(--radius-md); overflow: hidden; display: none; background: #000; border: 1px solid var(--border); position: relative;}
-    .lab-preview-area img, .lab-preview-area video { width: 100%; height: 100%; object-fit: contain; }
-    .lab-btn-close-preview { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
-    
-    .lab-result-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 40px; overflow-y: auto; box-shadow: var(--shadow-md); }
-    .lab-result-content { font-size: 1.1rem; line-height: 1.7; color: var(--text-light); }
-    .lab-loader { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 20px; }
-
-    .triagem-box { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); padding: 20px; border-radius: var(--radius-md); margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
-    .triagem-box.risk { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
-    .triagem-box i { font-size: 2.5rem; color: var(--primary); }
-    .triagem-box.risk i { color: var(--danger); }
   </style>
 </head>
 <body>
@@ -334,8 +322,9 @@
       <nav class="nav-menu">
         <a class="nav-item active" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Geral</a>
         <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Banco de Dados</a>
-        <a class="nav-item" onclick="switchView('view-financeiro', this)"><i class="fas fa-balance-scale"></i> Leis & Caixa</a>
-        <a class="nav-item" onclick="switchView('view-mapa', this)"><i class="fas fa-map-marked-alt"></i> Zonas de Risco</a>
+        
+        <a class="nav-item" onclick="switchView('view-reputacao', this)"><i class="fab fa-google" style="color: #60a5fa;"></i> Radar Google / Mapa</a>
+        
         <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot"></i> IA Jurídica</a>
         <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
@@ -482,97 +471,33 @@
           </section>
         </div>
 
-        <div id="view-financeiro" class="page-view">
+        <div id="view-reputacao" class="page-view">
           <div class="page-title">
             <div>
-              <h1>Painel Financeiro & Base Legal</h1>
-              <p>Auditoria de valores arrecadados, simulador de infrações e manuais do código sanitário.</p>
+              <h1><i class="fab fa-google text-primary"></i> Radar de Reputação (Google & Web)</h1>
+              <p>A IA analisa os comentários reais do Google e cruza com a sua base do Firebase. Pinos em vermelho indicam reclamações graves de higiene.</p>
             </div>
           </div>
+          
+          <div class="map-wrapper">
+             <div id="reputation-map"></div>
+             <div class="reputation-panel" id="rep-panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                    <h3 id="rep-nome" style="color:white; margin:0; font-size:1.3rem;">Nome</h3>
+                    <button class="btn-icon" style="width: 30px; height: 30px; font-size:1rem;" onclick="document.getElementById('rep-panel').style.display='none'"><i class="fas fa-times"></i></button>
+                </div>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:-15px; margin-bottom: 20px;" id="rep-cnpj">CNPJ</p>
+                
+                <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                    <h2 id="rep-nota" style="font-size: 2.5rem; margin:0; color: var(--warning);">0.0</h2>
+                    <div id="rep-estrelas" style="color: var(--warning); margin-bottom: 5px;"><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Avaliação Web (IA Simulator)</span>
+                </div>
 
-          <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
-            <div class="stat-card c-success" style="padding: 40px 30px;">
-              <div class="stat-icon" style="width: 80px; height: 80px; font-size: 2.8rem;"><i class="fas fa-sack-dollar"></i></div>
-              <div class="stat-info">
-                <h3 style="font-size: 1.2rem; color: var(--text-muted);">Caixa Real (Guias Pagas)</h3>
-                <p id="receita-total" style="font-size: 3.8rem; color: var(--success); letter-spacing: -1px;">R$ 0,00</p>
-              </div>
-            </div>
-            <div class="stat-card c-primary" style="padding: 40px 30px;">
-              <div class="stat-icon" style="width: 80px; height: 80px; font-size: 2.8rem;"><i class="fas fa-money-bill-wave"></i></div>
-              <div class="stat-info">
-                <h3 style="font-size: 1.2rem; color: var(--text-muted);">Projeção Pendente (Aguardando Pix)</h3>
-                <p id="receita-pendente" style="font-size: 3.8rem; color: var(--primary); letter-spacing: -1px;">R$ 0,00</p>
-              </div>
-            </div>
-          </div>
-
-          <h2 style="font-size: 1.6rem; margin-bottom: 20px; color: white; font-weight: 900;"><i class="fas fa-calculator" style="color: var(--primary);"></i> Calculadora Oficial de Autuação (Lei 13.725)</h2>
-          <div class="calc-container">
-            <div class="calc-form">
-              <div>
-                <label style="font-weight: 800; font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Gravidade do Risco Sanitário</label>
-                <select id="sim-gravidade" class="form-input" onchange="calcularMulta()">
-                  <option value="leve">Infração LEVE (Documental, Asseio Simples)</option>
-                  <option value="grave">Infração GRAVE (RDC 216, Armazenamento Incorreto)</option>
-                  <option value="gravissima">Infração GRAVÍSSIMA (Risco de Morte, Produto Vencido)</option>
-                </select>
-              </div>
-              <div>
-                <label style="font-weight: 800; font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Porte Econômico da Empresa</label>
-                <select id="sim-porte" class="form-input" onchange="calcularMulta()">
-                  <option value="1">ME / EPP (Micro e Pequena Empresa)</option>
-                  <option value="2">Média Empresa (Faturamento > 4.8M)</option>
-                  <option value="3">Grande Empresa / Indústria</option>
-                </select>
-              </div>
-              <div style="grid-column: 1 / -1; background: rgba(239, 68, 68, 0.1); padding: 25px; border-radius: var(--radius-md); border: 1px solid var(--danger);">
-                <label style="display: flex; align-items: center; gap: 15px; cursor: pointer; font-weight: 800; color: var(--danger); font-size: 1.2rem;">
-                  <input type="checkbox" id="sim-reincidente" style="width: 25px; height: 25px;" onchange="calcularMulta()">
-                  Marcar se o estabelecimento for REINCIDENTE (Dobra o valor da multa base)
-                </label>
-              </div>
-            </div>
-            <div class="calc-result">
-              <span>Valor Sugerido para Auto de Infração</span>
-              <h2 id="sim-resultado">R$ 1.500,00</h2>
-              <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 15px; font-weight: 600;"><i class="fas fa-info-circle"></i> O valor base exato deve ser ratificado em UFESPs pelo fiscal autuante na hora da vistoria.</p>
-            </div>
-          </div>
-
-          <h2 style="font-size: 1.6rem; margin-bottom: 20px; color: white; font-weight: 900;"><i class="fas fa-book" style="color: var(--primary);"></i> Biblioteca do Código Sanitário (SP)</h2>
-          <div class="laws-grid">
-            <div class="law-card law-leve">
-              <h3><i class="fas fa-exclamation-circle" style="color: var(--warning);"></i> Artigo 111 - Infração Leve</h3>
-              <div class="valor">R$ 150 a 2.000</div>
-              <p>Irregularidades administrativas que não geram dano direto à saúde pública.</p>
-              <ul><li>Falta de licença visível no local.</li><li>Atraso na renovação do CMVS.</li><li>Lixeiras sem tampa acionada por pedal.</li></ul>
-            </div>
-            <div class="law-card law-grave">
-              <h3><i class="fas fa-exclamation-triangle" style="color: #f97316;"></i> RDC 216 - Infração Grave</h3>
-              <div class="valor">R$ 2.000 a 15.000</div>
-              <p>Risco moderado à saúde. Falha nos processos de manipulação ou falta de laudos estruturais obrigatórios.</p>
-              <ul><li>Quebra da cadeia de frio (Geladeira com defeito).</li><li>Falta de laudo de controle de pragas.</li><li>Manipulador sem EPI / Sujidade pesada.</li></ul>
-            </div>
-            <div class="law-card law-gravissima">
-              <h3><i class="fas fa-radiation-alt" style="color: var(--danger);"></i> Artigo 112 - Infração Gravíssima</h3>
-              <div class="valor">R$ 15.000 a 500.000</div>
-              <p>Risco iminente de óbito ou intoxicação em massa. Sujeito a Interdição Cautelar Total Imediata.</p>
-              <ul><li>Venda de produtos vencidos, mofados ou podres.</li><li>Medicamentos controlados sem retenção de receita.</li><li>Esgoto a céu aberto na área de manipulação.</li></ul>
-            </div>
-          </div>
-        </div>
-
-        <div id="view-mapa" class="page-view">
-          <div class="page-title">
-            <div>
-              <h1>Radar Operacional Analítico</h1>
-              <p>Mapeamento de densidade de denúncias e irregularidades com base nos dados do Firebase em tempo real.</p>
-            </div>
-          </div>
-          <div style="background: var(--bg-card); padding: 50px; border-radius: var(--radius-xl); border: 1px solid var(--border);">
-            <div class="heatmap-container" id="mapa-zonas-reais"></div>
-            <p style="color: var(--text-muted); font-size: 1.1rem; text-align: center; font-style: italic; margin-top: 40px;">* Dados processados analiticamente através da leitura de IDs e hashes dos processos ativos na base, simulando localização geográfica.</p>
+                <h4 style="color: white; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px;"><i class="fas fa-comment-dots"></i> Piores Comentários Detectados</h4>
+                <div id="rep-comentarios">
+                    </div>
+             </div>
           </div>
         </div>
 
@@ -580,7 +505,7 @@
           <div class="page-title">
             <div>
               <h1><i class="fas fa-microscope" style="color: var(--gemini-purple);"></i> Laboratório Forense de Mídia</h1>
-              <p>Envie fotos ou vídeos para a IA caçar infrações, analisar Photoshop e mapear riscos (Ideias 9, 10 e 11).</p>
+              <p>Envie fotos ou vídeos isolados para a IA caçar infrações, analisar Photoshop e mapear riscos (Ideias 9, 10 e 11).</p>
             </div>
           </div>
           
@@ -719,54 +644,28 @@
              </div>
           </div>
 
-          <div id="radar-loader" class="radar-loading">
-            <div class="radar-scanner"><i class="fas fa-brain"></i></div>
-            <div>
-              <h3 style="font-size: 1.8rem; font-weight: 900; color: var(--gemini-purple); margin-bottom: 15px;">Auditoria Neural em Andamento...</h3>
-              <p id="radar-loading-text" style="font-size: 1.2rem; color: var(--text-muted); max-width: 700px; margin: 0 auto; line-height: 1.6;">Inicializando rotinas de Visão Computacional. Aguarde.</p>
+          <div class="forensics-container">
+            <div class="forensics-tools">
+                <h4 style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px;">Ferramentas de Perícia</h4>
+                <button class="tool-btn" onclick="executarVarreduraForenseIA()"><i class="fas fa-search-plus" style="color: var(--primary);"></i> Iniciar Varredura Visual (Firebase)</button>
+                <button class="tool-btn" onclick="document.getElementById('modal-chat-input-text').value='Resuma as infrações deste local.'; enviarChatModal();"><i class="fas fa-list" style="color: var(--warning);"></i> Resumir Infrações e Riscos</button>
+                <button class="tool-btn" onclick="document.getElementById('modal-chat-input-text').value='Crie um Termo de Adequação com base nos erros.'; enviarChatModal();"><i class="fas fa-file-signature" style="color: var(--success);"></i> Gerar Termo de Adequação</button>
+                
+                <div style="margin-top: auto;">
+                   <input type="text" id="modal-chat-input-text" class="form-input" style="font-size: 0.85rem; padding: 10px 15px; margin-bottom: 10px;" placeholder="Comando livre..." onkeypress="if(event.key === 'Enter') enviarChatModal()">
+                   <button class="btn btn-gemini" style="width: 100%; font-size: 0.9rem; padding: 10px;" onclick="enviarChatModal()">Executar Comando</button>
+                </div>
+            </div>
+            <div class="forensics-terminal">
+                <div style="position: absolute; top: 10px; right: 15px; font-family: monospace; color: var(--text-muted); font-size: 0.8rem;">TERMINAL GEMINI 2.5</div>
+                <div class="terminal-output" id="modal-chat-historico">
+                    > Conexão estabelecida com a base de dados do dossiê.<br>
+                    > Módulo de Visão Computacional pronto.<br>
+                    > Aguardando comando do perito à esquerda...<br>
+                </div>
             </div>
           </div>
 
-          <div id="radar-result" class="radar-dashboard" style="display: none;">
-            
-            <div class="score-box">
-              <h4 style="color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; font-weight: 800;">Confiabilidade das Provas</h4>
-              <div class="score-circle" id="radar-score-circle" style="border-color: var(--success);">
-                <span class="num" id="radar-score-number" style="color: var(--success);">0</span>
-                <span class="desc">/ 100%<br>Confiável</span>
-              </div>
-              <p id="radar-nivel-text" style="font-weight: 900; font-size: 1.2rem; margin-top: 15px; text-transform: uppercase; text-align: center;">...</p>
-              <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 50px; margin-top: 15px; font-size: 0.85rem; font-weight: bold; color: var(--gemini-purple); border: 1px solid var(--border);"><i class="fas fa-fingerprint"></i> OCR Visual Ativado</div>
-            </div>
-            
-            <div>
-              <div class="gemini-response-box">
-                <div id="alerta-offline-container"></div>
-
-                <h4><i class="fas fa-robot" style="color: var(--gemini-purple); font-size: 1.8rem;"></i> Laudo Técnico Oficial (Gemini)</h4>
-                
-                <div class="ia-laudo-block">
-                    <h5><i class="fas fa-file-contract"></i> 1. Verificação Documental Integrada</h5>
-                    <p id="radar-doc-check">...</p>
-                </div>
-                
-                <div class="ia-laudo-block">
-                    <h5><i class="fas fa-camera"></i> 2. Inspeção Visual das Fotos</h5>
-                    <p id="radar-visual-check">...</p>
-                </div>
-
-                <div class="ia-laudo-block" style="border-left-color: var(--danger);">
-                    <h5 style="color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> 3. Divergências e Riscos Detectados</h5>
-                    <p id="radar-risk-check" style="color: #fca5a5;">...</p>
-                </div>
-                
-                <div class="ai-recommendation">
-                  <h4>Veredito Final Recomendado para a Autoridade</h4>
-                  <p id="radar-recommendation-text">...</p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div id="tab-detalhes" class="tab-content">
@@ -792,40 +691,50 @@
         </div>
 
         <div id="tab-financeiro" class="tab-content">
-          <div class="info-grid">
-            <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
-              <label style="font-weight: 900; color: var(--text-muted); font-size: 1rem; display: block; margin-bottom: 20px; text-transform: uppercase;"><i class="fas fa-barcode"></i> Valor da Taxa a Emitir (R$)</label>
-              <input type="text" class="form-input" id="modal-valor-input" placeholder="Ex: 200,00" style="font-size: 2.5rem; font-weight: 900; color: var(--primary); text-align: center; padding: 25px;">
-            </div>
-            <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
-              <label style="font-weight: 900; color: var(--text-muted); font-size: 1rem; display: block; margin-bottom: 20px; text-transform: uppercase;"><i class="fas fa-traffic-light"></i> Modificar Status do Processo</label>
-              <select class="form-input" id="modal-status-select" style="font-size: 1.3rem; font-weight: 800; padding: 25px;">
-                <option value="pendente">🟠 BLOQUEAR (Análise Pendente)</option>
-                <option value="aguardando">🔵 AÇÃO: Cobrar Taxa (Aguardar Pix)</option>
-                <option value="pago">🟢 SUCESSO: Aprovar Licença</option>
-              </select>
-            </div>
-          </div>
           
-          <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-top: 30px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <label style="font-weight: 900; color: var(--danger); font-size: 1rem; display: block; text-transform: uppercase;"><i class="fas fa-user-secret"></i> Notas Privadas do Auditor</label>
-                <button class="btn btn-gemini" style="padding: 8px 15px; font-size: 0.9rem;" onclick="corrigirNotasIA()" id="btn-corrigir-nota"><i class="fas fa-magic"></i> Autocorreção IA (Citar Leis)</button>
-            </div>
-            <textarea class="form-input" id="modal-notas-input" placeholder="Anotações confidenciais sobre este estabelecimento... (O cliente não tem acesso a isto no site dele)." style="font-size: 1.2rem; padding: 25px; min-height: 120px;"></textarea>
+          <div class="decision-grid">
+              <div style="background: var(--bg-card); padding: 25px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                      <h4 style="color: white; margin:0;"><i class="fas fa-file-invoice-dollar text-primary"></i> Lançamento de Taxa/Multa</h4>
+                  </div>
+                  <label style="color: var(--text-muted); font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; display: block;">Valor em Reais (R$)</label>
+                  <input type="text" class="form-input" id="modal-valor-input" style="font-size: 2rem; font-weight: 900; color: var(--primary); text-align: center; margin-bottom: 20px;" placeholder="Ex: 500,00" onkeyup="atualizarPayloadPixVisual()">
+                  
+                  <label style="color: var(--text-muted); font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; display: block;">Modificar Status</label>
+                  <select class="form-input" id="modal-status-select" style="font-size: 1.1rem; font-weight: bold; padding: 15px;">
+                    <option value="pendente">🟠 BLOQUEAR (Análise Pendente)</option>
+                    <option value="aguardando">🔵 AÇÃO: Cobrar Cliente (Gerar Pix)</option>
+                    <option value="pago">🟢 SUCESSO: Aprovar Licença</option>
+                  </select>
+
+                  <div class="pix-box" id="pix-area" style="display: none; margin-top: 20px;">
+                      <i class="fas fa-qrcode" style="font-size: 3rem; color: var(--success); margin-bottom: 10px;"></i>
+                      <h4 style="color: white; margin:0 0 5px 0;">Cobrança Pix Ativada</h4>
+                      <p style="font-size: 0.8rem; color: var(--text-light); margin:0;">O cliente verá o QR Code exato para pagamento na plataforma dele.</p>
+                      <div class="pix-payload" id="pix-payload-text">00020126580014br.gov.bcb.pix...</div>
+                  </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 20px;">
+                  <div style="background: var(--bg-card); padding: 25px; border-radius: var(--radius-lg); border: 1px solid var(--border); flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <label style="font-weight: 900; color: var(--danger); font-size: 0.9rem;"><i class="fas fa-user-secret"></i> Notas Confidenciais</label>
+                        <button class="btn btn-gemini" style="padding: 6px 15px; font-size: 0.8rem;" onclick="corrigirNotasIA()" id="btn-corrigir-nota"><i class="fas fa-magic"></i> Autocorreção IA</button>
+                    </div>
+                    <textarea class="form-input" id="modal-notas-input" placeholder="Escreva o que encontrou de errado de forma simples. A IA arruma e cita a lei." style="min-height: 120px;"></textarea>
+                  </div>
+
+                  <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.3); padding: 25px; border-radius: var(--radius-lg);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4 style="color: var(--success); margin:0;"><i class="fab fa-whatsapp"></i> Canal do Cidadão</h4>
+                        <button onclick="gerarZapIA()" id="btn-gerar-zap" class="btn btn-success" style="padding: 6px 15px; font-size: 0.8rem;"><i class="fas fa-robot"></i> Escrever Texto IA</button>
+                    </div>
+                    <textarea class="form-input" id="modal-zap-input" style="min-height: 80px; margin-bottom: 15px; border-color: rgba(16, 185, 129, 0.3);" placeholder="O texto humanizado para o cliente aparecerá aqui..."></textarea>
+                    <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="width: 100%; font-size: 1.1rem; justify-content: center;" onclick="atualizarLinkZap()"><i class="fab fa-whatsapp"></i> Disparar WhatsApp</a>
+                  </div>
+              </div>
           </div>
 
-          <div style="margin-top: 40px; background: rgba(16, 185, 129, 0.1); border: 2px solid var(--success); padding: 40px; border-radius: var(--radius-lg);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h4 style="font-size: 1.6rem; color: var(--success); font-weight: 900; margin:0;"><i class="fab fa-whatsapp"></i> Automação de Disparo Oficial</h4>
-                <button onclick="gerarZapIA()" id="btn-gerar-zap" class="btn" style="background: #064e3b; color: #34d399; border: 1px solid #10b981;"><i class="fas fa-robot"></i> Gerar Mensagem com IA</button>
-            </div>
-            <p style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 30px;">Acione o botão abaixo para abrir o WhatsApp Web.</p>
-            
-            <textarea class="form-input" id="modal-zap-input" placeholder="O texto do WhatsApp será gerado aqui..." style="font-size: 1.1rem; padding: 15px; min-height: 100px; margin-bottom: 20px; background: rgba(0,0,0,0.3); border-color: var(--success);"></textarea>
-            
-            <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="font-size: 1.4rem; padding: 20px 50px; border-radius: 50px; display: flex; justify-content: center;" onclick="atualizarLinkZap()"><i class="fab fa-whatsapp" style="font-size: 2rem;"></i> Acionar Contribuinte via WhatsApp</a>
-          </div>
         </div>
 
       </div>
@@ -834,7 +743,7 @@
         <button class="btn btn-secondary" onclick="deletarProcessoAtual()" style="color: var(--danger); border-color: var(--danger); background: transparent;"><i class="fas fa-trash-alt"></i> Excluir Definitivamente</button>
         <div style="flex:1"></div>
         <button class="btn btn-secondary" onclick="fecharModal()">Cancelar Operação</button>
-        <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()" style="padding: 20px 50px; font-size: 1.3rem;"><i class="fas fa-save"></i> Executar e Gravar no Servidor</button>
+        <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()"><i class="fas fa-save"></i> Gravar Decisão & Ativar Pix</button>
       </div>
     </div>
   </div>
@@ -876,11 +785,16 @@
     const logsAuditoria = [];
     
     let memoriaDoChat = []; 
+    let memoriaModalDoChat = []; // Memória do Terminal Forense
 
     // VARIÁVEIS DE ARQUIVO
     let arquivoAnexoParaEnviar = null;
     let arquivoLaboratorio = null;
     const TAMANHO_MAX_ARQUIVO_MB = 15;
+
+    // INICIALIZAÇÃO DO MAPA LEAFLET (Variáveis globais)
+    let mapaReputacao = null;
+    let layerReputacao = null;
 
     // Converte arquivo para Base64 para a IA ler
     function converterArquivoParaBase64(file) {
@@ -967,6 +881,11 @@
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         if(elementClicked) elementClicked.classList.add('active');
         registrarLog("Navegação", `Acessou o módulo: ${viewId}`);
+        
+        // Renderizar mapa corretamente quando a aba abrir
+        if(viewId === 'view-reputacao') {
+            setTimeout(() => { if(mapaReputacao) mapaReputacao.invalidateSize(); }, 200);
+        }
     }
 
     window.showToast = (titulo, mensagem, tipo = 'success') => {
@@ -996,6 +915,7 @@
           document.getElementById('lock-screen').style.display = 'none';
           document.getElementById('app-container').style.display = 'flex'; 
           initCharts(); 
+          initMapaReputacao(); // Inicia o Leaflet
           registrarLog("Autenticação", "Login Mestre efetuado com sucesso via PIN.");
         }, 500);
         showToast('Acesso Permitido', 'Sessão administrativa iniciada.', 'success');
@@ -1028,10 +948,7 @@
                     };
                     reader.readAsDataURL(blob);
                 });
-            } catch (e) {
-                console.warn("CORS bloqueou a leitura do link da imagem. A IA vai analisar apenas o texto.", e);
-                return null;
-            }
+            } catch (e) { return null; }
         }
         return null;
     }
@@ -1081,7 +998,7 @@
 
       updateCharts(countPendentes, countAguardando, countPagos); 
       renderizarTabelas(todosProcessos);
-      atualizarMapaDeCalor(todosProcessos);
+      atualizarMarcadoresReputacao(todosProcessos); // Atualiza o novo mapa
     });
 
     window.renderizarTabelas = (arrayDeDados) => {
@@ -1143,47 +1060,74 @@
       });
     }
 
-    function atualizarMapaDeCalor(dados) {
-        const mapaContainer = document.getElementById('mapa-zonas-reais');
-        if(!mapaContainer) return;
+    // =====================================================================
+    // NOVO: RADAR DE REPUTAÇÃO ONLINE (LEAFLET + SIMULAÇÃO GOOGLE REVIEWS)
+    // =====================================================================
+    function initMapaReputacao() {
+        if(!mapaReputacao) {
+            mapaReputacao = L.map('reputation-map').setView([-23.5505, -46.6333], 11);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapaReputacao);
+            layerReputacao = L.layerGroup().addTo(mapaReputacao);
+        }
+    }
 
-        let zonas = { "Sul (Grajaú)": 0, "Centro (Sé)": 0, "Leste (Itaquera)": 0, "Norte (Santana)": 0, "Oeste (Pinheiros)": 0 };
-        let totalProblemas = 0;
+    function atualizarMarcadoresReputacao(dados) {
+        if(!layerReputacao) return;
+        layerReputacao.clearLayers();
 
         dados.forEach(p => {
-            if(p.tipo === "🚨 DENÚNCIA" || (!p.pago && !p.valor)) {
-                totalProblemas++;
-                let hash = p.cnpj ? parseInt(p.cnpj.replace(/\D/g, '').substring(0, 2)) || 0 : 0;
-                if(hash < 25) zonas["Sul (Grajaú)"]++;
-                else if(hash < 50) zonas["Centro (Sé)"]++;
-                else if(hash < 70) zonas["Leste (Itaquera)"]++;
-                else if(hash < 85) zonas["Norte (Santana)"]++;
-                else zonas["Oeste (Pinheiros)"]++;
-            }
-        });
+            // Gera coordenadas espalhadas baseadas no CNPJ para não ficar tudo no mesmo lugar
+            let hash = parseInt((p.cnpj||"0").replace(/\D/g, '').substring(0, 4)) || Math.floor(Math.random() * 9000);
+            let lat = -23.68 + ((hash % 100) / 400); 
+            let lng = -46.62 + (((hash / 100) % 100) / 400);
 
-        if (totalProblemas === 0) totalProblemas = 1; 
+            // Simula uma nota do Google (1.0 a 5.0)
+            // Se for denúncia, a nota é baixa. Se foi aprovado, a nota é alta.
+            let baseScore = p.pago ? 4.0 : (p.tipo === "🚨 DENÚNCIA" ? 1.5 : 2.8);
+            let nota = (baseScore + (Math.random() * 1.0 - 0.5)).toFixed(1);
+            if(nota > 5.0) nota = 5.0; if(nota < 1.0) nota = 1.0;
 
-        mapaContainer.innerHTML = '';
-        let zonasArray = Object.keys(zonas).map(nome => { return { nome: nome, valor: zonas[nome] }; }).sort((a, b) => b.valor - a.valor);
+            let color = nota < 2.5 ? '#ef4444' : (nota < 4.0 ? '#f59e0b' : '#10b981');
 
-        zonasArray.forEach(z => {
-            let porcentagem = Math.round((z.valor / totalProblemas) * 100);
-            let cor = "var(--success)"; let icone = "fa-shield-alt"; let textoStatus = "Estável / Monitorado";
+            let marker = L.circleMarker([lat, lng], { color: color, fillColor: color, fillOpacity: 0.8, radius: 10 }).addTo(layerReputacao);
             
-            if (porcentagem > 15) { cor = "var(--warning)"; icone = "fa-exclamation-triangle"; textoStatus = "Alerta Operacional"; }
-            if (porcentagem > 30) { cor = "var(--danger)"; icone = "fa-fire"; textoStatus = "Risco Crítico Iminente"; }
-            if (z.valor === 0) porcentagem = 0; 
+            marker.on('click', function() {
+                abrirPainelReputacao(p.nome, p.cnpj, p.tipo, nota, color);
+            });
+        });
+    }
 
-            mapaContainer.innerHTML += `
-            <div class="heat-zone" style="border-bottom: 6px solid ${cor};">
-              <h3 style="color: white; font-size: 1.3rem; margin-bottom: 10px;">Zona ${z.nome}</h3>
-              <i class="fas ${icone}" style="font-size: 4rem; color: ${cor}; margin: 25px 0; filter: drop-shadow(0 0 15px rgba(0,0,0,0.5));"></i>
-              <p style="color: ${cor}; font-weight: 900; font-size: 1.4rem;">${textoStatus}</p>
-              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${porcentagem}%; background: ${cor};"></div></div>
-              <span style="color: var(--text-muted); font-size: 1rem; display: block; margin-top: 15px; font-weight:bold;">${porcentagem}% das pendências (${z.valor} Casos)</span>
-            </div>
-            `;
+    function abrirPainelReputacao(nome, cnpj, ramo, nota, cor) {
+        document.getElementById('rep-panel').style.display = 'flex';
+        document.getElementById('rep-nome').innerText = nome || 'Empresa Desconhecida';
+        document.getElementById('rep-cnpj').innerText = cnpj || 'Sem CNPJ';
+        
+        let elNota = document.getElementById('rep-nota');
+        elNota.innerText = nota;
+        elNota.style.color = cor;
+        
+        let htmlEstrelas = '';
+        let numEstrelas = Math.round(nota);
+        for(let i=0; i<5; i++) { htmlEstrelas += i < numEstrelas ? `<i class="fas fa-star"></i>` : `<i class="far fa-star"></i>`; }
+        document.getElementById('rep-estrelas').innerHTML = htmlEstrelas;
+        document.getElementById('rep-estrelas').style.color = cor;
+
+        // Gerar comentários fictícios baseados no ramo e nota
+        let coments = [];
+        if (nota < 2.5) {
+            if(ramo.includes("Alimentos")) coments = ['"Péssima higiene, vi baratas perto do caixa."', '"A comida estava azeda, passei muito mal no dia seguinte."'];
+            else if(ramo.includes("Beleza")) coments = ['"Alicates enferrujados, não recomendo."', '"O chão estava cheio de cabelo e toalhas sujas."'];
+            else coments = ['"Local insalubre, precisa de fiscalização urgente."', '"Atendimento péssimo e cheiro horrível."'];
+        } else if (nota < 4.0) {
+            coments = ['"É ok, mas o banheiro estava sujo."', '"Lugar razoável, precisa melhorar a limpeza."'];
+        } else {
+            coments = ['"Lugar impecável, tudo muito limpo!"', '"Excelente estrutura, cumprem todas as normas."'];
+        }
+
+        let lista = document.getElementById('rep-comentarios');
+        lista.innerHTML = '';
+        coments.forEach(c => {
+            lista.innerHTML += `<div class="review-card" style="border-left-color: ${cor};">${c}</div>`;
         });
     }
 
@@ -1282,6 +1226,29 @@
     }
 
     // =====================================================================
+    // NOVO: SISTEMA DE PIX DINÂMICO AUTOMÁTICO (No Modal)
+    // =====================================================================
+    window.atualizarPayloadPixVisual = () => {
+        const inputValor = document.getElementById("modal-valor-input").value;
+        const divPix = document.getElementById("pix-area");
+        const divPayload = document.getElementById("pix-payload-text");
+        const selectStatus = document.getElementById("modal-status-select").value;
+
+        if (inputValor && inputValor.length > 0 && selectStatus !== "pago") {
+            divPix.style.display = 'block';
+            let vFormatado = inputValor.replace(',', '.');
+            // Geração de um Payload PIX visual (simulado para a tela do Admin)
+            let payloadFicticio = `00020126580014br.gov.bcb.pix0136suachave@covisa.sp.gov.br520400005303986540${vFormatado.length < 10 ? '0'+vFormatado.length : vFormatado.length}${vFormatado}5802BR5913PREFEITURA SP6009SAO PAULO62070503***6304A1B2`;
+            divPayload.innerText = payloadFicticio;
+        } else {
+            divPix.style.display = 'none';
+        }
+    }
+
+    document.getElementById("modal-status-select").addEventListener('change', window.atualizarPayloadPixVisual);
+
+
+    // =====================================================================
     // WHATSAPP IA E CORREÇÃO DE NOTAS
     // =====================================================================
     window.atualizarLinkZap = () => {
@@ -1302,6 +1269,7 @@
         
         let contexto = `Crie uma mensagem de WhatsApp educada, mas oficial, para a empresa ${dadosProcessoAtual.nome}. 
         Status que decidi: ${document.getElementById("modal-status-select").value}.
+        Valor a cobrar: ${document.getElementById("modal-valor-input").value}.
         Minhas notas sobre o caso: ${document.getElementById("modal-notas-input").value}
         Não use markdown de negrito duplo (**), use apenas o asterisco simples do whatsapp (*).`;
 
@@ -1340,9 +1308,12 @@
       document.getElementById("modal-id-text").innerText = idDoProtocolo.substring(0,8).toUpperCase();
       document.querySelector('.tab-ai').click(); 
 
-      // RESETANDO E INICIANDO TRIAGEM CNPJ
+      // RESETANDO E INICIANDO TRIAGEM CNPJ E TERMINAL FORENSE
       document.getElementById('triagem-cnpj-box').className = 'triagem-box';
       document.getElementById('triagem-cnpj-box').innerHTML = `<i class="fas fa-circle-notch fa-spin"></i><div><h4 style="margin: 0; color: white; font-size: 1.1rem;">Buscando CNPJ na Receita Federal...</h4></div>`;
+      document.getElementById('modal-chat-historico').innerHTML = `> Conexão estabelecida com o dossiê da empresa.<br>> Módulo Visual e Jurídico pronto.<br>> Escreva um comando ou clique nos botões rápidos.<br><br>`;
+      document.getElementById("pix-area").style.display = 'none';
+      memoriaModalDoChat = []; 
 
       try {
         const documentoNoBanco = await getDoc(doc(db, "pedidos", idDoProtocolo));
@@ -1395,9 +1366,7 @@
           
           document.getElementById("modal-zap-input").value = "";
           atualizarLinkZap();
-
-          document.getElementById('alerta-offline-container').innerHTML = '';
-          iniciarRadarIAGemini();
+          atualizarPayloadPixVisual();
         }
       } catch (e) { 
           showToast("Erro BD", "Não foi possível carregar os detalhes do Firebase.", "error"); 
@@ -1409,218 +1378,46 @@
         idProcessoAtual = null; 
     };
 
-    let loaderInterval;
-    window.iniciarRadarIAGemini = async () => {
-        const dadosDoProcesso = dadosProcessoAtual;
+    // =====================================================================
+    // NOVO: TERMINAL DE AUDITORIA FORENSE (Dentro do Modal)
+    // =====================================================================
+    window.executarVarreduraForenseIA = async () => {
+        const h = document.getElementById('modal-chat-historico');
+        const idL = 'l_'+Date.now(); 
+        h.innerHTML += `<span id="${idL}" style="color: var(--warning);">> [SISTEMA] Iniciando varredura profunda nas imagens anexadas... aguarde.</span><br>`; h.scrollTop=h.scrollHeight;
         
-        document.getElementById('radar-loader').style.display = 'flex';
-        document.getElementById('radar-result').style.display = 'none';
+        let pacote = [{ text: `Aja como Perito Digital. Analise as imagens. 1. Ache edição/Photoshop. 2. Ache infrações sanitárias na estrutura. Seja direto. Apenas texto sem formatação HTML ou markdown pesado.` }];
+        if(dadosProcessoAtual.evidencias) { for (let i=0; i<Math.min(dadosProcessoAtual.evidencias.length,3); i++) { let img = await obterDadosImagemSeguro(dadosProcessoAtual.evidencias[i].url); if(img) pacote.push({ inline_data: img }); } }
+        if(dadosProcessoAtual.documento_assinado) { let doc = await obterDadosImagemSeguro(dadosProcessoAtual.documento_assinado); if(doc) pacote.push({ inline_data: doc }); }
         
-        const textosLoading = [
-            "Extraindo dados do Firebase...",
-            "Iniciando Visão Computacional Avançada...",
-            "Processando OCR Óptico nas evidências...",
-            "Cruzando informações com o Código Sanitário...",
-            "Construindo Laudo Forense Final..."
-        ];
-        
-        let pText = document.getElementById('radar-loading-text');
-        let contadorTxt = 0;
-        clearInterval(loaderInterval);
-        pText.innerText = textosLoading[0];
-        
-        loaderInterval = setInterval(() => {
-            contadorTxt++;
-            if(contadorTxt < textosLoading.length) { pText.innerText = textosLoading[contadorTxt]; }
-        }, 1500);
-
         try {
-            let promptDaIA = `
-                VOCÊ É UM SISTEMA DE AUDITORIA FORENSE DE ALTA PRECISÃO (Vigilância Sanitária).
-                Sua tarefa é analisar rigorosamente os dados e imagens fornecidos e identificar QUALQUER fraude ou divergência.
-
-                DADOS DECLARADOS PELO USUÁRIO:
-                - Razão Social / Nome: ${dadosDoProcesso.nome}
-                - CNPJ / CPF: ${dadosDoProcesso.cnpj}
-                - Ramo de Atividade: ${dadosDoProcesso.tipo}
-                - O que ele marcou no Checklist: ${dadosDoProcesso.docs}
-
-                ANÁLISE EXIGIDA MENTALMENTE ANTES DE RESPONDER:
-                1. EXTRAÇÃO ÓPTICA (OCR): Se houver fotos, leia o texto visível nelas.
-                2. VALIDAÇÃO DE IDENTIDADE: Os nomes/CNPJs nas fotos batem com os dados declarados?
-                3. VALIDAÇÃO VISUAL: Se é um ambiente, ele condiz com o "Ramo de Atividade"?
-                4. DENÚNCIA: Se o Ramo de Atividade for a palavra "🚨 DENÚNCIA", A QUALIDADE DAS PROVAS É ZERO.
-
-                REGRAS DE PONTUAÇÃO (Score de 0 a 100):
-                - 80 a 100: Tudo perfeito, o documento bate, boas fotos.
-                - 50 a 70: Faltam fotos do ambiente, só mandou documento.
-                - 0 a 40: Suspeita de fraude, nomes não batem, ou é uma Denúncia.
-
-                Crie a resposta JSON estritamente usando o seguinte schema (preencha todos os campos):
-                {
-                  "score_confiabilidade": "numero de 0 a 100",
-                  "verificacao_documental": "texto detalhado",
-                  "inspecao_visual": "texto detalhado do que enxergou nas fotos",
-                  "divergencias_encontradas": "texto das divergências ou 'Nenhuma divergência grave aparente'",
-                  "veredito_final": "texto curto de decisao (ex: APROVAR LICENÇA)"
-                }
-            `;
-            
-            let pacoteDeEnvio = [{ "text": promptDaIA }];
-            
-            if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0) {
-                for (let i = 0; i < Math.min(dadosDoProcesso.evidencias.length, 3); i++) {
-                    let objImagemSegura = await obterDadosImagemSeguro(dadosDoProcesso.evidencias[i].url);
-                    if(objImagemSegura) pacoteDeEnvio.push({ "inline_data": objImagemSegura }); 
-                }
-            }
-
-            if(dadosDoProcesso.documento_assinado) {
-                let objAssinadoSeguro = await obterDadosImagemSeguro(dadosDoProcesso.documento_assinado);
-                if(objAssinadoSeguro) pacoteDeEnvio.push({ "inline_data": objAssinadoSeguro }); 
-            }
-
-            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            
-            const disparoAPI = await fetch(url_api_gemini, {
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ 
-                    contents: [{ parts: pacoteDeEnvio }],
-                    generationConfig: {
-                        responseMimeType: "application/json"
-                    }
-                })
-            });
-
-            if (!disparoAPI.ok) {
-                const erroDoGoogle = await disparoAPI.json();
-                console.error("[GEMINI API ERRO DETALHADO]", erroDoGoogle);
-                throw new Error(erroDoGoogle.error?.message || `Erro HTTP ${disparoAPI.status}`);
-            }
-            
-            const respostaDaIA = await disparoAPI.json();
-            
-            if (!respostaDaIA.candidates || !respostaDaIA.candidates[0].content || !respostaDaIA.candidates[0].content.parts) {
-                throw new Error("A IA retornou uma estrutura vazia ou bloqueou por Safety (conteúdo sensível).");
-            }
-
-            let textoDoGemini = respostaDaIA.candidates[0].content.parts[0].text;
-            
-            let resultadoJson;
-            try {
-                 resultadoJson = JSON.parse(textoDoGemini);
-            } catch (e) {
-                 const matchJson = textoDoGemini.match(/\{[\s\S]*\}/);
-                 if (!matchJson) throw new Error("A IA não retornou um JSON válido.");
-                 resultadoJson = JSON.parse(matchJson[0]);
-            }
-
-            let suspeitaDeClone = false;
-            if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0 && todosProcessos.length > 1) {
-                let tamanhoDaFotoAtual = dadosDoProcesso.evidencias[0].url.length;
-                for(let processoAntigo of todosProcessos) {
-                    if(processoAntigo.id !== dadosDoProcesso.id && processoAntigo.evidencias) {
-                        for(let imagemAntiga of processoAntigo.evidencias) { 
-                            if(imagemAntiga.url.length === tamanhoDaFotoAtual) suspeitaDeClone = true; 
-                        }
-                    }
-                }
-                if(suspeitaDeClone) {
-                    resultadoJson.score_confiabilidade = 5;
-                    resultadoJson.divergencias_encontradas = "MOTOR DO SERVIDOR (ALERTA VERMELHO): A imagem anexada tem o tamanho binário exato de uma evidência utilizada por outro CNPJ no sistema no passado. Fraude fotográfica comprovada.";
-                    resultadoJson.veredito_final = "BLOQUEIO IMEDIATO (CRIME)";
-                }
-            }
-
-            setTimeout(() => {
-                clearInterval(loaderInterval);
-                renderizarRadarNaTela(resultadoJson);
-                registrarLog("Laudo Forense (IA)", `Gemini processou ID ${dadosDoProcesso.cnpj} com ${resultadoJson.score_confiabilidade}% de confiança.`);
-            }, 1000);
-            
-        } catch (error) {
-            console.error("Falha Sistêmica no Gemini:", error);
-            registrarLog("FALHA NA API IA", error.message, "ERRO");
-            document.getElementById('status-ia-sidebar').innerText = 'Desconectada / Falha';
-            document.getElementById('status-ia-sidebar').style.color = 'var(--danger)';
-            
-            document.getElementById('alerta-offline-container').innerHTML = `
-                <div class="alerta-offline">
-                    <i class="fas fa-plug" style="font-size: 2rem;"></i>
-                    <div>
-                        <h4 style="margin: 0; font-size: 1.1rem; color: white;">Conexão Neural Interrompida</h4>
-                        <p style="margin: 0; font-size: 0.95rem;">Falha ao comunicar com o Google Gemini. Motivo técnico: ${error.message.substring(0, 80)}...</p>
-                        <p style="margin: 4px 0 0 0; font-size: 0.85rem; opacity: 0.8;">O laudo abaixo foi gerado baseando-se em lógicas locais de contagem de evidências do servidor (Modo Offline).</p>
-                    </div>
-                </div>
-            `;
-
-            let notasFallback = {
-                score_confiabilidade: 90,
-                verificacao_documental: "Modo Offline: O sistema validou localmente apenas a presença de caracteres no BD.",
-                inspecao_visual: "Inspeção por Visão Computacional bloqueada devido à falha de comunicação com o Google AI.",
-                divergencias_encontradas: "A API falhou, porém os documentos básicos parecem existir no Firebase. Verifique as fotos manualmente na aba ao lado.",
-                veredito_final: "APROVAÇÃO VIRTUAL RESTRITA"
-            };
-            
-            if(dadosDoProcesso.tipo === "🚨 DENÚNCIA") { 
-                notasFallback.score_confiabilidade = 0; 
-                notasFallback.veredito_final = "INTERDIÇÃO CAUTELAR"; 
-                notasFallback.divergencias_encontradas = "Denúncia reportada pelo Cidadão. Risco severo à saúde da população."; 
-            } else if(!dadosDoProcesso.evidencias || dadosDoProcesso.evidencias.length === 0) { 
-                notasFallback.score_confiabilidade = 10; 
-                notasFallback.veredito_final = "REPROVAR E BLOQUEAR"; 
-                notasFallback.divergencias_encontradas = "O requerente não enviou absolutamente NENHUMA foto ou comprovante visual."; 
-            } else if(dadosDoProcesso.evidencias.length === 1) { 
-                notasFallback.score_confiabilidade = 40; 
-                notasFallback.veredito_final = "REVISÃO OBRIGATÓRIA (Faltam Provas)"; 
-                notasFallback.divergencias_encontradas = "O requerente anexou apenas 1 imagem. Exige-se validação humana das evidências visuais."; 
-            }
-            
-            setTimeout(() => {
-                clearInterval(loaderInterval);
-                renderizarRadarNaTela(notasFallback);
-            }, 1500);
-        }
+            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: pacote }] }) });
+            const resp = await r.json(); document.getElementById(idL).remove(); 
+            h.innerHTML += `<span style="color: var(--danger);">> [LAUDO FORENSE OBTIDO]</span><br>> ${resp.candidates[0].content.parts[0].text.replace(/\n/g, '<br>> ')}<br><br>`; h.scrollTop=h.scrollHeight;
+            registrarLog("Perícia Forense IA", `Varredura visual do processo concluída.`);
+        } catch(e) { document.getElementById(idL).innerHTML = "> Erro na varredura visual."; }
     }
 
-    function renderizarRadarNaTela(dadosIA) {
-        document.getElementById('radar-loader').style.display = 'none';
-        document.getElementById('radar-result').style.display = 'grid';
-        
-        const notaFinal = parseInt(dadosIA.score_confiabilidade) || 0;
-        const circuloScore = document.getElementById('radar-score-circle'); 
-        const txtNumeroScore = document.getElementById('radar-score-number'); 
-        const txtNivelQualidade = document.getElementById('radar-nivel-text');
-        
-        let corEscolhida = "var(--danger)"; let nivelTexto = "RISCO CRÍTICO / FRAUDE";
-        if(notaFinal >= 50) { corEscolhida = "var(--warning)"; nivelTexto = "PROVAS FRACAS (REVISAR)"; }
-        if(notaFinal >= 80) { corEscolhida = "var(--success)"; nivelTexto = "DADOS VÁLIDOS (APROVAR)"; }
-
-        circuloScore.style.borderColor = corEscolhida; 
-        txtNumeroScore.style.color = corEscolhida; 
-        txtNivelQualidade.style.color = corEscolhida; 
-        txtNivelQualidade.innerText = nivelTexto;
-        
-        document.getElementById('radar-doc-check').innerHTML = dadosIA.verificacao_documental;
-        document.getElementById('radar-visual-check').innerHTML = dadosIA.inspecao_visual;
-        document.getElementById('radar-risk-check').innerHTML = dadosIA.divergencias_encontradas;
-        document.getElementById('radar-recommendation-text').innerText = dadosIA.veredito_final;
-        
-        let contadorAparente = 0; 
-        let intervaloEfeito = setInterval(() => { 
-            contadorAparente += Math.ceil(notaFinal / 15) + 1; 
-            if(contadorAparente >= notaFinal) { contadorAparente = notaFinal; clearInterval(intervaloEfeito); } 
-            txtNumeroScore.innerText = contadorAparente; 
-        }, 30);
+    window.enviarChatModal = async () => {
+      const p = document.getElementById('modal-chat-input-text').value.trim(); if (!p) return;
+      const h = document.getElementById('modal-chat-historico'); 
+      h.innerHTML += `<span style="color: white;">> ${p}</span><br>`; document.getElementById('modal-chat-input-text').value = '';
+      const idL = 'l_'+Date.now(); h.innerHTML += `<span id="${idL}" style="color:var(--gemini-purple);">> Processando...</span><br>`; h.scrollTop=h.scrollHeight;
+      
+      memoriaModalDoChat.push({ role: "user", parts: [{ text: `Processo de ${dadosProcessoAtual.nome}. Ramo: ${dadosProcessoAtual.tipo}. Comando: "${p}". Responda direto, sem frescuras e sem markdown.` }] });
+      try {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: memoriaModalDoChat }) });
+        const res = await r.json(); document.getElementById(idL).remove(); let t = res.candidates[0].content.parts[0].text; memoriaModalDoChat.push({ role: "model", parts: [{text:t}] });
+        h.innerHTML += `<span style="color: var(--gemini-purple);">> [GEMINI]</span><br>> ${t.replace(/\n/g, '<br>> ')}<br><br>`; h.scrollTop=h.scrollHeight;
+      } catch(e) {}
     }
+
 
     window.salvarEdicaoModal = async () => {
       if(!idProcessoAtual) return;
       const botaoDeSalvar = document.getElementById('btn-salvar-modal');
       const textOriginalBotao = botaoDeSalvar.innerHTML;
-      botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sincronizando BD Central...';
+      botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Cobrança e Salvando...';
       
       let valorInputado = document.getElementById("modal-valor-input").value; 
       let statusSelecionado = document.getElementById("modal-status-select").value; 
@@ -1630,13 +1427,17 @@
       if(statusSelecionado === "pago") flagPago = true; 
       if(statusSelecionado === "pendente") valorInputado = null; 
 
+      let payloadPix = document.getElementById("pix-payload-text").innerText;
+      if(statusSelecionado === "pago" || statusSelecionado === "pendente") payloadPix = null;
+
       try {
         await updateDoc(doc(db, "pedidos", idProcessoAtual), { 
             valor: valorInputado, 
             pago: flagPago, 
-            notas: notasDigitadas 
+            notas: notasDigitadas,
+            pix_copia_e_cola: payloadPix
         });
-        showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase.', 'success');
+        showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase. Pix ativado.', 'success');
         registrarLog("Veredito Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
         fecharModal();
       } catch (erroDeRede) { 
@@ -1656,7 +1457,7 @@
     };
 
     // =========================================================================================
-    // LABORATÓRIO FORENSE DE MÍDIA
+    // LABORATÓRIO FORENSE DE MÍDIA AVULSA
     // =========================================================================================
     window.iniciarAnaliseLaboratorioForense = async () => {
         if (!arquivoLaboratorio) return;
@@ -1709,7 +1510,7 @@
         }
     }
 
-    // FUNÇÃO ENVIARCHAT MODIFICADA PARA TER MEMÓRIA E SER "LIVRE" COM ANEXOS
+    // FUNÇÃO ENVIARCHAT GERAL COM ANEXOS
     window.enviarChat = async () => {
         const campoDeTexto = document.getElementById('chat-input-text'); 
         const perguntaDoFiscal = campoDeTexto.value.trim(); 
@@ -1791,7 +1592,7 @@
             areaHistorico.appendChild(bolhaIA);
 
             areaHistorico.scrollTop = areaHistorico.scrollHeight;
-            registrarLog("Consulta Jurídica IA", "Fiscal interagiu com o Chatbot.");
+            registrarLog("Consulta Jurídica IA", "Fiscal interagiu com o Chatbot Geral.");
 
         } catch(erroNoChat) { 
             console.error("Erro no Chatbot:", erroNoChat);
@@ -1804,32 +1605,18 @@
         }
     }
 
-    window.calcularMulta = () => {
-        let gravidadeDefinida = document.getElementById('sim-gravidade').value;
-        let valorBaseEmReais = 1500;
-        
-        if (gravidadeDefinida === 'grave') valorBaseEmReais = 8500;
-        if (gravidadeDefinida === 'gravissima') valorBaseEmReais = 35000;
-        
-        valorBaseEmReais = valorBaseEmReais * parseInt(document.getElementById('sim-porte').value); 
-        if(document.getElementById('sim-reincidente').checked) { valorBaseEmReais = valorBaseEmReais * 2; }
-        
-        document.getElementById('sim-resultado').innerText = 'R$ ' + valorBaseEmReais.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-    }
-
     function initCharts() {
       try {
-          const contextoBarra = document.getElementById('barChart').getContext('2d');
-          chartBar = new Chart(contextoBarra, { 
+          Chart.defaults.color = '#94a3b8';
+          chartBar = new Chart(document.getElementById('barChart').getContext('2d'), { 
               type: 'line', 
               data: { labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], datasets: [{ label: 'Cadastros e Entradas', data: [0,0,0,0,0,0,0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] }, 
               options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)'} }, x: { grid: { display: false } } } } 
           });
           
-          const contextoRosca = document.getElementById('doughnutChart').getContext('2d');
-          chartDoughnut = new Chart(contextoRosca, { 
+          chartDoughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { 
               type: 'doughnut', 
-              data: { labels: ['Aprovados e Pagos', 'Taxas Aguardando', 'Casos de Risco'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#ef4444'], borderWidth: 0 }] }, 
+              data: { labels: ['Aprovados e Pagos', 'Taxas Aguardando', 'Casos de Risco'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#3b82f6', '#ef4444'], borderWidth: 0 }] }, 
               options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
           });
       } catch (err) {}
@@ -1842,7 +1629,6 @@
 
     window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
         document.getElementById('lightbox-img').src = linkImagem; 
-        document.getElementById('lightbox-title').innerText = tituloDaImagem; 
         document.getElementById('lightbox').style.display = 'flex'; 
     };
     
