@@ -524,29 +524,33 @@
           <div class="page-title">
             <div>
               <h1>Monitoramento de Tráfego (Ao Vivo)</h1>
-              <p>Visualização em tempo real das visitas reais registradas no portal público da COVISA.</p>
+              <p>Visualização em tempo real das visitas que estão acontecendo no portal público.</p>
             </div>
           </div>
           
           <div class="stats-grid" style="margin-bottom: 30px;">
+             <div class="stat-card c-success" style="border-color: var(--success); border-width: 2px; box-shadow: 0 0 20px rgba(16,185,129,0.2);">
+               <div class="stat-icon" style="background: var(--success); color: #000;"><i class="fas fa-broadcast-tower"></i></div>
+               <div class="stat-info">
+                  <h3 style="color: var(--success); font-weight: 900; display:flex; align-items:center; gap:8px;">
+                    <span class="pulse-online"></span> ONLINE AGORA
+                  </h3>
+                  <p id="trafego-agora" style="font-size: 3.5rem; color: var(--success);">0</p>
+               </div>
+             </div>
              <div class="stat-card c-primary">
                <div class="stat-icon"><i class="fas fa-users"></i></div>
-               <div class="stat-info"><h3>Visitantes Hoje</h3><p id="trafego-hoje">0</p></div>
+               <div class="stat-info"><h3>Visitantes (Total Hoje)</h3><p id="trafego-hoje">0</p></div>
              </div>
-             <div class="stat-card c-success">
-               <div class="stat-icon"><i class="fas fa-mouse-pointer"></i></div>
-               <div class="stat-info"><h3>Acessos na Semana</h3><p id="trafego-semana">0</p></div>
-             </div>
-             <div class="stat-card c-gemini">
-               <div class="stat-icon"><i class="fas fa-stopwatch"></i></div>
-               <div class="stat-info"><h3>Tempo Médio (Página)</h3><p id="trafego-tempo">2m 15s</p></div>
+             <div class="stat-card c-warning">
+               <div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
+               <div class="stat-info"><h3>Pico Máximo Simultâneo</h3><p id="trafego-pico">0</p></div>
              </div>
           </div>
           
           <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-xl); border: 1px solid var(--border); height: 450px; box-shadow: var(--shadow-sm);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-               <h3 style="color: white; font-weight: 800;"><i class="fas fa-chart-area" style="color: var(--gemini-purple); margin-right: 10px;"></i> Volume de Acessos ao Site (Horas de Hoje)</h3>
-               <span class="pulse-online" style="width: 15px; height: 15px;"></span>
+               <h3 style="color: white; font-weight: 800;"><i class="fas fa-heartbeat" style="color: var(--success); margin-right: 10px;"></i> Monitor de Pulso (Batimentos de Conexão)</h3>
             </div>
             <div style="position: relative; height: 85%; width: 100%;">
                 <canvas id="chartAcessos"></canvas>
@@ -1821,38 +1825,61 @@
     }
 
     // ----------------------------------------------------
-    // MONITOR DE TRÁFEGO REAL (FIREBASE)
+    // MONITOR DE PULSO REAL (FIREBASE)
     // ----------------------------------------------------
-    function iniciarMonitorDeTrafegoReal() {
-        const hojeIso = new Date().toISOString().split('T')[0]; // ex: 2026-03-11
-        const docTrafegoRef = doc(db, "estatisticas", hojeIso);
+    let sessoesAtivas = {};
+    let picoMaximo = 0;
 
-        onSnapshot(docTrafegoRef, (docSnap) => {
+    function iniciarMonitorDeTrafegoReal() {
+        // 1. Pega o Total de Hoje
+        const hojeIso = new Date().toISOString().split('T')[0];
+        onSnapshot(doc(db, "estatisticas", hojeIso), (docSnap) => {
             if (docSnap.exists()) {
-                const dadosTrafego = docSnap.data();
-                
-                // Atualiza os cartões numéricos
-                document.getElementById('trafego-hoje').innerText = (dadosTrafego.total || 0).toLocaleString('pt-BR');
-                document.getElementById('trafego-semana').innerText = (dadosTrafego.total || 0).toLocaleString('pt-BR'); 
-                
-                // Atualiza o Gráfico com as 24 horas reais
-                if (chartAcessosObj) {
-                    let chartData = [];
-                    for(let i=0; i<24; i++) {
-                        let horaStr = `hora_${i.toString().padStart(2, '0')}`;
-                        chartData.push(dadosTrafego[horaStr] || 0);
-                    }
-                    chartAcessosObj.data.datasets[0].data = chartData;
-                    chartAcessosObj.update();
-                }
-            } else {
-                document.getElementById('trafego-hoje').innerText = "0";
-                if (chartAcessosObj) {
-                    chartAcessosObj.data.datasets[0].data = Array(24).fill(0);
-                    chartAcessosObj.update();
-                }
+                document.getElementById('trafego-hoje').innerText = (docSnap.data().total || 0).toLocaleString('pt-BR');
             }
         });
+
+        // 2. Ouve a coleção de "Acessos ao Vivo" para as sessões atuais
+        onSnapshot(collection(db, "trafego_aovivo"), (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added" || change.type === "modified") {
+                    sessoesAtivas[change.doc.id] = change.doc.data().ultima_acao;
+                }
+                if (change.type === "removed") {
+                    delete sessoesAtivas[change.doc.id];
+                }
+            });
+        });
+
+        // 3. Loop do Gráfico (Roda a cada 2 segundos para dar o efeito "Ao Vivo")
+        setInterval(() => {
+            let agora = Date.now();
+            let onlineAgora = 0;
+
+            // Limpa da lista as sessões que não mandam sinal há mais de 15 segundos (Pessoa fechou a aba)
+            for (let id in sessoesAtivas) {
+                if (agora - sessoesAtivas[id] > 15000) {
+                    delete sessoesAtivas[id];
+                } else {
+                    onlineAgora++;
+                }
+            }
+
+            // Atualiza os cartões na tela
+            document.getElementById('trafego-agora').innerText = onlineAgora;
+            
+            if(onlineAgora > picoMaximo) picoMaximo = onlineAgora;
+            document.getElementById('trafego-pico').innerText = picoMaximo;
+
+            // Anima o gráfico empurrando o número atual para frente
+            if (chartAcessosObj) {
+                let dataArray = chartAcessosObj.data.datasets[0].data;
+                dataArray.push(onlineAgora);
+                dataArray.shift(); // Remove o dado mais antigo do gráfico
+
+                chartAcessosObj.update('none'); // Update rápido sem travar a tela
+            }
+        }, 2000);
     }
 
     function initCharts() {
@@ -1871,46 +1898,51 @@
               options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
           });
 
-          // INICIALIZAÇÃO DO NOVO GRÁFICO DE TRÁFEGO
+          // INICIALIZAÇÃO DO NOVO GRÁFICO DE TRÁFEGO AO VIVO
           const ctxAcessos = document.getElementById('chartAcessos');
           if (ctxAcessos) {
               const contextoAcessos = ctxAcessos.getContext('2d');
               let gradient = contextoAcessos.createLinearGradient(0, 0, 0, 400);
-              gradient.addColorStop(0, 'rgba(192, 132, 252, 0.6)'); 
-              gradient.addColorStop(1, 'rgba(192, 132, 252, 0)');
+              gradient.addColorStop(0, 'rgba(16, 185, 129, 0.6)'); // Verde Success
+              gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
 
-              let labelsHoras = [];
-              for(let i=0; i<24; i++) { labelsHoras.push(`${i.toString().padStart(2, '0')}:00`); }
+              // Cria 30 pontos vazios para simular os últimos segundos (A linha anda para o lado)
+              let labelsSegundos = Array(30).fill(''); 
+              let dataSegundos = Array(30).fill(0);
 
               chartAcessosObj = new Chart(contextoAcessos, {
                   type: 'line',
                   data: {
-                      labels: labelsHoras,
+                      labels: labelsSegundos,
                       datasets: [{
-                          label: 'Acessos Reais (Cidadãos)',
-                          data: Array(24).fill(0), // Começa zerado
-                          borderColor: '#c084fc',
+                          label: 'Pessoas Online',
+                          data: dataSegundos,
+                          borderColor: '#10b981',
                           backgroundColor: gradient,
                           borderWidth: 3,
                           fill: true,
                           tension: 0.4,
-                          pointBackgroundColor: '#c084fc',
+                          pointBackgroundColor: '#10b981',
                           pointBorderColor: '#fff',
                           pointBorderWidth: 2,
-                          pointRadius: 4,
-                          pointHoverRadius: 7
+                          pointRadius: 0, // Esconde as bolinhas para ficar parecendo um monitor de hospital
+                          pointHoverRadius: 5
                       }]
                   },
                   options: {
                       responsive: true,
                       maintainAspectRatio: false,
+                      animation: {
+                          duration: 500, // Animação de rolagem suave
+                          easing: 'linear'
+                      },
                       plugins: {
                           legend: { display: false },
-                          tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(15, 23, 42, 0.9)', titleColor: '#fff', bodyColor: '#c084fc', borderColor: '#334155', borderWidth: 1 }
+                          tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(15, 23, 42, 0.9)', titleColor: '#fff', bodyColor: '#10b981', borderColor: '#334155', borderWidth: 1 }
                       },
                       scales: {
-                          y: { grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#94a3b8', stepSize: 1 }, beginAtZero: true },
-                          x: { grid: { display: false, drawBorder: false }, ticks: { color: '#94a3b8', maxTicksLimit: 12 } }
+                          y: { grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#94a3b8', stepSize: 1 }, min: 0, suggestedMax: 10 },
+                          x: { grid: { display: false, drawBorder: false } }
                       },
                       interaction: { mode: 'nearest', axis: 'x', intersect: false }
                   }
