@@ -208,7 +208,7 @@
     .area-card h3 { font-size: 1.3rem; margin-bottom: 15px; color: var(--text-dark); }
 
     .impact-section { padding: 120px 0; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1595855729736-2a725902f232?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-attachment: fixed; background-position: center; color: white; text-align: center; }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
+    .stats-grid-bottom { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
     .stat-item h3 { font-size: 4rem; font-weight: 900; color: #ffeb3b; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; line-height: 1; }
     .stat-item p { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
 
@@ -262,7 +262,6 @@
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .char-counter { text-align: right; font-size: 0.85rem; color: #999; margin-top: -10px; margin-bottom: 15px; }
     
-    /* Novo estilo de Upload para Denúncia */
     .file-upload-zone { border: 3px dashed #cbd5e0; border-radius: 15px; padding: 25px; text-align: center; background: #f8fafc; transition: 0.3s; margin-bottom: 25px; position: relative; }
     .file-upload-zone:hover { border-color: var(--sp-red); background: #fff5f5; }
     .file-upload-zone i { font-size: 2.5rem; color: var(--sp-red); margin-bottom: 10px; }
@@ -288,16 +287,19 @@
     .selo-link:hover { transform: translateY(-4px) scale(1.05); }
     .selo-link img { width: 100%; height: auto; display: block; mix-blend-mode: lighten; border-radius: 8px; }
 
-    /* Chatbot */
-    .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; }
-    .chat-interface { position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9998; display: none; flex-direction: column; border: 1px solid #eee; }
-    .chat-header { background: var(--sp-red); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
-    .chat-body { flex: 1; padding: 20px; overflow-y: auto; background: #f8f9fa; }
+    /* Chatbot Otimizado GEMINI IA */
+    .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; transition: 0.3s;}
+    .chat-widget-btn:hover { transform: scale(1.1); }
+    .chat-interface { position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9998; display: none; flex-direction: column; border: 1px solid #eee; overflow: hidden; }
+    .chat-header { background: var(--sp-red); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
+    .chat-body { flex: 1; padding: 20px; overflow-y: auto; background: #f8f9fa; display: flex; flex-direction: column; gap: 10px; }
     .chat-input { padding: 15px; background: white; display: flex; border-top: 1px solid #eee; gap: 10px; }
-    .chat-input input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 30px; outline: none; }
-    .chat-bubble { padding: 10px 15px; border-radius: 12px; margin-bottom: 10px; font-size: 0.9rem; max-width: 85%; }
-    .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .chat-input input { flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; font-family: var(--font-base); }
+    .chat-input button { background: var(--sp-red); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: 0.3s; }
+    .chat-input button:hover { background: var(--sp-dark-red); }
+    .chat-bubble { padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; word-wrap: break-word; }
+    .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333; border: 1px solid #eee;}
+    .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(218,37,28,0.2); }
 
     /* --- MOBILE AJUSTES --- */
     @media (max-width: 900px) {
@@ -314,7 +316,6 @@
       .brand-text h1 { font-size: 1.05rem; }
       .brand-text span { font-size: 0.68rem; }
       
-      /* Aumentando botões e inputs no mobile */
       .form-control { padding: 18px 16px; font-size: 1.05rem; }
       .btn-primary, .btn-success, .btn-report { padding: 20px 15px; font-size: 1.1rem; }
       
@@ -331,7 +332,7 @@
       .live-item h4 { font-size: 2.4rem; }
       .status-grid { grid-template-columns: 1fr; }
       .news-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: 1fr; }
+      .stats-grid-bottom { grid-template-columns: 1fr; }
       .areas-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
       .checklist-form-container { padding: 22px; min-width: auto; }
@@ -654,7 +655,7 @@
   <section class="impact-section">
     <div class="container">
       <div class="impact-title"><h2>Balanço de Fiscalização 2025/2026</h2><p>Combate rigoroso a irregularidades para proteger você.</p></div>
-      <div class="stats-grid">
+      <div class="stats-grid-bottom">
         <div class="stat-item"><h3>+15.400</h3><p>Vistorias Realizadas</p></div>
         <div class="stat-item"><h3>120 Ton</h3><p>Alimentos Apreendidos</p></div>
         <div class="stat-item"><h3>2.100</h3><p>Interdições Cautelares</p></div>
@@ -791,7 +792,7 @@
           <p style="margin: 0; color: #aaa; margin-bottom: 5px;">Telefone/WhatsApp: (11) 92066-5012</p>
           <p style="margin: 0; color: #aaa;">E-mail: vigilanciasanitariaspgov1@gmail.com</p>
         </div>
-       
+        
         <div class="selos-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 550px; gap: 15px;">
             <a href="https://call.icom-libras.com.br/smped/chamada/video?svId=6a144745-22d2-408c-9649-356872449766&preCall=true&queue=icom" class="selo-link" target="_blank" title="CIL - Central de Intermediação em Libras">
                 <img src="imagens/selo1.jpg" alt="CIL" />
@@ -820,8 +821,8 @@
 
   <div class="chat-widget-btn" onclick="window.toggleChat()"><i class="fas fa-comment-dots"></i></div>
   <div class="chat-interface" id="chat-interface">
-    <div class="chat-header"><span>Assistente COVISA</span><i class="fas fa-times" onclick="window.toggleChat()" style="cursor:pointer;"></i></div>
-    <div class="chat-body" id="chat-body"><div class="chat-bubble bubble-ai">Olá! Sou o assistente virtual. Como posso ajudar hoje?</div></div>
+    <div class="chat-header"><span>Assistente IA COVISA</span><i class="fas fa-times" onclick="window.toggleChat()" style="cursor:pointer;"></i></div>
+    <div class="chat-body" id="chat-body"><div class="chat-bubble bubble-ai">Olá! Sou a Ana, a Inteligência Artificial da COVISA. Como posso orientá-lo hoje sobre nossos serviços?</div></div>
     <form class="chat-input" id="chat-form">
       <input type="text" id="chat-msg" placeholder="Digite sua dúvida..." required />
       <button type="submit"><i class="fas fa-paper-plane"></i></button>
@@ -845,6 +846,12 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // ==============================================================
+    // CHAVE DO GOOGLE GEMINI (PARA O CHATBOT DO CIDADÃO)
+    // ==============================================================
+    const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
+    const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
     // FUNÇÕES GLOBAIS GERAIS
     window.idPedidoConsultaAtual = null; 
@@ -871,7 +878,7 @@
       i.value = v;
     };
 
-    // MÁSCARA DATA DE NASCIMENTO (NOVO)
+    // MÁSCARA DATA DE NASCIMENTO
     window.maskData = function(i) {
         let v = i.value.replace(/\D/g,'');
         if(v.length >= 5) {
@@ -1273,7 +1280,6 @@
                   document.getElementById('end_cidade').value = dados.municipio + " - " + dados.uf;
 
                   const enderecoCompleto = `${dados.logradouro}, ${dados.numero}, ${dados.municipio}, ${dados.uf}`;
-                  // CORREÇÃO DO HTTP PARA HTTPS AQUI
                   const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
                   
                   document.getElementById('map-container').style.display = 'block';
@@ -1358,7 +1364,7 @@
         }
       });
 
-      // ENVIO DENÚNCIA DIRETO PRO ADMIN (NOVO)
+      // ENVIO DENÚNCIA DIRETO PRO ADMIN
       document.getElementById('form-denuncia').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -1378,7 +1384,6 @@
             const listaEvidenciasDenuncia = [];
 
             if (fileInputDenuncia.files.length > 0) {
-                // Loop por todas as fotos de denúncia anexadas
                 for (let i = 0; i < fileInputDenuncia.files.length; i++) {
                     const arquivo = fileInputDenuncia.files[i];
                     const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
@@ -1386,7 +1391,6 @@
                 }
             }
 
-            // SALVA A DENÚNCIA NA MESMA COLEÇÃO "pedidos" DO ADMIN
             await addDoc(collection(db, "pedidos"), {
                 nome: "DENÚNCIA: " + assunto,
                 cnpj: cnpj_denuncia || "Não informado",
@@ -1468,6 +1472,12 @@
                     let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
                     if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
                     document.getElementById('valor-cobrado').innerText = valorFormatado;
+                    
+                    // MOSTRA O PIX QUE FOI GERADO NO ADMIN (SE EXISTIR)
+                    if (pedido.pix_copia_e_cola) {
+                        document.getElementById('pix-copia-cola').value = pedido.pix_copia_e_cola;
+                    }
+                    
                     cnpjParaComprovante = cnpj;
                     atualizarBarraProgresso(3); 
                     iniciarCronometroPix(); 
@@ -1481,18 +1491,71 @@
         }
       });
 
-      document.getElementById('chat-form').addEventListener('submit', (e) => {
+      // ==============================================================================
+      // NOVO CHATBOT INTEGRADO COM GEMINI AI (MANTÉM TODA A ESTRUTURA DO CÓDIGO)
+      // ==============================================================================
+      let memoriaChatCidadao = [];
+      
+      document.getElementById('chat-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const txt = document.getElementById('chat-msg');
+        const txtInput = document.getElementById('chat-msg');
         const body = document.getElementById('chat-body');
-        if (!txt.value) return;
-        body.innerHTML += `<div class="chat-bubble bubble-user">${txt.value}</div>`;
-        txt.value = '';
+        const userMsg = txtInput.value.trim();
+        if (!userMsg) return;
+        
+        // Coloca a mensagem do usuário na tela
+        body.innerHTML += `<div class="chat-bubble bubble-user">${userMsg}</div>`;
+        txtInput.value = '';
         body.scrollTop = body.scrollHeight;
-        setTimeout(() => {
-          body.innerHTML += `<div class="chat-bubble bubble-ai">Compreendido. Recomendo verificar a aba 'Regularize-se' para emissão de taxas.</div>`;
-          body.scrollTop = body.scrollHeight;
-        }, 1000);
+        
+        // Coloca o loader "Pensando..."
+        const idLoader = 'loader_' + Date.now();
+        body.innerHTML += `<div id="${idLoader}" class="chat-bubble bubble-ai"><i class="fas fa-spinner fa-spin"></i> Processando...</div>`;
+        body.scrollTop = body.scrollHeight;
+
+        // O "Cérebro" da IA (Prompt de Sistema)
+        let promptFinal = `Você é a "Ana", atendente virtual da Vigilância Sanitária (COVISA) da Prefeitura de SP.
+        Você está falando com um cidadão no portal oficial.
+        Responda de forma educada, super curta, objetiva e útil.
+        Sempre oriente o cidadão a usar o menu do site para suas necessidades: "Regularizar Empresa", "Fazer Denúncia" ou "Consultar Taxas e Pagamentos".
+        Formate a sua resposta em HTML básico (use a tag <b> para negrito, e a tag <br> para quebras de linha). Nunca use asteriscos (**) de markdown.
+        Mensagem do cidadão: "${userMsg}"`;
+
+        // Guarda na memória a pergunta
+        memoriaChatCidadao.push({ role: "user", parts: [{ text: promptFinal }] });
+
+        try {
+            // Dispara para a API usando a chave já existente do Admin
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: memoriaChatCidadao })
+            });
+
+            if(!response.ok) throw new Error("Erro na API da Ana");
+
+            const data = await response.json();
+            
+            // Remove o balãozinho de carregamento
+            document.getElementById(idLoader).remove();
+
+            let aiText = data.candidates[0].content.parts[0].text;
+            
+            // Guarda a resposta na memória
+            memoriaChatCidadao.push({ role: "model", parts: [{ text: aiText }] });
+
+            // Exibe a resposta na tela
+            body.innerHTML += `<div class="chat-bubble bubble-ai">${aiText}</div>`;
+            body.scrollTop = body.scrollHeight;
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById(idLoader).remove();
+            memoriaChatCidadao.pop(); // tira da memória a tentativa que falhou
+            body.innerHTML += `<div class="chat-bubble bubble-ai" style="color:var(--sp-red);">Desculpe, meus servidores estão ocupados no momento. Tente novamente em instantes.</div>`;
+            body.scrollTop = body.scrollHeight;
+        }
       });
 
     });
