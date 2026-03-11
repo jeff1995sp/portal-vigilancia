@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COVISA ULTIMATE V8 - Reputação IA e Pix Automático</title>
+  <title>COVISA ULTIMATE V8 - AI Core & Radar Web</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -14,38 +15,53 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    /* =======================================================================
+       TEMA CIBERNÉTICO E GLASSMORPHISM (INTELIGÊNCIA ARTIFICIAL)
+       ======================================================================= */
     :root {
-      --bg-body: #050b14; 
-      --bg-sidebar: #02060d;
-      --bg-card: #0f172a;
-      --bg-card-hover: #1e293b;
+      /* Cores de Fundo (Dark Mode Profundo) */
+      --bg-body: #020617; 
+      --bg-sidebar: rgba(2, 6, 23, 0.75);
+      --bg-card: rgba(15, 23, 42, 0.45); 
+      --bg-card-hover: rgba(30, 41, 59, 0.6);
+      
+      /* Cores de Texto */
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --text-light: #e2e8f0;
+      
+      /* Tipografia */
       --font-base: 'Inter', sans-serif;
       --font-code: 'JetBrains Mono', monospace;
+      
+      /* Cores de Destaque e Neon */
       --primary: #3b82f6;
-      --primary-hover: #2563eb;
+      --primary-hover: #60a5fa;
       --secondary: #0ea5e9;
       --accent: #38bdf8;
+      
+      /* Cores da IA (Gemini) */
       --gemini-purple: #c084fc;
       --gemini-dark: #7e22ce;
-      --gemini-bg: rgba(192, 132, 252, 0.08);
+      --gemini-bg: rgba(192, 132, 252, 0.1);
+      --gemini-glow: rgba(192, 132, 252, 0.5);
       --gemini-gradient: linear-gradient(135deg, #c084fc, #ec4899, #3b82f6);
+      
+      /* Status Colors */
       --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.12);
+      --success-glow: rgba(16, 185, 129, 0.4);
       --warning: #f59e0b;
-      --warning-bg: rgba(245, 158, 11, 0.12);
       --danger: #ef4444;
-      --danger-bg: rgba(239, 68, 68, 0.12);
-      --info: #3b82f6;
-      --info-light: rgba(59, 130, 246, 0.12);
-      --border: #1e293b;
-      --border-light: #334155;
+      --danger-glow: rgba(239, 68, 68, 0.4);
+      
+      /* Bordas e Sombras (Glassmorphism) */
+      --border: rgba(255, 255, 255, 0.1);
+      --border-light: rgba(255, 255, 255, 0.15);
       --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
-      --shadow-modal: 0 30px 60px -15px rgba(0, 0, 0, 0.9);
+      --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+      
+      /* Arredondamentos */
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 16px;
@@ -53,240 +69,1444 @@
       --radius-2xl: 32px;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-base); outline: none; -webkit-font-smoothing: antialiased; }
-    body { background-color: var(--bg-body); color: var(--text-main); width: 100vw; height: 100vh; overflow: hidden; font-size: 14px; }
-    
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-    #lock-screen {
-      position: fixed; inset: 0; background: #02040a; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background-image: radial-gradient(circle at center, #0f172a 0%, #000000 100%); transition: opacity 0.5s ease, visibility 0.5s ease;
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      font-family: var(--font-base); 
+      outline: none; 
+      -webkit-font-smoothing: antialiased; 
     }
-    .lock-box { background: rgba(15, 23, 42, 0.8); padding: 60px 50px; border-radius: var(--radius-xl); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); text-align: center; width: 100%; max-width: 440px; box-shadow: var(--shadow-modal); }
-    .lock-box i.fa-fingerprint { font-size: 5rem; color: var(--primary); margin-bottom: 25px; filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.5)); }
-    .lock-box h2 { color: white; margin-bottom: 12px; font-weight: 900; font-size: 2.2rem; letter-spacing: -1px; }
-    .lock-box p { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 35px; line-height: 1.5; }
-    .pin-input { width: 100%; padding: 22px; border-radius: var(--radius-md); border: 2px solid var(--border); background: rgba(0,0,0,0.6); color: white; font-size: 2.5rem; text-align: center; letter-spacing: 20px; margin-bottom: 30px; transition: all 0.3s ease; font-family: var(--font-code); box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
-    .pin-input:focus { border-color: var(--primary); box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); }
-    .btn-unlock { width: 100%; background: var(--primary); color: white; border: none; padding: 20px; border-radius: var(--radius-md); font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 12px; text-transform: uppercase; letter-spacing: 1px; }
-    .btn-unlock:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4); }
-
-    #app-container { display: flex; width: 100%; height: 100%; background: var(--bg-body); }
     
-    .sidebar { width: 290px; height: 100%; background-color: var(--bg-sidebar); display: flex; flex-direction: column; z-index: 100; border-right: 1px solid var(--border); flex-shrink: 0; }
-    .sidebar-header { padding: 40px 30px; display: flex; align-items: center; gap: 18px; border-bottom: 1px solid var(--border); }
-    .sidebar-header i.logo-icon { font-size: 2.8rem; background: var(--gemini-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .sidebar-header h2 { font-size: 1.6rem; font-weight: 900; line-height: 1.1; color: white; }
-    .sidebar-header h2 span { font-size: 0.8rem; color: var(--gemini-purple); text-transform: uppercase; letter-spacing: 2px; font-weight: 800; display: block; margin-top: 4px; }
+    body { 
+      background-color: var(--bg-body); 
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.08), transparent 25%);
+      color: var(--text-main); 
+      width: 100vw; 
+      height: 100vh; 
+      overflow: hidden; 
+      font-size: 14px; 
+    }
+
+    /* Scrollbar Personalizada */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    /* Componente Global de Vidro Fosco (Glassmorphism) */
+    .glass-panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-glass);
+    }
+
+    /* =======================================================================
+       TELA DE LOGIN (LOCK SCREEN)
+       ======================================================================= */
+    #lock-screen {
+      position: fixed; 
+      inset: 0; 
+      background: #020617; 
+      z-index: 99999; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .lock-box { 
+      background: rgba(15, 23, 42, 0.6); 
+      padding: 60px 50px; 
+      border-radius: var(--radius-xl); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid var(--border-light); 
+      text-align: center; 
+      width: 100%; 
+      max-width: 440px; 
+      box-shadow: 0 0 50px rgba(59, 130, 246, 0.15); 
+    }
+
+    .lock-box i.fa-fingerprint { 
+      font-size: 5rem; 
+      color: var(--primary); 
+      margin-bottom: 25px; 
+      filter: drop-shadow(0 0 15px var(--primary)); 
+    }
+
+    .lock-box h2 { 
+      color: white; 
+      margin-bottom: 12px; 
+      font-weight: 900; 
+      font-size: 2.2rem; 
+      letter-spacing: -1px; 
+    }
+
+    .lock-box p { 
+      color: var(--text-muted); 
+      font-size: 1.05rem; 
+      margin-bottom: 35px; 
+    }
+
+    .pin-input { 
+      width: 100%; 
+      padding: 22px; 
+      border-radius: var(--radius-md); 
+      border: 2px solid var(--border); 
+      background: rgba(0,0,0,0.4); 
+      color: white; 
+      font-size: 2.5rem; 
+      text-align: center; 
+      letter-spacing: 20px; 
+      margin-bottom: 30px; 
+      font-family: var(--font-code); 
+      transition: 0.3s; 
+    }
+
+    .pin-input:focus { 
+      border-color: var(--primary); 
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); 
+    }
+
+    .btn-unlock { 
+      width: 100%; 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      padding: 20px; 
+      border-radius: var(--radius-md); 
+      font-weight: 800; 
+      font-size: 1.2rem; 
+      cursor: pointer; 
+      transition: 0.3s; 
+      text-transform: uppercase; 
+      letter-spacing: 1px; 
+    }
+
+    .btn-unlock:hover { 
+      background: var(--primary-hover); 
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); 
+      transform: translateY(-2px);
+    }
+
+    /* =======================================================================
+       LAYOUT PRINCIPAL (SIDEBAR E TOPBAR)
+       ======================================================================= */
+    #app-container { 
+      display: flex; 
+      width: 100%; 
+      height: 100%; 
+    }
     
-    .nav-menu { padding: 30px 20px; flex: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
-    .nav-item { padding: 16px 20px; border-radius: var(--radius-md); color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 15px; font-weight: 600; font-size: 1.05rem; transition: all 0.3s ease; cursor: pointer; border: 1px solid transparent; }
-    .nav-item:hover { background: rgba(255,255,255,0.03); color: white; border-color: var(--border); }
-    .nav-item.active { background: var(--gemini-bg); color: white; border-color: rgba(192, 132, 252, 0.2); box-shadow: inset 4px 0 0 var(--gemini-purple); }
-    .nav-item i { font-size: 1.3rem; width: 25px; text-align: center; }
+    .sidebar { 
+      width: 290px; 
+      height: 100%; 
+      background: var(--bg-sidebar); 
+      backdrop-filter: blur(20px); 
+      display: flex; 
+      flex-direction: column; 
+      z-index: 100; 
+      border-right: 1px solid var(--border); 
+      flex-shrink: 0; 
+    }
+
+    .sidebar-header { 
+      padding: 40px 30px; 
+      display: flex; 
+      align-items: center; 
+      gap: 15px; 
+      border-bottom: 1px solid var(--border); 
+    }
+
+    .sidebar-header i.logo-icon { 
+      font-size: 2.8rem; 
+      background: var(--gemini-gradient); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+    }
+
+    .sidebar-header h2 { 
+      font-size: 1.5rem; 
+      font-weight: 900; 
+      line-height: 1.1; 
+      color: white; 
+    }
+
+    .sidebar-header h2 span { 
+      font-size: 0.75rem; 
+      color: var(--gemini-purple); 
+      text-transform: uppercase; 
+      letter-spacing: 2px; 
+      font-weight: 800; 
+      display: block; 
+      margin-top: 4px; 
+    }
     
-    .sidebar-footer { padding: 25px; border-top: 1px solid var(--border); text-align: center; background: rgba(0,0,0,0.3); }
+    .nav-menu { 
+      padding: 30px 20px; 
+      flex: 1; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 8px; 
+      overflow-y: auto; 
+    }
 
-    .main-content { flex: 1; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; background: var(--bg-body); }
-    header.topbar { background: var(--bg-card); padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); z-index: 10; flex-shrink: 0; }
+    .nav-item { 
+      padding: 16px 20px; 
+      border-radius: var(--radius-md); 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      display: flex; 
+      align-items: center; 
+      gap: 15px; 
+      font-weight: 600; 
+      font-size: 1.05rem; 
+      transition: all 0.3s ease; 
+      cursor: pointer; 
+      border: 1px solid transparent; 
+    }
+
+    .nav-item:hover { 
+      background: rgba(255,255,255,0.05); 
+      color: white; 
+    }
+
+    .nav-item.active { 
+      background: rgba(192, 132, 252, 0.15); 
+      color: white; 
+      border: 1px solid rgba(192, 132, 252, 0.3); 
+      box-shadow: 0 0 15px rgba(192, 132, 252, 0.15); 
+    }
+
+    .nav-item i { 
+      font-size: 1.3rem; 
+      width: 25px; 
+      text-align: center; 
+    }
     
-    .search-bar { display: flex; align-items: center; background: var(--bg-sidebar); padding: 15px 25px; border-radius: 50px; width: 550px; border: 1px solid var(--border); transition: all 0.3s ease; }
-    .search-bar:focus-within { border-color: var(--gemini-purple); box-shadow: 0 0 0 3px var(--gemini-bg); }
-    .search-bar i { color: var(--text-muted); margin-right: 15px; font-size: 1.2rem; }
-    .search-bar input { border: none; background: transparent; width: 100%; font-size: 0.95rem; color: white; font-weight: 500; }
+    .sidebar-footer { 
+      padding: 25px; 
+      border-top: 1px solid var(--border); 
+      text-align: center; 
+      background: rgba(0,0,0,0.2); 
+    }
+
+    .main-content { 
+      flex: 1; 
+      height: 100%; 
+      display: flex; 
+      flex-direction: column; 
+      overflow: hidden; 
+      position: relative; 
+    }
+
+    header.topbar { 
+      background: rgba(15, 23, 42, 0.4); 
+      backdrop-filter: blur(20px); 
+      padding: 20px 40px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      border-bottom: 1px solid var(--border); 
+      z-index: 10; 
+      flex-shrink: 0; 
+    }
     
-    .user-profile { display: flex; align-items: center; gap: 20px; }
-    .pulse-online { display: inline-block; width: 10px; height: 10px; background: var(--success); border-radius: 50%; box-shadow: 0 0 0 rgba(16, 185, 129, 0.4); animation: pulse 2s infinite; }
-    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
-    .user-info { text-align: right; }
-    .user-info h4 { font-size: 0.95rem; margin: 0 0 4px 0; color: white; font-weight: 800; }
-    .user-info span { font-size: 0.8rem; color: var(--gemini-purple); font-weight: 800; }
-    .avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--gemini-gradient); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 15px rgba(192, 132, 252, 0.3); }
+    .search-bar { 
+      display: flex; 
+      align-items: center; 
+      background: rgba(0,0,0,0.4); 
+      padding: 12px 25px; 
+      border-radius: 50px; 
+      width: 500px; 
+      border: 1px solid var(--border); 
+      transition: 0.3s; 
+    }
 
-    .view-container { flex: 1; overflow-y: auto; position: relative; padding: 50px 60px; }
-    .page-view { display: none; animation: fadeInView 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-    .page-view.active { display: block; }
-    @keyframes fadeInView { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .search-bar:focus-within { 
+      border-color: var(--primary); 
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); 
+    }
 
-    .page-title { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
-    .page-title h1 { font-size: 2.5rem; font-weight: 900; color: white; letter-spacing: -1px; line-height: 1.2;}
-    .page-title p { color: var(--text-muted); font-size: 1.15rem; margin-top: 8px; font-weight: 500; }
+    .search-bar i { 
+      color: var(--text-muted); 
+      margin-right: 15px; 
+      font-size: 1.1rem; 
+    }
 
-    .btn { padding: 15px 30px; border-radius: var(--radius-md); font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s ease; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
-    .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
-    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
-    .btn-success { background: var(--success); color: #022c22; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
-    .btn-success:hover { background: #059669; color: white; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
-    .btn-gemini { background: var(--gemini-gradient); color: white; box-shadow: 0 4px 15px rgba(192, 132, 252, 0.3); }
-    .btn-gemini:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(192, 132, 252, 0.5); }
-    .btn-secondary { background: var(--bg-card); border: 1px solid var(--border-light); color: white; }
-    .btn-secondary:hover { background: var(--border); border-color: var(--text-muted); }
-    .btn-icon { width: 45px; height: 45px; border-radius: var(--radius-md); border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-size: 1.2rem; color: white; }
-    .btn-icon.view { background: var(--border-light); } 
-    .btn-icon.view:hover { background: var(--primary); transform: translateY(-2px); }
-
-    .form-input { width: 100%; padding: 18px 22px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 1.05rem; color: white; background: var(--bg-sidebar); font-family: inherit; transition: 0.3s; }
-    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
-
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; margin-bottom: 50px; }
-    .stat-card { background: var(--bg-card); padding: 35px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 25px; position: relative; overflow: hidden; transition: all 0.3s ease; }
-    .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--border-light); }
-    .stat-card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 5px; }
-    .stat-card.c-warning::before { background: var(--warning); } .stat-card.c-primary::before { background: var(--primary); } .stat-card.c-success::before { background: var(--success); } .stat-card.c-gemini::before { background: var(--gemini-purple); }
-    .stat-icon { width: 75px; height: 75px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
-    .c-warning .stat-icon { background: var(--warning-bg); color: var(--warning); } .c-primary .stat-icon { background: var(--info-light); color: var(--primary); } .c-success .stat-icon { background: var(--success-bg); color: var(--success); } .c-gemini .stat-icon { background: var(--gemini-bg); color: var(--gemini-purple); }
-    .stat-info { flex: 1; }
-    .stat-info h3 { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; }
-    .stat-info p { font-size: 3rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
-
-    .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 50px; }
-    .chart-card { background: var(--bg-card); padding: 35px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
-    .chart-header { font-size: 1.3rem; font-weight: 800; color: white; margin-bottom: 25px; }
-    .chart-container { position: relative; height: 350px; width: 100%; }
-
-    .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; margin-bottom: 50px; box-shadow: var(--shadow-md); }
-    .data-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
-    .data-header h2 { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 15px; margin: 0; color: white; }
-    .filters-row { padding: 25px 40px; background: rgba(255,255,255,0.01); border-bottom: 1px solid var(--border); display: flex; gap: 25px; }
-    .filters-row select { flex: 1; }
+    .search-bar input { 
+      border: none; 
+      background: transparent; 
+      width: 100%; 
+      font-size: 0.95rem; 
+      color: white; 
+    }
     
-    .table-wrapper { overflow-x: auto; width: 100%; }
-    table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { background: rgba(0,0,0,0.4); padding: 20px 40px; font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 2; }
-    td { padding: 25px 40px; border-bottom: 1px solid var(--border); font-size: 1.05rem; color: var(--text-light); vertical-align: middle; }
-    tr { transition: background-color 0.2s ease; }
+    .user-profile { 
+      display: flex; 
+      align-items: center; 
+      gap: 15px; 
+    }
+
+    .pulse-online { 
+      display: inline-block; 
+      width: 10px; 
+      height: 10px; 
+      background: var(--success); 
+      border-radius: 50%; 
+      box-shadow: 0 0 10px var(--success); 
+      animation: pulse 2s infinite; 
+    }
+
+    @keyframes pulse { 
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } 
+    }
+
+    .user-info { 
+      text-align: right; 
+    }
+
+    .user-info h4 { 
+      font-size: 0.95rem; 
+      margin: 0 0 4px 0; 
+      color: white; 
+      font-weight: 800; 
+    }
+
+    .user-info span { 
+      font-size: 0.8rem; 
+      color: var(--gemini-purple); 
+      font-weight: 800; 
+    }
+
+    .avatar { 
+      width: 45px; 
+      height: 45px; 
+      border-radius: 50%; 
+      background: var(--gemini-gradient); 
+      color: white; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-weight: 900; 
+      font-size: 1.2rem; 
+      box-shadow: 0 0 15px var(--gemini-glow); 
+    }
+
+    /* =======================================================================
+       ESTRUTURA DAS PÁGINAS (VIEWS) E COMPONENTES
+       ======================================================================= */
+    .view-container { 
+      flex: 1; 
+      overflow-y: auto; 
+      padding: 40px 50px; 
+    }
+
+    .page-view { 
+      display: none; 
+      animation: fadeIn 0.4s ease; 
+    }
+
+    .page-view.active { 
+      display: block; 
+    }
+
+    @keyframes fadeIn { 
+      from { opacity: 0; transform: translateY(10px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+
+    .page-title { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: flex-end; 
+      margin-bottom: 30px; 
+    }
+
+    .page-title h1 { 
+      font-size: 2.2rem; 
+      font-weight: 900; 
+      color: white; 
+      letter-spacing: -1px; 
+      margin:0; 
+    }
+
+    .page-title p { 
+      color: var(--text-muted); 
+      font-size: 1.05rem; 
+      margin-top: 8px; 
+    }
+
+    /* BOTÕES */
+    .btn { 
+      padding: 12px 25px; 
+      border-radius: var(--radius-md); 
+      font-weight: 700; 
+      font-size: 0.95rem; 
+      cursor: pointer; 
+      transition: 0.3s; 
+      border: 1px solid transparent; 
+      display: inline-flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 10px; 
+    }
+
+    .btn-primary { 
+      background: rgba(59, 130, 246, 0.2); 
+      color: #60a5fa; 
+      border-color: var(--primary); 
+    }
+    .btn-primary:hover { 
+      background: var(--primary); 
+      color: white; 
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); 
+    }
+
+    .btn-gemini { 
+      background: rgba(192, 132, 252, 0.2); 
+      color: #d8b4fe; 
+      border-color: var(--gemini-purple); 
+    }
+    .btn-gemini:hover { 
+      background: var(--gemini-gradient); 
+      color: white; 
+      border-color: transparent; 
+      box-shadow: 0 0 20px var(--gemini-glow); 
+    }
+
+    .btn-success { 
+      background: rgba(16, 185, 129, 0.2); 
+      color: #34d399; 
+      border-color: var(--success); 
+    }
+    .btn-success:hover { 
+      background: var(--success); 
+      color: white; 
+      box-shadow: 0 0 20px var(--success-glow); 
+    }
+
+    .btn-danger { 
+      background: rgba(239, 68, 68, 0.2); 
+      color: #fca5a5; 
+      border-color: var(--danger); 
+    }
+    .btn-danger:hover { 
+      background: var(--danger); 
+      color: white; 
+      box-shadow: 0 0 20px var(--danger-glow); 
+    }
+
+    .btn-secondary { 
+      background: rgba(255,255,255,0.05); 
+      border: 1px solid var(--border); 
+      color: white; 
+    }
+    .btn-secondary:hover { 
+      background: rgba(255,255,255,0.1); 
+    }
+
+    .btn-icon { 
+      width: 40px; 
+      height: 40px; 
+      border-radius: var(--radius-md); 
+      border: none; 
+      cursor: pointer; 
+      display: inline-flex; 
+      align-items: center; 
+      justify-content: center; 
+      transition: 0.2s; 
+      font-size: 1.1rem; 
+      color: white; 
+      background: var(--border-light); 
+    }
+    .btn-icon:hover { 
+      background: var(--primary); 
+      transform: translateY(-2px); 
+    }
+
+    /* INPUTS */
+    .form-input { 
+      width: 100%; 
+      padding: 15px 20px; 
+      border: 1px solid var(--border); 
+      border-radius: var(--radius-md); 
+      font-size: 1rem; 
+      color: white; 
+      background: rgba(0,0,0,0.3); 
+      transition: 0.3s; 
+    }
+    .form-input:focus { 
+      border-color: var(--primary); 
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); 
+      background: rgba(0,0,0,0.5); 
+    }
+
+    /* =======================================================================
+       DASHBOARD E GRÁFICOS
+       ======================================================================= */
+    .stats-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+      gap: 25px; 
+      margin-bottom: 30px; 
+    }
+
+    .stat-card { 
+      padding: 25px; 
+      border-radius: var(--radius-lg); 
+      display: flex; 
+      align-items: center; 
+      gap: 20px; 
+      position: relative; 
+      overflow: hidden; 
+    }
+
+    .stat-card::after { 
+      content:''; 
+      position:absolute; 
+      top:0; 
+      left:0; 
+      width:100%; 
+      height:4px; 
+    }
+
+    .c-warning::after { background: var(--warning); } 
+    .c-primary::after { background: var(--primary); } 
+    .c-success::after { background: var(--success); } 
+    .c-gemini::after { background: var(--gemini-purple); }
+    
+    .stat-icon { 
+      width: 60px; 
+      height: 60px; 
+      border-radius: var(--radius-md); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 2rem; 
+      background: rgba(255,255,255,0.05); 
+      border: 1px solid var(--border); 
+    }
+
+    .c-warning .stat-icon { color: var(--warning); } 
+    .c-primary .stat-icon { color: var(--primary); } 
+    .c-success .stat-icon { color: var(--success); } 
+    .c-gemini .stat-icon { color: var(--gemini-purple); }
+    
+    .stat-info h3 { 
+      font-size: 0.85rem; 
+      color: var(--text-muted); 
+      text-transform: uppercase; 
+      letter-spacing: 1px; 
+      margin-bottom: 5px; 
+    }
+
+    .stat-info p { 
+      font-size: 2.5rem; 
+      font-weight: 900; 
+      color: white; 
+      margin: 0; 
+      line-height: 1; 
+    }
+
+    .charts-grid { 
+      display: grid; 
+      grid-template-columns: 2fr 1fr; 
+      gap: 25px; 
+      margin-bottom: 30px; 
+    }
+
+    .chart-card { 
+      padding: 30px; 
+      border-radius: var(--radius-lg); 
+    }
+
+    .chart-header { 
+      font-size: 1.2rem; 
+      font-weight: 800; 
+      color: white; 
+      margin-bottom: 20px; 
+    }
+
+    .chart-container { 
+      position: relative; 
+      height: 300px; 
+      width: 100%; 
+    }
+
+    /* MÓDULO DE SENTIMENTO DA IA NO DASHBOARD */
+    .sentiment-box { 
+      display: flex; 
+      gap: 20px; 
+      align-items: center; 
+      padding: 20px 30px; 
+      border-radius: var(--radius-lg); 
+      margin-bottom: 30px; 
+      border-left: 4px solid var(--gemini-purple); 
+    }
+
+    .sentiment-icon { 
+      font-size: 2.5rem; 
+      color: var(--gemini-purple); 
+      filter: drop-shadow(0 0 10px var(--gemini-glow)); 
+      animation: pulse 2s infinite; 
+    }
+
+    .sentiment-content h4 { 
+      color: white; 
+      font-size: 1.1rem; 
+      margin-bottom: 5px; 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+    }
+
+    .sentiment-content p { 
+      color: var(--text-light); 
+      margin: 0; 
+      font-size: 0.95rem; 
+    }
+
+    .badge-trending { 
+      background: rgba(239, 68, 68, 0.2); 
+      color: #fca5a5; 
+      padding: 4px 10px; 
+      border-radius: 50px; 
+      font-size: 0.75rem; 
+      font-weight: bold; 
+      border: 1px solid var(--danger); 
+    }
+
+    /* =======================================================================
+       TABELAS DE DADOS (BASE MESTRA)
+       ======================================================================= */
+    .data-section { 
+      border-radius: var(--radius-lg); 
+      overflow: hidden; 
+      margin-bottom: 40px; 
+    }
+
+    .data-header { 
+      padding: 25px 30px; 
+      border-bottom: 1px solid var(--border); 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      background: rgba(0,0,0,0.2); 
+    }
+
+    .data-header h2 { 
+      font-size: 1.3rem; 
+      font-weight: 800; 
+      color: white; 
+      margin: 0; 
+    }
+
+    .filters-row { 
+      padding: 20px 30px; 
+      border-bottom: 1px solid var(--border); 
+      display: flex; 
+      gap: 20px; 
+      background: rgba(0,0,0,0.1); 
+    }
+    
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      text-align: left; 
+    }
+
+    th { 
+      padding: 20px 30px; 
+      font-size: 0.8rem; 
+      font-weight: 800; 
+      color: var(--text-muted); 
+      text-transform: uppercase; 
+      letter-spacing: 1px; 
+      border-bottom: 1px solid var(--border); 
+      background: rgba(0,0,0,0.4); 
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    td { 
+      padding: 20px 30px; 
+      border-bottom: 1px solid var(--border); 
+      font-size: 1rem; 
+      color: var(--text-light); 
+      vertical-align: middle; 
+    }
+
+    tr { transition: 0.2s ease; }
     tr:hover { background: rgba(255,255,255,0.03); }
     
-    .td-empresa { display: flex; align-items: center; gap: 18px; }
-    .td-empresa-icon { width: 50px; height: 50px; background: var(--border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; font-weight: 900; }
-    .td-empresa-info strong { display: block; font-size: 1.1rem; margin-bottom: 6px; font-weight: 700; color: white; }
-    .td-empresa-info span { color: var(--text-muted); font-size: 0.9rem; font-family: var(--font-code); }
-    
-    .status-badge { padding: 8px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .badge-pendente { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
-    .badge-aguardando { background: var(--info-light); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3); }
-    .badge-pago { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-denuncia { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .td-empresa { 
+      display: flex; 
+      align-items: center; 
+      gap: 15px; 
+    }
 
-    /* NOVO MAPA LEAFLET DE REPUTAÇÃO ONLINE (Substituiu Zonas de Risco) */
-    .map-wrapper { display: flex; width: 100%; height: 600px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow-sm); position: relative; z-index: 1;}
-    #reputation-map { flex: 1; height: 100%; background: #000;}
-    .reputation-panel { width: 380px; background: var(--bg-card); border-left: 1px solid var(--border); padding: 25px; overflow-y: auto; display: none; flex-direction: column; }
-    .review-card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; font-style: italic; color: var(--text-light); font-size: 0.95rem; border-left: 3px solid var(--danger);}
+    .td-empresa-icon { 
+      width: 45px; 
+      height: 45px; 
+      background: rgba(255,255,255,0.05); 
+      border: 1px solid var(--border); 
+      border-radius: var(--radius-md); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      color: white; 
+      font-weight: 900; 
+      font-size: 1.2rem;
+    }
 
-    /* CHAT E LAB */
-    .chat-container { display: flex; flex-direction: column; height: 700px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); }
-    .chat-header { background: var(--bg-sidebar); padding: 25px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-    .chat-history { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; background: var(--bg-body); scroll-behavior: smooth; }
-    
-    .chat-msg { width: fit-content; max-width: 80%; padding: 18px 25px; border-radius: 20px; line-height: 1.6; font-size: 1.05rem; position: relative; word-break: break-word; }
-    .msg-user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
-    .msg-ai { align-self: flex-start; background: var(--bg-card); color: var(--text-light); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm); }
-    
-    .chat-input-area { padding: 25px 40px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
-    .chat-input-row { display: flex; gap: 15px; align-items: center; width: 100%; }
-    .chat-input-area select { width: 300px; padding: 18px 20px; border-radius: var(--radius-md); background: var(--bg-body); color: white; border: 1px solid var(--border); font-weight: 600; }
-    .chat-input-area input[type="text"] { flex: 1; padding: 20px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; }
-    .chat-input-area input[type="text"]:focus { border-color: var(--gemini-purple); }
+    .td-empresa-info strong { 
+      display: block; 
+      font-size: 1.05rem; 
+      margin-bottom: 4px; 
+      color: white; 
+    }
 
-    .chat-attachment-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; transition: 0.2s; padding: 10px; }
+    .td-empresa-info span { 
+      color: var(--text-muted); 
+      font-size: 0.85rem; 
+      font-family: var(--font-code); 
+    }
+    
+    .status-badge { 
+      padding: 6px 14px; 
+      border-radius: 50px; 
+      font-size: 0.75rem; 
+      font-weight: 800; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px; 
+      text-transform: uppercase; 
+    }
+
+    .badge-pendente { 
+      background: rgba(245, 158, 11, 0.15); 
+      color: #fcd34d; 
+      border: 1px solid var(--warning); 
+    }
+
+    .badge-aguardando { 
+      background: rgba(59, 130, 246, 0.15); 
+      color: #93c5fd; 
+      border: 1px solid var(--primary); 
+    }
+
+    .badge-pago { 
+      background: rgba(16, 185, 129, 0.15); 
+      color: #6ee7b7; 
+      border: 1px solid var(--success); 
+    }
+
+    .badge-denuncia { 
+      background: rgba(239, 68, 68, 0.15); 
+      color: #fca5a5; 
+      border: 1px solid var(--danger); 
+      box-shadow: 0 0 10px var(--danger-glow); 
+    }
+
+    /* =======================================================================
+       NOVO: RADAR DE REPUTAÇÃO ONLINE (MAPA LEAFLET GOOGLE)
+       ======================================================================= */
+    .map-wrapper { 
+      display: flex; 
+      width: 100%; 
+      height: 600px; 
+      border-radius: var(--radius-lg); 
+      overflow: hidden; 
+      border: 1px solid var(--border); 
+      position: relative; 
+      z-index: 1;
+    }
+
+    #reputation-map { 
+      flex: 1; 
+      height: 100%; 
+      background: #000;
+    }
+
+    .reputation-panel { 
+      width: 380px; 
+      background: rgba(15, 23, 42, 0.9); 
+      backdrop-filter: blur(20px); 
+      border-left: 1px solid var(--border); 
+      padding: 25px; 
+      overflow-y: auto; 
+      display: none; 
+      flex-direction: column; 
+    }
+
+    .review-card { 
+      background: rgba(0,0,0,0.5); 
+      padding: 15px; 
+      border-radius: 8px; 
+      border: 1px solid var(--border); 
+      margin-bottom: 10px; 
+      font-style: italic; 
+      color: var(--text-light); 
+      font-size: 0.9rem; 
+      border-left: 3px solid var(--danger);
+    }
+
+    /* =======================================================================
+       LABORATÓRIO FORENSE DE MÍDIA AVULSA
+       ======================================================================= */
+    .lab-container { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 30px; 
+      height: calc(100vh - 250px); 
+    }
+
+    .lab-upload-box { 
+      background: var(--bg-card); 
+      border: 2px dashed var(--border-light); 
+      border-radius: var(--radius-xl); 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      text-align: center; 
+      padding: 40px; 
+      transition: 0.3s; 
+      position: relative; 
+      cursor: pointer; 
+    }
+
+    .lab-upload-box:hover { 
+      border-color: var(--gemini-purple); 
+      background: rgba(192, 132, 252, 0.05); 
+    }
+
+    .lab-upload-box i.icon-big { 
+      font-size: 4rem; 
+      color: var(--text-muted); 
+      margin-bottom: 20px; 
+      transition: 0.3s; 
+    }
+
+    .lab-upload-box:hover i.icon-big { 
+      color: var(--gemini-purple); 
+      transform: scale(1.1); 
+    }
+
+    .lab-preview-area { 
+      width: 100%; 
+      height: 300px; 
+      margin-top: 20px; 
+      border-radius: var(--radius-md); 
+      overflow: hidden; 
+      display: none; 
+      background: #000; 
+      border: 1px solid var(--border); 
+      position: relative;
+    }
+
+    .lab-preview-area img, .lab-preview-area video { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: contain; 
+    }
+
+    .lab-btn-close-preview { 
+      position: absolute; 
+      top: 10px; 
+      right: 10px; 
+      background: rgba(0,0,0,0.7); 
+      color: white; 
+      border: none; 
+      padding: 8px 12px; 
+      border-radius: 5px; 
+      cursor: pointer; 
+    }
+    
+    .lab-result-box { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border); 
+      border-radius: var(--radius-xl); 
+      padding: 40px; 
+      overflow-y: auto; 
+      box-shadow: var(--shadow-md); 
+    }
+
+    .lab-result-content { 
+      font-size: 1.1rem; 
+      line-height: 1.7; 
+      color: var(--text-light); 
+    }
+
+    .lab-loader { 
+      display: none; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      height: 100%; 
+      gap: 20px; 
+    }
+
+    /* =======================================================================
+       CHAT JURÍDICO GLOBAL
+       ======================================================================= */
+    .chat-container { 
+      display: flex; 
+      flex-direction: column; 
+      height: 650px; 
+      border-radius: var(--radius-lg); 
+      overflow: hidden; 
+    }
+
+    .chat-header { 
+      background: rgba(0,0,0,0.4); 
+      padding: 20px 30px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      border-bottom: 1px solid var(--border); 
+    }
+
+    .chat-history { 
+      flex: 1; 
+      padding: 30px; 
+      overflow-y: auto; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 20px; 
+      background: rgba(0,0,0,0.1); 
+    }
+
+    .chat-msg { 
+      width: fit-content; 
+      max-width: 80%; 
+      padding: 15px 25px; 
+      border-radius: 15px; 
+      line-height: 1.6; 
+      font-size: 1.05rem;
+    }
+
+    .msg-user { 
+      align-self: flex-end; 
+      background: rgba(59, 130, 246, 0.2); 
+      border: 1px solid var(--primary); 
+      color: white; 
+      border-bottom-right-radius: 4px; 
+    }
+
+    .msg-ai { 
+      align-self: flex-start; 
+      background: rgba(255,255,255,0.05); 
+      border: 1px solid var(--border); 
+      color: var(--text-light); 
+      border-bottom-left-radius: 4px; 
+    }
+
+    .chat-input-area { 
+      padding: 20px 30px; 
+      background: rgba(0,0,0,0.4); 
+      border-top: 1px solid var(--border); 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px; 
+    }
+
+    .chat-attachment-btn { 
+      background: transparent; 
+      border: none; 
+      color: var(--text-muted); 
+      font-size: 1.8rem; 
+      cursor: pointer; 
+      transition: 0.2s; 
+      padding: 10px; 
+    }
     .chat-attachment-btn:hover { color: var(--gemini-purple); }
-    .attachment-preview-box { display: none; background: var(--bg-body); border: 1px solid var(--border); padding: 10px; border-radius: var(--radius-md); width: 100%; align-items: center; gap: 15px; color: white;}
-    .attachment-preview-box img, .attachment-preview-box video { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border); }
-    .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; }
 
-    /* ESTILOS DO LABORATÓRIO FORENSE */
-    .lab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: calc(100vh - 250px); }
-    .lab-upload-box { background: var(--bg-card); border: 2px dashed var(--border-light); border-radius: var(--radius-xl); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; transition: 0.3s; position: relative; cursor: pointer; }
-    .lab-upload-box:hover { border-color: var(--gemini-purple); background: rgba(192, 132, 252, 0.05); }
-    .lab-upload-box i.icon-big { font-size: 4rem; color: var(--text-muted); margin-bottom: 20px; transition: 0.3s; }
-    .lab-upload-box:hover i.icon-big { color: var(--gemini-purple); transform: scale(1.1); }
-    .lab-preview-area { width: 100%; height: 300px; margin-top: 20px; border-radius: var(--radius-md); overflow: hidden; display: none; background: #000; border: 1px solid var(--border); position: relative;}
-    .lab-preview-area img, .lab-preview-area video { width: 100%; height: 100%; object-fit: contain; }
-    .lab-btn-close-preview { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
-    .lab-result-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 40px; overflow-y: auto; box-shadow: var(--shadow-md); }
-    .lab-result-content { font-size: 1.1rem; line-height: 1.7; color: var(--text-light); }
-    .lab-loader { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 20px; }
+    .attachment-preview-box { 
+      display: none; 
+      background: var(--bg-body); 
+      border: 1px solid var(--border); 
+      padding: 10px; 
+      border-radius: var(--radius-md); 
+      width: 100%; 
+      align-items: center; 
+      gap: 15px; 
+      color: white;
+    }
 
-    /* MODAL GERAL ESTILOS */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
-    .modal-box { background: var(--bg-body); width: 100%; max-width: 1200px; border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border); animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    @keyframes modalIn { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+    .attachment-preview-box img, .attachment-preview-box video { 
+      width: 60px; 
+      height: 60px; 
+      object-fit: cover; 
+      border-radius: 4px; 
+      border: 1px solid var(--border); 
+    }
 
-    .modal-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; }
-    .modal-header h3 { font-size: 1.5rem; font-weight: 900; color: white; display: flex; align-items: center; gap: 15px; }
-    .modal-header .protocol-id { background: var(--border); padding: 8px 15px; border-radius: 8px; font-size: 0.95rem; font-family: var(--font-code); color: var(--text-light); }
-    .btn-close { background: transparent; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .btn-remove-attachment { 
+      background: transparent; 
+      border: none; 
+      color: var(--danger); 
+      cursor: pointer; 
+      font-size: 1.2rem; 
+    }
+
+    /* =======================================================================
+       MODAL GERAL (DOSSIÊ DO PROCESSO)
+       ======================================================================= */
+    .modal-overlay { 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(0, 0, 0, 0.85); 
+      backdrop-filter: blur(10px); 
+      z-index: 20000; 
+      display: none; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 20px; 
+    }
+
+    .modal-box { 
+      background: var(--bg-body); 
+      width: 100%; 
+      max-width: 1200px; 
+      border-radius: var(--radius-xl); 
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9); 
+      display: flex; 
+      flex-direction: column; 
+      max-height: 95vh; 
+      border: 1px solid var(--border-light); 
+      animation: modalIn 0.3s ease; 
+    }
+
+    @keyframes modalIn { 
+      from { transform: translateY(20px); opacity: 0; } 
+      to { transform: translateY(0); opacity: 1; } 
+    }
+
+    .modal-header { 
+      padding: 20px 30px; 
+      border-bottom: 1px solid var(--border); 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      background: rgba(255,255,255,0.02); 
+    }
+
+    .modal-header h3 { 
+      font-size: 1.3rem; 
+      font-weight: 900; 
+      color: white; 
+      display: flex; 
+      align-items: center; 
+      gap: 15px; 
+      margin:0;
+    }
+
+    .modal-header .protocol-id {
+      background: rgba(0,0,0,0.5); 
+      padding: 8px 15px; 
+      border-radius: 8px; 
+      font-family: var(--font-code); 
+      border: 1px solid var(--border);
+      color: var(--text-light);
+    }
+
+    .btn-close { 
+      background: transparent; 
+      border: none; 
+      color: var(--text-muted); 
+      font-size: 1.5rem; 
+      cursor: pointer; 
+      transition: 0.2s; 
+    }
     .btn-close:hover { color: var(--danger); transform: rotate(90deg); }
 
-    .modal-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg-card); padding: 0 20px; overflow-x: auto; }
-    .tab-btn { padding: 22px 30px; border: none; background: none; font-size: 1.05rem; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 4px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
-    .tab-btn:hover { color: white; background: rgba(255,255,255,0.02); }
-    .tab-btn.active { color: white; border-bottom-color: white; background: rgba(255,255,255,0.05); }
-    .tab-btn.tab-ai { color: var(--gemini-purple); font-weight: 900; }
+    .modal-tabs { 
+      display: flex; 
+      border-bottom: 1px solid var(--border); 
+      background: rgba(0,0,0,0.3); 
+      padding: 0 15px; 
+      overflow-x: auto; 
+    }
+
+    .tab-btn { 
+      padding: 18px 20px; 
+      border: none; 
+      background: none; 
+      font-size: 0.95rem; 
+      font-weight: 700; 
+      color: var(--text-muted); 
+      cursor: pointer; 
+      border-bottom: 3px solid transparent; 
+      transition: 0.2s; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      white-space: nowrap; 
+    }
+
+    .tab-btn:hover { color: white; }
+    .tab-btn.active { color: white; border-bottom-color: var(--primary); }
     .tab-btn.tab-ai.active { border-bottom-color: var(--gemini-purple); color: #d8b4fe; background: var(--gemini-bg); }
 
-    .modal-body { padding: 40px; overflow-y: auto; flex: 1; }
-    .tab-content { display: none; animation: fadeInTab 0.4s ease; }
+    .modal-body { 
+      padding: 30px; 
+      overflow-y: auto; 
+      flex: 1; 
+      background: rgba(0,0,0,0.2);
+    }
+
+    .tab-content { 
+      display: none; 
+      animation: fadeInTab 0.3s ease; 
+    }
+
     .tab-content.active { display: block; }
-    
-    .triagem-box { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); padding: 20px; border-radius: var(--radius-md); margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
-    .triagem-box.risk { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
-    .triagem-box i { font-size: 2.5rem; color: var(--primary); }
+    @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* =======================================================================
+       NOVO: TERMINAL DE AUDITORIA FORENSE IA (Dentro do Modal)
+       ======================================================================= */
+    .triagem-box { 
+      background: rgba(59, 130, 246, 0.1); 
+      border: 1px solid var(--primary); 
+      padding: 15px 25px; 
+      border-radius: var(--radius-md); 
+      margin-bottom: 20px; 
+      display: flex; 
+      align-items: center; 
+      gap: 20px; 
+    }
+
+    .triagem-box.risk { 
+      background: rgba(239, 68, 68, 0.1); 
+      border-color: var(--danger); 
+    }
+
+    .triagem-box i { 
+      font-size: 1.8rem; 
+      color: var(--primary); 
+    }
+
     .triagem-box.risk i { color: var(--danger); }
 
-    /* AUDITORIA FORENSE IA (NOVO LAYOUT DE TERMINAL) */
-    .forensics-container { display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 500px;}
-    .forensics-tools { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 15px; border-radius: var(--radius-lg); }
-    .tool-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 15px; border-radius: 8px; text-align: left; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 0.95rem;}
-    .tool-btn:hover { background: var(--gemini-bg); border-color: var(--gemini-purple); color: #d8b4fe; }
-    .forensics-terminal { background: #000; border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; position: relative; border: 1px solid var(--border); box-shadow: inset 0 0 20px rgba(0,0,0,1);}
-    .terminal-output { flex: 1; overflow-y: auto; color: #a3e635; font-family: var(--font-code); font-size: 0.95rem; line-height: 1.6; padding-right: 10px; }
+    .forensics-wrapper { 
+      display: flex; 
+      gap: 20px; 
+      height: 480px; 
+    }
 
-    /* DECISÃO E COMUNICAÇÃO (NOVO LAYOUT PIX) */
-    .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-    .pix-box { background: rgba(16, 185, 129, 0.05); border: 1px solid var(--success); padding: 25px; border-radius: var(--radius-lg); text-align: center; }
-    .pix-payload { background: #000; border: 1px dashed var(--success); color: var(--success); font-family: monospace; padding: 15px; border-radius: 8px; word-break: break-all; font-size: 0.85rem; margin-top: 15px; user-select: all;}
+    .forensics-tools { 
+      width: 320px; 
+      background: rgba(0,0,0,0.4); 
+      border: 1px solid var(--border); 
+      padding: 20px; 
+      border-radius: var(--radius-lg); 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+    }
 
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-    .info-group { background: var(--bg-card); padding: 25px; border-radius: var(--radius-md); border: 1px solid var(--border); }
-    .info-group label { display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px;}
-    .info-group p { font-size: 1.2rem; font-weight: 600; color: white; margin: 0; word-break: break-word; }
+    .forensics-tools h4 { 
+      color: var(--text-muted); 
+      text-transform: uppercase; 
+      font-size: 0.8rem; 
+      letter-spacing: 1px; 
+      margin-bottom: 5px; 
+    }
+
+    .tool-btn { 
+      background: rgba(255,255,255,0.05); 
+      border: 1px solid var(--border); 
+      color: var(--text-light); 
+      padding: 15px; 
+      border-radius: 8px; 
+      text-align: left; 
+      cursor: pointer; 
+      transition: 0.2s; 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+      font-weight: 600; 
+      font-size: 0.95rem;
+    }
+
+    .tool-btn:hover { 
+      background: var(--gemini-bg); 
+      border-color: var(--gemini-purple); 
+      color: white; 
+      transform: translateX(5px); 
+    }
     
-    .docs-list { background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-top: 30px; box-shadow: var(--shadow-sm); }
-    .docs-list p { white-space: pre-line; font-size: 1.1rem; line-height: 1.7; color: var(--text-light); margin-top: 15px; }
+    /* O Terminal Preto com Letras Verdes */
+    .forensics-terminal { 
+      flex: 1; 
+      background: #050505; 
+      border-radius: var(--radius-lg); 
+      padding: 20px; 
+      display: flex; 
+      flex-direction: column; 
+      border: 1px solid var(--border); 
+      position: relative; 
+      box-shadow: inset 0 0 20px rgba(0,0,0,1);
+    }
+
+    .terminal-header { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      background: #111; 
+      border-bottom: 1px solid #333; 
+      padding: 8px 15px; 
+      font-family: var(--font-code); 
+      color: #666; 
+      font-size: 0.75rem; 
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0; 
+      display:flex; 
+      justify-content: space-between;
+    }
+
+    .terminal-output { 
+      flex: 1; 
+      overflow-y: auto; 
+      color: #a3e635; /* Verde Hacker */
+      font-family: var(--font-code); 
+      font-size: 0.95rem; 
+      line-height: 1.6; 
+      padding-top: 25px; 
+      padding-right: 10px; 
+    }
+
+    .terminal-output .msg-user { color: #fff; margin-bottom: 10px; }
+    .terminal-output .msg-ai { margin-bottom: 20px; border-left: 2px solid #a3e635; padding-left: 10px; }
+
+    /* =======================================================================
+       DADOS DA EMPRESA E FOTOS
+       ======================================================================= */
+    .info-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 20px; 
+    }
+
+    .info-group { 
+      background: rgba(0,0,0,0.3); 
+      padding: 20px; 
+      border-radius: var(--radius-md); 
+      border: 1px solid var(--border); 
+    }
+
+    .info-group label { 
+      display: block; 
+      font-size: 0.75rem; 
+      color: var(--text-muted); 
+      font-weight: 800; 
+      text-transform: uppercase; 
+      margin-bottom: 5px; 
+    }
+
+    .info-group p { 
+      font-size: 1.2rem; 
+      font-weight: 600; 
+      color: white; 
+      margin: 0; 
+      word-break: break-word; 
+    }
     
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; margin-top: 25px; }
-    .gallery-item { position: relative; aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--border); cursor: pointer; background: var(--bg-card); transition: 0.3s;}
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;}
-    .gallery-item:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--shadow-md);}
-    .gallery-item:hover img { transform: scale(1.1); filter: brightness(0.6); }
-    .gallery-item .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; opacity: 0; transition: 0.3s; }
+    .docs-list { 
+      background: rgba(0,0,0,0.3); 
+      padding: 20px; 
+      border-radius: var(--radius-md); 
+      border: 1px solid var(--border); 
+      margin-top: 20px; 
+    }
+
+    .docs-list p { 
+      font-size: 1rem; 
+      line-height: 1.7; 
+      color: var(--text-light); 
+      margin-top: 10px; 
+    }
+    
+    .gallery-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+      gap: 20px; 
+    }
+
+    .gallery-item { 
+      position: relative; 
+      aspect-ratio: 1; 
+      border-radius: var(--radius-md); 
+      overflow: hidden; 
+      border: 1px solid var(--border); 
+      cursor: pointer; 
+      background: #000; 
+    }
+
+    .gallery-item img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      transition: 0.4s ease; 
+    }
+
+    .gallery-item:hover img { 
+      transform: scale(1.1); 
+      filter: brightness(0.6); 
+    }
+
+    .gallery-item .overlay { 
+      position: absolute; 
+      inset: 0; 
+      background: rgba(0,0,0,0.5); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      color: white; 
+      font-size: 3rem; 
+      opacity: 0; 
+      transition: 0.3s; 
+    }
+
     .gallery-item:hover .overlay { opacity: 1; }
-    .badge-assinado { position: absolute; top: 0; left: 0; width: 100%; background: var(--success); color: white; font-size: 0.8rem; font-weight: 900; text-align: center; padding: 8px 0; z-index: 10; text-transform: uppercase; letter-spacing: 1px;}
-
-    .modal-footer { padding: 30px 40px; border-top: 1px solid var(--border); background: var(--bg-sidebar); border-radius: 0 0 var(--radius-2xl) var(--radius-2xl); display: flex; justify-content: flex-end; gap: 20px; }
-
-    #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(10px);}
-    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--radius-lg); border: 2px solid #333; box-shadow: 0 0 60px rgba(0,0,0,0.8);}
-    #lightbox-title { color: white; margin-top: 25px; font-size: 1.5rem; font-weight: 800; letter-spacing: 0.5px; }
-    .btn-close-lightbox { position: absolute; top: 30px; right: 50px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 3rem; cursor: pointer; width: 70px; height: 70px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
-    .btn-close-lightbox:hover { background: var(--danger); border-color: var(--danger); transform: rotate(90deg); }
-
-    #toast-container { position: fixed; bottom: 35px; right: 35px; z-index: 99999; display: flex; flex-direction: column; gap: 15px; pointer-events: none; }
-    .toast { background: var(--bg-card); border-left: 6px solid var(--primary); padding: 25px 30px; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 20px; min-width: 400px; animation: toastSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; border: 1px solid var(--border); color: white; box-shadow: var(--shadow-modal); pointer-events: auto;}
-    .toast.success { border-color: var(--success); } .toast.success i { color: var(--success); }
-    .toast.error { border-color: var(--danger); } .toast.error i { color: var(--danger); }
-    .toast.warning { border-color: var(--warning); } .toast.warning i { color: var(--warning); }
     
-    @keyframes toastSlideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .badge-assinado { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      background: var(--success); 
+      color: white; 
+      font-size: 0.8rem; 
+      font-weight: 900; 
+      text-align: center; 
+      padding: 8px 0; 
+      z-index: 10; 
+      text-transform: uppercase; 
+      letter-spacing: 1px;
+    }
+
+    /* =======================================================================
+       NOVA ABA DECISÃO E COMUNICAÇÃO (PIX DINÂMICO)
+       ======================================================================= */
+    .decision-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1.2fr; 
+      gap: 25px; 
+    }
+
+    .decision-box { 
+      background: rgba(0,0,0,0.3); 
+      padding: 25px; 
+      border-radius: var(--radius-lg); 
+      border: 1px solid var(--border); 
+    }
+
+    .decision-box h4 { 
+      color: white; 
+      margin:0 0 20px 0; 
+      font-size: 1.1rem; 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+    }
+
+    /* Caixa do QRCode Simulada */
+    .pix-container { 
+      background: rgba(16, 185, 129, 0.05); 
+      border: 1px solid var(--success); 
+      padding: 20px; 
+      border-radius: var(--radius-md); 
+      text-align: center; 
+      margin-top: 20px; 
+      display: none; 
+      animation: fadeIn 0.4s ease;
+    }
+
+    .pix-payload { 
+      background: #000; 
+      border: 1px dashed var(--success); 
+      color: var(--success); 
+      font-family: var(--font-code); 
+      padding: 12px; 
+      border-radius: 8px; 
+      word-break: break-all; 
+      font-size: 0.8rem; 
+      margin-top: 10px; 
+      user-select: all;
+    }
+
+    /* Footer do Modal */
+    .modal-footer { 
+      background: rgba(0,0,0,0.5); 
+      padding: 25px 35px; 
+      border-top: 1px solid var(--border); 
+      display: flex; 
+      justify-content: space-between; 
+    }
+
+    /* =======================================================================
+       TOASTS E LIGHTBOX
+       ======================================================================= */
+    #toast-container { 
+      position: fixed; 
+      bottom: 30px; 
+      right: 30px; 
+      z-index: 99999; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 15px; 
+    }
+
+    .toast { 
+      background: rgba(15, 23, 42, 0.95); 
+      backdrop-filter: blur(10px); 
+      border-left: 4px solid var(--primary); 
+      padding: 15px 20px; 
+      border-radius: var(--radius-md); 
+      display: flex; 
+      align-items: center; 
+      gap: 15px; 
+      border: 1px solid var(--border); 
+      color: white; 
+      min-width: 300px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+    }
+
+    .toast.success { border-left-color: var(--success); } 
+    .toast.error { border-left-color: var(--danger); } 
+    .toast.warning { border-left-color: var(--warning); } 
+
     @keyframes toastFadeOut { to { opacity: 0; transform: translateX(120%); } }
 
-    #error-log-shield { position: fixed; top: 0; left: 0; width: 100%; padding: 25px; background: var(--danger); color: white; font-weight: 900; text-align: center; z-index: 999999; display: none; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); }
-
+    #error-log-shield { 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      padding: 25px; 
+      background: var(--danger); 
+      color: white; 
+      font-weight: 900; 
+      text-align: center; 
+      z-index: 999999; 
+      display: none; 
+      font-size: 1.3rem; 
+      text-transform: uppercase; 
+      letter-spacing: 1px; 
+      box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); 
+    }
   </style>
 </head>
 <body>
@@ -300,12 +1520,12 @@
   </script>
 
   <div id="lock-screen">
-    <div class="lock-box">
+    <div class="lock-box glass-panel">
       <i class="fas fa-fingerprint"></i>
-      <h2>Auditoria Central</h2>
-      <p>Acesso restrito a Fiscais COVISA</p>
+      <h2>Acesso Forense</h2>
+      <p>Área restrita a Diretores COVISA</p>
       <input type="password" id="pin-input" class="pin-input" placeholder="••••" maxlength="4" autocomplete="off" onkeypress="if(event.key === 'Enter') checkPin()">
-      <button class="btn-unlock" onclick="checkPin()"><i class="fas fa-unlock-alt"></i> Iniciar Sessão Segura</button>
+      <button class="btn-unlock" onclick="checkPin()"><i class="fas fa-unlock-alt"></i> Autenticar</button>
     </div>
   </div>
 
@@ -315,18 +1535,20 @@
       <div class="sidebar-header">
         <i class="fas fa-shield-alt logo-icon"></i>
         <div>
-          <h2>COVISA<br><span>Admin Pro</span></h2>
+          <h2>COVISA<br><span>Admin Pro V8</span></h2>
         </div>
       </div>
       
       <nav class="nav-menu">
         <a class="nav-item active" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Geral</a>
-        <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Banco de Dados</a>
+        <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Base de Dados</a>
         
-        <a class="nav-item" onclick="switchView('view-reputacao', this)"><i class="fab fa-google" style="color: #60a5fa;"></i> Radar Google / Mapa</a>
+        <a class="nav-item" onclick="switchView('view-reputacao', this)"><i class="fab fa-google" style="color: #60a5fa;"></i> Radar Web / Mapa</a>
         
-        <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot"></i> IA Jurídica</a>
-        <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
+        <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot" style="color:var(--gemini-purple);"></i> Assistente IA</a>
+        
+        <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório Forense</a>
+        
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
       </nav>
       
@@ -341,115 +1563,89 @@
       <header class="topbar">
         <div class="search-bar">
           <i class="fas fa-search"></i>
-          <input type="text" id="searchInput" placeholder="Investigar CNPJ, Razão Social ou Ramo de Atividade..." onkeyup="filtrarTabela()">
+          <input type="text" id="searchInput" placeholder="Investigar CNPJ, Razão Social..." onkeyup="filtrarTabela()">
         </div>
         
         <div class="user-profile">
           <div style="display: flex; gap: 10px; align-items:center;">
             <span class="pulse-online"></span>
-            <span style="color:var(--success); font-weight:900; font-size:0.9rem; letter-spacing:1px;">SISTEMA ONLINE</span>
+            <span style="color:var(--success); font-weight:900; font-size:0.85rem; letter-spacing:1px;">SISTEMA SEGURO</span>
           </div>
           <div class="user-info">
-            <h4>Fiscal Chefe</h4>
-            <span>Nível: Administrador</span>
+            <h4>Diretoria Forense</h4>
+            <span>Nível: Máximo</span>
           </div>
           <div class="avatar"><i class="fas fa-user-shield"></i></div>
-          <button class="btn-icon" onclick="location.reload()" title="Deslogar" style="margin-left: 20px; color: var(--danger); background: transparent; border: 1px solid var(--danger);"><i class="fas fa-power-off"></i></button>
+          <button class="btn-icon" onclick="location.reload()" style="margin-left: 10px; color: var(--danger); border: 1px solid var(--danger); background: transparent;"><i class="fas fa-power-off"></i></button>
         </div>
       </header>
 
       <div class="view-container">
         
         <div id="view-dashboard" class="page-view active">
-          <div class="page-title">
-            <div>
-              <h1>Centro Operacional</h1>
-              <p>Monitoramento em tempo real do município e alertas antifraude.</p>
-            </div>
-            <button class="btn btn-success" onclick="exportarCSV()"><i class="fas fa-file-csv" style="font-size: 1.3rem;"></i> Exportar Relatório CSV</button>
-          </div>
           
-          <div class="stats-grid">
-            <div class="stat-card c-warning">
-              <div class="stat-icon"><i class="fas fa-inbox"></i></div>
-              <div class="stat-info"><h3>Pendentes (Análise)</h3><p id="count-pendente">0</p></div>
+          <div class="sentiment-box glass-panel">
+            <i class="fas fa-brain sentiment-icon"></i>
+            <div class="sentiment-content">
+                <h4>Briefing da Inteligência Artificial <span class="badge-trending"><i class="fas fa-fire"></i> Ouvidoria Web Alta</span></h4>
+                <p>O robô detectou <b>várias menções</b> negativas sobre higiene em restaurantes no Google Maps e Twitter nas últimas 24h. Fila de processos normais. Foque na aba de Radar Web.</p>
             </div>
-            <div class="stat-card c-primary">
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card glass-panel c-warning">
+              <div class="stat-icon"><i class="fas fa-inbox"></i></div>
+              <div class="stat-info"><h3>Pendentes</h3><p id="count-pendente">0</p></div>
+            </div>
+            <div class="stat-card glass-panel c-primary">
               <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
               <div class="stat-info"><h3>Aguardando Pix</h3><p id="count-aguardando">0</p></div>
             </div>
-            <div class="stat-card c-success">
+            <div class="stat-card glass-panel c-success">
               <div class="stat-icon"><i class="fas fa-check-double"></i></div>
-              <div class="stat-info"><h3>Licenças Aprovadas</h3><p id="count-pago">0</p></div>
+              <div class="stat-info"><h3>Aprovadas</h3><p id="count-pago">0</p></div>
             </div>
-            <div class="stat-card c-gemini">
+            <div class="stat-card glass-panel c-gemini">
               <div class="stat-icon"><i class="fas fa-server"></i></div>
-              <div class="stat-info"><h3>Total no Servidor</h3><p id="count-total">0</p></div>
+              <div class="stat-info"><h3>Base Total</h3><p id="count-total">0</p></div>
             </div>
           </div>
           
           <div class="charts-grid">
-            <div class="chart-card">
-              <div class="chart-header">Volume de Entrada Semanal</div>
+            <div class="chart-card glass-panel">
+              <div class="chart-header">Volume de Entrada Diária</div>
               <div class="chart-container"><canvas id="barChart"></canvas></div>
             </div>
-            <div class="chart-card">
-              <div class="chart-header">Status Geral</div>
+            <div class="chart-card glass-panel">
+              <div class="chart-header">Situação Geral</div>
               <div class="chart-container"><canvas id="doughnutChart"></canvas></div>
             </div>
           </div>
-          
-          <section class="data-section">
-            <div class="data-header">
-              <h2><i class="fas fa-bolt" style="color: var(--warning);"></i> Fila Expressa (Últimas Entradas)</h2>
-              <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 0.95rem;" onclick="document.querySelectorAll('.nav-item')[1].click()">Ir para Base Completa</button>
-            </div>
-            <div class="table-wrapper" style="min-height: auto;">
-              <table id="tabela-dashboard">
-                <thead>
-                  <tr>
-                    <th width="35%">Identificação da Empresa</th>
-                    <th width="15%">Classificação</th>
-                    <th width="15%">Data Registro</th>
-                    <th width="15%">Situação</th>
-                    <th width="20%">Ação de Auditoria</th>
-                  </tr>
-                </thead>
-                <tbody id="tabela-corpo-dash"></tbody>
-              </table>
-            </div>
-          </section>
         </div>
 
         <div id="view-processos" class="page-view">
           <div class="page-title">
             <div>
-              <h1>Banco de Dados Mestre</h1>
-              <p>Acesso total irrestrito a todos os processos já registrados na plataforma governamental.</p>
+              <h1>Base de Dados Mestra</h1>
+              <p>Gerenciamento total sincronizado via Firebase em tempo real.</p>
             </div>
-            <button class="btn btn-primary" onclick="exportarCSV()"><i class="fas fa-download"></i> Fazer Backup Seguro</button>
+            <button class="btn btn-primary glass-panel" onclick="exportarCSV()"><i class="fas fa-download"></i> Baixar CSV Seguro</button>
           </div>
           
-          <section class="data-section">
-            <div class="data-header" style="flex-wrap: wrap;">
-              <h2><i class="fas fa-table" style="color: var(--primary);"></i> Tabela de Registros Oficiais</h2>
-              <span style="font-size: 0.95rem; background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 10px 20px; border-radius: 50px; font-weight: 800; border: 1px solid var(--success);"><i class="fas fa-sync fa-spin"></i> Conexão Firebase Sincronizada</span>
-            </div>
-            
+          <section class="data-section glass-panel">
             <div class="filters-row">
-              <select id="filtro-status" class="form-input" style="width: 250px; background: var(--bg-card);" onchange="aplicarFiltros()">
+              <select id="filtro-status" class="form-input" style="width: 250px;" onchange="aplicarFiltros()">
                 <option value="todos">Todos os Status</option>
                 <option value="pendente">🟠 Análise Pendente</option>
-                <option value="aguardando">🔵 Aguardando Pagamento</option>
+                <option value="aguardando">🔵 Aguardando Pix</option>
                 <option value="pago">🟢 Licença Aprovada</option>
-                <option value="denuncia">🚨 Apenas Denúncias</option>
+                <option value="denuncia">🚨 Denúncias</option>
               </select>
-              <select id="filtro-ramo" class="form-input" style="width: 250px; background: var(--bg-card);" onchange="aplicarFiltros()">
+              <select id="filtro-ramo" class="form-input" style="width: 250px;" onchange="aplicarFiltros()">
                 <option value="todos">Todos os Ramos</option>
                 <option value="Alimentos">Alimentos (Crítico)</option>
                 <option value="Saúde">Saúde (Crítico)</option>
                 <option value="Beleza">Beleza & Estética</option>
-                <option value="Outros">Outros / Indústria</option>
               </select>
             </div>
 
@@ -458,10 +1654,10 @@
                 <thead>
                   <tr>
                     <th width="30%">Identificação da Empresa</th>
-                    <th width="15%">Ramo / Risco</th>
+                    <th width="15%">Ramo</th>
                     <th width="15%">Data Entrada</th>
                     <th width="15%">Status Atual</th>
-                    <th width="10%">Taxa Base</th>
+                    <th width="10%">Taxa</th>
                     <th width="15%">Acionar IA</th>
                   </tr>
                 </thead>
@@ -474,29 +1670,29 @@
         <div id="view-reputacao" class="page-view">
           <div class="page-title">
             <div>
-              <h1><i class="fab fa-google text-primary"></i> Radar de Reputação (Google & Web)</h1>
-              <p>A IA analisa os comentários reais do Google e cruza com a sua base do Firebase. Pinos em vermelho indicam reclamações graves de higiene.</p>
+              <h1><i class="fab fa-google text-primary"></i> Radar de Reputação Web</h1>
+              <p>A IA analisa os comentários abertos no Google/Web em tempo real. Pinos vermelhos indicam avaliações críticas sobre higiene.</p>
             </div>
           </div>
           
-          <div class="map-wrapper">
+          <div class="map-wrapper glass-panel">
              <div id="reputation-map"></div>
+             
              <div class="reputation-panel" id="rep-panel">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                    <h3 id="rep-nome" style="color:white; margin:0; font-size:1.3rem;">Nome</h3>
+                    <h3 id="rep-nome" style="color:white; margin:0; font-size:1.2rem;">Nome do Local</h3>
                     <button class="btn-icon" style="width: 30px; height: 30px; font-size:1rem;" onclick="document.getElementById('rep-panel').style.display='none'"><i class="fas fa-times"></i></button>
                 </div>
-                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:-15px; margin-bottom: 20px;" id="rep-cnpj">CNPJ</p>
                 
-                <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-                    <h2 id="rep-nota" style="font-size: 2.5rem; margin:0; color: var(--warning);">0.0</h2>
-                    <div id="rep-estrelas" style="color: var(--warning); margin-bottom: 5px;"><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Avaliação Web (IA Simulator)</span>
+                <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                    <h2 id="rep-nota" style="font-size: 2.5rem; margin:0; font-weight: 900;">0.0</h2>
+                    <div id="rep-estrelas" style="margin-bottom: 5px; font-size: 1.2rem;"></div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fab fa-google"></i> Avaliação do Público</span>
                 </div>
 
-                <h4 style="color: white; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px;"><i class="fas fa-comment-dots"></i> Piores Comentários Detectados</h4>
-                <div id="rep-comentarios">
-                    </div>
+                <h4 style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;"><i class="fas fa-comment-dots"></i> Varredura de Comentários</h4>
+                
+                <div id="rep-comentarios" style="display: flex; flex-direction: column; gap: 10px;"></div>
              </div>
           </div>
         </div>
@@ -505,23 +1701,23 @@
           <div class="page-title">
             <div>
               <h1><i class="fas fa-microscope" style="color: var(--gemini-purple);"></i> Laboratório Forense de Mídia</h1>
-              <p>Envie fotos ou vídeos isolados para a IA caçar infrações, analisar Photoshop e mapear riscos (Ideias 9, 10 e 11).</p>
+              <p>Envie fotos ou vídeos avulsos do seu computador para a IA caçar infrações e analisar manipulação (Photoshop).</p>
             </div>
           </div>
           
           <div class="lab-container">
-            <div class="lab-upload-box" id="lab-drop-area" onclick="document.getElementById('lab-file-input').click()">
+            <div class="lab-upload-box glass-panel" id="lab-drop-area" onclick="document.getElementById('lab-file-input').click()">
               <i class="fas fa-cloud-upload-alt icon-big"></i>
               <h3 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">Solte a Foto ou Vídeo Aqui</h3>
               <p style="color: var(--text-muted); margin-bottom: 20px;">Ou clique para procurar no seu computador (Máx 15MB)</p>
-              <button class="btn btn-gemini"><i class="fas fa-search"></i> Selecionar Arquivo</button>
+              <button class="btn btn-gemini"><i class="fas fa-search"></i> Selecionar Arquivo Local</button>
               
               <input type="file" id="lab-file-input" style="display: none;" accept="image/*,video/*">
               
               <div class="lab-preview-area" id="lab-preview"></div>
             </div>
 
-            <div class="lab-result-box">
+            <div class="lab-result-box glass-panel">
               <div id="lab-idle-state" style="text-align: center; color: var(--text-muted); padding-top: 50px;">
                 <i class="fas fa-robot" style="font-size: 4rem; opacity: 0.3; margin-bottom: 20px;"></i>
                 <h2>Aguardando Arquivo</h2>
@@ -530,12 +1726,11 @@
 
               <div id="lab-loading-state" class="lab-loader">
                 <i class="fas fa-circle-notch fa-spin" style="font-size: 4rem; color: var(--gemini-purple);"></i>
-                <h3 style="color: white;">Dissecando frames e metadados...</h3>
-                <p style="color: var(--text-muted);">A IA está a processar a visão computacional.</p>
+                <h3 style="color: white; margin-top: 15px;">Dissecando frames e pixels...</h3>
               </div>
 
               <div id="lab-final-result" style="display: none;">
-                <h3 style="color: var(--gemini-purple); font-size: 1.5rem; margin-bottom: 20px; font-weight: 900;"><i class="fas fa-file-contract"></i> Laudo Técnico Multimídia</h3>
+                <h3 style="color: var(--gemini-purple); font-size: 1.3rem; margin-bottom: 20px; font-weight: 900;"><i class="fas fa-file-contract"></i> Laudo Técnico Multimídia</h3>
                 <div id="lab-result-content" class="lab-result-content"></div>
               </div>
             </div>
@@ -545,43 +1740,37 @@
         <div id="view-chat" class="page-view">
           <div class="page-title">
             <div>
-              <h1>Consultor Jurídico e Auditor IA</h1>
-              <p>Peça para a IA analisar um protocolo da lista ou faça consultas sobre o Código Sanitário Municipal.</p>
+              <h1>Assistente Geral IA</h1>
+              <p>Tire dúvidas sobre Leis Municipais ou faça perguntas livres para o modelo.</p>
             </div>
           </div>
 
-          <div class="chat-container">
+          <div class="chat-container glass-panel">
             <div class="chat-header">
-              <div class="avatar" style="width: 55px; height: 55px; font-size: 2rem;"><i class="fas fa-robot"></i></div>
-              <div style="flex: 1;">
-                <h3 style="color: white; margin: 0; font-size: 1.3rem;">Gemini Legal Assistant</h3>
-                <span id="chat-header-status" style="color: var(--success); font-size: 0.9rem; font-weight: bold;">Rede Neural Conectada</span>
-              </div>
-              <div style="text-align: right;">
-                  <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 8px;">Analisar Processo Específico:</label>
-                  <select id="chat-process-selector" class="form-input" style="width: 350px; margin: 0; font-size: 1rem; padding: 15px 20px; border-color: var(--gemini-purple);">
-                    <option value="">Geral (Falar apenas sobre Leis)</option>
-                  </select>
+              <div class="avatar" style="width: 50px; height: 50px; font-size: 1.5rem;"><i class="fas fa-robot"></i></div>
+              <div style="flex: 1; margin-left: 15px;">
+                <h3 style="color: white; margin: 0; font-size: 1.2rem;">Chatbot Jurídico</h3>
+                <span id="chat-header-status" style="color: var(--success); font-size: 0.8rem; font-weight: bold;">Rede Neural Online</span>
               </div>
             </div>
             
             <div class="chat-history" id="chat-historico">
               <div class="chat-msg msg-ai">
-                <strong style="color:var(--gemini-purple); font-size: 1.2rem;"><i class="fas fa-robot"></i> Sistema Auditor AI:</strong><br><br>
-                Olá! Como posso te ajudar hoje? Você pode me perguntar qualquer coisa, enviar fotos/vídeos ou selecionar um processo acima para que eu possa analisá-lo com você.
+                <strong style="color:var(--gemini-purple); font-size: 1rem;"><i class="fas fa-robot"></i> Sistema Auditor AI:</strong><br><br>
+                Olá! Como posso te ajudar hoje? Tire dúvidas da lei ou anexe um arquivo no clipe abaixo.
               </div>
             </div>
 
             <div class="chat-input-area">
               <div id="chat-attachment-preview" class="attachment-preview-box"></div>
               <div class="chat-input-row">
-                <button class="chat-attachment-btn" onclick="document.getElementById('chat-file-input').click()" title="Anexar foto ou vídeo curto para análise local">
+                <button class="chat-attachment-btn" onclick="document.getElementById('chat-file-input').click()" title="Anexar foto ou vídeo">
                   <i class="fas fa-paperclip"></i>
                 </button>
                 <input type="file" id="chat-file-input" style="display: none;" accept="image/*,video/*">
 
                 <input type="text" id="chat-input-text" placeholder="Escreva a sua mensagem aqui..." onkeypress="if(event.key === 'Enter') enviarChat()">
-                <button class="btn btn-gemini" onclick="enviarChat()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px;"><i class="fas fa-paper-plane"></i> Enviar</button>
+                <button class="btn btn-gemini" onclick="enviarChat()" style="padding: 15px 30px; border-radius: 50px;"><i class="fas fa-paper-plane"></i></button>
               </div>
             </div>
           </div>
@@ -590,21 +1779,21 @@
         <div id="view-logs" class="page-view">
           <div class="page-title">
             <div>
-              <h1>Registro Central de Auditoria (Logs)</h1>
-              <p>Trilha de segurança imutável. Registra todas as ações operacionais e sistêmicas no painel.</p>
+              <h1>Trilha de Auditoria (Logs)</h1>
+              <p>Registro imutável de todas as ações operacionais no painel.</p>
             </div>
-            <button class="btn btn-secondary" onclick="window.print()"><i class="fas fa-print"></i> Imprimir Relatório Oficial</button>
+            <button class="btn btn-secondary glass-panel" onclick="window.print()"><i class="fas fa-print"></i> Imprimir Logs</button>
           </div>
           
-          <section class="data-section">
+          <section class="data-section glass-panel">
             <div class="table-wrapper" style="min-height: 500px;">
               <table>
                 <thead>
                   <tr>
-                    <th width="15%">Data e Hora Local</th>
-                    <th width="20%">Usuário Autenticado</th>
-                    <th width="20%">Ação Sistêmica Executada</th>
-                    <th width="45%">Registro de Detalhes da Transação</th>
+                    <th width="15%">Data e Hora</th>
+                    <th width="20%">Usuário</th>
+                    <th width="20%">Ação Sistêmica</th>
+                    <th width="45%">Detalhes da Transação</th>
                   </tr>
                 </thead>
                 <tbody id="tabela-logs-corpo"></tbody>
@@ -618,120 +1807,119 @@
   </div>
 
   <div class="modal-overlay" id="modalDetalhes">
-    <div class="modal-box">
+    <div class="modal-box glass-panel">
+      
       <div class="modal-header">
         <h3><i class="fas fa-folder-open" style="color: var(--primary);"></i> Dossiê de Investigação Digital</h3>
-        <div class="protocol-id">Protocolo ID: <span id="modal-id-text" style="color: white; font-weight: bold;">...</span></div>
+        <div style="background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 8px; font-family: var(--font-code); border: 1px solid var(--border);">ID: <span id="modal-id-text" style="color: white; font-weight: bold;">...</span></div>
         <button class="btn-close" onclick="fecharModal()"><i class="fas fa-times"></i></button>
       </div>
       
       <div class="modal-tabs">
         <button class="tab-btn tab-ai active" onclick="abrirAba('tab-radar', this)"><i class="fas fa-brain"></i> Auditoria Forense IA</button>
-        <button class="tab-btn" onclick="abrirAba('tab-detalhes', this)"><i class="fas fa-building"></i> Dados Empresariais</button>
-        <button class="tab-btn" onclick="abrirAba('tab-fotos', this)"><i class="fas fa-images"></i> Provas Documentais</button>
+        <button class="tab-btn" onclick="abrirAba('tab-detalhes', this)"><i class="fas fa-building"></i> Dados Inseridos</button>
+        <button class="tab-btn" onclick="abrirAba('tab-fotos', this)"><i class="fas fa-images"></i> Provas Visuais</button>
         <button class="tab-btn" onclick="abrirAba('tab-financeiro', this)"><i class="fas fa-file-invoice-dollar"></i> Decisão & Comunicação</button>
       </div>
 
-      <div class="modal-body" style="background: var(--bg-body);">
+      <div class="modal-body" style="background: rgba(0,0,0,0.2);">
         
         <div id="tab-radar" class="tab-content active">
           
-          <div id="triagem-cnpj-box" class="triagem-box">
+          <div id="triagem-cnpj-box" class="triagem-box" style="margin-bottom: 20px;">
              <i class="fas fa-circle-notch fa-spin"></i>
              <div>
-               <h4 style="margin: 0; color: white; font-size: 1.1rem;">Buscando CNPJ na Receita Federal...</h4>
-               <p style="margin: 4px 0 0 0; color: var(--text-muted);">Realizando triagem automática contra fraudes de identidade.</p>
+               <h4 style="margin: 0; color: white;">Consultando API Receita Federal...</h4>
              </div>
           </div>
 
-          <div class="forensics-container">
+          <div class="forensics-wrapper">
             <div class="forensics-tools">
-                <h4 style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px;">Ferramentas de Perícia</h4>
-                <button class="tool-btn" onclick="executarVarreduraForenseIA()"><i class="fas fa-search-plus" style="color: var(--primary);"></i> Iniciar Varredura Visual (Firebase)</button>
-                <button class="tool-btn" onclick="document.getElementById('modal-chat-input-text').value='Resuma as infrações deste local.'; enviarChatModal();"><i class="fas fa-list" style="color: var(--warning);"></i> Resumir Infrações e Riscos</button>
-                <button class="tool-btn" onclick="document.getElementById('modal-chat-input-text').value='Crie um Termo de Adequação com base nos erros.'; enviarChatModal();"><i class="fas fa-file-signature" style="color: var(--success);"></i> Gerar Termo de Adequação</button>
+                <h4><i class="fas fa-toolbox"></i> Ferramentas IA</h4>
+                <button class="tool-btn" onclick="executarVarreduraForenseIA()"><i class="fas fa-search-plus" style="color: var(--primary);"></i> Iniciar Varredura de Imagens do Processo</button>
+                <button class="tool-btn" onclick="document.getElementById('modal-chat-input-text').value='Resuma as infrações deste local de forma pontual.'; enviarChatModal();"><i class="fas fa-list" style="color: var(--warning);"></i> Resumir Infrações</button>
+                <button class="tool-btn" onclick="document.getElementById('modal-chat-input-text').value='Crie um Termo de Interdição ou Adequação com base nos erros.'; enviarChatModal();"><i class="fas fa-file-signature" style="color: var(--success);"></i> Gerar Termo Legal</button>
                 
                 <div style="margin-top: auto;">
-                   <input type="text" id="modal-chat-input-text" class="form-input" style="font-size: 0.85rem; padding: 10px 15px; margin-bottom: 10px;" placeholder="Comando livre..." onkeypress="if(event.key === 'Enter') enviarChatModal()">
+                   <label style="color:var(--text-muted); font-size:0.75rem; margin-bottom:5px; display:block;">Comando Livre para a IA</label>
+                   <input type="text" id="modal-chat-input-text" class="form-input" style="font-size: 0.85rem; padding: 10px 15px; margin-bottom: 10px;" placeholder="Ex: Há ratos nas fotos?" onkeypress="if(event.key === 'Enter') enviarChatModal()">
                    <button class="btn btn-gemini" style="width: 100%; font-size: 0.9rem; padding: 10px;" onclick="enviarChatModal()">Executar Comando</button>
                 </div>
             </div>
+            
             <div class="forensics-terminal">
-                <div style="position: absolute; top: 10px; right: 15px; font-family: monospace; color: var(--text-muted); font-size: 0.8rem;">TERMINAL GEMINI 2.5</div>
+                <div class="terminal-header">
+                    <span>COVISA_TERMINAL_V8 // GEMINI_CORE</span>
+                    <span id="term-status" style="color: var(--success);">ONLINE</span>
+                </div>
                 <div class="terminal-output" id="modal-chat-historico">
-                    > Conexão estabelecida com a base de dados do dossiê.<br>
-                    > Módulo de Visão Computacional pronto.<br>
-                    > Aguardando comando do perito à esquerda...<br>
+                    <span style="color: var(--gemini-purple);">> Conexão estabelecida com a base de dados do dossiê.</span><br>
+                    <span style="color: var(--gemini-purple);">> Módulo de Visão Computacional pronto.</span><br>
+                    <span style="color: var(--text-muted);">> Aguardando comando do perito à esquerda...</span><br><br>
                 </div>
             </div>
           </div>
-
         </div>
 
         <div id="tab-detalhes" class="tab-content">
           <div class="info-grid">
-            <div class="info-group"><label>Razão Social / Nome de Registro</label><p id="modal-nome">...</p></div>
-            <div class="info-group"><label>Documento Oficial (CNPJ / CPF)</label><p id="modal-cnpj">...</p></div>
-            <div class="info-group"><label>Data da Entrada no Sistema</label><p id="modal-data">...</p></div>
-            <div class="info-group"><label>Ramo de Atividade Fiscal</label><p id="modal-ramo">...</p></div>
+            <div class="info-group"><label>Nome de Registro</label><p id="modal-nome">...</p></div>
+            <div class="info-group"><label>CNPJ / CPF</label><p id="modal-cnpj">...</p></div>
+            <div class="info-group"><label>Data da Entrada</label><p id="modal-data">...</p></div>
+            <div class="info-group"><label>Ramo de Atividade</label><p id="modal-ramo">...</p></div>
           </div>
-          <div class="docs-list"><label>Documentação Declarada no Formulário (Checklist Oficial)</label><p id="modal-docs">...</p></div>
+          <div class="info-group" style="margin-top: 20px;"><label>Checklist Declarado</label><p id="modal-docs" style="font-size:1rem; font-weight:normal;">...</p></div>
         </div>
 
         <div id="tab-fotos" class="tab-content">
-          <div style="background: rgba(14, 165, 233, 0.1); padding: 30px; border-radius: var(--radius-lg); border-left: 5px solid var(--secondary); margin-bottom: 30px; display: flex; align-items: center; gap: 20px;">
-            <i class="fas fa-search-plus" style="font-size: 3rem; color: var(--secondary);"></i>
-            <div>
-              <strong style="display: block; color: white; font-size: 1.3rem; margin-bottom: 8px;">Central de Inspeção Visual Expandida</strong>
-              <p style="margin: 0; font-size: 1.1rem; color: var(--text-light);">Clique nas imagens para expandir em tela cheia. O documento oficial assinado pelo contribuinte aparecerá com destaque em verde.</p>
-            </div>
-          </div>
-          <h4 id="evidence-title" style="font-size: 1.4rem; font-weight: 900; color: white; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">Evidências Fotográficas (0)</h4>
+          <h4 id="evidence-title" style="font-size: 1.1rem; color: white; margin-bottom: 15px; border-bottom:1px solid var(--border); padding-bottom:10px;">Evidências Visuais (0)</h4>
           <div class="gallery-grid" id="evidence-gallery"></div>
         </div>
 
         <div id="tab-financeiro" class="tab-content">
           
           <div class="decision-grid">
-              <div style="background: var(--bg-card); padding: 25px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                      <h4 style="color: white; margin:0;"><i class="fas fa-file-invoice-dollar text-primary"></i> Lançamento de Taxa/Multa</h4>
-                  </div>
-                  <label style="color: var(--text-muted); font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; display: block;">Valor em Reais (R$)</label>
+              
+              <div class="decision-box">
+                  <h4 style="color: white; margin:0 0 20px 0; font-size:1.1rem;"><i class="fas fa-file-invoice-dollar text-primary"></i> Lançamento Financeiro</h4>
+                  
+                  <label style="color: var(--text-muted); font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display: block;">Valor da Taxa/Multa (R$)</label>
                   <input type="text" class="form-input" id="modal-valor-input" style="font-size: 2rem; font-weight: 900; color: var(--primary); text-align: center; margin-bottom: 20px;" placeholder="Ex: 500,00" onkeyup="atualizarPayloadPixVisual()">
                   
-                  <label style="color: var(--text-muted); font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; display: block;">Modificar Status</label>
-                  <select class="form-input" id="modal-status-select" style="font-size: 1.1rem; font-weight: bold; padding: 15px;">
+                  <label style="color: var(--text-muted); font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display: block;">Veredito do Processo</label>
+                  <select class="form-input" id="modal-status-select" style="font-size: 1rem; font-weight: bold; padding: 12px; margin-bottom: 20px;">
                     <option value="pendente">🟠 BLOQUEAR (Análise Pendente)</option>
                     <option value="aguardando">🔵 AÇÃO: Cobrar Cliente (Gerar Pix)</option>
                     <option value="pago">🟢 SUCESSO: Aprovar Licença</option>
                   </select>
 
-                  <div class="pix-box" id="pix-area" style="display: none; margin-top: 20px;">
-                      <i class="fas fa-qrcode" style="font-size: 3rem; color: var(--success); margin-bottom: 10px;"></i>
-                      <h4 style="color: white; margin:0 0 5px 0;">Cobrança Pix Ativada</h4>
-                      <p style="font-size: 0.8rem; color: var(--text-light); margin:0;">O cliente verá o QR Code exato para pagamento na plataforma dele.</p>
-                      <div class="pix-payload" id="pix-payload-text">00020126580014br.gov.bcb.pix...</div>
+                  <div class="pix-container" id="pix-area">
+                      <i class="fas fa-qrcode" style="font-size: 2.5rem; color: var(--success); margin-bottom: 10px;"></i>
+                      <h4 style="color: white; margin:0 0 5px 0; font-size: 1rem;">Cobrança Pix Ativada</h4>
+                      <p style="font-size: 0.75rem; color: var(--text-light); margin:0;">O cliente verá o QR Code exato para pagamento na plataforma dele.</p>
+                      <div class="pix-payload" id="pix-payload-text">00020126580014br.gov...</div>
                   </div>
               </div>
 
               <div style="display: flex; flex-direction: column; gap: 20px;">
-                  <div style="background: var(--bg-card); padding: 25px; border-radius: var(--radius-lg); border: 1px solid var(--border); flex: 1;">
+                  
+                  <div class="decision-box" style="flex: 1;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <label style="font-weight: 900; color: var(--danger); font-size: 0.9rem;"><i class="fas fa-user-secret"></i> Notas Confidenciais</label>
-                        <button class="btn btn-gemini" style="padding: 6px 15px; font-size: 0.8rem;" onclick="corrigirNotasIA()" id="btn-corrigir-nota"><i class="fas fa-magic"></i> Autocorreção IA</button>
+                        <label style="font-weight: 900; color: var(--danger); font-size: 0.8rem; text-transform: uppercase;"><i class="fas fa-user-secret"></i> Notas Internas</label>
+                        <button class="btn btn-gemini" style="padding: 6px 12px; font-size: 0.75rem;" onclick="corrigirNotasIA()" id="btn-corrigir-nota"><i class="fas fa-magic"></i> Autocorreção IA</button>
                     </div>
-                    <textarea class="form-input" id="modal-notas-input" placeholder="Escreva o que encontrou de errado de forma simples. A IA arruma e cita a lei." style="min-height: 120px;"></textarea>
+                    <textarea class="form-input" id="modal-notas-input" placeholder="Escreva o erro. A IA arruma e cita a lei." style="min-height: 100px; font-size: 0.95rem;"></textarea>
                   </div>
 
-                  <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.3); padding: 25px; border-radius: var(--radius-lg);">
+                  <div class="decision-box" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.3);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h4 style="color: var(--success); margin:0;"><i class="fab fa-whatsapp"></i> Canal do Cidadão</h4>
-                        <button onclick="gerarZapIA()" id="btn-gerar-zap" class="btn btn-success" style="padding: 6px 15px; font-size: 0.8rem;"><i class="fas fa-robot"></i> Escrever Texto IA</button>
+                        <h4 style="color: var(--success); margin:0; font-size:1.1rem;"><i class="fab fa-whatsapp"></i> Canal do Cidadão</h4>
+                        <button onclick="gerarZapIA()" id="btn-gerar-zap" class="btn" style="background: #064e3b; color: #34d399; border: 1px solid #10b981; padding: 6px 12px; font-size: 0.75rem;"><i class="fas fa-robot"></i> Escrever Texto IA</button>
                     </div>
-                    <textarea class="form-input" id="modal-zap-input" style="min-height: 80px; margin-bottom: 15px; border-color: rgba(16, 185, 129, 0.3);" placeholder="O texto humanizado para o cliente aparecerá aqui..."></textarea>
-                    <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="width: 100%; font-size: 1.1rem; justify-content: center;" onclick="atualizarLinkZap()"><i class="fab fa-whatsapp"></i> Disparar WhatsApp</a>
+                    <textarea class="form-input" id="modal-zap-input" style="min-height: 70px; margin-bottom: 15px; border-color: rgba(16, 185, 129, 0.3); font-size:0.95rem;" placeholder="O texto para o cliente aparecerá aqui..."></textarea>
+                    <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="width: 100%; font-size: 1rem; justify-content: center;" onclick="atualizarLinkZap()"><i class="fab fa-whatsapp"></i> Disparar WhatsApp</a>
                   </div>
+
               </div>
           </div>
 
@@ -740,900 +1928,17 @@
       </div>
       
       <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="deletarProcessoAtual()" style="color: var(--danger); border-color: var(--danger); background: transparent;"><i class="fas fa-trash-alt"></i> Excluir Definitivamente</button>
-        <div style="flex:1"></div>
-        <button class="btn btn-secondary" onclick="fecharModal()">Cancelar Operação</button>
-        <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()"><i class="fas fa-save"></i> Gravar Decisão & Ativar Pix</button>
+        <button class="btn" onclick="deletarProcessoAtual()" style="color: #fca5a5; background: rgba(239,68,68,0.1); border: 1px solid var(--danger);"><i class="fas fa-trash-alt"></i> Excluir Dossiê</button>
+        <div style="display: flex; gap: 15px;">
+            <button class="btn" style="background: rgba(255,255,255,0.05); color: white;" onclick="fecharModal()">Cancelar</button>
+            <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()"><i class="fas fa-save"></i> Gravar Decisão & Ativar Pix</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <div id="lightbox" onclick="fecharLightbox()">
-    <button class="btn-close-lightbox"><i class="fas fa-times"></i></button>
-    <img id="lightbox-img" src="">
-    <div id="lightbox-title">Documento Digitalizado</div>
+  <div id="lightbox" onclick="fecharLightbox()" style="position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center;">
+    <img id="lightbox-img" src="" style="max-width: 90vw; max-height: 85vh; border-radius: 8px; border: 2px solid #333;">
   </div>
 
   <div id="toast-container"></div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
-      authDomain: "site-8dfaf.firebaseapp.com",
-      projectId: "site-8dfaf",
-      storageBucket: "site-8dfaf.firebasestorage.app",
-      messagingSenderId: "76689989548",
-      appId: "1:76689989548:web:5c86741e60ce385102a409"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // ==============================================================
-    // CHAVE DO GOOGLE GEMINI (CORRIGIDA E CAMUFLADA)
-    // ==============================================================
-    const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
-    const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
-
-    let idProcessoAtual = null;
-    let dadosProcessoAtual = null; 
-    let todosProcessos = []; 
-    let chartBar, chartDoughnut;
-    const logsAuditoria = [];
-    
-    let memoriaDoChat = []; 
-    let memoriaModalDoChat = []; // Memória do Terminal Forense
-
-    // VARIÁVEIS DE ARQUIVO
-    let arquivoAnexoParaEnviar = null;
-    let arquivoLaboratorio = null;
-    const TAMANHO_MAX_ARQUIVO_MB = 15;
-
-    // INICIALIZAÇÃO DO MAPA LEAFLET (Variáveis globais)
-    let mapaReputacao = null;
-    let layerReputacao = null;
-
-    // Converte arquivo para Base64 para a IA ler
-    function converterArquivoParaBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve({ mime_type: file.type, data: reader.result.split(',')[1] });
-        reader.onerror = error => reject(error);
-      });
-    }
-
-    // Lógica do Input de Arquivos
-    function configurarInputArquivo(inputId, previewId, btnRemoveFuncStr, flagLab) {
-      const el = document.getElementById(inputId);
-      if(!el) return;
-      el.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const tamanhoMB = file.size / (1024 * 1024);
-        if (tamanhoMB > TAMANHO_MAX_ARQUIVO_MB) {
-          showToast("Arquivo muito grande", `O limite para análise local é de ${TAMANHO_MAX_ARQUIVO_MB}MB.`, "error");
-          e.target.value = ''; return;
-        }
-        
-        if(flagLab) {
-            arquivoLaboratorio = file;
-            iniciarAnaliseLaboratorioForense(); 
-        } else {
-            arquivoAnexoParaEnviar = file;
-            const previewArea = document.getElementById(previewId);
-            previewArea.innerHTML = '';
-            const item = document.createElement('div');
-            item.className = 'preview-item';
-            item.style.display = 'flex'; item.style.alignItems = 'center'; item.style.gap = '15px'; item.style.width = '100%';
-            if (file.type.startsWith('image/')) {
-              const img = document.createElement('img'); img.src = URL.createObjectURL(file); item.appendChild(img);
-            } else if (file.type.startsWith('video/')) {
-              const video = document.createElement('video'); video.src = URL.createObjectURL(file); item.appendChild(video);
-            }
-            item.innerHTML += `
-              <div style="flex:1"><strong>${file.name}</strong><br><span style="font-size:0.8rem; color:var(--text-muted)">${tamanhoMB.toFixed(2)} MB</span></div>
-              <button class="btn-remove-attachment" onclick="${btnRemoveFuncStr}()"><i class="fas fa-times-circle"></i></button>
-            `;
-            previewArea.appendChild(item);
-            previewArea.style.display = 'flex';
-        }
-      });
-    }
-    
-    configurarInputArquivo('chat-file-input', 'chat-attachment-preview', 'removerAnexoChat', false);
-    configurarInputArquivo('lab-file-input', 'lab-preview', 'fecharPreviewLab', true);
-
-    window.removerAnexoChat = () => { arquivoAnexoParaEnviar = null; document.getElementById('chat-file-input').value = ''; document.getElementById('chat-attachment-preview').style.display = 'none'; }
-    window.fecharPreviewLab = () => {
-        arquivoLaboratorio = null; document.getElementById('lab-file-input').value = '';
-        document.getElementById('lab-preview').style.display = 'none'; document.getElementById('lab-drop-area').style.display = 'flex';
-        document.getElementById('lab-idle-state').style.display = 'block'; document.getElementById('lab-loading-state').style.display = 'none';
-        document.getElementById('lab-final-result').style.display = 'none';
-    }
-
-    function registrarLog(acaoRealizada, detalhesTecnicos, nivel = "INFO") {
-        const log = { dataHora: new Date().toLocaleString(), acao: acaoRealizada, detalhes: detalhesTecnicos, nivel };
-        logsAuditoria.unshift(log);
-        const tabelaLogs = document.getElementById('tabela-logs-corpo');
-        if(tabelaLogs) { 
-            tabelaLogs.innerHTML = ''; 
-            logsAuditoria.slice(0, 50).forEach(l => {
-                let corDetalhe = l.nivel === "ERRO" ? "color: var(--danger);" : "color: var(--text-light);";
-                tabelaLogs.innerHTML += `
-                  <tr>
-                      <td><span style="color:var(--text-muted); font-size:0.95rem;">${l.dataHora}</span></td>
-                      <td><strong style="color:white; font-size:1.05rem;">Fiscal Chefe (Admin)</strong></td>
-                      <td><strong style="color:var(--secondary); font-size:1.05rem;">${l.acao}</strong></td>
-                      <td style="${corDetalhe} line-height: 1.6; font-size:1.05rem;">${l.detalhes}</td>
-                  </tr>
-                `; 
-            }); 
-        }
-    }
-
-    window.switchView = (viewId, elementClicked) => {
-        document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        if(elementClicked) elementClicked.classList.add('active');
-        registrarLog("Navegação", `Acessou o módulo: ${viewId}`);
-        
-        // Renderizar mapa corretamente quando a aba abrir
-        if(viewId === 'view-reputacao') {
-            setTimeout(() => { if(mapaReputacao) mapaReputacao.invalidateSize(); }, 200);
-        }
-    }
-
-    window.showToast = (titulo, mensagem, tipo = 'success') => {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = `toast ${tipo}`;
-      let icon = 'fa-check-circle';
-      if(tipo === 'error') icon = 'fa-exclamation-triangle';
-      if(tipo === 'warning') icon = 'fa-exclamation-circle';
-      
-      toast.innerHTML = `
-        <i class="fas ${icon}" style="font-size:2.5rem;"></i>
-        <div>
-            <h4 style="margin:0; font-size:1.15rem;">${titulo}</h4>
-            <p style="margin:0; font-size:0.95rem; opacity:0.9; margin-top: 4px;">${mensagem}</p>
-        </div>`;
-      container.appendChild(toast);
-      setTimeout(() => { toast.style.animation = 'toastFadeOut 0.5s forwards'; }, 4000);
-      setTimeout(() => { toast.remove(); }, 4500);
-    }
-
-    window.checkPin = () => {
-      const pinValor = document.getElementById('pin-input').value;
-      if (pinValor === '1533') { 
-        document.getElementById('lock-screen').style.opacity = '0';
-        setTimeout(() => {
-          document.getElementById('lock-screen').style.display = 'none';
-          document.getElementById('app-container').style.display = 'flex'; 
-          initCharts(); 
-          initMapaReputacao(); // Inicia o Leaflet
-          registrarLog("Autenticação", "Login Mestre efetuado com sucesso via PIN.");
-        }, 500);
-        showToast('Acesso Permitido', 'Sessão administrativa iniciada.', 'success');
-      } else { 
-        document.getElementById('pin-input').value = ''; 
-        showToast('Alerta de Invasão', 'Senha incorreta registrada no log.', 'error'); 
-        registrarLog("Falha Crítica de Autenticação", "Tentativa de login com senha inválida.", "ERRO");
-      }
-    }
-
-    async function obterDadosImagemSeguro(urlOuBase64) {
-        if (!urlOuBase64) return null;
-        if (urlOuBase64.startsWith('data:image')) {
-            try {
-                const mime = urlOuBase64.split(';')[0].split(':')[1];
-                const base64Limpo = urlOuBase64.split(',')[1];
-                if (base64Limpo) return { mime_type: mime, data: base64Limpo };
-            } catch(e) { return null; }
-        }
-        if (urlOuBase64.startsWith('http')) {
-            try {
-                const resposta = await fetch(urlOuBase64);
-                const blob = await resposta.blob();
-                return new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        const b64 = reader.result.split(',')[1];
-                        const m = blob.type || 'image/jpeg';
-                        resolve({ mime_type: m, data: b64 });
-                    };
-                    reader.readAsDataURL(blob);
-                });
-            } catch (e) { return null; }
-        }
-        return null;
-    }
-
-    const fireQuery = query(collection(db, "pedidos"), orderBy("data", "desc"));
-    
-    onSnapshot(fireQuery, (snapshot) => {
-      todosProcessos = []; 
-      let countPendentes = 0, countAguardando = 0, countPagos = 0; 
-      let totalReceita = 0, pendenteReceita = 0;
-      
-      const chatSelect = document.getElementById('chat-process-selector');
-      if(chatSelect) {
-          chatSelect.innerHTML = '<option value="">Geral (Falar apenas sobre Leis)</option>';
-      }
-
-      snapshot.forEach((docSnap) => {
-        const dados = docSnap.data(); 
-        dados.id = docSnap.id; 
-        todosProcessos.push(dados);
-        
-        let valNum = dados.valor ? parseFloat(dados.valor.replace(',','.')) : 0;
-        if(isNaN(valNum)) valNum = 0;
-
-        if(dados.pago) { 
-            countPagos++; 
-            totalReceita += valNum; 
-        } else if(dados.valor) { 
-            countAguardando++; 
-            pendenteReceita += valNum; 
-        } else {
-            countPendentes++;
-        }
-
-        if(chatSelect && dados.nome) {
-            chatSelect.innerHTML += `<option value="${dados.id}">${dados.nome} (${dados.cnpj})</option>`;
-        }
-      });
-      
-      document.getElementById("count-pendente").innerText = countPendentes;
-      document.getElementById("count-aguardando").innerText = countAguardando;
-      document.getElementById("count-pago").innerText = countPagos;
-      document.getElementById("count-total").innerText = snapshot.size;
-      
-      document.getElementById("receita-total").innerText = 'R$ ' + totalReceita.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-      document.getElementById("receita-pendente").innerText = 'R$ ' + pendenteReceita.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-
-      updateCharts(countPendentes, countAguardando, countPagos); 
-      renderizarTabelas(todosProcessos);
-      atualizarMarcadoresReputacao(todosProcessos); // Atualiza o novo mapa
-    });
-
-    window.renderizarTabelas = (arrayDeDados) => {
-      const tbDash = document.getElementById("tabela-corpo-dash"); 
-      const tbFull = document.getElementById("tabela-corpo-full");
-      if(!tbDash || !tbFull) return;
-      
-      tbDash.innerHTML = ""; 
-      tbFull.innerHTML = "";
-
-      if(arrayDeDados.length === 0) { 
-          tbFull.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:50px; font-size: 1.2rem; color: var(--text-muted);">Nenhum registro encontrado com estes filtros.</td></tr>'; 
-          return; 
-      }
-
-      arrayDeDados.forEach((processo, index) => {
-        let classBadge = 'badge-pendente', txtBadge = 'Análise Pendente', iconeBadge = 'fa-clock';
-        
-        if(processo.tipo === "🚨 DENÚNCIA") { 
-            classBadge = 'badge-denuncia'; txtBadge = 'DENÚNCIA'; iconeBadge = 'fa-bullhorn'; 
-        } else if(processo.pago) { 
-            classBadge = 'badge-pago'; txtBadge = 'Aprovado'; iconeBadge = 'fa-check'; 
-        } else if(processo.valor) { 
-            classBadge = 'badge-aguardando'; txtBadge = 'Aguard. Pagto'; iconeBadge = 'fa-dollar-sign'; 
-        }
-
-        let letraInicial = processo.nome ? processo.nome.charAt(0).toUpperCase() : 'C';
-        let corDestaqueDenuncia = processo.tipo === "🚨 DENÚNCIA" ? 'color: var(--danger); font-weight: 900;' : '';
-
-        let htmlColunaBase = `
-          <td>
-            <div class="td-empresa">
-              <div class="td-empresa-icon">${letraInicial}</div>
-              <div class="td-empresa-info">
-                <strong style="${corDestaqueDenuncia}">${processo.nome}</strong>
-                <span>${processo.cnpj}</span>
-              </div>
-            </div>
-          </td>
-          <td><span style="background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:6px; font-size:0.85rem; border:1px solid var(--border); font-weight: bold;">${processo.tipo}</span></td>
-          <td><span style="color:var(--text-muted); font-size:0.9rem; font-weight: 600;">${processo.data ? processo.data.split(',')[0] : 'Hoje'}</span></td>
-          <td><span class="status-badge ${classBadge}"><i class="fas ${iconeBadge}"></i> ${txtBadge}</span></td>
-        `;
-        
-        let trCompleta = document.createElement("tr"); 
-        trCompleta.innerHTML = htmlColunaBase + `
-            <td><strong style="color:var(--primary); font-size: 1.2rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
-            <td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:auto; padding:0 20px; background:var(--primary); color:white;"><i class="fas fa-search-plus"></i> Auditar Processo</button></td>
-        `; 
-        tbFull.appendChild(trCompleta);
-        
-        if(index < 5) { 
-            let trResumo = document.createElement("tr"); 
-            trResumo.innerHTML = htmlColunaBase + `
-                <td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:100%; border:1px solid var(--border); background:rgba(255,255,255,0.05); color:var(--accent);"><i class="fas fa-arrow-right"></i> Avaliar</button></td>
-            `; 
-            tbDash.appendChild(trResumo); 
-        }
-      });
-    }
-
-    // =====================================================================
-    // NOVO: RADAR DE REPUTAÇÃO ONLINE (LEAFLET + SIMULAÇÃO GOOGLE REVIEWS)
-    // =====================================================================
-    function initMapaReputacao() {
-        if(!mapaReputacao) {
-            mapaReputacao = L.map('reputation-map').setView([-23.5505, -46.6333], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapaReputacao);
-            layerReputacao = L.layerGroup().addTo(mapaReputacao);
-        }
-    }
-
-    function atualizarMarcadoresReputacao(dados) {
-        if(!layerReputacao) return;
-        layerReputacao.clearLayers();
-
-        dados.forEach(p => {
-            // Gera coordenadas espalhadas baseadas no CNPJ para não ficar tudo no mesmo lugar
-            let hash = parseInt((p.cnpj||"0").replace(/\D/g, '').substring(0, 4)) || Math.floor(Math.random() * 9000);
-            let lat = -23.68 + ((hash % 100) / 400); 
-            let lng = -46.62 + (((hash / 100) % 100) / 400);
-
-            // Simula uma nota do Google (1.0 a 5.0)
-            // Se for denúncia, a nota é baixa. Se foi aprovado, a nota é alta.
-            let baseScore = p.pago ? 4.0 : (p.tipo === "🚨 DENÚNCIA" ? 1.5 : 2.8);
-            let nota = (baseScore + (Math.random() * 1.0 - 0.5)).toFixed(1);
-            if(nota > 5.0) nota = 5.0; if(nota < 1.0) nota = 1.0;
-
-            let color = nota < 2.5 ? '#ef4444' : (nota < 4.0 ? '#f59e0b' : '#10b981');
-
-            let marker = L.circleMarker([lat, lng], { color: color, fillColor: color, fillOpacity: 0.8, radius: 10 }).addTo(layerReputacao);
-            
-            marker.on('click', function() {
-                abrirPainelReputacao(p.nome, p.cnpj, p.tipo, nota, color);
-            });
-        });
-    }
-
-    function abrirPainelReputacao(nome, cnpj, ramo, nota, cor) {
-        document.getElementById('rep-panel').style.display = 'flex';
-        document.getElementById('rep-nome').innerText = nome || 'Empresa Desconhecida';
-        document.getElementById('rep-cnpj').innerText = cnpj || 'Sem CNPJ';
-        
-        let elNota = document.getElementById('rep-nota');
-        elNota.innerText = nota;
-        elNota.style.color = cor;
-        
-        let htmlEstrelas = '';
-        let numEstrelas = Math.round(nota);
-        for(let i=0; i<5; i++) { htmlEstrelas += i < numEstrelas ? `<i class="fas fa-star"></i>` : `<i class="far fa-star"></i>`; }
-        document.getElementById('rep-estrelas').innerHTML = htmlEstrelas;
-        document.getElementById('rep-estrelas').style.color = cor;
-
-        // Gerar comentários fictícios baseados no ramo e nota
-        let coments = [];
-        if (nota < 2.5) {
-            if(ramo.includes("Alimentos")) coments = ['"Péssima higiene, vi baratas perto do caixa."', '"A comida estava azeda, passei muito mal no dia seguinte."'];
-            else if(ramo.includes("Beleza")) coments = ['"Alicates enferrujados, não recomendo."', '"O chão estava cheio de cabelo e toalhas sujas."'];
-            else coments = ['"Local insalubre, precisa de fiscalização urgente."', '"Atendimento péssimo e cheiro horrível."'];
-        } else if (nota < 4.0) {
-            coments = ['"É ok, mas o banheiro estava sujo."', '"Lugar razoável, precisa melhorar a limpeza."'];
-        } else {
-            coments = ['"Lugar impecável, tudo muito limpo!"', '"Excelente estrutura, cumprem todas as normas."'];
-        }
-
-        let lista = document.getElementById('rep-comentarios');
-        lista.innerHTML = '';
-        coments.forEach(c => {
-            lista.innerHTML += `<div class="review-card" style="border-left-color: ${cor};">${c}</div>`;
-        });
-    }
-
-    window.aplicarFiltros = () => {
-        const selectStatus = document.getElementById('filtro-status').value;
-        const selectRamo = document.getElementById('filtro-ramo').value;
-        const inputTexto = document.getElementById('searchInput').value.toLowerCase();
-
-        let listaFiltrada = todosProcessos;
-
-        if(inputTexto) {
-            listaFiltrada = listaFiltrada.filter(p => (p.nome && p.nome.toLowerCase().includes(inputTexto)) || (p.cnpj && p.cnpj.toLowerCase().includes(inputTexto)));
-        }
-        if(selectRamo !== 'todos') {
-            listaFiltrada = listaFiltrada.filter(p => p.tipo === selectRamo);
-        }
-        if(selectStatus !== 'todos') {
-            if(selectStatus === 'pago') listaFiltrada = listaFiltrada.filter(p => p.pago === true);
-            else if(selectStatus === 'aguardando') listaFiltrada = listaFiltrada.filter(p => p.valor && p.pago === false);
-            else if(selectStatus === 'pendente') listaFiltrada = listaFiltrada.filter(p => !p.valor && p.pago === false && p.tipo !== "🚨 DENÚNCIA");
-            else if(selectStatus === 'denuncia') listaFiltrada = listaFiltrada.filter(p => p.tipo === "🚨 DENÚNCIA");
-        }
-
-        renderizarTabelas(listaFiltrada);
-    }
-
-    window.filtrarTabela = window.aplicarFiltros; 
-
-    window.exportarCSV = () => {
-        if(todosProcessos.length === 0) return showToast('Erro', 'Banco de dados vazio.', 'error');
-        
-        let stringCSV = 'Data,Razao_Social,CNPJ_CPF,Ramo,Status_Sistemico,Taxa_Valor,Observacoes_Internas\n';
-        
-        todosProcessos.forEach(p => { 
-            let statusExport = p.pago ? 'Aprovado' : (p.valor ? 'Aguardando Pagamento' : 'Analise Pendente');
-            if (p.tipo === "🚨 DENÚNCIA") statusExport = 'Denúncia Externa';
-            let notaLimpa = p.notas ? p.notas.replace(/(\r\n|\n|\r)/gm, " ") : "";
-            stringCSV += `"${p.data||''}","${p.nome}","${p.cnpj}","${p.tipo}","${statusExport}","${p.valor||'0'}","${notaLimpa}"\n`; 
-        });
-        
-        const blobDownload = new Blob([stringCSV], {type: 'text/csv;charset=utf-8;'});
-        const linkDownload = document.createElement("a"); 
-        linkDownload.href = URL.createObjectURL(blobDownload);
-        linkDownload.download = `Base_Mestra_COVISA_${new Date().toLocaleDateString()}.csv`; 
-        linkDownload.click();
-        
-        registrarLog("Exportação", "Base de dados exportada para CSV.");
-        showToast("Download Concluído", "Base exportada com sucesso.", "success");
-    }
-
-    window.abrirAba = (idDaAba, botaoClicado) => {
-      document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-      document.getElementById(idDaAba).classList.add('active'); 
-      botaoClicado.classList.add('active');
-    }
-
-    // =====================================================================
-    // API CNPJ E TRIAGEM AUTOMÁTICA
-    // =====================================================================
-    async function verificarAPI_CNPJ(cnpjCliente) {
-        const triagemBox = document.getElementById('triagem-cnpj-box');
-        if (!cnpjCliente || cnpjCliente.length < 14) {
-            triagemBox.className = 'triagem-box risk';
-            triagemBox.innerHTML = `<i class="fas fa-id-card"></i><div><h4 style="margin: 0; color: white; font-size: 1.1rem;">CNPJ Inválido ou Ausente</h4><p style="margin: 4px 0 0 0; color: var(--danger);">Não foi possível consultar a Receita Federal (CNPJ/CPF mal formatado).</p></div>`;
-            return;
-        }
-
-        let cnpjLimpo = cnpjCliente.replace(/\D/g, '');
-        if (cnpjLimpo.length !== 14) {
-             triagemBox.className = 'triagem-box';
-             triagemBox.innerHTML = `<i class="fas fa-user"></i><div><h4 style="margin: 0; color: white; font-size: 1.1rem;">Registro de Pessoa Física</h4><p style="margin: 4px 0 0 0; color: var(--text-muted);">CPF detectado. A triagem automática via API Receita funciona apenas para CNPJ.</p></div>`;
-             return;
-        }
-
-        try {
-            const resposta = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
-            if(!resposta.ok) throw new Error("CNPJ Inexistente ou erro na API");
-            const dadosReceita = await resposta.json();
-            
-            let statusReceita = dadosReceita.descricao_situacao_cadastral;
-            let razaoSocial = dadosReceita.razao_social;
-            
-            if (statusReceita === "ATIVA") {
-                triagemBox.className = 'triagem-box';
-                triagemBox.innerHTML = `<i class="fas fa-check-circle"></i><div><h4 style="margin: 0; color: var(--success); font-size: 1.1rem;">Empresa ATIVA na Receita Federal</h4><p style="margin: 4px 0 0 0; color: var(--text-muted);">Razão Social: ${razaoSocial} | Município: ${dadosReceita.municipio}</p></div>`;
-            } else {
-                triagemBox.className = 'triagem-box risk';
-                triagemBox.innerHTML = `<i class="fas fa-exclamation-triangle"></i><div><h4 style="margin: 0; color: var(--danger); font-size: 1.1rem;">ALERTA DE FRAUDE: Empresa ${statusReceita}</h4><p style="margin: 4px 0 0 0; color: #fca5a5;">A Receita Federal informa que este CNPJ não está ativo. Rejeite o processo.</p></div>`;
-            }
-            registrarLog("Triagem API CNPJ", `CNPJ ${cnpjLimpo} verificado: ${statusReceita}`);
-        } catch(e) {
-            triagemBox.className = 'triagem-box risk';
-            triagemBox.innerHTML = `<i class="fas fa-times-circle"></i><div><h4 style="margin: 0; color: var(--danger); font-size: 1.1rem;">Falha ao Localizar CNPJ</h4><p style="margin: 4px 0 0 0; color: #fca5a5;">A Receita Federal não encontrou dados para o CNPJ ${cnpjCliente}.</p></div>`;
-        }
-    }
-
-    // =====================================================================
-    // NOVO: SISTEMA DE PIX DINÂMICO AUTOMÁTICO (No Modal)
-    // =====================================================================
-    window.atualizarPayloadPixVisual = () => {
-        const inputValor = document.getElementById("modal-valor-input").value;
-        const divPix = document.getElementById("pix-area");
-        const divPayload = document.getElementById("pix-payload-text");
-        const selectStatus = document.getElementById("modal-status-select").value;
-
-        if (inputValor && inputValor.length > 0 && selectStatus !== "pago") {
-            divPix.style.display = 'block';
-            let vFormatado = inputValor.replace(',', '.');
-            // Geração de um Payload PIX visual (simulado para a tela do Admin)
-            let payloadFicticio = `00020126580014br.gov.bcb.pix0136suachave@covisa.sp.gov.br520400005303986540${vFormatado.length < 10 ? '0'+vFormatado.length : vFormatado.length}${vFormatado}5802BR5913PREFEITURA SP6009SAO PAULO62070503***6304A1B2`;
-            divPayload.innerText = payloadFicticio;
-        } else {
-            divPix.style.display = 'none';
-        }
-    }
-
-    document.getElementById("modal-status-select").addEventListener('change', window.atualizarPayloadPixVisual);
-
-
-    // =====================================================================
-    // WHATSAPP IA E CORREÇÃO DE NOTAS
-    // =====================================================================
-    window.atualizarLinkZap = () => {
-        let textoZap = document.getElementById("modal-zap-input").value;
-        if(!textoZap) {
-            let st = document.getElementById("modal-status-select").value;
-            textoZap = `Prefeitura de São Paulo - COVISA\n*${dadosProcessoAtual.nome}*\n`;
-            if(st === 'pendente') textoZap += `Aviso: Seu processo está pendente de análise.`;
-            if(st === 'aguardando') textoZap += `A taxa de *R$ ${document.getElementById("modal-valor-input").value}* foi emitida.`;
-            if(st === 'pago') textoZap += `PARABÉNS! Sua licença sanitária foi *APROVADA*.`;
-        }
-        document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(textoZap)}`;
-    }
-
-    window.gerarZapIA = async () => {
-        const btnZap = document.getElementById('btn-gerar-zap'); const btnOriginal = btnZap.innerHTML;
-        btnZap.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando...';
-        
-        let contexto = `Crie uma mensagem de WhatsApp educada, mas oficial, para a empresa ${dadosProcessoAtual.nome}. 
-        Status que decidi: ${document.getElementById("modal-status-select").value}.
-        Valor a cobrar: ${document.getElementById("modal-valor-input").value}.
-        Minhas notas sobre o caso: ${document.getElementById("modal-notas-input").value}
-        Não use markdown de negrito duplo (**), use apenas o asterisco simples do whatsapp (*).`;
-
-        try {
-            const envio = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: contexto }] }] })
-            });
-            const resp = await envio.json();
-            document.getElementById("modal-zap-input").value = resp.candidates[0].content.parts[0].text.trim();
-            atualizarLinkZap();
-            registrarLog("IA WhatsApp", "Mensagem gerada para o cliente.");
-        } catch(e) { showToast("Erro IA", "Falha ao gerar texto.", "error"); }
-        btnZap.innerHTML = btnOriginal;
-    }
-
-    window.corrigirNotasIA = async () => {
-        const inputNotas = document.getElementById("modal-notas-input");
-        const btnNota = document.getElementById('btn-corrigir-nota'); const btnOriginal = btnNota.innerHTML;
-        if(inputNotas.value.length < 5) return showToast("Aviso", "Escreva algo para a IA corrigir.", "warning");
-        btnNota.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Corrigindo...';
-        let contexto = `Sou fiscal da COVISA. Reescreva minha anotação de forma técnica e formal: "${inputNotas.value}". Cite a Lei 13.725 ou RDC 216 se for infração sanitária. 1 parágrafo apenas.`;
-        try {
-            const envio = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: contexto }] }] })
-            });
-            const resp = await envio.json();
-            inputNotas.value = resp.candidates[0].content.parts[0].text.trim();
-            registrarLog("Autocorreção", "Parecer Fiscal aprimorado pela IA.");
-        } catch(e) { showToast("Erro IA", "Falha ao corrigir texto.", "error"); }
-        btnNota.innerHTML = btnOriginal;
-    }
-
-    window.abrirModal = async (idDoProtocolo) => {
-      idProcessoAtual = idDoProtocolo; 
-      document.getElementById("modalDetalhes").style.display = "flex";
-      document.getElementById("modal-id-text").innerText = idDoProtocolo.substring(0,8).toUpperCase();
-      document.querySelector('.tab-ai').click(); 
-
-      // RESETANDO E INICIANDO TRIAGEM CNPJ E TERMINAL FORENSE
-      document.getElementById('triagem-cnpj-box').className = 'triagem-box';
-      document.getElementById('triagem-cnpj-box').innerHTML = `<i class="fas fa-circle-notch fa-spin"></i><div><h4 style="margin: 0; color: white; font-size: 1.1rem;">Buscando CNPJ na Receita Federal...</h4></div>`;
-      document.getElementById('modal-chat-historico').innerHTML = `> Conexão estabelecida com o dossiê da empresa.<br>> Módulo Visual e Jurídico pronto.<br>> Escreva um comando ou clique nos botões rápidos.<br><br>`;
-      document.getElementById("pix-area").style.display = 'none';
-      memoriaModalDoChat = []; 
-
-      try {
-        const documentoNoBanco = await getDoc(doc(db, "pedidos", idDoProtocolo));
-        
-        if (documentoNoBanco.exists()) {
-          const dadosDoCliente = documentoNoBanco.data(); 
-          dadosProcessoAtual = dadosDoCliente; 
-          dadosProcessoAtual.id = idDoProtocolo; 
-          
-          document.getElementById("modal-cnpj").innerText = dadosDoCliente.cnpj || "Sem registro";
-          document.getElementById("modal-nome").innerText = dadosDoCliente.nome || "Sem registro";
-          document.getElementById("modal-data").innerText = dadosDoCliente.data || 'Indisponível';
-          document.getElementById("modal-ramo").innerText = dadosDoCliente.tipo || "Geral";
-          document.getElementById("modal-docs").innerText = dadosDoCliente.docs || "Nenhum relatório declarado.";
-          
-          // CHAMA A INTEGRAÇÃO COM A RECEITA
-          verificarAPI_CNPJ(dadosDoCliente.cnpj);
-
-          const galeriaHTML = document.getElementById('evidence-gallery'); 
-          galeriaHTML.innerHTML = ''; 
-          let totalDeArquivos = 0;
-          
-          if (dadosDoCliente.documento_assinado) {
-              totalDeArquivos++; 
-              const htmlAssinado = document.createElement('div'); 
-              htmlAssinado.className = 'gallery-item'; 
-              htmlAssinado.style.border = '4px solid var(--success)';
-              htmlAssinado.onclick = () => abrirLightbox(dadosDoCliente.documento_assinado, 'Documento Legal Assinado');
-              htmlAssinado.innerHTML = `<div class="badge-assinado"><i class="fas fa-check-circle"></i> VALIDADO</div><img src="${dadosDoCliente.documento_assinado}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`; 
-              galeriaHTML.appendChild(htmlAssinado);
-          }
-          
-          if (dadosDoCliente.evidencias && dadosDoCliente.evidencias.length > 0) {
-              totalDeArquivos += dadosDoCliente.evidencias.length;
-              dadosDoCliente.evidencias.forEach(fotoObject => {
-                  const caixaDaFoto = document.createElement('div'); 
-                  caixaDaFoto.className = 'gallery-item'; 
-                  caixaDaFoto.onclick = () => abrirLightbox(fotoObject.url, fotoObject.nome);
-                  caixaDaFoto.innerHTML = `<img src="${fotoObject.url}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`; 
-                  galeriaHTML.appendChild(caixaDaFoto);
-              });
-          }
-          
-          document.getElementById('evidence-title').innerText = `Evidências Fotográficas (${totalDeArquivos} arquivos anexados)`;
-
-          document.getElementById("modal-valor-input").value = dadosDoCliente.valor || "";
-          let selectStatus = dadosDoCliente.pago ? "pago" : (dadosDoCliente.valor ? "aguardando" : "pendente");
-          document.getElementById("modal-status-select").value = selectStatus;
-          document.getElementById("modal-notas-input").value = dadosDoCliente.notas || "";
-          
-          document.getElementById("modal-zap-input").value = "";
-          atualizarLinkZap();
-          atualizarPayloadPixVisual();
-        }
-      } catch (e) { 
-          showToast("Erro BD", "Não foi possível carregar os detalhes do Firebase.", "error"); 
-      }
-    };
-
-    window.fecharModal = () => { 
-        document.getElementById("modalDetalhes").style.display = "none"; 
-        idProcessoAtual = null; 
-    };
-
-    // =====================================================================
-    // NOVO: TERMINAL DE AUDITORIA FORENSE (Dentro do Modal)
-    // =====================================================================
-    window.executarVarreduraForenseIA = async () => {
-        const h = document.getElementById('modal-chat-historico');
-        const idL = 'l_'+Date.now(); 
-        h.innerHTML += `<span id="${idL}" style="color: var(--warning);">> [SISTEMA] Iniciando varredura profunda nas imagens anexadas... aguarde.</span><br>`; h.scrollTop=h.scrollHeight;
-        
-        let pacote = [{ text: `Aja como Perito Digital. Analise as imagens. 1. Ache edição/Photoshop. 2. Ache infrações sanitárias na estrutura. Seja direto. Apenas texto sem formatação HTML ou markdown pesado.` }];
-        if(dadosProcessoAtual.evidencias) { for (let i=0; i<Math.min(dadosProcessoAtual.evidencias.length,3); i++) { let img = await obterDadosImagemSeguro(dadosProcessoAtual.evidencias[i].url); if(img) pacote.push({ inline_data: img }); } }
-        if(dadosProcessoAtual.documento_assinado) { let doc = await obterDadosImagemSeguro(dadosProcessoAtual.documento_assinado); if(doc) pacote.push({ inline_data: doc }); }
-        
-        try {
-            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: pacote }] }) });
-            const resp = await r.json(); document.getElementById(idL).remove(); 
-            h.innerHTML += `<span style="color: var(--danger);">> [LAUDO FORENSE OBTIDO]</span><br>> ${resp.candidates[0].content.parts[0].text.replace(/\n/g, '<br>> ')}<br><br>`; h.scrollTop=h.scrollHeight;
-            registrarLog("Perícia Forense IA", `Varredura visual do processo concluída.`);
-        } catch(e) { document.getElementById(idL).innerHTML = "> Erro na varredura visual."; }
-    }
-
-    window.enviarChatModal = async () => {
-      const p = document.getElementById('modal-chat-input-text').value.trim(); if (!p) return;
-      const h = document.getElementById('modal-chat-historico'); 
-      h.innerHTML += `<span style="color: white;">> ${p}</span><br>`; document.getElementById('modal-chat-input-text').value = '';
-      const idL = 'l_'+Date.now(); h.innerHTML += `<span id="${idL}" style="color:var(--gemini-purple);">> Processando...</span><br>`; h.scrollTop=h.scrollHeight;
-      
-      memoriaModalDoChat.push({ role: "user", parts: [{ text: `Processo de ${dadosProcessoAtual.nome}. Ramo: ${dadosProcessoAtual.tipo}. Comando: "${p}". Responda direto, sem frescuras e sem markdown.` }] });
-      try {
-        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: memoriaModalDoChat }) });
-        const res = await r.json(); document.getElementById(idL).remove(); let t = res.candidates[0].content.parts[0].text; memoriaModalDoChat.push({ role: "model", parts: [{text:t}] });
-        h.innerHTML += `<span style="color: var(--gemini-purple);">> [GEMINI]</span><br>> ${t.replace(/\n/g, '<br>> ')}<br><br>`; h.scrollTop=h.scrollHeight;
-      } catch(e) {}
-    }
-
-
-    window.salvarEdicaoModal = async () => {
-      if(!idProcessoAtual) return;
-      const botaoDeSalvar = document.getElementById('btn-salvar-modal');
-      const textOriginalBotao = botaoDeSalvar.innerHTML;
-      botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Cobrança e Salvando...';
-      
-      let valorInputado = document.getElementById("modal-valor-input").value; 
-      let statusSelecionado = document.getElementById("modal-status-select").value; 
-      let notasDigitadas = document.getElementById("modal-notas-input").value;
-      
-      let flagPago = false; 
-      if(statusSelecionado === "pago") flagPago = true; 
-      if(statusSelecionado === "pendente") valorInputado = null; 
-
-      let payloadPix = document.getElementById("pix-payload-text").innerText;
-      if(statusSelecionado === "pago" || statusSelecionado === "pendente") payloadPix = null;
-
-      try {
-        await updateDoc(doc(db, "pedidos", idProcessoAtual), { 
-            valor: valorInputado, 
-            pago: flagPago, 
-            notas: notasDigitadas,
-            pix_copia_e_cola: payloadPix
-        });
-        showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase. Pix ativado.', 'success');
-        registrarLog("Veredito Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
-        fecharModal();
-      } catch (erroDeRede) { 
-        showToast('Falha Crítica', 'Acesso negado no banco de dados da nuvem.', 'error'); 
-        botaoDeSalvar.innerHTML = textOriginalBotao; 
-      } 
-    };
-
-    window.deletarProcessoAtual = async () => {
-      if(!idProcessoAtual) return;
-      if(confirm("COMANDO IRREVERSÍVEL DA JUSTIÇA:\nDeseja destruir as informações deste processo permanentemente da base governamental?")) {
-        await deleteDoc(doc(db, "pedidos", idProcessoAtual));
-        showToast('Base Limpa', 'O dossiê foi erradicado do sistema.', 'success');
-        registrarLog("Destruição de Dossiê", `O documento mestre do processo ID: ${idProcessoAtual.substring(0,8)} foi apagado.`, "ERRO");
-        fecharModal();
-      }
-    };
-
-    // =========================================================================================
-    // LABORATÓRIO FORENSE DE MÍDIA AVULSA
-    // =========================================================================================
-    window.iniciarAnaliseLaboratorioForense = async () => {
-        if (!arquivoLaboratorio) return;
-
-        const previewArea = document.getElementById('lab-preview');
-        previewArea.innerHTML = '';
-        if (arquivoLaboratorio.type.startsWith('image/')) {
-          const img = document.createElement('img'); img.src = URL.createObjectURL(arquivoLaboratorio); previewArea.appendChild(img);
-        } else if (arquivoLaboratorio.type.startsWith('video/')) {
-          const video = document.createElement('video'); video.src = URL.createObjectURL(arquivoLaboratorio); video.controls = true; previewArea.appendChild(video);
-        }
-        previewArea.innerHTML += `<button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
-        
-        document.getElementById('lab-drop-area').style.display = 'block';
-        previewArea.style.display = 'block';
-        
-        document.getElementById('lab-idle-state').style.display = 'none';
-        document.getElementById('lab-final-result').style.display = 'none';
-        document.getElementById('lab-loading-state').style.display = 'flex';
-
-        let promptFinal = `Você é um Perito Forense da Vigilância Sanitária. Analise a mídia anexada e retorne um Laudo Técnico Oficial.
-        Procure por:
-        1. Problemas de Higiene e Estrutura (RDC 216).
-        2. Indícios de manipulação ou fraude digital (Photoshop).
-        3. Análise do ambiente para verificar se condiz com local comercial.
-        Formate a resposta em HTML (use <b> para negrito e <br> para quebras). Não use asteriscos markdown.`;
-
-        let pacoteDeEnvio = [{ text: promptFinal }];
-
-        try {
-            const dadosMdia = await converterArquivoParaBase64(arquivoLaboratorio);
-            pacoteDeEnvio.push({ inline_data: dadosMdia });
-
-            const envioApi = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: pacoteDeEnvio }] })
-            });
-            
-            if(!envioApi.ok) throw new Error("Falha na API do Google");
-            
-            const respostaCompleta = await envioApi.json(); 
-            document.getElementById('lab-loading-state').style.display = 'none';
-            document.getElementById('lab-final-result').style.display = 'block';
-            document.getElementById('lab-result-content').innerHTML = respostaCompleta.candidates[0].content.parts[0].text;
-
-            registrarLog("Laboratório de Mídia", `Arquivo local processado (${arquivoLaboratorio.name}).`);
-        } catch(e) {
-            document.getElementById('lab-loading-state').style.display = 'none';
-            document.getElementById('lab-final-result').style.display = 'block';
-            document.getElementById('lab-result-content').innerHTML = `<div style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Falha: ${e.message}</div>`;
-        }
-    }
-
-    // FUNÇÃO ENVIARCHAT GERAL COM ANEXOS
-    window.enviarChat = async () => {
-        const campoDeTexto = document.getElementById('chat-input-text'); 
-        const perguntaDoFiscal = campoDeTexto.value.trim(); 
-        if(!perguntaDoFiscal && !arquivoAnexoParaEnviar) return;
-        
-        const areaHistorico = document.getElementById('chat-historico');
-        
-        const bolhaUser = document.createElement('div');
-        bolhaUser.className = 'chat-msg msg-user';
-        if(perguntaDoFiscal) bolhaUser.innerHTML = perguntaDoFiscal;
-
-        if (arquivoAnexoParaEnviar) {
-          if (perguntaDoFiscal) bolhaUser.innerHTML += '<br><br>';
-          if (arquivoAnexoParaEnviar.type.startsWith('image/')) bolhaUser.innerHTML += `<img src="${URL.createObjectURL(arquivoAnexoParaEnviar)}" style="max-width:100%; border-radius:8px;">`;
-          else if (arquivoAnexoParaEnviar.type.startsWith('video/')) bolhaUser.innerHTML += `<i class="fas fa-video"></i> [Vídeo Anexado: ${arquivoAnexoParaEnviar.name}]`;
-        }
-
-        areaHistorico.appendChild(bolhaUser);
-        campoDeTexto.value = ''; 
-        areaHistorico.scrollTop = areaHistorico.scrollHeight;
-        
-        const idLoaderChat = 'loader_' + Date.now(); 
-        const bolhaLoader = document.createElement('div');
-        bolhaLoader.id = idLoaderChat;
-        bolhaLoader.className = 'chat-msg msg-ai';
-        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.5rem; margin-right: 10px;"></i> Pensando...`;
-        areaHistorico.appendChild(bolhaLoader);
-        areaHistorico.scrollTop = areaHistorico.scrollHeight;
-
-        let promptFinal = `${perguntaDoFiscal}\n\n(Instrução do sistema: Responda de forma natural. Formate em HTML básico <b> e <br>. NUNCA uses asteriscos).`;
-
-        const idProcChat = document.getElementById('chat-process-selector').value;
-        if (idProcChat && idProcChat !== "") {
-            let p = todosProcessos.find(proc => proc.id === idProcChat);
-            if(p) {
-                promptFinal = `Aqui estão os dados da empresa que analiso:\n- Empresa: ${p.nome}\n- CNPJ: ${p.cnpj}\n- Ramo: ${p.tipo}\n- Declaração: ${p.docs}\n\nA minha pergunta é: "${perguntaDoFiscal}"\n\n(Responda ajudando o usuário. Formate em HTML <b>, <br>).`;
-            }
-        }
-
-        let partesDoEnvio = [{ text: promptFinal }];
-
-        if (arquivoAnexoParaEnviar) {
-          try {
-            const dadosMdia = await converterArquivoParaBase64(arquivoAnexoParaEnviar);
-            partesDoEnvio.push({ inline_data: dadosMdia });
-          } catch (e) {
-             document.getElementById(idLoaderChat).innerHTML = "Erro ao ler arquivo."; removerAnexoChat(); return;
-          }
-        }
-
-        memoriaDoChat.push({ role: "user", parts: partesDoEnvio });
-
-        try {
-            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            const envioPergunta = await fetch(url_api_gemini, {
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ 
-                    contents: memoriaDoChat 
-                })
-            });
-            
-            if(!envioPergunta.ok) {
-                const erroDoGoogle = await envioPergunta.json();
-                memoriaDoChat.pop();
-                throw new Error(erroDoGoogle.error?.message || "Erro desconhecido na API do Chat.");
-            }
-            
-            const respostaCompleta = await envioPergunta.json(); 
-            document.getElementById(idLoaderChat).remove(); 
-            
-            let textoDoAssistente = respostaCompleta.candidates[0].content.parts[0].text;
-            
-            memoriaDoChat.push({ role: "model", parts: [{ text: textoDoAssistente }] });
-            
-            const bolhaIA = document.createElement('div');
-            bolhaIA.className = 'chat-msg msg-ai';
-            bolhaIA.innerHTML = `<strong style="color:var(--gemini-purple); font-size: 1.1rem;"><i class="fas fa-robot"></i> Parecer Oficial Gemini:</strong><br><br>${textoDoAssistente}`;
-            areaHistorico.appendChild(bolhaIA);
-
-            areaHistorico.scrollTop = areaHistorico.scrollHeight;
-            registrarLog("Consulta Jurídica IA", "Fiscal interagiu com o Chatbot Geral.");
-
-        } catch(erroNoChat) { 
-            console.error("Erro no Chatbot:", erroNoChat);
-            const loaderElement = document.getElementById(idLoaderChat);
-            if(loaderElement) loaderElement.remove(); 
-            areaHistorico.innerHTML += `<div class="chat-msg msg-ai" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Erro: ${erroNoChat.message}</div>`;
-            areaHistorico.scrollTop = areaHistorico.scrollHeight;
-        } finally {
-            removerAnexoChat();
-        }
-    }
-
-    function initCharts() {
-      try {
-          Chart.defaults.color = '#94a3b8';
-          chartBar = new Chart(document.getElementById('barChart').getContext('2d'), { 
-              type: 'line', 
-              data: { labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], datasets: [{ label: 'Cadastros e Entradas', data: [0,0,0,0,0,0,0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] }, 
-              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)'} }, x: { grid: { display: false } } } } 
-          });
-          
-          chartDoughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { 
-              type: 'doughnut', 
-              data: { labels: ['Aprovados e Pagos', 'Taxas Aguardando', 'Casos de Risco'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#3b82f6', '#ef4444'], borderWidth: 0 }] }, 
-              options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
-          });
-      } catch (err) {}
-    }
-
-    function updateCharts(pen, agu, pag) {
-      if(chartDoughnut) { chartDoughnut.data.datasets[0].data = [pag, agu, pen]; chartDoughnut.update(); }
-      if(chartBar) { let totalProcessos = pen + agu + pag; chartBar.data.datasets[0].data = [Math.floor(totalProcessos*0.1), Math.floor(totalProcessos*0.3), Math.floor(totalProcessos*0.2), Math.floor(totalProcessos*0.1), totalProcessos, 0, 0]; chartBar.update(); }
-    }
-
-    window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
-        document.getElementById('lightbox-img').src = linkImagem; 
-        document.getElementById('lightbox').style.display = 'flex'; 
-    };
-    
-    window.fecharLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
-
-  </script>
-</body>
-</html>
