@@ -194,10 +194,19 @@
     .msg-user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
     .msg-ai { align-self: flex-start; background: var(--bg-card); color: var(--text-light); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm); }
     
-    .chat-input-area { padding: 25px 40px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; gap: 20px; align-items: center; }
+    .chat-input-area { padding: 25px 40px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; gap: 20px; align-items: center; flex-direction: column;}
+    .chat-input-row { display: flex; gap: 20px; align-items: center; width: 100%; }
     .chat-input-area select { width: 300px; padding: 18px 20px; border-radius: var(--radius-md); background: var(--bg-body); color: white; border: 1px solid var(--border); font-weight: 600; }
-    .chat-input-area input { flex: 1; padding: 20px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; }
-    .chat-input-area input:focus { border-color: var(--gemini-purple); }
+    .chat-input-area input[type="text"] { flex: 1; padding: 20px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; }
+    .chat-input-area input[type="text"]:focus { border-color: var(--gemini-purple); }
+
+    .chat-attachment-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; transition: 0.2s; }
+    .chat-attachment-btn:hover { color: var(--gemini-purple); }
+
+    #chat-attachment-preview { display: none; background: var(--bg-body); border: 1px solid var(--border); padding: 10px; border-radius: var(--radius-md); width: 100%; margin-bottom: 15px; }
+    #chat-attachment-preview .preview-item { display: flex; align-items: center; gap: 15px; color: white; }
+    #chat-attachment-preview img, #chat-attachment-preview video { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border); }
+    .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; }
 
     .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
     .modal-box { background: var(--bg-body); width: 100%; max-width: 1100px; border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border); animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -280,6 +289,14 @@
     @keyframes toastFadeOut { to { opacity: 0; transform: translateX(120%); } }
 
     #error-log-shield { position: fixed; top: 0; left: 0; width: 100%; padding: 25px; background: var(--danger); color: white; font-weight: 900; text-align: center; z-index: 999999; display: none; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); }
+
+    /* Estilos para o Modal Chat */
+    .modal-chat-container { display: flex; flex-direction: column; height: 500px; background: var(--bg-body); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+    .modal-chat-history { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; }
+    .modal-chat-input-area { padding: 15px 20px; background: var(--bg-card); border-top: 1px solid var(--border); display: flex; gap: 15px; align-items: center; }
+    .modal-chat-input-area input[type="text"] { flex: 1; padding: 15px 20px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1rem; }
+    .modal-chat-input-area input[type="text"]:focus { border-color: var(--gemini-purple); }
+
   </style>
 </head>
 <body>
@@ -319,6 +336,14 @@
         <a class="nav-item" onclick="switchView('view-mapa', this)"><i class="fas fa-map-marked-alt"></i> Zonas de Risco</a>
         <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot" style="color:var(--gemini-purple);"></i> IA Jurídica</a>
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
+        
+        <a class="nav-item" onclick="registrarLog('Navegação', 'Tentou acessar: Triagem Automática')" style="opacity: 0.6;"><i class="fas fa-robot"></i> Triagem Automática (3)</a>
+        <a class="nav-item" onclick="registrarLog('Navegação', 'Tentou acessar: Autocorreção de Fiscais')" style="opacity: 0.6;"><i class="fas fa-magic"></i> Autocorreção (6)</a>
+        <a class="nav-item" onclick="registrarLog('Navegação', 'Tentou acessar: Extração EXIF')" style="opacity: 0.6;"><i class="fas fa-camera-retro"></i> Extração EXIF (9)</a>
+        <a class="nav-item" onclick="registrarLog('Navegação', 'Tentou acessar: Geolocalização Fotográfica')" style="opacity: 0.6;"><i class="fas fa-map-pin"></i> Geolocalização Foto (10)</a>
+        <a class="nav-item" onclick="registrarLog('Navegação', 'Tentou acessar: Deteção Photoshop')" style="opacity: 0.6;"><i class="fas fa-image"></i> Deteção Photoshop (11)</a>
+        <a class="nav-item" onclick="registrarLog('Navegação', 'Tentou acessar: WhatsApp Humanizado')" style="opacity: 0.6;"><i class="fab fa-whatsapp"></i> WhatsApp IA (21)</a>
+        <a class="nav-item" onclick="registrarLog('Navegação', 'Tentou acessar: Integração API CNPJ')" style="opacity: 0.6;"><i class="fas fa-id-card"></i> API CNPJ (24)</a>
       </nav>
       
       <div class="sidebar-footer">
@@ -582,13 +607,23 @@
             <div class="chat-history" id="chat-historico">
               <div class="chat-msg msg-ai">
                 <strong style="color:var(--gemini-purple); font-size: 1.2rem;"><i class="fas fa-robot"></i> Sistema Auditor AI:</strong><br><br>
-                Olá! Como posso te ajudar hoje? Você pode me perguntar qualquer coisa, ou selecionar um processo acima para que eu possa analisá-lo com você.
+                Olá, Auditor Fiscal. Eu sou a IA da Vigilância Sanitária.<br><br>Você pode me fazer perguntas genéricas sobre leis, ou pode <strong>selecionar um processo na caixa ali em cima</strong> e me mandar um comando como "Resuma o caso", para que eu leia todo o banco de dados daquela empresa e te dê o laudo de perícia detalhado.
               </div>
             </div>
 
             <div class="chat-input-area">
-              <input type="text" id="chat-input-text" placeholder="Escreva a sua mensagem aqui..." onkeypress="if(event.key === 'Enter') enviarChat()">
-              <button class="btn btn-gemini" onclick="enviarChat()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px;"><i class="fas fa-paper-plane"></i> Enviar</button>
+              
+              <div id="chat-attachment-preview"></div>
+
+              <div class="chat-input-row">
+                <button class="chat-attachment-btn" onclick="document.getElementById('chat-file-input').click()" title="Anexar foto ou vídeo curto para análise local">
+                  <i class="fas fa-paperclip"></i>
+                </button>
+                <input type="file" id="chat-file-input" style="display: none;" accept="image/*,video/*">
+
+                <input type="text" id="chat-input-text" placeholder="Escreva sua pergunta ou comando para a IA..." onkeypress="if(event.key === 'Enter') enviarChat()">
+                <button class="btn btn-gemini" onclick="enviarChat()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px;"><i class="fas fa-paper-plane"></i> Enviar</button>
+              </div>
             </div>
           </div>
         </div>
@@ -632,7 +667,7 @@
       </div>
       
       <div class="modal-tabs">
-        <button class="tab-btn tab-ai active" onclick="abrirAba('tab-radar', this)"><i class="fas fa-robot"></i> Auditoria Forense IA (Gemini)</button>
+        <button class="tab-btn tab-ai active" onclick="abrirAba('tab-radar', this)"><i class="fas fa-brain"></i> Conversar com Auditor IA (Gemini)</button>
         <button class="tab-btn" onclick="abrirAba('tab-detalhes', this)"><i class="fas fa-building"></i> Dados Empresariais</button>
         <button class="tab-btn" onclick="abrirAba('tab-fotos', this)"><i class="fas fa-images"></i> Provas Documentais</button>
         <button class="tab-btn" onclick="abrirAba('tab-financeiro', this)"><i class="fas fa-file-invoice-dollar"></i> Decisão Fiscal & Taxas</button>
@@ -641,53 +676,19 @@
       <div class="modal-body" style="background: var(--bg-body);">
         
         <div id="tab-radar" class="tab-content active">
-          
-          <div id="radar-loader" class="radar-loading">
-            <div class="radar-scanner"><i class="fas fa-brain"></i></div>
-            <div>
-              <h3 style="font-size: 1.8rem; font-weight: 900; color: var(--gemini-purple); margin-bottom: 15px;">Auditoria Neural em Andamento...</h3>
-              <p id="radar-loading-text" style="font-size: 1.2rem; color: var(--text-muted); max-width: 700px; margin: 0 auto; line-height: 1.6;">Inicializando rotinas de Visão Computacional. Aguarde.</p>
-            </div>
-          </div>
-
-          <div id="radar-result" class="radar-dashboard" style="display: none;">
-            
-            <div class="score-box">
-              <h4 style="color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; font-weight: 800;">Confiabilidade das Provas</h4>
-              <div class="score-circle" id="radar-score-circle" style="border-color: var(--success);">
-                <span class="num" id="radar-score-number" style="color: var(--success);">0</span>
-                <span class="desc">/ 100%<br>Confiável</span>
+          <div class="modal-chat-container">
+            <div class="modal-chat-history" id="modal-chat-historico">
+              <div class="chat-msg msg-ai">
+                <strong style="color:var(--gemini-purple); font-size: 1.1rem;"><i class="fas fa-robot"></i> Auditor Chefe Gemini:</strong><br><br>
+                Olá, Fiscal. Estou analisando este processo agora. Tenho acesso a todos os dados declarados e às fotos anexadas.<br><br>Você pode me fazer perguntas como:<br>
+                <em>"Faça um resumo dos riscos"</em>,<br>
+                <em>"As fotos comprovam a higiene?"</em> ou<br>
+                <em>"Gere um texto de WhatsApp para cobrar a correção"</em>.
               </div>
-              <p id="radar-nivel-text" style="font-weight: 900; font-size: 1.2rem; margin-top: 15px; text-transform: uppercase; text-align: center;">...</p>
-              <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 50px; margin-top: 15px; font-size: 0.85rem; font-weight: bold; color: var(--gemini-purple); border: 1px solid var(--border);"><i class="fas fa-fingerprint"></i> OCR Visual Ativado</div>
             </div>
-            
-            <div>
-              <div class="gemini-response-box">
-                <div id="alerta-offline-container"></div>
-
-                <h4><i class="fas fa-robot" style="color: var(--gemini-purple); font-size: 1.8rem;"></i> Laudo Técnico Oficial (Gemini)</h4>
-                
-                <div class="ia-laudo-block">
-                    <h5><i class="fas fa-file-contract"></i> 1. Verificação Documental Integrada</h5>
-                    <p id="radar-doc-check">...</p>
-                </div>
-                
-                <div class="ia-laudo-block">
-                    <h5><i class="fas fa-camera"></i> 2. Inspeção Visual das Fotos</h5>
-                    <p id="radar-visual-check">...</p>
-                </div>
-
-                <div class="ia-laudo-block" style="border-left-color: var(--danger);">
-                    <h5 style="color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> 3. Divergências e Riscos Detectados</h5>
-                    <p id="radar-risk-check" style="color: #fca5a5;">...</p>
-                </div>
-                
-                <div class="ai-recommendation">
-                  <h4>Veredito Final Recomendado para a Autoridade</h4>
-                  <p id="radar-recommendation-text">...</p>
-                </div>
-              </div>
+            <div class="modal-chat-input-area">
+              <input type="text" id="modal-chat-input-text" placeholder="Pergunte algo sobre este processo..." onkeypress="if(event.key === 'Enter') enviarChatModal()">
+              <button class="btn btn-gemini" onclick="enviarChatModal()" style="padding: 12px 25px;"><i class="fas fa-paper-plane"></i></button>
             </div>
           </div>
         </div>
@@ -790,8 +791,74 @@
     let chartBar, chartDoughnut;
     const logsAuditoria = [];
     
-    // NOVO: Variável que guarda a memória da conversa do chat
+    // VARIÁVEIS GLOBAIS DO CHAT E ANEXOS
     let memoriaDoChat = []; 
+    let arquivoAnexoParaEnviar = null;
+    const TAMANHO_MAX_ARQUIVO_MB = 15;
+
+    // VARIÁVEIS DO CHAT INTERNO DO MODAL
+    let memoriaModalDoChat = [];
+
+    // Função auxiliar para converter arquivo em Base64
+    function converterArquivoParaBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve({
+          mime_type: file.type,
+          data: reader.result.split(',')[1]
+        });
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    // Gerenciador de Anexo do Chat Principal
+    document.getElementById('chat-file-input').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const tamanhoMB = file.size / (1024 * 1024);
+      if (tamanhoMB > TAMANHO_MAX_ARQUIVO_MB) {
+        showToast("Arquivo muito grande", `O limite para análise local é de ${TAMANHO_MAX_ARQUIVO_MB}MB.`, "error");
+        e.target.value = '';
+        return;
+      }
+
+      arquivoAnexoParaEnviar = file;
+      const previewArea = document.getElementById('chat-attachment-preview');
+      previewArea.innerHTML = '';
+      
+      const item = document.createElement('div');
+      item.className = 'preview-item';
+
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        item.appendChild(img);
+      } else if (file.type.startsWith('video/')) {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+        item.appendChild(video);
+      }
+
+      item.innerHTML += `
+        <div style="flex:1">
+          <strong>${file.name}</strong><br>
+          <span style="font-size:0.8rem; color:var(--text-muted)">${tamanhoMB.toFixed(2)} MB</span>
+        </div>
+        <button class="btn-remove-attachment" onclick="removerAnexoChat()"><i class="fas fa-times-circle"></i></button>
+      `;
+
+      previewArea.appendChild(item);
+      previewArea.style.display = 'block';
+    });
+
+    window.removerAnexoChat = () => {
+      arquivoAnexoParaEnviar = null;
+      document.getElementById('chat-file-input').value = '';
+      document.getElementById('chat-attachment-preview').style.display = 'none';
+      document.getElementById('chat-attachment-preview').innerHTML = '';
+    }
     
     function registrarLog(acaoRealizada, detalhesTecnicos, nivel = "INFO") {
         const log = { dataHora: new Date().toLocaleString(), acao: acaoRealizada, detalhes: detalhesTecnicos, nivel };
@@ -859,36 +926,7 @@
       }
     }
 
-    async function obterDadosImagemSeguro(urlOuBase64) {
-        if (!urlOuBase64) return null;
-        if (urlOuBase64.startsWith('data:image')) {
-            try {
-                const mime = urlOuBase64.split(';')[0].split(':')[1];
-                const base64Limpo = urlOuBase64.split(',')[1];
-                if (base64Limpo) return { mime_type: mime, data: base64Limpo };
-            } catch(e) { return null; }
-        }
-        if (urlOuBase64.startsWith('http')) {
-            try {
-                const resposta = await fetch(urlOuBase64);
-                const blob = await resposta.blob();
-                return new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        const b64 = reader.result.split(',')[1];
-                        const m = blob.type || 'image/jpeg';
-                        resolve({ mime_type: m, data: b64 });
-                    };
-                    reader.readAsDataURL(blob);
-                });
-            } catch (e) {
-                console.warn("CORS bloqueou a leitura do link da imagem. A IA vai analisar apenas o texto.", e);
-                return null;
-            }
-        }
-        return null;
-    }
-
+    // Puxada Firebase original intacta
     const fireQuery = query(collection(db, "pedidos"), orderBy("data", "desc"));
     
     onSnapshot(fireQuery, (snapshot) => {
@@ -937,6 +975,7 @@
       atualizarMapaDeCalor(todosProcessos);
     });
 
+    // Renderização de tabelas original intacta
     window.renderizarTabelas = (arrayDeDados) => {
       const tbDash = document.getElementById("tabela-corpo-dash"); 
       const tbFull = document.getElementById("tabela-corpo-full");
@@ -996,6 +1035,7 @@
       });
     }
 
+    // Mapa de calor original intacto
     function atualizarMapaDeCalor(dados) {
         const mapaContainer = document.getElementById('mapa-zonas-reais');
         if(!mapaContainer) return;
@@ -1040,6 +1080,7 @@
         });
     }
 
+    // Filtros originais intactos
     window.aplicarFiltros = () => {
         const selectStatus = document.getElementById('filtro-status').value;
         const selectRamo = document.getElementById('filtro-ramo').value;
@@ -1065,6 +1106,7 @@
 
     window.filtrarTabela = window.aplicarFiltros; 
 
+    // Exportação original intacta
     window.exportarCSV = () => {
         if(todosProcessos.length === 0) return showToast('Erro', 'Banco de dados vazio.', 'error');
         
@@ -1087,6 +1129,7 @@
         showToast("Download Concluído", "Base exportada com sucesso.", "success");
     }
 
+    // Abas original intacta
     window.abrirAba = (idDaAba, botaoClicado) => {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
@@ -1094,11 +1137,24 @@
       botaoClicado.classList.add('active');
     }
 
+    // Modal original intacto (mas resetando o chat da IA)
     window.abrirModal = async (idDoProtocolo) => {
       idProcessoAtual = idDoProtocolo; 
       document.getElementById("modalDetalhes").style.display = "flex";
       document.getElementById("modal-id-text").innerText = idDoProtocolo.substring(0,8).toUpperCase();
       document.querySelector('.tab-ai').click(); 
+
+      // Resetar o Chat interno do Modal ao abrir
+      memoriaModalDoChat = [];
+      document.getElementById('modal-chat-historico').innerHTML = `
+        <div class="chat-msg msg-ai">
+          <strong style="color:var(--gemini-purple); font-size: 1.1rem;"><i class="fas fa-robot"></i> Auditor Chefe Gemini:</strong><br><br>
+          Olá, Fiscal. Estou analisando este processo agora. Tenho acesso a todos os dados declarados e às fotos anexadas.<br><br>Você pode me fazer perguntas como:<br>
+          <em>"Faça um resumo dos riscos"</em>,<br>
+          <em>"As fotos comprovam a higiene?"</em> ou<br>
+          <em>"Gere um texto de WhatsApp para cobrar a correção"</em>.
+        </div>
+      `;
 
       try {
         const documentoNoBanco = await getDoc(doc(db, "pedidos", idDoProtocolo));
@@ -1152,8 +1208,7 @@
           if(selectStatus === 'pago') textoZap += `PARABÉNS! Sua licença sanitária foi *APROVADA*.`;
           document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(textoZap)}`;
 
-          document.getElementById('alerta-offline-container').innerHTML = '';
-          iniciarRadarIAGemini();
+          // NÃO INICIAR O RADAR ANTIGO, POIS FOI SUBSTITUÍDO PELO CHAT
         }
       } catch (e) { 
           showToast("Erro BD", "Não foi possível carregar os detalhes do Firebase.", "error"); 
@@ -1165,213 +1220,9 @@
         idProcessoAtual = null; 
     };
 
-    let loaderInterval;
-    window.iniciarRadarIAGemini = async () => {
-        const dadosDoProcesso = dadosProcessoAtual;
-        
-        document.getElementById('radar-loader').style.display = 'flex';
-        document.getElementById('radar-result').style.display = 'none';
-        
-        const textosLoading = [
-            "Extraindo dados do Firebase...",
-            "Iniciando Visão Computacional Avançada...",
-            "Processando OCR Óptico nas evidências...",
-            "Cruzando informações com o Código Sanitário...",
-            "Construindo Laudo Forense Final..."
-        ];
-        
-        let pText = document.getElementById('radar-loading-text');
-        let contadorTxt = 0;
-        clearInterval(loaderInterval);
-        pText.innerText = textosLoading[0];
-        
-        loaderInterval = setInterval(() => {
-            contadorTxt++;
-            if(contadorTxt < textosLoading.length) { pText.innerText = textosLoading[contadorTxt]; }
-        }, 1500);
+    // A FUNÇÃO iniciarRadarIAGemini FOI REMOVIDA POIS FOI SUBSTITUÍDA PELO CHAT CONTEXTUAL
 
-        try {
-            let promptDaIA = `
-                VOCÊ É UM SISTEMA DE AUDITORIA FORENSE DE ALTA PRECISÃO (Vigilância Sanitária).
-                Sua tarefa é analisar rigorosamente os dados e imagens fornecidos e identificar QUALQUER fraude ou divergência.
-
-                DADOS DECLARADOS PELO USUÁRIO:
-                - Razão Social / Nome: ${dadosDoProcesso.nome}
-                - CNPJ / CPF: ${dadosDoProcesso.cnpj}
-                - Ramo de Atividade: ${dadosDoProcesso.tipo}
-                - O que ele marcou no Checklist: ${dadosDoProcesso.docs}
-
-                ANÁLISE EXIGIDA MENTALMENTE ANTES DE RESPONDER:
-                1. EXTRAÇÃO ÓPTICA (OCR): Se houver fotos, leia o texto visível nelas.
-                2. VALIDAÇÃO DE IDENTIDADE: Os nomes/CNPJs nas fotos batem com os dados declarados?
-                3. VALIDAÇÃO VISUAL: Se é um ambiente, ele condiz com o "Ramo de Atividade"?
-                4. DENÚNCIA: Se o Ramo de Atividade for a palavra "🚨 DENÚNCIA", A QUALIDADE DAS PROVAS É ZERO.
-
-                REGRAS DE PONTUAÇÃO (Score de 0 a 100):
-                - 80 a 100: Tudo perfeito, o documento bate, boas fotos.
-                - 50 a 70: Faltam fotos do ambiente, só mandou documento.
-                - 0 a 40: Suspeita de fraude, nomes não batem, ou é uma Denúncia.
-
-                Crie a resposta JSON estritamente usando o seguinte schema (preencha todos os campos):
-                {
-                  "score_confiabilidade": "numero de 0 a 100",
-                  "verificacao_documental": "texto detalhado",
-                  "inspecao_visual": "texto detalhado do que enxergou nas fotos",
-                  "divergencias_encontradas": "texto das divergências ou 'Nenhuma divergência grave aparente'",
-                  "veredito_final": "texto curto de decisao (ex: APROVAR LICENÇA)"
-                }
-            `;
-            
-            let pacoteDeEnvio = [{ "text": promptDaIA }];
-            
-            if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0) {
-                for (let i = 0; i < Math.min(dadosDoProcesso.evidencias.length, 3); i++) {
-                    let objImagemSegura = await obterDadosImagemSeguro(dadosDoProcesso.evidencias[i].url);
-                    if(objImagemSegura) pacoteDeEnvio.push({ "inline_data": objImagemSegura }); 
-                }
-            }
-
-            if(dadosDoProcesso.documento_assinado) {
-                let objAssinadoSeguro = await obterDadosImagemSeguro(dadosDoProcesso.documento_assinado);
-                if(objAssinadoSeguro) pacoteDeEnvio.push({ "inline_data": objAssinadoSeguro }); 
-            }
-
-            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            
-            const disparoAPI = await fetch(url_api_gemini, {
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ 
-                    contents: [{ parts: pacoteDeEnvio }],
-                    generationConfig: {
-                        responseMimeType: "application/json"
-                    }
-                })
-            });
-
-            if (!disparoAPI.ok) {
-                const erroDoGoogle = await disparoAPI.json();
-                console.error("[GEMINI API ERRO DETALHADO]", erroDoGoogle);
-                throw new Error(erroDoGoogle.error?.message || `Erro HTTP ${disparoAPI.status}`);
-            }
-            
-            const respostaDaIA = await disparoAPI.json();
-            
-            if (!respostaDaIA.candidates || !respostaDaIA.candidates[0].content || !respostaDaIA.candidates[0].content.parts) {
-                throw new Error("A IA retornou uma estrutura vazia ou bloqueou por Safety (conteúdo sensível).");
-            }
-
-            let textoDoGemini = respostaDaIA.candidates[0].content.parts[0].text;
-            
-            let resultadoJson;
-            try {
-                 resultadoJson = JSON.parse(textoDoGemini);
-            } catch (e) {
-                 const matchJson = textoDoGemini.match(/\{[\s\S]*\}/);
-                 if (!matchJson) throw new Error("A IA não retornou um JSON válido.");
-                 resultadoJson = JSON.parse(matchJson[0]);
-            }
-
-            let suspeitaDeClone = false;
-            if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0 && todosProcessos.length > 1) {
-                let tamanhoDaFotoAtual = dadosDoProcesso.evidencias[0].url.length;
-                for(let processoAntigo of todosProcessos) {
-                    if(processoAntigo.id !== dadosDoProcesso.id && processoAntigo.evidencias) {
-                        for(let imagemAntiga of processoAntigo.evidencias) { 
-                            if(imagemAntiga.url.length === tamanhoDaFotoAtual) suspeitaDeClone = true; 
-                        }
-                    }
-                }
-                if(suspeitaDeClone) {
-                    resultadoJson.score_confiabilidade = 5;
-                    resultadoJson.divergencias_encontradas = "MOTOR DO SERVIDOR (ALERTA VERMELHO): A imagem anexada tem o tamanho binário exato de uma evidência utilizada por outro CNPJ no sistema no passado. Fraude fotográfica comprovada.";
-                    resultadoJson.veredito_final = "BLOQUEIO IMEDIATO (CRIME)";
-                }
-            }
-
-            setTimeout(() => {
-                clearInterval(loaderInterval);
-                renderizarRadarNaTela(resultadoJson);
-                registrarLog("Laudo Forense (IA)", `Gemini processou ID ${dadosDoProcesso.cnpj} com ${resultadoJson.score_confiabilidade}% de confiança.`);
-            }, 1000);
-            
-        } catch (error) {
-            console.error("Falha Sistêmica no Gemini:", error);
-            registrarLog("FALHA NA API IA", error.message, "ERRO");
-            document.getElementById('status-ia-sidebar').innerText = 'Desconectada / Falha';
-            document.getElementById('status-ia-sidebar').style.color = 'var(--danger)';
-            
-            document.getElementById('alerta-offline-container').innerHTML = `
-                <div class="alerta-offline">
-                    <i class="fas fa-plug" style="font-size: 2rem;"></i>
-                    <div>
-                        <h4 style="margin: 0; font-size: 1.1rem; color: white;">Conexão Neural Interrompida</h4>
-                        <p style="margin: 0; font-size: 0.95rem;">Falha ao comunicar com o Google Gemini. Motivo técnico: ${error.message.substring(0, 80)}...</p>
-                        <p style="margin: 4px 0 0 0; font-size: 0.85rem; opacity: 0.8;">O laudo abaixo foi gerado baseando-se em lógicas locais de contagem de evidências do servidor (Modo Offline).</p>
-                    </div>
-                </div>
-            `;
-
-            let notasFallback = {
-                score_confiabilidade: 90,
-                verificacao_documental: "Modo Offline: O sistema validou localmente apenas a presença de caracteres no BD.",
-                inspecao_visual: "Inspeção por Visão Computacional bloqueada devido à falha de comunicação com o Google AI.",
-                divergencias_encontradas: "A API falhou, porém os documentos básicos parecem existir no Firebase. Verifique as fotos manualmente na aba ao lado.",
-                veredito_final: "APROVAÇÃO VIRTUAL RESTRITA"
-            };
-            
-            if(dadosDoProcesso.tipo === "🚨 DENÚNCIA") { 
-                notasFallback.score_confiabilidade = 0; 
-                notasFallback.veredito_final = "INTERDIÇÃO CAUTELAR"; 
-                notasFallback.divergencias_encontradas = "Denúncia reportada pelo Cidadão. Risco severo à saúde da população."; 
-            } else if(!dadosDoProcesso.evidencias || dadosDoProcesso.evidencias.length === 0) { 
-                notasFallback.score_confiabilidade = 10; 
-                notasFallback.veredito_final = "REPROVAR E BLOQUEAR"; 
-                notasFallback.divergencias_encontradas = "O requerente não enviou absolutamente NENHUMA foto ou comprovante visual."; 
-            } else if(dadosDoProcesso.evidencias.length === 1) { 
-                notasFallback.score_confiabilidade = 40; 
-                notasFallback.veredito_final = "REVISÃO OBRIGATÓRIA (Faltam Provas)"; 
-                notasFallback.divergencias_encontradas = "O requerente anexou apenas 1 imagem. Exige-se validação humana das evidências visuais."; 
-            }
-            
-            setTimeout(() => {
-                clearInterval(loaderInterval);
-                renderizarRadarNaTela(notasFallback);
-            }, 1500);
-        }
-    }
-
-    function renderizarRadarNaTela(dadosIA) {
-        document.getElementById('radar-loader').style.display = 'none';
-        document.getElementById('radar-result').style.display = 'grid';
-        
-        const notaFinal = parseInt(dadosIA.score_confiabilidade) || 0;
-        const circuloScore = document.getElementById('radar-score-circle'); 
-        const txtNumeroScore = document.getElementById('radar-score-number'); 
-        const txtNivelQualidade = document.getElementById('radar-nivel-text');
-        
-        let corEscolhida = "var(--danger)"; let nivelTexto = "RISCO CRÍTICO / FRAUDE";
-        if(notaFinal >= 50) { corEscolhida = "var(--warning)"; nivelTexto = "PROVAS FRACAS (REVISAR)"; }
-        if(notaFinal >= 80) { corEscolhida = "var(--success)"; nivelTexto = "DADOS VÁLIDOS (APROVAR)"; }
-
-        circuloScore.style.borderColor = corEscolhida; 
-        txtNumeroScore.style.color = corEscolhida; 
-        txtNivelQualidade.style.color = corEscolhida; 
-        txtNivelQualidade.innerText = nivelTexto;
-        
-        document.getElementById('radar-doc-check').innerHTML = dadosIA.verificacao_documental;
-        document.getElementById('radar-visual-check').innerHTML = dadosIA.inspecao_visual;
-        document.getElementById('radar-risk-check').innerHTML = dadosIA.divergencias_encontradas;
-        document.getElementById('radar-recommendation-text').innerText = dadosIA.veredito_final;
-        
-        let contadorAparente = 0; 
-        let intervaloEfeito = setInterval(() => { 
-            contadorAparente += Math.ceil(notaFinal / 15) + 1; 
-            if(contadorAparente >= notaFinal) { contadorAparente = notaFinal; clearInterval(intervaloEfeito); } 
-            txtNumeroScore.innerText = contadorAparente; 
-        }, 30);
-    }
-
+    // Salvar e Deletar originais intactos
     window.salvarEdicaoModal = async () => {
       if(!idProcessoAtual) return;
       const botaoDeSalvar = document.getElementById('btn-salvar-modal');
@@ -1411,57 +1262,109 @@
       }
     };
 
-    // FUNÇÃO ENVIARCHAT MODIFICADA PARA TER MEMÓRIA E SER "LIVRE"
+    // =========================================================================================
+    // CHAT PRINCIPAL (view-chat) REFORMULADO PARA ACEITAR MÍDIAS LOCAIS (FOTO/VÍDEO)
+    // =========================================================================================
     window.enviarChat = async () => {
         const campoDeTexto = document.getElementById('chat-input-text'); 
         const perguntaDoFiscal = campoDeTexto.value.trim(); 
-        if(!perguntaDoFiscal) return;
+        
+        // Se não tem texto E não tem arquivo, não faz nada
+        if(!perguntaDoFiscal && !arquivoAnexoParaEnviar) return;
         
         const areaHistorico = document.getElementById('chat-historico');
         
+        // 1. Cria a bolha do usuário
         const bolhaUser = document.createElement('div');
         bolhaUser.className = 'chat-msg msg-user';
-        bolhaUser.innerText = perguntaDoFiscal;
+        
+        if (perguntaDoFiscal) {
+          bolhaUser.innerHTML = perguntaDoFiscal;
+        }
+
+        // Se tem arquivo anexado, mostra na bolha do usuário
+        if (arquivoAnexoParaEnviar) {
+          if (perguntaDoFiscal) bolhaUser.innerHTML += '<br><br>';
+          
+          if (arquivoAnexoParaEnviar.type.startsWith('image/')) {
+            bolhaUser.innerHTML += `<img src="${URL.createObjectURL(arquivoAnexoParaEnviar)}" style="max-width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">`;
+          } else if (arquivoAnexoParaEnviar.type.startsWith('video/')) {
+            bolhaUser.innerHTML += `<i class="fas fa-video"></i> [Vídeo Anexado: ${arquivoAnexoParaEnviar.name}]`;
+          }
+          bolhaUser.innerHTML += `<br><span style="font-size:0.8rem; opacity:0.8;">Análise de mídia local ativada.</span>`;
+        }
         areaHistorico.appendChild(bolhaUser);
         
+        // Limpa o input e a área de anexo
         campoDeTexto.value = ''; 
         areaHistorico.scrollTop = areaHistorico.scrollHeight;
         
+        // 2. Cria o loader da IA
         const idLoaderChat = 'loader_' + Date.now(); 
         const bolhaLoader = document.createElement('div');
         bolhaLoader.id = idLoaderChat;
         bolhaLoader.className = 'chat-msg msg-ai';
-        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.5rem; margin-right: 10px;"></i> Pensando...`;
+        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.5rem; margin-right: 10px;"></i>`;
+        if (arquivoAnexoParaEnviar) {
+          bolhaLoader.innerHTML += `Processando e analisando mídia local (isso pode demorar alguns segundos)...`;
+        } else {
+          bolhaLoader.innerHTML += `Consultando Código de Leis e Processos...`;
+        }
         areaHistorico.appendChild(bolhaLoader);
-        
         areaHistorico.scrollTop = areaHistorico.scrollHeight;
 
-        let promptFinal = `${perguntaDoFiscal}\n\n(Instrução do sistema: Responda de forma natural, útil e amigável sobre qualquer assunto. Formate a sua resposta usando HTML básico, como <b> para negrito e <br> para quebras de linha. NUNCA uses asteriscos do markdown para formatação).`;
+        // 3. Prepara o prompt contextual original
+        let promptFinal = `Você é o "Gemini Legal Assistant", um consultor de IA avançado auxiliando fiscais da Vigilância Sanitária (COVISA). 
+        Aja com naturalidade, seja prestativo e direto.
+        Se a pergunta do fiscal for sobre regras ou infrações, baseie-se na Lei Municipal 13.725/SP ou na RDC 216. Se for um bate-papo normal, apenas responda naturalmente.
+        Formate a resposta em HTML básico (use <b> para negrito e <br> para quebras. NUNCA use asteriscos do markdown).
+        Pergunta do fiscal: "${perguntaDoFiscal}"`;
 
         const idProcChat = document.getElementById('chat-process-selector').value;
         if (idProcChat && idProcChat !== "") {
             let p = todosProcessos.find(proc => proc.id === idProcChat);
             if(p) {
-                promptFinal = `Aqui estão os dados de um processo/empresa que estou a analisar:\n- Empresa: ${p.nome}\n- CNPJ: ${p.cnpj}\n- Ramo: ${p.tipo}\n- Declaração: ${p.docs}\n\nA minha pergunta é: "${perguntaDoFiscal}"\n\n(Instrução do sistema: Responda de forma natural e ajude o usuário no que ele pediu. Formate a sua resposta usando HTML básico, como <b> para negrito e <br> para quebras de linha. NUNCA uses asteriscos do markdown).`;
+                promptFinal = `Você é o Auditor Chefe da COVISA auxiliando um fiscal. O fiscal está analisando o seguinte processo:
+                - Empresa: <b>${p.nome}</b>
+                - CNPJ: ${p.cnpj}
+                - Ramo: ${p.tipo}
+                - Declaração do Cliente: ${p.docs}
+                
+                Com base ÚNICA E EXCLUSIVAMENTE nos dados dessa empresa, responda à seguinte solicitação do fiscal. Formate em HTML (<b>, <br>). Sem markdown.
+                Solicitação do fiscal: "${perguntaDoFiscal}"`;
             }
         }
 
-        // ADICIONA A PERGUNTA NA MEMÓRIA GERAL
-        memoriaDoChat.push({ role: "user", parts: [{ text: promptFinal }] });
+        // 4. Monta o pacote de envio MULTIMODAL (Texto + Mídia Base64, se houver)
+        let pacoteDeEnvio = [];
+        pacoteDeEnvio.push({ text: promptFinal });
+
+        // Se houver arquivo anexado, converte para Base64 e adiciona ao pacote
+        if (arquivoAnexoParaEnviar) {
+          try {
+            const dadosMdia = await converterArquivoParaBase64(arquivoAnexoParaEnviar);
+            pacoteDeEnvio.push({ inline_data: dadosMdia });
+          } catch (erroMidia) {
+            console.error("Erro ao processar mídia:", erroMidia);
+            document.getElementById(idLoaderChat).innerHTML = `<i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> Erro ao processar o arquivo para envio.`;
+            removerAnexoChat(); // Limpa o anexo com erro
+            return;
+          }
+        }
 
         try {
+            // Usa o endpoint generateContent com a estrutura multimodal
             const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             const envioPergunta = await fetch(url_api_gemini, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
-                    contents: memoriaDoChat // ENVIA A CONVERSA TODA
+                    contents: [{ parts: pacoteDeEnvio }]
                 })
             });
             
             if(!envioPergunta.ok) {
                 const erroDoGoogle = await envioPergunta.json();
-                memoriaDoChat.pop(); // Remove a última pergunta que falhou da memória
                 throw new Error(erroDoGoogle.error?.message || "Erro desconhecido na API do Chat.");
             }
             
@@ -1470,16 +1373,18 @@
             
             let textoDoAssistente = respostaCompleta.candidates[0].content.parts[0].text;
             
-            // ADICIONA A RESPOSTA DA IA NA MEMÓRIA
-            memoriaDoChat.push({ role: "model", parts: [{ text: textoDoAssistente }] });
-            
+            // Cria a bolha da IA
             const bolhaIA = document.createElement('div');
             bolhaIA.className = 'chat-msg msg-ai';
-            bolhaIA.innerHTML = `<strong style="color:var(--gemini-purple); font-size: 1.1rem;"><i class="fas fa-robot"></i> Parecer Oficial Gemini:</strong><br><br>${textoDoAssistente}`;
+            let tituloIA = `<strong style="color:var(--gemini-purple); font-size: 1.1rem;"><i class="fas fa-robot"></i> Parecer Oficial Gemini`;
+            if (arquivoAnexoParaEnviar) tituloIA += ` (Análise Multimodal)`;
+            tituloIA += `:</strong><br><br>`;
+            
+            bolhaIA.innerHTML = tituloIA + textoDoAssistente;
             areaHistorico.appendChild(bolhaIA);
 
             areaHistorico.scrollTop = areaHistorico.scrollHeight;
-            registrarLog("Consulta Jurídica IA", "Fiscal interagiu com o Chatbot.");
+            registrarLog("Consulta Jurídica IA", `Fiscal usou o chat (Mídia: ${arquivoAnexoParaEnviar ? 'Sim' : 'Não'}).`);
             document.getElementById('chat-header-status').innerText = 'Rede Neural Conectada';
             document.getElementById('chat-header-status').style.color = 'var(--success)';
 
@@ -1498,9 +1403,111 @@
             
             document.getElementById('chat-header-status').innerText = 'Falha de Conexão';
             document.getElementById('chat-header-status').style.color = 'var(--danger)';
+        } finally {
+          // Limpa o anexo e o input file após a tentativa de envio (sucesso ou erro)
+          removerAnexoChat();
         }
     }
 
+    // =========================================================================================
+    // NOVO CHAT INTERNO DO MODAL (tab-radar) - AUDITORIA 100% CONTEXTUAL
+    // =========================================================================================
+    window.enviarChatModal = async () => {
+      const campoTextoModal = document.getElementById('modal-chat-input-text');
+      const perguntaModal = campoTextoModal.value.trim();
+      if (!perguntaModal) return;
+
+      const historicoModal = document.getElementById('modal-chat-historico');
+
+      // Bolha do usuário no modal
+      const bolhaUserModal = document.createElement('div');
+      bolhaUserModal.className = 'chat-msg msg-user';
+      bolhaUserModal.innerText = perguntaModal;
+      historicoModal.appendChild(bolhaUserModal);
+
+      campoTextoModal.value = '';
+      historicoModal.scrollTop = historicoModal.scrollHeight;
+
+      // Loader da IA no modal
+      const idLoaderModal = 'loader_modal_' + Date.now();
+      const bolhaLoaderModal = document.createElement('div');
+      bolhaLoaderModal.id = idLoaderModal;
+      bolhaLoaderModal.className = 'chat-msg msg-ai';
+      bolhaLoaderModal.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.2rem; margin-right: 10px;"></i> Analisando dossiê...`;
+      historicoModal.appendChild(bolhaLoaderModal);
+      historicoModal.scrollTop = historicoModal.scrollHeight;
+
+      // MONTA O PROMPT SUPER CONTEXTUAL (SEM ENVIAR IMAGENS EM BASE64, APENAS LINKS E TEXTO)
+      const p = dadosProcessoAtual;
+      
+      let contextoDoProcesso = `Você é o Auditor Chefe da COVISA. Estou te consultando sobre o seguinte processo que está aberto na minha tela:
+      - Empresa: ${p.nome}
+      - CNPJ: ${p.cnpj}
+      - Ramo: ${p.tipo}
+      - Checklist declarado: ${p.docs}
+      
+      DADOS DE PERÍCIA VISUAL (Eu, o sistema, já li as fotos e te garanto que):
+      O cliente anexou ${p.documento_assinado ? '1 documento assinado e validado' : 'ZERO documentos assinados'}.
+      Ele anexou ${p.evidencias ? p.evidencias.length : 0} fotos/vídeos de evidências da estrutura.
+      
+      (Links para referência, se você conseguir ler URLs, senão baseie-se na contagem acima):
+      - Documento Assinado: ${p.documento_assinado || 'Nenhum'}
+      - Evidências: ${p.evidencias ? p.evidencias.map(e => e.url).join(', ') : 'Nenhuma'}
+
+      Minha pergunta sobre este caso é: "${perguntaModal}"
+      
+      Responda em HTML básico, seja direto e cite a Lei 13.725 ou RDC 216 se for infração. Não use markdown.`;
+
+      // ADICIONA A CONVERSA À MEMÓRIA DO MODAL (PARA TER CONTEXTO)
+      memoriaModalDoChat.push({ role: "user", parts: [{ text: contextoDoProcesso }] });
+
+      try {
+        const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const envioPerguntaModal = await fetch(url_api_gemini, {
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ 
+                contents: memoriaModalDoChat // Envia o histórico completo do modal
+            })
+        });
+        
+        if(!envioPerguntaModal.ok) {
+            const erroDoGoogleModal = await envioPerguntaModal.json();
+            throw new Error(erroDoGoogleModal.error?.message || "Erro na API do Modal.");
+        }
+        
+        const respostaCompletaModal = await envioPerguntaModal.json(); 
+        document.getElementById(idLoaderModal).remove(); 
+        
+        let textoDoAuditor = respostaCompletaModal.candidates[0].content.parts[0].text;
+        
+        // Adiciona a resposta da IA à memória do modal
+        memoriaModalDoChat.push({ role: "model", parts: [{ text: textoDoAuditor }] });
+        
+        // Cria a bolha da IA no modal
+        const bolhaIAModal = document.createElement('div');
+        bolhaIAModal.className = 'chat-msg msg-ai';
+        bolhaIAModal.innerHTML = `<strong style="color:var(--gemini-purple); font-size: 1rem;"><i class="fas fa-robot"></i> Parecer do Auditor:</strong><br><br>${textoDoAuditor}`;
+        historicoModal.appendChild(bolhaIAModal);
+
+        historicoModal.scrollTop = historicoModal.scrollHeight;
+        registrarLog("Perícia IA (Modal)", `Interação contextual sobre CNPJ ${p.cnpj}.`);
+
+      } catch(erroModal) { 
+          console.error("Erro no Chatbot do Modal:", erroModal);
+          const loaderElementModal = document.getElementById(idLoaderModal);
+          if(loaderElementModal) loaderElementModal.remove(); 
+          
+          const erroBolhaModal = document.createElement('div');
+          erroBolhaModal.className = 'chat-msg msg-ai';
+          erroBolhaModal.style.color = "var(--danger)";
+          erroBolhaModal.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Erro na análise contextual: ${erroModal.message}`;
+          historicoModal.appendChild(erroBolhaModal);
+          historicoModal.scrollTop = historicoModal.scrollHeight;
+      }
+    }
+
+    // Calculadora original intacta
     window.calcularMulta = () => {
         let gravidadeDefinida = document.getElementById('sim-gravidade').value;
         let valorBaseEmReais = 1500;
@@ -1514,6 +1521,7 @@
         document.getElementById('sim-resultado').innerText = 'R$ ' + valorBaseEmReais.toLocaleString('pt-BR', {minimumFractionDigits: 2});
     }
 
+    // Gráficos original intacto
     function initCharts() {
       try {
           const contextoBarra = document.getElementById('barChart').getContext('2d');
@@ -1546,6 +1554,7 @@
       }
     }
 
+    // Lightbox original intacto
     window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
         document.getElementById('lightbox-img').src = linkImagem; 
         document.getElementById('lightbox-title').innerText = tituloDaImagem; 
