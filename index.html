@@ -28,6 +28,7 @@
       --shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
 
+    /* --- RESET GERAL --- */
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
     html { scroll-behavior: smooth; }
     body { font-family: 'Roboto', sans-serif; background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; line-height: 1.6; padding-bottom: 60px; }
@@ -39,7 +40,7 @@
     .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
-    /* CAPTCHA */
+    /* --- CAPTCHA --- */
     .captcha-container { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 4px; width: 100%; max-width: 300px; height: 74px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); user-select: none; }
     .captcha-checkbox { display: flex; align-items: center; gap: 12px; cursor: pointer; height: 100%; flex-grow: 1; }
     .checkmark-box { width: 24px; height: 24px; border: 2px solid #c1c1c1; border-radius: 2px; background: #fff; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
@@ -52,20 +53,25 @@
     .captcha-logo span { font-size: 10px; color: #999; margin-top: 2px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    /* --- ESTILO PARA MENSAGEM DE SUCESSO DO CPF --- */
     .cpf-success-msg { background: #dcfce3; color: #166534; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; margin-top: 10px; display: none; border: 1px solid #22c55e; text-align: center; }
 
+    /* --- WIDGET DE ACESSIBILIDADE LATERAL --- */
     .access-widget { position: fixed; right: 0; top: 40%; transform: translateY(-50%); display: flex; flex-direction: column; z-index: 9999; }
     .access-widget a { background: #0d3c85; color: white; font-size: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); border-radius: 8px 0 0 8px; margin-bottom: 2px; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; text-decoration: none;}
     .access-widget a:hover { background: var(--sp-red); width: 55px; }
 
+    /* --- FEATURE: BARRA DE SEGURANÇA --- */
     .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
       
+    /* --- BARRA GOV VERMELHA --- */
     .gov-bar { background: var(--sp-red); color: #fff; padding: 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2000; position: relative; }
     .gov-left { font-weight: 700; opacity: 0.95; }
     .gov-links { display: flex; gap: 10px; }
     .gov-links a { color: #fff; font-weight: 800; opacity: 0.95; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); white-space: nowrap; }
     .gov-links a:hover { opacity: 1; background: rgba(255,255,255,0.14); }
 
+    /* --- HEADER --- */
     header { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 14px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
     .header-grid { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
     .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
@@ -84,6 +90,7 @@
     .hamburger-btn { display: none; width: 44px; height: 44px; border-radius: 12px; background: #f8f9fa; border: 1px solid #e9ecef; cursor: pointer; align-items: center; justify-content: center; color: #333; transition: 0.2s; }
     .hamburger-btn:hover { background: #f1f3f5; }
 
+    /* --- DRAWER MOBILE --- */
     .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; display: none; }
     .drawer { position: fixed; top: 0; left: 0; height: 100%; width: 310px; max-width: 86vw; background: #fff; z-index: 10000; transform: translateX(-110%); transition: transform 0.25s ease; box-shadow: 0 20px 60px rgba(0,0,0,0.25); display: flex; flex-direction: column; }
     .drawer.open { transform: translateX(0); }
@@ -98,7 +105,7 @@
     .drawer-nav a.denuncia strong { background: var(--sp-red); color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; margin-left: auto; }
     .drawer-bottom { margin-top: auto; padding: 16px; border-top: 1px solid #eee; background: #fafafa; color: #666; font-size: 0.9rem; }
 
-    /* HERO E PESQUISA IA */
+    /* --- HERO & PESQUISA IA --- */
     .hero { background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center; color: white; padding-top: 40px; padding-bottom: 150px; }
     .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
@@ -110,13 +117,14 @@
     .search-box input { border: none; flex: 1; padding: 15px 25px; font-size: 1.1rem; color: #333; outline: none; background: transparent; }
     .search-box button { background: var(--sp-red); color: white; border: none; padding: 0 35px; border-radius: 50px; cursor: pointer; font-weight: 900; font-size: 1rem; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
     .search-box button:hover { background: var(--sp-dark-red); }
-    .search-box button:disabled { background: #ccc; cursor: not-allowed; }
 
+    /* --- SIMULAÇÃO EM TEMPO REAL --- */
     .live-stats-bar { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 25px 0; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; position: absolute; bottom: 0; }
     .live-grid { display: flex; justify-content: center; gap: 60px; text-align: center; color: white; }
     .live-item h4 { font-size: 2.8rem; font-weight: 900; margin: 0; color: #ffeb3b; font-family: 'Courier New', monospace; line-height: 1; }
     .live-item span { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 800; }
 
+    /* --- STATUS CARDS --- */
     .status-bar { margin-top: 60px; padding-bottom: 60px; background: white; }
     .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
     .status-card { background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #eee; display: flex; align-items: center; gap: 15px; transition: 0.3s; box-shadow: var(--shadow); }
@@ -125,7 +133,7 @@
     .status-info h4 { font-size: 0.9rem; color: var(--text-light); margin-bottom: 5px; text-transform: uppercase; font-weight: 900; }
     .status-info strong { font-size: 1.2rem; color: var(--text-dark); display: block; font-weight: 900; }
 
-    /* FORMULÁRIOS */
+    /* --- ESTILOS GERAIS DE FORMULÁRIO --- */
     .form-control { width: 100%; padding: 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; margin-bottom: 15px; transition: 0.3s; font-family: 'Roboto', sans-serif; background: #fff; }
     .form-control:focus { border-color: var(--gov-blue); outline: none; }
     .form-control[readonly] { background-color: #f1f3f5; color: #6c757d; cursor: not-allowed; }
@@ -134,7 +142,7 @@
     .btn-primary { background: var(--gov-blue); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: 900; font-size: 1.1rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; text-transform: uppercase; }
     .btn-primary:hover { background: var(--gov-dark-blue); transform: translateY(-2px); }
 
-    /* REGULARIZE */
+    /* --- REGULARIZE SECTION --- */
     .checklist-section { padding: 100px 0; background: #f4f7fa; border-top: 1px solid #e1e8ed; border-bottom: 1px solid #e1e8ed; }
     .checklist-wrapper { display: flex; gap: 60px; flex-wrap: wrap; align-items: flex-start; }
     .checklist-intro { flex: 1; min-width: 320px; }
@@ -168,6 +176,7 @@
     .doc-item input[type="checkbox"]:checked ~ span { color: var(--gov-blue); }
     .doc-item:has(input[type="checkbox"]:checked) { border-color: var(--gov-blue); background: #f0f4f8; }
 
+    /* Map Styles */
     #map-container { width: 100%; height: 250px; background: #e9ecef; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; display: none; overflow: hidden; position: relative; }
     .map-legend { background: #fff; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; color: var(--sp-red); border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 5px; }
 
@@ -181,6 +190,7 @@
     .invoice-value h2 { font-size: 2.5rem; color: #2d3748; margin: 0; }
     .qr-container { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e0; text-align: center; margin-bottom: 25px; position: relative;}
 
+    /* --- BARRA DE PROGRESSO VISUAL --- */
     .progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 35px; margin-top: 10px; padding: 0 20px;}
     .progress-container::before { content: ''; position: absolute; top: 50%; left: 30px; right: 30px; height: 4px; background: #e2e8f0; z-index: 0; transform: translateY(-50%); }
     .progress-step { position: relative; z-index: 1; background: white; border: 4px solid #e2e8f0; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #cbd5e0; }
@@ -188,7 +198,7 @@
     .progress-step.completed { border-color: var(--success-color); background: var(--success-color); color: white; }
     .progress-label { position: absolute; top: 55px; font-size: 0.75rem; text-align: center; width: 100px; left: -27px; font-weight: 800; color: #64748b; line-height: 1.2;}
 
-    /* OUTRAS SEÇÕES */
+    /* --- OUTRAS SEÇÕES --- */
     .areas-section { padding: 100px 0; background: #fff; text-align: center; }
     .areas-header { max-width: 700px; margin: 0 auto 60px; }
     .areas-header h2 { font-size: 2.5rem; color: var(--text-dark); margin-bottom: 15px; }
@@ -200,7 +210,7 @@
     .area-card h3 { font-size: 1.3rem; margin-bottom: 15px; color: var(--text-dark); }
 
     .impact-section { padding: 120px 0; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1595855729736-2a725902f232?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-attachment: fixed; background-position: center; color: white; text-align: center; }
-    .stats-grid-bottom { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
     .stat-item h3 { font-size: 4rem; font-weight: 900; color: #ffeb3b; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; line-height: 1; }
     .stat-item p { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
 
@@ -264,7 +274,7 @@
     .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 900; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
-    /* --- FOOTER --- */
+    /* --- FOOTER ATUALIZADO --- */
     footer { background: #17191d; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
     img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
@@ -278,18 +288,16 @@
     .selo-link:hover { transform: translateY(-4px) scale(1.05); }
     .selo-link img { width: 100%; height: auto; display: block; mix-blend-mode: lighten; border-radius: 8px; }
 
-    /* --- CHATBOT GEMINI IA (CORRIGIDO E COM ANTI-BLOCK) --- */
-    .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; transition: 0.3s; }
+    /* Chatbot Otimizado GEMINI IA */
+    .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; transition: 0.3s;}
     .chat-widget-btn:hover { transform: scale(1.1); }
     .chat-interface { position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9998; display: none; flex-direction: column; border: 1px solid #eee; overflow: hidden; }
     .chat-header { background: var(--sp-red); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
     .chat-body { flex: 1; padding: 20px; overflow-y: auto; background: #f8f9fa; display: flex; flex-direction: column; gap: 10px; }
     .chat-input { padding: 15px; background: white; display: flex; border-top: 1px solid #eee; gap: 10px; }
-    .chat-input input { flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; font-family: var(--font-base); transition: 0.3s; }
-    .chat-input input:disabled { background: #f1f1f1; cursor: not-allowed; }
+    .chat-input input { flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; font-family: var(--font-base); }
     .chat-input button { background: var(--sp-red); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: 0.3s; }
-    .chat-input button:disabled { background: #ccc; cursor: not-allowed; }
-    .chat-input button:hover:not(:disabled) { background: var(--sp-dark-red); }
+    .chat-input button:hover { background: var(--sp-dark-red); }
     .chat-bubble { padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; word-wrap: break-word; }
     .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333; border: 1px solid #eee;}
     .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(218,37,28,0.2); }
@@ -317,10 +325,12 @@
       .hero h2 { font-size: 2.2rem; }
       .hero p { font-size: 1.05rem; margin-bottom: 22px; }
       
+      /* AJUSTE RESPONSIVO DA BARRA DE PESQUISA */
       .search-box { flex-direction: column; background: transparent; padding: 0; box-shadow: none; gap: 10px; max-width: 95%; margin: 0 auto; border: none;}
       .search-box input { border-radius: 12px; padding: 16px; background: white; width: 100%; border: 1px solid #ccc;}
       .search-box button { border-radius: 12px; padding: 16px; width: 100%; height: auto; }
       
+      /* AJUSTE RESPONSIVO DA CAIXA DE RESULTADO DA IA */
       #search-result-area { max-width: 95% !important; margin: 15px auto !important; font-size: 0.95rem; }
 
       .live-stats-bar { position: relative; background: rgba(0,0,0,0.78); }
@@ -331,7 +341,7 @@
       .report-grid { grid-template-columns: 1fr; gap: 25px; }
       .report-header h2 { font-size: 2.2rem; }
       
-      /* CHATBOT TELA CHEIA NO MOBILE PERFEITO */
+      /* CHATBOT TELA CHEIA NO MOBILE */
       .chat-interface { right: 0; left: 0; bottom: 0; width: 100%; height: 85vh; border-radius: 20px 20px 0 0; z-index: 100000; position: fixed;}
       .chat-widget-btn { right: 16px; bottom: 18px; width: 60px; height: 60px; z-index: 99999;}
       
@@ -415,7 +425,7 @@
       
       <div class="search-box">
         <input type="text" id="main-search-input" placeholder="Buscar protocolos, legislação ou pergunte à IA..." onkeypress="if(event.key === 'Enter') window.realizarPesquisaIA()" />
-        <button onclick="window.realizarPesquisaIA()" id="main-search-btn"><i class="fas fa-search"></i> Pesquisar</button>
+        <button onclick="window.realizarPesquisaIA()"><i class="fas fa-search"></i> Pesquisar</button>
       </div>
       
       <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
@@ -462,17 +472,18 @@
           </div>
 
           <div class="steps-box">
-            <h4><i class="fas fa-exclamation-triangle"></i> Atenção à Taxa de Análise</h4>
+            <h4><i class="fas fa-exclamation-triangle"></i> Atenção à Taxa de Análise de Pendências Documentais</h4>
             <p>A <strong>Taxa de Análise de Pendências Documentais</strong> é um requisito legal obrigatório e fundamental para o destravamento e andamento do seu processo. O descumprimento dos prazos e o não pagamento da taxa sujeitam o estabelecimento a penalidades severas.</p>
             <ul class="steps-list">
               <li><i class="fas fa-check"></i> Garante prioridade na análise pelos fiscais de plantão.</li>
               <li><i class="fas fa-check"></i> Evita a suspensão preventiva das atividades em até 48 horas.</li>
-              <li><i class="fas fa-check"></i> Protege o CNPJ contra multas por irregularidade.</li>
+              <li><i class="fas fa-check"></i> Protege o CNPJ contra multas por irregularidade administrativa.</li>
             </ul>
           </div>
         </div>
 
         <div class="checklist-form-container">
+            
           <div class="form-tabs">
             <div class="form-tab active" id="tab-envio" onclick="window.alternarAba('envio')">1. Enviar Dados</div>
             <div class="form-tab" id="tab-pagamento" onclick="window.alternarAba('pagamento')">2. Pagar Taxa/Multa</div>
@@ -481,21 +492,30 @@
           <div id="area-envio">
             <form id="form-regularizacao">
               <label style="font-weight: 800; display: block; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Dados Cadastrais</label>
+                
               <input type="text" class="form-control" id="cnpj_empresa" placeholder="Digite seu CPF ou CNPJ" required style="margin-bottom: 10px;" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
+                
               <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados e localização via Satélite...</div>
-              <div id="msg-cpf-encontrado" class="cpf-success-msg"><i class="fas fa-check-circle"></i> CPF LOCALIZADO!<br><span style="font-weight: normal; font-size: 0.8rem; color: #333;">Por favor, confirme seus dados abaixo para prosseguir.</span></div>
+                
+              <div id="msg-cpf-encontrado" class="cpf-success-msg">
+                <i class="fas fa-check-circle"></i> CPF LOCALIZADO NA BASE DA RECEITA!<br>
+                <span style="font-weight: normal; font-size: 0.8rem; color: #333;">Por favor, confirme seus dados pessoais abaixo para prosseguir.</span>
+              </div>
                 
               <div id="dados-pf" style="display: none;">
-                <label style="font-weight: 800; display: block; margin-top: 10px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome Completo</label>
+                <label style="font-weight: 800; display: block; margin-top: 10px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome Completo (Confirmar)</label>
                 <input type="text" class="form-control" id="nome_pf" placeholder="Digite seu Nome Completo" />
+                  
                 <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Data de Nascimento</label>
                 <input type="text" class="form-control" id="data_nasc_pf" placeholder="DD/MM/AAAA" maxlength="10" oninput="window.maskData(this)" />
-                <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome Fantasia (Opcional)</label>
-                <input type="text" class="form-control" id="nome_fantasia_pf" placeholder="Ex: Salão da Maria..." />
+                  
+                <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome do Estabelecimento / Nome Fantasia (Opcional)</label>
+                <input type="text" class="form-control" id="nome_fantasia_pf" placeholder="Ex: Salão da Maria, Mercadinho Silva..." />
               </div>
 
               <div id="dados-pj" style="display: none;">
                   <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia ou Razão Social *" required onblur="window.salvarRascunho()" />
+
                   <div id="endereco-automatico" style="display: none;">
                       <div class="form-row">
                           <input type="text" class="form-control" id="end_rua" placeholder="Rua" readonly />
@@ -505,8 +525,9 @@
                           <input type="text" class="form-control" id="end_bairro" placeholder="Bairro" readonly />
                           <input type="text" class="form-control" id="end_cidade" placeholder="Cidade" readonly />
                       </div>
+                        
                       <div id="map-container">
-                          <div class="map-legend">📍 Localização Vinculada ao CNPJ</div>
+                          <div class="map-legend">📍 Localização Exata Vinculada ao CNPJ</div>
                           <iframe id="google-map-frame" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                       </div>
                   </div>
@@ -515,17 +536,24 @@
               <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Ramo de Atividade *</label>
               <select class="form-control" id="tipo_estab" required onchange="window.mostrarChecklist()">
                 <option value="" disabled selected>Selecione a atividade principal...</option>
-                <option value="Beleza">Estética e Beleza (Salão, Unhas, Barbearia)</option>
-                <option value="Alimentos">Alimentos (Restaurante, Bar, Mercado)</option>
-                <option value="Saúde">Saúde (Clínica, Odontologia, Farmácia)</option>
+                <option value="Beleza">Estética e Beleza (Salão, Unhas, Barbearia, Tatuagem)</option>
+                <option value="Alimentos">Alimentos (Restaurante, Bar, Mercado, Padaria)</option>
+                <option value="Saúde">Saúde (Clínica, Odontologia, Farmácia, Laboratório)</option>
                 <option value="Outros">Outros / Comércio Geral / Indústria</option>
               </select>
 
               <div id="area-checklist" style="display: none;">
-                <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental:</p>
-                <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px;"><i class="fas fa-info-circle"></i> Atenção: Se você marcar a caixa, será OBRIGATÓRIO anexar a foto do documento.</div>
-                <div class="docs-grid" id="lista-documentos"></div>
+                <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental (Marque APENAS os que JÁ POSSUI):</p>
+                  
+                <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px;">
+                  <i class="fas fa-info-circle"></i> Atenção: Se você marcar a caixa, será OBRIGATÓRIO anexar a foto do documento.
+                </div>
+
+                <div class="docs-grid" id="lista-documentos">
+                </div>
+
                 <div id="risco-multa" style="padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 20px; display: none;"></div>
+
               </div>
 
               <div class="captcha-container">
@@ -544,15 +572,16 @@
               </div>
 
               <button type="submit" class="btn-success" id="btn-enviar-whatsapp" style="display: none; margin-top: 25px;">
-                <i class="fas fa-paper-plane"></i> Enviar para Análise
+                <i class="fas fa-paper-plane"></i> Enviar Formulário de Análise
               </button>
             </form>
           </div>
 
           <div id="area-pagamento" style="display: none;">
             <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
-              <h4 style="color: var(--gov-dark-blue); margin-bottom: 15px;">Consultar Status</h4>
-              <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Digite o seu CPF/CNPJ para consultar o andamento ou gerar o Pix da taxa.</p>
+              <h4 style="color: var(--gov-dark-blue); margin-bottom: 15px;">Consultar Status do Processo</h4>
+              <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Digite o seu CPF/CNPJ para consultar o andamento da análise documental ou gerar o Pix da taxa.</p>
+                
               <form id="form-consulta">
                 <input type="text" class="form-control" id="consulta_cnpj" placeholder="Digite seu CPF ou CNPJ..." required oninput="window.maskCPFinCNPJ(this)" />
                 <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Consultar</button>
@@ -580,7 +609,9 @@
 
                   <div class="qr-container">
                     <div id="cronometro-pix" style="font-size: 1.2rem; font-weight: 900; color: var(--sp-red); margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 8px;"></div>
-                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco.</p>
+                      
+                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
+                      
                     <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
@@ -595,7 +626,10 @@
                       <i class="fas fa-shield-alt"></i> PROTEÇÃO ATIVA: Ao emitir a taxa, o sistema suspende temporariamente ações fiscais.
                     </p>
                   </div>
-                  <button onclick="window.enviarWhatsAppComprovanteConsulta()" class="btn-success">💳 Emitir Guia e Suspender Ações</button>
+
+                  <button onclick="window.enviarWhatsAppComprovanteConsulta()" class="btn-success">
+                    💳 Emitir Guia e Suspender Ações Fiscais Temporariamente
+                  </button>
                 </div>
               </div>
             </div>
@@ -604,6 +638,7 @@
               <div id="texto-mensagem" style="font-size: 1.1rem;">Em análise técnica...</div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -613,10 +648,24 @@
     <div class="container">
       <div class="areas-header"><h2>Onde a Vigilância Atua?</h2><p>Nossa fiscalização protege a saúde da população em diversas frentes essenciais.</p></div>
       <div class="areas-grid">
-        <div class="area-card"><div class="area-icon"><i class="fas fa-utensils"></i></div><h3>Alimentos</h3><p>Fiscalização de restaurantes, mercados e indústrias.</p></div>
-        <div class="area-card"><div class="area-icon"><i class="fas fa-pills"></i></div><h3>Medicamentos</h3><p>Controle de farmácias e drogarias.</p></div>
-        <div class="area-card"><div class="area-icon"><i class="fas fa-hospital"></i></div><h3>Saúde</h3><p>Inspeção em hospitais e clínicas.</p></div>
-        <div class="area-card"><div class="area-icon"><i class="fas fa-paw"></i></div><h3>Zoonoses</h3><p>Controle da Dengue e pragas urbanas.</p></div>
+        <div class="area-card"><div class="area-icon"><i class="fas fa-utensils"></i></div><h3>Alimentos</h3><p>Fiscalização de restaurantes, mercados e indústrias para garantir segurança alimentar.</p></div>
+        <div class="area-card"><div class="area-icon"><i class="fas fa-pills"></i></div><h3>Medicamentos</h3><p>Controle de farmácias e drogarias para evitar venda de produtos irregulares.</p></div>
+        <div class="area-card"><div class="area-icon"><i class="fas fa-hospital"></i></div><h3>Saúde</h3><p>Inspeção em hospitais e clínicas para garantir esterilização e procedimentos seguros.</p></div>
+        <div class="area-card"><div class="area-icon"><i class="fas fa-paw"></i></div><h3>Zoonoses</h3><p>Controle da Dengue, vacinação antirrábica e controle de pragas urbanas.</p></div>
+        <div class="area-card"><div class="area-icon"><i class="fas fa-hard-hat"></i></div><h3>Trabalho</h3><p>Verificação de EPIs e condições de segurança em ambientes de trabalho.</p></div>
+        <div class="area-card"><div class="area-icon"><i class="fas fa-water"></i></div><h3>Ambiental</h3><p>Monitoramento da qualidade da água e solo.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="impact-section">
+    <div class="container">
+      <div class="impact-title"><h2>Balanço de Fiscalização 2025/2026</h2><p>Combate rigoroso a irregularidades para proteger você.</p></div>
+      <div class="stats-grid-bottom">
+        <div class="stat-item"><h3>+15.400</h3><p>Vistorias Realizadas</p></div>
+        <div class="stat-item"><h3>120 Ton</h3><p>Alimentos Apreendidos</p></div>
+        <div class="stat-item"><h3>2.100</h3><p>Interdições Cautelares</p></div>
+        <div class="stat-item"><h3>+60.000</h3><p>Produtos Retirados</p></div>
       </div>
     </div>
   </section>
@@ -627,28 +676,67 @@
       <div class="news-grid">
         <div class="news-card">
           <div class="news-img"><img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=600&auto=format&fit=crop" alt="Dengue" /></div>
-          <div class="news-body"><span class="news-tag">Urgente</span><h3>Operação Dengue Zero</h3><p>Equipes realizam nebulização para eliminar focos.</p><a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a></div>
+          <div class="news-body"><span class="news-tag">Urgente</span><h3>Operação Dengue Zero: Ações em toda a capital</h3><p>Equipes realizam nebulização para eliminar focos do mosquito Aedes aegypti. Colabore!</p><a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a></div>
         </div>
         <div class="news-card">
-          <div class="news-img"><img src="imagens/3.jpeg" class="card-img-top" alt="Operação" /></div>
-          <div class="news-body"><span class="news-tag">Fiscalização</span><h3>Blitz fecha restaurantes clandestinos</h3><p>Estabelecimentos operavam sem licença, com alimentos vencidos.</p><a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a></div>
+          <div class="news-img"><img src="imagens/3.jpeg" class="card-img-top" alt="Operação de fiscalização" /></div>
+          <div class="news-body"><span class="news-tag">Fiscalização</span><h3>Blitz fecha restaurantes clandestinos no centro</h3><p>Estabelecimentos operavam sem licença, com alimentos vencidos e higiene precária.</p><a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a></div>
+        </div>
+        <div class="news-card">
+          <div class="news-img"><img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=600&auto=format&fit=crop" alt="Vacina" /></div>
+          <div class="news-body"><span class="news-tag">Saúde</span><h3>Campanha de Multivacinação Prorrogada</h3><p>Atualize a caderneta da sua família nos postos de saúde mais próximos.</p><a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a></div>
         </div>
       </div>
     </div>
   </section>
 
+  <section id="legislacao" class="laws-section">
+    <div class="container">
+      <div class="section-header"><h2>Legislação Sanitária</h2></div>
+      <table class="law-table">
+        <thead><tr><th>Norma</th><th>Descrição</th><th>Download</th></tr></thead>
+        <tbody>
+          <tr><td>Lei 13.725</td><td>Código Sanitário do Município de São Paulo.</td><td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
+          <tr><td>Portaria 2619</td><td>Boas Práticas para Alimentos (Temperaturas, Higiene).</td><td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
+          <tr><td>RDC 216</td><td>Regulamento Técnico ANVISA para Serviços de Alimentação.</td><td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="formularios" class="laws-section" style="border-top: none; background: #f9f9f9;">
+    <div class="container">
+      <div class="section-header"><h2>Formulários e Instruções</h2></div>
+      <table class="law-table">
+        <thead><tr><th>Documento</th><th>Descrição</th><th>Download</th></tr></thead>
+        <tbody>
+          <tr><td>Instruções de Preenchimento</td><td>Guia completo para preenchimento dos formulários sanitários.</td><td><a href="INSTRUÇÕES FORMULÁRIOS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-header"><h2>Perguntas Frequentes</h2></div>
+      <div class="faq-item"><div class="faq-question">Como renovar o CMVS? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>A renovação deve ser solicitada 60 dias antes do vencimento via sistema online.</p></div></div>
+      <div class="faq-item"><div class="faq-question">Preciso de Responsável Técnico? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Depende da atividade. Drogarias e indústrias exigem. Lanchonetes geralmente não.</p></div></div>
+      <div class="faq-item"><div class="faq-question">A denúncia é anônima? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Sim, seus dados são protegidos por lei e não são revelados ao denunciado.</p></div></div>
+    </div>
+  </section>
+
   <section id="contato" class="report-section">
     <div class="container">
-      <div class="report-header"><h2>Central de Denúncias</h2><p>Canal oficial para comunicar irregularidades sanitárias. Sua identidade é protegida.</p></div>
+      <div class="report-header"><h2>Central de Denúncias</h2><p>Canal oficial para comunicar irregularidades sanitárias. Sua identidade é protegida por lei e o sigilo é absoluto.</p></div>
       <div class="report-grid">
         <div class="report-guide">
           <h3><i class="fas fa-info-circle"></i> Guia do Denunciante</h3>
           <ol class="guide-steps">
             <li>Deturpe o Problema<p>Seja específico: o que, onde e quando ocorreu.</p></li>
             <li>Anexe Evidências<p>Apenas fotos são aceitas no sistema online.</p></li>
-            <li>Acompanhe<p>A denúncia será enviada diretamente à base de dados.</p></li>
+            <li>Acompanhe<p>A denúncia será enviada diretamente à base de dados dos fiscais de plantão.</p></li>
           </ol>
-          <div class="anon-badge"><i class="fas fa-user-secret"></i> Anonimato Garantido</div>
+          <div class="anon-badge"><i class="fas fa-user-secret"></i> Anonimato Garantido pela Lei 12.527</div>
         </div>
         <div class="report-form-container">
           <form id="form-denuncia">
@@ -659,35 +747,37 @@
                   <option value="" disabled selected>Selecione o Motivo *</option>
                   <option>Alimentos Vencidos/Estragados</option>
                   <option>Falta de Higiene/Sujeira</option>
-                  <option>Foco de Dengue</option>
+                  <option>Foco de Dengue (Água Parada)</option>
                   <option>Estabelecimento Clandestino</option>
+                  <option>Ruído Excessivo (PSIU)</option>
+                  <option>Pragas (Ratos/Baratas)</option>
                   <option>Outros</option>
                 </select>
               </div>
             </div>
-            <input type="text" class="form-control" id="resumo_outros" placeholder="Descreva o motivo" style="display: none;" maxlength="50" />
+            <input type="text" class="form-control" id="resumo_outros" placeholder="Descreva o motivo (máx 50 letras)" style="display: none;" maxlength="50" />
             
             <div class="input-with-icon">
               <i class="fas fa-search"></i>
-              <input type="text" class="form-control" id="cnpj_denuncia" placeholder="CNPJ do local (Opcional)" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
+              <input type="text" class="form-control" id="cnpj_denuncia" placeholder="CNPJ do local (Opcional - Busca Automática)" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
             </div>
             <div id="loading-cnpj-denuncia" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px; margin-top: -10px; margin-left: 10px;"><i class="fas fa-spinner fa-spin"></i> Localizando endereço...</div>
 
             <div class="input-with-icon">
               <i class="fas fa-map-marker-alt"></i>
-              <input type="text" class="form-control" id="local" placeholder="Nome do estabelecimento e endereço *" required />
+              <input type="text" class="form-control" id="local" placeholder="Nome do estabelecimento e endereço completo *" required />
             </div>
             
             <div class="input-with-icon">
               <i class="fas fa-pencil-alt"></i>
-              <textarea id="relato" class="form-control" rows="4" placeholder="Descreva a situação..." maxlength="500" onkeyup="window.countChars(this)"></textarea>
+              <textarea id="relato" class="form-control" rows="4" placeholder="Descreva a situação com o máximo de detalhes possível... *" maxlength="500" onkeyup="window.countChars(this)"></textarea>
             </div>
             <div class="char-counter"><span id="charNum">0</span>/500 caracteres</div>
             
             <div class="file-upload-zone" style="cursor: pointer; position: relative;">
               <i class="fas fa-camera"></i>
               <h4>Evidências (Apenas Fotos)</h4>
-              <p>Toque para abrir a Câmera</p>
+              <p>Toque para abrir a Câmera ou Galeria</p>
               <input type="file" id="evidencia_denuncia" accept="image/*" multiple style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" onchange="window.mostrarQtdFotosDenuncia(this)">
               <div id="qtd-fotos-denuncia" style="margin-top: 10px; font-weight: bold; color: var(--sp-red);"></div>
             </div>
@@ -701,24 +791,35 @@
 
   <footer>
     <div class="container">
+       
       <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 30px; margin-bottom: 40px; gap: 20px;">
         <div>
           <h4 style="color: white; margin-bottom: 10px; font-size: 1.1rem; border-left: none; padding-left: 0;">Secretaria Municipal da Saúde</h4>
           <p style="margin: 0; color: #aaa; margin-bottom: 5px;">Telefone/WhatsApp: (11) 92066-5012</p>
           <p style="margin: 0; color: #aaa;">E-mail: vigilanciasanitariaspgov1@gmail.com</p>
         </div>
+        
         <div class="selos-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 550px; gap: 15px;">
-            <a href="#" class="selo-link" target="_blank"><img src="imagens/selo1.jpg" alt="CIL" /></a>
-            <a href="#" class="selo-link" target="_blank"><img src="imagens/selo2.jpg" alt="CPA" /></a>
-            <a href="#" class="selo-link" target="_blank"><img src="imagens/selo3.jpg" alt="Prevenção" /></a>
-            <a href="#" class="selo-link" target="_blank"><img src="imagens/selo4.jpg" alt="Transparência" /></a>
+            <a href="https://call.icom-libras.com.br/smped/chamada/video?svId=6a144745-22d2-408c-9649-356872449766&preCall=true&queue=icom" class="selo-link" target="_blank" title="CIL - Central de Intermediação em Libras">
+                <img src="imagens/selo1.jpg" alt="CIL" />
+            </a>
+            <a href="http://selodigital.imprensaoficial.com.br/validacao/SMPED/01195459cd224b834f" class="selo-link" target="_blank" title="Selo CPA - Acessibilidade Digital">
+                <img src="imagens/selo2.jpg" alt="CPA" />
+            </a>
+            <a href="https://sites.tcu.gov.br/verifique-adesao-pnpc/" class="selo-link" target="_blank" title="Programa Nacional de Prevenção à Corrupção">
+                <img src="imagens/selo3.jpg" alt="Prevenção" />
+            </a>
+            <a href="https://prefeitura.sp.gov.br/web/controladoria_geral/w/a_cgm/329588" class="selo-link" target="_blank" title="Transparência e Boas Práticas de Gestão">
+                <img src="imagens/selo4.jpg" alt="Transparência" />
+            </a>
         </div>
       </div>
+
       <div class="footer-grid">
-        <div><img src="imagens/5.png" class="footer-logo" alt="Brasão SP" style="height: 80px !important; width: auto !important;" /><p>Secretaria Municipal da Saúde</p></div>
-        <div><h4>Institucional</h4><ul><li>Quem Somos</li><li>Transparência</li></ul></div>
-        <div><h4>Serviços</h4><ul><li>Licenciamento</li><li>Consultas</li></ul></div>
-        <div><h4>Canais</h4><ul><li>156</li><li>Ouvidoria</li></ul></div>
+        <div><img src="imagens/5.png" class="footer-logo" alt="Brasão SP" style="height: 80px !important; width: auto !important;" /><p>Secretaria Municipal da Saúde<br />Coordenação de Vigilância em Saúde</p></div>
+        <div><h4>Institucional</h4><ul><li>Quem Somos</li><li>Organograma</li><li>Transparência</li></ul></div>
+        <div><h4>Serviços</h4><ul><li>Licenciamento</li><li>Consultas</li><li>Taxas</li></ul></div>
+        <div><h4>Canais</h4><ul><li>156</li><li>Ouvidoria</li><li>e-SIC</li></ul></div>
       </div>
       <div class="footer-bottom"><p>© 2026 Prefeitura de São Paulo. Todos os direitos reservados.</p></div>
     </div>
@@ -727,34 +828,38 @@
   <div class="chat-widget-btn" onclick="window.toggleChat()"><i class="fas fa-comment-dots"></i></div>
   <div class="chat-interface" id="chat-interface">
     <div class="chat-header"><span>Assistente IA COVISA</span><i class="fas fa-times" onclick="window.toggleChat()" style="cursor:pointer;"></i></div>
-    <div class="chat-body" id="chat-body">
-        <div class="chat-bubble bubble-ai">Olá! Sou a Ana, a Inteligência Artificial da COVISA. Como posso orientá-lo hoje sobre nossos serviços?</div>
-    </div>
+    <div class="chat-body" id="chat-body"><div class="chat-bubble bubble-ai">Olá! Sou a Ana, a Inteligência Artificial da COVISA. Como posso orientá-lo hoje sobre nossos serviços?</div></div>
     <form class="chat-input" id="chat-form">
       <input type="text" id="chat-msg" placeholder="Digite sua dúvida..." required />
-      <button type="submit" id="btn-send-chat"><i class="fas fa-paper-plane"></i></button>
+      <button type="submit"><i class="fas fa-paper-plane"></i></button>
     </form>
   </div>
 
   <script type="module">
+    // IMPORTAÇÕES FIREBASE
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
+    // --- CHAVES DO FIREBASE ---
     const firebaseConfig = {
-      apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg", authDomain: "site-8dfaf.firebaseapp.com",
-      projectId: "site-8dfaf", storageBucket: "site-8dfaf.firebasestorage.app",
-      messagingSenderId: "76689989548", appId: "1:76689989548:web:5c86741e60ce385102a409"
+      apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
+      authDomain: "site-8dfaf.firebaseapp.com",
+      projectId: "site-8dfaf",
+      storageBucket: "site-8dfaf.firebasestorage.app",
+      messagingSenderId: "76689989548",
+      appId: "1:76689989548:web:5c86741e60ce385102a409"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     // ==============================================================
-    // CHAVE DO GOOGLE GEMINI E SISTEMA ANTI-BLOQUEIO (COOLDOWN)
+    // CHAVE DO GOOGLE GEMINI (PARA O CHATBOT E PESQUISA)
     // ==============================================================
     const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
+    // FUNÇÕES GLOBAIS GERAIS
     window.idPedidoConsultaAtual = null; 
     window.captchaValidado = false;
     
@@ -771,17 +876,52 @@
 
     window.maskCPFinCNPJ = function(i) {
       let v = i.value.replace(/\D/g,'');
-      if (v.length <= 11) { v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); } 
-      else { v = v.replace(/^(\d{2})(\d)/, '$1.$2'); v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3'); v = v.replace(/\.(\d{3})(\d)/, '.$1/$2'); v = v.replace(/(\d{4})(\d)/, '$1-$2'); }
+      if (v.length <= 11) { 
+        v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      } else { 
+        v = v.replace(/^(\d{2})(\d)/, '$1.$2'); v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3'); v = v.replace(/\.(\d{3})(\d)/, '.$1/$2'); v = v.replace(/(\d{4})(\d)/, '$1-$2');
+      }
       i.value = v;
     };
 
-    window.maskData = function(i) { let v = i.value.replace(/\D/g,''); if(v.length >= 5) { v = v.replace(/(\d{2})(\d{2})(\d{1,4})/, '$1/$2/$3'); } else if(v.length >= 3) { v = v.replace(/(\d{2})(\d{1,2})/, '$1/$2'); } i.value = v; };
-    window.validarCPF = function(cpf) { if (cpf == "00000000000" || cpf == "11111111111") return false; let add = 0; for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i); let rev = 11 - (add % 11); if (rev == 10 || rev == 11) rev = 0; if (rev != parseInt(cpf.charAt(9))) return false; add = 0; for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i); rev = 11 - (add % 11); if (rev == 10 || rev == 11) rev = 0; if (rev != parseInt(cpf.charAt(10))) return false; return true; };
-    window.salvarRascunho = function() { const nome = document.getElementById('nome_empresa').value; if(nome) localStorage.setItem('rascunho_nome', nome); };
-    
+    // MÁSCARA DATA DE NASCIMENTO
+    window.maskData = function(i) {
+        let v = i.value.replace(/\D/g,'');
+        if(v.length >= 5) {
+            v = v.replace(/(\d{2})(\d{2})(\d{1,4})/, '$1/$2/$3');
+        } else if(v.length >= 3) {
+            v = v.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+        }
+        i.value = v;
+    };
+
+    window.validarCPF = function(cpf) {
+      if (cpf == "00000000000" || cpf == "11111111111") return false;
+      let add = 0; for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
+      let rev = 11 - (add % 11); if (rev == 10 || rev == 11) rev = 0;
+      if (rev != parseInt(cpf.charAt(9))) return false;
+      add = 0; for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
+      rev = 11 - (add % 11); if (rev == 10 || rev == 11) rev = 0;
+      if (rev != parseInt(cpf.charAt(10))) return false;
+      return true;
+    };
+
+    window.salvarRascunho = function() {
+      const nome = document.getElementById('nome_empresa').value;
+      if(nome) localStorage.setItem('rascunho_nome', nome);
+    };
+
     window.limparCamposEndereco = function() {
-      document.getElementById('nome_empresa').value = ''; document.getElementById('end_rua').value = ''; document.getElementById('end_num').value = ''; document.getElementById('end_bairro').value = ''; document.getElementById('end_cidade').value = ''; document.getElementById('nome_pf').value = ''; document.getElementById('data_nasc_pf').value = ''; document.getElementById('nome_fantasia_pf').value = ''; document.getElementById('google-map-frame').src = ''; localStorage.removeItem('rascunho_nome');
+      document.getElementById('nome_empresa').value = '';
+      document.getElementById('end_rua').value = '';
+      document.getElementById('end_num').value = '';
+      document.getElementById('end_bairro').value = '';
+      document.getElementById('end_cidade').value = '';
+      document.getElementById('nome_pf').value = '';
+      document.getElementById('data_nasc_pf').value = '';
+      document.getElementById('nome_fantasia_pf').value = '';
+      document.getElementById('google-map-frame').src = '';
+      localStorage.removeItem('rascunho_nome');
     };
 
     window.realizarConsultaFake = function() {
@@ -800,128 +940,263 @@
     window.closeDrawer = function() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); document.body.style.overflow = ''; };
       
     let cliquesLogo = 0; let timerCliques;
-    window.acessoAdmin = function() { cliquesLogo++; clearTimeout(timerCliques); if(cliquesLogo >= 3) { let senha = prompt("ACESSO RESTRITO - Digite a senha do painel:"); if(senha === "1533") { window.location.href = "admin.html"; } else if(senha !== null) { alert("Senha incorreta!"); } cliquesLogo = 0; } timerCliques = setTimeout(() => cliquesLogo = 0, 1500); };
-    window.alternarAba = function(aba) { document.getElementById('tab-envio').classList.remove('active'); document.getElementById('tab-pagamento').classList.remove('active'); document.getElementById('area-envio').style.display = 'none'; document.getElementById('area-pagamento').style.display = 'none'; document.getElementById('tab-' + aba).classList.add('active'); document.getElementById('area-' + aba).style.display = 'block'; };
+    window.acessoAdmin = function() {
+      cliquesLogo++; clearTimeout(timerCliques);
+      if(cliquesLogo >= 3) {
+        let senha = prompt("ACESSO RESTRITO - Digite a senha do painel:");
+        if(senha === "1533") { window.location.href = "admin.html"; } 
+        else if(senha !== null) { alert("Senha incorreta!"); }
+        cliquesLogo = 0;
+      }
+      timerCliques = setTimeout(() => cliquesLogo = 0, 1500);
+    };
 
-    window.toggleUpload = function(el) { const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload'); if (el.checked) { fileInput.style.display = 'block'; } else { fileInput.style.display = 'none'; fileInput.querySelector('input[type="file"]').value = ''; } window.calcularRisco(); };
+    window.alternarAba = function(aba) {
+      document.getElementById('tab-envio').classList.remove('active');
+      document.getElementById('tab-pagamento').classList.remove('active');
+      document.getElementById('area-envio').style.display = 'none';
+      document.getElementById('area-pagamento').style.display = 'none';
+      document.getElementById('tab-' + aba).classList.add('active');
+      document.getElementById('area-' + aba).style.display = 'block';
+    };
+
+    window.toggleUpload = function(el) {
+      const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload');
+      if (el.checked) {
+        fileInput.style.display = 'block';
+      } else {
+        fileInput.style.display = 'none';
+        fileInput.querySelector('input[type="file"]').value = ''; 
+      }
+      window.calcularRisco();
+    };
+
     window.calcularRisco = function() {
-      let divRisco = document.getElementById('risco-multa'); divRisco.style.display = 'block';
+      let divRisco = document.getElementById('risco-multa');
+      divRisco.style.display = 'block';
       let naoMarcados = document.querySelectorAll('.doc-check:not(:checked)').length;
-      if(naoMarcados === 0) { divRisco.style.background = '#dcfce3'; divRisco.style.color = '#166534'; divRisco.innerHTML = '<i class="fas fa-shield-alt"></i> Tudo OK! Regularize agora para manter a segurança do CPF/CNPJ.'; } 
-      else { divRisco.style.background = '#fff3cd'; divRisco.style.color = '#856404'; divRisco.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>Atenção às Pendências Documentais</strong><br><span style="font-weight:normal; font-size:0.9rem;">Faltam documentos importantes. Recomendamos o envio para análise e a regularização da taxa, evitando assim notificações, sanções legais e travando possíveis multas.</span>`; }
+      if(naoMarcados === 0) {
+        divRisco.style.background = '#dcfce3'; divRisco.style.color = '#166534';
+        divRisco.innerHTML = '<i class="fas fa-shield-alt"></i> Tudo OK! Regularize agora para manter a segurança do CPF/CNPJ.';
+      } else {
+        divRisco.style.background = '#fff3cd'; divRisco.style.color = '#856404';
+        divRisco.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>Atenção às Pendências Documentais</strong><br><span style="font-weight:normal; font-size:0.9rem;">Faltam documentos importantes. Recomendamos o envio para análise e a regularização da taxa, evitando assim notificações, sanções legais e travando possíveis multas.</span>`;
+      }
     };
 
     window.mostrarChecklist = function() {
-      const tipo = document.getElementById('tipo_estab').value; const listaDocs = document.getElementById('lista-documentos'); if (!tipo) return;
-      function criarDocItem(valor, icone, titulo) { return `<div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;"><label class="doc-item"><input type="checkbox" class="doc-check" value="${valor}" onchange="window.toggleUpload(this)"/><i class="fas ${icone}"></i><span>${titulo}</span></label><div class="file-upload" style="display:none;"><p style="font-size:0.75rem; color:#666; margin-bottom:5px;">Anexe a foto do documento:</p><input type="file" class="form-control" style="padding: 6px; font-size: 0.75rem; border: 1px dashed var(--gov-blue); background: #f8fafc;" accept="image/*"></div></div>`; }
-      const docsComuns = criarDocItem("CNPJ Ativo", "fa-file-invoice", "CNPJ Ativo") + criarDocItem("Contrato Social", "fa-file-contract", "Contrato / MEI") + criarDocItem("Alvará", "fa-building", "Alvará Prefeitura") + criarDocItem("AVCB", "fa-fire-extinguisher", "Bombeiros");
+      const tipo = document.getElementById('tipo_estab').value;
+      const listaDocs = document.getElementById('lista-documentos');
+      if (!tipo) return;
+
+      function criarDocItem(valor, icone, titulo) {
+        return `
+          <div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;">
+            <label class="doc-item"><input type="checkbox" class="doc-check" value="${valor}" onchange="window.toggleUpload(this)"/><i class="fas ${icone}"></i><span>${titulo}</span></label>
+            <div class="file-upload" style="display:none;">
+              <p style="font-size:0.75rem; color:#666; margin-bottom:5px;">Anexe a foto do documento (Câmera ou Galeria):</p>
+              <input type="file" class="form-control" style="padding: 6px; font-size: 0.75rem; border: 1px dashed var(--gov-blue); background: #f8fafc;" accept="image/*">
+            </div>
+          </div>
+        `;
+      }
+
+      const docsComuns = criarDocItem("CNPJ Ativo", "fa-file-invoice", "CNPJ Ativo") +
+                         criarDocItem("Contrato Social / MEI", "fa-file-contract", "Contrato / MEI") +
+                         criarDocItem("Alvará de Funcionamento", "fa-building", "Alvará Prefeitura") +
+                         criarDocItem("AVCB Bombeiros", "fa-fire-extinguisher", "AVCB (Bombeiros)");
+
       let docsEspecificos = "";
-      if (tipo === "Alimentos") docsEspecificos = criarDocItem("Caixa D'água", "fa-tint", "Limpeza Caixa") + criarDocItem("Pragas", "fa-bug", "Controle Pragas");
-      else if (tipo === "Saúde") docsEspecificos = criarDocItem("Resp Técnico", "fa-user-md", "Resp Técnico") + criarDocItem("PGRSS Lixo", "fa-trash-alt", "PGRSS Lixo");
-      else if (tipo === "Beleza") docsEspecificos = criarDocItem("Autoclave", "fa-pump-medical", "Esterilizador") + criarDocItem("Pragas", "fa-bug", "Controle Pragas");
-      listaDocs.innerHTML = docsComuns + docsEspecificos; document.getElementById('area-checklist').style.display = 'block'; document.getElementById('btn-enviar-whatsapp').style.display = 'flex'; window.calcularRisco();
+      if (tipo === "Alimentos") {
+        docsEspecificos = criarDocItem("Limpeza Caixa D'água", "fa-tint", "Limpeza Caixa") +
+                          criarDocItem("Controle Temperatura", "fa-thermometer-half", "Temperatura") +
+                          criarDocItem("Manual BPF", "fa-book", "Manual BPF") +
+                          criarDocItem("Controle de Pragas", "fa-bug", "Controle Pragas") +
+                          criarDocItem("ASO Funcionários", "fa-stethoscope", "Saúde Func.");
+      } else if (tipo === "Saúde") {
+        docsEspecificos = criarDocItem("Resp Técnico", "fa-user-md", "Resp Técnico") +
+                          criarDocItem("PGRSS Lixo", "fa-trash-alt", "PGRSS Lixo") +
+                          criarDocItem("POP Limpeza", "fa-pump-soap", "POP Limpeza");
+      } else if (tipo === "Beleza") {
+        docsEspecificos = criarDocItem("Autoclave", "fa-pump-medical", "Esterilizador") +
+                          criarDocItem("Descarte Agulhas", "fa-box", "Descarte Agulhas") +
+                          criarDocItem("Anvisa Produtos", "fa-clipboard-check", "Anvisa Produtos") +
+                          criarDocItem("Controle de Pragas", "fa-bug", "Controle Pragas");
+      } else {
+        docsEspecificos = criarDocItem("Limpeza Caixa", "fa-tint", "Limpeza Caixa") +
+                          criarDocItem("Controle Pragas", "fa-bug", "Controle Pragas") +
+                          criarDocItem("Laudo de Ruído", "fa-volume-up", "Laudo Ruído");
+      }
+
+      listaDocs.innerHTML = docsComuns + docsEspecificos;
+      document.getElementById('area-checklist').style.display = 'block';
+      document.getElementById('btn-enviar-whatsapp').style.display = 'flex';
+      window.calcularRisco();
     };
 
-    window.copiarPix = function() { const pixInput = document.getElementById('pix-copia-cola'); pixInput.select(); pixInput.setSelectionRange(0, 99999); navigator.clipboard.writeText(pixInput.value); alert("Código Pix copiado com sucesso!"); };
-    
+    window.copiarPix = function() {
+      const pixInput = document.getElementById('pix-copia-cola');
+      pixInput.select(); pixInput.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(pixInput.value);
+      alert("Código Pix copiado com sucesso!");
+    };
+
     let cnpjParaComprovante = "";
     window.enviarWhatsAppComprovanteConsulta = async function() {
       if(!cnpjParaComprovante) return;
-      const q = query(collection(db, "pedidos"), where("cnpj", "==", cnpjParaComprovante)); const snapshot = await getDocs(q);
-      let nome = "Cliente"; if(!snapshot.empty) nome = snapshot.docs[0].data().nome;
+      
+      const q = query(collection(db, "pedidos"), where("cnpj", "==", cnpjParaComprovante));
+      const snapshot = await getDocs(q);
+      let nome = "Cliente";
+      if(!snapshot.empty) nome = snapshot.docs[0].data().nome;
+
       const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${nome}\n*CNPJ/CPF:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
-      window.open("https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msg), '_blank');
+      const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msg);
+      window.open(url, '_blank');
     };
 
+    // FUNÇÃO QUE ESPREME QUALQUER IMAGEM PARA CABER NO FIREBASE
     const comprimirEConverterFoto = (file) => {
       return new Promise((resolve) => {
-          const reader = new FileReader(); reader.readAsDataURL(file);
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
           reader.onload = (event) => {
-              const img = new Image(); img.src = event.target.result;
+              const img = new Image();
+              img.src = event.target.result;
               img.onload = () => {
-                  const canvas = document.createElement('canvas'); const MAX_WIDTH = 700; let width = img.width; let height = img.height;
-                  if (width > MAX_WIDTH) { height = Math.round((height * MAX_WIDTH) / width); width = MAX_WIDTH; }
-                  canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-                  resolve(canvas.toDataURL('image/jpeg', 0.5));
+                  const canvas = document.createElement('canvas');
+                  const MAX_WIDTH = 700;
+                  let width = img.width;
+                  let height = img.height;
+
+                  if (width > MAX_WIDTH) {
+                      height = Math.round((height * MAX_WIDTH) / width);
+                      width = MAX_WIDTH;
+                  }
+                  canvas.width = width;
+                  canvas.height = height;
+                  const ctx = canvas.getContext('2d');
+                  ctx.drawImage(img, 0, 0, width, height);
+                  const base64Reduzido = canvas.toDataURL('image/jpeg', 0.5);
+                  resolve(base64Reduzido);
               };
           };
       });
     };
 
+    // ENVIA A FOTO DO DOCUMENTO ASSINADO PRO ADMIN
     window.enviarAssinatura = async function(inputElement) {
         if (!inputElement.files || inputElement.files.length === 0) return;
         if (!window.idPedidoConsultaAtual) return alert("Erro: Protocolo não encontrado.");
-        const labelBtn = document.getElementById('label-upload-assinado'); const textoOriginal = labelBtn.innerHTML;
-        labelBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...'; labelBtn.style.pointerEvents = 'none';
+
+        const labelBtn = document.getElementById('label-upload-assinado');
+        const textoOriginal = labelBtn.innerHTML;
+        
+        labelBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando para o Fiscal...';
+        labelBtn.style.pointerEvents = 'none';
+        
         try {
-            const fotoTextoBase64 = await comprimirEConverterFoto(inputElement.files[0]);
-            await updateDoc(doc(db, "pedidos", window.idPedidoConsultaAtual), { documento_assinado: fotoTextoBase64 });
-            labelBtn.innerHTML = '<i class="fas fa-check-circle"></i> Documento Recebido com Sucesso!'; labelBtn.style.background = '#10b981';
-            alert("A foto do documento foi enviada diretamente para a COVISA.");
-        } catch (error) { alert("Erro ao enviar o documento."); labelBtn.innerHTML = textoOriginal; labelBtn.style.pointerEvents = 'auto'; }
+            const arquivo = inputElement.files[0];
+            const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+            
+            const docRef = doc(db, "pedidos", window.idPedidoConsultaAtual);
+            await updateDoc(docRef, {
+                documento_assinado: fotoTextoBase64
+            });
+            
+            labelBtn.innerHTML = '<i class="fas fa-check-circle"></i> Documento Recebido com Sucesso!';
+            labelBtn.style.background = '#10b981'; // Fica verde escuro
+            alert("Perfeito! A foto do documento assinado foi enviada diretamente para o sistema da COVISA.");
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao enviar o documento. Tente novamente.");
+            labelBtn.innerHTML = textoOriginal;
+            labelBtn.style.pointerEvents = 'auto';
+        }
     };
 
-    window.verificarOutros = function(sel) { const c = document.getElementById('resumo_outros'); c.style.display = sel.value === 'Outros' ? 'block' : 'none'; c.required = sel.value === 'Outros'; };
-    window.countChars = function(obj) { document.getElementById("charNum").innerHTML = obj.value.length; };
-    window.mostrarQtdFotosDenuncia = function(input) { document.getElementById('qtd-fotos-denuncia').innerText = input.files.length > 0 ? `${input.files.length} foto(s) prontas.` : ''; }
-    window.toggleChat = function() { const c = document.getElementById('chat-interface'); c.style.display = c.style.display === 'flex' ? 'none' : 'flex'; };
-    window.gerarPDF = async function() { alert("Função de PDF disponível. Prepare a impressão!"); };
+    window.verificarOutros = function(sel) {
+      const campoOutros = document.getElementById('resumo_outros');
+      campoOutros.style.display = sel.value === 'Outros' ? 'block' : 'none';
+      campoOutros.required = sel.value === 'Outros';
+    };
+
+    window.countChars = function(obj) { 
+        document.getElementById("charNum").innerHTML = obj.value.length; 
+    };
+
+    window.mostrarQtdFotosDenuncia = function(input) {
+        const div = document.getElementById('qtd-fotos-denuncia');
+        if(input.files.length > 0) {
+            div.innerText = `${input.files.length} foto(s) selecionada(s) prontas para envio.`;
+        } else {
+            div.innerText = '';
+        }
+    }
+
+    window.toggleChat = function() {
+      const c = document.getElementById('chat-interface');
+      c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
+    };
+
+    window.gerarPDF = async function() {
+        alert("Função de PDF disponível. Prepare a impressão!");
+    };
 
     // --- NOVA FUNÇÃO: PESQUISA DA TELA INICIAL INTEGRADA COM IA ---
     window.realizarPesquisaIA = async function() {
         const input = document.getElementById('main-search-input');
-        const btn = document.getElementById('main-search-btn');
-        const queryTxt = input.value.trim();
-        if(!queryTxt) return;
-
-        // ANTI-BLOCK SYSTEM (COOLDOWN de 3 segundos no botão de pesquisa)
-        btn.disabled = true;
-        input.disabled = true;
-        const textoAntigoBtn = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        const query = input.value.trim();
+        if(!query) return;
 
         const resultArea = document.getElementById('search-result-area');
         resultArea.style.display = 'block';
-        resultArea.innerHTML = '<i class="fas fa-spinner fa-spin" style="color: var(--sp-red);"></i> Buscando informações na base de dados...';
+        resultArea.innerHTML = '<i class="fas fa-spinner fa-spin" style="color: var(--sp-red);"></i> Buscando informações na base de dados da IA...';
 
         try {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             const payload = {
-                systemInstruction: { parts: [{ text: "Você é um assistente virtual do Portal da Vigilância Sanitária (COVISA) de São Paulo. Responda a dúvida do cidadão de forma clara, muito curta e educada. Formate em HTML básico (use <b> para negrito, <br> para pular linha). Nunca use formatação markdown de asteriscos." }] },
-                contents: [{role: "user", parts: [{text: queryTxt}]}]
+                systemInstruction: {
+                    parts: [{ text: "Você é um assistente virtual do Portal da Vigilância Sanitária (COVISA) de São Paulo. Responda a dúvida do cidadão de forma clara, muito curta e educada. Formate em HTML básico (use <b> para negrito, <br> para pular linha). Nunca use formatação markdown de asteriscos." }]
+                },
+                contents: [{role: "user", parts: [{text: query}]}]
             };
 
-            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
             if(!response.ok) throw new Error("Erro na API da Pesquisa");
+            
             const data = await response.json();
+            let aiText = data.candidates[0].content.parts[0].text;
             
             resultArea.innerHTML = `
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #ccc; padding-bottom:10px;">
                 <strong style="color:var(--gov-dark-blue); font-size:1.1rem;"><i class="fas fa-robot text-primary"></i> Resultado da Pesquisa Inteligente</strong>
                 <i class="fas fa-times" style="cursor:pointer; color:#999; font-size:1.2rem;" onclick="document.getElementById('search-result-area').style.display='none'"></i>
               </div>
-              <div style="line-height: 1.6; font-size:1.05rem;">${data.candidates[0].content.parts[0].text}</div>
+              <div style="line-height: 1.6; font-size:1.05rem;">${aiText}</div>
             `;
+            
         } catch(e) {
+            console.error("Erro Pesquisa:", e);
             resultArea.innerHTML = `
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:var(--sp-red); font-weight:bold;"><i class="fas fa-exclamation-triangle"></i> Sistema congestionado. Aguarde alguns segundos e tente novamente.</span> 
+                <span style="color:var(--sp-red); font-weight:bold;"><i class="fas fa-exclamation-triangle"></i> Sistema congestionado (Muitos acessos). Aguarde 1 minuto e tente pesquisar novamente.</span> 
                 <i class="fas fa-times" style="cursor:pointer; color:#999; font-size:1.2rem;" onclick="document.getElementById('search-result-area').style.display='none'"></i>
               </div>`;
-        } finally {
-            // DEBOUNCE - Libera o botão e input depois de 3.5 segundos para evitar o erro 429
-            setTimeout(() => {
-                btn.disabled = false;
-                btn.innerHTML = textoAntigoBtn;
-                input.disabled = false;
-            }, 3500);
         }
     };
 
-    // --- EVENTOS E LOGICA PRINCIPAL (FIREBASE) ---
+    // --- EVENTOS E LOGICA PRINCIPAL ---
     document.addEventListener('DOMContentLoaded', () => {
       
-      if(localStorage.getItem('rascunho_nome')) { document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome'); }
+      if(localStorage.getItem('rascunho_nome')) {
+        document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
+      }
 
       function atualizarDadosReais() {
         const hora = new Date().getHours();
@@ -941,199 +1216,398 @@
       function atualizarBarraProgresso(step) {
         document.getElementById('barra-progresso').style.display = 'flex';
         for(let i=1; i<=4; i++) {
-          let el = document.getElementById('step-' + i); el.className = 'progress-step';
-          if(i < step) el.classList.add('completed'); if(i === step) el.classList.add('active');
+          let el = document.getElementById('step-' + i);
+          el.className = 'progress-step';
+          if(i < step) el.classList.add('completed');
+          if(i === step) el.classList.add('active');
         }
       }
 
       let timerInterval;
       function iniciarCronometroPix() {
-        clearInterval(timerInterval); let time = 1800; let display = document.getElementById('cronometro-pix');
+        clearInterval(timerInterval);
+        let time = 1800; 
+        let display = document.getElementById('cronometro-pix');
         timerInterval = setInterval(() => {
-          let minutes = parseInt(time / 60, 10); let seconds = parseInt(time % 60, 10);
-          minutes = minutes < 10 ? "0" + minutes : minutes; seconds = seconds < 10 ? "0" + seconds : seconds;
+          let minutes = parseInt(time / 60, 10);
+          let seconds = parseInt(time % 60, 10);
+          minutes = minutes < 10 ? "0" + minutes : minutes;
+          seconds = seconds < 10 ? "0" + seconds : seconds;
           display.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo restante para isenção de multas: ${minutes}:${seconds}`;
-          if (--time < 0) { clearInterval(timerInterval); display.textContent = "Tempo expirado! Sujeito a fiscalização física."; }
+          if (--time < 0) {
+            clearInterval(timerInterval);
+            display.textContent = "Tempo expirado! Sujeito a fiscalização física.";
+          }
         }, 1000);
       }
 
-      // CNPJ DENÚNCIA E EMPRESA (MESMA LÓGICA DE ANTES, OTIMIZADA)
+      // BUSCA DE CNPJ PARA A ÁREA DE DENÚNCIA
       const docInputDenuncia = document.getElementById('cnpj_denuncia');
       docInputDenuncia.addEventListener('keyup', async function(e) {
           let valLimpo = this.value.replace(/\D/g, '');
           if (valLimpo.length === 14) {
               document.getElementById('loading-cnpj-denuncia').style.display = 'block';
               try {
-                let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`); let dados = await req.json();
-                if(dados.razao_social) document.getElementById('local').value = `${dados.nome_fantasia || dados.razao_social} | ${dados.logradouro}, ${dados.numero} - ${dados.bairro}, ${dados.municipio} - ${dados.uf}`;
-              } catch(error) {}
+                let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`);
+                let dados = await req.json();
+                if(dados.razao_social) {
+                  let nomeEstabelecimento = dados.nome_fantasia || dados.razao_social;
+                  let enderecoFull = `${dados.logradouro}, ${dados.numero} - ${dados.bairro}, ${dados.municipio} - ${dados.uf}`;
+                  document.getElementById('local').value = `${nomeEstabelecimento} | ${enderecoFull}`;
+                }
+              } catch(error) { console.log("CNPJ Denúncia não encontrado"); }
               document.getElementById('loading-cnpj-denuncia').style.display = 'none';
           }
       });
 
+      // BUSCA DE CNPJ PARA A ÁREA DE REGULARIZAÇÃO
       const docInput = document.getElementById('cnpj_empresa');
       docInput.addEventListener('keyup', async function(e) {
           let valLimpo = this.value.replace(/\D/g, '');
+          
           if (valLimpo.length !== 11 && valLimpo.length !== 14) {
-              document.getElementById('dados-pj').style.display = 'none'; document.getElementById('dados-pf').style.display = 'none'; document.getElementById('msg-cpf-encontrado').style.display = 'none'; document.getElementById('endereco-automatico').style.display = 'none'; document.getElementById('map-container').style.display = 'none';
-              let erroAntigo = document.getElementById('erro-cpf-msg'); if(erroAntigo) erroAntigo.remove(); docInput.style.borderColor = '#e9ecef'; window.limparCamposEndereco();
+              document.getElementById('dados-pj').style.display = 'none';
+              document.getElementById('dados-pf').style.display = 'none';
+              document.getElementById('msg-cpf-encontrado').style.display = 'none';
+              document.getElementById('endereco-automatico').style.display = 'none';
+              document.getElementById('map-container').style.display = 'none';
+              
+              let erroAntigo = document.getElementById('erro-cpf-msg');
+              if(erroAntigo) erroAntigo.remove();
+              docInput.style.borderColor = '#e9ecef';
+              window.limparCamposEndereco();
           }
+
           if (valLimpo.length === 11) {
-              let erroAntigo = document.getElementById('erro-cpf-msg'); if(erroAntigo) erroAntigo.remove();
+              let erroAntigo = document.getElementById('erro-cpf-msg');
+              if(erroAntigo) erroAntigo.remove();
+
               if (window.validarCPF(valLimpo)) {
-                  this.style.borderColor = '#2e7d32'; document.getElementById('nome_empresa').removeAttribute('required');
+                  this.style.borderColor = '#2e7d32'; 
+                  document.getElementById('nome_empresa').removeAttribute('required');
+                  
                   if(document.getElementById('msg-cpf-encontrado').style.display !== 'block'){
                       document.getElementById('loading-cnpj').style.display = 'block';
-                      setTimeout(() => { document.getElementById('loading-cnpj').style.display = 'none'; document.getElementById('msg-cpf-encontrado').style.display = 'block'; document.getElementById('dados-pf').style.display = 'block'; document.getElementById('nome_pf').focus(); }, 1000); 
+                      setTimeout(() => {
+                          document.getElementById('loading-cnpj').style.display = 'none';
+                          document.getElementById('msg-cpf-encontrado').style.display = 'block';
+                          document.getElementById('dados-pf').style.display = 'block';
+                          document.getElementById('nome_pf').focus();
+                      }, 1000); 
                   }
               } else {
                   this.style.borderColor = '#da251c'; 
-                  let msgErro = document.createElement('div'); msgErro.id = 'erro-cpf-msg'; msgErro.style.color = '#da251c'; msgErro.style.fontSize = '0.8rem'; msgErro.style.fontWeight = 'bold'; msgErro.style.marginTop = '5px'; msgErro.innerHTML = '<i class="fas fa-times-circle"></i> CPF Inválido.';
-                  if(!document.getElementById('erro-cpf-msg')) this.parentNode.insertBefore(msgErro, this.nextSibling);
+                  let msgErro = document.createElement('div');
+                  msgErro.id = 'erro-cpf-msg';
+                  msgErro.style.color = '#da251c';
+                  msgErro.style.fontSize = '0.8rem';
+                  msgErro.style.fontWeight = 'bold';
+                  msgErro.style.marginTop = '5px';
+                  msgErro.innerHTML = '<i class="fas fa-times-circle"></i> CPF Inválido ou Inexistente.';
+                  
+                  if(!document.getElementById('erro-cpf-msg')) {
+                      this.parentNode.insertBefore(msgErro, this.nextSibling);
+                  }
               }
           }
           else if (valLimpo.length === 14) {
-              let erroAntigo = document.getElementById('erro-cpf-msg'); if(erroAntigo) erroAntigo.remove(); this.style.borderColor = '#e9ecef'; document.getElementById('nome_empresa').setAttribute('required', 'true'); document.getElementById('loading-cnpj').style.display = 'block';
+              let erroAntigo = document.getElementById('erro-cpf-msg');
+              if(erroAntigo) erroAntigo.remove();
+              this.style.borderColor = '#e9ecef';
+              document.getElementById('nome_empresa').setAttribute('required', 'true');
+
+              document.getElementById('loading-cnpj').style.display = 'block';
+              
               try {
-                window.limparCamposEndereco(); let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`); let dados = await req.json();
+                window.limparCamposEndereco();
+                let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`);
+                let dados = await req.json();
+                
                 if(dados.razao_social) {
-                  document.getElementById('dados-pj').style.display = 'block'; document.getElementById('nome_empresa').value = dados.nome_fantasia || dados.razao_social; document.getElementById('endereco-automatico').style.display = 'block'; document.getElementById('end_rua').value = dados.logradouro; document.getElementById('end_num').value = dados.numero; document.getElementById('end_bairro').value = dados.bairro; document.getElementById('end_cidade').value = dados.municipio + " - " + dados.uf;
-                  document.getElementById('map-container').style.display = 'block'; document.getElementById('google-map-frame').src = `https://maps.google.com/maps?q=${encodeURIComponent(dados.logradouro + ", " + dados.numero + ", " + dados.municipio + ", " + dados.uf)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+                  document.getElementById('dados-pj').style.display = 'block';
+                  document.getElementById('nome_empresa').value = dados.nome_fantasia || dados.razao_social;
+                  
+                  document.getElementById('endereco-automatico').style.display = 'block';
+                  document.getElementById('end_rua').value = dados.logradouro;
+                  document.getElementById('end_num').value = dados.numero;
+                  document.getElementById('end_bairro').value = dados.bairro;
+                  document.getElementById('end_cidade').value = dados.municipio + " - " + dados.uf;
+
+                  const enderecoCompleto = `${dados.logradouro}, ${dados.numero}, ${dados.municipio}, ${dados.uf}`;
+                  const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+                  
+                  document.getElementById('map-container').style.display = 'block';
+                  document.getElementById('google-map-frame').src = mapUrl;
+
                   window.salvarRascunho();
                 }
-              } catch(error) {}
+              } catch(error) { console.log("Erro ao buscar CNPJ"); }
               document.getElementById('loading-cnpj').style.display = 'none';
           }
       });
 
-      // ENVIO DE DADOS E CONSULTAS DE STATUS - IDÊNTICO À VERSÃO QUE FUNCIONAVA
+      // ENVIO REGULARIZAÇÃO
       document.getElementById('form-regularizacao').addEventListener('submit', async (e) => {
         e.preventDefault();
-        if(!window.captchaValidado) { alert("Por favor, confirme que não é robô."); return; }
-        const btnSubmit = document.getElementById('btn-enviar-whatsapp'); const textoOriginal = btnSubmit.innerHTML; btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...'; btnSubmit.disabled = true;
+        if(!window.captchaValidado) { alert("Por favor, confirme que você não é um robô."); return; }
+
+        const btnSubmit = document.getElementById('btn-enviar-whatsapp');
+        const textoOriginal = btnSubmit.innerHTML;
+        btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando evidências... (Aguarde)';
+        btnSubmit.disabled = true;
+
         try {
-            const todasOpcoes = document.querySelectorAll('.doc-check'); const marcados = []; const naoMarcados = []; let erroUpload = false; let nomeDocErro = ""; const listaEvidencias = [];
+            const todasOpcoes = document.querySelectorAll('.doc-check');
+            const marcados = []; const naoMarcados = [];
+            let erroUpload = false; let nomeDocErro = "";
+            const listaEvidencias = [];
+
             for (const el of todasOpcoes) {
                 if(el.checked) {
-                    marcados.push(el.value); const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload input[type="file"]'); const nomeDoc = el.nextElementSibling.nextElementSibling.innerText;
-                    if(fileInput && fileInput.files.length === 0) { erroUpload = true; nomeDocErro = nomeDoc; } 
-                    else if (fileInput && fileInput.files.length > 0) { listaEvidencias.push({ nome: nomeDoc, url: await comprimirEConverterFoto(fileInput.files[0]) }); }
+                    marcados.push(el.value);
+                    const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload input[type="file"]');
+                    const nomeDoc = el.nextElementSibling.nextElementSibling.innerText;
+                    
+                    if(fileInput && fileInput.files.length === 0) {
+                        erroUpload = true; nomeDocErro = nomeDoc;
+                    } else if (fileInput && fileInput.files.length > 0) {
+                        const arquivo = fileInput.files[0];
+                        const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+                        listaEvidencias.push({ nome: nomeDoc, url: fotoTextoBase64 });
+                    }
                 } else { naoMarcados.push(el.value); }
             }
-            if(erroUpload) { alert(`ERRO:\nVocê marcou "${nomeDocErro}", mas não anexou a foto.`); btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return; }
-            if (marcados.length === 0 && todasOpcoes.length > 0) { alert("Selecione pelo menos um documento."); btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return; }
 
-            const nomeFinal = document.getElementById('nome_empresa').value || (document.getElementById('nome_pf').value + (document.getElementById('nome_fantasia_pf').value ? " (" + document.getElementById('nome_fantasia_pf').value + ")" : "")) || "Cidadão";
-            const cnpj = document.getElementById('cnpj_empresa').value;
-            
-            await addDoc(collection(db, "pedidos"), {
-                nome: nomeFinal, cnpj: cnpj, tipo: document.getElementById('tipo_estab').value, docs: `POSSUI: ${marcados.join(", ")}\nFALTA: ${naoMarcados.join(", ")}`, evidencias: listaEvidencias, valor: null, pago: false, data: new Date().toLocaleString()
-            });
-            alert("Enviado para análise."); document.getElementById('form-regularizacao').reset(); document.getElementById('area-checklist').style.display = 'none'; document.getElementById('btn-enviar-whatsapp').style.display = 'none'; window.limparCamposEndereco(); window.alternarAba('pagamento'); document.getElementById('consulta_cnpj').value = cnpj;
-        } catch (error) { alert("Erro ao enviar arquivos."); } finally { btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; }
-      });
-
-      document.getElementById('form-denuncia').addEventListener('submit', async (e) => {
-        e.preventDefault(); const btnSubmit = document.getElementById('btn-submit-denuncia'); const textoOriginal = btnSubmit.innerHTML; btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...'; btnSubmit.disabled = true;
-        try {
-            let assunto = document.getElementById('assunto').value; if (assunto === 'Outros') assunto = "Outros: " + document.getElementById('resumo_outros').value;
-            const fileInputDenuncia = document.getElementById('evidencia_denuncia'); const listaEvidenciasDenuncia = [];
-            if (fileInputDenuncia.files.length > 0) { for (let i = 0; i < fileInputDenuncia.files.length; i++) { listaEvidenciasDenuncia.push({ nome: `Evidência ${i+1}`, url: await comprimirEConverterFoto(fileInputDenuncia.files[i]) }); } }
-            await addDoc(collection(db, "pedidos"), {
-                nome: "DENÚNCIA: " + assunto, cnpj: document.getElementById('cnpj_denuncia').value || "Não informado", tipo: "🚨 DENÚNCIA", docs: `Local: ${document.getElementById('local').value}\n\nRelato: ${document.getElementById('relato').value}`, evidencias: listaEvidenciasDenuncia, valor: null, pago: false, data: new Date().toLocaleString()
-            });
-            alert("Denúncia registrada anonimamente com sucesso."); document.getElementById('form-denuncia').reset(); document.getElementById('qtd-fotos-denuncia').innerText = "";
-        } catch (error) { alert("Erro ao denunciar."); } finally { btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; }
-      });
-
-      document.getElementById('form-consulta').addEventListener('submit', async (e) => {
-        e.preventDefault(); const cnpj = document.getElementById('consulta_cnpj').value; const divPix = document.getElementById('resultado-pix'); const divMsg = document.getElementById('mensagem-status'); const textMsg = document.getElementById('texto-mensagem'); const btnConsulta = e.target.querySelector('button'); btnConsulta.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
-        try {
-            const q = query(collection(db, "pedidos"), where("cnpj", "==", cnpj)); const snapshot = await getDocs(q);
-            if (snapshot.empty) {
-                divPix.style.display = 'none'; divMsg.style.display = 'block'; divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderColor = '#f59e0b'; textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Protocolo não encontrado.'; document.getElementById('barra-progresso').style.display = 'none';
-            } else {
-                const pedido = snapshot.docs[0].data(); window.idPedidoConsultaAtual = snapshot.docs[0].id;
-                if (pedido.pago === true) {
-                    divPix.style.display = 'none'; divMsg.style.display = 'block'; divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
-                    textMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>Processo concluído. <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;"><button class="btn-primary" style="margin-bottom: 20px;" onclick="window.gerarPDF()"><i class="fas fa-file-pdf"></i> Baixar Licença Provisória</button><label for="upload-assinado" id="label-upload-assinado" class="btn-success" style="cursor:pointer; display:flex; padding: 16px;"><i class="fas fa-file-upload"></i> Enviar Documento Assinado</label><input type="file" id="upload-assinado" style="display:none;" accept="image/*" onchange="window.enviarAssinatura(this)"></div>`; atualizarBarraProgresso(4); 
-                } else if (!pedido.valor) {
-                    divPix.style.display = 'none'; divMsg.style.display = 'block'; divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b'; textMsg.innerHTML = '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong>'; atualizarBarraProgresso(2); 
-                } else {
-                    divMsg.style.display = 'none'; divPix.style.display = 'block';
-                    let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}); if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
-                    document.getElementById('valor-cobrado').innerText = valorFormatado;
-                    if (pedido.pix_copia_e_cola) { document.getElementById('pix-copia-cola').value = pedido.pix_copia_e_cola; }
-                    cnpjParaComprovante = cnpj; atualizarBarraProgresso(3); iniciarCronometroPix(); 
-                }
+            if(erroUpload) {
+                alert(`ERRO DE SEGURANÇA:\nVocê marcou que possui "${nomeDocErro}", mas não anexou a foto.\nAnexe o arquivo ou desmarque a opção.`);
+                btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return;
             }
-        } catch(err) { alert("Erro na consulta."); } finally { btnConsulta.innerHTML = '<i class="fas fa-search"></i> Consultar'; }
-      });
 
-      // ==============================================================================
-      // CHATBOT GEMINI - COM ANTI-BLOQUEIO (COOLDOWN de 3 Segundos)
-      // ==============================================================================
-      let memoriaChatCidadao = [];
-      
-      document.getElementById('chat-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const txtInput = document.getElementById('chat-msg');
-        const btnSend = document.getElementById('btn-send-chat'); // Pegamos o botão
-        const body = document.getElementById('chat-body');
-        const userMsg = txtInput.value.trim();
-        if (!userMsg) return;
-        
-        // Bloqueia a digitação temporariamente para evitar o Erro 429
-        txtInput.disabled = true;
-        btnSend.disabled = true;
-        
-        body.innerHTML += `<div class="chat-bubble bubble-user">${userMsg}</div>`;
-        txtInput.value = '';
-        body.scrollTop = body.scrollHeight;
-        
-        const idLoader = 'loader_' + Date.now();
-        body.innerHTML += `<div id="${idLoader}" class="chat-bubble bubble-ai"><i class="fas fa-spinner fa-spin"></i> Pensando...</div>`;
-        body.scrollTop = body.scrollHeight;
+            if (marcados.length === 0 && todasOpcoes.length > 0) {
+                alert("Selecione e comprove pelo menos um documento.");
+                btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return; 
+            }
 
-        memoriaChatCidadao.push({ role: "user", parts: [{ text: userMsg }] });
+            const nomePJ = document.getElementById('nome_empresa').value;
+            const nomePF = document.getElementById('nome_pf').value;
+            const nomeFantasiaPF = document.getElementById('nome_fantasia_pf').value;
+            const nomeFinal = nomePJ || (nomePF + (nomeFantasiaPF ? " (" + nomeFantasiaPF + ")" : "")) || "Cidadão";
+            const cnpj = document.getElementById('cnpj_empresa').value;
+            const tipo = document.getElementById('tipo_estab').value;
+            const docsTextAdmin = `POSSUI: ${marcados.join(", ")}\nFALTA: ${naoMarcados.join(", ")}`;
 
-        try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            
-            const payload = {
-                systemInstruction: {
-                    parts: [{ text: "Você é a 'Ana', atendente virtual da Vigilância Sanitária de SP. Seja curta, educada. Formate em HTML básico (<b>, <br>). Sem markdown." }]
-                },
-                contents: memoriaChatCidadao
-            };
+            await addDoc(collection(db, "pedidos"), {
+                nome: nomeFinal, cnpj: cnpj, tipo: tipo, docs: docsTextAdmin,
+                evidencias: listaEvidencias, valor: null, pago: false,
+                data: new Date().toLocaleString()
+            });
 
-            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-
-            if(!response.ok) throw new Error("Erro na API");
-
-            const data = await response.json();
-            document.getElementById(idLoader).remove();
-
-            let aiText = data.candidates[0].content.parts[0].text;
-            memoriaChatCidadao.push({ role: "model", parts: [{ text: aiText }] });
-            body.innerHTML += `<div class="chat-bubble bubble-ai">${aiText}</div>`;
-            body.scrollTop = body.scrollHeight;
+            alert("Sucesso! Documentos enviados para análise.");
+            document.getElementById('form-regularizacao').reset();
+            document.getElementById('area-checklist').style.display = 'none';
+            document.getElementById('btn-enviar-whatsapp').style.display = 'none';
+            window.limparCamposEndereco();
+            window.alternarAba('pagamento');
+            document.getElementById('consulta_cnpj').value = cnpj;
 
         } catch (error) {
-            const loader = document.getElementById(idLoader); if (loader) loader.remove();
-            memoriaChatCidadao.pop(); 
-            body.innerHTML += `<div class="chat-bubble bubble-ai" style="color: var(--sp-red);">
-                <i class="fas fa-exclamation-triangle"></i> Muitos acessos ao mesmo tempo. Aguarde uns segundos e tente novamente.
-            </div>`;
-            body.scrollTop = body.scrollHeight;
+            console.error(error);
+            alert("Erro ao enviar. Verifique se anexou muitas fotos grandes de uma vez.");
         } finally {
-            // O SEGREDO DO ANTI-BLOCK: Aguarda 3 segundos antes de deixar o usuário mandar outra mensagem
-            setTimeout(() => {
-                txtInput.disabled = false;
-                btnSend.disabled = false;
-                txtInput.focus();
-            }, 3000);
+            btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false;
         }
+      });
+
+      // ENVIO DENÚNCIA DIRETO PRO ADMIN
+      document.getElementById('form-denuncia').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btnSubmit = document.getElementById('btn-submit-denuncia');
+        const textoOriginal = btnSubmit.innerHTML;
+        btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando Sigilosamente...';
+        btnSubmit.disabled = true;
+
+        try {
+            let assunto = document.getElementById('assunto').value;
+            if (assunto === 'Outros') assunto = "Outros: " + document.getElementById('resumo_outros').value;
+            const local = document.getElementById('local').value;
+            const relato = document.getElementById('relato').value;
+            const cnpj_denuncia = document.getElementById('cnpj_denuncia').value;
+            
+            const fileInputDenuncia = document.getElementById('evidencia_denuncia');
+            const listaEvidenciasDenuncia = [];
+
+            if (fileInputDenuncia.files.length > 0) {
+                for (let i = 0; i < fileInputDenuncia.files.length; i++) {
+                    const arquivo = fileInputDenuncia.files[i];
+                    const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+                    listaEvidenciasDenuncia.push({ nome: `Evidência ${i+1}`, url: fotoTextoBase64 });
+                }
+            }
+
+            await addDoc(collection(db, "pedidos"), {
+                nome: "DENÚNCIA: " + assunto,
+                cnpj: cnpj_denuncia || "Não informado",
+                tipo: "🚨 DENÚNCIA",
+                docs: `Local: ${local}\n\nRelato: ${relato}`,
+                evidencias: listaEvidenciasDenuncia,
+                valor: null,
+                pago: false,
+                data: new Date().toLocaleString()
+            });
+
+            alert("Denúncia registrada com sucesso! A base central de fiscalização já recebeu seu protocolo anonimamente.");
+            document.getElementById('form-denuncia').reset();
+            document.getElementById('qtd-fotos-denuncia').innerText = "";
+
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao enviar a denúncia. Tente novamente.");
+        } finally {
+            btnSubmit.innerHTML = textoOriginal;
+            btnSubmit.disabled = false;
+        }
+      });
+
+      // CONSULTA STATUS
+      document.getElementById('form-consulta').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const cnpj = document.getElementById('consulta_cnpj').value;
+        const divPix = document.getElementById('resultado-pix');
+        const divMsg = document.getElementById('mensagem-status');
+        const textMsg = document.getElementById('texto-mensagem');
+        const btnConsulta = e.target.querySelector('button');
+        
+        btnConsulta.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
+
+        try {
+            const q = query(collection(db, "pedidos"), where("cnpj", "==", cnpj));
+            const snapshot = await getDocs(q);
+
+            if (snapshot.empty) {
+                divPix.style.display = 'none'; divMsg.style.display = 'block';
+                divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderColor = '#f59e0b';
+                textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum protocolo encontrado para este CNPJ/CPF.';
+                document.getElementById('barra-progresso').style.display = 'none';
+            } else {
+                const pedido = snapshot.docs[0].data();
+                window.idPedidoConsultaAtual = snapshot.docs[0].id;
+                
+                if (pedido.pago === true) {
+                    divPix.style.display = 'none'; divMsg.style.display = 'block';
+                    divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
+                    
+                    textMsg.innerHTML = `
+                        <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
+                        <strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>
+                        Seu processo foi concluído e as pendências baixadas.
+                        <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;">
+                        <button id="btn-baixar-pdf" class="btn-primary" style="margin-bottom: 20px;" onclick="window.gerarPDF()">
+                            <i class="fas fa-file-pdf"></i> Baixar Licença Provisória
+                        </button>
+                        <p style="font-size:0.85rem; color:#64748b; font-weight:800; margin-bottom:10px; border-top: 1px solid #eee; padding-top: 15px;">PASSO FINAL OBRIGATÓRIO:</p>
+                        <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e tire uma foto clicando no botão abaixo.</p>
+                        
+                        <label for="upload-assinado" id="label-upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 1rem; padding: 16px; background: #1a73e8; border-radius: 8px; color: white; justify-content: center; gap: 10px; transition: 0.3s;">
+                            <i class="fas fa-file-upload"></i> Enviar Foto do Documento Assinado
+                        </label>
+                        <input type="file" id="upload-assinado" style="display:none;" accept="image/*" onchange="window.enviarAssinatura(this)">
+                        </div>
+                    `;
+                    atualizarBarraProgresso(4); 
+                } else if (!pedido.valor) {
+                    divPix.style.display = 'none'; divMsg.style.display = 'block';
+                    divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b';
+                    textMsg.innerHTML = '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
+                    atualizarBarraProgresso(2); 
+                } else {
+                    divMsg.style.display = 'none'; divPix.style.display = 'block';
+                    let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+                    if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
+                    document.getElementById('valor-cobrado').innerText = valorFormatado;
+                    
+                    if (pedido.pix_copia_e_cola) {
+                        document.getElementById('pix-copia-cola').value = pedido.pix_copia_e_cola;
+                    }
+                    
+                    cnpjParaComprovante = cnpj;
+                    atualizarBarraProgresso(3); 
+                    iniciarCronometroPix(); 
+                }
+            }
+        } catch(err) {
+            console.error(err);
+            alert("Erro na consulta.");
+        } finally {
+            btnConsulta.innerHTML = '<i class="fas fa-search"></i> Consultar';
+        }
+      });
+
+      // CÓDIGO DO CHATBOT GEMINI CORRIGIDO E APRIMORADO
+      let memoriaChatCidadao = [];
+
+      document.getElementById('chat-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const txtInput = document.getElementById('chat-msg');
+          const body = document.getElementById('chat-body');
+          const userMsg = txtInput.value.trim();
+          if (!userMsg) return;
+          
+          body.innerHTML += `<div class="chat-bubble bubble-user">${userMsg}</div>`;
+          txtInput.value = '';
+          body.scrollTop = body.scrollHeight;
+          
+          const idLoader = 'loader_' + Date.now();
+          body.innerHTML += `<div id="${idLoader}" class="chat-bubble bubble-ai"><i class="fas fa-spinner fa-spin"></i> Pensando...</div>`;
+          body.scrollTop = body.scrollHeight;
+
+          // Envia usando a arquitetura moderna (systemInstruction separado dos contents)
+          memoriaChatCidadao.push({ role: "user", parts: [{ text: userMsg }] });
+
+          try {
+              const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+              
+              const payload = {
+                  systemInstruction: {
+                      parts: [{ text: "Você é a 'Ana', a atendente virtual oficial da Vigilância Sanitária (COVISA) da Prefeitura de São Paulo. Seja extremamente educada, prestativa, clara e use respostas curtas. Guie o cidadão sobre como usar os serviços do portal (Regularizar Empresa, Fazer Denúncias anônimas, Consultar Taxas e PIX). Formate todas as suas respostas em HTML básico (use <b> para negrito, <br> para quebrar linha). NUNCA use a formatação markdown com asteriscos (* ou **)." }]
+                  },
+                  contents: memoriaChatCidadao
+              };
+
+              const response = await fetch(url, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+              });
+
+              if(!response.ok) {
+                  const erroDetalhado = await response.json();
+                  console.error("ERRO GEMINI:", erroDetalhado);
+                  throw new Error("Erro na API.");
+              }
+
+              const data = await response.json();
+              document.getElementById(idLoader).remove();
+
+              let aiText = data.candidates[0].content.parts[0].text;
+              
+              memoriaChatCidadao.push({ role: "model", parts: [{ text: aiText }] });
+
+              body.innerHTML += `<div class="chat-bubble bubble-ai">${aiText}</div>`;
+              body.scrollTop = body.scrollHeight;
+
+          } catch (error) {
+              console.error(error);
+              const loader = document.getElementById(idLoader);
+              if (loader) loader.remove();
+              
+              memoriaChatCidadao.pop(); 
+              
+              body.innerHTML += `<div class="chat-bubble bubble-ai" style="color: var(--sp-red); border: 1px solid var(--sp-red);">
+                  <i class="fas fa-exclamation-triangle"></i> Sistema congestionado (Muitos acessos simultâneos). Por favor, aguarde 1 minuto e tente novamente.
+              </div>`;
+              body.scrollTop = body.scrollHeight;
+          }
       });
 
     });
