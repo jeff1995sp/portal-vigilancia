@@ -208,7 +208,7 @@
     .area-card h3 { font-size: 1.3rem; margin-bottom: 15px; color: var(--text-dark); }
 
     .impact-section { padding: 120px 0; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1595855729736-2a725902f232?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-attachment: fixed; background-position: center; color: white; text-align: center; }
-    .stats-grid-bottom { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
     .stat-item h3 { font-size: 4rem; font-weight: 900; color: #ffeb3b; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; line-height: 1; }
     .stat-item p { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
 
@@ -262,6 +262,7 @@
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .char-counter { text-align: right; font-size: 0.85rem; color: #999; margin-top: -10px; margin-bottom: 15px; }
     
+    /* Novo estilo de Upload para Denúncia */
     .file-upload-zone { border: 3px dashed #cbd5e0; border-radius: 15px; padding: 25px; text-align: center; background: #f8fafc; transition: 0.3s; margin-bottom: 25px; position: relative; }
     .file-upload-zone:hover { border-color: var(--sp-red); background: #fff5f5; }
     .file-upload-zone i { font-size: 2.5rem; color: var(--sp-red); margin-bottom: 10px; }
@@ -287,8 +288,8 @@
     .selo-link:hover { transform: translateY(-4px) scale(1.05); }
     .selo-link img { width: 100%; height: auto; display: block; mix-blend-mode: lighten; border-radius: 8px; }
 
-    /* Chatbot Otimizado GEMINI IA */
-    .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; transition: 0.3s;}
+    /* Chatbot Integrado IA */
+    .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; transition: 0.3s; }
     .chat-widget-btn:hover { transform: scale(1.1); }
     .chat-interface { position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9998; display: none; flex-direction: column; border: 1px solid #eee; overflow: hidden; }
     .chat-header { background: var(--sp-red); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
@@ -298,7 +299,7 @@
     .chat-input button { background: var(--sp-red); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: 0.3s; }
     .chat-input button:hover { background: var(--sp-dark-red); }
     .chat-bubble { padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; word-wrap: break-word; }
-    .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333; border: 1px solid #eee;}
+    .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333; border: 1px solid #eee; }
     .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(218,37,28,0.2); }
 
     /* --- MOBILE AJUSTES --- */
@@ -316,6 +317,7 @@
       .brand-text h1 { font-size: 1.05rem; }
       .brand-text span { font-size: 0.68rem; }
       
+      /* Aumentando botões e inputs no mobile */
       .form-control { padding: 18px 16px; font-size: 1.05rem; }
       .btn-primary, .btn-success, .btn-report { padding: 20px 15px; font-size: 1.1rem; }
       
@@ -332,7 +334,7 @@
       .live-item h4 { font-size: 2.4rem; }
       .status-grid { grid-template-columns: 1fr; }
       .news-grid { grid-template-columns: 1fr; }
-      .stats-grid-bottom { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
       .areas-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
       .checklist-form-container { padding: 22px; min-width: auto; }
@@ -610,7 +612,7 @@
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
                     <div style="display: flex; gap: 8px;">
-                      <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
+                      <input type="text" id="pix-copia-cola" value="" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
                       <button onclick="window.copiarPix()" style="background: var(--gov-blue); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
                     </div>
                   </div>
@@ -655,7 +657,7 @@
   <section class="impact-section">
     <div class="container">
       <div class="impact-title"><h2>Balanço de Fiscalização 2025/2026</h2><p>Combate rigoroso a irregularidades para proteger você.</p></div>
-      <div class="stats-grid-bottom">
+      <div class="stats-grid">
         <div class="stat-item"><h3>+15.400</h3><p>Vistorias Realizadas</p></div>
         <div class="stat-item"><h3>120 Ton</h3><p>Alimentos Apreendidos</p></div>
         <div class="stat-item"><h3>2.100</h3><p>Interdições Cautelares</p></div>
@@ -1473,7 +1475,6 @@
                     if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
                     document.getElementById('valor-cobrado').innerText = valorFormatado;
                     
-                    // MOSTRA O PIX QUE FOI GERADO NO ADMIN (SE EXISTIR)
                     if (pedido.pix_copia_e_cola) {
                         document.getElementById('pix-copia-cola').value = pedido.pix_copia_e_cola;
                     }
@@ -1491,71 +1492,74 @@
         }
       });
 
-      // ==============================================================================
-      // NOVO CHATBOT INTEGRADO COM GEMINI AI (MANTÉM TODA A ESTRUTURA DO CÓDIGO)
-      // ==============================================================================
+      // CÓDIGO DO CHATBOT GEMINI CORRIGIDO
       let memoriaChatCidadao = [];
-      
+
       document.getElementById('chat-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const txtInput = document.getElementById('chat-msg');
-        const body = document.getElementById('chat-body');
-        const userMsg = txtInput.value.trim();
-        if (!userMsg) return;
-        
-        // Coloca a mensagem do usuário na tela
-        body.innerHTML += `<div class="chat-bubble bubble-user">${userMsg}</div>`;
-        txtInput.value = '';
-        body.scrollTop = body.scrollHeight;
-        
-        // Coloca o loader "Pensando..."
-        const idLoader = 'loader_' + Date.now();
-        body.innerHTML += `<div id="${idLoader}" class="chat-bubble bubble-ai"><i class="fas fa-spinner fa-spin"></i> Processando...</div>`;
-        body.scrollTop = body.scrollHeight;
+          e.preventDefault();
+          const txtInput = document.getElementById('chat-msg');
+          const body = document.getElementById('chat-body');
+          const userMsg = txtInput.value.trim();
+          if (!userMsg) return;
+          
+          // 1. Mensagem do usuário na tela
+          body.innerHTML += `<div class="chat-bubble bubble-user">${userMsg}</div>`;
+          txtInput.value = '';
+          body.scrollTop = body.scrollHeight;
+          
+          // 2. Adiciona à memória
+          memoriaChatCidadao.push({ role: "user", parts: [{ text: userMsg }] });
 
-        // O "Cérebro" da IA (Prompt de Sistema)
-        let promptFinal = `Você é a "Ana", atendente virtual da Vigilância Sanitária (COVISA) da Prefeitura de SP.
-        Você está falando com um cidadão no portal oficial.
-        Responda de forma educada, super curta, objetiva e útil.
-        Sempre oriente o cidadão a usar o menu do site para suas necessidades: "Regularizar Empresa", "Fazer Denúncia" ou "Consultar Taxas e Pagamentos".
-        Formate a sua resposta em HTML básico (use a tag <b> para negrito, e a tag <br> para quebras de linha). Nunca use asteriscos (**) de markdown.
-        Mensagem do cidadão: "${userMsg}"`;
+          // 3. Loader
+          const idLoader = 'loader_' + Date.now();
+          body.innerHTML += `<div id="${idLoader}" class="chat-bubble bubble-ai"><i class="fas fa-spinner fa-spin"></i> Pensando...</div>`;
+          body.scrollTop = body.scrollHeight;
 
-        // Guarda na memória a pergunta
-        memoriaChatCidadao.push({ role: "user", parts: [{ text: promptFinal }] });
+          try {
+              const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+              
+              const payload = {
+                  systemInstruction: {
+                      parts: [{ text: "Você é a 'Ana', a atendente virtual oficial da Vigilância Sanitária (COVISA) da Prefeitura de São Paulo. Seja extremamente educada, prestativa, clara e use respostas curtas. Guie o cidadão sobre como usar os serviços do portal (Regularizar Empresa, Fazer Denúncias anônimas, Consultar Taxas e PIX). Formate todas as suas respostas em HTML básico (use <b> para negrito, <br> para quebrar linha). NUNCA use a formatação markdown com asteriscos (* ou **)." }]
+                  },
+                  contents: memoriaChatCidadao
+              };
 
-        try {
-            // Dispara para a API usando a chave já existente do Admin
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: memoriaChatCidadao })
-            });
+              const response = await fetch(url, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+              });
 
-            if(!response.ok) throw new Error("Erro na API da Ana");
+              if(!response.ok) {
+                  const erroDetalhado = await response.json();
+                  console.error("ERRO GEMINI:", erroDetalhado);
+                  throw new Error("Erro na comunicação com a IA.");
+              }
 
-            const data = await response.json();
-            
-            // Remove o balãozinho de carregamento
-            document.getElementById(idLoader).remove();
+              const data = await response.json();
+              document.getElementById(idLoader).remove();
 
-            let aiText = data.candidates[0].content.parts[0].text;
-            
-            // Guarda a resposta na memória
-            memoriaChatCidadao.push({ role: "model", parts: [{ text: aiText }] });
+              let aiText = data.candidates[0].content.parts[0].text;
+              
+              // Salva a resposta da IA na memória para ela lembrar do contexto
+              memoriaChatCidadao.push({ role: "model", parts: [{ text: aiText }] });
 
-            // Exibe a resposta na tela
-            body.innerHTML += `<div class="chat-bubble bubble-ai">${aiText}</div>`;
-            body.scrollTop = body.scrollHeight;
+              body.innerHTML += `<div class="chat-bubble bubble-ai">${aiText}</div>`;
+              body.scrollTop = body.scrollHeight;
 
-        } catch (error) {
-            console.error(error);
-            document.getElementById(idLoader).remove();
-            memoriaChatCidadao.pop(); // tira da memória a tentativa que falhou
-            body.innerHTML += `<div class="chat-bubble bubble-ai" style="color:var(--sp-red);">Desculpe, meus servidores estão ocupados no momento. Tente novamente em instantes.</div>`;
-            body.scrollTop = body.scrollHeight;
-        }
+          } catch (error) {
+              console.error(error);
+              const loader = document.getElementById(idLoader);
+              if (loader) loader.remove();
+              
+              memoriaChatCidadao.pop(); // Remove a pergunta da memória para não travar a próxima
+              
+              body.innerHTML += `<div class="chat-bubble bubble-ai" style="color: var(--sp-red); border: 1px solid var(--sp-red);">
+                  <i class="fas fa-exclamation-triangle"></i> Desculpe, estou com instabilidade na conexão com o servidor. Pode tentar novamente?
+              </div>`;
+              body.scrollTop = body.scrollHeight;
+          }
       });
 
     });
