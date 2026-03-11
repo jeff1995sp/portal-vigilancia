@@ -799,7 +799,7 @@
 
   <footer>
     <div class="container">
-       
+        
       <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 30px; margin-bottom: 40px; gap: 20px;">
         <div>
           <h4 style="color: white; margin-bottom: 10px; font-size: 1.1rem; border-left: none; padding-left: 0;">Secretaria Municipal da Saúde</h4>
@@ -844,9 +844,11 @@
   </div>
 
   <script type="module">
-    // IMPORTAÇÕES FIREBASE
+    // ==============================================================
+    // IMPORTAÇÕES FIREBASE (UNIFICADAS)
+    // ==============================================================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc, setDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
     // --- CHAVES DO FIREBASE ---
     const firebaseConfig = {
@@ -860,6 +862,34 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // =========================================================
+    // RASTREADOR DE TRÁFEGO AO VIVO (COVISA)
+    // =========================================================
+    try {
+        // Registra +1 no total do dia assim que abre
+        const dataIso = new Date().toISOString().split('T')[0]; 
+        setDoc(doc(db, "estatisticas", dataIso), { total: increment(1) }, { merge: true }).catch(()=>{});
+
+        // Cria uma sessão "Ao Vivo" para este cliente
+        const sessionId = "sessao_" + Math.random().toString(36).substring(2, 15);
+        const sessionRef = doc(db, "trafego_aovivo", sessionId);
+
+        // Função que avisa o Admin que este cidadão está online agora
+        function avisarEstouOnline() {
+            setDoc(sessionRef, { ultima_acao: Date.now() }).catch(()=>{});
+        }
+
+        avisarEstouOnline(); // Avisa na hora
+        setInterval(avisarEstouOnline, 10000); // Continua avisando a cada 10 segundos
+
+        // Tenta apagar o rastro quando ele fechar a aba
+        window.addEventListener('beforeunload', () => {
+            deleteDoc(sessionRef).catch(()=>{});
+        });
+    } catch(e) {
+        console.log("Erro no rastreador:", e);
+    }
 
     // ==============================================================
     // CHAVE DO GOOGLE GEMINI (PARA O CHATBOT E PESQUISA)
@@ -1622,7 +1652,7 @@
               const loader = document.getElementById(idLoader);
               if (loader) loader.remove();
               
-memoriaChatCidadao.pop(); 
+              memoriaChatCidadao.pop(); 
               
               body.innerHTML += `<div class="chat-bubble bubble-ai" style="color: var(--sp-red); border: 1px solid var(--sp-red);">
                   <i class="fas fa-exclamation-triangle"></i> Muitos acessos ao mesmo tempo. Aguarde uns segundos e tente novamente.
@@ -1638,42 +1668,6 @@ memoriaChatCidadao.pop();
           }
       });
 
-    });
-  </script>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
-      authDomain: "site-8dfaf.firebaseapp.com",
-      projectId: "site-8dfaf"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // 1. Registra +1 no total do dia assim que abre
-    const dataIso = new Date().toISOString().split('T')[0]; 
-    setDoc(doc(db, "estatisticas", dataIso), { total: increment(1) }, { merge: true }).catch(()=>{});
-
-    // 2. Cria uma sessão "Ao Vivo" para este cliente
-    const sessionId = "sessao_" + Math.random().toString(36).substring(2, 15);
-    const sessionRef = doc(db, "trafego_aovivo", sessionId);
-
-    // Função que avisa o Admin que este cara está online
-    function avisarEstouOnline() {
-        setDoc(sessionRef, { ultima_acao: Date.now() }).catch(()=>{});
-    }
-
-    avisarEstouOnline();
-    // Continua avisando a cada 10 segundos
-    setInterval(avisarEstouOnline, 10000);
-
-    // Tenta apagar o rastro quando ele fechar a aba
-    window.addEventListener('beforeunload', () => {
-        deleteDoc(sessionRef).catch(()=>{});
     });
   </script>
 </body>
