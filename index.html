@@ -1622,7 +1622,7 @@
               const loader = document.getElementById(idLoader);
               if (loader) loader.remove();
               
-              memoriaChatCidadao.pop(); 
+memoriaChatCidadao.pop(); 
               
               body.innerHTML += `<div class="chat-bubble bubble-ai" style="color: var(--sp-red); border: 1px solid var(--sp-red);">
                   <i class="fas fa-exclamation-triangle"></i> Muitos acessos ao mesmo tempo. Aguarde uns segundos e tente novamente.
@@ -1639,6 +1639,43 @@
       });
 
     });
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
+      authDomain: "site-8dfaf.firebaseapp.com",
+      projectId: "site-8dfaf"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Registra a visita no exato momento que o cidadão abre o site
+    async function registrarVisitaReal() {
+        const hoje = new Date();
+        // Pega a data de hoje (ex: 2026-03-11)
+        const dataIso = hoje.toISOString().split('T')[0]; 
+        // Pega a hora atual (ex: 08, 14, 21)
+        const horaAtual = hoje.getHours().toString().padStart(2, '0'); 
+        const docRef = doc(db, "estatisticas", dataIso);
+
+        try {
+            // Incrementa +1 visita no total do dia e +1 na hora específica
+            await setDoc(docRef, {
+                total: increment(1),
+                [`hora_${horaAtual}`]: increment(1)
+            }, { merge: true });
+        } catch(e) {
+            console.log("Erro ao registrar analytics:", e);
+        }
+    }
+
+    // Dispara a contagem assim que o script carrega
+    registrarVisitaReal();
   </script>
 </body>
 </html>
