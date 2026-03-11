@@ -582,13 +582,13 @@
             <div class="chat-history" id="chat-historico">
               <div class="chat-msg msg-ai">
                 <strong style="color:var(--gemini-purple); font-size: 1.2rem;"><i class="fas fa-robot"></i> Sistema Auditor AI:</strong><br><br>
-                Olá, Auditor Fiscal. Eu sou a IA da Vigilância Sanitária.<br><br>Você pode me fazer perguntas genéricas sobre leis, ou pode <strong>selecionar um processo na caixa ali em cima</strong> e me mandar um comando como "Resuma o caso", para que eu leia todo o banco de dados daquela empresa e te dê o laudo de perícia detalhado.
+                Olá! Como posso te ajudar hoje? Você pode me perguntar qualquer coisa, ou selecionar um processo acima para que eu possa analisá-lo com você.
               </div>
             </div>
 
             <div class="chat-input-area">
-              <input type="text" id="chat-input-text" placeholder="Ex: Faça o resumo forense do caso selecionado acima." onkeypress="if(event.key === 'Enter') enviarChat()">
-              <button class="btn btn-gemini" onclick="enviarChat()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px;"><i class="fas fa-paper-plane"></i> Enviar Ordem</button>
+              <input type="text" id="chat-input-text" placeholder="Escreva a sua mensagem aqui..." onkeypress="if(event.key === 'Enter') enviarChat()">
+              <button class="btn btn-gemini" onclick="enviarChat()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px;"><i class="fas fa-paper-plane"></i> Enviar</button>
             </div>
           </div>
         </div>
@@ -777,7 +777,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-// ==============================================================
+    // ==============================================================
     // CHAVE DO GOOGLE GEMINI (CORRIGIDA E CAMUFLADA)
     // ==============================================================
     const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
@@ -789,6 +789,9 @@
     let todosProcessos = []; 
     let chartBar, chartDoughnut;
     const logsAuditoria = [];
+    
+    // NOVO: Variável que guarda a memória da conversa do chat
+    let memoriaDoChat = []; 
     
     function registrarLog(acaoRealizada, detalhesTecnicos, nivel = "INFO") {
         const log = { dataHora: new Date().toLocaleString(), acao: acaoRealizada, detalhes: detalhesTecnicos, nivel };
@@ -1233,10 +1236,8 @@
                 if(objAssinadoSeguro) pacoteDeEnvio.push({ "inline_data": objAssinadoSeguro }); 
             }
 
-            // CORREÇÃO 1: Endpoint atualizado para o modelo Gemini 2.5 Flash
             const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             
-            // CORREÇÃO 2: Adicionado o "generationConfig" para forçar retorno JSON válido
             const disparoAPI = await fetch(url_api_gemini, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
@@ -1262,7 +1263,6 @@
 
             let textoDoGemini = respostaDaIA.candidates[0].content.parts[0].text;
             
-            // Parse robusto
             let resultadoJson;
             try {
                  resultadoJson = JSON.parse(textoDoGemini);
@@ -1411,6 +1411,7 @@
       }
     };
 
+    // FUNÇÃO ENVIARCHAT MODIFICADA PARA TER MEMÓRIA E SER "LIVRE"
     window.enviarChat = async () => {
         const campoDeTexto = document.getElementById('chat-input-text'); 
         const perguntaDoFiscal = campoDeTexto.value.trim(); 
@@ -1430,34 +1431,37 @@
         const bolhaLoader = document.createElement('div');
         bolhaLoader.id = idLoaderChat;
         bolhaLoader.className = 'chat-msg msg-ai';
-        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.5rem; margin-right: 10px;"></i> Analisando Código de Leis e Processos...`;
+        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.5rem; margin-right: 10px;"></i> Pensando...`;
         areaHistorico.appendChild(bolhaLoader);
         
         areaHistorico.scrollTop = areaHistorico.scrollHeight;
 
-        let promptFinal = `Aja como Auditor/Advogado da Vigilância Sanitária de SP. Cite a Lei Municipal 13.725 ou RDC 216 nas respostas. O fiscal perguntou: "${perguntaDoFiscal}". Seja direto, sem enrolação. Formate as respostas em HTML básico (use tags <b> para negrito e <br> para quebras, não use asteriscos markdown).`;
+        let promptFinal = `${perguntaDoFiscal}\n\n(Instrução do sistema: Responda de forma natural, útil e amigável sobre qualquer assunto. Formate a sua resposta usando HTML básico, como <b> para negrito e <br> para quebras de linha. NUNCA uses asteriscos do markdown para formatação).`;
 
         const idProcChat = document.getElementById('chat-process-selector').value;
         if (idProcChat && idProcChat !== "") {
             let p = todosProcessos.find(proc => proc.id === idProcChat);
             if(p) {
-                promptFinal = `Aja como Auditor Chefe da Vigilância Sanitária de SP. O fiscal abriu a empresa "${p.nome}" (CNPJ: ${p.cnpj}, Ramo: ${p.tipo}). Checklist base: ${p.docs}. Mensagem: "${perguntaDoFiscal}". Responda em HTML básico (<b> para destaques, <br> para quebras) e cite leis cabíveis. Não use marcações markdown (* ou **).`;
+                promptFinal = `Aqui estão os dados de um processo/empresa que estou a analisar:\n- Empresa: ${p.nome}\n- CNPJ: ${p.cnpj}\n- Ramo: ${p.tipo}\n- Declaração: ${p.docs}\n\nA minha pergunta é: "${perguntaDoFiscal}"\n\n(Instrução do sistema: Responda de forma natural e ajude o usuário no que ele pediu. Formate a sua resposta usando HTML básico, como <b> para negrito e <br> para quebras de linha. NUNCA uses asteriscos do markdown).`;
             }
         }
 
+        // ADICIONA A PERGUNTA NA MEMÓRIA GERAL
+        memoriaDoChat.push({ role: "user", parts: [{ text: promptFinal }] });
+
         try {
-            // CORREÇÃO 3: Endpoint atualizado para o modelo Gemini 2.5 Flash no Chat
             const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             const envioPergunta = await fetch(url_api_gemini, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
-                    contents: [{ parts: [{text: promptFinal}] }] 
+                    contents: memoriaDoChat // ENVIA A CONVERSA TODA
                 })
             });
             
             if(!envioPergunta.ok) {
                 const erroDoGoogle = await envioPergunta.json();
+                memoriaDoChat.pop(); // Remove a última pergunta que falhou da memória
                 throw new Error(erroDoGoogle.error?.message || "Erro desconhecido na API do Chat.");
             }
             
@@ -1465,6 +1469,9 @@
             document.getElementById(idLoaderChat).remove(); 
             
             let textoDoAssistente = respostaCompleta.candidates[0].content.parts[0].text;
+            
+            // ADICIONA A RESPOSTA DA IA NA MEMÓRIA
+            memoriaDoChat.push({ role: "model", parts: [{ text: textoDoAssistente }] });
             
             const bolhaIA = document.createElement('div');
             bolhaIA.className = 'chat-msg msg-ai';
@@ -1545,7 +1552,6 @@
         document.getElementById('lightbox').style.display = 'flex'; 
     };
     
-    // CORREÇÃO 4: A função foi fechada corretamente e o arquivo finalizado limpo.
     window.fecharLightbox = () => { 
         document.getElementById('lightbox').style.display = 'none'; 
     };
