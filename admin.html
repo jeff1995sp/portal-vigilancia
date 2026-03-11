@@ -194,10 +194,11 @@
     .msg-user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
     .msg-ai { align-self: flex-start; background: var(--bg-card); color: var(--text-light); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm); }
     
-    .chat-input-area { padding: 25px 40px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; gap: 20px; align-items: center; }
-    .chat-input-area select { width: 300px; padding: 18px 20px; border-radius: var(--radius-md); background: var(--bg-body); color: white; border: 1px solid var(--border); font-weight: 600; }
-    .chat-input-area input { flex: 1; padding: 20px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; }
-    .chat-input-area input:focus { border-color: var(--gemini-purple); }
+    .chat-input-area { padding: 25px 40px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
+    .chat-input-row { display: flex; gap: 20px; align-items: center; width: 100%; }
+    .chat-input-row select { width: 300px; padding: 18px 20px; border-radius: var(--radius-md); background: var(--bg-body); color: white; border: 1px solid var(--border); font-weight: 600; }
+    .chat-input-row input { flex: 1; padding: 20px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; }
+    .chat-input-row input:focus { border-color: var(--gemini-purple); }
 
     .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
     .modal-box { background: var(--bg-body); width: 100%; max-width: 1100px; border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border); animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -281,7 +282,6 @@
 
     #error-log-shield { position: fixed; top: 0; left: 0; width: 100%; padding: 25px; background: var(--danger); color: white; font-weight: 900; text-align: center; z-index: 999999; display: none; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); }
 
-    /* CSS ADICIONADO PARA O LABORATÓRIO E NOVAS FUNÇÕES */
     .lab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: calc(100vh - 250px); }
     .lab-upload-box { background: var(--bg-card); border: 2px dashed var(--border-light); border-radius: var(--radius-xl); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; transition: 0.3s; position: relative; cursor: pointer; }
     .lab-upload-box:hover { border-color: var(--gemini-purple); background: rgba(192, 132, 252, 0.05); }
@@ -299,6 +299,15 @@
     .triagem-box.risk { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
     .triagem-box i { font-size: 2.5rem; color: var(--primary); }
     .triagem-box.risk i { color: var(--danger); }
+
+    /* CSS para o botão de anexo e preview no chat */
+    .chat-attachment-btn { background: var(--bg-card); border: 1px solid var(--border); width: 60px; height: 60px; border-radius: 50px; cursor: pointer; color: var(--text-muted); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; }
+    .chat-attachment-btn:hover { color: var(--primary); border-color: var(--primary); background: rgba(59, 130, 246, 0.1); }
+    .attachment-preview-box { display: none; width: 100%; background: var(--bg-body); border: 1px dashed var(--border); border-radius: var(--radius-md); padding: 15px; margin-bottom: 10px; }
+    .preview-item { display: flex; align-items: center; gap: 15px; width: 100%; }
+    .preview-item img, .preview-item video { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
+    .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.5rem; padding: 5px; }
+
   </style>
 </head>
 <body>
@@ -334,7 +343,7 @@
       <nav class="nav-menu">
         <a class="nav-item active" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Geral</a>
         <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Banco de Dados</a>
-        <a class="nav-item" onclick="switchView('view-financeiro', this)"><i class="fas fa-balance-scale"></i> Leis & Caixa</a>
+        <a class="nav-item" onclick="switchView('view-financeiro', this)"><i class="fas fa-comment-dots"></i> Assistente WhatsApp</a>
         <a class="nav-item" onclick="switchView('view-mapa', this)"><i class="fas fa-map-marked-alt"></i> Zonas de Risco</a>
         <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot"></i> IA Jurídica</a>
         <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
@@ -485,80 +494,38 @@
         <div id="view-financeiro" class="page-view">
           <div class="page-title">
             <div>
-              <h1>Painel Financeiro & Base Legal</h1>
-              <p>Auditoria de valores arrecadados, simulador de infrações e manuais do código sanitário.</p>
+              <h1>Assistente Automático para WhatsApp</h1>
+              <p>Envie textos, fotos ou vídeos de irregularidades. A IA analisará o material e criará a mensagem exata para você copiar e mandar para o contribuinte.</p>
             </div>
           </div>
 
-          <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
-            <div class="stat-card c-success" style="padding: 40px 30px;">
-              <div class="stat-icon" style="width: 80px; height: 80px; font-size: 2.8rem;"><i class="fas fa-sack-dollar"></i></div>
-              <div class="stat-info">
-                <h3 style="font-size: 1.2rem; color: var(--text-muted);">Caixa Real (Guias Pagas)</h3>
-                <p id="receita-total" style="font-size: 3.8rem; color: var(--success); letter-spacing: -1px;">R$ 0,00</p>
+          <div class="chat-container">
+            <div class="chat-header">
+              <div class="avatar" style="width: 55px; height: 55px; font-size: 2rem; background: var(--success);"><i class="fab fa-whatsapp"></i></div>
+              <div style="flex: 1;">
+                <h3 style="color: white; margin: 0; font-size: 1.3rem;">Gerador Oficial de Mensagens (IA)</h3>
+                <span style="color: var(--success); font-size: 0.9rem; font-weight: bold;">Foco: Notificação e Orientação ao Cliente</span>
               </div>
             </div>
-            <div class="stat-card c-primary" style="padding: 40px 30px;">
-              <div class="stat-icon" style="width: 80px; height: 80px; font-size: 2.8rem;"><i class="fas fa-money-bill-wave"></i></div>
-              <div class="stat-info">
-                <h3 style="font-size: 1.2rem; color: var(--text-muted);">Projeção Pendente (Aguardando Pix)</h3>
-                <p id="receita-pendente" style="font-size: 3.8rem; color: var(--primary); letter-spacing: -1px;">R$ 0,00</p>
+            
+            <div class="chat-history" id="chat-historico-whatsapp">
+              <div class="chat-msg msg-ai">
+                <strong style="color:var(--success); font-size: 1.2rem;"><i class="fas fa-robot"></i> Gerador IA:</strong><br><br>
+                Olá! Me descreva a situação, ou envie uma foto/vídeo da irregularidade. Eu vou criar uma mensagem formal, pronta para você copiar e colar no WhatsApp do contribuinte, informando o que ele precisa fazer ou corrigir.
               </div>
             </div>
-          </div>
 
-          <h2 style="font-size: 1.6rem; margin-bottom: 20px; color: white; font-weight: 900;"><i class="fas fa-calculator" style="color: var(--primary);"></i> Calculadora Oficial de Autuação (Lei 13.725)</h2>
-          <div class="calc-container">
-            <div class="calc-form">
-              <div>
-                <label style="font-weight: 800; font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Gravidade do Risco Sanitário</label>
-                <select id="sim-gravidade" class="form-input" onchange="calcularMulta()">
-                  <option value="leve">Infração LEVE (Documental, Asseio Simples)</option>
-                  <option value="grave">Infração GRAVE (RDC 216, Armazenamento Incorreto)</option>
-                  <option value="gravissima">Infração GRAVÍSSIMA (Risco de Morte, Produto Vencido)</option>
-                </select>
-              </div>
-              <div>
-                <label style="font-weight: 800; font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Porte Econômico da Empresa</label>
-                <select id="sim-porte" class="form-input" onchange="calcularMulta()">
-                  <option value="1">ME / EPP (Micro e Pequena Empresa)</option>
-                  <option value="2">Média Empresa (Faturamento > 4.8M)</option>
-                  <option value="3">Grande Empresa / Indústria</option>
-                </select>
-              </div>
-              <div style="grid-column: 1 / -1; background: rgba(239, 68, 68, 0.1); padding: 25px; border-radius: var(--radius-md); border: 1px solid var(--danger);">
-                <label style="display: flex; align-items: center; gap: 15px; cursor: pointer; font-weight: 800; color: var(--danger); font-size: 1.2rem;">
-                  <input type="checkbox" id="sim-reincidente" style="width: 25px; height: 25px;" onchange="calcularMulta()">
-                  Marcar se o estabelecimento for REINCIDENTE (Dobra o valor da multa base)
-                </label>
-              </div>
-            </div>
-            <div class="calc-result">
-              <span>Valor Sugerido para Auto de Infração</span>
-              <h2 id="sim-resultado">R$ 1.500,00</h2>
-              <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 15px; font-weight: 600;"><i class="fas fa-info-circle"></i> O valor base exato deve ser ratificado em UFESPs pelo fiscal autuante na hora da vistoria.</p>
-            </div>
-          </div>
+            <div class="chat-input-area">
+              <div id="zap-attachment-preview" class="attachment-preview-box"></div>
+              <div class="chat-input-row">
+                <button class="chat-attachment-btn" onclick="document.getElementById('zap-file-input').click()" title="Anexar foto ou vídeo curto para análise local">
+                  <i class="fas fa-camera"></i>
+                </button>
+                <input type="file" id="zap-file-input" style="display: none;" accept="image/*,video/*">
 
-          <h2 style="font-size: 1.6rem; margin-bottom: 20px; color: white; font-weight: 900;"><i class="fas fa-book" style="color: var(--primary);"></i> Biblioteca do Código Sanitário (SP)</h2>
-          <div class="laws-grid">
-            <div class="law-card law-leve">
-              <h3><i class="fas fa-exclamation-circle" style="color: var(--warning);"></i> Artigo 111 - Infração Leve</h3>
-              <div class="valor">R$ 150 a 2.000</div>
-              <p>Irregularidades administrativas que não geram dano direto à saúde pública.</p>
-              <ul><li>Falta de licença visível no local.</li><li>Atraso na renovação do CMVS.</li><li>Lixeiras sem tampa acionada por pedal.</li></ul>
-            </div>
-            <div class="law-card law-grave">
-              <h3><i class="fas fa-exclamation-triangle" style="color: #f97316;"></i> RDC 216 - Infração Grave</h3>
-              <div class="valor">R$ 2.000 a 15.000</div>
-              <p>Risco moderado à saúde. Falha nos processos de manipulação ou falta de laudos estruturais obrigatórios.</p>
-              <ul><li>Quebra da cadeia de frio (Geladeira com defeito).</li><li>Falta de laudo de controle de pragas.</li><li>Manipulador sem EPI / Sujidade pesada.</li></ul>
-            </div>
-            <div class="law-card law-gravissima">
-              <h3><i class="fas fa-radiation-alt" style="color: var(--danger);"></i> Artigo 112 - Infração Gravíssima</h3>
-              <div class="valor">R$ 15.000 a 500.000</div>
-              <p>Risco iminente de óbito ou intoxicação em massa. Sujeito a Interdição Cautelar Total Imediata.</p>
-              <ul><li>Venda de produtos vencidos, mofados ou podres.</li><li>Medicamentos controlados sem retenção de receita.</li><li>Esgoto a céu aberto na área de manipulação.</li></ul>
+                <input type="text" id="zap-input-text" placeholder="Ex: O cliente mandou foto do estabelecimento sem lixeira com pedal. Gere a cobrança para ele arrumar." onkeypress="if(event.key === 'Enter') enviarChatZap()">
+                <button class="btn btn-success" onclick="enviarChatZap()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px; background: var(--success); color: #022c22; border: none; font-weight: 900;"><i class="fab fa-whatsapp"></i> Gerar Texto</button>
+              </div>
             </div>
           </div>
         </div>
@@ -863,9 +830,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ==============================================================
-    // CHAVE DO GOOGLE GEMINI (CORRIGIDA E CAMUFLADA)
-    // ==============================================================
     const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
@@ -876,13 +840,14 @@
     const logsAuditoria = [];
     
     let memoriaDoChat = []; 
+    let memoriaDoChatZap = []; // Memória separada para o chat do WhatsApp
 
     // VARIÁVEIS DE ARQUIVO
     let arquivoAnexoParaEnviar = null;
+    let arquivoAnexoParaEnviarZap = null; // Variável para o arquivo do chat WhatsApp
     let arquivoLaboratorio = null;
     const TAMANHO_MAX_ARQUIVO_MB = 15;
 
-    // Converte arquivo para Base64 para a IA ler
     function converterArquivoParaBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -892,8 +857,8 @@
       });
     }
 
-    // Lógica do Input de Arquivos
-    function configurarInputArquivo(inputId, previewId, btnRemoveFuncStr, flagLab) {
+    // Adaptado para suportar múltiplos inputs (chat normal e chat zap)
+    function configurarInputArquivo(inputId, previewId, btnRemoveFuncStr, flagLab, tipoChat = 'normal') {
       const el = document.getElementById(inputId);
       if(!el) return;
       el.addEventListener('change', function(e) {
@@ -909,7 +874,11 @@
             arquivoLaboratorio = file;
             iniciarAnaliseLaboratorioForense(); 
         } else {
-            arquivoAnexoParaEnviar = file;
+            if (tipoChat === 'zap') {
+                arquivoAnexoParaEnviarZap = file;
+            } else {
+                arquivoAnexoParaEnviar = file;
+            }
             const previewArea = document.getElementById(previewId);
             previewArea.innerHTML = '';
             const item = document.createElement('div');
@@ -930,10 +899,13 @@
       });
     }
     
-    configurarInputArquivo('chat-file-input', 'chat-attachment-preview', 'removerAnexoChat', false);
-    configurarInputArquivo('lab-file-input', 'lab-preview', 'fecharPreviewLab', true);
+    configurarInputArquivo('chat-file-input', 'chat-attachment-preview', 'removerAnexoChat', false, 'normal');
+    configurarInputArquivo('zap-file-input', 'zap-attachment-preview', 'removerAnexoZap', false, 'zap'); // Novo input
+    configurarInputArquivo('lab-file-input', 'lab-preview', 'fecharPreviewLab', true, 'lab');
 
     window.removerAnexoChat = () => { arquivoAnexoParaEnviar = null; document.getElementById('chat-file-input').value = ''; document.getElementById('chat-attachment-preview').style.display = 'none'; }
+    window.removerAnexoZap = () => { arquivoAnexoParaEnviarZap = null; document.getElementById('zap-file-input').value = ''; document.getElementById('zap-attachment-preview').style.display = 'none'; } // Nova função de remover
+    
     window.fecharPreviewLab = () => {
         arquivoLaboratorio = null; document.getElementById('lab-file-input').value = '';
         document.getElementById('lab-preview').style.display = 'none'; document.getElementById('lab-drop-area').style.display = 'flex';
@@ -1041,7 +1013,6 @@
     onSnapshot(fireQuery, (snapshot) => {
       todosProcessos = []; 
       let countPendentes = 0, countAguardando = 0, countPagos = 0; 
-      let totalReceita = 0, pendenteReceita = 0;
       
       const chatSelect = document.getElementById('chat-process-selector');
       if(chatSelect) {
@@ -1058,10 +1029,8 @@
 
         if(dados.pago) { 
             countPagos++; 
-            totalReceita += valNum; 
         } else if(dados.valor) { 
             countAguardando++; 
-            pendenteReceita += valNum; 
         } else {
             countPendentes++;
         }
@@ -1076,9 +1045,6 @@
       document.getElementById("count-pago").innerText = countPagos;
       document.getElementById("count-total").innerText = snapshot.size;
       
-      document.getElementById("receita-total").innerText = 'R$ ' + totalReceita.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-      document.getElementById("receita-pendente").innerText = 'R$ ' + pendenteReceita.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-
       updateCharts(countPendentes, countAguardando, countPagos); 
       renderizarTabelas(todosProcessos);
       atualizarMapaDeCalor(todosProcessos);
@@ -1241,9 +1207,6 @@
       botaoClicado.classList.add('active');
     }
 
-    // =====================================================================
-    // API CNPJ E TRIAGEM AUTOMÁTICA
-    // =====================================================================
     async function verificarAPI_CNPJ(cnpjCliente) {
         const triagemBox = document.getElementById('triagem-cnpj-box');
         if (!cnpjCliente || cnpjCliente.length < 14) {
@@ -1281,9 +1244,6 @@
         }
     }
 
-    // =====================================================================
-    // WHATSAPP IA E CORREÇÃO DE NOTAS
-    // =====================================================================
     window.atualizarLinkZap = () => {
         let textoZap = document.getElementById("modal-zap-input").value;
         if(!textoZap) {
@@ -1340,7 +1300,6 @@
       document.getElementById("modal-id-text").innerText = idDoProtocolo.substring(0,8).toUpperCase();
       document.querySelector('.tab-ai').click(); 
 
-      // RESETANDO E INICIANDO TRIAGEM CNPJ
       document.getElementById('triagem-cnpj-box').className = 'triagem-box';
       document.getElementById('triagem-cnpj-box').innerHTML = `<i class="fas fa-circle-notch fa-spin"></i><div><h4 style="margin: 0; color: white; font-size: 1.1rem;">Buscando CNPJ na Receita Federal...</h4></div>`;
 
@@ -1358,7 +1317,6 @@
           document.getElementById("modal-ramo").innerText = dadosDoCliente.tipo || "Geral";
           document.getElementById("modal-docs").innerText = dadosDoCliente.docs || "Nenhum relatório declarado.";
           
-          // CHAMA A INTEGRAÇÃO COM A RECEITA
           verificarAPI_CNPJ(dadosDoCliente.cnpj);
 
           const galeriaHTML = document.getElementById('evidence-gallery'); 
@@ -1655,9 +1613,6 @@
       }
     };
 
-    // =========================================================================================
-    // LABORATÓRIO FORENSE DE MÍDIA
-    // =========================================================================================
     window.iniciarAnaliseLaboratorioForense = async () => {
         if (!arquivoLaboratorio) return;
 
@@ -1709,7 +1664,106 @@
         }
     }
 
-    // FUNÇÃO ENVIARCHAT MODIFICADA PARA TER MEMÓRIA E SER "LIVRE" COM ANEXOS
+    // Função para o Chatbot de WhatsApp (Aba Assistente WhatsApp)
+    window.enviarChatZap = async () => {
+        const campoDeTexto = document.getElementById('zap-input-text'); 
+        const instrucaoDoFiscal = campoDeTexto.value.trim(); 
+        if(!instrucaoDoFiscal && !arquivoAnexoParaEnviarZap) return;
+        
+        const areaHistorico = document.getElementById('chat-historico-whatsapp');
+        
+        const bolhaUser = document.createElement('div');
+        bolhaUser.className = 'chat-msg msg-user';
+        if(instrucaoDoFiscal) bolhaUser.innerHTML = instrucaoDoFiscal;
+
+        if (arquivoAnexoParaEnviarZap) {
+          if (instrucaoDoFiscal) bolhaUser.innerHTML += '<br><br>';
+          if (arquivoAnexoParaEnviarZap.type.startsWith('image/')) bolhaUser.innerHTML += `<img src="${URL.createObjectURL(arquivoAnexoParaEnviarZap)}" style="max-width:100%; border-radius:8px;">`;
+          else if (arquivoAnexoParaEnviarZap.type.startsWith('video/')) bolhaUser.innerHTML += `<i class="fas fa-video"></i> [Vídeo Anexado: ${arquivoAnexoParaEnviarZap.name}]`;
+        }
+
+        areaHistorico.appendChild(bolhaUser);
+        campoDeTexto.value = ''; 
+        areaHistorico.scrollTop = areaHistorico.scrollHeight;
+        
+        const idLoaderChat = 'loader_zap_' + Date.now(); 
+        const bolhaLoader = document.createElement('div');
+        bolhaLoader.id = idLoaderChat;
+        bolhaLoader.className = 'chat-msg msg-ai';
+        bolhaLoader.style.borderColor = 'var(--success)';
+        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--success); font-size:1.5rem; margin-right: 10px;"></i> Escrevendo mensagem...`;
+        areaHistorico.appendChild(bolhaLoader);
+        areaHistorico.scrollTop = areaHistorico.scrollHeight;
+
+        let promptFinal = `Você é um Assistente de Atendimento da Vigilância Sanitária via WhatsApp.
+        Sua tarefa: Analisar o contexto ou a imagem/vídeo fornecidos e gerar UMA MENSAGEM FORMAL, EDUCADAMENTE DIRETA, pronta para eu copiar e mandar no WhatsApp do contribuinte.
+        
+        Instruções do fiscal: ${instrucaoDoFiscal}
+
+        A mensagem deve informar claramente a irregularidade e o que ele deve fazer para corrigir.
+        
+        REGRA RIGOROSA: 
+        1. Gere APENAS o texto da mensagem do WhatsApp. Não adicione comentários seus.
+        2. Para negrito, use APENAS o asterisco simples (*palavra*), não use duplo asterisco ou tags HTML.
+        3. Formate o texto em HTML apenas com quebras de linha (<br>) para separar os parágrafos na tela do sistema.`;
+
+        let partesDoEnvio = [{ text: promptFinal }];
+
+        if (arquivoAnexoParaEnviarZap) {
+          try {
+            const dadosMdia = await converterArquivoParaBase64(arquivoAnexoParaEnviarZap);
+            partesDoEnvio.push({ inline_data: dadosMdia });
+          } catch (e) {
+             document.getElementById(idLoaderChat).innerHTML = "Erro ao ler arquivo."; removerAnexoZap(); return;
+          }
+        }
+
+        memoriaDoChatZap.push({ role: "user", parts: partesDoEnvio });
+
+        try {
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const envioPergunta = await fetch(url_api_gemini, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ 
+                    contents: memoriaDoChatZap 
+                })
+            });
+            
+            if(!envioPergunta.ok) {
+                const erroDoGoogle = await envioPergunta.json();
+                memoriaDoChatZap.pop();
+                throw new Error(erroDoGoogle.error?.message || "Erro desconhecido na API do Chat.");
+            }
+            
+            const respostaCompleta = await envioPergunta.json(); 
+            document.getElementById(idLoaderChat).remove(); 
+            
+            let textoDoAssistente = respostaCompleta.candidates[0].content.parts[0].text;
+            
+            memoriaDoChatZap.push({ role: "model", parts: [{ text: textoDoAssistente }] });
+            
+            const bolhaIA = document.createElement('div');
+            bolhaIA.className = 'chat-msg msg-ai';
+            bolhaIA.style.borderColor = 'var(--success)';
+            bolhaIA.innerHTML = `<strong style="color:var(--success); font-size: 1.1rem;"><i class="fab fa-whatsapp"></i> Mensagem Pronta:</strong><br><br><div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border-left: 4px solid var(--success); font-family: sans-serif; white-space: pre-wrap;">${textoDoAssistente.replace(/\n/g, '<br>')}</div><br><button onclick="navigator.clipboard.writeText(this.previousSibling.previousSibling.innerText); showToast('Copiado!', 'Mensagem copiada para a área de transferência', 'success');" class="btn" style="background:var(--success); color:#000; padding: 8px 15px; font-size: 0.9rem;"><i class="fas fa-copy"></i> Copiar Mensagem</button>`;
+            areaHistorico.appendChild(bolhaIA);
+
+            areaHistorico.scrollTop = areaHistorico.scrollHeight;
+            registrarLog("Assistente WhatsApp", "Mensagem gerada baseada em mídia/texto.");
+
+        } catch(erroNoChat) { 
+            console.error("Erro no Assistente WhatsApp:", erroNoChat);
+            const loaderElement = document.getElementById(idLoaderChat);
+            if(loaderElement) loaderElement.remove(); 
+            areaHistorico.innerHTML += `<div class="chat-msg msg-ai" style="color:var(--danger); border-color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> Erro: ${erroNoChat.message}</div>`;
+            areaHistorico.scrollTop = areaHistorico.scrollHeight;
+        } finally {
+            removerAnexoZap();
+        }
+    }
+
+    // Chat Jurídico (Mantido original)
     window.enviarChat = async () => {
         const campoDeTexto = document.getElementById('chat-input-text'); 
         const perguntaDoFiscal = campoDeTexto.value.trim(); 
@@ -1802,19 +1856,6 @@
         } finally {
             removerAnexoChat();
         }
-    }
-
-    window.calcularMulta = () => {
-        let gravidadeDefinida = document.getElementById('sim-gravidade').value;
-        let valorBaseEmReais = 1500;
-        
-        if (gravidadeDefinida === 'grave') valorBaseEmReais = 8500;
-        if (gravidadeDefinida === 'gravissima') valorBaseEmReais = 35000;
-        
-        valorBaseEmReais = valorBaseEmReais * parseInt(document.getElementById('sim-porte').value); 
-        if(document.getElementById('sim-reincidente').checked) { valorBaseEmReais = valorBaseEmReais * 2; }
-        
-        document.getElementById('sim-resultado').innerText = 'R$ ' + valorBaseEmReais.toLocaleString('pt-BR', {minimumFractionDigits: 2});
     }
 
     function initCharts() {
