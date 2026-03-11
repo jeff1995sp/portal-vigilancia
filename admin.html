@@ -1888,7 +1888,71 @@
     };
     
     window.fecharLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
+// =================================================================================
+    // ADICIONADO: CAPTURA DE PRINTS E IMAGENS COLADAS (CTRL+V) SEM MEXER NO CÓDIGO BASE
+    // =================================================================================
+    document.addEventListener('paste', function(e) {
+        let itens = (e.clipboardData || e.originalEvent.clipboardData).items;
 
+        for (let i = 0; i < itens.length; i++) {
+            if (itens[i].type.indexOf('image') !== -1) {
+                // Identificou que é uma imagem copiada
+                let arquivoDaImagem = itens[i].getAsFile();
+                // Cria um arquivo sintético com o print
+                let arquivoFinal = new File([arquivoDaImagem], "Print_Capturado_" + Math.floor(Date.now()/1000) + ".png", { type: arquivoDaImagem.type });
+                
+                // Descobre em qual tela o usuário está olhando agora
+                let abaAtual = document.querySelector('.page-view.active');
+                if(!abaAtual) return;
+
+                // Aplica a imagem de acordo com a aba ativa
+                if (abaAtual.id === 'view-financeiro') {
+                    // Chat do WhatsApp
+                    arquivoAnexoParaEnviarZap = arquivoFinal;
+                    renderizarPreviewColado(arquivoFinal, 'zap-attachment-preview', 'removerAnexoZap');
+                    showToast("Print Anexado", "Pronto para gerar o texto do WhatsApp.", "success");
+                    
+                } else if (abaAtual.id === 'view-chat') {
+                    // Chat Jurídico
+                    arquivoAnexoParaEnviar = arquivoFinal;
+                    renderizarPreviewColado(arquivoFinal, 'chat-attachment-preview', 'removerAnexoChat');
+                    showToast("Print Anexado", "Imagem pronta para a IA Jurídica.", "success");
+                    
+                } else if (abaAtual.id === 'view-laboratorio') {
+                    // Laboratório Forense
+                    arquivoLaboratorio = arquivoFinal;
+                    iniciarAnaliseLaboratorioForense();
+                    showToast("Print Anexado", "Enviando para o microscópio IA...", "success");
+                }
+                
+                // Impede que a imagem tente ser colada como texto no input
+                e.preventDefault(); 
+                break; 
+            }
+        }
+    });
+
+    // Função auxiliar que imita a sua preview original sem alterar sua lógica
+    function renderizarPreviewColado(file, previewId, btnRemoveFuncStr) {
+        const previewArea = document.getElementById(previewId);
+        previewArea.innerHTML = '';
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.style.display = 'flex'; item.style.alignItems = 'center'; item.style.gap = '15px'; item.style.width = '100%';
+
+        const img = document.createElement('img'); 
+        img.src = URL.createObjectURL(file); 
+        item.appendChild(img);
+
+        const tamanhoMB = file.size / (1024 * 1024);
+        item.innerHTML += `
+          <div style="flex:1"><strong>${file.name}</strong><br><span style="font-size:0.8rem; color:var(--text-muted)">${tamanhoMB.toFixed(2)} MB (Colado)</span></div>
+          <button class="btn-remove-attachment" onclick="${btnRemoveFuncStr}()"><i class="fas fa-times-circle"></i></button>
+        `;
+        previewArea.appendChild(item);
+        previewArea.style.display = 'flex';
+    }
+    // =================================================================================
   </script>
 </body>
 </html>
