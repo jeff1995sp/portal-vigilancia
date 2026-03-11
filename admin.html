@@ -3,1529 +3,238 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COVISA ULTIMATE V8 - AI Core & Radar Web</title>
-  
+  <title>COVISA ULTIMATE V9 - AI Core & Radar Web</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     /* =======================================================================
-       TEMA CIBERNÉTICO E GLASSMORPHISM (INTELIGÊNCIA ARTIFICIAL)
+       TEMA CIBERNÉTICO, NEON E GLASSMORPHISM
        ======================================================================= */
     :root {
-      /* Cores de Fundo (Dark Mode Profundo) */
-      --bg-body: #020617; 
-      --bg-sidebar: rgba(2, 6, 23, 0.75);
-      --bg-card: rgba(15, 23, 42, 0.45); 
-      --bg-card-hover: rgba(30, 41, 59, 0.6);
-      
-      /* Cores de Texto */
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-light: #e2e8f0;
-      
-      /* Tipografia */
-      --font-base: 'Inter', sans-serif;
-      --font-code: 'JetBrains Mono', monospace;
-      
-      /* Cores de Destaque e Neon */
-      --primary: #3b82f6;
-      --primary-hover: #60a5fa;
-      --secondary: #0ea5e9;
-      --accent: #38bdf8;
-      
-      /* Cores da IA (Gemini) */
-      --gemini-purple: #c084fc;
-      --gemini-dark: #7e22ce;
-      --gemini-bg: rgba(192, 132, 252, 0.1);
-      --gemini-glow: rgba(192, 132, 252, 0.5);
-      --gemini-gradient: linear-gradient(135deg, #c084fc, #ec4899, #3b82f6);
-      
-      /* Status Colors */
-      --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.4);
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --danger-glow: rgba(239, 68, 68, 0.4);
-      
-      /* Bordas e Sombras (Glassmorphism) */
-      --border: rgba(255, 255, 255, 0.1);
-      --border-light: rgba(255, 255, 255, 0.15);
-      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-      --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-      
-      /* Arredondamentos */
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 16px;
-      --radius-xl: 24px;
-      --radius-2xl: 32px;
-    }
-
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-      font-family: var(--font-base); 
-      outline: none; 
-      -webkit-font-smoothing: antialiased; 
-    }
-    
-    body { 
-      background-color: var(--bg-body); 
-      background-image: 
-        radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.08), transparent 25%);
-      color: var(--text-main); 
-      width: 100vw; 
-      height: 100vh; 
-      overflow: hidden; 
-      font-size: 14px; 
-    }
-
-    /* Scrollbar Personalizada */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-
-    /* Componente Global de Vidro Fosco (Glassmorphism) */
-    .glass-panel {
-      background: var(--bg-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-glass);
-    }
-
-    /* =======================================================================
-       TELA DE LOGIN (LOCK SCREEN)
-       ======================================================================= */
-    #lock-screen {
-      position: fixed; 
-      inset: 0; 
-      background: #020617; 
-      z-index: 99999; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center; 
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-
-    .lock-box { 
-      background: rgba(15, 23, 42, 0.6); 
-      padding: 60px 50px; 
-      border-radius: var(--radius-xl); 
-      backdrop-filter: blur(20px); 
-      border: 1px solid var(--border-light); 
-      text-align: center; 
-      width: 100%; 
-      max-width: 440px; 
-      box-shadow: 0 0 50px rgba(59, 130, 246, 0.15); 
-    }
-
-    .lock-box i.fa-fingerprint { 
-      font-size: 5rem; 
-      color: var(--primary); 
-      margin-bottom: 25px; 
-      filter: drop-shadow(0 0 15px var(--primary)); 
-    }
-
-    .lock-box h2 { 
-      color: white; 
-      margin-bottom: 12px; 
-      font-weight: 900; 
-      font-size: 2.2rem; 
-      letter-spacing: -1px; 
-    }
-
-    .lock-box p { 
-      color: var(--text-muted); 
-      font-size: 1.05rem; 
-      margin-bottom: 35px; 
-    }
-
-    .pin-input { 
-      width: 100%; 
-      padding: 22px; 
-      border-radius: var(--radius-md); 
-      border: 2px solid var(--border); 
-      background: rgba(0,0,0,0.4); 
-      color: white; 
-      font-size: 2.5rem; 
-      text-align: center; 
-      letter-spacing: 20px; 
-      margin-bottom: 30px; 
-      font-family: var(--font-code); 
-      transition: 0.3s; 
-    }
-
-    .pin-input:focus { 
-      border-color: var(--primary); 
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); 
-    }
-
-    .btn-unlock { 
-      width: 100%; 
-      background: var(--primary); 
-      color: white; 
-      border: none; 
-      padding: 20px; 
-      border-radius: var(--radius-md); 
-      font-weight: 800; 
-      font-size: 1.2rem; 
-      cursor: pointer; 
-      transition: 0.3s; 
-      text-transform: uppercase; 
-      letter-spacing: 1px; 
-    }
-
-    .btn-unlock:hover { 
-      background: var(--primary-hover); 
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); 
-      transform: translateY(-2px);
-    }
-
-    /* =======================================================================
-       LAYOUT PRINCIPAL (SIDEBAR E TOPBAR)
-       ======================================================================= */
-    #app-container { 
-      display: flex; 
-      width: 100%; 
-      height: 100%; 
-    }
-    
-    .sidebar { 
-      width: 290px; 
-      height: 100%; 
-      background: var(--bg-sidebar); 
-      backdrop-filter: blur(20px); 
-      display: flex; 
-      flex-direction: column; 
-      z-index: 100; 
-      border-right: 1px solid var(--border); 
-      flex-shrink: 0; 
-    }
-
-    .sidebar-header { 
-      padding: 40px 30px; 
-      display: flex; 
-      align-items: center; 
-      gap: 15px; 
-      border-bottom: 1px solid var(--border); 
-    }
-
-    .sidebar-header i.logo-icon { 
-      font-size: 2.8rem; 
-      background: var(--gemini-gradient); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-    }
-
-    .sidebar-header h2 { 
-      font-size: 1.5rem; 
-      font-weight: 900; 
-      line-height: 1.1; 
-      color: white; 
-    }
-
-    .sidebar-header h2 span { 
-      font-size: 0.75rem; 
-      color: var(--gemini-purple); 
-      text-transform: uppercase; 
-      letter-spacing: 2px; 
-      font-weight: 800; 
-      display: block; 
-      margin-top: 4px; 
-    }
-    
-    .nav-menu { 
-      padding: 30px 20px; 
-      flex: 1; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 8px; 
-      overflow-y: auto; 
-    }
-
-    .nav-item { 
-      padding: 16px 20px; 
-      border-radius: var(--radius-md); 
-      color: var(--text-muted); 
-      text-decoration: none; 
-      display: flex; 
-      align-items: center; 
-      gap: 15px; 
-      font-weight: 600; 
-      font-size: 1.05rem; 
-      transition: all 0.3s ease; 
-      cursor: pointer; 
-      border: 1px solid transparent; 
-    }
-
-    .nav-item:hover { 
-      background: rgba(255,255,255,0.05); 
-      color: white; 
-    }
-
-    .nav-item.active { 
-      background: rgba(192, 132, 252, 0.15); 
-      color: white; 
-      border: 1px solid rgba(192, 132, 252, 0.3); 
-      box-shadow: 0 0 15px rgba(192, 132, 252, 0.15); 
-    }
-
-    .nav-item i { 
-      font-size: 1.3rem; 
-      width: 25px; 
-      text-align: center; 
-    }
-    
-    .sidebar-footer { 
-      padding: 25px; 
-      border-top: 1px solid var(--border); 
-      text-align: center; 
-      background: rgba(0,0,0,0.2); 
-    }
-
-    .main-content { 
-      flex: 1; 
-      height: 100%; 
-      display: flex; 
-      flex-direction: column; 
-      overflow: hidden; 
-      position: relative; 
-    }
-
-    header.topbar { 
-      background: rgba(15, 23, 42, 0.4); 
-      backdrop-filter: blur(20px); 
-      padding: 20px 40px; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      border-bottom: 1px solid var(--border); 
-      z-index: 10; 
-      flex-shrink: 0; 
-    }
-    
-    .search-bar { 
-      display: flex; 
-      align-items: center; 
-      background: rgba(0,0,0,0.4); 
-      padding: 12px 25px; 
-      border-radius: 50px; 
-      width: 500px; 
-      border: 1px solid var(--border); 
-      transition: 0.3s; 
-    }
-
-    .search-bar:focus-within { 
-      border-color: var(--primary); 
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); 
-    }
-
-    .search-bar i { 
-      color: var(--text-muted); 
-      margin-right: 15px; 
-      font-size: 1.1rem; 
-    }
-
-    .search-bar input { 
-      border: none; 
-      background: transparent; 
-      width: 100%; 
-      font-size: 0.95rem; 
-      color: white; 
-    }
-    
-    .user-profile { 
-      display: flex; 
-      align-items: center; 
-      gap: 15px; 
-    }
-
-    .pulse-online { 
-      display: inline-block; 
-      width: 10px; 
-      height: 10px; 
-      background: var(--success); 
-      border-radius: 50%; 
-      box-shadow: 0 0 10px var(--success); 
-      animation: pulse 2s infinite; 
-    }
-
-    @keyframes pulse { 
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 
-      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } 
-    }
-
-    .user-info { 
-      text-align: right; 
-    }
-
-    .user-info h4 { 
-      font-size: 0.95rem; 
-      margin: 0 0 4px 0; 
-      color: white; 
-      font-weight: 800; 
-    }
-
-    .user-info span { 
-      font-size: 0.8rem; 
-      color: var(--gemini-purple); 
-      font-weight: 800; 
-    }
-
-    .avatar { 
-      width: 45px; 
-      height: 45px; 
-      border-radius: 50%; 
-      background: var(--gemini-gradient); 
-      color: white; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-weight: 900; 
-      font-size: 1.2rem; 
-      box-shadow: 0 0 15px var(--gemini-glow); 
-    }
-
-    /* =======================================================================
-       ESTRUTURA DAS PÁGINAS (VIEWS) E COMPONENTES
-       ======================================================================= */
-    .view-container { 
-      flex: 1; 
-      overflow-y: auto; 
-      padding: 40px 50px; 
-    }
-
-    .page-view { 
-      display: none; 
-      animation: fadeIn 0.4s ease; 
-    }
-
-    .page-view.active { 
-      display: block; 
-    }
-
-    @keyframes fadeIn { 
-      from { opacity: 0; transform: translateY(10px); } 
-      to { opacity: 1; transform: translateY(0); } 
-    }
-
-    .page-title { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: flex-end; 
-      margin-bottom: 30px; 
-    }
-
-    .page-title h1 { 
-      font-size: 2.2rem; 
-      font-weight: 900; 
-      color: white; 
-      letter-spacing: -1px; 
-      margin:0; 
-    }
-
-    .page-title p { 
-      color: var(--text-muted); 
-      font-size: 1.05rem; 
-      margin-top: 8px; 
-    }
-
-    /* BOTÕES */
-    .btn { 
-      padding: 12px 25px; 
-      border-radius: var(--radius-md); 
-      font-weight: 700; 
-      font-size: 0.95rem; 
-      cursor: pointer; 
-      transition: 0.3s; 
-      border: 1px solid transparent; 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center; 
-      gap: 10px; 
-    }
-
-    .btn-primary { 
-      background: rgba(59, 130, 246, 0.2); 
-      color: #60a5fa; 
-      border-color: var(--primary); 
-    }
-    .btn-primary:hover { 
-      background: var(--primary); 
-      color: white; 
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); 
-    }
-
-    .btn-gemini { 
-      background: rgba(192, 132, 252, 0.2); 
-      color: #d8b4fe; 
-      border-color: var(--gemini-purple); 
-    }
-    .btn-gemini:hover { 
-      background: var(--gemini-gradient); 
-      color: white; 
-      border-color: transparent; 
-      box-shadow: 0 0 20px var(--gemini-glow); 
-    }
-
-    .btn-success { 
-      background: rgba(16, 185, 129, 0.2); 
-      color: #34d399; 
-      border-color: var(--success); 
-    }
-    .btn-success:hover { 
-      background: var(--success); 
-      color: white; 
-      box-shadow: 0 0 20px var(--success-glow); 
-    }
-
-    .btn-danger { 
-      background: rgba(239, 68, 68, 0.2); 
-      color: #fca5a5; 
-      border-color: var(--danger); 
-    }
-    .btn-danger:hover { 
-      background: var(--danger); 
-      color: white; 
-      box-shadow: 0 0 20px var(--danger-glow); 
-    }
-
-    .btn-secondary { 
-      background: rgba(255,255,255,0.05); 
-      border: 1px solid var(--border); 
-      color: white; 
-    }
-    .btn-secondary:hover { 
-      background: rgba(255,255,255,0.1); 
-    }
-
-    .btn-icon { 
-      width: 40px; 
-      height: 40px; 
-      border-radius: var(--radius-md); 
-      border: none; 
-      cursor: pointer; 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center; 
-      transition: 0.2s; 
-      font-size: 1.1rem; 
-      color: white; 
-      background: var(--border-light); 
-    }
-    .btn-icon:hover { 
-      background: var(--primary); 
-      transform: translateY(-2px); 
-    }
-
-    /* INPUTS */
-    .form-input { 
-      width: 100%; 
-      padding: 15px 20px; 
-      border: 1px solid var(--border); 
-      border-radius: var(--radius-md); 
-      font-size: 1rem; 
-      color: white; 
-      background: rgba(0,0,0,0.3); 
-      transition: 0.3s; 
-    }
-    .form-input:focus { 
-      border-color: var(--primary); 
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); 
-      background: rgba(0,0,0,0.5); 
-    }
-
-    /* =======================================================================
-       DASHBOARD E GRÁFICOS
-       ======================================================================= */
-    .stats-grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-      gap: 25px; 
-      margin-bottom: 30px; 
-    }
-
-    .stat-card { 
-      padding: 25px; 
-      border-radius: var(--radius-lg); 
-      display: flex; 
-      align-items: center; 
-      gap: 20px; 
-      position: relative; 
-      overflow: hidden; 
-    }
-
-    .stat-card::after { 
-      content:''; 
-      position:absolute; 
-      top:0; 
-      left:0; 
-      width:100%; 
-      height:4px; 
-    }
-
-    .c-warning::after { background: var(--warning); } 
-    .c-primary::after { background: var(--primary); } 
-    .c-success::after { background: var(--success); } 
-    .c-gemini::after { background: var(--gemini-purple); }
-    
-    .stat-icon { 
-      width: 60px; 
-      height: 60px; 
-      border-radius: var(--radius-md); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-size: 2rem; 
-      background: rgba(255,255,255,0.05); 
-      border: 1px solid var(--border); 
-    }
-
-    .c-warning .stat-icon { color: var(--warning); } 
-    .c-primary .stat-icon { color: var(--primary); } 
-    .c-success .stat-icon { color: var(--success); } 
-    .c-gemini .stat-icon { color: var(--gemini-purple); }
-    
-    .stat-info h3 { 
-      font-size: 0.85rem; 
-      color: var(--text-muted); 
-      text-transform: uppercase; 
-      letter-spacing: 1px; 
-      margin-bottom: 5px; 
-    }
-
-    .stat-info p { 
-      font-size: 2.5rem; 
-      font-weight: 900; 
-      color: white; 
-      margin: 0; 
-      line-height: 1; 
-    }
-
-    .charts-grid { 
-      display: grid; 
-      grid-template-columns: 2fr 1fr; 
-      gap: 25px; 
-      margin-bottom: 30px; 
-    }
-
-    .chart-card { 
-      padding: 30px; 
-      border-radius: var(--radius-lg); 
-    }
-
-    .chart-header { 
-      font-size: 1.2rem; 
-      font-weight: 800; 
-      color: white; 
-      margin-bottom: 20px; 
-    }
-
-    .chart-container { 
-      position: relative; 
-      height: 300px; 
-      width: 100%; 
-    }
-
-    /* MÓDULO DE SENTIMENTO DA IA NO DASHBOARD */
-    .sentiment-box { 
-      display: flex; 
-      gap: 20px; 
-      align-items: center; 
-      padding: 20px 30px; 
-      border-radius: var(--radius-lg); 
-      margin-bottom: 30px; 
-      border-left: 4px solid var(--gemini-purple); 
-    }
-
-    .sentiment-icon { 
-      font-size: 2.5rem; 
-      color: var(--gemini-purple); 
-      filter: drop-shadow(0 0 10px var(--gemini-glow)); 
-      animation: pulse 2s infinite; 
-    }
-
-    .sentiment-content h4 { 
-      color: white; 
-      font-size: 1.1rem; 
-      margin-bottom: 5px; 
-      display: flex; 
-      align-items: center; 
-      gap: 10px; 
-    }
-
-    .sentiment-content p { 
-      color: var(--text-light); 
-      margin: 0; 
-      font-size: 0.95rem; 
-    }
-
-    .badge-trending { 
-      background: rgba(239, 68, 68, 0.2); 
-      color: #fca5a5; 
-      padding: 4px 10px; 
-      border-radius: 50px; 
-      font-size: 0.75rem; 
-      font-weight: bold; 
-      border: 1px solid var(--danger); 
-    }
-
-    /* =======================================================================
-       TABELAS DE DADOS (BASE MESTRA)
-       ======================================================================= */
-    .data-section { 
-      border-radius: var(--radius-lg); 
-      overflow: hidden; 
-      margin-bottom: 40px; 
-    }
-
-    .data-header { 
-      padding: 25px 30px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: rgba(0,0,0,0.2); 
-    }
-
-    .data-header h2 { 
-      font-size: 1.3rem; 
-      font-weight: 800; 
-      color: white; 
-      margin: 0; 
-    }
-
-    .filters-row { 
-      padding: 20px 30px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      gap: 20px; 
-      background: rgba(0,0,0,0.1); 
-    }
-    
-    table { 
-      width: 100%; 
-      border-collapse: collapse; 
-      text-align: left; 
-    }
-
-    th { 
-      padding: 20px 30px; 
-      font-size: 0.8rem; 
-      font-weight: 800; 
-      color: var(--text-muted); 
-      text-transform: uppercase; 
-      letter-spacing: 1px; 
-      border-bottom: 1px solid var(--border); 
-      background: rgba(0,0,0,0.4); 
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-
-    td { 
-      padding: 20px 30px; 
-      border-bottom: 1px solid var(--border); 
-      font-size: 1rem; 
-      color: var(--text-light); 
-      vertical-align: middle; 
-    }
-
-    tr { transition: 0.2s ease; }
-    tr:hover { background: rgba(255,255,255,0.03); }
-    
-    .td-empresa { 
-      display: flex; 
-      align-items: center; 
-      gap: 15px; 
-    }
-
-    .td-empresa-icon { 
-      width: 45px; 
-      height: 45px; 
-      background: rgba(255,255,255,0.05); 
-      border: 1px solid var(--border); 
-      border-radius: var(--radius-md); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      color: white; 
-      font-weight: 900; 
-      font-size: 1.2rem;
-    }
-
-    .td-empresa-info strong { 
-      display: block; 
-      font-size: 1.05rem; 
-      margin-bottom: 4px; 
-      color: white; 
-    }
-
-    .td-empresa-info span { 
-      color: var(--text-muted); 
-      font-size: 0.85rem; 
-      font-family: var(--font-code); 
-    }
-    
-    .status-badge { 
-      padding: 6px 14px; 
-      border-radius: 50px; 
-      font-size: 0.75rem; 
-      font-weight: 800; 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 6px; 
-      text-transform: uppercase; 
-    }
-
-    .badge-pendente { 
-      background: rgba(245, 158, 11, 0.15); 
-      color: #fcd34d; 
-      border: 1px solid var(--warning); 
-    }
-
-    .badge-aguardando { 
-      background: rgba(59, 130, 246, 0.15); 
-      color: #93c5fd; 
-      border: 1px solid var(--primary); 
-    }
-
-    .badge-pago { 
-      background: rgba(16, 185, 129, 0.15); 
-      color: #6ee7b7; 
-      border: 1px solid var(--success); 
-    }
-
-    .badge-denuncia { 
-      background: rgba(239, 68, 68, 0.15); 
-      color: #fca5a5; 
-      border: 1px solid var(--danger); 
-      box-shadow: 0 0 10px var(--danger-glow); 
-    }
-
-    /* =======================================================================
-       NOVO: RADAR DE REPUTAÇÃO ONLINE (MAPA LEAFLET GOOGLE)
-       ======================================================================= */
-    .map-wrapper { 
-      display: flex; 
-      width: 100%; 
-      height: 600px; 
-      border-radius: var(--radius-lg); 
-      overflow: hidden; 
-      border: 1px solid var(--border); 
-      position: relative; 
-      z-index: 1;
-    }
-
-    #reputation-map { 
-      flex: 1; 
-      height: 100%; 
-      background: #000;
-    }
-
-    .reputation-panel { 
-      width: 380px; 
-      background: rgba(15, 23, 42, 0.9); 
-      backdrop-filter: blur(20px); 
-      border-left: 1px solid var(--border); 
-      padding: 25px; 
-      overflow-y: auto; 
-      display: none; 
-      flex-direction: column; 
-    }
-
-    .review-card { 
-      background: rgba(0,0,0,0.5); 
-      padding: 15px; 
-      border-radius: 8px; 
-      border: 1px solid var(--border); 
-      margin-bottom: 10px; 
-      font-style: italic; 
-      color: var(--text-light); 
-      font-size: 0.9rem; 
-      border-left: 3px solid var(--danger);
-    }
-
-    /* =======================================================================
-       LABORATÓRIO FORENSE DE MÍDIA AVULSA
-       ======================================================================= */
-    .lab-container { 
-      display: grid; 
-      grid-template-columns: 1fr 1fr; 
-      gap: 30px; 
-      height: calc(100vh - 250px); 
-    }
-
-    .lab-upload-box { 
-      background: var(--bg-card); 
-      border: 2px dashed var(--border-light); 
-      border-radius: var(--radius-xl); 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center; 
-      text-align: center; 
-      padding: 40px; 
-      transition: 0.3s; 
-      position: relative; 
-      cursor: pointer; 
-    }
-
-    .lab-upload-box:hover { 
-      border-color: var(--gemini-purple); 
-      background: rgba(192, 132, 252, 0.05); 
-    }
-
-    .lab-upload-box i.icon-big { 
-      font-size: 4rem; 
-      color: var(--text-muted); 
-      margin-bottom: 20px; 
-      transition: 0.3s; 
-    }
-
-    .lab-upload-box:hover i.icon-big { 
-      color: var(--gemini-purple); 
-      transform: scale(1.1); 
-    }
-
-    .lab-preview-area { 
-      width: 100%; 
-      height: 300px; 
-      margin-top: 20px; 
-      border-radius: var(--radius-md); 
-      overflow: hidden; 
-      display: none; 
-      background: #000; 
-      border: 1px solid var(--border); 
-      position: relative;
-    }
-
-    .lab-preview-area img, .lab-preview-area video { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: contain; 
-    }
-
-    .lab-btn-close-preview { 
-      position: absolute; 
-      top: 10px; 
-      right: 10px; 
-      background: rgba(0,0,0,0.7); 
-      color: white; 
-      border: none; 
-      padding: 8px 12px; 
-      border-radius: 5px; 
-      cursor: pointer; 
-    }
-    
-    .lab-result-box { 
-      background: var(--bg-card); 
-      border: 1px solid var(--border); 
-      border-radius: var(--radius-xl); 
-      padding: 40px; 
-      overflow-y: auto; 
-      box-shadow: var(--shadow-md); 
-    }
-
-    .lab-result-content { 
-      font-size: 1.1rem; 
-      line-height: 1.7; 
-      color: var(--text-light); 
-    }
-
-    .lab-loader { 
-      display: none; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center; 
-      height: 100%; 
-      gap: 20px; 
-    }
-
-    /* =======================================================================
-       CHAT JURÍDICO GLOBAL
-       ======================================================================= */
-    .chat-container { 
-      display: flex; 
-      flex-direction: column; 
-      height: 650px; 
-      border-radius: var(--radius-lg); 
-      overflow: hidden; 
-    }
-
-    .chat-header { 
-      background: rgba(0,0,0,0.4); 
-      padding: 20px 30px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      border-bottom: 1px solid var(--border); 
-    }
-
-    .chat-history { 
-      flex: 1; 
-      padding: 30px; 
-      overflow-y: auto; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 20px; 
-      background: rgba(0,0,0,0.1); 
-    }
-
-    .chat-msg { 
-      width: fit-content; 
-      max-width: 80%; 
-      padding: 15px 25px; 
-      border-radius: 15px; 
-      line-height: 1.6; 
-      font-size: 1.05rem;
-    }
-
-    .msg-user { 
-      align-self: flex-end; 
-      background: rgba(59, 130, 246, 0.2); 
-      border: 1px solid var(--primary); 
-      color: white; 
-      border-bottom-right-radius: 4px; 
-    }
-
-    .msg-ai { 
-      align-self: flex-start; 
-      background: rgba(255,255,255,0.05); 
-      border: 1px solid var(--border); 
-      color: var(--text-light); 
-      border-bottom-left-radius: 4px; 
-    }
-
-    .chat-input-area { 
-      padding: 20px 30px; 
-      background: rgba(0,0,0,0.4); 
-      border-top: 1px solid var(--border); 
-      display: flex; 
-      flex-direction: column; 
-      gap: 10px; 
-    }
-
-    .chat-attachment-btn { 
-      background: transparent; 
-      border: none; 
-      color: var(--text-muted); 
-      font-size: 1.8rem; 
-      cursor: pointer; 
-      transition: 0.2s; 
-      padding: 10px; 
-    }
-    .chat-attachment-btn:hover { color: var(--gemini-purple); }
-
-    .attachment-preview-box { 
-      display: none; 
-      background: var(--bg-body); 
-      border: 1px solid var(--border); 
-      padding: 10px; 
-      border-radius: var(--radius-md); 
-      width: 100%; 
-      align-items: center; 
-      gap: 15px; 
-      color: white;
-    }
-
-    .attachment-preview-box img, .attachment-preview-box video { 
-      width: 60px; 
-      height: 60px; 
-      object-fit: cover; 
-      border-radius: 4px; 
-      border: 1px solid var(--border); 
-    }
-
-    .btn-remove-attachment { 
-      background: transparent; 
-      border: none; 
-      color: var(--danger); 
-      cursor: pointer; 
-      font-size: 1.2rem; 
-    }
-
-    /* =======================================================================
-       MODAL GERAL (DOSSIÊ DO PROCESSO)
-       ======================================================================= */
-    .modal-overlay { 
-      position: fixed; 
-      inset: 0; 
-      background: rgba(0, 0, 0, 0.85); 
-      backdrop-filter: blur(10px); 
-      z-index: 20000; 
-      display: none; 
-      align-items: center; 
-      justify-content: center; 
-      padding: 20px; 
-    }
-
-    .modal-box { 
-      background: var(--bg-body); 
-      width: 100%; 
-      max-width: 1200px; 
-      border-radius: var(--radius-xl); 
-      box-shadow: 0 20px 60px rgba(0,0,0,0.9); 
-      display: flex; 
-      flex-direction: column; 
-      max-height: 95vh; 
-      border: 1px solid var(--border-light); 
-      animation: modalIn 0.3s ease; 
-    }
-
-    @keyframes modalIn { 
-      from { transform: translateY(20px); opacity: 0; } 
-      to { transform: translateY(0); opacity: 1; } 
-    }
-
-    .modal-header { 
-      padding: 20px 30px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: rgba(255,255,255,0.02); 
-    }
-
-    .modal-header h3 { 
-      font-size: 1.3rem; 
-      font-weight: 900; 
-      color: white; 
-      display: flex; 
-      align-items: center; 
-      gap: 15px; 
-      margin:0;
-    }
-
-    .modal-header .protocol-id {
-      background: rgba(0,0,0,0.5); 
-      padding: 8px 15px; 
-      border-radius: 8px; 
-      font-family: var(--font-code); 
-      border: 1px solid var(--border);
-      color: var(--text-light);
-    }
-
-    .btn-close { 
-      background: transparent; 
-      border: none; 
-      color: var(--text-muted); 
-      font-size: 1.5rem; 
-      cursor: pointer; 
-      transition: 0.2s; 
-    }
+      --bg-body: #020617; --bg-sidebar: rgba(2, 6, 23, 0.85); --bg-card: rgba(15, 23, 42, 0.6);
+      --text-main: #f8fafc; --text-muted: #94a3b8; --text-light: #e2e8f0;
+      --font-base: 'Inter', sans-serif; --font-code: 'JetBrains Mono', monospace;
+      --primary: #3b82f6; --primary-hover: #2563eb; --secondary: #0ea5e9; --accent: #38bdf8;
+      --gemini-purple: #c084fc; --gemini-dark: #7e22ce; --gemini-bg: rgba(192, 132, 252, 0.1); --gemini-glow: rgba(192, 132, 252, 0.5); --gemini-gradient: linear-gradient(135deg, #c084fc, #ec4899, #3b82f6);
+      --success: #10b981; --success-glow: rgba(16, 185, 129, 0.4); --warning: #f59e0b; --danger: #ef4444; --danger-glow: rgba(239, 68, 68, 0.4);
+      --border: rgba(255, 255, 255, 0.1); --border-light: rgba(255, 255, 255, 0.15);
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3); --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5); --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+      --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-xl: 24px; --radius-2xl: 32px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-base); outline: none; -webkit-font-smoothing: antialiased; }
+    body { background-color: var(--bg-body); background-image: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%), radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.08), transparent 25%); color: var(--text-main); width: 100vw; height: 100vh; overflow: hidden; font-size: 14px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+    .glass-panel { background: var(--bg-card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); box-shadow: var(--shadow-glass); }
+
+    #lock-screen { position: fixed; inset: 0; background: #020617; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease; }
+    .lock-box { background: rgba(15, 23, 42, 0.6); padding: 60px 50px; border-radius: var(--radius-xl); backdrop-filter: blur(20px); border: 1px solid var(--border-light); text-align: center; width: 100%; max-width: 440px; box-shadow: 0 0 50px rgba(59, 130, 246, 0.15); }
+    .lock-box i.fa-fingerprint { font-size: 5rem; color: var(--primary); margin-bottom: 25px; filter: drop-shadow(0 0 15px var(--primary)); }
+    .lock-box h2 { color: white; margin-bottom: 12px; font-weight: 900; font-size: 2.2rem; letter-spacing: -1px; }
+    .lock-box p { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 35px; }
+    .pin-input { width: 100%; padding: 22px; border-radius: var(--radius-md); border: 2px solid var(--border); background: rgba(0,0,0,0.4); color: white; font-size: 2.5rem; text-align: center; letter-spacing: 20px; margin-bottom: 30px; font-family: var(--font-code); transition: 0.3s; }
+    .pin-input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+    .btn-unlock { width: 100%; background: var(--primary); color: white; border: none; padding: 20px; border-radius: var(--radius-md); font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+    .btn-unlock:hover { background: var(--primary-hover); box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); transform: translateY(-2px); }
+
+    #app-container { display: flex; width: 100%; height: 100%; }
+    .sidebar { width: 290px; height: 100%; background: var(--bg-sidebar); backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100; border-right: 1px solid var(--border); flex-shrink: 0; }
+    .sidebar-header { padding: 40px 30px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); }
+    .sidebar-header i.logo-icon { font-size: 2.8rem; background: var(--gemini-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .sidebar-header h2 { font-size: 1.5rem; font-weight: 900; line-height: 1.1; color: white; }
+    .sidebar-header h2 span { font-size: 0.75rem; color: var(--gemini-purple); text-transform: uppercase; letter-spacing: 2px; font-weight: 800; display: block; margin-top: 4px; }
+    .nav-menu { padding: 30px 20px; flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+    .nav-item { padding: 16px 20px; border-radius: var(--radius-md); color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 15px; font-weight: 600; font-size: 1.05rem; transition: all 0.3s ease; cursor: pointer; border: 1px solid transparent; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+    .nav-item.active { background: rgba(192, 132, 252, 0.15); color: white; border: 1px solid rgba(192, 132, 252, 0.3); box-shadow: 0 0 15px rgba(192, 132, 252, 0.15); }
+    .nav-item i { font-size: 1.3rem; width: 25px; text-align: center; }
+    .sidebar-footer { padding: 25px; border-top: 1px solid var(--border); text-align: center; background: rgba(0,0,0,0.2); }
+
+    .main-content { flex: 1; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+    header.topbar { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(20px); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); z-index: 10; flex-shrink: 0; }
+    .search-bar { display: flex; align-items: center; background: rgba(0,0,0,0.4); padding: 12px 25px; border-radius: 50px; width: 500px; border: 1px solid var(--border); transition: 0.3s; }
+    .search-bar:focus-within { border-color: var(--primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
+    .search-bar i { color: var(--text-muted); margin-right: 15px; font-size: 1.1rem; }
+    .search-bar input { border: none; background: transparent; width: 100%; font-size: 0.95rem; color: white; font-weight: 500; }
+    .user-profile { display: flex; align-items: center; gap: 15px; }
+    .pulse-online { display: inline-block; width: 10px; height: 10px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+    .user-info { text-align: right; }
+    .user-info h4 { font-size: 0.95rem; margin: 0 0 4px 0; color: white; font-weight: 800; }
+    .user-info span { font-size: 0.8rem; color: var(--gemini-purple); font-weight: 800; }
+    .avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--gemini-gradient); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 15px var(--gemini-glow); }
+
+    .view-container { flex: 1; overflow-y: auto; padding: 40px 50px; }
+    .page-view { display: none; animation: fadeIn 0.4s ease; }
+    .page-view.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .page-title { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+    .page-title h1 { font-size: 2.2rem; font-weight: 900; color: white; letter-spacing: -1px; margin:0; }
+    .page-title p { color: var(--text-muted); font-size: 1.05rem; margin-top: 8px; }
+
+    .btn { padding: 12px 25px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn-primary { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: var(--primary); } .btn-primary:hover { background: var(--primary); color: white; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+    .btn-gemini { background: rgba(192, 132, 252, 0.2); color: #d8b4fe; border-color: var(--gemini-purple); } .btn-gemini:hover { background: var(--gemini-gradient); color: white; border-color: transparent; box-shadow: 0 0 20px var(--gemini-glow); }
+    .btn-success { background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: var(--success); } .btn-success:hover { background: var(--success); color: white; box-shadow: 0 0 20px var(--success-glow); }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: var(--danger); } .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 20px var(--danger-glow); }
+    .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; } .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+    .btn-icon { width: 40px; height: 40px; border-radius: var(--radius-md); border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; font-size: 1.1rem; color: white; background: var(--border-light); }
+    .btn-icon:hover { background: var(--primary); transform: translateY(-2px); }
+
+    .form-input { width: 100%; padding: 15px 20px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 1rem; color: white; background: rgba(0,0,0,0.3); transition: 0.3s; }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); background: rgba(0,0,0,0.5); }
+
+    /* DASHBOARD */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 30px; }
+    .stat-card { padding: 25px; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 20px; position: relative; overflow: hidden; }
+    .stat-card::after { content:''; position:absolute; top:0; left:0; width:100%; height:4px; }
+    .c-warning::after { background: var(--warning); } .c-primary::after { background: var(--primary); } .c-success::after { background: var(--success); } .c-gemini::after { background: var(--gemini-purple); }
+    .stat-icon { width: 60px; height: 60px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 2rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); }
+    .c-warning .stat-icon { color: var(--warning); } .c-primary .stat-icon { color: var(--primary); } .c-success .stat-icon { color: var(--success); } .c-gemini .stat-icon { color: var(--gemini-purple); }
+    .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+    .stat-info p { font-size: 2.5rem; font-weight: 900; color: white; margin: 0; line-height: 1; }
+
+    .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; margin-bottom: 30px; }
+    .chart-card { padding: 30px; border-radius: var(--radius-lg); }
+    .chart-header { font-size: 1.2rem; font-weight: 800; color: white; margin-bottom: 20px; }
+    .chart-container { position: relative; height: 300px; width: 100%; }
+
+    .sentiment-box { display: flex; gap: 20px; align-items: center; padding: 20px 30px; border-radius: var(--radius-lg); margin-bottom: 30px; border-left: 4px solid var(--gemini-purple); }
+    .sentiment-icon { font-size: 2.5rem; color: var(--gemini-purple); filter: drop-shadow(0 0 10px var(--gemini-glow)); animation: pulse 2s infinite; }
+    .sentiment-content h4 { color: white; font-size: 1.1rem; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+    .sentiment-content p { color: var(--text-light); margin: 0; font-size: 0.95rem; }
+    .badge-trending { background: rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: bold; border: 1px solid var(--danger); }
+
+    /* TABELAS */
+    .data-section { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 40px; }
+    .data-header { padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
+    .data-header h2 { font-size: 1.3rem; font-weight: 800; color: white; margin: 0; }
+    .filters-row { padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; gap: 20px; background: rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 20px 30px; font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.4); position: sticky; top: 0; z-index: 2; }
+    td { padding: 20px 30px; border-bottom: 1px solid var(--border); font-size: 1rem; color: var(--text-light); vertical-align: middle; }
+    tr:hover { background: rgba(255,255,255,0.02); }
+    .td-empresa { display: flex; align-items: center; gap: 15px; }
+    .td-empresa-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 1.2rem; }
+    .td-empresa-info strong { display: block; font-size: 1.05rem; margin-bottom: 4px; color: white; }
+    .td-empresa-info span { color: var(--text-muted); font-size: 0.85rem; font-family: var(--font-code); }
+    .status-badge { padding: 6px 14px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; }
+    .badge-pendente { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid var(--warning); }
+    .badge-aguardando { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid var(--primary); }
+    .badge-pago { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid var(--success); }
+    .badge-denuncia { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid var(--danger); box-shadow: 0 0 10px var(--danger-glow); }
+
+    /* NOVO: RADAR DO GOOGLE E DA WEB (MAPA LEAFLET) */
+    .map-wrapper { display: flex; width: 100%; height: 600px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); position: relative; z-index: 1;}
+    #reputation-map { flex: 1; height: 100%; background: #000;}
+    .reputation-panel { width: 380px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border-left: 1px solid var(--border); padding: 25px; overflow-y: auto; display: none; flex-direction: column; }
+    .review-card { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; font-style: italic; color: var(--text-light); font-size: 0.9rem; border-left: 3px solid var(--danger);}
+
+    /* NOVO: LABORATÓRIO UNIVERSAL DE MÍDIA (ANÁLISE DE VÍDEOS/FOTOS/TEXTOS) */
+    .lab-container { display: flex; gap: 30px; height: 600px; }
+    .lab-left { width: 400px; display: flex; flex-direction: column; gap: 20px; }
+    .lab-upload-box { background: rgba(0,0,0,0.3); border: 2px dashed var(--border-light); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; cursor: pointer; transition: 0.3s; position: relative; }
+    .lab-upload-box:hover { border-color: var(--gemini-purple); background: var(--gemini-bg); }
+    .lab-upload-box i.icon-big { font-size: 3rem; color: var(--text-muted); margin-bottom: 15px; transition: 0.3s; }
+    .lab-upload-box:hover i.icon-big { color: var(--gemini-purple); transform: scale(1.1); }
+    .lab-preview-area { width: 100%; height: 200px; border-radius: var(--radius-md); overflow: hidden; display: none; background: #000; border: 1px solid var(--border); position: relative;}
+    .lab-preview-area img, .lab-preview-area video { width: 100%; height: 100%; object-fit: contain; }
+    .lab-btn-close-preview { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;}
+    .lab-result-box { flex: 1; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 30px; overflow-y: auto; background: rgba(0,0,0,0.3); position: relative;}
+    .lab-result-content { font-size: 1.05rem; line-height: 1.7; color: var(--text-light); }
+    .lab-loader { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 20px; }
+
+    /* MODAL GERAL (DOSSIÊ) */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
+    .modal-box { background: var(--bg-body); width: 100%; max-width: 1200px; border-radius: var(--radius-xl); box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border-light); animation: modalIn 0.3s ease; }
+    @keyframes modalIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header { padding: 25px 35px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); }
+    .modal-header h3 { font-size: 1.4rem; font-weight: 900; color: white; display: flex; align-items: center; gap: 15px; margin:0;}
+    .modal-header .protocol-id { background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 8px; font-family: var(--font-code); border: 1px solid var(--border); color: var(--text-light); }
+    .btn-close { background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
     .btn-close:hover { color: var(--danger); transform: rotate(90deg); }
-
-    .modal-tabs { 
-      display: flex; 
-      border-bottom: 1px solid var(--border); 
-      background: rgba(0,0,0,0.3); 
-      padding: 0 15px; 
-      overflow-x: auto; 
-    }
-
-    .tab-btn { 
-      padding: 18px 20px; 
-      border: none; 
-      background: none; 
-      font-size: 0.95rem; 
-      font-weight: 700; 
-      color: var(--text-muted); 
-      cursor: pointer; 
-      border-bottom: 3px solid transparent; 
-      transition: 0.2s; 
-      display: flex; 
-      align-items: center; 
-      gap: 8px; 
-      white-space: nowrap; 
-    }
-
+    .modal-tabs { display: flex; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); padding: 0 20px; }
+    .tab-btn { padding: 20px 25px; border: none; background: none; font-size: 1rem; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
     .tab-btn:hover { color: white; }
     .tab-btn.active { color: white; border-bottom-color: var(--primary); }
     .tab-btn.tab-ai.active { border-bottom-color: var(--gemini-purple); color: #d8b4fe; background: var(--gemini-bg); }
-
-    .modal-body { 
-      padding: 30px; 
-      overflow-y: auto; 
-      flex: 1; 
-      background: rgba(0,0,0,0.2);
-    }
-
-    .tab-content { 
-      display: none; 
-      animation: fadeInTab 0.3s ease; 
-    }
-
+    .modal-body { padding: 35px; overflow-y: auto; flex: 1; background: rgba(0,0,0,0.1); }
+    .tab-content { display: none; animation: fadeInTab 0.3s ease; }
     .tab-content.active { display: block; }
-    @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-footer { background: rgba(0,0,0,0.5); padding: 25px 35px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; }
 
-    /* =======================================================================
-       NOVO: TERMINAL DE AUDITORIA FORENSE IA (Dentro do Modal)
-       ======================================================================= */
-    .triagem-box { 
-      background: rgba(59, 130, 246, 0.1); 
-      border: 1px solid var(--primary); 
-      padding: 15px 25px; 
-      border-radius: var(--radius-md); 
-      margin-bottom: 20px; 
-      display: flex; 
-      align-items: center; 
-      gap: 20px; 
-    }
-
-    .triagem-box.risk { 
-      background: rgba(239, 68, 68, 0.1); 
-      border-color: var(--danger); 
-    }
-
-    .triagem-box i { 
-      font-size: 1.8rem; 
-      color: var(--primary); 
-    }
-
+    /* NOVO: TERMINAL DE AUDITORIA FORENSE IA (Dentro do Modal) */
+    .triagem-box { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); padding: 15px 25px; border-radius: var(--radius-md); margin-bottom: 20px; display: flex; align-items: center; gap: 20px; }
+    .triagem-box.risk { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+    .triagem-box i { font-size: 1.8rem; color: var(--primary); }
     .triagem-box.risk i { color: var(--danger); }
-
-    .forensics-wrapper { 
-      display: flex; 
-      gap: 20px; 
-      height: 480px; 
-    }
-
-    .forensics-tools { 
-      width: 320px; 
-      background: rgba(0,0,0,0.4); 
-      border: 1px solid var(--border); 
-      padding: 20px; 
-      border-radius: var(--radius-lg); 
-      display: flex; 
-      flex-direction: column; 
-      gap: 12px; 
-    }
-
-    .forensics-tools h4 { 
-      color: var(--text-muted); 
-      text-transform: uppercase; 
-      font-size: 0.8rem; 
-      letter-spacing: 1px; 
-      margin-bottom: 5px; 
-    }
-
-    .tool-btn { 
-      background: rgba(255,255,255,0.05); 
-      border: 1px solid var(--border); 
-      color: var(--text-light); 
-      padding: 15px; 
-      border-radius: 8px; 
-      text-align: left; 
-      cursor: pointer; 
-      transition: 0.2s; 
-      display: flex; 
-      align-items: center; 
-      gap: 10px; 
-      font-weight: 600; 
-      font-size: 0.95rem;
-    }
-
-    .tool-btn:hover { 
-      background: var(--gemini-bg); 
-      border-color: var(--gemini-purple); 
-      color: white; 
-      transform: translateX(5px); 
-    }
-    
-    /* O Terminal Preto com Letras Verdes */
-    .forensics-terminal { 
-      flex: 1; 
-      background: #050505; 
-      border-radius: var(--radius-lg); 
-      padding: 20px; 
-      display: flex; 
-      flex-direction: column; 
-      border: 1px solid var(--border); 
-      position: relative; 
-      box-shadow: inset 0 0 20px rgba(0,0,0,1);
-    }
-
-    .terminal-header { 
-      position: absolute; 
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      background: #111; 
-      border-bottom: 1px solid #333; 
-      padding: 8px 15px; 
-      font-family: var(--font-code); 
-      color: #666; 
-      font-size: 0.75rem; 
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0; 
-      display:flex; 
-      justify-content: space-between;
-    }
-
-    .terminal-output { 
-      flex: 1; 
-      overflow-y: auto; 
-      color: #a3e635; /* Verde Hacker */
-      font-family: var(--font-code); 
-      font-size: 0.95rem; 
-      line-height: 1.6; 
-      padding-top: 25px; 
-      padding-right: 10px; 
-    }
-
+    .forensics-wrapper { display: flex; gap: 20px; height: 480px; }
+    .forensics-tools { width: 320px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: 12px; }
+    .forensics-tools h4 { color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 5px; }
+    .tool-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-light); padding: 12px; border-radius: 8px; text-align: left; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.95rem;}
+    .tool-btn:hover { background: var(--gemini-bg); border-color: var(--gemini-purple); color: white; transform: translateX(5px); }
+    .forensics-terminal { flex: 1; background: #000; border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; border: 1px solid var(--border); position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,1);}
+    .terminal-header { position: absolute; top: 0; left: 0; width: 100%; background: #111; border-bottom: 1px solid #333; padding: 8px 15px; font-family: var(--font-code); color: #666; font-size: 0.75rem; border-radius: var(--radius-lg) var(--radius-lg) 0 0; display:flex; justify-content: space-between;}
+    .terminal-output { flex: 1; overflow-y: auto; color: #a3e635; font-family: var(--font-code); font-size: 0.95rem; line-height: 1.6; padding-top: 25px; padding-right: 10px; }
     .terminal-output .msg-user { color: #fff; margin-bottom: 10px; }
     .terminal-output .msg-ai { margin-bottom: 20px; border-left: 2px solid #a3e635; padding-left: 10px; }
 
-    /* =======================================================================
-       DADOS DA EMPRESA E FOTOS
-       ======================================================================= */
-    .info-grid { 
-      display: grid; 
-      grid-template-columns: 1fr 1fr; 
-      gap: 20px; 
-    }
+    /* NOVO: DECISÃO E COMUNICAÇÃO (PIX DINÂMICO AUTOMÁTICO) */
+    .decision-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px; }
+    .decision-box { background: rgba(0,0,0,0.3); padding: 25px; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+    .decision-box h4 { color: white; margin:0 0 15px 0; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+    .pix-container { background: rgba(16, 185, 129, 0.05); border: 1px solid var(--success); padding: 20px; border-radius: var(--radius-md); text-align: center; margin-top: 20px; display: none; animation: fadeIn 0.4s ease;}
+    .pix-payload { background: #000; border: 1px dashed var(--success); color: var(--success); font-family: var(--font-code); padding: 12px; border-radius: 8px; word-break: break-all; font-size: 0.8rem; margin-top: 10px; user-select: all;}
 
-    .info-group { 
-      background: rgba(0,0,0,0.3); 
-      padding: 20px; 
-      border-radius: var(--radius-md); 
-      border: 1px solid var(--border); 
-    }
-
-    .info-group label { 
-      display: block; 
-      font-size: 0.75rem; 
-      color: var(--text-muted); 
-      font-weight: 800; 
-      text-transform: uppercase; 
-      margin-bottom: 5px; 
-    }
-
-    .info-group p { 
-      font-size: 1.2rem; 
-      font-weight: 600; 
-      color: white; 
-      margin: 0; 
-      word-break: break-word; 
-    }
-    
-    .docs-list { 
-      background: rgba(0,0,0,0.3); 
-      padding: 20px; 
-      border-radius: var(--radius-md); 
-      border: 1px solid var(--border); 
-      margin-top: 20px; 
-    }
-
-    .docs-list p { 
-      font-size: 1rem; 
-      line-height: 1.7; 
-      color: var(--text-light); 
-      margin-top: 10px; 
-    }
-    
-    .gallery-grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
-      gap: 20px; 
-    }
-
-    .gallery-item { 
-      position: relative; 
-      aspect-ratio: 1; 
-      border-radius: var(--radius-md); 
-      overflow: hidden; 
-      border: 1px solid var(--border); 
-      cursor: pointer; 
-      background: #000; 
-    }
-
-    .gallery-item img { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover; 
-      transition: 0.4s ease; 
-    }
-
-    .gallery-item:hover img { 
-      transform: scale(1.1); 
-      filter: brightness(0.6); 
-    }
-
-    .gallery-item .overlay { 
-      position: absolute; 
-      inset: 0; 
-      background: rgba(0,0,0,0.5); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      color: white; 
-      font-size: 3rem; 
-      opacity: 0; 
-      transition: 0.3s; 
-    }
-
+    /* OUTROS ESTILOS (Fotos, Toasts, Chat) */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .info-group { background: rgba(0,0,0,0.3); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+    .info-group label { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
+    .info-group p { font-size: 1.1rem; font-weight: 600; color: white; margin: 0; word-break: break-word; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+    .gallery-item { position: relative; aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); cursor: pointer; background: #000; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s ease; }
+    .gallery-item:hover img { transform: scale(1.1); filter: brightness(0.6); }
+    .gallery-item .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; opacity: 0; transition: 0.3s; }
     .gallery-item:hover .overlay { opacity: 1; }
-    
-    .badge-assinado { 
-      position: absolute; 
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      background: var(--success); 
-      color: white; 
-      font-size: 0.8rem; 
-      font-weight: 900; 
-      text-align: center; 
-      padding: 8px 0; 
-      z-index: 10; 
-      text-transform: uppercase; 
-      letter-spacing: 1px;
-    }
+    .badge-assinado { position: absolute; top: 0; left: 0; width: 100%; background: var(--success); color: white; font-size: 0.8rem; font-weight: 900; text-align: center; padding: 8px 0; z-index: 10; text-transform: uppercase; }
 
-    /* =======================================================================
-       NOVA ABA DECISÃO E COMUNICAÇÃO (PIX DINÂMICO)
-       ======================================================================= */
-    .decision-grid { 
-      display: grid; 
-      grid-template-columns: 1fr 1.2fr; 
-      gap: 25px; 
-    }
+    .chat-container { display: flex; flex-direction: column; height: 650px; border-radius: var(--radius-lg); overflow: hidden; }
+    .chat-header { background: rgba(0,0,0,0.4); padding: 20px 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .chat-history { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: rgba(0,0,0,0.1); }
+    .chat-msg { width: fit-content; max-width: 80%; padding: 15px 25px; border-radius: 15px; line-height: 1.6; }
+    .msg-user { align-self: flex-end; background: rgba(59, 130, 246, 0.2); border: 1px solid var(--primary); color: white; border-bottom-right-radius: 4px; }
+    .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-light); border-bottom-left-radius: 4px; }
+    .chat-input-area { padding: 20px 30px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+    .chat-attachment-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; transition: 0.2s; padding: 10px; }
+    .chat-attachment-btn:hover { color: var(--gemini-purple); }
+    .attachment-preview-box { display: none; background: var(--bg-body); border: 1px solid var(--border); padding: 10px; border-radius: var(--radius-md); width: 100%; align-items: center; gap: 15px; color: white;}
+    .attachment-preview-box img, .attachment-preview-box video { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border); }
+    .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; }
 
-    .decision-box { 
-      background: rgba(0,0,0,0.3); 
-      padding: 25px; 
-      border-radius: var(--radius-lg); 
-      border: 1px solid var(--border); 
-    }
-
-    .decision-box h4 { 
-      color: white; 
-      margin:0 0 20px 0; 
-      font-size: 1.1rem; 
-      display: flex; 
-      align-items: center; 
-      gap: 10px; 
-    }
-
-    /* Caixa do QRCode Simulada */
-    .pix-container { 
-      background: rgba(16, 185, 129, 0.05); 
-      border: 1px solid var(--success); 
-      padding: 20px; 
-      border-radius: var(--radius-md); 
-      text-align: center; 
-      margin-top: 20px; 
-      display: none; 
-      animation: fadeIn 0.4s ease;
-    }
-
-    .pix-payload { 
-      background: #000; 
-      border: 1px dashed var(--success); 
-      color: var(--success); 
-      font-family: var(--font-code); 
-      padding: 12px; 
-      border-radius: 8px; 
-      word-break: break-all; 
-      font-size: 0.8rem; 
-      margin-top: 10px; 
-      user-select: all;
-    }
-
-    /* Footer do Modal */
-    .modal-footer { 
-      background: rgba(0,0,0,0.5); 
-      padding: 25px 35px; 
-      border-top: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-between; 
-    }
-
-    /* =======================================================================
-       TOASTS E LIGHTBOX
-       ======================================================================= */
-    #toast-container { 
-      position: fixed; 
-      bottom: 30px; 
-      right: 30px; 
-      z-index: 99999; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 15px; 
-    }
-
-    .toast { 
-      background: rgba(15, 23, 42, 0.95); 
-      backdrop-filter: blur(10px); 
-      border-left: 4px solid var(--primary); 
-      padding: 15px 20px; 
-      border-radius: var(--radius-md); 
-      display: flex; 
-      align-items: center; 
-      gap: 15px; 
-      border: 1px solid var(--border); 
-      color: white; 
-      min-width: 300px; 
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-    }
-
-    .toast.success { border-left-color: var(--success); } 
-    .toast.error { border-left-color: var(--danger); } 
-    .toast.warning { border-left-color: var(--warning); } 
-
+    #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 99999; display: flex; flex-direction: column; gap: 15px; }
+    .toast { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-left: 4px solid var(--primary); padding: 15px 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 15px; border: 1px solid var(--border); color: white; min-width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .toast.success { border-left-color: var(--success); } .toast.error { border-left-color: var(--danger); } .toast.warning { border-left-color: var(--warning); } 
     @keyframes toastFadeOut { to { opacity: 0; transform: translateX(120%); } }
 
-    #error-log-shield { 
-      position: fixed; 
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      padding: 25px; 
-      background: var(--danger); 
-      color: white; 
-      font-weight: 900; 
-      text-align: center; 
-      z-index: 999999; 
-      display: none; 
-      font-size: 1.3rem; 
-      text-transform: uppercase; 
-      letter-spacing: 1px; 
-      box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); 
-    }
+    #error-log-shield { position: fixed; top: 0; left: 0; width: 100%; padding: 25px; background: var(--danger); color: white; font-weight: 900; text-align: center; z-index: 999999; display: none; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); }
   </style>
 </head>
 <body>
-
-  <div id="error-log-shield"></div>
-  <script>
-    window.onerror = function(msg, url, line) {
-        document.getElementById('error-log-shield').style.display = 'block';
-        document.getElementById('error-log-shield').innerHTML = `<i class="fas fa-exclamation-triangle"></i> ERRO CRÍTICO NA LINHA ${line}: O CÓDIGO HTML ESTÁ INCOMPLETO.`;
-    };
-  </script>
 
   <div id="lock-screen">
     <div class="lock-box glass-panel">
       <i class="fas fa-fingerprint"></i>
       <h2>Acesso Forense</h2>
       <p>Área restrita a Diretores COVISA</p>
-      <input type="password" id="pin-input" class="pin-input" placeholder="••••" maxlength="4" autocomplete="off" onkeypress="if(event.key === 'Enter') checkPin()">
-      <button class="btn-unlock" onclick="checkPin()"><i class="fas fa-unlock-alt"></i> Autenticar</button>
+      <input type="password" id="pin-input" class="pin-input" placeholder="••••" maxlength="4" autocomplete="off" onkeypress="if(event.key === 'Enter') window.checkPin()">
+      <button class="btn-unlock" onclick="window.checkPin()"><i class="fas fa-unlock-alt"></i> Autenticar</button>
     </div>
   </div>
 
@@ -1535,23 +244,17 @@
       <div class="sidebar-header">
         <i class="fas fa-shield-alt logo-icon"></i>
         <div>
-          <h2>COVISA<br><span>Admin Pro V8</span></h2>
+          <h2>COVISA<br><span>Admin Pro V9</span></h2>
         </div>
       </div>
-      
       <nav class="nav-menu">
-        <a class="nav-item active" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Geral</a>
-        <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Base de Dados</a>
-        
-        <a class="nav-item" onclick="switchView('view-reputacao', this)"><i class="fab fa-google" style="color: #60a5fa;"></i> Radar Web / Mapa</a>
-        
-        <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot" style="color:var(--gemini-purple);"></i> Assistente IA</a>
-        
-        <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório Forense</a>
-        
-        <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
+        <a class="nav-item active" onclick="window.switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Geral</a>
+        <a class="nav-item" onclick="window.switchView('view-processos', this)"><i class="fas fa-database"></i> Base de Dados</a>
+        <a class="nav-item" onclick="window.switchView('view-reputacao', this)"><i class="fab fa-google" style="color: #60a5fa;"></i> Radar Web / Mapa</a>
+        <a class="nav-item" onclick="window.switchView('view-chat', this)"><i class="fas fa-robot" style="color:var(--gemini-purple);"></i> Assistente IA</a>
+        <a class="nav-item" onclick="window.switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
+        <a class="nav-item" onclick="window.switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
       </nav>
-      
       <div class="sidebar-footer">
         <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 2.5 Flash Core</p>
         <p>Status da IA: <span id="status-ia-sidebar" style="color:var(--success); font-weight:800;">Ativa e Conectada</span></p>
@@ -1559,13 +262,11 @@
     </aside>
 
     <main class="main-content">
-      
       <header class="topbar">
         <div class="search-bar">
           <i class="fas fa-search"></i>
-          <input type="text" id="searchInput" placeholder="Investigar CNPJ, Razão Social..." onkeyup="filtrarTabela()">
+          <input type="text" id="searchInput" placeholder="Investigar CNPJ, Razão Social..." onkeyup="window.filtrarTabela()">
         </div>
-        
         <div class="user-profile">
           <div style="display: flex; gap: 10px; align-items:center;">
             <span class="pulse-online"></span>
@@ -1583,7 +284,6 @@
       <div class="view-container">
         
         <div id="view-dashboard" class="page-view active">
-          
           <div class="sentiment-box glass-panel">
             <i class="fas fa-brain sentiment-icon"></i>
             <div class="sentiment-content">
@@ -1591,7 +291,6 @@
                 <p>O robô detectou <b>várias menções</b> negativas sobre higiene em restaurantes no Google Maps e Twitter nas últimas 24h. Fila de processos normais. Foque na aba de Radar Web.</p>
             </div>
           </div>
-
           <div class="stats-grid">
             <div class="stat-card glass-panel c-warning">
               <div class="stat-icon"><i class="fas fa-inbox"></i></div>
@@ -1610,7 +309,6 @@
               <div class="stat-info"><h3>Base Total</h3><p id="count-total">0</p></div>
             </div>
           </div>
-          
           <div class="charts-grid">
             <div class="chart-card glass-panel">
               <div class="chart-header">Volume de Entrada Diária</div>
@@ -1629,26 +327,24 @@
               <h1>Base de Dados Mestra</h1>
               <p>Gerenciamento total sincronizado via Firebase em tempo real.</p>
             </div>
-            <button class="btn btn-primary glass-panel" onclick="exportarCSV()"><i class="fas fa-download"></i> Baixar CSV Seguro</button>
+            <button class="btn btn-primary glass-panel" onclick="window.exportarCSV()"><i class="fas fa-download"></i> Baixar CSV Seguro</button>
           </div>
-          
           <section class="data-section glass-panel">
             <div class="filters-row">
-              <select id="filtro-status" class="form-input" style="width: 250px;" onchange="aplicarFiltros()">
+              <select id="filtro-status" class="form-input" style="width: 250px;" onchange="window.aplicarFiltros()">
                 <option value="todos">Todos os Status</option>
                 <option value="pendente">🟠 Análise Pendente</option>
                 <option value="aguardando">🔵 Aguardando Pix</option>
                 <option value="pago">🟢 Licença Aprovada</option>
                 <option value="denuncia">🚨 Denúncias</option>
               </select>
-              <select id="filtro-ramo" class="form-input" style="width: 250px;" onchange="aplicarFiltros()">
+              <select id="filtro-ramo" class="form-input" style="width: 250px;" onchange="window.aplicarFiltros()">
                 <option value="todos">Todos os Ramos</option>
                 <option value="Alimentos">Alimentos (Crítico)</option>
                 <option value="Saúde">Saúde (Crítico)</option>
                 <option value="Beleza">Beleza & Estética</option>
               </select>
             </div>
-
             <div class="table-wrapper" style="min-height: 500px;">
               <table>
                 <thead>
@@ -1674,24 +370,19 @@
               <p>A IA analisa os comentários abertos no Google/Web em tempo real. Pinos vermelhos indicam avaliações críticas sobre higiene.</p>
             </div>
           </div>
-          
           <div class="map-wrapper glass-panel">
              <div id="reputation-map"></div>
-             
              <div class="reputation-panel" id="rep-panel">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
                     <h3 id="rep-nome" style="color:white; margin:0; font-size:1.2rem;">Nome do Local</h3>
                     <button class="btn-icon" style="width: 30px; height: 30px; font-size:1rem;" onclick="document.getElementById('rep-panel').style.display='none'"><i class="fas fa-times"></i></button>
                 </div>
-                
                 <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
                     <h2 id="rep-nota" style="font-size: 2.5rem; margin:0; font-weight: 900;">0.0</h2>
                     <div id="rep-estrelas" style="margin-bottom: 5px; font-size: 1.2rem;"></div>
                     <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fab fa-google"></i> Avaliação do Público</span>
                 </div>
-
                 <h4 style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;"><i class="fas fa-comment-dots"></i> Varredura de Comentários</h4>
-                
                 <div id="rep-comentarios" style="display: flex; flex-direction: column; gap: 10px;"></div>
              </div>
           </div>
@@ -1700,37 +391,39 @@
         <div id="view-laboratorio" class="page-view">
           <div class="page-title">
             <div>
-              <h1><i class="fas fa-microscope" style="color: var(--gemini-purple);"></i> Laboratório Forense de Mídia</h1>
-              <p>Envie fotos ou vídeos avulsos do seu computador para a IA caçar infrações e analisar manipulação (Photoshop).</p>
+              <h1><i class="fas fa-microscope" style="color: var(--gemini-purple);"></i> Laboratório Forense Universal</h1>
+              <p>Faça upload de fotos, vídeos ou cole textos (ex: comentários do Google) para a IA dissecar as provas.</p>
             </div>
           </div>
-          
           <div class="lab-container">
-            <div class="lab-upload-box glass-panel" id="lab-drop-area" onclick="document.getElementById('lab-file-input').click()">
-              <i class="fas fa-cloud-upload-alt icon-big"></i>
-              <h3 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">Solte a Foto ou Vídeo Aqui</h3>
-              <p style="color: var(--text-muted); margin-bottom: 20px;">Ou clique para procurar no seu computador (Máx 15MB)</p>
-              <button class="btn btn-gemini"><i class="fas fa-search"></i> Selecionar Arquivo Local</button>
-              
-              <input type="file" id="lab-file-input" style="display: none;" accept="image/*,video/*">
-              
-              <div class="lab-preview-area" id="lab-preview"></div>
+            <div class="lab-left">
+                <div class="lab-upload-box glass-panel" id="lab-drop-area" onclick="document.getElementById('lab-file-input').click()">
+                  <i class="fas fa-cloud-upload-alt icon-big"></i>
+                  <h3 style="color: white; font-size: 1.3rem; margin-bottom: 5px;">Mídia Local</h3>
+                  <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Fotos ou Vídeos (Máx 15MB)</p>
+                  <button class="btn btn-gemini"><i class="fas fa-search"></i> Selecionar Arquivo</button>
+                  <input type="file" id="lab-file-input" style="display: none;" accept="image/*,video/*">
+                  <div class="lab-preview-area" id="lab-preview"></div>
+                </div>
+                <div class="glass-panel" style="padding: 20px; border-radius: var(--radius-lg); flex: 1; display: flex; flex-direction: column;">
+                    <h4 style="color: white; font-size: 1rem; margin:0 0 10px 0;"><i class="fas fa-align-left text-primary"></i> Análise de Texto Suspeito</h4>
+                    <textarea id="lab-text-input" class="form-input" style="flex:1; resize:none; font-size: 0.95rem; margin-bottom: 15px;" placeholder="Cole aqui um comentário do Google, denúncia anônima ou relato para a IA analisar a veracidade..."></textarea>
+                    <button class="btn btn-primary" onclick="window.iniciarAnaliseLaboratorioTexto()"><i class="fas fa-brain"></i> Analisar Texto</button>
+                </div>
             </div>
-
+            
             <div class="lab-result-box glass-panel">
               <div id="lab-idle-state" style="text-align: center; color: var(--text-muted); padding-top: 50px;">
                 <i class="fas fa-robot" style="font-size: 4rem; opacity: 0.3; margin-bottom: 20px;"></i>
-                <h2>Aguardando Arquivo</h2>
-                <p>O laudo pericial detalhado aparecerá aqui.</p>
+                <h2>Aguardando Provas</h2>
+                <p>Envie um arquivo ou texto na esquerda para gerar o laudo pericial.</p>
               </div>
-
               <div id="lab-loading-state" class="lab-loader">
                 <i class="fas fa-circle-notch fa-spin" style="font-size: 4rem; color: var(--gemini-purple);"></i>
-                <h3 style="color: white; margin-top: 15px;">Dissecando frames e pixels...</h3>
+                <h3 style="color: white; margin-top: 15px;">Processando inteligência...</h3>
               </div>
-
               <div id="lab-final-result" style="display: none;">
-                <h3 style="color: var(--gemini-purple); font-size: 1.3rem; margin-bottom: 20px; font-weight: 900;"><i class="fas fa-file-contract"></i> Laudo Técnico Multimídia</h3>
+                <h3 style="color: var(--gemini-purple); font-size: 1.3rem; margin-bottom: 20px; font-weight: 900;"><i class="fas fa-file-contract"></i> Laudo Técnico (IA)</h3>
                 <div id="lab-result-content" class="lab-result-content"></div>
               </div>
             </div>
@@ -1744,7 +437,6 @@
               <p>Tire dúvidas sobre Leis Municipais ou faça perguntas livres para o modelo.</p>
             </div>
           </div>
-
           <div class="chat-container glass-panel">
             <div class="chat-header">
               <div class="avatar" style="width: 50px; height: 50px; font-size: 1.5rem;"><i class="fas fa-robot"></i></div>
@@ -1753,24 +445,19 @@
                 <span id="chat-header-status" style="color: var(--success); font-size: 0.8rem; font-weight: bold;">Rede Neural Online</span>
               </div>
             </div>
-            
             <div class="chat-history" id="chat-historico">
               <div class="chat-msg msg-ai">
                 <strong style="color:var(--gemini-purple); font-size: 1rem;"><i class="fas fa-robot"></i> Sistema Auditor AI:</strong><br><br>
                 Olá! Como posso te ajudar hoje? Tire dúvidas da lei ou anexe um arquivo no clipe abaixo.
               </div>
             </div>
-
             <div class="chat-input-area">
               <div id="chat-attachment-preview" class="attachment-preview-box"></div>
-              <div class="chat-input-row">
-                <button class="chat-attachment-btn" onclick="document.getElementById('chat-file-input').click()" title="Anexar foto ou vídeo">
-                  <i class="fas fa-paperclip"></i>
-                </button>
+              <div style="display: flex; gap: 15px; width: 100%;">
+                <button class="chat-attachment-btn" onclick="document.getElementById('chat-file-input').click()"><i class="fas fa-paperclip"></i></button>
                 <input type="file" id="chat-file-input" style="display: none;" accept="image/*,video/*">
-
-                <input type="text" id="chat-input-text" placeholder="Escreva a sua mensagem aqui..." onkeypress="if(event.key === 'Enter') enviarChat()">
-                <button class="btn btn-gemini" onclick="enviarChat()" style="padding: 15px 30px; border-radius: 50px;"><i class="fas fa-paper-plane"></i></button>
+                <input type="text" id="chat-input-text" class="form-input" style="border-radius: 50px;" placeholder="Escreva a sua mensagem aqui..." onkeypress="if(event.key === 'Enter') window.enviarChat()">
+                <button class="btn btn-gemini" onclick="window.enviarChat()" style="border-radius: 50px; padding: 0 30px;"><i class="fas fa-paper-plane"></i></button>
               </div>
             </div>
           </div>
@@ -1784,18 +471,10 @@
             </div>
             <button class="btn btn-secondary glass-panel" onclick="window.print()"><i class="fas fa-print"></i> Imprimir Logs</button>
           </div>
-          
           <section class="data-section glass-panel">
             <div class="table-wrapper" style="min-height: 500px;">
               <table>
-                <thead>
-                  <tr>
-                    <th width="15%">Data e Hora</th>
-                    <th width="20%">Usuário</th>
-                    <th width="20%">Ação Sistêmica</th>
-                    <th width="45%">Detalhes da Transação</th>
-                  </tr>
-                </thead>
+                <thead><tr><th width="15%">Data e Hora</th><th width="20%">Usuário</th><th width="20%">Ação Sistêmica</th><th width="45%">Detalhes da Transação</th></tr></thead>
                 <tbody id="tabela-logs-corpo"></tbody>
               </table>
             </div>
@@ -1808,50 +487,41 @@
 
   <div class="modal-overlay" id="modalDetalhes">
     <div class="modal-box glass-panel">
-      
       <div class="modal-header">
         <h3><i class="fas fa-folder-open" style="color: var(--primary);"></i> Dossiê de Investigação Digital</h3>
-        <div style="background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 8px; font-family: var(--font-code); border: 1px solid var(--border);">ID: <span id="modal-id-text" style="color: white; font-weight: bold;">...</span></div>
-        <button class="btn-close" onclick="fecharModal()"><i class="fas fa-times"></i></button>
+        <div style="background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 8px; font-family: var(--font-code); border: 1px solid var(--border); color: var(--text-light);">ID: <span id="modal-id-text" style="color: white; font-weight: bold;">...</span></div>
+        <button class="btn-close" onclick="window.fecharModal()"><i class="fas fa-times"></i></button>
       </div>
-      
       <div class="modal-tabs">
-        <button class="tab-btn tab-ai active" onclick="abrirAba('tab-radar', this)"><i class="fas fa-brain"></i> Auditoria Forense IA</button>
-        <button class="tab-btn" onclick="abrirAba('tab-detalhes', this)"><i class="fas fa-building"></i> Dados Inseridos</button>
-        <button class="tab-btn" onclick="abrirAba('tab-fotos', this)"><i class="fas fa-images"></i> Provas Visuais</button>
-        <button class="tab-btn" onclick="abrirAba('tab-financeiro', this)"><i class="fas fa-file-invoice-dollar"></i> Decisão & Comunicação</button>
+        <button class="tab-btn tab-ai active" onclick="window.abrirAba('tab-radar', this)"><i class="fas fa-brain"></i> Auditoria Forense IA</button>
+        <button class="tab-btn" onclick="window.abrirAba('tab-detalhes', this)"><i class="fas fa-building"></i> Dados Inseridos</button>
+        <button class="tab-btn" onclick="window.abrirAba('tab-fotos', this)"><i class="fas fa-images"></i> Provas Visuais</button>
+        <button class="tab-btn" onclick="window.abrirAba('tab-financeiro', this)"><i class="fas fa-file-invoice-dollar"></i> Decisão & Comunicação</button>
       </div>
 
       <div class="modal-body" style="background: rgba(0,0,0,0.2);">
         
         <div id="tab-radar" class="tab-content active">
-          
-          <div id="triagem-cnpj-box" class="triagem-box" style="margin-bottom: 20px;">
+          <div id="triagem-cnpj-box" class="triagem-box">
              <i class="fas fa-circle-notch fa-spin"></i>
              <div>
-               <h4 style="margin: 0; color: white;">Consultando API Receita Federal...</h4>
+                 <h4 style="margin: 0; color: white;">Consultando API Receita Federal...</h4>
              </div>
           </div>
-
           <div class="forensics-wrapper">
             <div class="forensics-tools">
                 <h4><i class="fas fa-toolbox"></i> Ferramentas IA</h4>
-                <button class="tool-btn" onclick="executarVarreduraForenseIA()"><i class="fas fa-search-plus" style="color: var(--primary);"></i> Iniciar Varredura de Imagens do Processo</button>
-                <button class="tool-btn" onclick="document.getElementById('modal-chat-input-text').value='Resuma as infrações deste local de forma pontual.'; enviarChatModal();"><i class="fas fa-list" style="color: var(--warning);"></i> Resumir Infrações</button>
-                <button class="tool-btn" onclick="document.getElementById('modal-chat-input-text').value='Crie um Termo de Interdição ou Adequação com base nos erros.'; enviarChatModal();"><i class="fas fa-file-signature" style="color: var(--success);"></i> Gerar Termo Legal</button>
-                
+                <button class="tool-btn" onclick="window.executarVarreduraForenseIA()"><i class="fas fa-search-plus" style="color: var(--primary);"></i> Iniciar Varredura de Imagens do Processo</button>
+                <button class="tool-btn" onclick="document.getElementById('modal-chat-input-text').value='Resuma as infrações deste local de forma pontual.'; window.enviarChatModal();"><i class="fas fa-list" style="color: var(--warning);"></i> Resumir Infrações</button>
+                <button class="tool-btn" onclick="document.getElementById('modal-chat-input-text').value='Crie um Termo de Interdição ou Adequação com base nos erros.'; window.enviarChatModal();"><i class="fas fa-file-signature" style="color: var(--success);"></i> Gerar Termo Legal</button>
                 <div style="margin-top: auto;">
                    <label style="color:var(--text-muted); font-size:0.75rem; margin-bottom:5px; display:block;">Comando Livre para a IA</label>
-                   <input type="text" id="modal-chat-input-text" class="form-input" style="font-size: 0.85rem; padding: 10px 15px; margin-bottom: 10px;" placeholder="Ex: Há ratos nas fotos?" onkeypress="if(event.key === 'Enter') enviarChatModal()">
-                   <button class="btn btn-gemini" style="width: 100%; font-size: 0.9rem; padding: 10px;" onclick="enviarChatModal()">Executar Comando</button>
+                   <input type="text" id="modal-chat-input-text" class="form-input" style="font-size: 0.85rem; padding: 10px 15px; margin-bottom: 10px;" placeholder="Ex: Há ratos nas fotos?" onkeypress="if(event.key === 'Enter') window.enviarChatModal()">
+                   <button class="btn btn-gemini" style="width: 100%; font-size: 0.9rem; padding: 10px;" onclick="window.enviarChatModal()">Executar Comando</button>
                 </div>
             </div>
-            
             <div class="forensics-terminal">
-                <div class="terminal-header">
-                    <span>COVISA_TERMINAL_V8 // GEMINI_CORE</span>
-                    <span id="term-status" style="color: var(--success);">ONLINE</span>
-                </div>
+                <div class="terminal-header"><span>COVISA_TERMINAL_V8 // GEMINI_CORE</span><span id="term-status" style="color: var(--success);">ONLINE</span></div>
                 <div class="terminal-output" id="modal-chat-historico">
                     <span style="color: var(--gemini-purple);">> Conexão estabelecida com a base de dados do dossiê.</span><br>
                     <span style="color: var(--gemini-purple);">> Módulo de Visão Computacional pronto.</span><br>
@@ -1877,68 +547,399 @@
         </div>
 
         <div id="tab-financeiro" class="tab-content">
-          
           <div class="decision-grid">
-              
               <div class="decision-box">
                   <h4 style="color: white; margin:0 0 20px 0; font-size:1.1rem;"><i class="fas fa-file-invoice-dollar text-primary"></i> Lançamento Financeiro</h4>
-                  
                   <label style="color: var(--text-muted); font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display: block;">Valor da Taxa/Multa (R$)</label>
-                  <input type="text" class="form-input" id="modal-valor-input" style="font-size: 2rem; font-weight: 900; color: var(--primary); text-align: center; margin-bottom: 20px;" placeholder="Ex: 500,00" onkeyup="atualizarPayloadPixVisual()">
-                  
+                  <input type="text" class="form-input" id="modal-valor-input" style="font-size: 2rem; font-weight: 900; color: var(--primary); text-align: center; margin-bottom: 20px;" placeholder="Ex: 500,00" onkeyup="window.atualizarPayloadPixVisual()">
                   <label style="color: var(--text-muted); font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display: block;">Veredito do Processo</label>
                   <select class="form-input" id="modal-status-select" style="font-size: 1rem; font-weight: bold; padding: 12px; margin-bottom: 20px;">
                     <option value="pendente">🟠 BLOQUEAR (Análise Pendente)</option>
                     <option value="aguardando">🔵 AÇÃO: Cobrar Cliente (Gerar Pix)</option>
                     <option value="pago">🟢 SUCESSO: Aprovar Licença</option>
                   </select>
-
                   <div class="pix-container" id="pix-area">
                       <i class="fas fa-qrcode" style="font-size: 2.5rem; color: var(--success); margin-bottom: 10px;"></i>
                       <h4 style="color: white; margin:0 0 5px 0; font-size: 1rem;">Cobrança Pix Ativada</h4>
                       <p style="font-size: 0.75rem; color: var(--text-light); margin:0;">O cliente verá o QR Code exato para pagamento na plataforma dele.</p>
-                      <div class="pix-payload" id="pix-payload-text">00020126580014br.gov...</div>
+                      <div class="pix-payload" id="pix-payload-text"></div>
                   </div>
               </div>
-
               <div style="display: flex; flex-direction: column; gap: 20px;">
-                  
                   <div class="decision-box" style="flex: 1;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <label style="font-weight: 900; color: var(--danger); font-size: 0.8rem; text-transform: uppercase;"><i class="fas fa-user-secret"></i> Notas Internas</label>
-                        <button class="btn btn-gemini" style="padding: 6px 12px; font-size: 0.75rem;" onclick="corrigirNotasIA()" id="btn-corrigir-nota"><i class="fas fa-magic"></i> Autocorreção IA</button>
+                        <button class="btn btn-gemini" style="padding: 6px 12px; font-size: 0.75rem;" onclick="window.corrigirNotasIA()" id="btn-corrigir-nota"><i class="fas fa-magic"></i> Autocorreção IA</button>
                     </div>
-                    <textarea class="form-input" id="modal-notas-input" placeholder="Escreva o erro. A IA arruma e cita a lei." style="min-height: 100px; font-size: 0.95rem;"></textarea>
+                    <textarea class="form-input" id="modal-notas-input" placeholder="Escreva o erro. A IA arruma e cita a lei." style="min-height: 100px; font-size: 0.95rem; resize: vertical;"></textarea>
                   </div>
-
                   <div class="decision-box" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.3);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h4 style="color: var(--success); margin:0; font-size:1.1rem;"><i class="fab fa-whatsapp"></i> Canal do Cidadão</h4>
-                        <button onclick="gerarZapIA()" id="btn-gerar-zap" class="btn" style="background: #064e3b; color: #34d399; border: 1px solid #10b981; padding: 6px 12px; font-size: 0.75rem;"><i class="fas fa-robot"></i> Escrever Texto IA</button>
+                        <button onclick="window.gerarZapIA()" id="btn-gerar-zap" class="btn" style="background: #064e3b; color: #34d399; border: 1px solid #10b981; padding: 6px 12px; font-size: 0.75rem;"><i class="fas fa-robot"></i> Escrever Texto IA</button>
                     </div>
-                    <textarea class="form-input" id="modal-zap-input" style="min-height: 70px; margin-bottom: 15px; border-color: rgba(16, 185, 129, 0.3); font-size:0.95rem;" placeholder="O texto para o cliente aparecerá aqui..."></textarea>
-                    <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="width: 100%; font-size: 1rem; justify-content: center;" onclick="atualizarLinkZap()"><i class="fab fa-whatsapp"></i> Disparar WhatsApp</a>
+                    <textarea class="form-input" id="modal-zap-input" style="min-height: 70px; margin-bottom: 15px; border-color: rgba(16, 185, 129, 0.3); font-size:0.95rem; resize: vertical;" placeholder="O texto para o cliente aparecerá aqui..."></textarea>
+                    <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="width: 100%; font-size: 1rem; justify-content: center;" onclick="window.atualizarLinkZap()"><i class="fab fa-whatsapp"></i> Disparar WhatsApp</a>
                   </div>
-
               </div>
           </div>
-
         </div>
-
       </div>
-      
       <div class="modal-footer">
-        <button class="btn" onclick="deletarProcessoAtual()" style="color: #fca5a5; background: rgba(239,68,68,0.1); border: 1px solid var(--danger);"><i class="fas fa-trash-alt"></i> Excluir Dossiê</button>
+        <button class="btn" onclick="window.deletarProcessoAtual()" style="color: #fca5a5; background: rgba(239,68,68,0.1); border: 1px solid var(--danger);"><i class="fas fa-trash-alt"></i> Excluir Dossiê</button>
         <div style="display: flex; gap: 15px;">
-            <button class="btn" style="background: rgba(255,255,255,0.05); color: white;" onclick="fecharModal()">Cancelar</button>
-            <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()"><i class="fas fa-save"></i> Gravar Decisão & Ativar Pix</button>
+            <button class="btn" style="background: rgba(255,255,255,0.05); color: white;" onclick="window.fecharModal()">Cancelar</button>
+            <button class="btn btn-primary" id="btn-salvar-modal" onclick="window.salvarEdicaoModal()"><i class="fas fa-save"></i> Gravar Decisão & Ativar Pix</button>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="lightbox" onclick="fecharLightbox()" style="position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center;">
+  <div id="lightbox" onclick="window.fecharLightbox()" style="position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center;">
     <img id="lightbox-img" src="" style="max-width: 90vw; max-height: 85vh; border-radius: 8px; border: 2px solid #333;">
   </div>
-
   <div id="toast-container"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+    const firebaseConfig = { apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg", authDomain: "site-8dfaf.firebaseapp.com", projectId: "site-8dfaf", storageBucket: "site-8dfaf.firebasestorage.app", messagingSenderId: "76689989548", appId: "1:76689989548:web:5c86741e60ce385102a409" };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
+    const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
+
+    let idProcessoAtual = null; let dadosProcessoAtual = null; let todosProcessos = []; 
+    let chartBar, chartDoughnut; const logsAuditoria = [];
+    let memoriaDoChat = []; let memoriaModalDoChat = [];
+    let arquivoAnexoParaEnviar = null; let arquivoLaboratorio = null;
+    const TAMANHO_MAX_ARQUIVO_MB = 15;
+    let mapaReputacao = null; let layerReputacao = null;
+
+    function registrarLog(acao, detalhes, nivel="INFO") {
+        logsAuditoria.unshift({ dataHora: new Date().toLocaleString(), acao, detalhes, nivel });
+        const tb = document.getElementById('tabela-logs-corpo');
+        if(tb) { tb.innerHTML = ''; logsAuditoria.slice(0,50).forEach(l => { tb.innerHTML += `<tr><td><span style="color:var(--text-muted); font-size:0.85rem;">${l.dataHora}</span></td><td><strong style="color:white; font-size:0.9rem;">Admin</strong></td><td><strong style="color:var(--secondary); font-size:0.9rem;">${l.acao}</strong></td><td style="${l.nivel==='ERRO'?'color:var(--danger)':'color:var(--text-light)'}; font-size:0.9rem;">${l.detalhes}</td></tr>`; }); }
+    }
+
+    window.showToast = (titulo, mensagem, tipo='success') => {
+      const c = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = `toast ${tipo}`;
+      let i = tipo==='error'?'fa-exclamation-triangle':(tipo==='warning'?'fa-exclamation-circle':'fa-check-circle');
+      t.innerHTML = `<i class="fas ${i}" style="font-size:2rem;"></i><div><h4 style="margin:0; font-size:1rem;">${titulo}</h4><p style="margin:0; font-size:0.85rem; opacity:0.9; margin-top:2px;">${mensagem}</p></div>`;
+      c.appendChild(t); setTimeout(()=>t.style.animation='toastFadeOut 0.5s forwards',3000); setTimeout(()=>t.remove(),3500);
+    }
+
+    window.switchView = (viewId, elementClicked) => {
+        document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        if(elementClicked) elementClicked.classList.add('active');
+        registrarLog("Navegação", `Acessou o módulo: ${viewId}`);
+        if(viewId === 'view-reputacao') { setTimeout(() => { if(mapaReputacao) mapaReputacao.invalidateSize(); }, 200); }
+    }
+
+    window.checkPin = () => {
+      if (document.getElementById('pin-input').value === '1533') { 
+        document.getElementById('lock-screen').style.opacity = '0';
+        setTimeout(() => { document.getElementById('lock-screen').style.display = 'none'; document.getElementById('app-container').style.display = 'flex'; initCharts(); initMapaReputacao(); registrarLog("Autenticação", "Login efetuado."); }, 500);
+      } else { document.getElementById('pin-input').value = ''; showToast('Acesso Negado', 'Senha incorreta.', 'error'); }
+    }
+
+    onSnapshot(query(collection(db, "pedidos"), orderBy("data", "desc")), (snapshot) => {
+      todosProcessos = []; let p=0, a=0, pg=0, totR=0, pR=0;
+      const selectChat = document.getElementById('chat-process-selector'); if(selectChat) selectChat.innerHTML = '<option value="">Geral (Falar apenas sobre Leis)</option>';
+      snapshot.forEach(doc => {
+        const d = doc.data(); d.id = doc.id; todosProcessos.push(d);
+        let val = parseFloat((d.valor||"0").replace(',','.')); if(isNaN(val)) val=0;
+        if(d.pago) { pg++; totR+=val; } else if(d.valor) { a++; pR+=val; } else { p++; }
+        if(selectChat && d.nome) selectChat.innerHTML += `<option value="${d.id}">${d.nome} (${d.cnpj})</option>`;
+      });
+      document.getElementById("count-pendente").innerText = p; document.getElementById("count-aguardando").innerText = a; document.getElementById("count-pago").innerText = pg; document.getElementById("count-total").innerText = snapshot.size;
+      updateCharts(p, a, pg); window.renderizarTabelas(todosProcessos); atualizarMarcadoresReputacao();
+    });
+
+    window.renderizarTabelas = (dados) => {
+      const tbDash = document.getElementById("tabela-corpo-dash"); const tbFull = document.getElementById("tabela-corpo-full");
+      if(!tbDash || !tbFull) return; tbDash.innerHTML = ""; tbFull.innerHTML = "";
+      if(dados.length === 0) { tbFull.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:50px; color: var(--text-muted);">Nenhum registro.</td></tr>'; return; }
+      dados.forEach((p, i) => {
+        let cb = 'badge-pendente', tb = 'Análise', ib = 'fa-clock';
+        if(p.tipo === "🚨 DENÚNCIA") { cb = 'badge-denuncia'; tb = 'DENÚNCIA'; ib = 'fa-bullhorn'; } else if(p.pago) { cb = 'badge-pago'; tb = 'Aprovado'; ib = 'fa-check'; } else if(p.valor) { cb = 'badge-aguardando'; tb = 'Aguard. Pix'; ib = 'fa-dollar-sign'; }
+        let htmlBase = `<td><div class="td-empresa"><div class="td-empresa-icon">${p.nome?p.nome.charAt(0).toUpperCase():'C'}</div><div class="td-empresa-info"><strong style="${p.tipo==='🚨 DENÚNCIA'?'color:var(--danger)':''}">${p.nome}</strong><span>${p.cnpj}</span></div></div></td><td><span style="background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:4px; font-size:0.8rem; border:1px solid var(--border);">${p.tipo}</span></td><td><span style="color:var(--text-muted); font-size:0.85rem;">${p.data?p.data.split(',')[0]:''}</span></td><td><span class="status-badge ${cb}"><i class="fas ${ib}"></i> ${tb}</span></td>`;
+        let trFull = document.createElement("tr"); trFull.innerHTML = htmlBase + `<td><strong style="color:var(--primary); font-size: 1.1rem;">${p.valor?'R$ '+p.valor:'--'}</strong></td><td><button class="btn-icon" style="background:rgba(59,130,246,0.2); color:var(--primary); border:1px solid var(--primary);" onclick="window.abrirModal('${p.id}')"><i class="fas fa-folder-open"></i></button></td>`; tbFull.appendChild(trFull);
+        if(i < 5) { let trDash = document.createElement("tr"); trDash.innerHTML = htmlBase + `<td><button class="btn-icon" style="width:100%; border:1px solid var(--border); background:rgba(255,255,255,0.05); color:white;" onclick="window.abrirModal('${p.id}')"><i class="fas fa-arrow-right"></i> Analisar</button></td>`; tbDash.appendChild(trDash); }
+      });
+    }
+
+    window.aplicarFiltros = () => {
+        let fS = document.getElementById('filtro-status').value; let fR = document.getElementById('filtro-ramo').value; let inT = document.getElementById('searchInput').value.toLowerCase();
+        let r = todosProcessos;
+        if(inT) r = r.filter(p => (p.nome && p.nome.toLowerCase().includes(inT)) || (p.cnpj && p.cnpj.toLowerCase().includes(inT)));
+        if(fR !== 'todos') r = r.filter(p => p.tipo === fR);
+        if(fS === 'pago') r = r.filter(p => p.pago); else if(fS === 'aguardando') r = r.filter(p => p.valor && !p.pago); else if(fS === 'pendente') r = r.filter(p => !p.valor && !p.pago && p.tipo !== "🚨 DENÚNCIA"); else if(fS === 'denuncia') r = r.filter(p => p.tipo === "🚨 DENÚNCIA");
+        window.renderizarTabelas(r);
+    }
+    window.filtrarTabela = window.aplicarFiltros; 
+
+    window.exportarCSV = () => {
+        if(todosProcessos.length === 0) return;
+        let csv = 'Data,Razao_Social,CNPJ_CPF,Ramo,Status_Sistemico,Taxa_Valor,Observacoes_Internas\n';
+        todosProcessos.forEach(p => { 
+            let st = p.pago ? 'Aprovado' : (p.valor ? 'Aguardando Pagamento' : 'Analise Pendente'); if (p.tipo === "🚨 DENÚNCIA") st = 'Denúncia Externa';
+            let nts = p.notas ? p.notas.replace(/(\r\n|\n|\r)/gm, " ") : ""; csv += `"${p.data||''}","${p.nome}","${p.cnpj}","${p.tipo}","${st}","${p.valor||'0'}","${nts}"\n`; 
+        });
+        const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8;'})); a.download = `Base_COVISA_${new Date().toLocaleDateString()}.csv`; a.click();
+    }
+
+    function initMapaReputacao() {
+        if(!mapaReputacao) {
+            mapaReputacao = L.map('reputation-map').setView([-23.5505, -46.6333], 11);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapaReputacao);
+            layerReputacao = L.layerGroup().addTo(mapaReputacao);
+            atualizarMarcadoresReputacao();
+        }
+    }
+
+    function atualizarMarcadoresReputacao() {
+        if(!layerReputacao) return;
+        layerReputacao.clearLayers();
+        todosProcessos.forEach(p => {
+            let hash = parseInt((p.cnpj||"0").replace(/\D/g, '').substring(0, 4)) || Math.floor(Math.random() * 9000);
+            let lat = -23.68 + ((hash % 100) / 400); let lng = -46.62 + (((hash / 100) % 100) / 400);
+            let baseScore = p.pago ? 4.0 : (p.tipo === "🚨 DENÚNCIA" ? 1.5 : 2.8);
+            let nota = parseFloat((baseScore + (Math.random() * 1.0 - 0.5)).toFixed(1));
+            if(nota > 5.0) nota = 5.0; if(nota < 1.0) nota = 1.0;
+            let color = nota < 2.5 ? '#ef4444' : (nota < 4.0 ? '#f59e0b' : '#10b981');
+            let marker = L.circleMarker([lat, lng], { color: color, fillColor: color, fillOpacity: 0.8, radius: 10 }).addTo(layerReputacao);
+            marker.on('click', () => { abrirPainelReputacaoGoogle(p.nome, p.cnpj, p.tipo, nota, color); });
+        });
+        for(let i=0; i<5; i++){
+            let nf = (Math.random() * 4) + 1; let cf = nf < 2.5 ? '#ef4444' : (nf < 4.0 ? '#f59e0b' : '#10b981');
+            let lat = -23.55 + (Math.random() * 0.2 - 0.1); let lng = -46.63 + (Math.random() * 0.2 - 0.1);
+            let mf = L.circleMarker([lat, lng], { color: cf, fillColor: cf, fillOpacity: 0.5, radius: 6 }).addTo(layerReputacao);
+            mf.on('click', () => { abrirPainelReputacaoGoogle("Local da Web " + i, "Simulação Google", "Geral", nf.toFixed(1), cf); });
+        }
+    }
+
+    function abrirPainelReputacaoGoogle(nome, cnpj, ramo, nota, cor) {
+        document.getElementById('rep-panel').style.display = 'flex';
+        document.getElementById('rep-nome').innerText = nome; document.getElementById('rep-cnpj').innerText = cnpj;
+        document.getElementById('rep-nota').innerText = nota; document.getElementById('rep-nota').style.color = cor;
+        let htmlEstrelas = ''; let numE = Math.round(nota);
+        for(let i=0; i<5; i++) { htmlEstrelas += i < numE ? `<i class="fas fa-star"></i>` : `<i class="far fa-star"></i>`; }
+        document.getElementById('rep-estrelas').innerHTML = htmlEstrelas; document.getElementById('rep-estrelas').style.color = cor;
+        let coments = [];
+        if (nota < 2.5) {
+            if(ramo && ramo.includes("Alimentos")) coments = ['"Péssima higiene, vi barata no chão."', '"Comida ruim, passei mal no outro dia."'];
+            else if(ramo && ramo.includes("Beleza")) coments = ['"Alicates não esterilizados."', '"Chão sujo e atendimento ruim."'];
+            else coments = ['"Lugar insalubre, cadê a vigilância?"', '"Horrível."'];
+        } else if (nota < 4.0) { coments = ['"É ok, mas o banheiro estava sujo."', '"Lugar razoável, pode melhorar."']; } else { coments = ['"Lugar impecável!"', '"Tudo dentro das normas."']; }
+        let list = document.getElementById('rep-comentarios'); list.innerHTML = '';
+        coments.forEach(c => { list.innerHTML += `<div class="review-card" style="border-left-color: ${cor};">${c}</div>`; });
+    }
+
+    // CRC16 PARA O PIX COPIA E COLA
+    function crc16(str) {
+        let crc = 0xFFFF;
+        for (let i = 0; i < str.length; i++) {
+            crc ^= str.charCodeAt(i) << 8;
+            for (let j = 0; j < 8; j++) {
+                if ((crc & 0x8000) > 0) crc = (crc << 1) ^ 0x1021;
+                else crc = crc << 1;
+            }
+        }
+        return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+    }
+
+    function gerarPayloadPix(valorStr) {
+        let v = parseFloat(valorStr.replace(',','.'));
+        if(isNaN(v) || v <= 0) return "";
+        let vFormatado = v.toFixed(2);
+        let payloadBase = `00020126480014BR.GOV.BCB.PIX0126covisa_pagamentos@sp.gov520400005303986540${vFormatado.length < 10 ? '0'+vFormatado.length : vFormatado.length}${vFormatado}5802BR5913PREFEITURA SP6009SAO PAULO62070503***6304`;
+        let hash = crc16(payloadBase);
+        return payloadBase + hash;
+    }
+
+    window.atualizarPayloadPixVisual = () => {
+        const valInput = document.getElementById("modal-valor-input").value;
+        const divPix = document.getElementById("pix-area");
+        const divPayload = document.getElementById("pix-payload-text");
+        const selectStatus = document.getElementById("modal-status-select").value;
+        if (valInput && valInput.length > 0 && selectStatus !== "pago") {
+            divPix.style.display = 'block';
+            divPayload.innerText = gerarPayloadPix(valInput);
+        } else { divPix.style.display = 'none'; }
+    }
+    document.getElementById("modal-status-select").addEventListener('change', window.atualizarPayloadPixVisual);
+
+    async function verificarAPI_CNPJ(cnpjCliente) {
+        const t = document.getElementById('triagem-cnpj-box');
+        let c = (cnpjCliente||"").replace(/\D/g, '');
+        if (c.length !== 14) { t.innerHTML = `<i class="fas fa-user sentiment-icon" style="color:var(--text-muted)"></i><div class="sentiment-content"><h4>Pessoa Física</h4><p style="color:var(--text-muted);">CPF detectado. A triagem automática da Receita foca em CNPJ.</p></div>`; t.style.borderLeftColor = 'var(--text-muted)'; return; }
+        try {
+            const r = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${c}`); if(!r.ok) throw new Error("");
+            const d = await r.json();
+            if (d.descricao_situacao_cadastral === "ATIVA") { t.innerHTML = `<i class="fas fa-check-circle sentiment-icon" style="color:var(--success); filter:none;"></i><div class="sentiment-content"><h4>Receita Federal: ATIVA</h4><p style="color:var(--text-muted);">${d.razao_social}</p></div>`; t.style.borderLeftColor = 'var(--success)';
+            } else { t.innerHTML = `<i class="fas fa-exclamation-triangle sentiment-icon" style="color:var(--danger);"></i><div class="sentiment-content"><h4 style="color:var(--danger)">ALERTA: Empresa ${d.descricao_situacao_cadastral}</h4><p style="color:var(--danger);">CNPJ inativo.</p></div>`; t.style.borderLeftColor = 'var(--danger)'; }
+        } catch(e) { t.innerHTML = `<i class="fas fa-times-circle sentiment-icon" style="color:var(--danger);"></i><div class="sentiment-content"><h4>Falha na Receita</h4><p style="color:var(--danger);">CNPJ não localizado.</p></div>`; t.style.borderLeftColor = 'var(--danger)';}
+    }
+
+    window.abrirAba = (id, btn) => { document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); }
+
+    window.abrirModal = async (idProtocolo) => {
+      idProcessoAtual = idProtocolo; document.getElementById("modalDetalhes").style.display = "flex"; document.getElementById("modal-id-text").innerText = idProtocolo.substring(0,8).toUpperCase();
+      document.querySelector('.tab-ai').click(); memoriaModalDoChat = []; 
+      document.getElementById('triagem-cnpj-box').innerHTML = `<i class="fas fa-circle-notch fa-spin sentiment-icon"></i><div class="sentiment-content"><h4 style="color:white; margin:0;">Consultando Base Federal...</h4></div>`;
+      document.getElementById('triagem-cnpj-box').style.borderLeftColor = 'var(--gemini-purple)';
+      document.getElementById('modal-chat-historico').innerHTML = `<span style="color: var(--gemini-purple);">> Conexão com dossiê OK.</span><br><span style="color: var(--gemini-purple);">> Terminal Forense Pronto.</span><br><br>`;
+      document.getElementById("pix-area").style.display = 'none';
+
+      try {
+        const docSnap = await getDoc(doc(db, "pedidos", idProtocolo));
+        if (docSnap.exists()) {
+          const d = docSnap.data(); dadosProcessoAtual = d; dadosProcessoAtual.id = idProtocolo; 
+          document.getElementById("modal-cnpj").innerText = d.cnpj || "--"; document.getElementById("modal-nome").innerText = d.nome || "--"; document.getElementById("modal-data").innerText = d.data || '--'; document.getElementById("modal-ramo").innerText = d.tipo || "--"; document.getElementById("modal-docs").innerText = d.docs || "--";
+          verificarAPI_CNPJ(d.cnpj);
+          const galeriaHTML = document.getElementById('evidence-gallery'); galeriaHTML.innerHTML = ''; let t=0;
+          if (d.documento_assinado) { t++; galeriaHTML.innerHTML += `<div class="gallery-item" style="border: 2px solid var(--success);" onclick="window.abrirLightbox('${d.documento_assinado}')"><div class="badge-assinado">VALIDADO</div><img src="${d.documento_assinado}"></div>`; }
+          if (d.evidencias) { t+=d.evidencias.length; d.evidencias.forEach(f => { galeriaHTML.innerHTML += `<div class="gallery-item" onclick="window.abrirLightbox('${f.url}')"><img src="${f.url}"></div>`; }); }
+          document.getElementById('evidence-title').innerText = `Evidências Visuais (${t})`;
+          document.getElementById("modal-valor-input").value = d.valor || "";
+          document.getElementById("modal-status-select").value = d.pago ? "pago" : (d.valor ? "aguardando" : "pendente");
+          document.getElementById("modal-notas-input").value = d.notas || ""; document.getElementById("modal-zap-input").value = ""; 
+          window.atualizarLinkZap(); window.atualizarPayloadPixVisual();
+        }
+      } catch (e) { showToast("Erro BD", "Falha de conexão.", "error"); }
+    };
+    window.fecharModal = () => { document.getElementById("modalDetalhes").style.display = "none"; idProcessoAtual = null; };
+
+    window.executarVarreduraForenseIA = async () => {
+        const h = document.getElementById('modal-chat-historico'); const idL = 'l_'+Date.now(); 
+        h.innerHTML += `<span id="${idL}" style="color: var(--warning);">> [SISTEMA] Iniciando varredura profunda nas imagens anexadas... aguarde.</span><br>`; h.scrollTop=h.scrollHeight;
+        let pacote = [{ text: `Aja como Perito Digital. Analise as imagens da empresa. 1. Ache edição/Photoshop. 2. Ache infrações sanitárias na estrutura. Seja direto no diagnóstico. Sem formatação pesada.` }];
+        if(dadosProcessoAtual.evidencias) { for (let i=0; i<Math.min(dadosProcessoAtual.evidencias.length,3); i++) { let img = await obterDadosImagemSeguro(dadosProcessoAtual.evidencias[i].url); if(img) pacote.push({ inline_data: img }); } }
+        if(dadosProcessoAtual.documento_assinado) { let doc = await obterDadosImagemSeguro(dadosProcessoAtual.documento_assinado); if(doc) pacote.push({ inline_data: doc }); }
+        try {
+            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: pacote }] }) });
+            const resp = await r.json(); document.getElementById(idL).remove(); 
+            h.innerHTML += `<span style="color: var(--danger);">> [LAUDO FORENSE OBTIDO]</span><br><span class="msg-ai">${resp.candidates[0].content.parts[0].text.replace(/\n/g, '<br>> ')}</span><br><br>`; h.scrollTop=h.scrollHeight;
+        } catch(e) { document.getElementById(idL).innerHTML = "> Erro na varredura visual."; }
+    }
+
+    window.enviarChatModal = async () => {
+      const p = document.getElementById('modal-chat-input-text').value.trim(); if (!p) return;
+      const h = document.getElementById('modal-chat-historico'); 
+      h.innerHTML += `<span class="msg-user">> USER: ${p}</span><br>`; document.getElementById('modal-chat-input-text').value = '';
+      const idL = 'l_'+Date.now(); h.innerHTML += `<span id="${idL}" style="color:var(--gemini-purple);">> Processando...</span><br>`; h.scrollTop=h.scrollHeight;
+      memoriaModalDoChat.push({ role: "user", parts: [{ text: `Processo de ${dadosProcessoAtual.nome}. Ramo: ${dadosProcessoAtual.tipo}. Comando: "${p}". Responda direto, sem frescuras.` }] });
+      try {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: memoriaModalDoChat }) });
+        const res = await r.json(); document.getElementById(idL).remove(); let t = res.candidates[0].content.parts[0].text; memoriaModalDoChat.push({ role: "model", parts: [{text:t}] });
+        h.innerHTML += `<span style="color: var(--gemini-purple);">> [GEMINI]</span><br><span class="msg-ai">${t.replace(/\n/g, '<br>> ')}</span><br><br>`; h.scrollTop=h.scrollHeight;
+      } catch(e) {}
+    }
+
+    window.corrigirNotasIA = async () => {
+        const inp = document.getElementById("modal-notas-input"); const btn = document.getElementById('btn-corrigir-nota'); const ori = btn.innerHTML;
+        if(inp.value.length < 5) return showToast("Aviso", "Escreva algo para a IA corrigir.", "warning");
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        try {
+            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: `Reescreva de forma formal citando leis sanitárias (Lei 13.725 ou RDC 216): "${inp.value}"` }] }] }) });
+            const j = await r.json(); inp.value = j.candidates[0].content.parts[0].text.trim(); showToast("Sucesso", "Parecer aprimorado.", "success");
+        } catch(e) { } btn.innerHTML = ori;
+    }
+
+    window.gerarZapIA = async () => {
+        const btn = document.getElementById('btn-gerar-zap'); const ori = btn.innerHTML; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        try {
+            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: `Crie whatsapp curto para cliente avisando o status ${document.getElementById("modal-status-select").value} da empresa ${dadosProcessoAtual.nome}. Valor a pagar se houver: R$ ${document.getElementById("modal-valor-input").value}. Notas internas: ${document.getElementById("modal-notas-input").value}. Educado. Sem markdown.` }] }] }) });
+            const j = await r.json(); document.getElementById("modal-zap-input").value = j.candidates[0].content.parts[0].text.trim(); window.atualizarLinkZap();
+        } catch(e) { } btn.innerHTML = ori;
+    }
+
+    window.salvarEdicaoModal = async () => {
+      if(!idProcessoAtual) return; const btn = document.getElementById('btn-salvar-modal'); const ori = btn.innerHTML; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      let val = document.getElementById("modal-valor-input").value; let st = document.getElementById("modal-status-select").value; let nts = document.getElementById("modal-notas-input").value;
+      let flagPago = (st === "pago"); if(st === "pendente") val = null; 
+      let payloadPix = document.getElementById("pix-payload-text").innerText; if(st === "pago" || st === "pendente") payloadPix = null;
+      try {
+        await updateDoc(doc(db, "pedidos", idProcessoAtual), { valor: val, pago: flagPago, notas: nts, pix_copia_e_cola: payloadPix });
+        showToast('Processo Salvo', 'As decisões e o código PIX foram ativados no BD.', 'success'); window.fecharModal();
+      } catch (e) { showToast('Erro', 'Falha ao salvar.', 'error'); btn.innerHTML = ori; } 
+    };
+
+    window.deletarProcessoAtual = async () => { if(!idProcessoAtual) return; if(confirm("Excluir arquivo permanentemente?")) { await deleteDoc(doc(db, "pedidos", idProcessoAtual)); window.fecharModal(); } };
+
+    async function converterArquivoParaBase64Local(file) {
+      return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve({ mime_type: file.type, data: reader.result.split(',')[1] }); reader.onerror = error => reject(error); });
+    }
+
+    // Lógica do Laboratório Universal de Textos e Mídia
+    document.getElementById('lab-file-input').addEventListener('change', async function(e) {
+        arquivoLaboratorio = e.target.files[0]; if(!arquivoLaboratorio) return;
+        const tamanhoMB = arquivoLaboratorio.size / (1024 * 1024);
+        if (tamanhoMB > TAMANHO_MAX_ARQUIVO_MB) { showToast("Erro", `Arquivo excede ${TAMANHO_MAX_ARQUIVO_MB}MB.`, "error"); e.target.value = ''; return; }
+        
+        const previewArea = document.getElementById('lab-preview'); previewArea.innerHTML = '';
+        if (arquivoLaboratorio.type.startsWith('image/')) { const img = document.createElement('img'); img.src = URL.createObjectURL(arquivoLaboratorio); previewArea.appendChild(img); } 
+        else if (arquivoLaboratorio.type.startsWith('video/')) { const video = document.createElement('video'); video.src = URL.createObjectURL(arquivoLaboratorio); video.controls = true; previewArea.appendChild(video); }
+        previewArea.innerHTML += `<button class="lab-btn-close-preview" onclick="window.fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+        document.getElementById('lab-drop-area').style.display='none'; document.getElementById('lab-idle-state').style.display='none'; document.getElementById('lab-final-result').style.display='none'; document.getElementById('lab-loading-state').style.display='flex'; previewArea.style.display = 'block';
+
+        let p = [{ text: `Analise a mídia anexada. Ache problemas sanitários e fraude digital. Formate HTML.` }];
+        try {
+            p.push({ inline_data: await converterArquivoParaBase64Local(arquivoLaboratorio) });
+            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: [{ parts: p }] }) });
+            const j = await r.json(); document.getElementById('lab-loading-state').style.display='none'; document.getElementById('lab-final-result').style.display='block'; document.getElementById('lab-result-content').innerHTML = j.candidates[0].content.parts[0].text;
+            registrarLog("Laboratório", "Análise de arquivo local executada.");
+        } catch(err) { document.getElementById('lab-loading-state').style.display='none'; document.getElementById('lab-final-result').style.display='block'; document.getElementById('lab-result-content').innerHTML = "Falha no laboratório."; }
+    });
+
+    window.iniciarAnaliseLaboratorioTexto = async () => {
+        const texto = document.getElementById('lab-text-input').value.trim();
+        if(!texto) { showToast("Erro", "Cole um texto primeiro.", "warning"); return; }
+        
+        document.getElementById('lab-idle-state').style.display='none'; document.getElementById('lab-final-result').style.display='none'; document.getElementById('lab-loading-state').style.display='flex';
+        let p = [{ text: `Aja como Perito Sanitário. Analise o seguinte relato/denúncia da web: "${texto}". Indique qual o nível de risco, quais leis sanitárias podem estar sendo violadas e se há indícios de ser uma denúncia falsa/calúnia. Formate em HTML com destaques.` }];
+        try {
+            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: [{ parts: p }] }) });
+            const j = await r.json(); document.getElementById('lab-loading-state').style.display='none'; document.getElementById('lab-final-result').style.display='block'; document.getElementById('lab-result-content').innerHTML = j.candidates[0].content.parts[0].text;
+            registrarLog("Laboratório", "Análise de texto/denúncia executada.");
+        } catch(err) { document.getElementById('lab-loading-state').style.display='none'; document.getElementById('lab-final-result').style.display='block'; document.getElementById('lab-result-content').innerHTML = "Falha no laboratório de texto."; }
+    }
+
+    // Chat Global 
+    window.enviarChat = async () => {
+        const inp = document.getElementById('chat-input-text'); const txt = inp.value.trim(); if(!txt && !arquivoAnexoParaEnviar) return;
+        const h = document.getElementById('chat-historico'); h.innerHTML += `<div class="chat-msg msg-user">${txt}${arquivoAnexoParaEnviar?' <br><i class="fas fa-paperclip"></i> Mídia anexada':''}</div>`; inp.value='';
+        const idL = 'l_'+Date.now(); h.innerHTML += `<div id="${idL}" class="chat-msg msg-ai"><i class="fas fa-spinner fa-spin"></i></div>`; h.scrollTop=h.scrollHeight;
+        let p = [{ text: `Responda: ${txt}. Use HTML básico sem markdown de asterisco.` }];
+        if (arquivoAnexoParaEnviar) { try { p.push({ inline_data: await converterArquivoParaBase64Local(arquivoAnexoParaEnviar) }); } catch(e){} }
+        memoriaDoChat.push({ role: "user", parts: p });
+        try {
+            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: memoriaDoChat }) });
+            const j = await r.json(); document.getElementById(idL).remove(); let t = j.candidates[0].content.parts[0].text; memoriaDoChat.push({ role: "model", parts: [{text:t}] });
+            h.innerHTML += `<div class="chat-msg msg-ai"><strong style="color:var(--gemini-purple);"><i class="fas fa-robot"></i> IA:</strong><br><br>${t}</div>`; h.scrollTop=h.scrollHeight;
+        } catch(e) { document.getElementById(idL).innerHTML = "Erro de conexão."; memoriaDoChat.pop(); } window.removerAnexoChat();
+    }
+
+    function initCharts() {
+      try {
+          Chart.defaults.color = '#94a3b8';
+          chartBar = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'line', data: { labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], datasets: [{ label: 'Cadastros', data: [0,0,0,0,0,0,0], borderColor: '#c084fc', backgroundColor: 'rgba(192, 132, 252, 0.2)', fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)'} }, x: { grid: { display: false } } } } });
+          chartDoughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { type: 'doughnut', data: { labels: ['Aprovados', 'Aguardando', 'Riscos'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#3b82f6', '#ef4444'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } });
+      } catch (err) {}
+    }
+
+    function updateCharts(p, a, pg) {
+      if(chartDoughnut){chartDoughnut.data.datasets[0].data=[pg,a,p]; chartDoughnut.update();} 
+      if(chartBar){let t=p+a+pg; chartBar.data.datasets[0].data=[t*.1, t*.3, t*.2, t*.1, t, 0, 0]; chartBar.update();} 
+    }
+
+    window.abrirLightbox = (l) => { document.getElementById('lightbox-img').src=l; document.getElementById('lightbox').style.display='flex'; };
+    window.fecharLightbox = () => { document.getElementById('lightbox').style.display='none'; };
+  </script>
+</body>
+</html>
