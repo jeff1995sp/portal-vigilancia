@@ -523,19 +523,19 @@
         <div id="view-trafego" class="page-view">
           <div class="page-title">
             <div>
-              <h1>Monitoramento de Tráfego</h1>
-              <p>Visualização em tempo real dos acessos cidadãos ao portal público.</p>
+              <h1>Monitoramento de Tráfego (Ao Vivo)</h1>
+              <p>Visualização em tempo real das visitas reais registradas no portal público da COVISA.</p>
             </div>
           </div>
           
           <div class="stats-grid" style="margin-bottom: 30px;">
              <div class="stat-card c-primary">
                <div class="stat-icon"><i class="fas fa-users"></i></div>
-               <div class="stat-info"><h3>Visitantes Hoje</h3><p id="trafego-hoje">1.248</p></div>
+               <div class="stat-info"><h3>Visitantes Hoje</h3><p id="trafego-hoje">0</p></div>
              </div>
              <div class="stat-card c-success">
                <div class="stat-icon"><i class="fas fa-mouse-pointer"></i></div>
-               <div class="stat-info"><h3>Acessos na Semana</h3><p id="trafego-semana">8.430</p></div>
+               <div class="stat-info"><h3>Acessos na Semana</h3><p id="trafego-semana">0</p></div>
              </div>
              <div class="stat-card c-gemini">
                <div class="stat-icon"><i class="fas fa-stopwatch"></i></div>
@@ -545,7 +545,7 @@
           
           <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-xl); border: 1px solid var(--border); height: 450px; box-shadow: var(--shadow-sm);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-               <h3 style="color: white; font-weight: 800;"><i class="fas fa-chart-area" style="color: var(--gemini-purple); margin-right: 10px;"></i> Volume de Acessos ao Site (Horas)</h3>
+               <h3 style="color: white; font-weight: 800;"><i class="fas fa-chart-area" style="color: var(--gemini-purple); margin-right: 10px;"></i> Volume de Acessos ao Site (Horas de Hoje)</h3>
                <span class="pulse-online" style="width: 15px; height: 15px;"></span>
             </div>
             <div style="position: relative; height: 85%; width: 100%;">
@@ -1820,38 +1820,39 @@
         }
     }
 
-    // Gerador de dados simulados (dinâmicos) para o Gráfico de Tráfego
-    function gerarDadosDeTrafego() {
-        let dados = [];
-        let base = 200;
-        for (let i = 0; i < 24; i++) {
-            // Cria uma curva que sobe de dia e desce de noite
-            if(i > 8 && i < 18) base += Math.floor(Math.random() * 150) - 30;
-            else base -= Math.floor(Math.random() * 80);
-            
-            if(base < 10) base = Math.floor(Math.random() * 50) + 10;
-            dados.push(base);
-        }
-        return dados;
-    }
+    // ----------------------------------------------------
+    // MONITOR DE TRÁFEGO REAL (FIREBASE)
+    // ----------------------------------------------------
+    function iniciarMonitorDeTrafegoReal() {
+        const hojeIso = new Date().toISOString().split('T')[0]; // ex: 2026-03-11
+        const docTrafegoRef = doc(db, "estatisticas", hojeIso);
 
-    function atualizarNumerosDeTrafegoAoVivo() {
-        if(!chartAcessosObj) return;
-        
-        // Simula a entrada de novas pessoas a cada poucos segundos
-        let hojeStr = document.getElementById('trafego-hoje').innerText.replace('.', '');
-        let hojeInt = parseInt(hojeStr) + Math.floor(Math.random() * 3);
-        document.getElementById('trafego-hoje').innerText = hojeInt.toLocaleString('pt-BR');
-
-        // Pega os dados atuais do gráfico
-        let dataArray = chartAcessosObj.data.datasets[0].data;
-        // Altera levemente o último ponto para dar sensação de "ao vivo"
-        let lastValue = dataArray[dataArray.length - 1];
-        let newValue = lastValue + (Math.floor(Math.random() * 11) - 5);
-        if(newValue < 0) newValue = 0;
-        
-        dataArray[dataArray.length - 1] = newValue;
-        chartAcessosObj.update('none'); // Update sem animação brusca
+        onSnapshot(docTrafegoRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const dadosTrafego = docSnap.data();
+                
+                // Atualiza os cartões numéricos
+                document.getElementById('trafego-hoje').innerText = (dadosTrafego.total || 0).toLocaleString('pt-BR');
+                document.getElementById('trafego-semana').innerText = (dadosTrafego.total || 0).toLocaleString('pt-BR'); 
+                
+                // Atualiza o Gráfico com as 24 horas reais
+                if (chartAcessosObj) {
+                    let chartData = [];
+                    for(let i=0; i<24; i++) {
+                        let horaStr = `hora_${i.toString().padStart(2, '0')}`;
+                        chartData.push(dadosTrafego[horaStr] || 0);
+                    }
+                    chartAcessosObj.data.datasets[0].data = chartData;
+                    chartAcessosObj.update();
+                }
+            } else {
+                document.getElementById('trafego-hoje').innerText = "0";
+                if (chartAcessosObj) {
+                    chartAcessosObj.data.datasets[0].data = Array(24).fill(0);
+                    chartAcessosObj.update();
+                }
+            }
+        });
     }
 
     function initCharts() {
@@ -1875,10 +1876,9 @@
           if (ctxAcessos) {
               const contextoAcessos = ctxAcessos.getContext('2d');
               let gradient = contextoAcessos.createLinearGradient(0, 0, 0, 400);
-              gradient.addColorStop(0, 'rgba(192, 132, 252, 0.6)'); // Roxo Gemini
+              gradient.addColorStop(0, 'rgba(192, 132, 252, 0.6)'); 
               gradient.addColorStop(1, 'rgba(192, 132, 252, 0)');
 
-              // Criar labels de horas (00:00 até 23:00)
               let labelsHoras = [];
               for(let i=0; i<24; i++) { labelsHoras.push(`${i.toString().padStart(2, '0')}:00`); }
 
@@ -1887,8 +1887,8 @@
                   data: {
                       labels: labelsHoras,
                       datasets: [{
-                          label: 'Cidadãos Simultâneos',
-                          data: gerarDadosDeTrafego(),
+                          label: 'Acessos Reais (Cidadãos)',
+                          data: Array(24).fill(0), // Começa zerado
                           borderColor: '#c084fc',
                           backgroundColor: gradient,
                           borderWidth: 3,
@@ -1909,15 +1909,15 @@
                           tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(15, 23, 42, 0.9)', titleColor: '#fff', bodyColor: '#c084fc', borderColor: '#334155', borderWidth: 1 }
                       },
                       scales: {
-                          y: { grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#94a3b8' }, beginAtZero: true },
+                          y: { grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#94a3b8', stepSize: 1 }, beginAtZero: true },
                           x: { grid: { display: false, drawBorder: false }, ticks: { color: '#94a3b8', maxTicksLimit: 12 } }
                       },
                       interaction: { mode: 'nearest', axis: 'x', intersect: false }
                   }
               });
-
-              // Inicia o simulador "ao vivo" do gráfico de acessos
-              setInterval(atualizarNumerosDeTrafegoAoVivo, 3500);
+              
+              // Inicia a escuta real no Firebase
+              iniciarMonitorDeTrafegoReal();
           }
       } catch (err) {}
     }
