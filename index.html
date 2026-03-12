@@ -80,21 +80,22 @@
 
     /* --- HEADER --- */
     header { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 14px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-    .header-grid { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
-    .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0; }
-    .brand img { height: 55px; width: auto; }
-    .brand-text h1 { font-size: 1.2rem; line-height: 1; color: var(--text-dark); letter-spacing: -0.5px; text-transform: uppercase; font-weight: 900; }
-    .brand-text span { font-size: 0.7rem; color: var(--sp-red); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+    .header-grid { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
+    .brand img { height: 68px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+    .brand-text h1 { font-size: 1.35rem; line-height: 1; color: var(--text-dark); letter-spacing: -0.5px; text-transform: uppercase; font-weight: 900; }
+    .brand-text span { font-size: 0.75rem; color: var(--sp-red); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
 
-    nav { display: block; }
-    nav ul { display: flex; gap: 5px; }
-    nav a { color: var(--text-dark); font-weight: 700; font-size: 0.9rem; padding: 8px 12px; border-radius: 999px; transition: 0.3s; white-space: nowrap; }
+    nav ul { display: flex; gap: 10px; }
+    nav a { color: var(--text-dark); font-weight: 700; font-size: 0.9rem; padding: 10px 18px; border-radius: 999px; transition: 0.3s; }
     nav a:hover, nav a.active { background: rgba(218, 37, 28, 0.08); color: var(--sp-red); }
 
-    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .btn-login { background: var(--gov-blue); color: white; padding: 10px 15px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
-    .btn-login:hover { background: var(--gov-dark-blue); }
-    .hamburger-btn { display: none; width: 40px; height: 40px; border-radius: 10px; background: #f8f9fa; border: 1px solid #e9ecef; cursor: pointer; align-items: center; justify-content: center; color: #333; transition: 0.2s; }
+    .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+    .btn-login { background: var(--gov-blue); color: white; padding: 10px 18px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
+    .btn-login:hover { background: var(--gov-dark-blue); box-shadow: 0 4px 15px rgba(19, 81, 180, 0.3); }
+    .btn-login i { font-size: 1.15rem; }
+    .hamburger-btn { display: none; width: 44px; height: 44px; border-radius: 12px; background: #f8f9fa; border: 1px solid #e9ecef; cursor: pointer; align-items: center; justify-content: center; color: #333; transition: 0.2s; }
+    .hamburger-btn:hover { background: #f1f3f5; }
 
     /* --- DRAWER MOBILE --- */
     .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; display: none; }
@@ -319,15 +320,15 @@
       .gov-left { display: block; max-width: 62%; line-height: 1.2; }
       .gov-links { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
       .gov-links a { padding: 6px 10px; }
-      header { position: relative; padding: 15px 0; }
-      nav { display: none; } 
       
-      /* AJUSTE FIXO PARA IPHONE / MOBILE - LOGO NO TOPO CENTRALIZADA */
-      .header-grid { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; gap: 10px;}
-      .brand { flex-direction: column; text-align: center; gap: 5px; width: 100%; justify-content: center; }
-      .brand img { height: 55px; margin: 0 auto; }
-      .hamburger-btn { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: inline-flex; }
-      .header-actions { display: none; /* Esconde botões desnecessários no cabeçalho mobile */ }
+      /* AJUSTE FIXO PARA IPHONE / MOBILE - LOGO E MENU */
+      header { position: relative; padding: 10px 0; }
+      .header-grid { display: flex; flex-direction: column; align-items: center; position: relative; padding-top: 10px; }
+      .brand { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px; margin-bottom: 10px; }
+      .brand img { height: 50px; margin: 0 auto; }
+      .hamburger-btn { position: absolute; right: 15px; top: 15px; display: inline-flex; }
+      .header-actions { display: none; }
+      nav { display: none; } 
       
       .brand-text h1 { font-size: 1.05rem; }
       .brand-text span { font-size: 0.68rem; }
@@ -340,12 +341,10 @@
       .hero h2 { font-size: 2.2rem; }
       .hero p { font-size: 1.05rem; margin-bottom: 22px; }
       
-      /* AJUSTE RESPONSIVO DA BARRA DE PESQUISA NA TELA INICIAL */
       .search-box { flex-direction: column; background: transparent; padding: 0; box-shadow: none; gap: 10px; max-width: 95%; margin: 0 auto; border: none;}
       .search-box input { border-radius: 12px; padding: 16px; background: white; width: 100%; border: 1px solid #ccc; font-size: 1rem;}
       .search-box button { border-radius: 12px; padding: 16px; width: 100%; height: auto; font-size: 1.1rem; justify-content: center;}
       
-      /* AJUSTE RESPONSIVO DA CAIXA DE RESULTADO DA IA (TELA INICIAL) */
       #search-result-area { max-width: 95% !important; margin: 15px auto !important; font-size: 0.95rem; }
 
       .live-stats-bar { position: relative; background: rgba(0,0,0,0.78); }
@@ -360,7 +359,6 @@
       .report-grid { grid-template-columns: 1fr; gap: 25px; }
       .report-header h2 { font-size: 2.2rem; }
       
-      /* CHATBOT TELA CHEIA NO MOBILE PARA FICAR PERFEITO */
       .chat-interface { right: 0; left: 0; bottom: 0; width: 100%; height: 85vh; border-radius: 20px 20px 0 0; z-index: 100000; position: fixed;}
       .chat-widget-btn { right: 16px; bottom: 18px; width: 60px; height: 60px; z-index: 99999;}
       
@@ -411,7 +409,7 @@
   <header>
     <div class="container header-grid">
       <a class="brand" onclick="window.acessoAdmin()">
-        <img src="imagens/5.png" alt="Brasão SP" style="height: 60px; width: auto;" />
+        <img src="imagens/5.png" alt="Brasão SP" />
         <div class="brand-text">
           <h1>COVISA</h1>
           <span>Vigilância em Saúde</span>
@@ -894,7 +892,7 @@
         let tagRetorno = "👤 Novo";
         if(localStorage.getItem('ja_visitou')) {
             isRecorrente = true;
-            tagRetorno = "🔄 Retorno";
+            tagRetorno = "🔄 Recorrente";
         } else {
             localStorage.setItem('ja_visitou', 'sim');
         }
@@ -943,6 +941,7 @@
                     modelo: osInfo,
                     localizacao: userLocation,
                     regiao: userRegion,
+                    recorrente: isRecorrente,
                     tipoVisitante: tagRetorno,
                     dataHora: new Date().getTime()
                 });
