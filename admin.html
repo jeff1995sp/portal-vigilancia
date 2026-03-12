@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
   <style>
     :root {
@@ -298,7 +300,7 @@
     .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.5rem; padding: 5px; }
 
     /* ======================================================== */
-    /* CSS ADICIONADO: MAPA DE SÃO PAULO E ZONAS QUENTES        */
+    /* CSS ADICIONADO: MAPA GOOGLE, ZONAS QUENTES E ESPIÃO      */
     /* ======================================================== */
     .war-room-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px; }
     .map-card { background: var(--bg-card); padding: 25px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); position: relative; }
@@ -306,21 +308,12 @@
     .top-city-item { display: flex; justify-content: space-between; padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; color: var(--text-main); font-weight: 600; }
     .top-city-item span.count { background: var(--gemini-purple); color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 900; }
     
-    .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 350px; overflow-y: auto; padding: 20px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+    .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 400px; overflow-y: auto; padding: 20px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
     .feed-item { padding: 12px; border-bottom: 1px dashed #1e293b; color: #94a3b8; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; animation: slideDown 0.3s ease-out forwards; flex-wrap: wrap; }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     .feed-item span.time { color: var(--gemini-purple); font-weight: bold; }
     .feed-item span.device { font-size: 1.3rem; }
     .feed-item span.action { color: #f8fafc; }
-    
-    /* RADAR DE SÃO PAULO */
-    .radar-container { position: relative; width: 100%; height: 320px; background-color: #02060d; background-image: linear-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 189, 248, 0.1) 1px, transparent 1px), radial-gradient(circle, rgba(56, 189, 248, 0.1) 1px, transparent 1px); background-size: 40px 40px, 40px 40px, 100px 100px; background-position: center center; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    .radar-sweep-sp { position: absolute; width: 800px; height: 800px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 70%, rgba(239, 68, 68, 0.5) 100%); animation: radar-spin 4s linear infinite; pointer-events: none; }
-    @keyframes radar-spin { 100% { transform: rotate(360deg); } }
-    .target-dot { position: absolute; width: 12px; height: 12px; background-color: #ef4444; border-radius: 50%; box-shadow: 0 0 15px #ef4444, 0 0 30px #ef4444; z-index: 10; transform: translate(-50%, -50%); }
-    .target-pulse { position: absolute; top: -14px; left: -14px; width: 40px; height: 40px; border: 2px solid #ef4444; border-radius: 50%; animation: target-pulse-anim 2s infinite ease-out; }
-    @keyframes target-pulse-anim { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
-    .target-label { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); color: #f8fafc; font-family: var(--font-code); font-size: 0.75rem; font-weight: bold; background: rgba(0,0,0,0.8); padding: 2px 6px; border: 1px solid #ef4444; border-radius: 4px; white-space: nowrap; }
     
     @media (max-width: 900px) {
         .war-room-grid { grid-template-columns: 1fr; }
@@ -362,7 +355,7 @@
         <a class="nav-item active" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Geral</a>
         <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Banco de Dados</a>
         <a class="nav-item" onclick="switchView('view-financeiro', this)"><i class="fas fa-comment-dots"></i> Assistente WhatsApp</a>
-        <a class="nav-item" onclick="switchView('view-trafego', this)"><i class="fas fa-chart-line"></i> Monitor de Tráfego</a>
+        <a class="nav-item" onclick="switchView('view-trafego', this)"><i class="fas fa-satellite-dish"></i> Monitor de Tráfego</a>
         <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot"></i> IA Jurídica</a>
         <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
@@ -578,18 +571,8 @@
 
           <div class="war-room-grid">
             <div class="map-card">
-              <h3 style="color: white; margin-bottom: 20px; position: relative; z-index: 20;"><i class="fas fa-crosshairs" style="color: var(--danger);"></i> Radar Tático (Foco São Paulo)</h3>
-              
-              <div class="radar-container">
-                  <div class="radar-sweep-sp"></div>
-                  <div class="target-dot" style="top: 50%; left: 50%;" title="São Paulo Capital"><div class="target-pulse"></div><span class="target-label">São Paulo</span></div>
-                  <div class="target-dot" style="top: 58%; left: 53%;" title="Diadema / ABC"><div class="target-pulse"></div><span class="target-label">Diadema</span></div>
-                  <div class="target-dot" style="top: 38%; left: 45%;" title="Campinas e Região"><div class="target-pulse"></div><span class="target-label">Campinas</span></div>
-                  <div class="target-dot" style="top: 65%; left: 58%;" title="Baixada Santista"><div class="target-pulse"></div><span class="target-label">Santos</span></div>
-                  <div class="target-dot" style="top: 42%; left: 62%;" title="Vale do Paraíba"><div class="target-pulse"></div><span class="target-label">S.J. Campos</span></div>
-                  <div class="target-dot" style="top: 18%; left: 35%;" title="Ribeirão Preto"><div class="target-pulse"></div><span class="target-label">Ribeirão Preto</span></div>
-              </div>
-              
+              <h3 style="color: white; margin-bottom: 20px;"><i class="fas fa-map-marked-alt" style="color: var(--primary);"></i> Radar Nacional (Acessos)</h3>
+              <div id="brazil_map" style="width: 100%; height: 320px;"></div>
             </div>
             
             <div class="top-cities-card">
@@ -600,16 +583,7 @@
             </div>
           </div>
 
-          <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-xl); border: 1px solid var(--border); height: 400px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-               <h3 style="color: white; font-weight: 800;"><i class="fas fa-heartbeat" style="color: var(--success); margin-right: 10px;"></i> Monitor de Pulso (Batimentos de Conexão)</h3>
-            </div>
-            <div style="position: relative; height: 85%; width: 100%;">
-                <canvas id="chartAcessos"></canvas>
-            </div>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 15px;">
               <h3 style="color: white; font-weight: 800;"><i class="fas fa-satellite-dish" style="color: var(--primary);"></i> Console Espião (Atividades ao Vivo)</h3>
               <a href="https://clarity.microsoft.com/" target="_blank" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;"><i class="fas fa-video"></i> Ver Gravações de Tela (Microsoft)</a>
           </div>
@@ -623,14 +597,14 @@
           <div class="page-title">
             <div>
               <h1><i class="fas fa-microscope" style="color: var(--gemini-purple);"></i> Laboratório Forense de Mídia</h1>
-              <p>Envie fotos ou vídeos para a IA caçar infrações, analisar Photoshop e mapear riscos.</p>
+              <p>Envie fotos ou vídeos para a IA caçar infrações, analisar Photoshop e mapear riscos. Aceita (Ctrl+V).</p>
             </div>
           </div>
           
           <div class="lab-container">
             <div class="lab-upload-box" id="lab-drop-area" onclick="document.getElementById('lab-file-input').click()">
               <i class="fas fa-cloud-upload-alt icon-big"></i>
-              <h3 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">Solte a Foto ou Vídeo Aqui</h3>
+              <h3 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">Solte a Foto ou Dê Ctrl+V Aqui</h3>
               <p style="color: var(--text-muted); margin-bottom: 20px;">Ou clique para procurar no seu computador (Máx 15MB)</p>
               <button class="btn btn-gemini"><i class="fas fa-search"></i> Selecionar Arquivo</button>
               
@@ -686,7 +660,7 @@
             <div class="chat-history" id="chat-historico">
               <div class="chat-msg msg-ai">
                 <strong style="color:var(--gemini-purple); font-size: 1.2rem;"><i class="fas fa-robot"></i> Sistema Auditor AI:</strong><br><br>
-                Olá! Como posso te ajudar hoje? Você pode me perguntar qualquer coisa, enviar fotos/vídeos ou selecionar um processo acima para que eu possa analisá-lo com você.
+                Olá! Como posso te ajudar hoje? Você pode me perguntar qualquer coisa, colar um Print (Ctrl+V) da tela, ou selecionar um processo acima para que eu possa analisá-lo com você.
               </div>
             </div>
 
@@ -698,7 +672,7 @@
                 </button>
                 <input type="file" id="chat-file-input" style="display: none;" accept="image/*,video/*">
 
-                <input type="text" id="chat-input-text" placeholder="Escreva a sua mensagem aqui..." onkeypress="if(event.key === 'Enter') enviarChat()">
+                <input type="text" id="chat-input-text" placeholder="Escreva a sua mensagem aqui ou cole um Print (Ctrl+V)..." onkeypress="if(event.key === 'Enter') enviarChat()">
                 <button class="btn btn-gemini" onclick="enviarChat()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px;"><i class="fas fa-paper-plane"></i> Enviar</button>
               </div>
             </div>
@@ -718,7 +692,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
               <div>
                 <h3 style="color: white; margin: 0; font-size: 1.5rem; font-weight: 900;"><i class="fas fa-robot" style="color: var(--gemini-purple);"></i> Relatório de Fim de Dia (IA)</h3>
-                <p style="color: var(--text-muted); margin-top: 5px;">Análise tática gerada pelo Gemini baseada nos acessos diários.</p>
+                <p style="color: var(--text-muted); margin-top: 5px;">Análise tática gerada pelo Gemini baseada nos acessos diários e logs do sistema.</p>
               </div>
               <div style="display: flex; gap: 15px;">
                  <button onclick="gerarRelatorioIA()" id="btn-relatorio-ia" class="btn btn-gemini"><i class="fas fa-bolt"></i> Gerar Parecer Tático</button>
@@ -926,7 +900,7 @@
     let idProcessoAtual = null;
     let dadosProcessoAtual = null; 
     let todosProcessos = []; 
-    let chartBar, chartDoughnut, chartAcessosObj;
+    let chartBar, chartDoughnut;
     const logsAuditoria = [];
     
     let memoriaDoChat = []; 
@@ -936,6 +910,32 @@
     let arquivoAnexoParaEnviarZap = null;
     let arquivoLaboratorio = null;
     const TAMANHO_MAX_ARQUIVO_MB = 15;
+
+    // ==============================================
+    // CONFIGURAÇÃO DO MAPA DO GOOGLE (WAR ROOM)
+    // ==============================================
+    let chartMapLoaded = false;
+    google.charts.load('current', { 'packages':['geochart'] });
+    google.charts.setOnLoadCallback(() => { chartMapLoaded = true; drawRegionsMap(); });
+
+    let mapDataArray = [['Estado', 'Ações Detectadas']];
+
+    function drawRegionsMap() {
+        if(!chartMapLoaded || !document.getElementById('brazil_map')) return;
+        var data = google.visualization.arrayToDataTable(mapDataArray);
+        var options = {
+            region: 'BR',
+            displayMode: 'regions',
+            resolution: 'provinces',
+            backgroundColor: 'transparent',
+            datalessRegionColor: '#0f172a',
+            defaultColor: '#1e293b',
+            colorAxis: {colors: ['#3b82f6', '#c084fc', '#da251c']}
+        };
+        var chart = new google.visualization.GeoChart(document.getElementById('brazil_map'));
+        chart.draw(data, options);
+    }
+    // ==============================================
 
     function converterArquivoParaBase64(file) {
       return new Promise((resolve, reject) => {
@@ -1303,7 +1303,7 @@
             let st = document.getElementById("modal-status-select").value;
             textoZap = `Prefeitura de São Paulo - COVISA\n*${dadosProcessoAtual.nome}*\n`;
             if(st === 'pendente') textoZap += `Aviso: Seu processo está pendente de análise.`;
-            if(st === 'aguardando') textoZap += `A taxa de *R$ ${document.getElementById("modal-valor-input").value}* foi emitida.`;
+            if(st === 'aguardando') textoZap += `A taxa foi emitida. Para prosseguirmos com a sua licença, por favor, realize o pagamento no site oficial.`;
             if(st === 'pago') textoZap += `PARABÉNS! Sua licença sanitária foi *APROVADA*.`;
         }
         document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(textoZap)}`;
@@ -1316,7 +1316,7 @@
         let contexto = `Crie uma mensagem de WhatsApp educada, mas oficial, para a empresa ${dadosProcessoAtual.nome}. 
         Status que decidi: ${document.getElementById("modal-status-select").value}.
         Minhas notas sobre o caso: ${document.getElementById("modal-notas-input").value}
-        Não use markdown de negrito duplo (**), use apenas o asterisco simples do whatsapp (*).`;
+        Não use markdown de negrito duplo (**), use apenas o asterisco simples do whatsapp (*). Não cite valores de dinheiro fixos se não houver nas notas.`;
 
         try {
             const envio = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
@@ -1952,6 +1952,9 @@
                     cidadeCounts[loc] = (cidadeCounts[loc] || 0) + 1;
                 }
 
+                // Deixa o log mais claro, com formatação que destaca a ação
+                let acaoClara = d.acao.replace('Tocou em:', 'Acessou:').replace('Preencheu o campo:', 'Preencheu Documento:');
+
                 feedContainer.innerHTML += `
                     <div class="feed-item">
                         <span class="time">[${dataFormata}]</span>
@@ -1959,7 +1962,7 @@
                         <span style="color: #c084fc; font-weight: 800; padding: 2px 8px; background: rgba(192, 132, 252, 0.1); border-radius: 4px;">${tipoVis}</span>
                         <span style="color: #38bdf8; font-weight: 800; padding: 2px 8px; background: rgba(56, 189, 248, 0.1); border-radius: 4px;">${mod}</span>
                         <span style="color: #10b981; font-weight: 800;"><i class="fas fa-map-marker-alt"></i> ${loc}</span>
-                        <span class="action" style="color: white;">➜ ${d.acao}</span>
+                        <span class="action" style="color: white; margin-left: 10px; font-weight: bold; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px;">➜ ${acaoClara}</span>
                     </div>
                 `;
             });
@@ -1978,7 +1981,7 @@
             document.getElementById('top_cities_list').innerHTML = cityHtml;
         });
 
-        // 4. Loop do Gráfico (Roda a cada 2 segundos para dar o efeito "Ao Vivo")
+        // 4. Loop de Pessoas Online
         setInterval(() => {
             let agora = Date.now();
             let onlineAgora = 0;
@@ -1994,13 +1997,6 @@
             document.getElementById('trafego-agora').innerText = onlineAgora;
             if(onlineAgora > picoMaximo) picoMaximo = onlineAgora;
             document.getElementById('trafego-pico').innerText = picoMaximo;
-
-            if (chartAcessosObj) {
-                let dataArray = chartAcessosObj.data.datasets[0].data;
-                dataArray.push(onlineAgora);
-                dataArray.shift(); 
-                chartAcessosObj.update('none'); 
-            }
         }, 2000);
     }
     
@@ -2090,59 +2086,9 @@
               options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
           });
 
-          // INICIALIZAÇÃO DO NOVO GRÁFICO DE TRÁFEGO AO VIVO
-          const ctxAcessos = document.getElementById('chartAcessos');
-          if (ctxAcessos) {
-              const contextoAcessos = ctxAcessos.getContext('2d');
-              let gradient = contextoAcessos.createLinearGradient(0, 0, 0, 400);
-              gradient.addColorStop(0, 'rgba(16, 185, 129, 0.6)'); // Verde Success
-              gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
-
-              // Cria 30 pontos vazios para simular os últimos segundos (A linha anda para o lado)
-              let labelsSegundos = Array(30).fill(''); 
-              let dataSegundos = Array(30).fill(0);
-
-              chartAcessosObj = new Chart(contextoAcessos, {
-                  type: 'line',
-                  data: {
-                      labels: labelsSegundos,
-                      datasets: [{
-                          label: 'Pessoas Online',
-                          data: dataSegundos,
-                          borderColor: '#10b981',
-                          backgroundColor: gradient,
-                          borderWidth: 3,
-                          fill: true,
-                          tension: 0.4,
-                          pointBackgroundColor: '#10b981',
-                          pointBorderColor: '#fff',
-                          pointBorderWidth: 2,
-                          pointRadius: 0, // Esconde as bolinhas para ficar parecendo um monitor de hospital
-                          pointHoverRadius: 5
-                      }]
-                  },
-                  options: {
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      animation: {
-                          duration: 500, // Animação de rolagem suave
-                          easing: 'linear'
-                      },
-                      plugins: {
-                          legend: { display: false },
-                          tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(15, 23, 42, 0.9)', titleColor: '#fff', bodyColor: '#10b981', borderColor: '#334155', borderWidth: 1 }
-                      },
-                      scales: {
-                          y: { grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#94a3b8', stepSize: 1 }, min: 0, suggestedMax: 10 },
-                          x: { grid: { display: false, drawBorder: false } }
-                      },
-                      interaction: { mode: 'nearest', axis: 'x', intersect: false }
-                  }
-              });
-              
-              // Inicia a escuta real no Firebase
-              iniciarMonitorDeTrafegoReal();
-          }
+          // Inicia a escuta real no Firebase
+          iniciarMonitorDeTrafegoReal();
+          
       } catch (err) {}
     }
 
