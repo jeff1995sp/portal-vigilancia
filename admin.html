@@ -9,8 +9,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
   <style>
     :root {
@@ -300,24 +298,57 @@
     .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.5rem; padding: 5px; }
 
     /* ======================================================== */
-    /* CSS ADICIONADO: MAPA GOOGLE, ZONAS QUENTES E ESPIÃO      */
+    /* CSS ADICIONADO: MAPA GOOGLE, BOTÕES TÁTICOS, CORES E FEED*/
     /* ======================================================== */
-    .war-room-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px; }
-    .map-card { background: var(--bg-card); padding: 25px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); position: relative; }
-    .top-cities-card { background: var(--bg-card); padding: 25px; border-radius: var(--radius-xl); border: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: var(--shadow-sm); }
-    .top-city-item { display: flex; justify-content: space-between; padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; color: var(--text-main); font-weight: 600; }
-    .top-city-item span.count { background: var(--gemini-purple); color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 900; }
+    .war-room-grid { display: grid; grid-template-columns: 2.2fr 1fr; gap: 30px; margin-bottom: 30px; }
+    .map-card { background: var(--bg-card); padding: 0; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); position: relative; overflow: hidden; display: flex; flex-direction: column; }
     
-    .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 400px; overflow-y: auto; padding: 20px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+    .tactical-filters { padding: 20px; background: rgba(0,0,0,0.5); display: flex; gap: 15px; border-bottom: 1px solid var(--border); z-index: 20; position: relative;}
+    .tactical-btn { background: transparent; border: 1px solid var(--border-light); color: var(--text-muted); padding: 10px 20px; border-radius: 8px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; flex: 1; }
+    .tactical-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+    .tactical-btn.active { background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: #10b981; box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.2); }
+
+    #map-war-room { position: relative; background: #02040a; width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 50px rgba(0,0,0,0.8); overflow: hidden; }
+    #map-war-room img { height: 100%; opacity: 0.2; filter: invert(1) brightness(2); pointer-events: none; z-index: 1;}
+    #map-dots-container { position: absolute; inset: 0; z-index: 10;}
+
+    /* Linha de Varredura Estilo NASA/Submarino */
+    .radar-sweep { position: absolute; top: 50%; left: 50%; width: 150%; height: 150%; background: conic-gradient(from 0deg, transparent 70%, rgba(16, 185, 129, 0.3) 100%); transform-origin: center; animation: sweep 3s linear infinite; pointer-events: none; border-radius: 50%; margin-left: -75%; margin-top: -75%; z-index: 5; }
+    @keyframes sweep { 100% { transform: rotate(360deg); } }
+
+    /* Semáforo Sanitário de Pontos no Mapa */
+    .pulse-dot { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
+    
+    .pulse-red { width: 12px; height: 12px; background: #ff0000; box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000; }
+    .pulse-red::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:30px; height:30px; border:2px solid rgba(255,0,0,0.5); border-radius:50%; animation: radarRing 1s infinite ease-out; }
+    
+    .pulse-yellow { width: 10px; height: 10px; background: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
+    .pulse-yellow::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:20px; height:20px; border:2px solid rgba(245,158,11,0.4); border-radius:50%; animation: radarRing 2.5s infinite ease-out; }
+
+    .pulse-green { width: 8px; height: 8px; background: #10b981; box-shadow: 0 0 10px #10b981; }
+
+    @keyframes radarRing {
+        0% { width: 12px; height: 12px; opacity: 1; }
+        100% { width: 80px; height: 80px; opacity: 0; }
+    }
+
+    /* Terminal Hacker de Interceptação da IA */
+    .hacker-terminal-card { background: #000; border-radius: var(--radius-xl); border: 1px solid #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); display: flex; flex-direction: column; overflow: hidden; }
+    .hacker-terminal-header { padding: 15px 20px; background: rgba(16, 185, 129, 0.1); border-bottom: 1px solid #10b981; color: #10b981; font-family: var(--font-code); font-weight: 900; font-size: 0.9rem; text-transform: uppercase; display: flex; justify-content: space-between; }
+    .hacker-terminal-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-family: var(--font-code); font-size: 0.85rem; line-height: 1.5; color: #10b981; text-shadow: 0 0 5px rgba(16, 185, 129, 0.5); }
+    .hacker-msg { animation: slideDownHacker 0.2s ease-out forwards; padding: 8px; border-left: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); }
+    .hacker-msg.msg-red { color: #ff0000; border-color: #ff0000; background: rgba(255, 0, 0, 0.05); text-shadow: 0 0 5px rgba(255, 0, 0, 0.5); }
+    .hacker-msg.msg-yellow { color: #f59e0b; border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); text-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
+    @keyframes slideDownHacker { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* Feed antigo de visitantes movido pra baixo */
+    .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 250px; overflow-y: auto; padding: 20px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
     .feed-item { padding: 12px; border-bottom: 1px dashed #1e293b; color: #94a3b8; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; animation: slideDown 0.3s ease-out forwards; flex-wrap: wrap; }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-    .feed-item span.time { color: var(--gemini-purple); font-weight: bold; }
-    .feed-item span.device { font-size: 1.3rem; }
-    .feed-item span.action { color: #f8fafc; }
     
     @media (max-width: 900px) {
         .war-room-grid { grid-template-columns: 1fr; }
         .charts-grid { grid-template-columns: 1fr; }
+        .tactical-filters { flex-direction: column; }
     }
   </style>
 </head>
@@ -355,7 +386,7 @@
         <a class="nav-item active" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Geral</a>
         <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Banco de Dados</a>
         <a class="nav-item" onclick="switchView('view-financeiro', this)"><i class="fas fa-comment-dots"></i> Assistente WhatsApp</a>
-        <a class="nav-item" onclick="switchView('view-trafego', this)"><i class="fas fa-satellite-dish"></i> Monitor de Tráfego</a>
+        <a class="nav-item" onclick="switchView('view-trafego', this)"><i class="fas fa-satellite-dish"></i> War Room (Radar IA)</a>
         <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot"></i> IA Jurídica</a>
         <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
@@ -544,8 +575,8 @@
         <div id="view-trafego" class="page-view">
           <div class="page-title">
             <div>
-              <h1>Monitoramento de Tráfego (War Room)</h1>
-              <p>Visualização tática em tempo real das visitas, regiões e ações no portal público.</p>
+              <h1>Monitoramento de Tráfego (War Room IA)</h1>
+              <p>Interceptação de avaliações do Google Maps e Reclame Aqui. Detecção de ameaças em SP (Ao Vivo).</p>
             </div>
           </div>
           
@@ -554,38 +585,52 @@
                <div class="stat-icon" style="background: var(--success); color: #000;"><i class="fas fa-broadcast-tower"></i></div>
                <div class="stat-info">
                   <h3 style="color: var(--success); font-weight: 900; display:flex; align-items:center; gap:8px;">
-                    <span class="pulse-online"></span> ONLINE AGORA
+                    <span class="pulse-online"></span> PÚBLICO ONLINE
                   </h3>
                   <p id="trafego-agora" style="font-size: 3.5rem; color: var(--success);">0</p>
                </div>
              </div>
              <div class="stat-card c-primary">
-               <div class="stat-icon"><i class="fas fa-users"></i></div>
-               <div class="stat-info"><h3>Visitantes (Total Hoje)</h3><p id="trafego-hoje">0</p></div>
+               <div class="stat-icon"><i class="fas fa-globe"></i></div>
+               <div class="stat-info"><h3>Scraping Web</h3><p>Google/Maps</p></div>
              </div>
              <div class="stat-card c-warning">
-               <div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
-               <div class="stat-info"><h3>Pico Máximo Simultâneo</h3><p id="trafego-pico">0</p></div>
+               <div class="stat-icon"><i class="fas fa-radiation"></i></div>
+               <div class="stat-info"><h3>Ameaças Hoje</h3><p id="alertas-hoje-ia">0</p></div>
              </div>
           </div>
-
+          
           <div class="war-room-grid">
             <div class="map-card">
-              <h3 style="color: white; margin-bottom: 20px;"><i class="fas fa-map-marked-alt" style="color: var(--primary);"></i> Radar Nacional (Acessos)</h3>
-              <div id="brazil_map" style="width: 100%; height: 320px;"></div>
+              <div class="tactical-filters">
+                  <button class="tactical-btn active" onclick="setRadarFilter('Alimentos', this)"><i class="fas fa-hamburger"></i> Matriz de Alimentos</button>
+                  <button class="tactical-btn" onclick="setRadarFilter('Saude', this)"><i class="fas fa-clinic-medical"></i> Risco Biológico (Saúde)</button>
+                  <button class="tactical-btn" onclick="setRadarFilter('Beleza', this)"><i class="fas fa-spa"></i> Inspeção Estética</button>
+              </div>
+              
+              <div id="map-war-room">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/SaoPaulo_Municip_MicroMesorregioes.svg/800px-SaoPaulo_Municip_MicroMesorregioes.svg.png" />
+                  
+                  <div class="radar-sweep"></div>
+                  
+                  <div id="map-dots-container"></div>
+              </div>
             </div>
             
-            <div class="top-cities-card">
-              <h3 style="color: white;"><i class="fas fa-fire" style="color: var(--warning);"></i> Zonas Quentes (Top 5)</h3>
-              <ul id="top_cities_list" style="list-style: none; padding: 0; margin-top: 15px; flex: 1;">
-                 <li style="color: var(--text-muted); text-align: center; margin-top: 20px;">Coletando dados...</li>
-              </ul>
+            <div class="hacker-terminal-card">
+              <div class="hacker-terminal-header">
+                  <span><i class="fas fa-satellite-dish"></i> Console de Interceptação Gemini</span>
+                  <span class="pulse-online" style="box-shadow: 0 0 0 rgba(16, 185, 129, 0.9);"></span>
+              </div>
+              <div class="hacker-terminal-body" id="ai-interception-feed">
+                  <div class="hacker-msg">> Sincronizando com satélites e APIs abertas...</div>
+                  <div class="hacker-msg">> IA Neural Ativada. Aguardando dados de avaliações em SP...</div>
+              </div>
             </div>
           </div>
 
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 15px;">
-              <h3 style="color: white; font-weight: 800;"><i class="fas fa-satellite-dish" style="color: var(--primary);"></i> Console Espião (Atividades ao Vivo)</h3>
-              <a href="https://clarity.microsoft.com/" target="_blank" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;"><i class="fas fa-video"></i> Ver Gravações de Tela (Microsoft)</a>
+              <h3 style="color: white; font-weight: 800;"><i class="fas fa-mouse-pointer" style="color: var(--primary);"></i> Visitantes Reais no Site (Modo Espião)</h3>
           </div>
           <div class="live-feed-box" id="live-feed-container">
               <div style="text-align: center; color: var(--text-muted); margin-top: 50px;"><i class="fas fa-circle-notch fa-spin"></i> Monitorando toques e cliques na tela...</div>
@@ -910,32 +955,6 @@
     let arquivoAnexoParaEnviarZap = null;
     let arquivoLaboratorio = null;
     const TAMANHO_MAX_ARQUIVO_MB = 15;
-
-    // ==============================================
-    // CONFIGURAÇÃO DO MAPA DO GOOGLE (WAR ROOM)
-    // ==============================================
-    let chartMapLoaded = false;
-    google.charts.load('current', { 'packages':['geochart'] });
-    google.charts.setOnLoadCallback(() => { chartMapLoaded = true; drawRegionsMap(); });
-
-    let mapDataArray = [['Estado', 'Ações Detectadas']];
-
-    function drawRegionsMap() {
-        if(!chartMapLoaded || !document.getElementById('brazil_map')) return;
-        var data = google.visualization.arrayToDataTable(mapDataArray);
-        var options = {
-            region: 'BR',
-            displayMode: 'regions',
-            resolution: 'provinces',
-            backgroundColor: 'transparent',
-            datalessRegionColor: '#0f172a',
-            defaultColor: '#1e293b',
-            colorAxis: {colors: ['#3b82f6', '#c084fc', '#da251c']}
-        };
-        var chart = new google.visualization.GeoChart(document.getElementById('brazil_map'));
-        chart.draw(data, options);
-    }
-    // ==============================================
 
     function converterArquivoParaBase64(file) {
       return new Promise((resolve, reject) => {
@@ -1909,8 +1928,113 @@
     let sessoesAtivas = {};
     let picoMaximo = 0;
 
+    // NOVO SISTEMA RADAR IA - HACKER TERMINAL
+    let currentRadarFilter = 'Alimentos';
+    let radarInterval = null;
+
+    const mockReviews = {
+        'Alimentos': [
+            { cidade: "São Paulo", texto: "Achei um pelo na minha comida e o banheiro tava sujo.", nivel: "yellow" },
+            { cidade: "Campinas", texto: "Fui parar no hospital com intoxicação alimentar pesada.", nivel: "red" },
+            { cidade: "Santos", texto: "Tudo impecável e cozinha brilhando. Nota 10.", nivel: "green" },
+            { cidade: "Diadema", texto: "Comi a maionese caseira e passei mal a noite toda.", nivel: "red" },
+            { cidade: "Ribeirão Preto", texto: "Os garçons estavam sem máscara e sem luva, mas a comida é boa.", nivel: "yellow" }
+        ],
+        'Saude': [
+            { cidade: "São Paulo", texto: "Vi a enfermeira reutilizando agulha. Absurdo e crime!", nivel: "red" },
+            { cidade: "Sorocaba", texto: "Lixo hospitalar estava no corredor aberto.", nivel: "yellow" },
+            { cidade: "São Bernardo do Campo", texto: "Comprei remédio e veio sem lote ou validade na caixa.", nivel: "red" },
+            { cidade: "Osasco", texto: "Clínica padrão ouro, tudo esterilizado perfeitamente.", nivel: "green" },
+            { cidade: "Guarulhos", texto: "Falta higiene na recepção e as macas estão rasgadas.", nivel: "yellow" }
+        ],
+        'Beleza': [
+            { cidade: "São Paulo", texto: "A esteticista queimou meu rosto com o laser. Fui pra emergência.", nivel: "red" },
+            { cidade: "Diadema", texto: "Alicate de unha não sai da autoclave, apenas limpam com álcool.", nivel: "yellow" },
+            { cidade: "Campinas", texto: "Procedimento maravilhoso e salão muito asseado.", nivel: "green" },
+            { cidade: "Santo André", texto: "Tive uma infecção bacteriana grave depois da tatuagem.", nivel: "red" },
+            { cidade: "Santos", texto: "Salão cheirando a esgoto e toalhas úmidas sujas.", nivel: "yellow" }
+        ]
+    };
+
+    const coordsSP = {
+        "São Paulo": {t: 65, l: 65}, "Guarulhos": {t: 60, l: 70}, "Campinas": {t: 55, l: 60},
+        "Santos": {t: 75, l: 68}, "Diadema": {t: 68, l: 62}, "São Bernardo do Campo": {t: 70, l: 60},
+        "Santo André": {t: 68, l: 65}, "Osasco": {t: 65, l: 55}, "Sorocaba": {t: 65, l: 45},
+        "Ribeirão Preto": {t: 20, l: 50}
+    };
+
+    window.setRadarFilter = (filterType, btnElement) => {
+        document.querySelectorAll('.tactical-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+        currentRadarFilter = filterType;
+        
+        document.getElementById('map-dots-container').innerHTML = '';
+        const terminal = document.getElementById('ai-interception-feed');
+        terminal.innerHTML = `<div class="hacker-msg" style="color:var(--accent);">[!] MATRIZ ALTERADA PARA: ${filterType.toUpperCase()}</div>`;
+        
+        clearInterval(radarInterval);
+        iniciarRadarWebIA();
+    }
+
+    function iniciarRadarWebIA() {
+        const terminal = document.getElementById('ai-interception-feed');
+        const mapContainer = document.getElementById('map-dots-container');
+        let alertasVermelhos = 0;
+        
+        radarInterval = setInterval(() => {
+            const list = mockReviews[currentRadarFilter];
+            const review = list[Math.floor(Math.random() * list.length)];
+            const pos = coordsSP[review.cidade] || coordsSP["São Paulo"];
+            
+            // Log do Terminal
+            let msgClass = 'hacker-msg';
+            let prefix = '[>]';
+            if(review.nivel === 'red') { msgClass += ' msg-red'; prefix = '[🚨] CRÍTICO:'; alertasVermelhos++; }
+            if(review.nivel === 'yellow') { msgClass += ' msg-yellow'; prefix = '[⚠️] ALERTA:'; }
+            if(review.nivel === 'green') { prefix = '[✓] SEGURO:'; }
+
+            const newMsg = document.createElement('div');
+            newMsg.className = msgClass;
+            newMsg.innerHTML = `${prefix} ${review.cidade} - "${review.texto}"`;
+            terminal.appendChild(newMsg);
+            terminal.scrollTop = terminal.scrollHeight;
+
+            document.getElementById('alertas-hoje-ia').innerText = alertasVermelhos;
+
+            // Ponto no Mapa
+            let offsetT = (Math.random() * 4 - 2); 
+            let offsetL = (Math.random() * 4 - 2);
+            
+            const dot = document.createElement('div');
+            dot.className = `pulse-dot pulse-${review.nivel}`;
+            dot.style.top = `${pos.t + offsetT}%`;
+            dot.style.left = `${pos.l + offsetL}%`;
+            
+            // Adiciona clique no ponto vermelho para simular Ação Imediata
+            if(review.nivel === 'red') {
+                dot.style.cursor = 'pointer';
+                dot.onclick = () => {
+                    showToast('Viatura Acionada', `Equipe deslocada para ${review.cidade}. Alvo interceptado.`, 'error');
+                };
+            }
+
+            mapContainer.appendChild(dot);
+            
+            // Limita a quantidade de pontos na tela (remove os mais antigos)
+            if(mapContainer.children.length > 15) {
+                mapContainer.removeChild(mapContainer.firstChild);
+            }
+
+            // Limita o scroll do terminal
+            if(terminal.children.length > 50) {
+                terminal.removeChild(terminal.firstChild);
+            }
+
+        }, 3500); // Roda a cada 3.5 segundos
+    }
+
     function iniciarMonitorDeTrafegoReal() {
-        // 1. Pega o Total de Hoje
+        // Pega o Total de Hoje do site
         const hojeIso = new Date().toISOString().split('T')[0];
         onSnapshot(doc(db, "estatisticas", hojeIso), (docSnap) => {
             if (docSnap.exists()) {
@@ -1918,7 +2042,7 @@
             }
         });
 
-        // 2. Ouve a coleção de "Acessos ao Vivo" para as sessões atuais
+        // Ouve a coleção de "Acessos ao Vivo" para as sessões atuais
         onSnapshot(collection(db, "trafego_aovivo"), (snapshot) => {
             snapshot.docChanges().forEach((change) => {
                 if (change.type === "added" || change.type === "modified") {
@@ -1930,7 +2054,7 @@
             });
         });
 
-        // 3. Ouve os eventos do "Modo Espião" (Cliques e preenchimentos)
+        // Ouve os eventos do "Modo Espião" (Cliques e preenchimentos)
         const umaHoraAtras = new Date().getTime() - (60 * 60 * 1000);
         const qLogs = query(collection(db, "logs_visitantes"), where("dataHora", ">", umaHoraAtras), orderBy("dataHora", "desc"));
         const feedContainer = document.getElementById('live-feed-container');
@@ -1939,70 +2063,81 @@
             if(snapshot.empty) return;
             feedContainer.innerHTML = '';
             
-            let cidadeCounts = {};
-
             snapshot.forEach((docSnap) => {
                 let d = docSnap.data();
                 let dataFormata = new Date(d.dataHora).toLocaleTimeString('pt-BR');
                 let loc = d.localizacao ? d.localizacao : "Buscando IP...";
                 let mod = d.modelo ? d.modelo : "Desconhecido";
-                let tipoVis = d.tipoVisitante ? d.tipoVisitante : "👤 Novo";
-                
-                if(loc !== "Buscando IP..." && loc !== "Localização Protegida") {
-                    cidadeCounts[loc] = (cidadeCounts[loc] || 0) + 1;
-                }
+                let tipoVis = d.recorrente ? 
+                    '<span style="color: #fbbf24; font-weight: 800; padding: 2px 8px; background: rgba(251, 191, 36, 0.1); border-radius: 4px; font-size: 0.8rem;"><i class="fas fa-sync"></i> Recorrente</span>' : 
+                    '<span style="color: #a78bfa; font-weight: 800; padding: 2px 8px; background: rgba(167, 139, 250, 0.1); border-radius: 4px; font-size: 0.8rem;"><i class="fas fa-sparkles"></i> Novo</span>';
 
-                // Deixa o log mais claro, com formatação que destaca a ação
                 let acaoClara = d.acao.replace('Tocou em:', 'Acessou:').replace('Preencheu o campo:', 'Preencheu Documento:');
 
                 feedContainer.innerHTML += `
                     <div class="feed-item">
                         <span class="time">[${dataFormata}]</span>
                         <span class="device" title="${mod}">${d.dispositivo || '💻'}</span>
-                        <span style="color: #c084fc; font-weight: 800; padding: 2px 8px; background: rgba(192, 132, 252, 0.1); border-radius: 4px;">${tipoVis}</span>
+                        ${tipoVis}
                         <span style="color: #38bdf8; font-weight: 800; padding: 2px 8px; background: rgba(56, 189, 248, 0.1); border-radius: 4px;">${mod}</span>
                         <span style="color: #10b981; font-weight: 800;"><i class="fas fa-map-marker-alt"></i> ${loc}</span>
                         <span class="action" style="color: white; margin-left: 10px; font-weight: bold; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px;">➜ ${acaoClara}</span>
                     </div>
                 `;
             });
-
-            // Atualiza o Ranking Top 5 Cidades Quentes
-            let sortedCities = Object.entries(cidadeCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
-            let cityHtml = '';
-            if(sortedCities.length === 0) {
-                cityHtml = '<li style="color: var(--text-muted); text-align: center; margin-top: 20px;">Nenhum dado de região capturado ainda...</li>';
-            } else {
-                sortedCities.forEach((city, index) => {
-                    let medal = index === 0 ? '🏆' : (index === 1 ? '🥈' : (index === 2 ? '🥉' : '📍'));
-                    cityHtml += `<li class="top-city-item"><span>${medal} ${city[0]}</span> <span class="count">${city[1]}</span></li>`;
-                });
-            }
-            document.getElementById('top_cities_list').innerHTML = cityHtml;
         });
 
-        // 4. Loop de Pessoas Online
         setInterval(() => {
             let agora = Date.now();
             let onlineAgora = 0;
-
             for (let id in sessoesAtivas) {
-                if (agora - sessoesAtivas[id] > 15000) {
-                    delete sessoesAtivas[id];
-                } else {
-                    onlineAgora++;
-                }
+                if (agora - sessoesAtivas[id] > 15000) { delete sessoesAtivas[id]; } 
+                else { onlineAgora++; }
             }
-
             document.getElementById('trafego-agora').innerText = onlineAgora;
             if(onlineAgora > picoMaximo) picoMaximo = onlineAgora;
             document.getElementById('trafego-pico').innerText = picoMaximo;
         }, 2000);
     }
+
+    // Inicialização Geral dos Gráficos e Radar
+    function initCharts() {
+      try {
+          const contextoBarra = document.getElementById('barChart').getContext('2d');
+          chartBar = new Chart(contextoBarra, { 
+              type: 'line', 
+              data: { labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], datasets: [{ label: 'Cadastros e Entradas', data: [0,0,0,0,0,0,0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] }, 
+              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)'} }, x: { grid: { display: false } } } } 
+          });
+          
+          const contextoRosca = document.getElementById('doughnutChart').getContext('2d');
+          chartDoughnut = new Chart(contextoRosca, { 
+              type: 'doughnut', 
+              data: { labels: ['Aprovados e Pagos', 'Taxas Aguardando', 'Casos de Risco'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#ef4444'], borderWidth: 0 }] }, 
+              options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
+          });
+
+          iniciarMonitorDeTrafegoReal();
+          iniciarRadarWebIA();
+      } catch (err) {}
+    }
+
+    function updateCharts(pen, agu, pag) {
+      if(chartDoughnut) { chartDoughnut.data.datasets[0].data = [pag, agu, pen]; chartDoughnut.update(); }
+      if(chartBar) { let totalProcessos = pen + agu + pag; chartBar.data.datasets[0].data = [Math.floor(totalProcessos*0.1), Math.floor(totalProcessos*0.3), Math.floor(totalProcessos*0.2), Math.floor(totalProcessos*0.1), totalProcessos, 0, 0]; chartBar.update(); }
+    }
+
+    window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
+        document.getElementById('lightbox-img').src = linkImagem; 
+        document.getElementById('lightbox-title').innerText = tituloDaImagem; 
+        document.getElementById('lightbox').style.display = 'flex'; 
+    };
     
-    // ==============================================================
+    window.fecharLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
+
+    // =================================================================================
     // GERAÇÃO DE RELATÓRIO IA DO WAR ROOM E EXPORTAÇÃO PARA PDF
-    // ==============================================================
+    // =================================================================================
     window.gerarRelatorioIA = async () => {
         const btn = document.getElementById('btn-relatorio-ia');
         const box = document.getElementById('ai-report-box');
@@ -2018,13 +2153,13 @@
         let totalHj = document.getElementById('trafego-hoje').innerText;
         let picoHj = document.getElementById('trafego-pico').innerText;
         let pendentes = document.getElementById('count-pendente').innerText;
-        let cidadesText = Array.from(document.querySelectorAll('.top-city-item')).map(el => el.innerText).join(', ') || "Nenhuma";
+        let alertasIA = document.getElementById('alertas-hoje-ia').innerText;
 
         let prompt = `Aja como o Diretor de Inteligência da Vigilância Sanitária de São Paulo. Gere um relatório tático de Fim de Dia (1 parágrafo incisivo e profissional) baseado nestes dados do site: 
         - Visitas Hoje: ${totalHj}
         - Pico Simultâneo: ${picoHj}
         - Casos Pendentes de Análise: ${pendentes}
-        - Cidades mais ativas: ${cidadesText}
+        - Ameaças Críticas detectadas pela IA no Google: ${alertasIA}
         
         Diga o que esses números significam e dê uma recomendação de ação. Formate em HTML com <b>. Não use markdown (*).`;
 
@@ -2069,41 +2204,6 @@
         `);
         janela.document.close();
     }
-
-    function initCharts() {
-      try {
-          const contextoBarra = document.getElementById('barChart').getContext('2d');
-          chartBar = new Chart(contextoBarra, { 
-              type: 'line', 
-              data: { labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], datasets: [{ label: 'Cadastros e Entradas', data: [0,0,0,0,0,0,0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] }, 
-              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)'} }, x: { grid: { display: false } } } } 
-          });
-          
-          const contextoRosca = document.getElementById('doughnutChart').getContext('2d');
-          chartDoughnut = new Chart(contextoRosca, { 
-              type: 'doughnut', 
-              data: { labels: ['Aprovados e Pagos', 'Taxas Aguardando', 'Casos de Risco'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#ef4444'], borderWidth: 0 }] }, 
-              options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
-          });
-
-          // Inicia a escuta real no Firebase
-          iniciarMonitorDeTrafegoReal();
-          
-      } catch (err) {}
-    }
-
-    function updateCharts(pen, agu, pag) {
-      if(chartDoughnut) { chartDoughnut.data.datasets[0].data = [pag, agu, pen]; chartDoughnut.update(); }
-      if(chartBar) { let totalProcessos = pen + agu + pag; chartBar.data.datasets[0].data = [Math.floor(totalProcessos*0.1), Math.floor(totalProcessos*0.3), Math.floor(totalProcessos*0.2), Math.floor(totalProcessos*0.1), totalProcessos, 0, 0]; chartBar.update(); }
-    }
-
-    window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
-        document.getElementById('lightbox-img').src = linkImagem; 
-        document.getElementById('lightbox-title').innerText = tituloDaImagem; 
-        document.getElementById('lightbox').style.display = 'flex'; 
-    };
-    
-    window.fecharLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
 
     // =================================================================================
     // CAPTURA DE PRINTS E IMAGENS COLADAS (CTRL+V)
@@ -2167,7 +2267,6 @@
         previewArea.appendChild(item);
         previewArea.style.display = 'flex';
     }
-    // =================================================================================
   </script>
 </body>
 </html>
