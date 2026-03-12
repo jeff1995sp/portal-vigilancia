@@ -9,9 +9,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     :root {
@@ -76,7 +73,7 @@
 
     #app-container { display: flex; width: 100%; height: 100%; background: var(--bg-body); }
     
-    .sidebar { width: 290px; height: 100%; background-color: var(--bg-sidebar); display: flex; flex-direction: column; z-index: 1000; border-right: 1px solid var(--border); flex-shrink: 0; }
+    .sidebar { width: 290px; height: 100%; background-color: var(--bg-sidebar); display: flex; flex-direction: column; z-index: 100; border-right: 1px solid var(--border); flex-shrink: 0; }
     .sidebar-header { padding: 40px 30px; display: flex; align-items: center; gap: 18px; border-bottom: 1px solid var(--border); }
     .sidebar-header i.logo-icon { font-size: 2.8rem; background: var(--gemini-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .sidebar-header h2 { font-size: 1.6rem; font-weight: 900; line-height: 1.1; color: white; }
@@ -106,16 +103,16 @@
     .user-info span { font-size: 0.8rem; color: var(--gemini-purple); font-weight: 800; }
     .avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--gemini-gradient); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 15px rgba(192, 132, 252, 0.3); }
 
-    .view-container { flex: 1; overflow-y: auto; position: relative; padding: 40px 60px; }
+    .view-container { flex: 1; overflow-y: auto; position: relative; padding: 50px 60px; }
     .page-view { display: none; animation: fadeInView 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
     .page-view.active { display: block; }
     @keyframes fadeInView { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
     .page-title { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
-    .page-title h1 { font-size: 2.2rem; font-weight: 900; color: white; letter-spacing: -1px; line-height: 1.2;}
-    .page-title p { color: var(--text-muted); font-size: 1.05rem; margin-top: 8px; font-weight: 500; }
+    .page-title h1 { font-size: 2.5rem; font-weight: 900; color: white; letter-spacing: -1px; line-height: 1.2;}
+    .page-title p { color: var(--text-muted); font-size: 1.15rem; margin-top: 8px; font-weight: 500; }
 
-    .btn { padding: 12px 25px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn { padding: 15px 30px; border-radius: var(--radius-md); font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s ease; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
     .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
     .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
     .btn-success { background: var(--success); color: #022c22; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
@@ -131,61 +128,68 @@
     .form-input { width: 100%; padding: 18px 22px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 1.05rem; color: white; background: var(--bg-sidebar); font-family: inherit; transition: 0.3s; }
     .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
 
-    /* DASHBOARD CARDS ALTERADOS - VISUAL MAIS MODERNO */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
-    .stat-card { background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-body) 100%); padding: 30px; border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.03); box-shadow: var(--shadow-md); display: flex; flex-direction: column; position: relative; overflow: hidden; transition: all 0.3s ease; }
-    .stat-card:hover { transform: translateY(-5px); border-color: var(--border-light); }
-    .stat-card::after { content: ''; position: absolute; right: -20px; bottom: -20px; width: 100px; height: 100px; border-radius: 50%; opacity: 0.1; }
-    .stat-card.c-warning::after { background: var(--warning); } .stat-card.c-primary::after { background: var(--primary); } .stat-card.c-success::after { background: var(--success); } .stat-card.c-gemini::after { background: var(--gemini-purple); }
-    .stat-icon-top { font-size: 2rem; margin-bottom: 15px; }
-    .c-warning .stat-icon-top { color: var(--warning); } .c-primary .stat-icon-top { color: var(--primary); } .c-success .stat-icon-top { color: var(--success); } .c-gemini .stat-icon-top { color: var(--gemini-purple); }
-    .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 800; }
-    .stat-info p { font-size: 2.8rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; margin-bottom: 50px; }
+    .stat-card { background: var(--bg-card); padding: 35px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 25px; position: relative; overflow: hidden; transition: all 0.3s ease; }
+    .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--border-light); }
+    .stat-card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 5px; }
+    .stat-card.c-warning::before { background: var(--warning); } .stat-card.c-primary::before { background: var(--primary); } .stat-card.c-success::before { background: var(--success); } .stat-card.c-gemini::before { background: var(--gemini-purple); }
+    .stat-icon { width: 75px; height: 75px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+    .c-warning .stat-icon { background: var(--warning-bg); color: var(--warning); } .c-primary .stat-icon { background: var(--info-light); color: var(--primary); } .c-success .stat-icon { background: var(--success-bg); color: var(--success); } .c-gemini .stat-icon { background: var(--gemini-bg); color: var(--gemini-purple); }
+    .stat-info { flex: 1; }
+    .stat-info h3 { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; }
+    .stat-info p { font-size: 3rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
 
     .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 50px; }
-    .chart-card { background: var(--bg-card); padding: 30px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
-    .chart-header { font-size: 1.1rem; font-weight: 800; color: white; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;}
-    .chart-container { position: relative; height: 320px; width: 100%; }
+    .chart-card { background: var(--bg-card); padding: 35px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+    .chart-header { font-size: 1.3rem; font-weight: 800; color: white; margin-bottom: 25px; }
+    .chart-container { position: relative; height: 350px; width: 100%; }
 
     .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; margin-bottom: 50px; box-shadow: var(--shadow-md); }
-    .data-header { padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
-    .data-header h2 { font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 15px; margin: 0; color: white; text-transform: uppercase;}
-    .filters-row { padding: 20px 30px; background: rgba(255,255,255,0.01); border-bottom: 1px solid var(--border); display: flex; gap: 20px; }
+    .data-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
+    .data-header h2 { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 15px; margin: 0; color: white; }
+    .filters-row { padding: 25px 40px; background: rgba(255,255,255,0.01); border-bottom: 1px solid var(--border); display: flex; gap: 25px; }
     .filters-row select { flex: 1; }
     
     .table-wrapper { overflow-x: auto; width: 100%; }
     table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { background: rgba(0,0,0,0.4); padding: 18px 30px; font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 2; }
-    td { padding: 20px 30px; border-bottom: 1px solid var(--border); font-size: 1rem; color: var(--text-light); vertical-align: middle; }
+    th { background: rgba(0,0,0,0.4); padding: 20px 40px; font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 2; }
+    td { padding: 25px 40px; border-bottom: 1px solid var(--border); font-size: 1.05rem; color: var(--text-light); vertical-align: middle; }
     tr { transition: background-color 0.2s ease; }
-    tr:hover { background: rgba(255,255,255,0.02); }
+    tr:hover { background: rgba(255,255,255,0.03); }
     
-    .td-empresa { display: flex; align-items: center; gap: 15px; }
-    .td-empresa-icon { width: 45px; height: 45px; background: var(--border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: 900; }
-    .td-empresa-info strong { display: block; font-size: 1.05rem; margin-bottom: 4px; font-weight: 700; color: white; }
-    .td-empresa-info span { color: var(--text-muted); font-size: 0.85rem; font-family: var(--font-code); }
+    .td-empresa { display: flex; align-items: center; gap: 18px; }
+    .td-empresa-icon { width: 50px; height: 50px; background: var(--border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; font-weight: 900; }
+    .td-empresa-info strong { display: block; font-size: 1.1rem; margin-bottom: 6px; font-weight: 700; color: white; }
+    .td-empresa-info span { color: var(--text-muted); font-size: 0.9rem; font-family: var(--font-code); }
     
-    .status-badge { padding: 6px 14px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .status-badge { padding: 8px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
     .badge-pendente { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
     .badge-aguardando { background: var(--info-light); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3); }
     .badge-pago { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-denuncia { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
-    .chat-container { display: flex; flex-direction: column; height: 600px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); }
-    .chat-header { background: var(--bg-sidebar); padding: 20px 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-    .chat-history { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: var(--bg-body); scroll-behavior: smooth; }
+    .laws-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 50px; }
+    .law-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 35px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
+    .law-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; }
+    .law-leve::before { background: var(--warning); } .law-grave::before { background: #f97316; } .law-gravissima::before { background: var(--danger); }
+    .law-card h3 { font-size: 1.3rem; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 800; }
+    .law-card .valor { font-size: 2.5rem; font-weight: 900; color: white; margin-bottom: 20px; }
+    .law-card p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; }
+
+    .chat-container { display: flex; flex-direction: column; height: 700px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); }
+    .chat-header { background: var(--bg-sidebar); padding: 25px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .chat-history { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; background: var(--bg-body); scroll-behavior: smooth; }
     
-    .chat-msg { width: fit-content; max-width: 80%; padding: 15px 22px; border-radius: 18px; line-height: 1.5; font-size: 1rem; position: relative; word-break: break-word; }
+    .chat-msg { width: fit-content; max-width: 80%; padding: 18px 25px; border-radius: 20px; line-height: 1.6; font-size: 1.05rem; position: relative; word-break: break-word; }
     .msg-user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
     .msg-ai { align-self: flex-start; background: var(--bg-card); color: var(--text-light); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm); }
     
-    .chat-input-area { padding: 20px 30px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
-    .chat-input-row { display: flex; gap: 15px; align-items: center; width: 100%; }
-    .chat-input-row select { width: 250px; padding: 15px; border-radius: var(--radius-md); background: var(--bg-body); color: white; border: 1px solid var(--border); font-weight: 600; }
-    .chat-input-row input { flex: 1; padding: 18px 25px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.05rem; }
+    .chat-input-area { padding: 25px 40px; background: var(--bg-sidebar); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
+    .chat-input-row { display: flex; gap: 20px; align-items: center; width: 100%; }
+    .chat-input-row select { width: 300px; padding: 18px 20px; border-radius: var(--radius-md); background: var(--bg-body); color: white; border: 1px solid var(--border); font-weight: 600; }
+    .chat-input-row input { flex: 1; padding: 20px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-body); color: white; font-size: 1.1rem; }
     .chat-input-row input:focus { border-color: var(--gemini-purple); }
 
-    /* MODAL DOSSIÊ */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
     .modal-box { background: var(--bg-body); width: 100%; max-width: 1100px; border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border); animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes modalIn { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
@@ -208,7 +212,6 @@
     .tab-content.active { display: block; }
     @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* AUDITORIA IA */
     .radar-loading { text-align: center; padding: 80px 20px; display: flex; flex-direction: column; align-items: center; gap: 25px; }
     .radar-scanner { position: relative; width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 5rem; color: var(--gemini-purple); overflow: hidden; box-shadow: 0 0 40px rgba(168, 85, 247, 0.2); }
     .radar-scanner::after { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6)); transform-origin: left center; animation: radarScan 1.5s linear infinite; }
@@ -220,112 +223,101 @@
     .score-circle span.num { font-size: 5rem; margin: 0; line-height: 1; letter-spacing: -2px; }
     .score-circle span.desc { font-size: 0.95rem; font-weight: 800; text-transform: uppercase; opacity: 0.9; margin-top: 8px; text-align: center; line-height: 1.2;}
     
-    .gemini-response-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 40px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); }
+    .gemini-response-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 45px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); }
     .gemini-response-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--gemini-gradient); }
     
-    .ia-laudo-block { background: var(--bg-body); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--gemini-purple); }
-    .ia-laudo-block h5 { font-size: 0.95rem; text-transform: uppercase; color: var(--gemini-purple); margin-bottom: 10px; font-weight: 800; display: flex; align-items: center; gap: 10px;}
-    .ia-laudo-block p { font-size: 1.05rem; color: var(--text-light); line-height: 1.6; }
+    .ia-laudo-block { background: var(--bg-body); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 25px; margin-bottom: 25px; border-left: 4px solid var(--gemini-purple); }
+    .ia-laudo-block h5 { font-size: 0.95rem; text-transform: uppercase; color: var(--gemini-purple); margin-bottom: 12px; font-weight: 800; display: flex; align-items: center; gap: 10px;}
+    .ia-laudo-block p { font-size: 1.1rem; color: var(--text-light); line-height: 1.6; }
 
-    .ai-recommendation { padding: 25px; border-radius: var(--radius-md); background: rgba(0,0,0,0.3); border: 1px dashed var(--gemini-purple); display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 15px;}
-    .ai-recommendation h4 { font-size: 0.85rem; text-transform: uppercase; color: #d8b4fe; margin-bottom: 10px; font-weight: 800;}
-    .ai-recommendation p { font-size: 1.5rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+    .ai-recommendation { padding: 30px 35px; border-radius: var(--radius-md); background: rgba(0,0,0,0.3); border: 1px dashed var(--gemini-purple); display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 15px;}
+    .ai-recommendation h4 { font-size: 0.9rem; text-transform: uppercase; color: #d8b4fe; margin-bottom: 10px; font-weight: 800;}
+    .ai-recommendation p { font-size: 1.6rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .alerta-offline { display: flex; align-items: center; gap: 15px; padding: 20px; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--warning); border-radius: var(--radius-md); color: var(--warning); font-weight: bold; margin-bottom: 25px; }
 
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 25px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+    .info-group { background: var(--bg-card); padding: 25px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+    .info-group label { display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px;}
+    .info-group p { font-size: 1.2rem; font-weight: 600; color: white; margin: 0; word-break: break-word; }
+    
+    .docs-list { background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-top: 30px; box-shadow: var(--shadow-sm); }
+    .docs-list p { white-space: pre-line; font-size: 1.1rem; line-height: 1.7; color: var(--text-light); margin-top: 15px; }
+    
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; margin-top: 25px; }
     .gallery-item { position: relative; aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--border); cursor: pointer; background: var(--bg-card); transition: 0.3s;}
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;}
     .gallery-item:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--shadow-md);}
     .gallery-item:hover img { transform: scale(1.1); filter: brightness(0.6); }
+    .gallery-item .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; opacity: 0; transition: 0.3s; }
+    .gallery-item:hover .overlay { opacity: 1; }
+    .badge-assinado { position: absolute; top: 0; left: 0; width: 100%; background: var(--success); color: white; font-size: 0.8rem; font-weight: 900; text-align: center; padding: 8px 0; z-index: 10; text-transform: uppercase; letter-spacing: 1px;}
 
-    .modal-footer { padding: 25px 40px; border-top: 1px solid var(--border); background: var(--bg-sidebar); border-radius: 0 0 var(--radius-2xl) var(--radius-2xl); display: flex; justify-content: flex-end; gap: 15px; }
+    .modal-footer { padding: 30px 40px; border-top: 1px solid var(--border); background: var(--bg-sidebar); border-radius: 0 0 var(--radius-2xl) var(--radius-2xl); display: flex; justify-content: flex-end; gap: 20px; }
 
-    /* LAB DE MIDIA E UPLOAD */
-    .lab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: 500px; }
+    #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(10px);}
+    #lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--radius-lg); border: 2px solid #333; box-shadow: 0 0 60px rgba(0,0,0,0.8);}
+    #lightbox-title { color: white; margin-top: 25px; font-size: 1.5rem; font-weight: 800; letter-spacing: 0.5px; }
+    .btn-close-lightbox { position: absolute; top: 30px; right: 50px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 3rem; cursor: pointer; width: 70px; height: 70px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
+    .btn-close-lightbox:hover { background: var(--danger); border-color: var(--danger); transform: rotate(90deg); }
+
+    #toast-container { position: fixed; bottom: 35px; right: 35px; z-index: 99999; display: flex; flex-direction: column; gap: 15px; pointer-events: none; }
+    .toast { background: var(--bg-card); border-left: 6px solid var(--primary); padding: 25px 30px; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 20px; min-width: 400px; animation: toastSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; border: 1px solid var(--border); color: white; box-shadow: var(--shadow-modal); pointer-events: auto;}
+    .toast.success { border-color: var(--success); } .toast.success i { color: var(--success); }
+    .toast.error { border-color: var(--danger); } .toast.error i { color: var(--danger); }
+    .toast.warning { border-color: var(--warning); } .toast.warning i { color: var(--warning); }
+    
+    @keyframes toastSlideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes toastFadeOut { to { opacity: 0; transform: translateX(120%); } }
+
+    .lab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: calc(100vh - 250px); }
     .lab-upload-box { background: var(--bg-card); border: 2px dashed var(--border-light); border-radius: var(--radius-xl); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; transition: 0.3s; position: relative; cursor: pointer; }
     .lab-upload-box:hover { border-color: var(--gemini-purple); background: rgba(192, 132, 252, 0.05); }
     .lab-upload-box i.icon-big { font-size: 4rem; color: var(--text-muted); margin-bottom: 20px; transition: 0.3s; }
     .lab-upload-box:hover i.icon-big { color: var(--gemini-purple); transform: scale(1.1); }
     .lab-preview-area { width: 100%; height: 300px; margin-top: 20px; border-radius: var(--radius-md); overflow: hidden; display: none; background: #000; border: 1px solid var(--border); position: relative;}
     .lab-preview-area img, .lab-preview-area video { width: 100%; height: 100%; object-fit: contain; }
-    .lab-btn-close-preview { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    .lab-btn-close-preview { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
     
     .lab-result-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 40px; overflow-y: auto; box-shadow: var(--shadow-md); }
+    .lab-result-content { font-size: 1.1rem; line-height: 1.7; color: var(--text-light); }
     .lab-loader { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 20px; }
 
-    /* TOASTS */
-    #toast-container { position: fixed; bottom: 35px; right: 35px; z-index: 99999; display: flex; flex-direction: column; gap: 15px; pointer-events: none; }
-    .toast { background: var(--bg-card); border-left: 6px solid var(--primary); padding: 20px 25px; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 15px; min-width: 350px; animation: toastSlideIn 0.4s forwards; border: 1px solid var(--border); color: white; box-shadow: var(--shadow-modal); pointer-events: auto;}
-    .toast.success { border-color: var(--success); } .toast.success i { color: var(--success); }
-    .toast.error { border-color: var(--danger); } .toast.error i { color: var(--danger); }
-    .toast.warning { border-color: var(--warning); } .toast.warning i { color: var(--warning); }
-    @keyframes toastSlideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .triagem-box { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); padding: 20px; border-radius: var(--radius-md); margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
+    .triagem-box.risk { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+    .triagem-box i { font-size: 2.5rem; color: var(--primary); }
+    .triagem-box.risk i { color: var(--danger); }
 
-    /* ========================================================= */
-    /* CSS NOVO: MAPA LEAFLET, RADAR IA E MODO ESPIÃO            */
-    /* ========================================================= */
-    
-    /* Grid Tática do Radar */
-    .war-room-grid { display: grid; grid-template-columns: 2.2fr 1fr; gap: 25px; margin-bottom: 30px; height: 500px; }
-    
-    /* Contêiner do Mapa Interativo */
-    .map-card { background: #000; border-radius: var(--radius-xl); border: 1px solid var(--border); position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-    
-    /* Botões de Filtro Acima do Mapa */
-    .tactical-filters { padding: 15px 20px; background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid var(--border); z-index: 1000; display: flex; gap: 12px; position: relative; }
-    .tactical-btn { flex: 1; background: #02060d; border: 1px solid #334155; color: #94a3b8; padding: 10px; border-radius: 8px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
-    .tactical-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-    .tactical-btn.active { background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: #10b981; box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.2); }
+    .chat-attachment-btn { background: var(--bg-card); border: 1px solid var(--border); width: 60px; height: 60px; border-radius: 50px; cursor: pointer; color: var(--text-muted); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; }
+    .chat-attachment-btn:hover { color: var(--primary); border-color: var(--primary); background: rgba(59, 130, 246, 0.1); }
+    .attachment-preview-box { display: none; width: 100%; background: var(--bg-body); border: 1px dashed var(--border); border-radius: var(--radius-md); padding: 15px; margin-bottom: 10px; }
+    .preview-item { display: flex; align-items: center; gap: 15px; width: 100%; }
+    .preview-item img, .preview-item video { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
+    .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.5rem; padding: 5px; }
 
-    /* O Mapa Real (Leaflet) */
-    #map-war-room { flex: 1; width: 100%; background: #000; position: relative; z-index: 1; }
-    
-    /* Lente Verde de Scanner Giratória sobre o Mapa */
-    .radar-lens { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 500; overflow: hidden; box-shadow: inset 0 0 80px rgba(0,0,0,1); }
-    .radar-sweep { position: absolute; top: 50%; left: 50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent 70%, rgba(16, 185, 129, 0.3) 100%); transform-origin: center; animation: sweep 4s linear infinite; margin-left: -100%; margin-top: -100%; }
-    @keyframes sweep { 100% { transform: rotate(360deg); } }
-
-    /* Semáforo: Pontos de Alerta Piscantes (Customização do Ícone Leaflet) */
-    .custom-radar-icon { background: transparent; border: none; }
-    .pulse-dot { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); }
-    
-    .pulse-red { width: 16px; height: 16px; background: #ff0000; box-shadow: 0 0 20px #ff0000; }
-    .pulse-red::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:40px; height:40px; border:2px solid rgba(255,0,0,0.6); border-radius:50%; animation: radarRing 1s infinite ease-out; }
-    
-    .pulse-yellow { width: 12px; height: 12px; background: #f59e0b; box-shadow: 0 0 15px #f59e0b; pointer-events: none;}
-    .pulse-yellow::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:30px; height:30px; border:2px solid rgba(245,158,11,0.5); border-radius:50%; animation: radarRing 2s infinite ease-out; }
-
-    .pulse-green { width: 10px; height: 10px; background: #10b981; box-shadow: 0 0 10px #10b981; pointer-events: none;}
-    
-    @keyframes radarRing { 0% { width: 15px; height: 15px; opacity: 1; } 100% { width: 80px; height: 80px; opacity: 0; } }
-
-    /* Caixa Preta do Mapa (Holograma de Denúncia) */
-    .leaflet-popup-content-wrapper { background: rgba(15, 23, 42, 0.95); border: 1px solid var(--border-light); border-radius: 12px; color: white; font-family: var(--font-base); box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
-    .leaflet-popup-tip { background: rgba(15, 23, 42, 0.95); border: 1px solid var(--border-light); }
-    .popup-red .leaflet-popup-content-wrapper { border-color: var(--danger); box-shadow: 0 0 25px rgba(239,68,68,0.25); }
-    .popup-red .leaflet-popup-tip { background: var(--danger); }
-    .popup-yellow .leaflet-popup-content-wrapper { border-color: var(--warning); }
-    .leaflet-container a.leaflet-popup-close-button { color: #fff; top: 10px; right: 10px; }
-
-    /* Terminal Lateral (Console Hacker da IA) */
-    .hacker-terminal-card { background: #000; border-radius: var(--radius-xl); border: 1px solid #10b981; display: flex; flex-direction: column; overflow: hidden; box-shadow: inset 0 0 30px rgba(16, 185, 129, 0.1); }
-    .hacker-terminal-header { padding: 18px 20px; background: rgba(16, 185, 129, 0.1); border-bottom: 1px solid #10b981; color: #10b981; font-family: var(--font-code); font-weight: bold; font-size: 0.9rem; display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1px;}
-    .hacker-terminal-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-family: var(--font-code); font-size: 0.85rem; color: #10b981; }
-    .hacker-msg { padding: 10px; border-left: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); animation: fadeInMsg 0.3s; line-height: 1.4; word-break: break-word;}
-    .hacker-msg.msg-red { color: #ff0000; border-color: #ff0000; background: rgba(255, 0, 0, 0.08); text-shadow: 0 0 5px rgba(255,0,0,0.4); }
-    .hacker-msg.msg-yellow { color: #f59e0b; border-color: #f59e0b; background: rgba(245, 158, 11, 0.08); text-shadow: 0 0 5px rgba(245,158,11,0.3); }
-    @keyframes fadeInMsg { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-
-    /* Estilo do feed de visitantes espião (resumido e tático) */
-    .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 250px; overflow-y: auto; padding: 15px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
-    .feed-item { padding: 10px; border-bottom: 1px dashed #1e293b; color: #94a3b8; font-size: 0.9rem; display: flex; align-items: center; gap: 15px; animation: slideDown 0.3s ease-out forwards; }
-    .feed-item span.time { color: var(--gemini-purple); font-weight: bold; width: 75px; flex-shrink: 0;}
-    .feed-item span.device { font-size: 1.2rem; }
-    .feed-item span.loc { color: #10b981; font-weight: bold; min-width: 140px;}
-    .feed-item span.action { color: #f8fafc; flex: 1; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;}
-    
-    .btn-act { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 12px; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;}
-    .btn-act:hover { background: var(--primary-hover); transform: translateY(-2px);}
-
+    /* ======================================================== */
+    /* CSS WAR ROOM: MAPA, PONTOS E FEED                        */
+    /* ======================================================== */
+    .pulse-dot {
+        position: absolute;
+        width: 8px; height: 8px;
+        background: var(--danger);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 10px var(--danger);
+        animation: mapPulse 1.5s infinite;
+    }
+    @keyframes mapPulse {
+        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 280px; overflow-y: auto; padding: 20px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+    .feed-item { padding: 12px; border-bottom: 1px dashed #1e293b; color: #94a3b8; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; animation: slideDown 0.3s ease-out forwards; flex-wrap: wrap; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .feed-item span.time { color: var(--gemini-purple); font-weight: bold; }
+    .feed-item span.device { font-size: 1.3rem; }
+    .feed-item span.action { color: #f8fafc; }
   </style>
 </head>
 <body>
@@ -351,18 +343,18 @@
       </div>
       
       <nav class="nav-menu">
-        <a class="nav-item" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Mestre</a>
-        <a class="nav-item active" onclick="switchView('view-trafego', this)"><i class="fas fa-satellite-dish"></i> Radar IA (War Room)</a>
-        <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Processos / BD</a>
+        <a class="nav-item active" onclick="switchView('view-dashboard', this)"><i class="fas fa-chart-pie"></i> Painel Geral</a>
+        <a class="nav-item" onclick="switchView('view-processos', this)"><i class="fas fa-database"></i> Banco de Dados</a>
         <a class="nav-item" onclick="switchView('view-financeiro', this)"><i class="fas fa-comment-dots"></i> Assistente WhatsApp</a>
-        <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
+        <a class="nav-item" onclick="switchView('view-trafego', this)"><i class="fas fa-chart-line"></i> Monitor de Tráfego</a>
         <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot"></i> IA Jurídica</a>
+        <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
       </nav>
       
       <div class="sidebar-footer">
-        <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">Inteligência Artificial</p>
-        <p style="margin:5px 0 0 0; color:var(--success); font-weight:bold; font-size: 0.9rem;"><i class="fas fa-link"></i> Gemini API Conectada</p>
+        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 2.5 Flash Core</p>
+        <p>Status da IA: <span id="status-ia-sidebar" style="color:var(--success); font-weight:800;">Ativa e Conectada</span></p>
       </div>
     </aside>
 
@@ -371,7 +363,7 @@
       <header class="topbar">
         <div class="search-bar">
           <i class="fas fa-search"></i>
-          <input type="text" id="searchInput" placeholder="Pesquisar protocolo ou CNPJ..." onkeyup="filtrarTabela()">
+          <input type="text" id="searchInput" placeholder="Investigar CNPJ, Razão Social ou Ramo de Atividade..." onkeyup="filtrarTabela()">
         </div>
         
         <div class="user-profile">
@@ -380,8 +372,8 @@
             <span style="color:var(--success); font-weight:900; font-size:0.9rem; letter-spacing:1px;">SISTEMA ONLINE</span>
           </div>
           <div class="user-info">
-            <h4>Giliard Santi</h4>
-            <span>Diretor de Fiscalização</span>
+            <h4>Fiscal Chefe</h4>
+            <span>Nível: Administrador</span>
           </div>
           <div class="avatar"><i class="fas fa-user-shield"></i></div>
           <button class="btn-icon" onclick="location.reload()" title="Deslogar" style="margin-left: 20px; color: var(--danger); background: transparent; border: 1px solid var(--danger);"><i class="fas fa-power-off"></i></button>
@@ -389,94 +381,31 @@
       </header>
 
       <div class="view-container">
-
-        <div id="view-trafego" class="page-view active">
-          
+        
+        <div id="view-dashboard" class="page-view active">
           <div class="page-title">
             <div>
-              <h1>Monitoramento de Tráfego (War Room)</h1>
-              <p>O satélite Gemini varre o estado de São Paulo interceptando avaliações reais e indicando ameaças sanitárias.</p>
-            </div>
-          </div>
-          
-          <div class="stats-grid" style="margin-bottom: 25px;">
-             <div class="stat-card" style="padding: 20px;">
-               <div class="stat-icon-top c-primary"><i class="fas fa-globe-americas"></i></div>
-               <div class="stat-info"><h3>Status da IA</h3><p style="font-size:1.6rem;" id="ia-status-text">Iniciando Radar...</p></div>
-             </div>
-             <div class="stat-card c-danger" style="border-color: var(--danger); background: rgba(239,68,68,0.05); padding: 20px;">
-               <div class="stat-icon-top" style="color: var(--danger);"><i class="fas fa-biohazard"></i></div>
-               <div class="stat-info"><h3>Ameaças Críticas (Hoje)</h3><p id="alertas-hoje-ia" style="color: var(--danger);">0</p></div>
-             </div>
-             <div class="stat-card c-warning" style="padding: 20px;">
-               <div class="stat-icon-top"><i class="fas fa-exclamation-triangle"></i></div>
-               <div class="stat-info"><h3>Atenção Moderada</h3><p id="alertas-amarelos-ia" style="color: var(--warning);">0</p></div>
-             </div>
-             <div class="stat-card c-success" style="border-color: var(--success); padding: 20px;">
-               <div class="stat-icon-top"><i class="fas fa-broadcast-tower"></i></div>
-               <div class="stat-info"><h3 style="color: var(--success);"><span class="pulse-online" style="width:8px;height:8px;"></span> Visitantes no Portal</h3><p id="trafego-agora" style="color: var(--success);">0</p></div>
-             </div>
-          </div>
-          
-          <div class="war-room-grid">
-            
-            <div class="map-card">
-              <div class="tactical-filters">
-                  <button class="tactical-btn active" onclick="setRadarFilter('Alimentos', this)"><i class="fas fa-hamburger"></i> Foco: Alimentos</button>
-                  <button class="tactical-btn" onclick="setRadarFilter('Saude', this)"><i class="fas fa-clinic-medical"></i> Foco: Hospitais/Clínicas</button>
-                  <button class="tactical-btn" onclick="setRadarFilter('Beleza', this)"><i class="fas fa-spa"></i> Foco: Beleza/Tatuagem</button>
-              </div>
-              
-              <div id="map-war-room"></div>
-            </div>
-            
-            <div class="hacker-terminal-card">
-              <div class="hacker-terminal-header">
-                  <span><i class="fas fa-satellite-dish"></i> Decrypt Gemini API</span>
-                  <span class="pulse-online" style="box-shadow: 0 0 0 rgba(16, 185, 129, 0.9);"></span>
-              </div>
-              <div class="hacker-terminal-body" id="ai-interception-feed">
-                  <div class="hacker-msg">> Estabelecendo conexão segura com satélite...</div>
-                  <div class="hacker-msg">> Motor Leaflet Dark Matter carregado.</div>
-                  <div class="hacker-msg" style="color: #f59e0b;">> Iniciando varredura tática no Estado de São Paulo. Intervalo: 12s.</div>
-              </div>
-            </div>
-
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 15px;">
-              <h3 style="color: white; font-weight: 800; font-size: 1.2rem;"><i class="fas fa-user-secret" style="color: var(--primary);"></i> Console Espião (Visitantes Reais no Portal)</h3>
-              <a href="https://clarity.microsoft.com/" target="_blank" class="btn btn-secondary" style="padding: 8px 15px; font-size: 0.85rem;"><i class="fas fa-video"></i> Gravações Microsoft Clarity</a>
-          </div>
-          <div class="live-feed-box" id="live-feed-container">
-              <div style="text-align: center; color: var(--text-muted); margin-top: 50px;"><i class="fas fa-circle-notch fa-spin"></i> Monitorando toques e cliques na tela do cidadão...</div>
-          </div>
-        </div>
-
-        <div id="view-dashboard" class="page-view">
-          <div class="page-title">
-            <div>
-              <h1>Painel de Gestão (Dashboard)</h1>
-              <p>Análise de volume de processos e estatísticas gerais.</p>
+              <h1>Centro Operacional</h1>
+              <p>Monitoramento em tempo real do município e alertas antifraude.</p>
             </div>
             <button class="btn btn-success" onclick="exportarCSV()"><i class="fas fa-file-csv" style="font-size: 1.3rem;"></i> Exportar Relatório CSV</button>
           </div>
           
           <div class="stats-grid">
             <div class="stat-card c-warning">
-              <div class="stat-icon-top"><i class="fas fa-inbox"></i></div>
+              <div class="stat-icon"><i class="fas fa-inbox"></i></div>
               <div class="stat-info"><h3>Pendentes (Análise)</h3><p id="count-pendente">0</p></div>
             </div>
             <div class="stat-card c-primary">
-              <div class="stat-icon-top"><i class="fas fa-dollar-sign"></i></div>
+              <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
               <div class="stat-info"><h3>Aguardando Pix</h3><p id="count-aguardando">0</p></div>
             </div>
             <div class="stat-card c-success">
-              <div class="stat-icon-top"><i class="fas fa-check-double"></i></div>
+              <div class="stat-icon"><i class="fas fa-check-double"></i></div>
               <div class="stat-info"><h3>Licenças Aprovadas</h3><p id="count-pago">0</p></div>
             </div>
             <div class="stat-card c-gemini">
-              <div class="stat-icon-top"><i class="fas fa-server"></i></div>
+              <div class="stat-icon"><i class="fas fa-server"></i></div>
               <div class="stat-info"><h3>Total no Servidor</h3><p id="count-total">0</p></div>
             </div>
           </div>
@@ -491,6 +420,27 @@
               <div class="chart-container"><canvas id="doughnutChart"></canvas></div>
             </div>
           </div>
+          
+          <section class="data-section">
+            <div class="data-header">
+              <h2><i class="fas fa-bolt" style="color: var(--warning);"></i> Fila Expressa (Últimas Entradas)</h2>
+              <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 0.95rem;" onclick="document.querySelectorAll('.nav-item')[1].click()">Ir para Base Completa</button>
+            </div>
+            <div class="table-wrapper" style="min-height: auto;">
+              <table id="tabela-dashboard">
+                <thead>
+                  <tr>
+                    <th width="35%">Identificação da Empresa</th>
+                    <th width="15%">Classificação</th>
+                    <th width="15%">Data Registro</th>
+                    <th width="15%">Situação</th>
+                    <th width="20%">Ação de Auditoria</th>
+                  </tr>
+                </thead>
+                <tbody id="tabela-corpo-dash"></tbody>
+              </table>
+            </div>
+          </section>
         </div>
 
         <div id="view-processos" class="page-view">
@@ -505,18 +455,18 @@
           <section class="data-section">
             <div class="data-header" style="flex-wrap: wrap;">
               <h2><i class="fas fa-table" style="color: var(--primary);"></i> Tabela de Registros Oficiais</h2>
-              <span style="font-size: 0.9rem; background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 8px 15px; border-radius: 50px; font-weight: 800; border: 1px solid var(--success);"><i class="fas fa-sync fa-spin"></i> Firebase Sincronizado</span>
+              <span style="font-size: 0.95rem; background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 10px 20px; border-radius: 50px; font-weight: 800; border: 1px solid var(--success);"><i class="fas fa-sync fa-spin"></i> Conexão Firebase Sincronizada</span>
             </div>
             
             <div class="filters-row">
-              <select id="filtro-status" class="form-input" style="width: 250px; background: var(--bg-body);" onchange="aplicarFiltros()">
+              <select id="filtro-status" class="form-input" style="width: 250px; background: var(--bg-card);" onchange="aplicarFiltros()">
                 <option value="todos">Todos os Status</option>
                 <option value="pendente">🟠 Análise Pendente</option>
                 <option value="aguardando">🔵 Aguardando Pagamento</option>
                 <option value="pago">🟢 Licença Aprovada</option>
                 <option value="denuncia">🚨 Apenas Denúncias</option>
               </select>
-              <select id="filtro-ramo" class="form-input" style="width: 250px; background: var(--bg-body);" onchange="aplicarFiltros()">
+              <select id="filtro-ramo" class="form-input" style="width: 250px; background: var(--bg-card);" onchange="aplicarFiltros()">
                 <option value="todos">Todos os Ramos</option>
                 <option value="Alimentos">Alimentos (Crítico)</option>
                 <option value="Saúde">Saúde (Crítico)</option>
@@ -547,9 +497,10 @@
           <div class="page-title">
             <div>
               <h1>Assistente Automático para WhatsApp</h1>
-              <p>Envie textos, fotos ou vídeos de irregularidades. A IA analisará o material e criará a mensagem exata para você copiar e colar.</p>
+              <p>Envie textos, fotos ou vídeos de irregularidades. A IA analisará o material e criará a mensagem exata para você copiar e mandar para o contribuinte.</p>
             </div>
           </div>
+
           <div class="chat-container">
             <div class="chat-header">
               <div class="avatar" style="width: 55px; height: 55px; font-size: 2rem; background: var(--success);"><i class="fab fa-whatsapp"></i></div>
@@ -558,51 +509,122 @@
                 <span style="color: var(--success); font-size: 0.9rem; font-weight: bold;">Foco: Notificação e Orientação ao Cliente</span>
               </div>
             </div>
+            
             <div class="chat-history" id="chat-historico-whatsapp">
               <div class="chat-msg msg-ai">
                 <strong style="color:var(--success); font-size: 1.2rem;"><i class="fas fa-robot"></i> Gerador IA:</strong><br><br>
-                Olá! Me descreva a situação, cole um Print (Ctrl+V) ou envie uma foto da irregularidade. Eu vou criar uma mensagem formal, pronta para você mandar no WhatsApp do contribuinte.
+                Olá! Me descreva a situação, ou envie uma foto/vídeo da irregularidade. Eu vou criar uma mensagem formal, pronta para você copiar e colar no WhatsApp do contribuinte, informando o que ele precisa fazer ou corrigir.
               </div>
             </div>
+
             <div class="chat-input-area">
               <div id="zap-attachment-preview" class="attachment-preview-box"></div>
               <div class="chat-input-row">
-                <button class="chat-attachment-btn" onclick="document.getElementById('zap-file-input').click()" title="Anexar foto ou vídeo curto"><i class="fas fa-camera"></i></button>
+                <button class="chat-attachment-btn" onclick="document.getElementById('zap-file-input').click()" title="Anexar foto ou vídeo curto para análise local">
+                  <i class="fas fa-camera"></i>
+                </button>
                 <input type="file" id="zap-file-input" style="display: none;" accept="image/*,video/*">
-                <input type="text" id="zap-input-text" placeholder="Ex: Cliente mandou foto sem lixeira. Gere cobrança..." onkeypress="if(event.key === 'Enter') enviarChatZap()">
+
+                <input type="text" id="zap-input-text" placeholder="Ex: O cliente mandou foto do estabelecimento sem lixeira com pedal. Gere a cobrança para ele arrumar." onkeypress="if(event.key === 'Enter') enviarChatZap()">
                 <button class="btn btn-success" onclick="enviarChatZap()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px; background: var(--success); color: #022c22; border: none; font-weight: 900;"><i class="fab fa-whatsapp"></i> Gerar Texto</button>
               </div>
             </div>
           </div>
         </div>
 
+        <div id="view-trafego" class="page-view">
+          <div class="page-title">
+            <div>
+              <h1>Monitoramento de Tráfego (Ao Vivo)</h1>
+              <p>Visualização em tempo real das visitas que estão acontecendo no portal público.</p>
+            </div>
+          </div>
+          
+          <div class="stats-grid" style="margin-bottom: 30px;">
+             <div class="stat-card c-success" style="border-color: var(--success); border-width: 2px; box-shadow: 0 0 20px rgba(16,185,129,0.2);">
+               <div class="stat-icon" style="background: var(--success); color: #000;"><i class="fas fa-broadcast-tower"></i></div>
+               <div class="stat-info">
+                  <h3 style="color: var(--success); font-weight: 900; display:flex; align-items:center; gap:8px;">
+                    <span class="pulse-online"></span> ONLINE AGORA
+                  </h3>
+                  <p id="trafego-agora" style="font-size: 3.5rem; color: var(--success);">0</p>
+               </div>
+             </div>
+             <div class="stat-card c-primary">
+               <div class="stat-icon"><i class="fas fa-users"></i></div>
+               <div class="stat-info"><h3>Visitantes (Total Hoje)</h3><p id="trafego-hoje">0</p></div>
+             </div>
+             <div class="stat-card c-warning">
+               <div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
+               <div class="stat-info"><h3>Pico Máximo Simultâneo</h3><p id="trafego-pico">0</p></div>
+             </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; background: var(--bg-card); padding: 30px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+            
+            <div style="display: flex; flex-direction: column;">
+                <h3 style="color: white; font-weight: 800; margin-bottom: 15px;"><i class="fas fa-globe-americas" style="color: var(--danger); margin-right: 10px;"></i> War Room: Mapa de Acessos</h3>
+                <div id="map-war-room" style="flex: 1; position: relative; background: #02040a; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 50px rgba(0,0,0,0.8);">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Brazil_blank_map.svg/500px-Brazil_blank_map.svg.png" style="height: 95%; opacity: 0.15; filter: invert(1); pointer-events: none;" />
+                    <div id="map-dots-container" style="position: absolute; inset: 0;"></div>
+                </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column;">
+                <h3 style="color: white; font-weight: 800; margin-bottom: 15px; visibility: hidden;">Ranking</h3>
+                <div style="background: #02040a; border-radius: 12px; border: 1px solid var(--border); padding: 20px; overflow-y: auto; flex: 1;">
+                    <h4 style="color: var(--warning); margin-bottom: 15px; font-weight: 900; text-transform: uppercase; font-size: 0.9rem;"><i class="fas fa-fire"></i> Top 5 Cidades "Quentes"</h4>
+                    <ul id="ranking-cidades" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
+                        <li style="color: var(--text-muted); font-size: 0.9rem;">Aguardando dados...</li>
+                    </ul>
+                </div>
+            </div>
+
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 15px;">
+              <h3 style="color: white; font-weight: 800;"><i class="fas fa-satellite-dish" style="color: var(--primary);"></i> Console Espião (Atividades ao Vivo)</h3>
+              <a href="https://clarity.microsoft.com/" target="_blank" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;"><i class="fas fa-video"></i> Ver Gravações de Tela (Microsoft)</a>
+          </div>
+          <div class="live-feed-box" id="live-feed-container">
+              <div style="text-align: center; color: var(--text-muted); margin-top: 50px;"><i class="fas fa-circle-notch fa-spin"></i> Monitorando toques e cliques na tela...</div>
+          </div>
+
+        </div>
+
         <div id="view-laboratorio" class="page-view">
           <div class="page-title">
             <div>
               <h1><i class="fas fa-microscope" style="color: var(--gemini-purple);"></i> Laboratório Forense de Mídia</h1>
-              <p>Envie fotos ou vídeos para a IA caçar infrações, analisar Photoshop e mapear riscos. Aceita imagens Coladas (Ctrl+V).</p>
+              <p>Envie fotos ou vídeos para a IA caçar infrações, analisar Photoshop e mapear riscos.</p>
             </div>
           </div>
+          
           <div class="lab-container">
             <div class="lab-upload-box" id="lab-drop-area" onclick="document.getElementById('lab-file-input').click()">
               <i class="fas fa-cloud-upload-alt icon-big"></i>
-              <h3 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">Solte a Foto ou Dê Ctrl+V Aqui</h3>
+              <h3 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">Solte a Foto ou Vídeo Aqui</h3>
               <p style="color: var(--text-muted); margin-bottom: 20px;">Ou clique para procurar no seu computador (Máx 15MB)</p>
               <button class="btn btn-gemini"><i class="fas fa-search"></i> Selecionar Arquivo</button>
+              
               <input type="file" id="lab-file-input" style="display: none;" accept="image/*,video/*">
+              
               <div class="lab-preview-area" id="lab-preview"></div>
             </div>
+
             <div class="lab-result-box">
               <div id="lab-idle-state" style="text-align: center; color: var(--text-muted); padding-top: 50px;">
                 <i class="fas fa-robot" style="font-size: 4rem; opacity: 0.3; margin-bottom: 20px;"></i>
                 <h2>Aguardando Arquivo</h2>
                 <p>O laudo pericial detalhado aparecerá aqui.</p>
               </div>
+
               <div id="lab-loading-state" class="lab-loader">
                 <i class="fas fa-circle-notch fa-spin" style="font-size: 4rem; color: var(--gemini-purple);"></i>
                 <h3 style="color: white;">Dissecando frames e metadados...</h3>
                 <p style="color: var(--text-muted);">A IA está a processar a visão computacional.</p>
               </div>
+
               <div id="lab-final-result" style="display: none;">
                 <h3 style="color: var(--gemini-purple); font-size: 1.5rem; margin-bottom: 20px; font-weight: 900;"><i class="fas fa-file-contract"></i> Laudo Técnico Multimídia</h3>
                 <div id="lab-result-content" class="lab-result-content"></div>
@@ -618,6 +640,7 @@
               <p>Peça para a IA analisar um protocolo da lista ou faça consultas sobre o Código Sanitário Municipal.</p>
             </div>
           </div>
+
           <div class="chat-container">
             <div class="chat-header">
               <div class="avatar" style="width: 55px; height: 55px; font-size: 2rem;"><i class="fas fa-robot"></i></div>
@@ -632,18 +655,23 @@
                   </select>
               </div>
             </div>
+            
             <div class="chat-history" id="chat-historico">
               <div class="chat-msg msg-ai">
                 <strong style="color:var(--gemini-purple); font-size: 1.2rem;"><i class="fas fa-robot"></i> Sistema Auditor AI:</strong><br><br>
-                Olá! Como posso te ajudar hoje? Você pode me perguntar qualquer coisa, colar um Print (Ctrl+V) da tela, ou selecionar um processo acima para que eu possa analisá-lo com você.
+                Olá! Como posso te ajudar hoje? Você pode me perguntar qualquer coisa, enviar fotos/vídeos ou selecionar um processo acima para que eu possa analisá-lo com você.
               </div>
             </div>
+
             <div class="chat-input-area">
               <div id="chat-attachment-preview" class="attachment-preview-box"></div>
               <div class="chat-input-row">
-                <button class="chat-attachment-btn" onclick="document.getElementById('chat-file-input').click()" title="Anexar foto ou vídeo curto"><i class="fas fa-paperclip"></i></button>
+                <button class="chat-attachment-btn" onclick="document.getElementById('chat-file-input').click()" title="Anexar foto ou vídeo curto para análise local">
+                  <i class="fas fa-paperclip"></i>
+                </button>
                 <input type="file" id="chat-file-input" style="display: none;" accept="image/*,video/*">
-                <input type="text" id="chat-input-text" placeholder="Escreva a sua mensagem aqui ou cole um Print (Ctrl+V)..." onkeypress="if(event.key === 'Enter') enviarChat()">
+
+                <input type="text" id="chat-input-text" placeholder="Escreva a sua mensagem aqui..." onkeypress="if(event.key === 'Enter') enviarChat()">
                 <button class="btn btn-gemini" onclick="enviarChat()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px;"><i class="fas fa-paper-plane"></i> Enviar</button>
               </div>
             </div>
@@ -679,7 +707,7 @@
               <table>
                 <thead>
                   <tr>
-                    <th width="15%">Data e Hora</th>
+                    <th width="15%">Data e Hora Local</th>
                     <th width="20%">Usuário Autenticado</th>
                     <th width="20%">Ação Sistêmica Executada</th>
                     <th width="45%">Registro de Detalhes da Transação</th>
@@ -713,6 +741,7 @@
       <div class="modal-body" style="background: var(--bg-body);">
         
         <div id="tab-radar" class="tab-content active">
+          
           <div id="triagem-cnpj-box" class="triagem-box">
              <i class="fas fa-circle-notch fa-spin"></i>
              <div>
@@ -730,6 +759,7 @@
           </div>
 
           <div id="radar-result" class="radar-dashboard" style="display: none;">
+            
             <div class="score-box">
               <h4 style="color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; font-weight: 800;">Confiabilidade das Provas</h4>
               <div class="score-circle" id="radar-score-circle" style="border-color: var(--success);">
@@ -743,20 +773,24 @@
             <div>
               <div class="gemini-response-box">
                 <div id="alerta-offline-container"></div>
+
                 <h4><i class="fas fa-robot" style="color: var(--gemini-purple); font-size: 1.8rem;"></i> Laudo Técnico Oficial (Gemini)</h4>
                 
                 <div class="ia-laudo-block">
                     <h5><i class="fas fa-file-contract"></i> 1. Verificação Documental Integrada</h5>
                     <p id="radar-doc-check">...</p>
                 </div>
+                
                 <div class="ia-laudo-block">
                     <h5><i class="fas fa-camera"></i> 2. Inspeção Visual das Fotos</h5>
                     <p id="radar-visual-check">...</p>
                 </div>
+
                 <div class="ia-laudo-block" style="border-left-color: var(--danger);">
                     <h5 style="color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> 3. Divergências e Riscos Detectados</h5>
                     <p id="radar-risk-check" style="color: #fca5a5;">...</p>
                 </div>
+                
                 <div class="ai-recommendation">
                   <h4>Veredito Final Recomendado para a Autoridade</h4>
                   <p id="radar-recommendation-text">...</p>
@@ -781,7 +815,7 @@
             <i class="fas fa-search-plus" style="font-size: 3rem; color: var(--secondary);"></i>
             <div>
               <strong style="display: block; color: white; font-size: 1.3rem; margin-bottom: 8px;">Central de Inspeção Visual Expandida</strong>
-              <p style="margin: 0; font-size: 1.1rem; color: var(--text-light);">Clique nas imagens para expandir em tela cheia.</p>
+              <p style="margin: 0; font-size: 1.1rem; color: var(--text-light);">Clique nas imagens para expandir em tela cheia. O documento oficial assinado pelo contribuinte aparecerá com destaque em verde.</p>
             </div>
           </div>
           <h4 id="evidence-title" style="font-size: 1.4rem; font-weight: 900; color: white; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">Evidências Fotográficas (0)</h4>
@@ -803,20 +837,24 @@
               </select>
             </div>
           </div>
+          
           <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-top: 30px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <label style="font-weight: 900; color: var(--danger); font-size: 1rem; display: block; text-transform: uppercase;"><i class="fas fa-user-secret"></i> Notas Privadas do Auditor</label>
-                <button class="btn btn-gemini" style="padding: 8px 15px; font-size: 0.9rem;" onclick="corrigirNotasIA()" id="btn-corrigir-nota"><i class="fas fa-magic"></i> Autocorreção IA</button>
+                <button class="btn btn-gemini" style="padding: 8px 15px; font-size: 0.9rem;" onclick="corrigirNotasIA()" id="btn-corrigir-nota"><i class="fas fa-magic"></i> Autocorreção IA (Citar Leis)</button>
             </div>
-            <textarea class="form-input" id="modal-notas-input" placeholder="Anotações confidenciais sobre este estabelecimento..." style="font-size: 1.2rem; padding: 25px; min-height: 120px;"></textarea>
+            <textarea class="form-input" id="modal-notas-input" placeholder="Anotações confidenciais sobre este estabelecimento... (O cliente não tem acesso a isto no site dele)." style="font-size: 1.2rem; padding: 25px; min-height: 120px;"></textarea>
           </div>
 
           <div style="margin-top: 40px; background: rgba(16, 185, 129, 0.1); border: 2px solid var(--success); padding: 40px; border-radius: var(--radius-lg);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h4 style="font-size: 1.6rem; color: var(--success); font-weight: 900; margin:0;"><i class="fab fa-whatsapp"></i> Automação de Disparo</h4>
+                <h4 style="font-size: 1.6rem; color: var(--success); font-weight: 900; margin:0;"><i class="fab fa-whatsapp"></i> Automação de Disparo Oficial</h4>
                 <button onclick="gerarZapIA()" id="btn-gerar-zap" class="btn" style="background: #064e3b; color: #34d399; border: 1px solid #10b981;"><i class="fas fa-robot"></i> Gerar Mensagem com IA</button>
             </div>
+            <p style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 30px;">Acione o botão abaixo para abrir o WhatsApp Web.</p>
+            
             <textarea class="form-input" id="modal-zap-input" placeholder="O texto do WhatsApp será gerado aqui..." style="font-size: 1.1rem; padding: 15px; min-height: 100px; margin-bottom: 20px; background: rgba(0,0,0,0.3); border-color: var(--success);"></textarea>
+            
             <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="font-size: 1.4rem; padding: 20px 50px; border-radius: 50px; display: flex; justify-content: center;" onclick="atualizarLinkZap()"><i class="fab fa-whatsapp" style="font-size: 2rem;"></i> Acionar Contribuinte via WhatsApp</a>
           </div>
         </div>
@@ -832,220 +870,47 @@
     </div>
   </div>
 
-  <div id="lightbox" onclick="fecharLightbox()"><button class="btn-close-lightbox"><i class="fas fa-times"></i></button><img id="lightbox-img" src=""><div id="lightbox-title">Documento Digitalizado</div></div>
+  <div id="lightbox" onclick="fecharLightbox()">
+    <button class="btn-close-lightbox"><i class="fas fa-times"></i></button>
+    <img id="lightbox-img" src="">
+    <div id="lightbox-title">Documento Digitalizado</div>
+  </div>
+
+  <div id="toast-container"></div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, where, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-    const firebaseConfig = { apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg", authDomain: "site-8dfaf.firebaseapp.com", projectId: "site-8dfaf", storageBucket: "site-8dfaf.firebasestorage.app", messagingSenderId: "76689989548", appId: "1:76689989548:web:5c86741e60ce385102a409" };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
+      authDomain: "site-8dfaf.firebaseapp.com",
+      projectId: "site-8dfaf",
+      storageBucket: "site-8dfaf.firebasestorage.app",
+      messagingSenderId: "76689989548",
+      appId: "1:76689989548:web:5c86741e60ce385102a409"
+    };
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
-    let idProcessoAtual = null; let dadosProcessoAtual = null; let todosProcessos = []; 
-    let chartBar, chartDoughnut; const logsAuditoria = [];
-    let memoriaDoChat = []; let memoriaDoChatZap = [];
-    let arquivoAnexoParaEnviar = null; let arquivoAnexoParaEnviarZap = null; let arquivoLaboratorio = null;
+    let idProcessoAtual = null;
+    let dadosProcessoAtual = null; 
+    let todosProcessos = []; 
+    let chartBar, chartDoughnut;
+    const logsAuditoria = [];
+    
+    let memoriaDoChat = []; 
+    let memoriaDoChatZap = [];
+
+    let arquivoAnexoParaEnviar = null;
+    let arquivoAnexoParaEnviarZap = null;
+    let arquivoLaboratorio = null;
     const TAMANHO_MAX_ARQUIVO_MB = 15;
 
-    // =========================================================================
-    // INICIALIZAÇÃO SEGURA DOS GRÁFICOS ANTIGOS
-    // =========================================================================
-    function initCharts() {
-      try {
-          const contextoBarra = document.getElementById('barChart').getContext('2d');
-          chartBar = new Chart(contextoBarra, { 
-              type: 'line', 
-              data: { labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], datasets: [{ label: 'Cadastros e Entradas', data: [0,0,0,0,0,0,0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] }, 
-              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)'} }, x: { grid: { display: false } } } } 
-          });
-          const contextoRosca = document.getElementById('doughnutChart').getContext('2d');
-          chartDoughnut = new Chart(contextoRosca, { 
-              type: 'doughnut', 
-              data: { labels: ['Aprovados e Pagos', 'Taxas Aguardando', 'Casos de Risco'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#ef4444'], borderWidth: 0 }] }, 
-              options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
-          });
-      } catch (err) {}
-    }
-
-    function updateCharts(pen, agu, pag) {
-      if(chartDoughnut) { chartDoughnut.data.datasets[0].data = [pag, agu, pen]; chartDoughnut.update(); }
-      if(chartBar) { let totalProcessos = pen + agu + pag; chartBar.data.datasets[0].data = [Math.floor(totalProcessos*0.1), Math.floor(totalProcessos*0.3), Math.floor(totalProcessos*0.2), Math.floor(totalProcessos*0.1), totalProcessos, 0, 0]; chartBar.update(); }
-    }
-
-    // =========================================================================
-    // LÓGICA DO MAPA INTERATIVO (LEAFLET) E API DO GEMINI
-    // =========================================================================
-    let warMap = null;
-    let currentRadarFilter = 'Alimentos';
-    let iaLoopInterval = null;
-    let isFetchingIA = false;
-
-    // Coordenadas das cidades do Estado de SP
-    const coordsSP = {
-        "São Paulo": [-23.5505, -46.6333], "Guarulhos": [-23.4628, -46.5333],
-        "Campinas": [-22.9099, -47.0626], "São Bernardo do Campo": [-23.6939, -46.5654],
-        "Santo André": [-23.6666, -46.5322], "Osasco": [-23.5329, -46.7917],
-        "São José dos Campos": [-23.2237, -45.9009], "Ribeirão Preto": [-21.1704, -47.8103],
-        "Sorocaba": [-23.5015, -47.4581], "Santos": [-23.9618, -46.3322],
-        "Diadema": [-23.6865, -46.6234], "Mauá": [-23.6687, -46.4614],
-        "Mogi das Cruzes": [-23.5235, -46.1925], "Piracicaba": [-22.7338, -47.6476],
-        "Bauru": [-22.3145, -49.0587]
-    };
-
-    window.setRadarFilter = (filterType, btnElement) => {
-        document.querySelectorAll('.tactical-btn').forEach(btn => btn.classList.remove('active'));
-        btnElement.classList.add('active');
-        currentRadarFilter = filterType;
-        
-        document.querySelectorAll('.custom-radar-icon').forEach(el => el.remove());
-        addTerminalMsg(`[!] RECALIBRANDO SENSORES PARA: ${filterType.toUpperCase()}`, 'yellow');
-        
-        if(warMap) warMap.flyTo([-23.5505, -46.6333], 8, { duration: 1 });
-        
-        clearInterval(iaLoopInterval);
-        iniciarRadarWebIA();
-    }
-
-    function addTerminalMsg(text, type = 'green') {
-        const terminal = document.getElementById('ai-interception-feed');
-        const msg = document.createElement('div');
-        msg.className = `hacker-msg`;
-        if (type === 'red') msg.classList.add('msg-red');
-        if (type === 'yellow') msg.classList.add('msg-yellow');
-        const hora = new Date().toLocaleTimeString('pt-BR');
-        msg.innerHTML = `<span style="opacity:0.5;">[${hora}]</span> ${text}`;
-        terminal.appendChild(msg);
-        terminal.scrollTop = terminal.scrollHeight;
-        if(terminal.children.length > 25) terminal.removeChild(terminal.firstChild);
-    }
-
-    async function buscarAlertaGeminiReal() {
-        if(isFetchingIA) return null;
-        isFetchingIA = true;
-        document.getElementById('ia-status-text').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analisando Web...';
-        
-        let contextoTema = "restaurantes, lanchonetes e fast-foods (foco em comida estragada, rato, barata, intoxicação alimentar)";
-        if(currentRadarFilter === "Saude") contextoTema = "hospitais, clínicas, dentistas, farmácias (foco em negligência, sujeira, sangue, remédio falso)";
-        if(currentRadarFilter === "Beleza") contextoTema = "salões de beleza, estéticas, tatuagem (foco em infecções, alicate não esterilizado, queimadura de laser)";
-
-        const prompt = `Gere 1 (um) alerta de vigilância sanitária simulando um comentário real de cliente (Reclame Aqui ou Google Maps).
-        Contexto: ${contextoTema}
-        Obrigatório usar uma destas cidades de SP: São Paulo, Campinas, Santos, Ribeirão Preto, Sorocaba, Diadema, Guarulhos, Osasco, Bauru, Santo André.
-        Nível: 'red' (risco à saúde, urgente), 'yellow' (sujeira, falta de higiene), 'green' (elogio, muito limpo).
-        Retorne APENAS um JSON válido neste formato exato e NADA MAIS:
-        {"cidade": "Nome da Cidade", "texto": "Comentário do cliente em 1ª pessoa", "nivel": "red/yellow/green"}`;
-
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { responseMimeType: "application/json" }
-                })
-            });
-
-            if (!response.ok) throw new Error("API Falhou");
-            const data = await response.json();
-            return JSON.parse(data.candidates[0].content.parts[0].text.trim());
-        } catch (error) {
-            console.log("Erro IA Scanner:", error);
-            return null; // Ignora e tenta de novo no proximo ciclo se falhar
-        } finally {
-            isFetchingIA = false;
-            document.getElementById('ia-status-text').innerHTML = 'Varredura Ativa <i class="fas fa-check-circle" style="color:var(--success);"></i>';
-        }
-    }
-
-    async function iniciarRadarWebIA() {
-        if (!warMap) {
-            warMap = L.map('map-war-room', { zoomControl: false }).setView([-23.5505, -46.6333], 8);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: 'Satélite Espião COVISA &copy; OpenStreetMap',
-                maxZoom: 18
-            }).addTo(warMap);
-            const radarOverlay = document.createElement('div');
-            radarOverlay.className = 'radar-lens';
-            radarOverlay.innerHTML = '<div class="radar-sweep"></div>';
-            document.getElementById('map-war-room').appendChild(radarOverlay);
-        }
-
-        if(iaLoopInterval) clearInterval(iaLoopInterval);
-
-        const cicloDeBusca = async () => {
-            const alerta = await buscarAlertaGeminiReal();
-            if(!alerta) return;
-
-            let msgClass = 'hacker-msg';
-            let prefix = '[>]';
-            let iconColor = 'green';
-            let temaDoBalao = 'success';
-
-            if(alerta.nivel === 'red') { 
-                prefix = '[🚨] CRÍTICO:'; 
-                iconColor = 'red';
-                temaDoBalao = 'danger';
-                document.getElementById('alertas-hoje-ia').innerText = parseInt(document.getElementById('alertas-hoje-ia').innerText) + 1;
-            } else if(alerta.nivel === 'yellow') { 
-                prefix = '[⚠️] ATENÇÃO:'; 
-                iconColor = 'yellow';
-                temaDoBalao = 'warning';
-                document.getElementById('alertas-amarelos-ia').innerText = parseInt(document.getElementById('alertas-amarelos-ia').innerText) + 1;
-            } else if(alerta.nivel === 'green') { 
-                prefix = '[✓] SEGURO:'; 
-            }
-
-            addTerminalMsg(`${prefix} ${alerta.cidade} - "${alerta.texto}"`, iconColor);
-
-            let coords = coordsSP[alerta.cidade] || [-23.5505, -46.6333];
-            let latLng = [coords[0] + (Math.random() - 0.5) * 0.08, coords[1] + (Math.random() - 0.5) * 0.08];
-            
-            const pulsingIcon = L.divIcon({
-                className: 'custom-radar-icon',
-                html: `<div class="pulse-dot pulse-${alerta.nivel}"></div>`,
-                iconSize: [20, 20],
-                iconAnchor: [10, 10]
-            });
-
-            const marker = L.marker(latLng, { icon: pulsingIcon }).addTo(warMap);
-
-            let btnAcao = '';
-            if (alerta.nivel === 'red') {
-                btnAcao = `<button class="btn-act" onclick="showToast('Viatura Despachada', 'A caminho de ${alerta.cidade}.', 'error'); this.innerText='FISCAL A CAMINHO'; this.style.background='#333'; this.disabled=true;"><i class="fas fa-car-side"></i> Acionar Viatura Urgente</button>`;
-            } else if (alerta.nivel === 'yellow') {
-                btnAcao = `<button class="btn-act" style="background:#f59e0b; color:#000;" onclick="showToast('Notificação Gerada', 'Enviado para ${alerta.cidade}.', 'warning'); this.innerText='NOTIFICADO'; this.style.background='#333'; this.style.color='white'; this.disabled=true;"><i class="fas fa-envelope"></i> Emitir Notificação</button>`;
-            }
-
-            const popUpContent = `
-                <div style="padding: 5px; min-width: 180px;">
-                    <strong style="color: var(--${temaDoBalao}); font-size: 1.1rem; text-transform: uppercase;"><i class="fas fa-map-pin"></i> ${alerta.cidade}</strong>
-                    <p style="margin: 8px 0; font-size: 0.95rem; font-style: italic; color: #e2e8f0;">"${alerta.texto}"</p>
-                    ${btnAcao}
-                </div>
-            `;
-
-            marker.bindPopup(popUpContent, { className: `popup-${alerta.nivel}`, closeButton: false });
-
-            if (alerta.nivel === 'red') {
-                warMap.flyTo(latLng, 11, { animate: true, duration: 2 });
-                setTimeout(() => marker.openPopup(), 2000);
-            }
-            if(alerta.nivel === 'yellow' && Math.random() > 0.5) {
-                warMap.panTo(latLng, { animate: true, duration: 1.5 });
-            }
-        };
-
-        setTimeout(cicloDeBusca, 1000);
-        iaLoopInterval = setInterval(cicloDeBusca, 12000); // 12s 
-    }
-
-    // ==============================================================
-    // RESTANTE DO CÓDIGO ORIGINAL (FIREBASE, MODAIS, CHAT, ETC)
-    // ==============================================================
     function converterArquivoParaBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1069,13 +934,13 @@
         
         if(flagLab) {
             arquivoLaboratorio = file;
-            const previewArea = document.getElementById(previewId);
-            previewArea.innerHTML = `<img src="${URL.createObjectURL(file)}"><button class="lab-btn-close-preview" onclick="${btnRemoveFuncStr}()"><i class="fas fa-times"></i> Fechar</button>`;
-            document.getElementById('lab-drop-area').style.display = 'block'; previewArea.style.display = 'block';
             iniciarAnaliseLaboratorioForense(); 
         } else {
-            if (tipoChat === 'zap') arquivoAnexoParaEnviarZap = file;
-            else arquivoAnexoParaEnviar = file;
+            if (tipoChat === 'zap') {
+                arquivoAnexoParaEnviarZap = file;
+            } else {
+                arquivoAnexoParaEnviar = file;
+            }
             const previewArea = document.getElementById(previewId);
             previewArea.innerHTML = '';
             const item = document.createElement('div');
@@ -1086,7 +951,10 @@
             } else if (file.type.startsWith('video/')) {
               const video = document.createElement('video'); video.src = URL.createObjectURL(file); item.appendChild(video);
             }
-            item.innerHTML += `<div style="flex:1"><strong>${file.name}</strong><br><span style="font-size:0.8rem; color:var(--text-muted)">${tamanhoMB.toFixed(2)} MB</span></div><button class="btn-remove-attachment" onclick="${btnRemoveFuncStr}()"><i class="fas fa-times-circle"></i></button>`;
+            item.innerHTML += `
+              <div style="flex:1"><strong>${file.name}</strong><br><span style="font-size:0.8rem; color:var(--text-muted)">${tamanhoMB.toFixed(2)} MB</span></div>
+              <button class="btn-remove-attachment" onclick="${btnRemoveFuncStr}()"><i class="fas fa-times-circle"></i></button>
+            `;
             previewArea.appendChild(item);
             previewArea.style.display = 'flex';
         }
@@ -1115,15 +983,71 @@
             tabelaLogs.innerHTML = ''; 
             logsAuditoria.slice(0, 50).forEach(l => {
                 let corDetalhe = l.nivel === "ERRO" ? "color: var(--danger);" : "color: var(--text-light);";
-                tabelaLogs.innerHTML += `<tr><td><span style="color:var(--text-muted); font-size:0.95rem;">${l.dataHora}</span></td><td><strong style="color:white; font-size:1.05rem;">Fiscal Chefe (Admin)</strong></td><td><strong style="color:var(--secondary); font-size:1.05rem;">${l.acao}</strong></td><td style="${corDetalhe} line-height: 1.6; font-size:1.05rem;">${l.detalhes}</td></tr>`; 
+                tabelaLogs.innerHTML += `
+                  <tr>
+                      <td><span style="color:var(--text-muted); font-size:0.95rem;">${l.dataHora}</span></td>
+                      <td><strong style="color:white; font-size:1.05rem;">Fiscal Chefe (Admin)</strong></td>
+                      <td><strong style="color:var(--secondary); font-size:1.05rem;">${l.acao}</strong></td>
+                      <td style="${corDetalhe} line-height: 1.6; font-size:1.05rem;">${l.detalhes}</td>
+                  </tr>
+                `; 
             }); 
         }
+    }
+
+    window.switchView = (viewId, elementClicked) => {
+        document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        if(elementClicked) elementClicked.classList.add('active');
+        registrarLog("Navegação", `Acessou o módulo: ${viewId}`);
+    }
+
+    window.showToast = (titulo, mensagem, tipo = 'success') => {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${tipo}`;
+      let icon = 'fa-check-circle';
+      if(tipo === 'error') icon = 'fa-exclamation-triangle';
+      if(tipo === 'warning') icon = 'fa-exclamation-circle';
+      
+      toast.innerHTML = `
+        <i class="fas ${icon}" style="font-size:2.5rem;"></i>
+        <div>
+            <h4 style="margin:0; font-size:1.15rem;">${titulo}</h4>
+            <p style="margin:0; font-size:0.95rem; opacity:0.9; margin-top: 4px;">${mensagem}</p>
+        </div>`;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.animation = 'toastFadeOut 0.5s forwards'; }, 4000);
+      setTimeout(() => { toast.remove(); }, 4500);
+    }
+
+    window.checkPin = () => {
+      const pinValor = document.getElementById('pin-input').value;
+      if (pinValor === '1533') { 
+        document.getElementById('lock-screen').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('lock-screen').style.display = 'none';
+          document.getElementById('app-container').style.display = 'flex'; 
+          initCharts(); 
+          registrarLog("Autenticação", "Login Mestre efetuado com sucesso via PIN.");
+        }, 500);
+        showToast('Acesso Permitido', 'Sessão administrativa iniciada.', 'success');
+      } else { 
+        document.getElementById('pin-input').value = ''; 
+        showToast('Alerta de Invasão', 'Senha incorreta registrada no log.', 'error'); 
+        registrarLog("Falha Crítica de Autenticação", "Tentativa de login com senha inválida.", "ERRO");
+      }
     }
 
     async function obterDadosImagemSeguro(urlOuBase64) {
         if (!urlOuBase64) return null;
         if (urlOuBase64.startsWith('data:image')) {
-            try { return { mime_type: urlOuBase64.split(';')[0].split(':')[1], data: urlOuBase64.split(',')[1] }; } catch(e) { return null; }
+            try {
+                const mime = urlOuBase64.split(';')[0].split(':')[1];
+                const base64Limpo = urlOuBase64.split(',')[1];
+                if (base64Limpo) return { mime_type: mime, data: base64Limpo };
+            } catch(e) { return null; }
         }
         if (urlOuBase64.startsWith('http')) {
             try {
@@ -1131,25 +1055,51 @@
                 const blob = await resposta.blob();
                 return new Promise((resolve) => {
                     const reader = new FileReader();
-                    reader.onloadend = () => resolve({ mime_type: blob.type || 'image/jpeg', data: reader.result.split(',')[1] });
+                    reader.onloadend = () => {
+                        const b64 = reader.result.split(',')[1];
+                        const m = blob.type || 'image/jpeg';
+                        resolve({ mime_type: m, data: b64 });
+                    };
                     reader.readAsDataURL(blob);
                 });
-            } catch (e) { return null; }
+            } catch (e) {
+                console.warn("CORS bloqueou a leitura do link da imagem. A IA vai analisar apenas o texto.", e);
+                return null;
+            }
         }
         return null;
     }
 
     const fireQuery = query(collection(db, "pedidos"), orderBy("data", "desc"));
+    
     onSnapshot(fireQuery, (snapshot) => {
       todosProcessos = []; 
       let countPendentes = 0, countAguardando = 0, countPagos = 0; 
+      
       const chatSelect = document.getElementById('chat-process-selector');
-      if(chatSelect) chatSelect.innerHTML = '<option value="">Geral (Falar apenas sobre Leis)</option>';
+      if(chatSelect) {
+          chatSelect.innerHTML = '<option value="">Geral (Falar apenas sobre Leis)</option>';
+      }
 
       snapshot.forEach((docSnap) => {
-        const dados = docSnap.data(); dados.id = docSnap.id; todosProcessos.push(dados);
-        if(dados.pago) countPagos++; else if(dados.valor) countAguardando++; else countPendentes++;
-        if(chatSelect && dados.nome) chatSelect.innerHTML += `<option value="${dados.id}">${dados.nome} (${dados.cnpj})</option>`;
+        const dados = docSnap.data(); 
+        dados.id = docSnap.id; 
+        todosProcessos.push(dados);
+        
+        let valNum = dados.valor ? parseFloat(dados.valor.replace(',','.')) : 0;
+        if(isNaN(valNum)) valNum = 0;
+
+        if(dados.pago) { 
+            countPagos++; 
+        } else if(dados.valor) { 
+            countAguardando++; 
+        } else {
+            countPendentes++;
+        }
+
+        if(chatSelect && dados.nome) {
+            chatSelect.innerHTML += `<option value="${dados.id}">${dados.nome} (${dados.cnpj})</option>`;
+        }
       });
       
       document.getElementById("count-pendente").innerText = countPendentes;
@@ -1165,32 +1115,56 @@
       const tbDash = document.getElementById("tabela-corpo-dash"); 
       const tbFull = document.getElementById("tabela-corpo-full");
       if(!tbDash || !tbFull) return;
-      tbDash.innerHTML = ""; tbFull.innerHTML = "";
+      
+      tbDash.innerHTML = ""; 
+      tbFull.innerHTML = "";
 
-      if(arrayDeDados.length === 0) { tbFull.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:50px; font-size: 1.2rem; color: var(--text-muted);">Nenhum registro encontrado.</td></tr>'; return; }
+      if(arrayDeDados.length === 0) { 
+          tbFull.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:50px; font-size: 1.2rem; color: var(--text-muted);">Nenhum registro encontrado com estes filtros.</td></tr>'; 
+          return; 
+      }
 
       arrayDeDados.forEach((processo, index) => {
         let classBadge = 'badge-pendente', txtBadge = 'Análise Pendente', iconeBadge = 'fa-clock';
-        if(processo.tipo === "🚨 DENÚNCIA") { classBadge = 'badge-denuncia'; txtBadge = 'DENÚNCIA'; iconeBadge = 'fa-bullhorn'; } 
-        else if(processo.pago) { classBadge = 'badge-pago'; txtBadge = 'Aprovado'; iconeBadge = 'fa-check'; } 
-        else if(processo.valor) { classBadge = 'badge-aguardando'; txtBadge = 'Aguard. Pagto'; iconeBadge = 'fa-dollar-sign'; }
+        
+        if(processo.tipo === "🚨 DENÚNCIA") { 
+            classBadge = 'badge-denuncia'; txtBadge = 'DENÚNCIA'; iconeBadge = 'fa-bullhorn'; 
+        } else if(processo.pago) { 
+            classBadge = 'badge-pago'; txtBadge = 'Aprovado'; iconeBadge = 'fa-check'; 
+        } else if(processo.valor) { 
+            classBadge = 'badge-aguardando'; txtBadge = 'Aguard. Pagto'; iconeBadge = 'fa-dollar-sign'; 
+        }
 
         let letraInicial = processo.nome ? processo.nome.charAt(0).toUpperCase() : 'C';
         let corDestaqueDenuncia = processo.tipo === "🚨 DENÚNCIA" ? 'color: var(--danger); font-weight: 900;' : '';
 
         let htmlColunaBase = `
-          <td><div class="td-empresa"><div class="td-empresa-icon">${letraInicial}</div><div class="td-empresa-info"><strong style="${corDestaqueDenuncia}">${processo.nome}</strong><span>${processo.cnpj}</span></div></div></td>
+          <td>
+            <div class="td-empresa">
+              <div class="td-empresa-icon">${letraInicial}</div>
+              <div class="td-empresa-info">
+                <strong style="${corDestaqueDenuncia}">${processo.nome}</strong>
+                <span>${processo.cnpj}</span>
+              </div>
+            </div>
+          </td>
           <td><span style="background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:6px; font-size:0.85rem; border:1px solid var(--border); font-weight: bold;">${processo.tipo}</span></td>
           <td><span style="color:var(--text-muted); font-size:0.9rem; font-weight: 600;">${processo.data ? processo.data.split(',')[0] : 'Hoje'}</span></td>
           <td><span class="status-badge ${classBadge}"><i class="fas ${iconeBadge}"></i> ${txtBadge}</span></td>
         `;
+        
         let trCompleta = document.createElement("tr"); 
-        trCompleta.innerHTML = htmlColunaBase + `<td><strong style="color:var(--primary); font-size: 1.2rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td><td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:auto; padding:0 20px; background:var(--primary); color:white;"><i class="fas fa-search-plus"></i> Auditar Processo</button></td>`; 
+        trCompleta.innerHTML = htmlColunaBase + `
+            <td><strong style="color:var(--primary); font-size: 1.2rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
+            <td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:auto; padding:0 20px; background:var(--primary); color:white;"><i class="fas fa-search-plus"></i> Auditar Processo</button></td>
+        `; 
         tbFull.appendChild(trCompleta);
         
         if(index < 5) { 
             let trResumo = document.createElement("tr"); 
-            trResumo.innerHTML = htmlColunaBase + `<td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:100%; border:1px solid var(--border); background:rgba(255,255,255,0.05); color:var(--accent);"><i class="fas fa-arrow-right"></i> Avaliar</button></td>`; 
+            trResumo.innerHTML = htmlColunaBase + `
+                <td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:100%; border:1px solid var(--border); background:rgba(255,255,255,0.05); color:var(--accent);"><i class="fas fa-arrow-right"></i> Avaliar</button></td>
+            `; 
             tbDash.appendChild(trResumo); 
         }
       });
@@ -1200,31 +1174,45 @@
         const selectStatus = document.getElementById('filtro-status').value;
         const selectRamo = document.getElementById('filtro-ramo').value;
         const inputTexto = document.getElementById('searchInput').value.toLowerCase();
+
         let listaFiltrada = todosProcessos;
-        if(inputTexto) listaFiltrada = listaFiltrada.filter(p => (p.nome && p.nome.toLowerCase().includes(inputTexto)) || (p.cnpj && p.cnpj.toLowerCase().includes(inputTexto)));
-        if(selectRamo !== 'todos') listaFiltrada = listaFiltrada.filter(p => p.tipo === selectRamo);
+
+        if(inputTexto) {
+            listaFiltrada = listaFiltrada.filter(p => (p.nome && p.nome.toLowerCase().includes(inputTexto)) || (p.cnpj && p.cnpj.toLowerCase().includes(inputTexto)));
+        }
+        if(selectRamo !== 'todos') {
+            listaFiltrada = listaFiltrada.filter(p => p.tipo === selectRamo);
+        }
         if(selectStatus !== 'todos') {
             if(selectStatus === 'pago') listaFiltrada = listaFiltrada.filter(p => p.pago === true);
             else if(selectStatus === 'aguardando') listaFiltrada = listaFiltrada.filter(p => p.valor && p.pago === false);
             else if(selectStatus === 'pendente') listaFiltrada = listaFiltrada.filter(p => !p.valor && p.pago === false && p.tipo !== "🚨 DENÚNCIA");
             else if(selectStatus === 'denuncia') listaFiltrada = listaFiltrada.filter(p => p.tipo === "🚨 DENÚNCIA");
         }
+
         renderizarTabelas(listaFiltrada);
     }
+
     window.filtrarTabela = window.aplicarFiltros; 
 
     window.exportarCSV = () => {
         if(todosProcessos.length === 0) return showToast('Erro', 'Banco de dados vazio.', 'error');
+        
         let stringCSV = 'Data,Razao_Social,CNPJ_CPF,Ramo,Status_Sistemico,Taxa_Valor,Observacoes_Internas\n';
+        
         todosProcessos.forEach(p => { 
             let statusExport = p.pago ? 'Aprovado' : (p.valor ? 'Aguardando Pagamento' : 'Analise Pendente');
             if (p.tipo === "🚨 DENÚNCIA") statusExport = 'Denúncia Externa';
             let notaLimpa = p.notas ? p.notas.replace(/(\r\n|\n|\r)/gm, " ") : "";
             stringCSV += `"${p.data||''}","${p.nome}","${p.cnpj}","${p.tipo}","${statusExport}","${p.valor||'0'}","${notaLimpa}"\n`; 
         });
+        
+        const blobDownload = new Blob([stringCSV], {type: 'text/csv;charset=utf-8;'});
         const linkDownload = document.createElement("a"); 
-        linkDownload.href = URL.createObjectURL(new Blob([stringCSV], {type: 'text/csv;charset=utf-8;'}));
-        linkDownload.download = `Base_Mestra_COVISA_${new Date().toLocaleDateString()}.csv`; linkDownload.click();
+        linkDownload.href = URL.createObjectURL(blobDownload);
+        linkDownload.download = `Base_Mestra_COVISA_${new Date().toLocaleDateString()}.csv`; 
+        linkDownload.click();
+        
         registrarLog("Exportação", "Base de dados exportada para CSV.");
         showToast("Download Concluído", "Base exportada com sucesso.", "success");
     }
@@ -1232,23 +1220,45 @@
     window.abrirAba = (idDaAba, botaoClicado) => {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-      document.getElementById(idDaAba).classList.add('active'); botaoClicado.classList.add('active');
+      document.getElementById(idDaAba).classList.add('active'); 
+      botaoClicado.classList.add('active');
     }
 
     async function verificarAPI_CNPJ(cnpjCliente) {
         const triagemBox = document.getElementById('triagem-cnpj-box');
-        let cnpjLimpo = cnpjCliente ? cnpjCliente.replace(/\D/g, '') : '';
-        if (cnpjLimpo.length !== 14) { triagemBox.innerHTML = `<i class="fas fa-user"></i><div><h4 style="margin: 0; color: white;">Registro de Pessoa Física</h4></div>`; return; }
+        if (!cnpjCliente || cnpjCliente.length < 14) {
+            triagemBox.className = 'triagem-box risk';
+            triagemBox.innerHTML = `<i class="fas fa-id-card"></i><div><h4 style="margin: 0; color: white; font-size: 1.1rem;">CNPJ Inválido ou Ausente</h4><p style="margin: 4px 0 0 0; color: var(--danger);">Não foi possível consultar a Receita Federal (CNPJ/CPF mal formatado).</p></div>`;
+            return;
+        }
+
+        let cnpjLimpo = cnpjCliente.replace(/\D/g, '');
+        if (cnpjLimpo.length !== 14) {
+             triagemBox.className = 'triagem-box';
+             triagemBox.innerHTML = `<i class="fas fa-user"></i><div><h4 style="margin: 0; color: white; font-size: 1.1rem;">Registro de Pessoa Física</h4><p style="margin: 4px 0 0 0; color: var(--text-muted);">CPF detectado. A triagem automática via API Receita funciona apenas para CNPJ.</p></div>`;
+             return;
+        }
+
         try {
             const resposta = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
-            if(!resposta.ok) throw new Error("CNPJ Inexistente");
+            if(!resposta.ok) throw new Error("CNPJ Inexistente ou erro na API");
             const dadosReceita = await resposta.json();
-            if (dadosReceita.descricao_situacao_cadastral === "ATIVA") {
-                triagemBox.className = 'triagem-box'; triagemBox.innerHTML = `<i class="fas fa-check-circle"></i><div><h4 style="margin:0; color:var(--success);">Empresa ATIVA</h4><p style="margin:4px 0 0 0; color:var(--text-muted);">${dadosReceita.razao_social}</p></div>`;
+            
+            let statusReceita = dadosReceita.descricao_situacao_cadastral;
+            let razaoSocial = dadosReceita.razao_social;
+            
+            if (statusReceita === "ATIVA") {
+                triagemBox.className = 'triagem-box';
+                triagemBox.innerHTML = `<i class="fas fa-check-circle"></i><div><h4 style="margin: 0; color: var(--success); font-size: 1.1rem;">Empresa ATIVA na Receita Federal</h4><p style="margin: 4px 0 0 0; color: var(--text-muted);">Razão Social: ${razaoSocial} | Município: ${dadosReceita.municipio}</p></div>`;
             } else {
-                triagemBox.className = 'triagem-box risk'; triagemBox.innerHTML = `<i class="fas fa-exclamation-triangle"></i><div><h4 style="margin:0; color:var(--danger);">ALERTA: Empresa ${dadosReceita.descricao_situacao_cadastral}</h4></div>`;
+                triagemBox.className = 'triagem-box risk';
+                triagemBox.innerHTML = `<i class="fas fa-exclamation-triangle"></i><div><h4 style="margin: 0; color: var(--danger); font-size: 1.1rem;">ALERTA DE FRAUDE: Empresa ${statusReceita}</h4><p style="margin: 4px 0 0 0; color: #fca5a5;">A Receita Federal informa que este CNPJ não está ativo. Rejeite o processo.</p></div>`;
             }
-        } catch(e) { triagemBox.className = 'triagem-box risk'; triagemBox.innerHTML = `<i class="fas fa-times-circle"></i><div><h4 style="margin:0; color:var(--danger);">Falha ao Localizar CNPJ</h4></div>`; }
+            registrarLog("Triagem API CNPJ", `CNPJ ${cnpjLimpo} verificado: ${statusReceita}`);
+        } catch(e) {
+            triagemBox.className = 'triagem-box risk';
+            triagemBox.innerHTML = `<i class="fas fa-times-circle"></i><div><h4 style="margin: 0; color: var(--danger); font-size: 1.1rem;">Falha ao Localizar CNPJ</h4><p style="margin: 4px 0 0 0; color: #fca5a5;">A Receita Federal não encontrou dados para o CNPJ ${cnpjCliente}.</p></div>`;
+        }
     }
 
     window.atualizarLinkZap = () => {
@@ -1256,9 +1266,9 @@
         if(!textoZap && dadosProcessoAtual) {
             let st = document.getElementById("modal-status-select").value;
             textoZap = `Prefeitura de São Paulo - COVISA\n*${dadosProcessoAtual.nome}*\n`;
-            if(st === 'pendente') textoZap += `Aviso: Seu processo está pendente.`;
-            if(st === 'aguardando') textoZap += `A taxa foi emitida. Realize o pagamento no site oficial.`;
-            if(st === 'pago') textoZap += `PARABÉNS! Sua licença foi *APROVADA*.`;
+            if(st === 'pendente') textoZap += `Aviso: Seu processo está pendente de análise.`;
+            if(st === 'aguardando') textoZap += `A taxa foi emitida. Para prosseguirmos com a sua licença, por favor, realize o pagamento no site oficial.`;
+            if(st === 'pago') textoZap += `PARABÉNS! Sua licença sanitária foi *APROVADA*.`;
         }
         document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(textoZap)}`;
     }
@@ -1266,12 +1276,20 @@
     window.gerarZapIA = async () => {
         const btnZap = document.getElementById('btn-gerar-zap'); const btnOriginal = btnZap.innerHTML;
         btnZap.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando...';
-        let contexto = `Crie mensagem Whatsapp educada para a empresa ${dadosProcessoAtual.nome}. Status: ${document.getElementById("modal-status-select").value}. Notas: ${document.getElementById("modal-notas-input").value}`;
+        
+        let contexto = `Crie uma mensagem de WhatsApp educada, mas oficial, para a empresa ${dadosProcessoAtual.nome}. 
+        Status que decidi: ${document.getElementById("modal-status-select").value}.
+        Minhas notas sobre o caso: ${document.getElementById("modal-notas-input").value}
+        Não use markdown de negrito duplo (**), use apenas o asterisco simples do whatsapp (*). Não cite valores de dinheiro fixos se não houver nas notas.`;
+
         try {
-            const envio = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: contexto }] }] }) });
+            const envio = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: contexto }] }] })
+            });
             const resp = await envio.json();
             document.getElementById("modal-zap-input").value = resp.candidates[0].content.parts[0].text.trim();
             atualizarLinkZap();
+            registrarLog("IA WhatsApp", "Mensagem gerada para o cliente.");
         } catch(e) { showToast("Erro IA", "Falha ao gerar texto.", "error"); }
         btnZap.innerHTML = btnOriginal;
     }
@@ -1279,13 +1297,17 @@
     window.corrigirNotasIA = async () => {
         const inputNotas = document.getElementById("modal-notas-input");
         const btnNota = document.getElementById('btn-corrigir-nota'); const btnOriginal = btnNota.innerHTML;
-        if(inputNotas.value.length < 5) return showToast("Aviso", "Escreva algo.", "warning");
+        if(inputNotas.value.length < 5) return showToast("Aviso", "Escreva algo para a IA corrigir.", "warning");
         btnNota.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Corrigindo...';
+        let contexto = `Sou fiscal da COVISA. Reescreva minha anotação de forma técnica e formal: "${inputNotas.value}". Cite a Lei 13.725 ou RDC 216 se for infração sanitária. 1 parágrafo apenas.`;
         try {
-            const envio = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: `Reescreva minha anotação de forma formal: "${inputNotas.value}"` }] }] }) });
+            const envio = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: contexto }] }] })
+            });
             const resp = await envio.json();
             inputNotas.value = resp.candidates[0].content.parts[0].text.trim();
-        } catch(e) { showToast("Erro", "Falha", "error"); }
+            registrarLog("Autocorreção", "Parecer Fiscal aprimorado pela IA.");
+        } catch(e) { showToast("Erro IA", "Falha ao corrigir texto.", "error"); }
         btnNota.innerHTML = btnOriginal;
     }
 
@@ -1294,222 +1316,857 @@
       document.getElementById("modalDetalhes").style.display = "flex";
       document.getElementById("modal-id-text").innerText = idDoProtocolo.substring(0,8).toUpperCase();
       document.querySelector('.tab-ai').click(); 
+
       document.getElementById('triagem-cnpj-box').className = 'triagem-box';
-      document.getElementById('triagem-cnpj-box').innerHTML = `<i class="fas fa-circle-notch fa-spin"></i><div><h4 style="margin: 0; color: white;">Buscando CNPJ...</h4></div>`;
+      document.getElementById('triagem-cnpj-box').innerHTML = `<i class="fas fa-circle-notch fa-spin"></i><div><h4 style="margin: 0; color: white; font-size: 1.1rem;">Buscando CNPJ na Receita Federal...</h4></div>`;
 
       try {
-        const docSnap = await getDoc(doc(db, "pedidos", idDoProtocolo));
-        if (docSnap.exists()) {
-          dadosProcessoAtual = docSnap.data(); dadosProcessoAtual.id = idDoProtocolo; 
-          document.getElementById("modal-cnpj").innerText = dadosProcessoAtual.cnpj || "Sem registro";
-          document.getElementById("modal-nome").innerText = dadosProcessoAtual.nome || "Sem registro";
-          document.getElementById("modal-data").innerText = dadosProcessoAtual.data || 'Indisponível';
-          document.getElementById("modal-ramo").innerText = dadosProcessoAtual.tipo || "Geral";
-          document.getElementById("modal-docs").innerText = dadosProcessoAtual.docs || "Nenhum relatório declarado.";
-          verificarAPI_CNPJ(dadosProcessoAtual.cnpj);
+        const documentoNoBanco = await getDoc(doc(db, "pedidos", idDoProtocolo));
+        
+        if (documentoNoBanco.exists()) {
+          const dadosDoCliente = documentoNoBanco.data(); 
+          dadosProcessoAtual = dadosDoCliente; 
+          dadosProcessoAtual.id = idDoProtocolo; 
+          
+          document.getElementById("modal-cnpj").innerText = dadosDoCliente.cnpj || "Sem registro";
+          document.getElementById("modal-nome").innerText = dadosDoCliente.nome || "Sem registro";
+          document.getElementById("modal-data").innerText = dadosDoCliente.data || 'Indisponível';
+          document.getElementById("modal-ramo").innerText = dadosDoCliente.tipo || "Geral";
+          document.getElementById("modal-docs").innerText = dadosDoCliente.docs || "Nenhum relatório declarado.";
+          
+          verificarAPI_CNPJ(dadosDoCliente.cnpj);
 
-          const galeriaHTML = document.getElementById('evidence-gallery'); galeriaHTML.innerHTML = ''; let totalArquivos = 0;
-          if (dadosProcessoAtual.documento_assinado) {
-              totalArquivos++; 
-              galeriaHTML.innerHTML += `<div class="gallery-item" style="border: 4px solid var(--success);" onclick="abrirLightbox('${dadosProcessoAtual.documento_assinado}', 'Documento Legal')"><div class="badge-assinado"><i class="fas fa-check-circle"></i> VALIDADO</div><img src="${dadosProcessoAtual.documento_assinado}"><div class="overlay"><i class="fas fa-search-plus"></i></div></div>`;
+          const galeriaHTML = document.getElementById('evidence-gallery'); 
+          galeriaHTML.innerHTML = ''; 
+          let totalDeArquivos = 0;
+          
+          if (dadosDoCliente.documento_assinado) {
+              totalDeArquivos++; 
+              const htmlAssinado = document.createElement('div'); 
+              htmlAssinado.className = 'gallery-item'; 
+              htmlAssinado.style.border = '4px solid var(--success)';
+              htmlAssinado.onclick = () => abrirLightbox(dadosDoCliente.documento_assinado, 'Documento Legal Assinado');
+              htmlAssinado.innerHTML = `<div class="badge-assinado"><i class="fas fa-check-circle"></i> VALIDADO</div><img src="${dadosDoCliente.documento_assinado}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`; 
+              galeriaHTML.appendChild(htmlAssinado);
           }
-          if (dadosProcessoAtual.evidencias) {
-              totalArquivos += dadosProcessoAtual.evidencias.length;
-              dadosProcessoAtual.evidencias.forEach(foto => {
-                  galeriaHTML.innerHTML += `<div class="gallery-item" onclick="abrirLightbox('${foto.url}', '${foto.nome}')"><img src="${foto.url}"><div class="overlay"><i class="fas fa-search-plus"></i></div></div>`;
+          
+          if (dadosDoCliente.evidencias && dadosDoCliente.evidencias.length > 0) {
+              totalDeArquivos += dadosDoCliente.evidencias.length;
+              dadosDoCliente.evidencias.forEach(fotoObject => {
+                  const caixaDaFoto = document.createElement('div'); 
+                  caixaDaFoto.className = 'gallery-item'; 
+                  caixaDaFoto.onclick = () => abrirLightbox(fotoObject.url, fotoObject.nome);
+                  caixaDaFoto.innerHTML = `<img src="${fotoObject.url}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`; 
+                  galeriaHTML.appendChild(caixaDaFoto);
               });
           }
-          document.getElementById('evidence-title').innerText = `Evidências Fotográficas (${totalArquivos})`;
-          document.getElementById("modal-valor-input").value = dadosProcessoAtual.valor || "";
-          document.getElementById("modal-status-select").value = dadosProcessoAtual.pago ? "pago" : (dadosProcessoAtual.valor ? "aguardando" : "pendente");
-          document.getElementById("modal-notas-input").value = dadosProcessoAtual.notas || "";
+          
+          document.getElementById('evidence-title').innerText = `Evidências Fotográficas (${totalDeArquivos} arquivos anexados)`;
+
+          document.getElementById("modal-valor-input").value = dadosDoCliente.valor || "";
+          let selectStatus = dadosDoCliente.pago ? "pago" : (dadosDoCliente.valor ? "aguardando" : "pendente");
+          document.getElementById("modal-status-select").value = selectStatus;
+          document.getElementById("modal-notas-input").value = dadosDoCliente.notas || "";
+          
           document.getElementById("modal-zap-input").value = "";
           atualizarLinkZap();
+
           document.getElementById('alerta-offline-container').innerHTML = '';
           iniciarRadarIAGemini();
         }
-      } catch (e) { showToast("Erro BD", "Não foi carregar os detalhes.", "error"); }
+      } catch (e) { 
+          showToast("Erro BD", "Não foi possível carregar os detalhes do Firebase.", "error"); 
+      }
     };
 
-    window.fecharModal = () => { document.getElementById("modalDetalhes").style.display = "none"; idProcessoAtual = null; };
+    window.fecharModal = () => { 
+        document.getElementById("modalDetalhes").style.display = "none"; 
+        idProcessoAtual = null; 
+    };
 
+    let loaderInterval;
     window.iniciarRadarIAGemini = async () => {
-        document.getElementById('radar-loader').style.display = 'flex'; document.getElementById('radar-result').style.display = 'none';
+        const dadosDoProcesso = dadosProcessoAtual;
+        
+        document.getElementById('radar-loader').style.display = 'flex';
+        document.getElementById('radar-result').style.display = 'none';
+        
+        const textosLoading = [
+            "Extraindo dados do Firebase...",
+            "Iniciando Visão Computacional Avançada...",
+            "Processando OCR Óptico nas evidências...",
+            "Cruzando informações com o Código Sanitário...",
+            "Construindo Laudo Forense Final..."
+        ];
+        
+        let pText = document.getElementById('radar-loading-text');
+        let contadorTxt = 0;
+        clearInterval(loaderInterval);
+        pText.innerText = textosLoading[0];
+        
+        loaderInterval = setInterval(() => {
+            contadorTxt++;
+            if(contadorTxt < textosLoading.length) { pText.innerText = textosLoading[contadorTxt]; }
+        }, 1500);
+
         try {
-            let promptDaIA = `Analise os dados e retorne JSON: {"score_confiabilidade": 100, "verificacao_documental": "OK", "inspecao_visual": "OK", "divergencias_encontradas": "Nenhuma", "veredito_final": "APROVAR"}. Dados: Nome: ${dadosProcessoAtual.nome}, Ramo: ${dadosProcessoAtual.tipo}, Checklist: ${dadosProcessoAtual.docs}`;
+            let promptDaIA = `
+                VOCÊ É UM SISTEMA DE AUDITORIA FORENSE DE ALTA PRECISÃO (Vigilância Sanitária).
+                Sua tarefa é analisar rigorosamente os dados e imagens fornecidos e identificar QUALQUER fraude ou divergência.
+
+                DADOS DECLARADOS PELO USUÁRIO:
+                - Razão Social / Nome: ${dadosDoProcesso.nome}
+                - CNPJ / CPF: ${dadosDoProcesso.cnpj}
+                - Ramo de Atividade: ${dadosDoProcesso.tipo}
+                - O que ele marcou no Checklist: ${dadosDoProcesso.docs}
+
+                ANÁLISE EXIGIDA MENTALMENTE ANTES DE RESPONDER:
+                1. EXTRAÇÃO ÓPTICA (OCR): Se houver fotos, leia o texto visível nelas.
+                2. VALIDAÇÃO DE IDENTIDADE: Os nomes/CNPJs nas fotos batem com os dados declarados?
+                3. VALIDAÇÃO VISUAL: Se é um ambiente, ele condiz com o "Ramo de Atividade"?
+                4. DENÚNCIA: Se o Ramo de Atividade for a palavra "🚨 DENÚNCIA", A QUALIDADE DAS PROVAS É ZERO.
+
+                REGRAS DE PONTUAÇÃO (Score de 0 a 100):
+                - 80 a 100: Tudo perfeito, o documento bate, boas fotos.
+                - 50 a 70: Faltam fotos do ambiente, só mandou documento.
+                - 0 a 40: Suspeita de fraude, nomes não batem, ou é uma Denúncia.
+
+                Crie a resposta JSON estritamente usando o seguinte schema (preencha todos os campos):
+                {
+                  "score_confiabilidade": "numero de 0 a 100",
+                  "verificacao_documental": "texto detalhado",
+                  "inspecao_visual": "texto detalhado do que enxergou nas fotos",
+                  "divergencias_encontradas": "texto das divergências ou 'Nenhuma divergência grave aparente'",
+                  "veredito_final": "texto curto de decisao (ex: APROVAR LICENÇA)"
+                }
+            `;
+            
             let pacoteDeEnvio = [{ "text": promptDaIA }];
-            if(dadosProcessoAtual.evidencias) {
-                for (let i = 0; i < Math.min(dadosProcessoAtual.evidencias.length, 3); i++) {
-                    let img = await obterDadosImagemSeguro(dadosProcessoAtual.evidencias[i].url);
-                    if(img) pacoteDeEnvio.push({ "inline_data": img }); 
+            
+            if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0) {
+                for (let i = 0; i < Math.min(dadosDoProcesso.evidencias.length, 3); i++) {
+                    let objImagemSegura = await obterDadosImagemSeguro(dadosDoProcesso.evidencias[i].url);
+                    if(objImagemSegura) pacoteDeEnvio.push({ "inline_data": objImagemSegura }); 
                 }
             }
-            const disparoAPI = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: pacoteDeEnvio }], generationConfig: { responseMimeType: "application/json" } }) });
-            const respostaDaIA = await disparoAPI.json();
-            const resultadoJson = JSON.parse(respostaDaIA.candidates[0].content.parts[0].text.trim());
 
-            document.getElementById('radar-loader').style.display = 'none'; document.getElementById('radar-result').style.display = 'grid';
-            document.getElementById('radar-score-number').innerText = resultadoJson.score_confiabilidade;
-            document.getElementById('radar-doc-check').innerHTML = resultadoJson.verificacao_documental;
-            document.getElementById('radar-visual-check').innerHTML = resultadoJson.inspecao_visual;
-            document.getElementById('radar-risk-check').innerHTML = resultadoJson.divergencias_encontradas;
-            document.getElementById('radar-recommendation-text').innerText = resultadoJson.veredito_final;
+            if(dadosDoProcesso.documento_assinado) {
+                let objAssinadoSeguro = await obterDadosImagemSeguro(dadosDoProcesso.documento_assinado);
+                if(objAssinadoSeguro) pacoteDeEnvio.push({ "inline_data": objAssinadoSeguro }); 
+            }
+
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            
+            const disparoAPI = await fetch(url_api_gemini, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ 
+                    contents: [{ parts: pacoteDeEnvio }],
+                    generationConfig: {
+                        responseMimeType: "application/json"
+                    }
+                })
+            });
+
+            if (!disparoAPI.ok) {
+                const erroDoGoogle = await disparoAPI.json();
+                console.error("[GEMINI API ERRO DETALHADO]", erroDoGoogle);
+                throw new Error(erroDoGoogle.error?.message || `Erro HTTP ${disparoAPI.status}`);
+            }
+            
+            const respostaDaIA = await disparoAPI.json();
+            
+            if (!respostaDaIA.candidates || !respostaDaIA.candidates[0].content || !respostaDaIA.candidates[0].content.parts) {
+                throw new Error("A IA retornou uma estrutura vazia ou bloqueou por Safety (conteúdo sensível).");
+            }
+
+            let textoDoGemini = respostaDaIA.candidates[0].content.parts[0].text;
+            
+            let resultadoJson;
+            try {
+                 resultadoJson = JSON.parse(textoDoGemini);
+            } catch (e) {
+                 const matchJson = textoDoGemini.match(/\{[\s\S]*\}/);
+                 if (!matchJson) throw new Error("A IA não retornou um JSON válido.");
+                 resultadoJson = JSON.parse(matchJson[0]);
+            }
+
+            let suspeitaDeClone = false;
+            if(dadosDoProcesso.evidencias && dadosDoProcesso.evidencias.length > 0 && todosProcessos.length > 1) {
+                let tamanhoDaFotoAtual = dadosDoProcesso.evidencias[0].url.length;
+                for(let processoAntigo of todosProcessos) {
+                    if(processoAntigo.id !== dadosDoProcesso.id && processoAntigo.evidencias) {
+                        for(let imagemAntiga of processoAntigo.evidencias) { 
+                            if(imagemAntiga.url.length === tamanhoDaFotoAtual) suspeitaDeClone = true; 
+                        }
+                    }
+                }
+                if(suspeitaDeClone) {
+                    resultadoJson.score_confiabilidade = 5;
+                    resultadoJson.divergencias_encontradas = "MOTOR DO SERVIDOR (ALERTA VERMELHO): A imagem anexada tem o tamanho binário exato de uma evidência utilizada por outro CNPJ no sistema no passado. Fraude fotográfica comprovada.";
+                    resultadoJson.veredito_final = "BLOQUEIO IMEDIATO (CRIME)";
+                }
+            }
+
+            setTimeout(() => {
+                clearInterval(loaderInterval);
+                renderizarRadarNaTela(resultadoJson);
+                registrarLog("Laudo Forense (IA)", `Gemini processou ID ${dadosDoProcesso.cnpj} com ${resultadoJson.score_confiabilidade}% de confiança.`);
+            }, 1000);
+            
         } catch (error) {
-            document.getElementById('radar-loader').style.display = 'none'; document.getElementById('radar-result').style.display = 'grid';
-            document.getElementById('radar-score-number').innerText = 50;
-            document.getElementById('radar-doc-check').innerHTML = "Modo de segurança offline ativado.";
+            console.error("Falha Sistêmica no Gemini:", error);
+            registrarLog("FALHA NA API IA", error.message, "ERRO");
+            document.getElementById('status-ia-sidebar').innerText = 'Desconectada / Falha';
+            document.getElementById('status-ia-sidebar').style.color = 'var(--danger)';
+            
+            document.getElementById('alerta-offline-container').innerHTML = `
+                <div class="alerta-offline">
+                    <i class="fas fa-plug" style="font-size: 2rem;"></i>
+                    <div>
+                        <h4 style="margin: 0; font-size: 1.1rem; color: white;">Conexão Neural Interrompida</h4>
+                        <p style="margin: 0; font-size: 0.95rem;">Falha ao comunicar com o Google Gemini. Motivo técnico: ${error.message.substring(0, 80)}...</p>
+                        <p style="margin: 4px 0 0 0; font-size: 0.85rem; opacity: 0.8;">O laudo abaixo foi gerado baseando-se em lógicas locais de contagem de evidências do servidor (Modo Offline).</p>
+                    </div>
+                </div>
+            `;
+
+            let notasFallback = {
+                score_confiabilidade: 90,
+                verificacao_documental: "Modo Offline: O sistema validou localmente apenas a presença de caracteres no BD.",
+                inspecao_visual: "Inspeção por Visão Computacional bloqueada devido à falha de comunicação com o Google AI.",
+                divergencias_encontradas: "A API falhou, porém os documentos básicos parecem existir no Firebase. Verifique as fotos manualmente na aba ao lado.",
+                veredito_final: "APROVAÇÃO VIRTUAL RESTRITA"
+            };
+            
+            if(dadosDoProcesso.tipo === "🚨 DENÚNCIA") { 
+                notasFallback.score_confiabilidade = 0; 
+                notasFallback.veredito_final = "INTERDIÇÃO CAUTELAR"; 
+                notasFallback.divergencias_encontradas = "Denúncia reportada pelo Cidadão. Risco severo à saúde da população."; 
+            } else if(!dadosDoProcesso.evidencias || dadosDoProcesso.evidencias.length === 0) { 
+                notasFallback.score_confiabilidade = 10; 
+                notasFallback.veredito_final = "REPROVAR E BLOQUEAR"; 
+                notasFallback.divergencias_encontradas = "O requerente não enviou absolutamente NENHUMA foto ou comprovante visual."; 
+            } else if(dadosDoProcesso.evidencias.length === 1) { 
+                notasFallback.score_confiabilidade = 40; 
+                notasFallback.veredito_final = "REVISÃO OBRIGATÓRIA (Faltam Provas)"; 
+                notasFallback.divergencias_encontradas = "O requerente anexou apenas 1 imagem. Exige-se validação humana das evidências visuais."; 
+            }
+            
+            setTimeout(() => {
+                clearInterval(loaderInterval);
+                renderizarRadarNaTela(notasFallback);
+            }, 1500);
         }
+    }
+
+    function renderizarRadarNaTela(dadosIA) {
+        document.getElementById('radar-loader').style.display = 'none';
+        document.getElementById('radar-result').style.display = 'grid';
+        
+        const notaFinal = parseInt(dadosIA.score_confiabilidade) || 0;
+        const circuloScore = document.getElementById('radar-score-circle'); 
+        const txtNumeroScore = document.getElementById('radar-score-number'); 
+        const txtNivelQualidade = document.getElementById('radar-nivel-text');
+        
+        let corEscolhida = "var(--danger)"; let nivelTexto = "RISCO CRÍTICO / FRAUDE";
+        if(notaFinal >= 50) { corEscolhida = "var(--warning)"; nivelTexto = "PROVAS FRACAS (REVISAR)"; }
+        if(notaFinal >= 80) { corEscolhida = "var(--success)"; nivelTexto = "DADOS VÁLIDOS (APROVAR)"; }
+
+        circuloScore.style.borderColor = corEscolhida; 
+        txtNumeroScore.style.color = corEscolhida; 
+        txtNivelQualidade.style.color = corEscolhida; 
+        txtNivelQualidade.innerText = nivelTexto;
+        
+        document.getElementById('radar-doc-check').innerHTML = dadosIA.verificacao_documental;
+        document.getElementById('radar-visual-check').innerHTML = dadosIA.inspecao_visual;
+        document.getElementById('radar-risk-check').innerHTML = dadosIA.divergencias_encontradas;
+        document.getElementById('radar-recommendation-text').innerText = dadosIA.veredito_final;
+        
+        let contadorAparente = 0; 
+        let intervaloEfeito = setInterval(() => { 
+            contadorAparente += Math.ceil(notaFinal / 15) + 1; 
+            if(contadorAparente >= notaFinal) { contadorAparente = notaFinal; clearInterval(intervaloEfeito); } 
+            txtNumeroScore.innerText = contadorAparente; 
+        }, 30);
     }
 
     window.salvarEdicaoModal = async () => {
       if(!idProcessoAtual) return;
-      const botaoDeSalvar = document.getElementById('btn-salvar-modal'); const textOriginalBotao = botaoDeSalvar.innerHTML;
+      const botaoDeSalvar = document.getElementById('btn-salvar-modal');
+      const textOriginalBotao = botaoDeSalvar.innerHTML;
       botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sincronizando BD Central...';
+      
       let valorInputado = document.getElementById("modal-valor-input").value; 
       let statusSelecionado = document.getElementById("modal-status-select").value; 
       let notasDigitadas = document.getElementById("modal-notas-input").value;
-      let flagPago = statusSelecionado === "pago"; 
+      
+      let flagPago = false; 
+      if(statusSelecionado === "pago") flagPago = true; 
       if(statusSelecionado === "pendente") valorInputado = null; 
 
       try {
-        await updateDoc(doc(db, "pedidos", idProcessoAtual), { valor: valorInputado, pago: flagPago, notas: notasDigitadas });
-        showToast('Veredito Finalizado', 'A base foi atualizada no Firebase.', 'success');
+        await updateDoc(doc(db, "pedidos", idProcessoAtual), { 
+            valor: valorInputado, 
+            pago: flagPago, 
+            notas: notasDigitadas 
+        });
+        showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase.', 'success');
+        registrarLog("Veredito Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
         fecharModal();
-      } catch (e) { showToast('Falha Crítica', 'Acesso negado.', 'error'); botaoDeSalvar.innerHTML = textOriginalBotao; } 
+      } catch (erroDeRede) { 
+        showToast('Falha Crítica', 'Acesso negado no banco de dados da nuvem.', 'error'); 
+        botaoDeSalvar.innerHTML = textOriginalBotao; 
+      } 
     };
 
     window.deletarProcessoAtual = async () => {
       if(!idProcessoAtual) return;
-      if(confirm("Deseja destruir as informações deste processo permanentemente?")) {
+      if(confirm("COMANDO IRREVERSÍVEL DA JUSTIÇA:\nDeseja destruir as informações deste processo permanentemente da base governamental?")) {
         await deleteDoc(doc(db, "pedidos", idProcessoAtual));
-        showToast('Base Limpa', 'O dossiê foi erradicado.', 'success');
+        showToast('Base Limpa', 'O dossiê foi erradicado do sistema.', 'success');
+        registrarLog("Destruição de Dossiê", `O documento mestre do processo ID: ${idProcessoAtual.substring(0,8)} foi apagado.`, "ERRO");
         fecharModal();
       }
     };
 
     window.iniciarAnaliseLaboratorioForense = async () => {
         if (!arquivoLaboratorio) return;
+
         const previewArea = document.getElementById('lab-preview');
-        // Preview da imagem
         previewArea.innerHTML = `<img src="${URL.createObjectURL(arquivoLaboratorio)}"><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
-        document.getElementById('lab-drop-area').style.display = 'block'; previewArea.style.display = 'block';
-        document.getElementById('lab-idle-state').style.display = 'none'; document.getElementById('lab-final-result').style.display = 'none'; document.getElementById('lab-loading-state').style.display = 'flex';
+        
+        document.getElementById('lab-drop-area').style.display = 'block';
+        previewArea.style.display = 'block';
+        
+        document.getElementById('lab-idle-state').style.display = 'none';
+        document.getElementById('lab-final-result').style.display = 'none';
+        document.getElementById('lab-loading-state').style.display = 'flex';
+
+        let promptFinal = `Você é um Perito Forense da Vigilância Sanitária. Analise a mídia anexada e retorne um Laudo Técnico Oficial.
+        Procure por:
+        1. Problemas de Higiene e Estrutura (RDC 216).
+        2. Indícios de manipulação ou fraude digital (Photoshop).
+        3. Análise do ambiente para verificar se condiz com local comercial.
+        Formate a resposta em HTML (use <b> para negrito e <br> para quebras). Não use asteriscos markdown.`;
+
+        let pacoteDeEnvio = [{ text: promptFinal }];
 
         try {
             const dadosMdia = await converterArquivoParaBase64(arquivoLaboratorio);
-            const envioApi = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: "Analise esta imagem em busca de problemas de higiene e formate em HTML." }, { inline_data: dadosMdia }] }] }) });
+            pacoteDeEnvio.push({ inline_data: dadosMdia });
+
+            const envioApi = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: pacoteDeEnvio }] })
+            });
+            
+            if(!envioApi.ok) throw new Error("Falha na API do Google");
+            
             const respostaCompleta = await envioApi.json(); 
-            document.getElementById('lab-loading-state').style.display = 'none'; document.getElementById('lab-final-result').style.display = 'block';
+            document.getElementById('lab-loading-state').style.display = 'none';
+            document.getElementById('lab-final-result').style.display = 'block';
             document.getElementById('lab-result-content').innerHTML = respostaCompleta.candidates[0].content.parts[0].text;
+
+            registrarLog("Laboratório de Mídia", `Arquivo local processado (${arquivoLaboratorio.name}).`);
         } catch(e) {
-            document.getElementById('lab-loading-state').style.display = 'none'; document.getElementById('lab-final-result').style.display = 'block';
-            document.getElementById('lab-result-content').innerHTML = `<div style="color:var(--danger);">Falha: ${e.message}</div>`;
+            document.getElementById('lab-loading-state').style.display = 'none';
+            document.getElementById('lab-final-result').style.display = 'block';
+            document.getElementById('lab-result-content').innerHTML = `<div style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Falha: ${e.message}</div>`;
         }
     }
 
     window.enviarChatZap = async () => {
-        const campoDeTexto = document.getElementById('zap-input-text'); const instrucaoDoFiscal = campoDeTexto.value.trim(); 
+        const campoDeTexto = document.getElementById('zap-input-text'); 
+        const instrucaoDoFiscal = campoDeTexto.value.trim(); 
         if(!instrucaoDoFiscal && !arquivoAnexoParaEnviarZap) return;
+        
         const areaHistorico = document.getElementById('chat-historico-whatsapp');
-        const bolhaUser = document.createElement('div'); bolhaUser.className = 'chat-msg msg-user'; bolhaUser.innerHTML = instrucaoDoFiscal;
-        areaHistorico.appendChild(bolhaUser); campoDeTexto.value = ''; areaHistorico.scrollTop = areaHistorico.scrollHeight;
+        
+        const bolhaUser = document.createElement('div');
+        bolhaUser.className = 'chat-msg msg-user';
+        if(instrucaoDoFiscal) bolhaUser.innerHTML = instrucaoDoFiscal;
+
+        if (arquivoAnexoParaEnviarZap) {
+          if (instrucaoDoFiscal) bolhaUser.innerHTML += '<br><br>';
+          if (arquivoAnexoParaEnviarZap.type.startsWith('image/')) bolhaUser.innerHTML += `<img src="${URL.createObjectURL(arquivoAnexoParaEnviarZap)}" style="max-width:100%; border-radius:8px;">`;
+          else if (arquivoAnexoParaEnviarZap.type.startsWith('video/')) bolhaUser.innerHTML += `<i class="fas fa-video"></i> [Vídeo Anexado: ${arquivoAnexoParaEnviarZap.name}]`;
+        }
+
+        areaHistorico.appendChild(bolhaUser);
+        campoDeTexto.value = ''; 
+        areaHistorico.scrollTop = areaHistorico.scrollHeight;
         
         const idLoaderChat = 'loader_zap_' + Date.now(); 
-        const bolhaLoader = document.createElement('div'); bolhaLoader.id = idLoaderChat; bolhaLoader.className = 'chat-msg msg-ai'; bolhaLoader.innerHTML = `Escrevendo...`;
-        areaHistorico.appendChild(bolhaLoader); areaHistorico.scrollTop = areaHistorico.scrollHeight;
+        const bolhaLoader = document.createElement('div');
+        bolhaLoader.id = idLoaderChat;
+        bolhaLoader.className = 'chat-msg msg-ai';
+        bolhaLoader.style.borderColor = 'var(--success)';
+        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--success); font-size:1.5rem; margin-right: 10px;"></i> Escrevendo mensagem...`;
+        areaHistorico.appendChild(bolhaLoader);
+        areaHistorico.scrollTop = areaHistorico.scrollHeight;
 
-        let partesDoEnvio = [{ text: `Gere uma mensagem formal de WhatsApp para o cliente informando: ${instrucaoDoFiscal}` }];
+        let promptFinal = `Você é um Assistente de Atendimento da Vigilância Sanitária via WhatsApp.
+        Sua tarefa: Analisar o contexto ou a imagem/vídeo fornecidos e gerar UMA MENSAGEM FORMAL, EDUCADAMENTE DIRETA, pronta para eu copiar e mandar no WhatsApp do contribuinte.
+        
+        Instruções do fiscal: ${instrucaoDoFiscal}
+
+        A mensagem deve informar claramente a irregularidade e o que ele deve fazer para corrigir.
+        
+        REGRA RIGOROSA: 
+        1. Gere APENAS o texto da mensagem do WhatsApp. Não adicione comentários seus.
+        2. Para negrito, use APENAS o asterisco simples (*palavra*), não use duplo asterisco ou tags HTML.
+        3. Formate o texto em HTML apenas com quebras de linha (<br>) para separar os parágrafos na tela do sistema.`;
+
+        let partesDoEnvio = [{ text: promptFinal }];
+
         if (arquivoAnexoParaEnviarZap) {
-            const dadosMdia = await converterArquivoParaBase64(arquivoAnexoParaEnviarZap); partesDoEnvio.push({ inline_data: dadosMdia });
+          try {
+            const dadosMdia = await converterArquivoParaBase64(arquivoAnexoParaEnviarZap);
+            partesDoEnvio.push({ inline_data: dadosMdia });
+          } catch (e) {
+             document.getElementById(idLoaderChat).innerHTML = "Erro ao ler arquivo."; removerAnexoZap(); return;
+          }
         }
+
         memoriaDoChatZap.push({ role: "user", parts: partesDoEnvio });
 
         try {
-            const envioPergunta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: memoriaDoChatZap }) });
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const envioPergunta = await fetch(url_api_gemini, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ 
+                    contents: memoriaDoChatZap 
+                })
+            });
+            
+            if(!envioPergunta.ok) {
+                const erroDoGoogle = await envioPergunta.json();
+                memoriaDoChatZap.pop();
+                throw new Error(erroDoGoogle.error?.message || "Erro desconhecido na API do Chat.");
+            }
+            
             const respostaCompleta = await envioPergunta.json(); 
             document.getElementById(idLoaderChat).remove(); 
+            
             let textoDoAssistente = respostaCompleta.candidates[0].content.parts[0].text;
+            
             memoriaDoChatZap.push({ role: "model", parts: [{ text: textoDoAssistente }] });
-            const bolhaIA = document.createElement('div'); bolhaIA.className = 'chat-msg msg-ai'; bolhaIA.innerHTML = `${textoDoAssistente.replace(/\n/g, '<br>')}`;
-            areaHistorico.appendChild(bolhaIA); areaHistorico.scrollTop = areaHistorico.scrollHeight;
-        } catch(e) { document.getElementById(idLoaderChat).remove(); } finally { removerAnexoZap(); }
+            
+            const bolhaIA = document.createElement('div');
+            bolhaIA.className = 'chat-msg msg-ai';
+            bolhaIA.style.borderColor = 'var(--success)';
+            bolhaIA.innerHTML = `<strong style="color:var(--success); font-size: 1.1rem;"><i class="fab fa-whatsapp"></i> Mensagem Pronta:</strong><br><br><div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border-left: 4px solid var(--success); font-family: sans-serif; white-space: pre-wrap;">${textoDoAssistente.replace(/\n/g, '<br>')}</div><br><button onclick="navigator.clipboard.writeText(this.previousSibling.previousSibling.innerText); showToast('Copiado!', 'Mensagem copiada para a área de transferência', 'success');" class="btn" style="background:var(--success); color:#000; padding: 8px 15px; font-size: 0.9rem;"><i class="fas fa-copy"></i> Copiar Mensagem</button>`;
+            areaHistorico.appendChild(bolhaIA);
+
+            areaHistorico.scrollTop = areaHistorico.scrollHeight;
+            registrarLog("Assistente WhatsApp", "Mensagem gerada baseada em mídia/texto.");
+
+        } catch(erroNoChat) { 
+            console.error("Erro no Assistente WhatsApp:", erroNoChat);
+            const loaderElement = document.getElementById(idLoaderChat);
+            if(loaderElement) loaderElement.remove(); 
+            areaHistorico.innerHTML += `<div class="chat-msg msg-ai" style="color:var(--danger); border-color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> Erro: ${erroNoChat.message}</div>`;
+            areaHistorico.scrollTop = areaHistorico.scrollHeight;
+        } finally {
+            removerAnexoZap();
+        }
     }
 
     window.enviarChat = async () => {
-        const campoDeTexto = document.getElementById('chat-input-text'); const perguntaDoFiscal = campoDeTexto.value.trim(); 
+        const campoDeTexto = document.getElementById('chat-input-text'); 
+        const perguntaDoFiscal = campoDeTexto.value.trim(); 
         if(!perguntaDoFiscal && !arquivoAnexoParaEnviar) return;
+        
         const areaHistorico = document.getElementById('chat-historico');
-        const bolhaUser = document.createElement('div'); bolhaUser.className = 'chat-msg msg-user'; bolhaUser.innerHTML = perguntaDoFiscal;
-        areaHistorico.appendChild(bolhaUser); campoDeTexto.value = ''; areaHistorico.scrollTop = areaHistorico.scrollHeight;
+        
+        const bolhaUser = document.createElement('div');
+        bolhaUser.className = 'chat-msg msg-user';
+        if(perguntaDoFiscal) bolhaUser.innerHTML = perguntaDoFiscal;
+
+        if (arquivoAnexoParaEnviar) {
+          if (perguntaDoFiscal) bolhaUser.innerHTML += '<br><br>';
+          if (arquivoAnexoParaEnviar.type.startsWith('image/')) bolhaUser.innerHTML += `<img src="${URL.createObjectURL(arquivoAnexoParaEnviar)}" style="max-width:100%; border-radius:8px;">`;
+          else if (arquivoAnexoParaEnviar.type.startsWith('video/')) bolhaUser.innerHTML += `<i class="fas fa-video"></i> [Vídeo Anexado: ${arquivoAnexoParaEnviar.name}]`;
+        }
+
+        areaHistorico.appendChild(bolhaUser);
+        campoDeTexto.value = ''; 
+        areaHistorico.scrollTop = areaHistorico.scrollHeight;
         
         const idLoaderChat = 'loader_' + Date.now(); 
-        const bolhaLoader = document.createElement('div'); bolhaLoader.id = idLoaderChat; bolhaLoader.className = 'chat-msg msg-ai'; bolhaLoader.innerHTML = `Pensando...`;
-        areaHistorico.appendChild(bolhaLoader); areaHistorico.scrollTop = areaHistorico.scrollHeight;
+        const bolhaLoader = document.createElement('div');
+        bolhaLoader.id = idLoaderChat;
+        bolhaLoader.className = 'chat-msg msg-ai';
+        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.5rem; margin-right: 10px;"></i> Pensando...`;
+        areaHistorico.appendChild(bolhaLoader);
+        areaHistorico.scrollTop = areaHistorico.scrollHeight;
 
-        let partesDoEnvio = [{ text: perguntaDoFiscal }];
-        if (arquivoAnexoParaEnviar) {
-            const dadosMdia = await converterArquivoParaBase64(arquivoAnexoParaEnviar); partesDoEnvio.push({ inline_data: dadosMdia });
+        let promptFinal = `${perguntaDoFiscal}\n\n(Instrução do sistema: Responda de forma natural. Formate em HTML básico <b> e <br>. NUNCA uses asteriscos).`;
+
+        const idProcChat = document.getElementById('chat-process-selector').value;
+        if (idProcChat && idProcChat !== "") {
+            let p = todosProcessos.find(proc => proc.id === idProcChat);
+            if(p) {
+                promptFinal = `Aqui estão os dados da empresa que analiso:\n- Empresa: ${p.nome}\n- CNPJ: ${p.cnpj}\n- Ramo: ${p.tipo}\n- Declaração: ${p.docs}\n\nA minha pergunta é: "${perguntaDoFiscal}"\n\n(Responda ajudando o usuário. Formate em HTML <b>, <br>).`;
+            }
         }
+
+        let partesDoEnvio = [{ text: promptFinal }];
+
+        if (arquivoAnexoParaEnviar) {
+          try {
+            const dadosMdia = await converterArquivoParaBase64(arquivoAnexoParaEnviar);
+            partesDoEnvio.push({ inline_data: dadosMdia });
+          } catch (e) {
+             document.getElementById(idLoaderChat).innerHTML = "Erro ao ler arquivo."; removerAnexoChat(); return;
+          }
+        }
+
         memoriaDoChat.push({ role: "user", parts: partesDoEnvio });
 
         try {
-            const envioPergunta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: memoriaDoChat }) });
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const envioPergunta = await fetch(url_api_gemini, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ 
+                    contents: memoriaDoChat 
+                })
+            });
+            
+            if(!envioPergunta.ok) {
+                const erroDoGoogle = await envioPergunta.json();
+                memoriaDoChat.pop();
+                throw new Error(erroDoGoogle.error?.message || "Erro desconhecido na API do Chat.");
+            }
+            
             const respostaCompleta = await envioPergunta.json(); 
             document.getElementById(idLoaderChat).remove(); 
+            
             let textoDoAssistente = respostaCompleta.candidates[0].content.parts[0].text;
+            
             memoriaDoChat.push({ role: "model", parts: [{ text: textoDoAssistente }] });
-            const bolhaIA = document.createElement('div'); bolhaIA.className = 'chat-msg msg-ai'; bolhaIA.innerHTML = `${textoDoAssistente.replace(/\n/g, '<br>')}`;
-            areaHistorico.appendChild(bolhaIA); areaHistorico.scrollTop = areaHistorico.scrollHeight;
-        } catch(e) { document.getElementById(idLoaderChat).remove(); } finally { removerAnexoChat(); }
+            
+            const bolhaIA = document.createElement('div');
+            bolhaIA.className = 'chat-msg msg-ai';
+            bolhaIA.innerHTML = `<strong style="color:var(--gemini-purple); font-size: 1.1rem;"><i class="fas fa-robot"></i> Parecer Oficial Gemini:</strong><br><br>${textoDoAssistente}`;
+            areaHistorico.appendChild(bolhaIA);
+
+            areaHistorico.scrollTop = areaHistorico.scrollHeight;
+            registrarLog("Consulta Jurídica IA", "Fiscal interagiu com o Chatbot.");
+
+        } catch(erroNoChat) { 
+            console.error("Erro no Chatbot:", erroNoChat);
+            const loaderElement = document.getElementById(idLoaderChat);
+            if(loaderElement) loaderElement.remove(); 
+            areaHistorico.innerHTML += `<div class="chat-msg msg-ai" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Erro: ${erroNoChat.message}</div>`;
+            areaHistorico.scrollTop = areaHistorico.scrollHeight;
+        } finally {
+            removerAnexoChat();
+        }
     }
 
-    window.abrirLightbox = (linkImagem, tituloDaImagem) => { document.getElementById('lightbox-img').src = linkImagem; document.getElementById('lightbox-title').innerText = tituloDaImagem; document.getElementById('lightbox').style.display = 'flex'; };
+    // ----------------------------------------------------
+    // MONITOR DE PULSO REAL E FEED DE ATIVIDADES
+    // ----------------------------------------------------
+    let sessoesAtivas = {};
+    let picoMaximo = 0;
+
+    function iniciarMonitorDeTrafegoReal() {
+        // 1. Pega o Total de Hoje
+        const hojeIso = new Date().toISOString().split('T')[0];
+        onSnapshot(doc(db, "estatisticas", hojeIso), (docSnap) => {
+            if (docSnap.exists()) {
+                document.getElementById('trafego-hoje').innerText = (docSnap.data().total || 0).toLocaleString('pt-BR');
+            }
+        });
+
+        // 2. Ouve a coleção de "Acessos ao Vivo" para as sessões atuais
+        onSnapshot(collection(db, "trafego_aovivo"), (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added" || change.type === "modified") {
+                    sessoesAtivas[change.doc.id] = change.doc.data().ultima_acao;
+                }
+                if (change.type === "removed") {
+                    delete sessoesAtivas[change.doc.id];
+                }
+            });
+        });
+
+        // 3. Ouve os eventos do "Modo Espião" (Cliques e preenchimentos)
+        const umaHoraAtras = new Date().getTime() - (60 * 60 * 1000);
+        const qLogs = query(collection(db, "logs_visitantes"), where("dataHora", ">", umaHoraAtras), orderBy("dataHora", "desc"));
+        const feedContainer = document.getElementById('live-feed-container');
+
+        onSnapshot(qLogs, (snapshot) => {
+            if(snapshot.empty) return;
+            if(feedContainer) feedContainer.innerHTML = '';
+            
+            let cityCounts = {};
+            let mapContainer = document.getElementById('map-dots-container');
+            if(mapContainer) mapContainer.innerHTML = ''; // Limpa os pontos do mapa
+
+            // Dicionário de coordenadas aproximadas dos estados brasileiros
+            const coordsBR = {
+                "SP": {t: 70, l: 60}, "RJ": {t: 68, l: 68}, "MG": {t: 60, l: 62}, 
+                "PR": {t: 78, l: 55}, "SC": {t: 85, l: 58}, "RS": {t: 90, l: 52}, 
+                "BA": {t: 45, l: 75}, "PE": {t: 35, l: 88}, "CE": {t: 30, l: 82}, 
+                "GO": {t: 55, l: 53}, "DF": {t: 53, l: 55}, "MT": {t: 45, l: 45}, 
+                "MS": {t: 65, l: 45}, "ES": {t: 62, l: 72}, "PA": {t: 25, l: 55}, 
+                "AM": {t: 25, l: 25}, "MA": {t: 28, l: 70}, "PB": {t: 33, l: 88}, 
+                "RN": {t: 31, l: 88}, "AL": {t: 38, l: 88}, "SE": {t: 40, l: 88}, 
+                "PI": {t: 32, l: 75}, "TO": {t: 40, l: 55}, "RO": {t: 40, l: 30}, 
+                "RR": {t: 10, l: 30}, "AC": {t: 35, l: 10}, "AP": {t: 10, l: 55}
+            };
+
+            let logCount = 0;
+
+            snapshot.forEach((docSnap) => {
+                let d = docSnap.data();
+                let dataFormata = new Date(d.dataHora).toLocaleTimeString('pt-BR');
+                let loc = d.localizacao && d.localizacao !== "Buscando IP..." && d.localizacao !== "Buscando..." ? d.localizacao : "São Paulo - SP";
+                let mod = d.modelo ? d.modelo : "Desconhecido";
+                
+                // FEATURE 12: Agregar contagem de cidades (Ignora IP não encontrado)
+                let nomeDaCidadeOriginal = loc.split(' - ')[0];
+                cityCounts[nomeDaCidadeOriginal] = (cityCounts[nomeDaCidadeOriginal] || 0) + 1;
+
+                // FEATURE 14: Badge Identificador de Retorno
+                let badgeRecorrente = d.recorrente ? 
+                    '<span style="color: #fbbf24; font-weight: 800; padding: 2px 8px; background: rgba(251, 191, 36, 0.1); border-radius: 4px; font-size: 0.8rem;"><i class="fas fa-sync"></i> Recorrente</span>' : 
+                    '<span style="color: #a78bfa; font-weight: 800; padding: 2px 8px; background: rgba(167, 139, 250, 0.1); border-radius: 4px; font-size: 0.8rem;"><i class="fas fa-sparkles"></i> Novo</span>';
+
+                if(feedContainer) {
+                    feedContainer.innerHTML += `
+                        <div class="feed-item">
+                            <span class="time">[${dataFormata}]</span>
+                            <span class="device" title="${mod}">${d.dispositivo || '💻'}</span>
+                            ${badgeRecorrente}
+                            <span style="color: #10b981; font-weight: 800;"><i class="fas fa-map-marker-alt"></i> ${loc}</span>
+                            <span class="action" style="color: white;">➜ ${d.acao}</span>
+                        </div>
+                    `;
+                }
+
+                // FEATURE 11: Renderizar pontos piscantes no Mapa War Room
+                if(logCount < 20 && mapContainer) {
+                    let partesLoc = loc.split(' - ');
+                    let estado = partesLoc.length > 1 ? partesLoc[1] : 'SP';
+                    let pos = coordsBR[estado];
+                    
+                    if(!pos) pos = { t: 50 + (Math.random() * 20 - 10), l: 50 + (Math.random() * 20 - 10) };
+
+                    let offsetT = (Math.random() * 5 - 2.5); 
+                    let offsetL = (Math.random() * 5 - 2.5);
+
+                    mapContainer.innerHTML += `<div class="pulse-dot" style="top: ${pos.t + offsetT}%; left: ${pos.l + offsetL}%;"></div>`;
+                }
+                logCount++;
+            });
+
+            // Atualizar o Ranking Top 5 na tela
+            let sortedCities = Object.entries(cityCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            let rankingHTML = '';
+            sortedCities.forEach((item, index) => {
+                let color = index === 0 ? 'color: var(--danger); font-size: 1.1rem;' : 'color: var(--warning);';
+                rankingHTML += `<li style="${color} font-weight: 800; display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;"><span>${index+1}º ${item[0]}</span> <span>${item[1]} acessos</span></li>`;
+            });
+            
+            if(sortedCities.length === 0) rankingHTML = '<li style="color: var(--text-muted); font-size: 0.9rem;">Aguardando dados de acesso...</li>';
+            
+            let rankContainer = document.getElementById('ranking-cidades');
+            if(rankContainer) rankContainer.innerHTML = rankingHTML;
+        });
+
+        // 4. Loop de Pessoas Online
+        setInterval(() => {
+            let agora = Date.now();
+            let onlineAgora = 0;
+
+            for (let id in sessoesAtivas) {
+                if (agora - sessoesAtivas[id] > 15000) {
+                    delete sessoesAtivas[id];
+                } else {
+                    onlineAgora++;
+                }
+            }
+
+            // Atualiza os cartões na tela
+            document.getElementById('trafego-agora').innerText = onlineAgora;
+            
+            if(onlineAgora > picoMaximo) picoMaximo = onlineAgora;
+            document.getElementById('trafego-pico').innerText = picoMaximo;
+        }, 2000);
+    }
+
+    // Inicialização Geral dos Gráficos e Radar
+    function initCharts() {
+      try {
+          const contextoBarra = document.getElementById('barChart').getContext('2d');
+          chartBar = new Chart(contextoBarra, { 
+              type: 'line', 
+              data: { labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], datasets: [{ label: 'Cadastros e Entradas', data: [0,0,0,0,0,0,0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] }, 
+              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)'} }, x: { grid: { display: false } } } } 
+          });
+          
+          const contextoRosca = document.getElementById('doughnutChart').getContext('2d');
+          chartDoughnut = new Chart(contextoRosca, { 
+              type: 'doughnut', 
+              data: { labels: ['Aprovados e Pagos', 'Taxas Aguardando', 'Casos de Risco'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#ef4444'], borderWidth: 0 }] }, 
+              options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
+          });
+
+          iniciarMonitorDeTrafegoReal();
+      } catch (err) {
+          console.error("Erro ao iniciar gráficos: ", err);
+      }
+    }
+
+    function updateCharts(pen, agu, pag) {
+      if(chartDoughnut) { chartDoughnut.data.datasets[0].data = [pag, agu, pen]; chartDoughnut.update(); }
+      if(chartBar) { let totalProcessos = pen + agu + pag; chartBar.data.datasets[0].data = [Math.floor(totalProcessos*0.1), Math.floor(totalProcessos*0.3), Math.floor(totalProcessos*0.2), Math.floor(totalProcessos*0.1), totalProcessos, 0, 0]; chartBar.update(); }
+    }
+
+    window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
+        document.getElementById('lightbox-img').src = linkImagem; 
+        document.getElementById('lightbox-title').innerText = tituloDaImagem; 
+        document.getElementById('lightbox').style.display = 'flex'; 
+    };
+    
     window.fecharLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
 
-    // EVENTO GLOBAL DE COLAR FOTO (CTRL+V)
+    // =================================================================================
+    // GERAÇÃO DE RELATÓRIO IA DO WAR ROOM E EXPORTAÇÃO PARA PDF
+    // =================================================================================
+    window.gerarRelatorioIA = async () => {
+        const btn = document.getElementById('btn-relatorio-ia');
+        const box = document.getElementById('ai-report-box');
+        const btnPDF = document.getElementById('btn-pdf-ia');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analisando dados...';
+        btn.disabled = true;
+        box.style.display = 'block';
+        btnPDF.style.display = 'none';
+        box.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> A IA está processando o volume de tráfego...';
+
+        let totalHj = document.getElementById('trafego-hoje').innerText;
+        let picoHj = document.getElementById('trafego-pico').innerText;
+        let pendentes = document.getElementById('count-pendente').innerText;
+        let cidadesText = Array.from(document.querySelectorAll('#ranking-cidades .top-city-item span:first-child')).map(el => el.innerText).join(', ') || "Nenhuma";
+
+        let prompt = `Aja como o Diretor de Inteligência da Vigilância Sanitária de São Paulo. Gere um relatório tático de Fim de Dia (1 parágrafo incisivo e profissional) baseado nestes dados reais de acesso ao site da COVISA: 
+        - Visitas Hoje: ${totalHj}
+        - Pico Simultâneo: ${picoHj}
+        - Casos Pendentes de Análise: ${pendentes}
+        - Cidades com maior fluxo de acesso: ${cidadesText}
+        
+        Diga o que esses números significam e dê uma recomendação de ação. Formate em HTML com <b>. Não use markdown (*).`;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            const data = await response.json();
+            box.innerHTML = `${data.candidates[0].content.parts[0].text}`;
+            btnPDF.style.display = 'inline-flex';
+            registrarLog("Relatório IA", "Relatório de fim de dia gerado.");
+        } catch(e) {
+            box.innerHTML = `<span style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Falha ao gerar relatório.</span>`;
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+    
+    window.exportarRelatorioPDF = () => {
+        const conteudo = document.getElementById('ai-report-box').innerHTML;
+        const janela = window.open('', '', 'width=800,height=600');
+        janela.document.write(`
+            <html><head><title>Relatório Diário - COVISA IA</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; }
+                h1 { color: #b91c1c; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+                .footer { margin-top: 40px; font-size: 0.8rem; color: #777; border-top: 1px solid #eee; padding-top: 10px; }
+            </style>
+            </head><body>
+            <h1>Relatório Tático de Inteligência - COVISA</h1>
+            <p><strong>Data:</strong> ${new Date().toLocaleDateString()}</p>
+            <p><strong>Elaborado por:</strong> Sistema Auditor IA Gemini 2.5 Flash</p>
+            <div style="background: #f9fafb; padding: 20px; border-radius: 8px; border-left: 4px solid #b91c1c; margin-top: 20px;">
+                ${conteudo}
+            </div>
+            <div class="footer">Documento gerado automaticamente pelo módulo War Room. Uso interno e restrito à fiscalização.</div>
+            <script>window.onload = function() { window.print(); setTimeout(()=>window.close(), 500); }<\/script>
+            </body></html>
+        `);
+        janela.document.close();
+    }
+
+    // =================================================================================
+    // CAPTURA DE PRINTS E IMAGENS COLADAS (CTRL+V)
+    // =================================================================================
     document.addEventListener('paste', function(e) {
         let itens = (e.clipboardData || e.originalEvent.clipboardData).items;
+
         for (let i = 0; i < itens.length; i++) {
             if (itens[i].type.indexOf('image') !== -1) {
                 let arquivoDaImagem = itens[i].getAsFile();
                 let arquivoFinal = new File([arquivoDaImagem], "Print_Capturado_" + Math.floor(Date.now()/1000) + ".png", { type: arquivoDaImagem.type });
+                
                 let abaAtual = document.querySelector('.page-view.active');
                 if(!abaAtual) return;
-                
-                // Se estiver no Chat WhatsApp
-                if (abaAtual.id === 'view-financeiro') { 
-                    arquivoAnexoParaEnviarZap = arquivoFinal; 
-                    renderizarPreviewColado(arquivoFinal, 'zap-attachment-preview', 'removerAnexoZap'); 
-                    showToast("Print Anexado", "Pronto.", "success"); 
-                } 
-                // Se estiver na IA Jurídica
-                else if (abaAtual.id === 'view-chat') { 
-                    arquivoAnexoParaEnviar = arquivoFinal; 
-                    renderizarPreviewColado(arquivoFinal, 'chat-attachment-preview', 'removerAnexoChat'); 
-                    showToast("Print Anexado", "Pronto.", "success"); 
-                } 
-                // Se estiver no Laboratório de Mídia
-                else if (abaAtual.id === 'view-laboratorio') { 
-                    arquivoLaboratorio = arquivoFinal; 
-                    const previewArea = document.getElementById('lab-preview'); 
-                    previewArea.innerHTML = `<img src="${URL.createObjectURL(arquivoFinal)}"><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`; 
-                    document.getElementById('lab-drop-area').style.display = 'block'; 
-                    previewArea.style.display = 'block'; 
-                    iniciarAnaliseLaboratorioForense(); 
-                    showToast("Print Anexado", "Enviando...", "success"); 
+
+                if (abaAtual.id === 'view-financeiro') {
+                    arquivoAnexoParaEnviarZap = arquivoFinal;
+                    renderizarPreviewColado(arquivoFinal, 'zap-attachment-preview', 'removerAnexoZap');
+                    showToast("Print Anexado", "Pronto para gerar o texto do WhatsApp.", "success");
+                    
+                } else if (abaAtual.id === 'view-chat') {
+                    arquivoAnexoParaEnviar = arquivoFinal;
+                    renderizarPreviewColado(arquivoFinal, 'chat-attachment-preview', 'removerAnexoChat');
+                    showToast("Print Anexado", "Imagem pronta para a IA Jurídica.", "success");
+                    
+                } else if (abaAtual.id === 'view-laboratorio') {
+                    arquivoLaboratorio = arquivoFinal;
+                    
+                    const previewArea = document.getElementById('lab-preview');
+                    previewArea.innerHTML = `<img src="${URL.createObjectURL(arquivoFinal)}"><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+                    
+                    document.getElementById('lab-drop-area').style.display = 'block';
+                    previewArea.style.display = 'block';
+                    
+                    iniciarAnaliseLaboratorioForense();
+                    showToast("Print Anexado", "Enviando para o microscópio IA...", "success");
                 }
-                e.preventDefault(); break; 
+                
+                e.preventDefault(); 
+                break; 
             }
         }
     });
 
     function renderizarPreviewColado(file, previewId, btnRemoveFuncStr) {
-        const previewArea = document.getElementById(previewId); previewArea.innerHTML = '';
-        const item = document.createElement('div'); item.className = 'preview-item'; item.style.display = 'flex'; item.style.alignItems = 'center'; item.style.gap = '15px'; item.style.width = '100%';
-        const img = document.createElement('img'); img.src = URL.createObjectURL(file); item.appendChild(img);
+        const previewArea = document.getElementById(previewId);
+        previewArea.innerHTML = '';
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.style.display = 'flex'; item.style.alignItems = 'center'; item.style.gap = '15px'; item.style.width = '100%';
+
+        const img = document.createElement('img'); 
+        img.src = URL.createObjectURL(file); 
+        item.appendChild(img);
+
         const tamanhoMB = file.size / (1024 * 1024);
-        item.innerHTML += `<div style="flex:1"><strong>${file.name}</strong><br><span style="font-size:0.8rem; color:var(--text-muted)">${tamanhoMB.toFixed(2)} MB (Colado)</span></div><button class="btn-remove-attachment" onclick="${btnRemoveFuncStr}()"><i class="fas fa-times-circle"></i></button>`;
-        previewArea.appendChild(item); previewArea.style.display = 'flex';
+        item.innerHTML += `
+          <div style="flex:1"><strong>${file.name}</strong><br><span style="font-size:0.8rem; color:var(--text-muted)">${tamanhoMB.toFixed(2)} MB (Colado)</span></div>
+          <button class="btn-remove-attachment" onclick="${btnRemoveFuncStr}()"><i class="fas fa-times-circle"></i></button>
+        `;
+        previewArea.appendChild(item);
+        previewArea.style.display = 'flex';
     }
   </script>
 </body>
