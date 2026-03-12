@@ -871,9 +871,38 @@
     const db = getFirestore(app);
 
     // =========================================================
-    // RASTREADOR DE TRÁFEGO E AÇÕES (MODO ESPIÃO)
+    // RASTREADOR DE TRÁFEGO E AÇÕES (MODO ESPIÃO) COM LOCALIZAÇÃO
     // =========================================================
     try {
+        // Detectando Aparelho com mais precisão
+        const ua = navigator.userAgent.toLowerCase();
+        let osInfo = "Computador";
+        if (ua.includes("android")) osInfo = "Android";
+        else if (ua.includes("iphone") || ua.includes("ipad")) osInfo = "iPhone/iOS";
+        else if (ua.includes("windows")) osInfo = "Windows PC";
+        else if (ua.includes("mac")) osInfo = "MacBook";
+
+        const isMobile = /iphone|ipad|ipod|android/i.test(ua);
+        const deviceIcon = isMobile ? '📱' : '💻';
+
+        // Sistema de Localização Agressivo (salva na memória para ser mais rápido)
+        let userLocation = localStorage.getItem('user_loc') || "Buscando...";
+
+        async function buscarLocalizacao() {
+            if(userLocation !== "Buscando...") return;
+            try {
+                let req = await fetch('https://ipapi.co/json/');
+                let data = await req.json();
+                if(data.city) {
+                    userLocation = `${data.city} - ${data.region}`;
+                    localStorage.setItem('user_loc', userLocation);
+                }
+            } catch(e) {
+                userLocation = "Localização Protegida";
+            }
+        }
+        buscarLocalizacao(); // Dispara logo que abre o site
+
         const dataIso = new Date().toISOString().split('T')[0]; 
         setDoc(doc(db, "estatisticas", dataIso), { total: increment(1) }, { merge: true }).catch(()=>{});
 
@@ -889,14 +918,13 @@
         window.addEventListener('beforeunload', () => { deleteDoc(sessionRef).catch(()=>{}); });
 
         // --- SISTEMA DE LEITURA DE CLIQUES E TOQUES NA TELA ---
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const deviceIcon = isMobile ? '📱' : '💻';
-
         async function registrarAcaoUsuario(acaoStr) {
             try {
                 await addDoc(collection(db, "logs_visitantes"), {
                     acao: acaoStr,
                     dispositivo: deviceIcon,
+                    modelo: osInfo,
+                    localizacao: userLocation,
                     dataHora: new Date().getTime()
                 });
             } catch(e){}
