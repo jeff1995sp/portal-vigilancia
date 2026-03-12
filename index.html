@@ -1160,6 +1160,9 @@
     };
 
     let cnpjParaComprovante = "";
+    // O VALOR ABAIXO IRÁ GUARDAR O VALOR DO PIX RECUPERADO DO FIREBASE
+    let valorPixParaComprovante = "0,00";
+
     window.enviarWhatsAppComprovanteConsulta = async function() {
       if(!cnpjParaComprovante) return;
       
@@ -1168,7 +1171,8 @@
       let nome = "Cliente";
       if(!snapshot.empty) nome = snapshot.docs[0].data().nome;
 
-      const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${nome}\n*CNPJ/CPF:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
+      // AGORA O VALOR FICA SALVO AQUI TAMBÉM NO ZAP DO CLIENTE (SE VOCÊ PRECISAR)
+      const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${nome}\n*CNPJ/CPF:* ${cnpjParaComprovante}\n*Valor da Guia (R$):* ${valorPixParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
       const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msg);
       window.open(url, '_blank');
     };
@@ -1609,7 +1613,7 @@
         });
     }
 
-    // CONSULTA STATUS
+    // CONSULTA STATUS E MOSTRA PIX
     const formConsulta = document.getElementById('form-consulta');
     if (formConsulta) {
         formConsulta.addEventListener('submit', async (e) => {
@@ -1664,13 +1668,30 @@
                       atualizarBarraProgresso(2); 
                   } else {
                       divMsg.style.display = 'none'; divPix.style.display = 'block';
-                      let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-                      if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
+                      
+                      // =========================================================================
+                      // LÓGICA DO VALOR DO PIX: MOSTRA EXATAMENTE O VALOR LANÇADO PELO ADMIN
+                      // =========================================================================
+                      let valorLimpo = pedido.valor.replace('R$', '').replace(/\s/g, ''); // Garante que não tem 'R$' digitado pelo admin
+                      let valorFormatado = parseFloat(valorLimpo.replace(',','.')).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+                      
+                      if(valorFormatado === "NaN" || !valorLimpo.match(/[0-9]/)) {
+                          valorFormatado = "R$ " + valorLimpo;
+                      }
+                      
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
+                      
+                      // Salva o valor globalmente para a mensagem do Whatsapp do botão "Emitir Guia"
+                      valorPixParaComprovante = valorFormatado;
+
+                      // Substitui o código "copia e cola" genérico inserindo o valor (Simulação)
+                      // Nota: Num cenário real com banco, o código do Pix muda dinamicamente via API.
+                      // Aqui, mantemos o código original do seu template, mas a tela reflete o valor do Banco.
                       
                       if (pedido.pix_copia_e_cola) {
                           document.getElementById('pix-copia-cola').value = pedido.pix_copia_e_cola;
                       }
+                      // =========================================================================
                       
                       cnpjParaComprovante = cnpj;
                       atualizarBarraProgresso(3); 
