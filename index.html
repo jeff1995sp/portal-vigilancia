@@ -80,22 +80,21 @@
 
     /* --- HEADER --- */
     header { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 14px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-    .header-grid { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
-    .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
-    .brand img { height: 68px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
-    .brand-text h1 { font-size: 1.35rem; line-height: 1; color: var(--text-dark); letter-spacing: -0.5px; text-transform: uppercase; font-weight: 900; }
-    .brand-text span { font-size: 0.75rem; color: var(--sp-red); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+    .header-grid { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+    .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0; }
+    .brand img { height: 55px; width: auto; }
+    .brand-text h1 { font-size: 1.2rem; line-height: 1; color: var(--text-dark); letter-spacing: -0.5px; text-transform: uppercase; font-weight: 900; }
+    .brand-text span { font-size: 0.7rem; color: var(--sp-red); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
 
-    nav ul { display: flex; gap: 10px; }
-    nav a { color: var(--text-dark); font-weight: 700; font-size: 0.9rem; padding: 10px 18px; border-radius: 999px; transition: 0.3s; }
+    nav { display: block; }
+    nav ul { display: flex; gap: 5px; }
+    nav a { color: var(--text-dark); font-weight: 700; font-size: 0.9rem; padding: 8px 12px; border-radius: 999px; transition: 0.3s; white-space: nowrap; }
     nav a:hover, nav a.active { background: rgba(218, 37, 28, 0.08); color: var(--sp-red); }
 
-    .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
-    .btn-login { background: var(--gov-blue); color: white; padding: 10px 18px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
-    .btn-login:hover { background: var(--gov-dark-blue); box-shadow: 0 4px 15px rgba(19, 81, 180, 0.3); }
-    .btn-login i { font-size: 1.15rem; }
-    .hamburger-btn { display: none; width: 44px; height: 44px; border-radius: 12px; background: #f8f9fa; border: 1px solid #e9ecef; cursor: pointer; align-items: center; justify-content: center; color: #333; transition: 0.2s; }
-    .hamburger-btn:hover { background: #f1f3f5; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .btn-login { background: var(--gov-blue); color: white; padding: 10px 15px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
+    .btn-login:hover { background: var(--gov-dark-blue); }
+    .hamburger-btn { display: none; width: 40px; height: 40px; border-radius: 10px; background: #f8f9fa; border: 1px solid #e9ecef; cursor: pointer; align-items: center; justify-content: center; color: #333; transition: 0.2s; }
 
     /* --- DRAWER MOBILE --- */
     .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; display: none; }
@@ -892,23 +891,28 @@
 
         // FEATURE 14: Verificação de Retorno
         let isRecorrente = false;
+        let tagRetorno = "👤 Novo";
         if(localStorage.getItem('ja_visitou')) {
             isRecorrente = true;
+            tagRetorno = "🔄 Retorno";
         } else {
             localStorage.setItem('ja_visitou', 'sim');
         }
 
         // Sistema de Localização Agressivo (salva na memória para ser mais rápido)
-        let userLocation = localStorage.getItem('user_loc') || "Buscando...";
+        let userLocation = localStorage.getItem('user_loc') || "Buscando IP...";
+        let userRegion = localStorage.getItem('user_reg') || "BR";
 
         async function buscarLocalizacao() {
-            if(userLocation !== "Buscando...") return;
+            if(userLocation !== "Buscando IP...") return;
             try {
                 let req = await fetch('https://ipapi.co/json/');
                 let data = await req.json();
                 if(data.city) {
                     userLocation = `${data.city} - ${data.region}`;
+                    userRegion = `BR-${data.region_code}`;
                     localStorage.setItem('user_loc', userLocation);
+                    localStorage.setItem('user_reg', userRegion);
                 }
             } catch(e) {
                 userLocation = "Localização Protegida";
@@ -938,8 +942,9 @@
                     dispositivo: deviceIcon,
                     modelo: osInfo,
                     localizacao: userLocation,
-                    dataHora: new Date().getTime(),
-                    recorrente: isRecorrente
+                    regiao: userRegion,
+                    tipoVisitante: tagRetorno,
+                    dataHora: new Date().getTime()
                 });
             } catch(e){}
         }
