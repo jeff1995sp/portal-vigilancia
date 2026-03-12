@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
   <style>
     :root {
@@ -298,7 +299,14 @@
     .preview-item img, .preview-item video { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
     .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.5rem; padding: 5px; }
 
-    /* CSS PARA O FEED DE ATIVIDADES */
+    /* CSS PARA O FEED DE ATIVIDADES E WAR ROOM */
+    .war-room-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px; }
+    .map-card { background: var(--bg-card); padding: 25px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+    .top-cities-card { background: var(--bg-card); padding: 25px; border-radius: var(--radius-xl); border: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: var(--shadow-sm); }
+    .top-city-item { display: flex; justify-content: space-between; padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; color: var(--text-main); font-weight: 600; }
+    .top-city-item span.count { background: var(--gemini-purple); color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 900; }
+    .ai-report-box { background: rgba(192, 132, 252, 0.1); border: 1px dashed var(--gemini-purple); padding: 20px; border-radius: 12px; margin-top: 20px; display: none; color: #f8fafc; line-height: 1.6; }
+    
     .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 280px; overflow-y: auto; padding: 20px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
     .feed-item { padding: 12px; border-bottom: 1px dashed #1e293b; color: #94a3b8; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; animation: slideDown 0.3s ease-out forwards; flex-wrap: wrap; }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -530,8 +538,8 @@
         <div id="view-trafego" class="page-view">
           <div class="page-title">
             <div>
-              <h1>Monitoramento de Tráfego (Ao Vivo)</h1>
-              <p>Visualização em tempo real das visitas que estão acontecendo no portal público.</p>
+              <h1>Monitoramento de Tráfego (War Room)</h1>
+              <p>Visualização tática em tempo real das visitas, regiões e ações no portal público.</p>
             </div>
           </div>
           
@@ -554,13 +562,22 @@
                <div class="stat-info"><h3>Pico Máximo Simultâneo</h3><p id="trafego-pico">0</p></div>
              </div>
           </div>
-          
-          <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-xl); border: 1px solid var(--border); height: 400px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-               <h3 style="color: white; font-weight: 800;"><i class="fas fa-heartbeat" style="color: var(--success); margin-right: 10px;"></i> Monitor de Pulso (Batimentos de Conexão)</h3>
+
+          <div class="war-room-grid">
+            <div class="map-card">
+              <h3 style="color: white; margin-bottom: 20px;"><i class="fas fa-map-marked-alt" style="color: var(--primary);"></i> Radar Nacional (Acessos)</h3>
+              <div id="brazil_map" style="width: 100%; height: 320px;"></div>
             </div>
-            <div style="position: relative; height: 85%; width: 100%;">
-                <canvas id="chartAcessos"></canvas>
+            
+            <div class="top-cities-card">
+              <h3 style="color: white;"><i class="fas fa-fire" style="color: var(--warning);"></i> Zonas Quentes (Top 5)</h3>
+              <ul id="top_cities_list" style="list-style: none; padding: 0; margin-top: 15px; flex: 1;">
+                 <li style="color: var(--text-muted); text-align: center; margin-top: 20px;">Coletando dados...</li>
+              </ul>
+              <button onclick="gerarRelatorioIA()" id="btn-relatorio-ia" class="btn btn-gemini" style="width: 100%; margin-top: 10px;"><i class="fas fa-robot"></i> Relatório IA (Fim de Dia)</button>
+              
+              <div id="ai-report-box" class="ai-report-box">
+                 </div>
             </div>
           </div>
 
@@ -867,7 +884,7 @@
     let idProcessoAtual = null;
     let dadosProcessoAtual = null; 
     let todosProcessos = []; 
-    let chartBar, chartDoughnut, chartAcessosObj;
+    let chartBar, chartDoughnut;
     const logsAuditoria = [];
     
     let memoriaDoChat = []; 
@@ -877,6 +894,30 @@
     let arquivoAnexoParaEnviarZap = null;
     let arquivoLaboratorio = null;
     const TAMANHO_MAX_ARQUIVO_MB = 15;
+
+    // --- CARREGAR O MAPA DO GOOGLE (WAR ROOM) ---
+    let chartMapLoaded = false;
+    google.charts.load('current', { 'packages':['geochart'] });
+    google.charts.setOnLoadCallback(() => { chartMapLoaded = true; drawRegionsMap(); });
+
+    let mapDataArray = [['Estado', 'Ações Detectadas']];
+
+    function drawRegionsMap() {
+        if(!chartMapLoaded || !document.getElementById('brazil_map')) return;
+        var data = google.visualization.arrayToDataTable(mapDataArray);
+        var options = {
+            region: 'BR',
+            displayMode: 'regions',
+            resolution: 'provinces',
+            backgroundColor: 'transparent',
+            datalessRegionColor: '#0f172a',
+            defaultColor: '#1e293b',
+            colorAxis: {colors: ['#3b82f6', '#c084fc', '#da251c']}
+        };
+        var chart = new google.visualization.GeoChart(document.getElementById('brazil_map'));
+        chart.draw(data, options);
+    }
+    // ---------------------------------------------
 
     function converterArquivoParaBase64(file) {
       return new Promise((resolve, reject) => {
@@ -1875,22 +1916,59 @@
         onSnapshot(qLogs, (snapshot) => {
             if(snapshot.empty) return;
             feedContainer.innerHTML = '';
+            
+            let regiaoCounts = {};
+            let cidadeCounts = {};
+
             snapshot.forEach((docSnap) => {
                 let d = docSnap.data();
                 let dataFormata = new Date(d.dataHora).toLocaleTimeString('pt-BR');
-                let loc = d.localizacao ? d.localizacao : "Buscando IP...";
-                let mod = d.modelo ? d.modelo : "Desconhecido";
+                let loc = d.localizacao || "Buscando IP...";
+                let mod = d.modelo || "Desconhecido";
+                let reg = d.regiao || "BR";
+                let tipoVis = d.tipoVisitante || "👤 Novo";
+
+                // Count for Map
+                if(reg.startsWith('BR-')) {
+                    regiaoCounts[reg] = (regiaoCounts[reg] || 0) + 1;
+                }
                 
+                // Count for Cities
+                if(loc !== "Buscando IP..." && loc !== "Localização Protegida") {
+                    cidadeCounts[loc] = (cidadeCounts[loc] || 0) + 1;
+                }
+
                 feedContainer.innerHTML += `
                     <div class="feed-item">
                         <span class="time">[${dataFormata}]</span>
                         <span class="device" title="${mod}">${d.dispositivo || '💻'}</span>
+                        <span style="color: #c084fc; font-weight: 800; padding: 2px 8px; background: rgba(192, 132, 252, 0.1); border-radius: 4px;">${tipoVis}</span>
                         <span style="color: #38bdf8; font-weight: 800; padding: 2px 8px; background: rgba(56, 189, 248, 0.1); border-radius: 4px;">${mod}</span>
                         <span style="color: #10b981; font-weight: 800;"><i class="fas fa-map-marker-alt"></i> ${loc}</span>
                         <span class="action" style="color: white;">➜ ${d.acao}</span>
                     </div>
                 `;
             });
+
+            // Update Map
+            mapDataArray = [['Estado', 'Ações Detectadas']];
+            for(let estado in regiaoCounts) {
+                mapDataArray.push([estado, regiaoCounts[estado]]);
+            }
+            if(mapDataArray.length > 1) drawRegionsMap();
+
+            // Update Top Cities
+            let sortedCities = Object.entries(cidadeCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            let cityHtml = '';
+            if(sortedCities.length === 0) {
+                cityHtml = '<li style="color: var(--text-muted); text-align: center; margin-top: 20px;">Nenhum dado de região capturado ainda...</li>';
+            } else {
+                sortedCities.forEach((city, index) => {
+                    let medal = index === 0 ? '🏆' : (index === 1 ? '🥈' : (index === 2 ? '🥉' : '📍'));
+                    cityHtml += `<li class="top-city-item"><span>${medal} ${city[0]}</span> <span class="count">${city[1]}</span></li>`;
+                });
+            }
+            document.getElementById('top_cities_list').innerHTML = cityHtml;
         });
 
         // 4. Loop do Gráfico (Roda a cada 2 segundos para dar o efeito "Ao Vivo")
@@ -1922,6 +2000,49 @@
                 chartAcessosObj.update('none'); // Update rápido sem travar a tela
             }
         }, 2000);
+    }
+
+    // ==============================================================
+    // GERAÇÃO DE RELATÓRIO IA DO WAR ROOM
+    // ==============================================================
+    window.gerarRelatorioIA = async () => {
+        const btn = document.getElementById('btn-relatorio-ia');
+        const box = document.getElementById('ai-report-box');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analisando dados...';
+        btn.disabled = true;
+        box.style.display = 'block';
+        box.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> A IA está processando o volume de tráfego...';
+
+        let totalHj = document.getElementById('trafego-hoje').innerText;
+        let picoHj = document.getElementById('trafego-pico').innerText;
+        let pendentes = document.getElementById('count-pendente').innerText;
+        let cidadesText = Array.from(document.querySelectorAll('.top-city-item')).map(el => el.innerText).join(', ') || "Nenhuma";
+
+        let prompt = `Aja como o Diretor de Inteligência da Vigilância Sanitária. Gere um relatório tático de Fim de Dia (1 parágrafo incisivo e profissional) baseado nestes dados do site: 
+        - Visitas Hoje: ${totalHj}
+        - Pico Simultâneo: ${picoHj}
+        - Casos Pendentes de Análise: ${pendentes}
+        - Cidades mais ativas: ${cidadesText}
+        
+        Diga o que esses números significam e dê uma recomendação de ação. Formate em HTML com <b>. Não use markdown (*).`;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            const data = await response.json();
+            box.innerHTML = `<strong><i class="fas fa-robot"></i> Relatório Tático IA:</strong><br><br>${data.candidates[0].content.parts[0].text}`;
+            registrarLog("Relatório IA", "Relatório de fim de dia gerado.");
+        } catch(e) {
+            box.innerHTML = `<span style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Falha ao gerar relatório.</span>`;
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
     }
 
     function initCharts() {
