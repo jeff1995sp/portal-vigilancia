@@ -290,7 +290,6 @@
     .triagem-box i { font-size: 2.5rem; color: var(--primary); }
     .triagem-box.risk i { color: var(--danger); }
 
-    /* CSS para o botão de anexo e preview no chat */
     .chat-attachment-btn { background: var(--bg-card); border: 1px solid var(--border); width: 60px; height: 60px; border-radius: 50px; cursor: pointer; color: var(--text-muted); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; }
     .chat-attachment-btn:hover { color: var(--primary); border-color: var(--primary); background: rgba(59, 130, 246, 0.1); }
     .attachment-preview-box { display: none; width: 100%; background: var(--bg-body); border: 1px dashed var(--border); border-radius: var(--radius-md); padding: 15px; margin-bottom: 10px; }
@@ -298,46 +297,34 @@
     .preview-item img, .preview-item video { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
     .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.5rem; padding: 5px; }
 
-    /* CSS PARA O FEED DE ATIVIDADES E PONTOS DO MAPA (ESTILO RADAR) */
-    .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 280px; overflow-y: auto; padding: 20px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+    /* ======================================================== */
+    /* CSS ADICIONADO: MAPA DE SÃO PAULO E ZONAS QUENTES        */
+    /* ======================================================== */
+    .war-room-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px; }
+    .map-card { background: var(--bg-card); padding: 25px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); position: relative; }
+    .top-cities-card { background: var(--bg-card); padding: 25px; border-radius: var(--radius-xl); border: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: var(--shadow-sm); }
+    .top-city-item { display: flex; justify-content: space-between; padding: 12px 15px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; color: var(--text-main); font-weight: 600; }
+    .top-city-item span.count { background: var(--gemini-purple); color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 900; }
+    
+    .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 350px; overflow-y: auto; padding: 20px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
     .feed-item { padding: 12px; border-bottom: 1px dashed #1e293b; color: #94a3b8; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; animation: slideDown 0.3s ease-out forwards; flex-wrap: wrap; }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     .feed-item span.time { color: var(--gemini-purple); font-weight: bold; }
     .feed-item span.device { font-size: 1.3rem; }
     .feed-item span.action { color: #f8fafc; }
-
-    /* Estilo do Ponto Brilhante igual ao da foto de referência */
-    .pulse-dot {
-        position: absolute;
-        width: 12px; height: 12px;
-        background: #ff0000;
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
-    }
-    .pulse-dot::before {
-        content: '';
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        width: 30px; height: 30px;
-        border: 2px solid rgba(255, 0, 0, 0.5);
-        border-radius: 50%;
-        animation: radarRing 2s infinite ease-out;
-    }
-    .pulse-dot::after {
-        content: '';
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        width: 60px; height: 60px;
-        border: 1px solid rgba(255, 0, 0, 0.2);
-        border-radius: 50%;
-        animation: radarRing 2s infinite ease-out 1s;
-    }
-    @keyframes radarRing {
-        0% { width: 12px; height: 12px; opacity: 1; }
-        100% { width: 80px; height: 80px; opacity: 0; }
+    
+    /* RADAR DE SÃO PAULO */
+    .radar-container { position: relative; width: 100%; height: 320px; background-color: #02060d; background-image: linear-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 189, 248, 0.1) 1px, transparent 1px), radial-gradient(circle, rgba(56, 189, 248, 0.1) 1px, transparent 1px); background-size: 40px 40px, 40px 40px, 100px 100px; background-position: center center; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .radar-sweep-sp { position: absolute; width: 800px; height: 800px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 70%, rgba(239, 68, 68, 0.5) 100%); animation: radar-spin 4s linear infinite; pointer-events: none; }
+    @keyframes radar-spin { 100% { transform: rotate(360deg); } }
+    .target-dot { position: absolute; width: 12px; height: 12px; background-color: #ef4444; border-radius: 50%; box-shadow: 0 0 15px #ef4444, 0 0 30px #ef4444; z-index: 10; transform: translate(-50%, -50%); }
+    .target-pulse { position: absolute; top: -14px; left: -14px; width: 40px; height: 40px; border: 2px solid #ef4444; border-radius: 50%; animation: target-pulse-anim 2s infinite ease-out; }
+    @keyframes target-pulse-anim { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+    .target-label { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); color: #f8fafc; font-family: var(--font-code); font-size: 0.75rem; font-weight: bold; background: rgba(0,0,0,0.8); padding: 2px 6px; border: 1px solid #ef4444; border-radius: 4px; white-space: nowrap; }
+    
+    @media (max-width: 900px) {
+        .war-room-grid { grid-template-columns: 1fr; }
+        .charts-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -564,8 +551,8 @@
         <div id="view-trafego" class="page-view">
           <div class="page-title">
             <div>
-              <h1>Monitoramento de Tráfego (Ao Vivo)</h1>
-              <p>Visualização em tempo real das visitas que estão acontecendo no portal público.</p>
+              <h1>Monitoramento de Tráfego (War Room)</h1>
+              <p>Visualização tática em tempo real das visitas, regiões e ações no portal público.</p>
             </div>
           </div>
           
@@ -588,23 +575,37 @@
                <div class="stat-info"><h3>Pico Máximo Simultâneo</h3><p id="trafego-pico">0</p></div>
              </div>
           </div>
-          
-          <div style="background: var(--bg-card); padding: 30px; border-radius: var(--radius-xl); border: 1px solid var(--border); height: 450px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="color: white; font-weight: 800;"><i class="fas fa-map-marked-alt" style="color: var(--danger); margin-right: 10px;"></i> Radar SP: Focos de Reclamação (Google/Reclame Aqui)</h3>
+
+          <div class="war-room-grid">
+            <div class="map-card">
+              <h3 style="color: white; margin-bottom: 20px; position: relative; z-index: 20;"><i class="fas fa-crosshairs" style="color: var(--danger);"></i> Radar Tático (Foco São Paulo)</h3>
+              
+              <div class="radar-container">
+                  <div class="radar-sweep-sp"></div>
+                  <div class="target-dot" style="top: 50%; left: 50%;" title="São Paulo Capital"><div class="target-pulse"></div><span class="target-label">São Paulo</span></div>
+                  <div class="target-dot" style="top: 58%; left: 53%;" title="Diadema / ABC"><div class="target-pulse"></div><span class="target-label">Diadema</span></div>
+                  <div class="target-dot" style="top: 38%; left: 45%;" title="Campinas e Região"><div class="target-pulse"></div><span class="target-label">Campinas</span></div>
+                  <div class="target-dot" style="top: 65%; left: 58%;" title="Baixada Santista"><div class="target-pulse"></div><span class="target-label">Santos</span></div>
+                  <div class="target-dot" style="top: 42%; left: 62%;" title="Vale do Paraíba"><div class="target-pulse"></div><span class="target-label">S.J. Campos</span></div>
+                  <div class="target-dot" style="top: 18%; left: 35%;" title="Ribeirão Preto"><div class="target-pulse"></div><span class="target-label">Ribeirão Preto</span></div>
+              </div>
+              
             </div>
             
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; height: 85%;">
-                <div id="map-war-room" style="position: relative; background: #02040a; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 50px rgba(0,0,0,0.8);">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/SaoPaulo_Municip_MicroMesorregioes.svg/800px-SaoPaulo_Municip_MicroMesorregioes.svg.png" style="height: 100%; opacity: 0.2; filter: invert(1) brightness(2); pointer-events: none;" />
-                    <div id="map-dots-container" style="position: absolute; inset: 0;"></div>
-                </div>
-                <div style="background: #02040a; border-radius: 12px; border: 1px solid var(--border); padding: 20px; overflow-y: auto;">
-                    <h4 style="color: var(--warning); margin-bottom: 15px; font-weight: 900; text-transform: uppercase; font-size: 0.9rem;"><i class="fas fa-fire"></i> Top 5 Focos (SP)</h4>
-                    <ul id="ranking-cidades" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
-                        <li style="color: var(--text-muted); font-size: 0.9rem;">Calculando dados...</li>
-                    </ul>
-                </div>
+            <div class="top-cities-card">
+              <h3 style="color: white;"><i class="fas fa-fire" style="color: var(--warning);"></i> Zonas Quentes (Top 5)</h3>
+              <ul id="top_cities_list" style="list-style: none; padding: 0; margin-top: 15px; flex: 1;">
+                 <li style="color: var(--text-muted); text-align: center; margin-top: 20px;">Coletando dados...</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-xl); border: 1px solid var(--border); height: 400px; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+               <h3 style="color: white; font-weight: 800;"><i class="fas fa-heartbeat" style="color: var(--success); margin-right: 10px;"></i> Monitor de Pulso (Batimentos de Conexão)</h3>
+            </div>
+            <div style="position: relative; height: 85%; width: 100%;">
+                <canvas id="chartAcessos"></canvas>
             </div>
           </div>
 
@@ -713,6 +714,20 @@
             <button class="btn btn-secondary" onclick="window.print()"><i class="fas fa-print"></i> Imprimir Relatório Oficial</button>
           </div>
           
+          <div style="background: var(--bg-card); padding: 35px; border-radius: var(--radius-xl); border: 1px solid var(--gemini-purple); margin-bottom: 40px; box-shadow: 0 0 25px rgba(192, 132, 252, 0.15);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+              <div>
+                <h3 style="color: white; margin: 0; font-size: 1.5rem; font-weight: 900;"><i class="fas fa-robot" style="color: var(--gemini-purple);"></i> Relatório de Fim de Dia (IA)</h3>
+                <p style="color: var(--text-muted); margin-top: 5px;">Análise tática gerada pelo Gemini baseada nos acessos diários.</p>
+              </div>
+              <div style="display: flex; gap: 15px;">
+                 <button onclick="gerarRelatorioIA()" id="btn-relatorio-ia" class="btn btn-gemini"><i class="fas fa-bolt"></i> Gerar Parecer Tático</button>
+                 <button onclick="exportarRelatorioPDF()" id="btn-pdf-ia" class="btn btn-secondary" style="display: none; border-color: var(--danger); color: var(--danger);"><i class="fas fa-file-pdf"></i> Salvar PDF</button>
+              </div>
+            </div>
+            <div id="ai-report-box" style="display: none; background: rgba(0,0,0,0.4); padding: 25px; border-radius: 12px; border-left: 4px solid var(--gemini-purple); margin-top: 25px; color: #f8fafc; line-height: 1.8; font-size: 1.05rem;">
+               </div>
+          </div>
           <section class="data-section">
             <div class="table-wrapper" style="min-height: 500px;">
               <table>
@@ -976,8 +991,18 @@
     configurarInputArquivo('zap-file-input', 'zap-attachment-preview', 'removerAnexoZap', false, 'zap');
     configurarInputArquivo('lab-file-input', 'lab-preview', 'fecharPreviewLab', true, 'lab');
 
-    window.removerAnexoChat = () => { arquivoAnexoParaEnviar = null; document.getElementById('chat-file-input').value = ''; document.getElementById('chat-attachment-preview').style.display = 'none'; }
-    window.removerAnexoZap = () => { arquivoAnexoParaEnviarZap = null; document.getElementById('zap-file-input').value = ''; document.getElementById('zap-attachment-preview').style.display = 'none'; }
+    window.removerAnexoChat = () => { 
+        arquivoAnexoParaEnviar = null; 
+        document.getElementById('chat-file-input').value = ''; 
+        document.getElementById('chat-attachment-preview').innerHTML = ''; 
+        document.getElementById('chat-attachment-preview').style.display = 'none'; 
+    }
+    window.removerAnexoZap = () => { 
+        arquivoAnexoParaEnviarZap = null; 
+        document.getElementById('zap-file-input').value = ''; 
+        document.getElementById('zap-attachment-preview').innerHTML = ''; 
+        document.getElementById('zap-attachment-preview').style.display = 'none'; 
+    }
     
     window.fecharPreviewLab = () => {
         arquivoLaboratorio = null; document.getElementById('lab-file-input').value = '';
@@ -1645,13 +1670,7 @@
         if (!arquivoLaboratorio) return;
 
         const previewArea = document.getElementById('lab-preview');
-        previewArea.innerHTML = '';
-        if (arquivoLaboratorio.type.startsWith('image/')) {
-          const img = document.createElement('img'); img.src = URL.createObjectURL(arquivoLaboratorio); previewArea.appendChild(img);
-        } else if (arquivoLaboratorio.type.startsWith('video/')) {
-          const video = document.createElement('video'); video.src = URL.createObjectURL(arquivoLaboratorio); video.controls = true; previewArea.appendChild(video);
-        }
-        previewArea.innerHTML += `<button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+        previewArea.innerHTML = `<img src="${URL.createObjectURL(arquivoLaboratorio)}"><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
         
         document.getElementById('lab-drop-area').style.display = 'block';
         previewArea.style.display = 'block';
@@ -1920,99 +1939,43 @@
             if(snapshot.empty) return;
             feedContainer.innerHTML = '';
             
-            let cityCounts = {};
-            let mapContainer = document.getElementById('map-dots-container');
-            if(mapContainer) mapContainer.innerHTML = ''; // Limpa os pontos do mapa
-
-            // Dicionário de coordenadas aproximadas dos estados brasileiros (Top / Left %) para o Mapa de Guerra
-            const coordsSP = {
-                "São Paulo": {t: 65, l: 65},
-                "Guarulhos": {t: 60, l: 70},
-                "Campinas": {t: 55, l: 60},
-                "Santos": {t: 75, l: 68},
-                "Diadema": {t: 68, l: 62},
-                "São Bernardo do Campo": {t: 70, l: 60},
-                "Santo André": {t: 68, l: 65},
-                "Osasco": {t: 65, l: 55},
-                "Sorocaba": {t: 65, l: 45},
-                "Ribeirão Preto": {t: 20, l: 50},
-                "São José dos Campos": {t: 55, l: 75},
-                "São José do Rio Preto": {t: 15, l: 35},
-                "Bauru": {t: 45, l: 40},
-                "Franca": {t: 10, l: 55},
-                "Presidente Prudente": {t: 50, l: 15},
-                "Araçatuba": {t: 30, l: 20},
-                "Marília": {t: 40, l: 30},
-                "Rio Claro": {t: 30, l: 45},
-                "Barretos": {t: 15, l: 50}
-            };
-
-            let logCount = 0;
+            let cidadeCounts = {};
 
             snapshot.forEach((docSnap) => {
                 let d = docSnap.data();
                 let dataFormata = new Date(d.dataHora).toLocaleTimeString('pt-BR');
-                let loc = d.localizacao && d.localizacao !== "Buscando IP..." && d.localizacao !== "Buscando..." ? d.localizacao : "São Paulo - SP";
+                let loc = d.localizacao ? d.localizacao : "Buscando IP...";
                 let mod = d.modelo ? d.modelo : "Desconhecido";
+                let tipoVis = d.tipoVisitante ? d.tipoVisitante : "👤 Novo";
                 
-                // Extrai apenas o nome da cidade ignorando o "- SP"
-                let nomeDaCidadeOriginal = loc.split(' - ')[0];
-                
-                // FEATURE 12: Agregar contagem de cidades (Ignora IP não encontrado)
-                cityCounts[nomeDaCidadeOriginal] = (cityCounts[nomeDaCidadeOriginal] || 0) + 1;
-
-                // FEATURE 14: Badge Identificador de Retorno
-                let badgeRecorrente = d.recorrente ? 
-                    '<span style="color: #fbbf24; font-weight: 800; padding: 2px 8px; background: rgba(251, 191, 36, 0.1); border-radius: 4px; font-size: 0.8rem;"><i class="fas fa-sync"></i> Recorrente</span>' : 
-                    '<span style="color: #a78bfa; font-weight: 800; padding: 2px 8px; background: rgba(167, 139, 250, 0.1); border-radius: 4px; font-size: 0.8rem;"><i class="fas fa-sparkles"></i> Novo</span>';
+                if(loc !== "Buscando IP..." && loc !== "Localização Protegida") {
+                    cidadeCounts[loc] = (cidadeCounts[loc] || 0) + 1;
+                }
 
                 feedContainer.innerHTML += `
                     <div class="feed-item">
                         <span class="time">[${dataFormata}]</span>
                         <span class="device" title="${mod}">${d.dispositivo || '💻'}</span>
-                        ${badgeRecorrente}
+                        <span style="color: #c084fc; font-weight: 800; padding: 2px 8px; background: rgba(192, 132, 252, 0.1); border-radius: 4px;">${tipoVis}</span>
+                        <span style="color: #38bdf8; font-weight: 800; padding: 2px 8px; background: rgba(56, 189, 248, 0.1); border-radius: 4px;">${mod}</span>
                         <span style="color: #10b981; font-weight: 800;"><i class="fas fa-map-marker-alt"></i> ${loc}</span>
                         <span class="action" style="color: white;">➜ ${d.acao}</span>
                     </div>
                 `;
-
-                // FEATURE 11: Renderizar pontos piscantes no Mapa War Room de SP
-                if(logCount < 20 && mapContainer) {
-                    let cidadeSP = "São Paulo"; // Default
-                    const cidadesKeys = Object.keys(coordsSP);
-                    
-                    // Tenta achar a cidade exata, se não achar, espalha para simular dados.
-                    let achouCidade = cidadesKeys.find(c => loc.includes(c));
-                    if(achouCidade) {
-                        cidadeSP = achouCidade;
-                    } else {
-                        // Simulação para o mapa não ficar vazio se vier IPs genéricos ou de fora do radar
-                        cidadeSP = cidadesKeys[loc.length % cidadesKeys.length]; 
-                    }
-
-                    let pos = coordsSP[cidadeSP];
-
-                    // Pequena dispersão pra caso todos sejam do mesmo estado os pontos não ficarem perfeitamente um em cima do outro
-                    let offsetT = (Math.random() * 4 - 2); 
-                    let offsetL = (Math.random() * 4 - 2);
-
-                    mapContainer.innerHTML += `<div class="pulse-dot" style="top: ${pos.t + offsetT}%; left: ${pos.l + offsetL}%;"></div>`;
-                }
-                logCount++;
             });
 
-            // Atualizar o Ranking Top 5 na tela
-            let sortedCities = Object.entries(cityCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
-            let rankingHTML = '';
-            sortedCities.forEach((item, index) => {
-                let color = index === 0 ? 'color: var(--danger); font-size: 1.1rem;' : 'color: var(--warning);';
-                rankingHTML += `<li style="${color} font-weight: 800; display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;"><span>${index+1}º ${item[0]}</span> <span>${item[1]} alertas</span></li>`;
-            });
-            
-            if(sortedCities.length === 0) rankingHTML = '<li style="color: var(--text-muted); font-size: 0.9rem;">Aguardando dados...</li>';
-            
-            let rankContainer = document.getElementById('ranking-cidades');
-            if(rankContainer) rankContainer.innerHTML = rankingHTML;
+            // Atualiza o Ranking Top 5 Cidades Quentes
+            let sortedCities = Object.entries(cidadeCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            let cityHtml = '';
+            if(sortedCities.length === 0) {
+                cityHtml = '<li style="color: var(--text-muted); text-align: center; margin-top: 20px;">Nenhum dado de região capturado ainda...</li>';
+            } else {
+                sortedCities.forEach((city, index) => {
+                    let medal = index === 0 ? '🏆' : (index === 1 ? '🥈' : (index === 2 ? '🥉' : '📍'));
+                    cityHtml += `<li class="top-city-item"><span>${medal} ${city[0]}</span> <span class="count">${city[1]}</span></li>`;
+                });
+            }
+            document.getElementById('top_cities_list').innerHTML = cityHtml;
         });
 
         // 4. Loop do Gráfico (Roda a cada 2 segundos para dar o efeito "Ao Vivo")
@@ -2020,7 +1983,6 @@
             let agora = Date.now();
             let onlineAgora = 0;
 
-            // Limpa da lista as sessões que não mandam sinal há mais de 15 segundos (Pessoa fechou a aba)
             for (let id in sessoesAtivas) {
                 if (agora - sessoesAtivas[id] > 15000) {
                     delete sessoesAtivas[id];
@@ -2029,21 +1991,87 @@
                 }
             }
 
-            // Atualiza os cartões na tela
             document.getElementById('trafego-agora').innerText = onlineAgora;
-            
             if(onlineAgora > picoMaximo) picoMaximo = onlineAgora;
             document.getElementById('trafego-pico').innerText = picoMaximo;
 
-            // Anima o gráfico de pulso empurrando o número atual para frente
             if (chartAcessosObj) {
                 let dataArray = chartAcessosObj.data.datasets[0].data;
                 dataArray.push(onlineAgora);
-                dataArray.shift(); // Remove o dado mais antigo do gráfico
-
-                chartAcessosObj.update('none'); // Update rápido sem travar a tela
+                dataArray.shift(); 
+                chartAcessosObj.update('none'); 
             }
         }, 2000);
+    }
+    
+    // ==============================================================
+    // GERAÇÃO DE RELATÓRIO IA DO WAR ROOM E EXPORTAÇÃO PARA PDF
+    // ==============================================================
+    window.gerarRelatorioIA = async () => {
+        const btn = document.getElementById('btn-relatorio-ia');
+        const box = document.getElementById('ai-report-box');
+        const btnPDF = document.getElementById('btn-pdf-ia');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analisando dados...';
+        btn.disabled = true;
+        box.style.display = 'block';
+        btnPDF.style.display = 'none';
+        box.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> A IA está processando o volume de tráfego...';
+
+        let totalHj = document.getElementById('trafego-hoje').innerText;
+        let picoHj = document.getElementById('trafego-pico').innerText;
+        let pendentes = document.getElementById('count-pendente').innerText;
+        let cidadesText = Array.from(document.querySelectorAll('.top-city-item')).map(el => el.innerText).join(', ') || "Nenhuma";
+
+        let prompt = `Aja como o Diretor de Inteligência da Vigilância Sanitária de São Paulo. Gere um relatório tático de Fim de Dia (1 parágrafo incisivo e profissional) baseado nestes dados do site: 
+        - Visitas Hoje: ${totalHj}
+        - Pico Simultâneo: ${picoHj}
+        - Casos Pendentes de Análise: ${pendentes}
+        - Cidades mais ativas: ${cidadesText}
+        
+        Diga o que esses números significam e dê uma recomendação de ação. Formate em HTML com <b>. Não use markdown (*).`;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            const data = await response.json();
+            box.innerHTML = `${data.candidates[0].content.parts[0].text}`;
+            btnPDF.style.display = 'inline-flex';
+            registrarLog("Relatório IA", "Relatório de fim de dia gerado.");
+        } catch(e) {
+            box.innerHTML = `<span style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Falha ao gerar relatório.</span>`;
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+    
+    window.exportarRelatorioPDF = () => {
+        const conteudo = document.getElementById('ai-report-box').innerHTML;
+        const janela = window.open('', '', 'width=800,height=600');
+        janela.document.write(`
+            <html><head><title>Relatório Diário - COVISA IA</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; }
+                h1 { color: #b91c1c; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+                .footer { margin-top: 40px; font-size: 0.8rem; color: #777; border-top: 1px solid #eee; padding-top: 10px; }
+            </style>
+            </head><body>
+            <h1>Relatório Tático de Inteligência - COVISA</h1>
+            <p><strong>Data:</strong> ${new Date().toLocaleDateString()}</p>
+            <p><strong>Elaborado por:</strong> Sistema Auditor IA Gemini 2.5 Flash</p>
+            <div style="background: #f9fafb; padding: 20px; border-radius: 8px; border-left: 4px solid #b91c1c; margin-top: 20px;">
+                ${conteudo}
+            </div>
+            <div class="footer">Documento gerado automaticamente pelo módulo War Room. Uso interno e restrito à fiscalização.</div>
+            <script>window.onload = function() { window.print(); setTimeout(()=>window.close(), 500); }<\/script>
+            </body></html>
+        `);
+        janela.document.close();
     }
 
     function initCharts() {
@@ -2062,7 +2090,7 @@
               options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
           });
 
-          // INICIALIZAÇÃO DO NOVO GRÁFICO DE TRÁFEGO AO VIVO (Pulso de Frequência Cardíaca)
+          // INICIALIZAÇÃO DO NOVO GRÁFICO DE TRÁFEGO AO VIVO
           const ctxAcessos = document.getElementById('chartAcessos');
           if (ctxAcessos) {
               const contextoAcessos = ctxAcessos.getContext('2d');
@@ -2157,6 +2185,13 @@
                     
                 } else if (abaAtual.id === 'view-laboratorio') {
                     arquivoLaboratorio = arquivoFinal;
+                    
+                    const previewArea = document.getElementById('lab-preview');
+                    previewArea.innerHTML = `<img src="${URL.createObjectURL(arquivoFinal)}"><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+                    
+                    document.getElementById('lab-drop-area').style.display = 'block';
+                    previewArea.style.display = 'block';
+                    
                     iniciarAnaliseLaboratorioForense();
                     showToast("Print Anexado", "Enviando para o microscópio IA...", "success");
                 }
