@@ -886,16 +886,24 @@
         const deviceIcon = isMobile ? '📱' : '💻';
 
         // Sistema de Localização Agressivo (salva na memória para ser mais rápido)
-        let userLocation = localStorage.getItem('user_loc') || "Buscando...";
+        let userLocation = localStorage.getItem('user_loc') || "Buscando IP...";
+        let userRegion = localStorage.getItem('user_reg') || "BR";
+
+        // Identificador de Retorno (Ideia 14)
+        let isRetorno = localStorage.getItem('covisa_visita');
+        let tagRetorno = isRetorno ? "🔄 Retorno" : "👤 Novo";
+        if(!isRetorno) localStorage.setItem('covisa_visita', 'sim');
 
         async function buscarLocalizacao() {
-            if(userLocation !== "Buscando...") return;
+            if(userLocation !== "Buscando IP...") return;
             try {
                 let req = await fetch('https://ipapi.co/json/');
                 let data = await req.json();
                 if(data.city) {
                     userLocation = `${data.city} - ${data.region}`;
+                    userRegion = `BR-${data.region_code}`;
                     localStorage.setItem('user_loc', userLocation);
+                    localStorage.setItem('user_reg', userRegion);
                 }
             } catch(e) {
                 userLocation = "Localização Protegida";
@@ -925,6 +933,8 @@
                     dispositivo: deviceIcon,
                     modelo: osInfo,
                     localizacao: userLocation,
+                    regiao: userRegion,
+                    tipoVisitante: tagRetorno,
                     dataHora: new Date().getTime()
                 });
             } catch(e){}
