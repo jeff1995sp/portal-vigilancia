@@ -897,23 +897,73 @@
             localStorage.setItem('ja_visitou', 'sim');
         }
 
-        // Sistema de Localização Agressivo (salva na memória para ser mais rápido)
-        let userLocation = localStorage.getItem('user_loc') || "Buscando IP...";
+        // Sistema de Localização Agressivo e Híbrido (GPS + IP)
+        let userLocation = localStorage.getItem('user_loc') || "Buscando...";
         let userRegion = localStorage.getItem('user_reg') || "BR";
+        let bairroGPS = localStorage.getItem('user_bairro') || "";
+        let municipioGPS = localStorage.getItem('user_municipio') || "";
+        let estadoGPS = localStorage.getItem('user_estado') || "";
 
-        async function buscarLocalizacao() {
-            if(userLocation !== "Buscando IP...") return;
+        async function fallbackIP() {
             try {
                 let req = await fetch('https://ipapi.co/json/');
                 let data = await req.json();
                 if(data.city) {
-                    userLocation = `${data.city} - ${data.region}`;
-                    userRegion = `BR-${data.region_code}`;
+                    municipioGPS = data.city;
+                    estadoGPS = data.region_code;
+                    bairroGPS = "Centro"; // IP não dá bairro, coloca Centro por padrão
+                    userLocation = `${municipioGPS} - ${estadoGPS}`;
+                    userRegion = `BR-${estadoGPS}`;
+                    
+                    localStorage.setItem('user_bairro', bairroGPS);
+                    localStorage.setItem('user_municipio', municipioGPS);
+                    localStorage.setItem('user_estado', estadoGPS);
                     localStorage.setItem('user_loc', userLocation);
                     localStorage.setItem('user_reg', userRegion);
                 }
             } catch(e) {
                 userLocation = "Localização Protegida";
+            }
+        }
+
+        async function buscarLocalizacao() {
+            if(userLocation !== "Buscando..." && bairroGPS !== "") return; // Já achou antes
+
+            // 1. Tenta pegar a Localização Exata via GPS primeiro
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    try {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        // Reverse geocoding gratuito via OpenStreetMap para achar o Bairro
+                        let req = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                        let data = await req.json();
+                        
+                        if(data && data.address) {
+                            bairroGPS = data.address.suburb || data.address.neighbourhood || data.address.village || "Centro";
+                            municipioGPS = data.address.city || data.address.town || data.address.municipality || "Desconhecido";
+                            estadoGPS = data.address.state || "SP";
+                            
+                            userLocation = `${municipioGPS} - ${estadoGPS}`;
+                            userRegion = `BR-${estadoGPS}`;
+
+                            localStorage.setItem('user_bairro', bairroGPS);
+                            localStorage.setItem('user_municipio', municipioGPS);
+                            localStorage.setItem('user_estado', estadoGPS);
+                            localStorage.setItem('user_loc', userLocation);
+                            localStorage.setItem('user_reg', userRegion);
+                        } else {
+                            fallbackIP();
+                        }
+                    } catch(e) {
+                        fallbackIP();
+                    }
+                }, (error) => {
+                    // Se o usuário negar o pop-up de localização, cai pro IP (Fallback)
+                    fallbackIP();
+                });
+            } else {
+                fallbackIP();
             }
         }
         buscarLocalizacao(); // Dispara logo que abre o site
@@ -941,6 +991,9 @@
                     modelo: osInfo,
                     localizacao: userLocation,
                     regiao: userRegion,
+                    bairroGPS: bairroGPS,
+                    municipioGPS: municipioGPS,
+                    estadoGPS: estadoGPS,
                     recorrente: isRecorrente,
                     tipoVisitante: tagRetorno,
                     dataHora: new Date().getTime()
@@ -948,13 +1001,13 @@
             } catch(e){}
         }
 
-        // Lê todos os cliques em botões e links
+        // Lê todos os cliques em botões e links e deixa os verbos bonitos pro painel Admin
         document.addEventListener('click', (e) => {
-            let target = e.target.closest('button, a, .doc-item');
+            let target = e.target.closest('button, a, .doc-item, .form-tab');
             if(target) {
                 let label = target.innerText.trim() || target.title || target.id || 'um botão';
                 label = label.replace(/(\r\n|\n|\r)/gm, " ");
-                registrarAcaoUsuario(`Tocou em: [${label.substring(0, 30)}]`);
+                registrarAcaoUsuario(`Tocou/Clicou em: [${label.substring(0, 40)}]`);
             }
         });
 
@@ -963,7 +1016,7 @@
             if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
                 let label = e.target.placeholder || e.target.id || 'campo';
                 if(e.target.value.length > 0) {
-                    registrarAcaoUsuario(`Preencheu o campo: [${label}]`);
+                    registrarAcaoUsuario(`Preencheu formulário: [${label}]`);
                 }
             }
         });
