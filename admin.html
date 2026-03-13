@@ -125,6 +125,9 @@
     .btn-icon.view { background: var(--border-light); } 
     .btn-icon.view:hover { background: var(--primary); transform: translateY(-2px); }
 
+    /* CORREÇÃO DO DROPDOWN FICA BRANCO */
+    select.form-input option { background-color: var(--bg-card); color: white; }
+
     .form-input { width: 100%; padding: 18px 22px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 1.05rem; color: white; background: var(--bg-sidebar); font-family: inherit; transition: 0.3s; }
     .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
 
@@ -136,7 +139,7 @@
     .stat-icon { width: 65px; height: 65px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
     .c-warning .stat-icon { background: var(--warning-bg); color: var(--warning); } .c-primary .stat-icon { background: var(--info-light); color: var(--primary); } .c-success .stat-icon { background: var(--success-bg); color: var(--success); } .c-gemini .stat-icon { background: var(--gemini-bg); color: var(--gemini-purple); }
     .stat-info { flex: 1; }
-    .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; }
+    .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; display: flex; align-items: center; }
     .stat-info p { font-size: 2.5rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
 
     .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 50px; }
@@ -351,7 +354,22 @@
     .target-card-hud h4 { color: white; margin: 0 0 5px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
     .target-card-hud .loc { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-code); margin-bottom: 10px; display: block; }
     .target-card-hud .reason { color: #fca5a5; font-size: 0.9rem; line-height: 1.4; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; }
-
+    
+    /* ======================================================== */
+    /* CSS MONITOR ESPIÃO (FEED DE OPERAÇÕES)                   */
+    /* ======================================================== */
+    .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 280px; overflow-y: auto; padding: 20px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+    .feed-item { padding: 15px; border-bottom: 1px dashed #1e293b; color: #94a3b8; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; animation: slideDown 0.3s ease-out forwards; flex-wrap: wrap; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .feed-item span.time { color: var(--gemini-purple); font-weight: bold; }
+    .feed-item span.device { font-size: 1.3rem; }
+    
+    /* Cores das ações do Feed */
+    .feed-item .action-box { display: inline-block; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; letter-spacing: 0.5px; }
+    .action-read { background: rgba(59, 130, 246, 0.15); color: var(--primary); border: 1px solid var(--primary); }
+    .action-type { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid var(--warning); }
+    .action-click { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid var(--success); }
+    .action-alert { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
   </style>
 </head>
 <body>
@@ -598,22 +616,20 @@
           </div>
           
           <div class="stats-grid" style="margin-bottom: 30px;">
-             <div class="stat-card c-success" style="border-color: var(--success); border-width: 2px; box-shadow: 0 0 20px rgba(16,185,129,0.2);">
-               <div class="stat-icon" style="background: var(--success); color: #000;"><i class="fas fa-broadcast-tower"></i></div>
+             <div class="stat-card c-success">
+               <div class="stat-icon"><i class="fas fa-broadcast-tower"></i></div>
                <div class="stat-info">
-                  <h3 style="color: var(--success); font-weight: 900; display:flex; align-items:center; gap:8px;">
-                    <span class="pulse-online"></span> ONLINE AGORA
-                  </h3>
-                  <p id="trafego-agora" style="font-size: 3.5rem; color: var(--success);">0</p>
+                  <h3><span class="pulse-online" style="margin-right:5px;"></span> ONLINE AGORA</h3>
+                  <p id="trafego-agora">0</p>
                </div>
              </div>
              <div class="stat-card c-primary">
                <div class="stat-icon"><i class="fas fa-users"></i></div>
-               <div class="stat-info"><h3>Visitantes (Total Hoje)</h3><p id="trafego-hoje">0</p></div>
+               <div class="stat-info"><h3>Visitantes (Hoje)</h3><p id="trafego-hoje">0</p></div>
              </div>
              <div class="stat-card c-warning">
                <div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
-               <div class="stat-info"><h3>Pico Máximo Simultâneo</h3><p id="trafego-pico">0</p></div>
+               <div class="stat-info"><h3>Pico Simultâneo</h3><p id="trafego-pico">0</p></div>
              </div>
           </div>
 
@@ -917,9 +933,9 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, where, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-    // 🔴🔴🔴 COLE SUA CHAVE DA API DO GOOGLE AQUI EMBAIXO 🔴🔴🔴
-    const GOOGLE_MAPS_API_KEY = 'SUA_CHAVE_AQUI'; 
-    // 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
+    // 🔴🔴🔴 SUA CHAVE DO GOOGLE MAPS ESTÁ AQUI, NÃO MEXA NISSO 🔴🔴🔴
+    const GOOGLE_MAPS_API_KEY = 'AIzaSyBOFL5KRaRj7xgTuYFmAanAqMzFW0vmxek'; 
+    // 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
 
     const firebaseConfig = {
       apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
