@@ -1188,10 +1188,6 @@
     window.varreduraRealGoogleMaps = async () => {
         const queryInput = document.getElementById('osint-query-input').value.trim();
         if(!queryInput) return showToast("Aviso", "Digite a região para rastrear (Ex: Pizzarias Bairro Liberdade).", "warning");
-        
-        if(GOOGLE_MAPS_API_KEY === 'AIzaSyBOFL5KRaRj7xgTuYFmAanAqMzFW0vmxek') {
-            return showToast("Chave Google Ausente", "Abra o código e cole sua API Key do Google Cloud na variável GOOGLE_MAPS_API_KEY.", "error");
-        }
 
         const btn = document.getElementById('btn-osint');
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Satélite...';
