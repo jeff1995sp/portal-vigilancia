@@ -127,6 +127,8 @@
 
     /* CORREÇÃO DO DROPDOWN FICA BRANCO */
     select.form-input option { background-color: var(--bg-card); color: white; }
+    /* Correção do Select que corta cidades */
+    select.form-input { appearance: auto; -webkit-appearance: auto; -moz-appearance: auto; }
 
     .form-input { width: 100%; padding: 18px 22px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 1.05rem; color: white; background: var(--bg-sidebar); font-family: inherit; transition: 0.3s; }
     .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
@@ -470,7 +472,7 @@
                 <div class="console-step">
                     <h4><i class="fas fa-map"></i> 1. Macro-Região</h4>
                     <select class="form-input" id="radar-estado" onchange="resetRadar()" style="background: rgba(255,255,255,0.02); font-weight: bold; border-color: #1e293b;">
-                        <option value="São Paulo">São Paulo (Capital e Interior)</option>
+                        <option value="São Paulo (Estado Inteiro)">São Paulo (Estado Inteiro)</option>
                         <option value="Litoral SP">Litoral Paulista</option>
                     </select>
                 </div>
@@ -487,16 +489,16 @@
                 <div class="console-step">
                     <h4><i class="fas fa-crosshairs"></i> 3. Natureza da Ameaça</h4>
                     <div class="threat-grid">
-                        <button class="threat-btn active" onclick="selectThreat(this, 'Alimentos', 'Restaurantes, lanchonetes, padarias e indústrias')"><i class="fas fa-hamburger"></i> Alimentos</button>
-                        <button class="threat-btn" onclick="selectThreat(this, 'Farmácias', 'Drogarias e insumos médicos')"><i class="fas fa-pills"></i> Insumos/Meds</button>
-                        <button class="threat-btn" onclick="selectThreat(this, 'Saúde', 'Hospitais, clínicas e laboratórios')"><i class="fas fa-hospital"></i> Serv. Saúde</button>
-                        <button class="threat-btn" onclick="selectThreat(this, 'Estética', 'Salões de beleza, estúdios, creches')"><i class="fas fa-cut"></i> Interesse Saúde</button>
-                        <button class="threat-btn" onclick="selectThreat(this, 'Cosméticos', 'Produtos de beleza e higiene')"><i class="fas fa-spray-can"></i> Cosméticos</button>
-                        <button class="threat-btn" onclick="selectThreat(this, 'Ambiental', 'Controle de pragas e água')"><i class="fas fa-bug"></i> Ambiental</button>
+                        <button class="threat-btn active" data-query="Restaurantes, lanchonetes, padarias, supermercados" onclick="toggleThreat(this)"><i class="fas fa-hamburger"></i> Alimentos</button>
+                        <button class="threat-btn" data-query="Farmácias e drogarias" onclick="toggleThreat(this)"><i class="fas fa-pills"></i> Insumos/Meds</button>
+                        <button class="threat-btn" data-query="Hospitais, clínicas e laboratórios" onclick="toggleThreat(this)"><i class="fas fa-hospital"></i> Serv. Saúde</button>
+                        <button class="threat-btn" data-query="Salões de beleza, estúdios de tatuagem, academias" onclick="toggleThreat(this)"><i class="fas fa-cut"></i> Interesse Saúde</button>
+                        <button class="threat-btn" data-query="Cosméticos, produtos de beleza e limpeza" onclick="toggleThreat(this)"><i class="fas fa-spray-can"></i> Cosméticos</button>
+                        <button class="threat-btn" data-query="Controle de pragas, água" onclick="toggleThreat(this)"><i class="fas fa-bug"></i> Ambiental</button>
                     </div>
                 </div>
 
-                <button class="btn-scan" id="btn-start-radar" onclick="iniciarRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura</button>
+                <button class="btn-scan" id="btn-start-radar" onclick="toggleRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura</button>
             </div>
 
             <div class="radar-display-area">
@@ -616,20 +618,22 @@
           </div>
           
           <div class="stats-grid" style="margin-bottom: 30px;">
-             <div class="stat-card c-success">
-               <div class="stat-icon"><i class="fas fa-broadcast-tower"></i></div>
+             <div class="stat-card c-success" style="border-color: var(--success); border-width: 2px; box-shadow: 0 0 20px rgba(16,185,129,0.2);">
+               <div class="stat-icon" style="background: var(--success); color: #000;"><i class="fas fa-broadcast-tower"></i></div>
                <div class="stat-info">
-                  <h3><span class="pulse-online" style="margin-right:5px;"></span> ONLINE AGORA</h3>
-                  <p id="trafego-agora">0</p>
+                  <h3 style="color: var(--success); font-weight: 900; display:flex; align-items:center; gap:8px;">
+                    <span class="pulse-online"></span> ONLINE AGORA
+                  </h3>
+                  <p id="trafego-agora" style="font-size: 3.5rem; color: var(--success);">0</p>
                </div>
              </div>
              <div class="stat-card c-primary">
                <div class="stat-icon"><i class="fas fa-users"></i></div>
-               <div class="stat-info"><h3>Visitantes (Hoje)</h3><p id="trafego-hoje">0</p></div>
+               <div class="stat-info"><h3>Visitantes (Total Hoje)</h3><p id="trafego-hoje">0</p></div>
              </div>
              <div class="stat-card c-warning">
                <div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
-               <div class="stat-info"><h3>Pico Simultâneo</h3><p id="trafego-pico">0</p></div>
+               <div class="stat-info"><h3>Pico Máximo Simultâneo</h3><p id="trafego-pico">0</p></div>
              </div>
           </div>
 
@@ -933,9 +937,9 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, where, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-    // 🔴🔴🔴 SUA CHAVE DO GOOGLE MAPS ESTÁ AQUI, NÃO MEXA NISSO 🔴🔴🔴
+    // 🔴🔴🔴 COLE SUA CHAVE DA API DO GOOGLE AQUI EMBAIXO 🔴🔴🔴
     const GOOGLE_MAPS_API_KEY = 'AIzaSyBOFL5KRaRj7xgTuYFmAanAqMzFW0vmxek'; 
-    // 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
+    // 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
 
     const firebaseConfig = {
       apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
@@ -967,11 +971,37 @@
     const TAMANHO_MAX_ARQUIVO_MB = 15;
 
     // --- VARIÁVEIS DO RADAR HUD ---
-    let radarTargetArea = "São Paulo";
+    let radarTargetArea = "São Paulo (Estado Inteiro)";
     let radarTargetLetter = "";
     let radarTargetCity = "";
-    let radarThreatType = "Alimentos";
-    let radarThreatQuery = "Restaurantes, lanchonetes, padarias e indústrias";
+    let isRadarScanning = false;
+    let radarNextPageToken = "";
+
+    // LISTA COMPLETA DOS 645 MUNICÍPIOS DE SP AGRUPADOS POR LETRA INICIAL
+    const cidadesSP = {
+        'A': ["Adamantina", "Adolfo", "Aguaí", "Águas da Prata", "Águas de Lindóia", "Águas de Santa Bárbara", "Águas de São Pedro", "Agudos", "Alambari", "Alfredo Marcondes", "Altair", "Altinópolis", "Alto Alegre", "Alumínio", "Álvares Florence", "Álvares Machado", "Álvaro de Carvalho", "Alvinlândia", "Americana", "Américo Brasiliense", "Américo de Campos", "Amparo", "Analândia", "Andradina", "Angatuba", "Anhembi", "Anhumas", "Aparecida", "Aparecida d'Oeste", "Apiaí", "Araçariguama", "Araçatuba", "Araçoiaba da Serra", "Aramina", "Arandu", "Arapeí", "Araraquara", "Araras", "Arco-Íris", "Arealva", "Areias", "Areiópolis", "Ariranha", "Artur Nogueira", "Arujá", "Aspásia", "Assis", "Atibaia", "Auriflama", "Avaí", "Avanhandava", "Avaré"],
+        'B': ["Bady Bassitt", "Balbinos", "Bálsamo", "Bananal", "Barão de Antonina", "Barbosa", "Bariri", "Barra Bonita", "Barra do Chapéu", "Barra do Turvo", "Barretos", "Barrinha", "Barueri", "Bastos", "Batatais", "Bauru", "Bebedouro", "Bento de Abreu", "Bernardino de Campos", "Bertioga", "Bilac", "Birigui", "Biritiba-Mirim", "Boa Esperança do Sul", "Bocaina", "Bofete", "Boituva", "Bom Jesus dos Perdões", "Bom Sucesso de Itararé", "Borá", "Boracéia", "Borborema", "Borebi", "Botucatu", "Bragança Paulista", "Braúna", "Brejo Alegre", "Brodowski", "Brotas", "Buri", "Buritama", "Buritizal"],
+        'C': ["Cabrália Paulista", "Cabreúva", "Caçapava", "Cachoeira Paulista", "Caconde", "Cafelândia", "Caiabu", "Caieiras", "Caiuá", "Cajamar", "Cajati", "Cajobi", "Cajuru", "Campina do Monte Alegre", "Campinas", "Campo Limpo Paulista", "Campos do Jordão", "Campos Novos Paulista", "Cananéia", "Canas", "Cândido Mota", "Cândido Rodrigues", "Canitar", "Capão Bonito", "Capela do Alto", "Capivari", "Caraguatatuba", "Carapicuíba", "Cardoso", "Casa Branca", "Cássia dos Coqueiros", "Castilho", "Catanduva", "Catiguá", "Cedral", "Cerqueira César", "Cerquilho", "Cesário Lange", "Charqueada", "Chavantes", "Clementina", "Colina", "Colômbia", "Conchal", "Conchas", "Cordeirópolis", "Coroados", "Coronel Macedo", "Corumbataí", "Cosmópolis", "Cosmorama", "Cotia", "Cravinhos", "Cristais Paulista", "Cruzália", "Cruzeiro", "Cubatão", "Cunha"],
+        'D': ["Descalvado", "Diadema", "Dirce Reis", "Divinolândia", "Dobrada", "Dois Córregos", "Dolcinópolis", "Dourado", "Dracena", "Duartina", "Dumont"],
+        'E': ["Echaporã", "Eldorado", "Elias Fausto", "Elisiário", "Embaúba", "Embu das Artes", "Embu-Guaçu", "Emilianópolis", "Engenheiro Coelho", "Espírito Santo do Pinhal", "Espírito Santo do Turvo", "Estiva Gerbi", "Estrela d'Oeste", "Estrela do Norte", "Euclides da Cunha Paulista"],
+        'F': ["Fartura", "Fernando Prestes", "Fernandópolis", "Fernão", "Ferraz de Vasconcelos", "Flora Rica", "Floreal", "Flórida Paulista", "Florínia", "Franca", "Francisco Morato", "Franco da Rocha"],
+        'G': ["Gabriel Monteiro", "Gália", "Garça", "Gastão Vidigal", "Gavião Peixoto", "General Salgado", "Getulina", "Glicério", "Guaiçara", "Guaimbê", "Guaíra", "Guapiaçu", "Guapiara", "Guará", "Guaraçaí", "Guaraci", "Guarani d'Oeste", "Guarantã", "Guararapes", "Guararema", "Guaratinguetá", "Guareí", "Guariba", "Guarujá", "Guarulhos", "Guatapará", "Guzolândia"],
+        'H': ["Herculândia", "Holambra", "Hortolândia"],
+        'I': ["Iacanga", "Iacri", "Iaras", "Ibaté", "Ibirá", "Ibirarema", "Ibitinga", "Ibiúna", "Icém", "Iepê", "Igaraçu do Tietê", "Igarapava", "Igaratá", "Iguape", "Ilhabela", "Ilha Comprida", "Ilha Solteira", "Indaiatuba", "Indiana", "Indiaporã", "Inúbia Paulista", "Ipaussu", "Iperó", "Ipeúna", "Ipiguá", "Iporanga", "Ipuã", "Iracemápolis", "Irapuã", "Irapuru", "Itaberá", "Itaí", "Itajobi", "Itaju", "Itanhaém", "Itaóca", "Itapecerica da Serra", "Itapetininga", "Itapeva", "Itapevi", "Itapira", "Itapirapuã Paulista", "Itápolis", "Itaporanga", "Itapuí", "Itapura", "Itaquaquecetuba", "Itararé", "Itariri", "Itatiba", "Itatinga", "Itatinga", "Itirapina", "Itirapuã", "Itobi", "Itu", "Itupeva", "Ituverava"],
+        'J': ["Jaborandi", "Jaboticabal", "Jacareí", "Jaci", "Jacupiranga", "Jaguariúna", "Jales", "Jambeiro", "Jandira", "Jardinópolis", "Jarinu", "Jaú", "Jeriquara", "Joanópolis", "João Ramalho", "José Bonifácio", "Júlio Mesquita", "Jumirim", "Jundiaí", "Junqueirópolis", "Juquiá", "Juquitiba"],
+        'L': ["Lagoinha", "Laranjal Paulista", "Lavínia", "Lavrinhas", "Leme", "Lençóis Paulista", "Limeira", "Lindóia", "Lins", "Lorena", "Lourdes", "Louveira", "Lucélia", "Lucianópolis", "Luís Antônio", "Luiziânia", "Lupércio", "Lutécia"],
+        'M': ["Macatuba", "Macaubal", "Macedônia", "Magda", "Mairinque", "Mairiporã", "Manduri", "Marabá Paulista", "Maracaí", "Marapoama", "Mariápolis", "Marília", "Marinópolis", "Martinópolis", "Matão", "Mauá", "Mendonça", "Meridiano", "Mesópolis", "Miguelópolis", "Mineiros do Tietê", "Mira Estrela", "Miracatu", "Mirandópolis", "Mirante do Paranapanema", "Mirassol", "Mirassolândia", "Mococa", "Mogi das Cruzes", "Mogi Guaçu", "Mogi Mirim", "Mombuca", "Monções", "Mongaguá", "Monte Alegre do Sul", "Monte Alto", "Monte Aprazível", "Monte Azul Paulista", "Monte Castelo", "Monte Mor", "Monteiro Lobato", "Morro Agudo", "Morungaba", "Motuca", "Murutinga do Sul"],
+        'N': ["Nantes", "Narandiba", "Natividade da Serra", "Nazaré Paulista", "Neves Paulista", "Nhandeara", "Nipoã", "Nova Aliança", "Nova Campina", "Nova Canaã Paulista", "Nova Castilho", "Nova Europa", "Nova Granada", "Nova Guataporanga", "Nova Independência", "Nova Luzitânia", "Nova Odessa", "Novais", "Novo Horizonte", "Nuporanga"],
+        'O': ["Ocauçu", "Óleo", "Olímpia", "Onda Verde", "Oriente", "Orindiúva", "Orlândia", "Osasco", "Oscar Bressane", "Osvaldo Cruz", "Ourinhos", "Ouro Verde", "Ouroeste"],
+        'P': ["Pacaembu", "Palestina", "Palmares Paulista", "Palmeira d'Oeste", "Palmital", "Panorama", "Paraguaçu Paulista", "Paraibuna", "Paraíso", "Paranapanema", "Paranapuã", "Parapuã", "Pardinho", "Pariquera-Açu", "Parisi", "Patrocínio Paulista", "Paulicéia", "Paulínia", "Paulistânia", "Paulo de Faria", "Pederneiras", "Pedra Bela", "Pedranópolis", "Pedregulho", "Pedreira", "Pedrinhas Paulista", "Pedro de Toledo", "Penápolis", "Pereira Barreto", "Pereiras", "Peruíbe", "Piacatu", "Piedade", "Pilar do Sul", "Pindamonhangaba", "Pindorama", "Pinhalzinho", "Piquerobi", "Piquete", "Piracaia", "Piracicaba", "Piraju", "Pirajuí", "Pirangi", "Pirapora do Bom Jesus", "Pirapozinho", "Pirassununga", "Piratininga", "Pitangueiras", "Planalto", "Platina", "Poá", "Poloni", "Pompéia", "Pongaí", "Pontal", "Pontalinda", "Pontes Gestal", "Populina", "Porangaba", "Porto Feliz", "Porto Ferreira", "Potim", "Potirendaba", "Pracinha", "Pradópolis", "Praia Grande", "Pratânia", "Presidente Alves", "Presidente Bernardes", "Presidente Epitácio", "Presidente Prudente", "Presidente Venceslau", "Promissão"],
+        'Q': ["Quadra", "Quatá", "Queiroz", "Queluz", "Quintana"],
+        'R': ["Rafard", "Rancharia", "Redenção da Serra", "Regente Feijó", "Reginópolis", "Registro", "Restinga", "Ribeira", "Ribeirão Bonito", "Ribeirão Branco", "Ribeirão Corrente", "Ribeirão do Sul", "Ribeirão dos Índios", "Ribeirão Grande", "Ribeirão Pires", "Ribeirão Preto", "Rifaina", "Rincão", "Rinópolis", "Rio Claro", "Rio das Pedras", "Rio Grande da Serra", "Riolândia", "Riversul", "Rosana", "Roseira", "Rubiácea", "Rubinéia"],
+        'S': ["Sabino", "Sagres", "Sales", "Sales Oliveira", "Salesópolis", "Salmourão", "Saltinho", "Salto", "Salto de Pirapora", "Salto Grande", "Sandovalina", "Santa Adélia", "Santa Albertina", "Santa Bárbara d'Oeste", "Santa Branca", "Santa Clara d'Oeste", "Santa Cruz da Conceição", "Santa Cruz da Esperança", "Santa Cruz das Palmeiras", "Santa Cruz do Rio Pardo", "Santa Ernestina", "Santa Fé do Sul", "Santa Gertrudes", "Santa Isabel", "Santa Lúcia", "Santa Maria da Serra", "Santa Mercedes", "Santa Rita d'Oeste", "Santa Rita do Passa Quatro", "Santa Rosa de Viterbo", "Santa Salete", "Santana da Ponte Pensa", "Santana de Parnaíba", "Santo Anastácio", "Santo André", "Santo Antônio da Alegria", "Santo Antônio de Posse", "Santo Antônio do Aracanguá", "Santo Antônio do Jardim", "Santo Antônio do Pinhal", "Santo Expedito", "Santópolis do Aguapeí", "Santos", "São Bento do Sapucaí", "São Bernardo do Campo", "São Caetano do Sul", "São Carlos", "São Francisco", "São João da Boa Vista", "São João das Duas Pontes", "São João de Iracema", "São João do Pau d'Alho", "São Joaquim da Barra", "São José da Bela Vista", "São José do Barreiro", "São José do Rio Pardo", "São José do Rio Preto", "São José dos Campos", "São Lourenço da Serra", "São Luís do Paraitinga", "São Manuel", "São Miguel Arcanjo", "São Paulo", "São Pedro", "São Pedro do Turvo", "São Roque", "São Sebastião", "São Sebastião da Grama", "São Simão", "São Vicente", "Sarapuí", "Sarutaiá", "Sebastianópolis do Sul", "Serra Azul", "Serrana", "Sertãozinho", "Sete Barras", "Severínia", "Silveiras", "Socorro", "Socorro", "Sorocaba", "Sud Mennucci", "Sumaré", "Suzanápolis", "Suzano"],
+        'T': ["Tabapuã", "Tabatinga", "Taboão da Serra", "Taciba", "Taguaí", "Taiaçu", "Taiúva", "Tambaú", "Tambaú", "Tanabi", "Tapiraí", "Tapiratiba", "Taquaral", "Taquaritinga", "Taquarituba", "Taquarivaí", "Tarabai", "Tarumã", "Tatuí", "Taubaté", "Tejupá", "Teodoro Sampaio", "Terra Roxa", "Tietê", "Timburi", "Torre de Pedra", "Torrinha", "Trabiju", "Tremembé", "Três Fronteiras", "Tuiuti", "Tupã", "Tupi Paulista", "Turiúba", "Turmalina"],
+        'U': ["Ubarana", "Ubatuba", "Ubirajara", "Uchoa", "União Paulista", "Urânia", "Uru", "Urupês"],
+        'V': ["Valentim Gentil", "Valinhos", "Valparaíso", "Vargem", "Vargem Grande do Sul", "Vargem Grande Paulista", "Várzea Paulista", "Vera Cruz", "Vinhedo", "Viradouro", "Vista Alegre do Alto", "Vitória Brasil", "Votorantim", "Votuporanga"],
+        'Z': ["Zacarias"]
+    };
 
     // Gera o alfabeto da barra
     const azBar = document.getElementById('az-bar');
@@ -991,33 +1021,16 @@
         });
     }
 
-    // Cidades Fake do Estado de SP (Só para o filtro bonitinho)
-    const cidadesSP = {
-        'A': ['Americana', 'Araçatuba', 'Araraquara', 'Assis'],
-        'B': ['Bauru', 'Bertioga', 'Bragança Paulista', 'Brooklin (SP)'],
-        'C': ['Campinas', 'Caraguatatuba', 'Cotia', 'Cubatão'],
-        'D': ['Diadema', 'Dracena'],
-        'E': ['Embu das Artes', 'Eldorado'],
-        'F': ['Franca', 'Ferraz de Vasconcelos'],
-        'G': ['Guarujá', 'Guarulhos'],
-        'I': ['Itapevi', 'Itu', 'Ilhabela', 'Inamar (Diadema)'],
-        'J': ['Jacareí', 'Jundiaí'],
-        'M': ['Marília', 'Mauá', 'Mogi das Cruzes'],
-        'O': ['Osasco', 'Ourinhos'],
-        'P': ['Piracicaba', 'Praia Grande', 'Presidente Prudente'],
-        'R': ['Ribeirão Preto', 'Rio Claro'],
-        'S': ['Santos', 'São Bernardo do Campo', 'São Caetano', 'São José dos Campos', 'São Paulo', 'São Vicente', 'Serraria (Diadema)'],
-        'T': ['Taubaté', 'Tatuapé (SP)'],
-        'U': ['Ubatuba'],
-        'V': ['Valinhos', 'Vinhedo']
-    };
-
     function popularCidades(letra) {
         const select = document.getElementById('radar-cidade');
         select.style.display = 'block';
         select.innerHTML = '<option value="">Selecione a Localidade...</option>';
         
-        let cidadesList = cidadesSP[letra] || [`Cidade Exemplo com ${letra} 1`, `Cidade Exemplo com ${letra} 2`];
+        let cidadesList = cidadesSP[letra];
+        if(!cidadesList) {
+             select.innerHTML = '<option value="">Nenhuma cidade com esta letra</option>';
+             return;
+        }
         
         cidadesList.forEach(cid => {
             let op = document.createElement('option');
@@ -1037,180 +1050,212 @@
         radarTargetCity = "";
     };
 
-    window.selectThreat = (element, type, query) => {
-        document.querySelectorAll('.threat-btn').forEach(b => b.classList.remove('active'));
-        element.classList.add('active');
-        radarThreatType = type;
-        radarThreatQuery = query;
+    window.toggleThreat = (element) => {
+        element.classList.toggle('active');
     };
 
     // =================================================================================
-    // O CORAÇÃO DO RADAR: BUSCA GOOGLE MAPS + CLASSIFICAÇÃO GEMINI AO VIVO
+    // O CORAÇÃO DO RADAR: BUSCA GOOGLE MAPS + CLASSIFICAÇÃO GEMINI AO VIVO E CONTÍNUA
     // =================================================================================
-    window.iniciarRadarHUD = async () => {
-        if(!radarTargetCity) {
-            showToast("Falha na Trava", "Selecione uma Letra e uma Cidade/Bairro para focar o radar.", "warning");
-            return;
-        }
-
-        if(GOOGLE_MAPS_API_KEY === 'SUA_CHAVE_AQUI') {
-            showToast("Satélite Offline", "Insira a chave da API do Google Maps no código para o radar funcionar.", "error");
-            return;
-        }
-
+    window.toggleRadarHUD = async () => {
         const btn = document.getElementById('btn-start-radar');
         const radarCircle = document.getElementById('radar-circle-ui');
         const radarSweep = document.getElementById('radar-sweep-ui');
         const resultsList = document.getElementById('radar-results-list');
 
-        // Animação de Início
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-satellite-dish fa-spin"></i> Varrendo Setor...';
+        // Se já está escaneando, o botão serve para Pausar
+        if (isRadarScanning) {
+            isRadarScanning = false;
+            btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Retomar Varredura';
+            btn.style.borderColor = 'var(--primary)';
+            btn.style.color = 'var(--primary)';
+            radarSweep.style.display = 'none';
+            return;
+        }
+
+        // Validações
+        if(!radarTargetCity) {
+            showToast("Falha na Trava", "Selecione uma Letra e uma Cidade para focar o radar.", "warning");
+            return;
+        }
+        
+        if(GOOGLE_MAPS_API_KEY === 'SUA_CHAVE_AQUI') {
+            showToast("Satélite Offline", "Insira a chave da API do Google Maps no código para o radar funcionar.", "error");
+            return;
+        }
+
+        let activeThreatsBtn = document.querySelectorAll('.threat-btn.active');
+        if(activeThreatsBtn.length === 0) {
+            showToast("Falha na Trava", "Selecione pelo menos um tipo de ameaça.", "warning");
+            return;
+        }
+
+        // Monta a string de busca unindo todos os botões ativos
+        let queries = Array.from(activeThreatsBtn).map(b => b.getAttribute('data-query')).join(' e ');
+        const buscaTermo = `${queries} em ${radarTargetCity}, ${radarTargetArea}`;
+
+        // Inicia a Varredura Contínua
+        isRadarScanning = true;
+        radarNextPageToken = ""; // Reseta a paginação para iniciar do começo
+
+        btn.innerHTML = '<i class="fas fa-pause"></i> Pausar Satélite';
+        btn.style.borderColor = 'var(--warning)';
+        btn.style.color = 'var(--warning)';
         radarCircle.classList.remove('danger-mode');
         radarSweep.style.display = 'block';
-        
-        // Tira os blips antigos
-        document.querySelectorAll('.radar-blip').forEach(el => el.remove());
-        
-        resultsList.innerHTML = `<div class="osint-idle-msg"><i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i><span>Interceptando transmissões em ${radarTargetCity}...</span></div>`;
 
-        // Monta a busca: Ex: "Hospitais, clínicas Brooklin (SP)"
-        const buscaTermo = `${radarThreatQuery} em ${radarTargetCity}, ${radarTargetArea}`;
-        
-        try {
-            // 1. Busca os locais na API do Google
-            const responsePlaces = await fetch('https://places.googleapis.com/v1/places:searchText', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
-                    'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.reviews'
-                },
-                body: JSON.stringify({
-                    textQuery: buscaTermo,
-                    maxResultCount: 15 // Pega um lote bom de locais
-                })
-            });
+        if(resultsList.innerHTML.includes('Aguardando Trava')) {
+            resultsList.innerHTML = '';
+            document.querySelectorAll('.radar-blip').forEach(el => el.remove());
+        }
 
-            if(!responsePlaces.ok) throw new Error("Acesso negado aos satélites do Google.");
-
-            const dadosGoogle = await responsePlaces.json();
-            
-            if (!dadosGoogle.places || dadosGoogle.places.length === 0) {
-                resultsList.innerHTML = `<div class="osint-idle-msg"><i class="fas fa-check-circle" style="font-size: 2rem; color: var(--success);"></i><span style="color:var(--success);">Setor limpo. Nenhuma ameaça detectada em ${radarTargetCity}.</span></div>`;
-                pararRadar(btn, radarSweep);
-                return;
+        while (isRadarScanning) {
+            let statusMsg = document.getElementById('radar-status-msg');
+            if(!statusMsg) {
+                resultsList.insertAdjacentHTML('afterbegin', `<div id="radar-status-msg" class="osint-idle-msg" style="opacity: 0.8; margin-bottom: 15px;"><i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary);"></i><span>Analisando alvos em ${radarTargetCity}...</span></div>`);
+                statusMsg = document.getElementById('radar-status-msg');
+            } else {
+                statusMsg.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary);"></i><span>Buscando próximo lote em ${radarTargetCity}...</span>`;
             }
 
-            resultsList.innerHTML = ''; // Limpa pra começar a pipocar
-            let achouPerigo = false;
-
-            // 2. Passa cada local pro Gemini avaliar
-            for (let i = 0; i < dadosGoogle.places.length; i++) {
-                let place = dadosGoogle.places[i];
-                let nomeReal = place.displayName.text;
-                let enderecoReal = place.formattedAddress;
-                let comentariosReais = "";
-
-                if (place.reviews && place.reviews.length > 0) {
-                    place.reviews.forEach(rev => {
-                        if (rev.text && rev.text.text) comentariosReais += `"${rev.text.text}"\n`;
-                    });
-                } else {
-                    continue; // Pula quem não tem avaliação
+            try {
+                let requestBody = {
+                    textQuery: buscaTermo,
+                    maxResultCount: 15 // Pega de 15 em 15 para não travar a IA
+                };
+                
+                // Se tiver token de próxima página, adiciona na requisição
+                if (radarNextPageToken) {
+                    requestBody.pageToken = radarNextPageToken;
                 }
 
-                // O Prompt mestre da IA para caçar os perigosos
-                let prompt = `Você é um radar tático da Vigilância Sanitária caçando irregularidades.
-                Leia estas avaliações reais sobre "${nomeReal}" no endereço "${enderecoReal}".
+                // 1. Busca os locais na API do Google
+                const responsePlaces = await fetch('https://places.googleapis.com/v1/places:searchText', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+                        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.reviews,nextPageToken'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if(!responsePlaces.ok) throw new Error("Acesso negado aos satélites do Google.");
+
+                const dadosGoogle = await responsePlaces.json();
                 
-                Avaliações:
-                ${comentariosReais}
+                if (!dadosGoogle.places || dadosGoogle.places.length === 0) {
+                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--success);"></i><span style="color:var(--success);">Varredura de ${radarTargetCity} concluída. Sem mais alvos.</span>`;
+                    isRadarScanning = false;
+                    break;
+                }
 
-                Se as avaliações forem boas ou falarem só de coisas bobas (comida fria, atraso, caro), retorne APENAS a palavra IGNORAR.
-                Se as avaliações mencionarem sujeira pesada, rato, barata, pelo na comida, intoxicação alimentar, carne podre, material não esterilizado ou risco à saúde:
-                Retorne um JSON com o motivo do perigo (máx 20 palavras).
-                Exemplo: {"perigo": "Clientes relataram baratas andando pelas mesas e cheiro forte de esgoto na cozinha."}`;
+                // 2. Passa cada local pro Gemini avaliar
+                for (let i = 0; i < dadosGoogle.places.length; i++) {
+                    if (!isRadarScanning) break; // Para na hora se o usuário pausar
 
-                try {
-                    const respostaIA = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-                    
-                    const dataIA = await respostaIA.json();
-                    let resposta = dataIA.candidates[0].content.parts[0].text.trim();
+                    let place = dadosGoogle.places[i];
+                    let nomeReal = place.displayName?.text || "Desconhecido";
+                    let enderecoReal = place.formattedAddress;
+                    let comentariosReais = "";
 
-                    if (!resposta.includes("IGNORAR")) {
-                        // ACHOU UMA AMEAÇA!
-                        achouPerigo = true;
-                        
-                        // Faz o radar ficar vermelho
-                        if(!radarCircle.classList.contains('danger-mode')) {
-                            radarCircle.classList.add('danger-mode');
-                            // Toca um sonzinho de alerta se quiser (opcional)
-                        }
-
-                        // Coloca um "Blip" no radar em posição aleatória
-                        let blip = document.createElement('div');
-                        blip.className = 'radar-blip';
-                        blip.style.top = `${Math.floor(Math.random() * 60) + 20}%`;
-                        blip.style.left = `${Math.floor(Math.random() * 60) + 20}%`;
-                        radarCircle.appendChild(blip);
-
-                        // Lê o JSON do Gemini
-                        let textoLimpo = resposta.replace(/```json/g, '').replace(/```/g, '').trim();
-                        let resultado = JSON.parse(textoLimpo);
-
-                        // Cria o card do lado direito
-                        let divTarget = document.createElement('div');
-                        divTarget.className = 'target-card-hud';
-                        divTarget.innerHTML = `
-                            <h4><i class="fas fa-crosshairs"></i> ${nomeReal}</h4>
-                            <span class="loc">${enderecoReal}</span>
-                            <div class="reason"><strong>RELATO INTERCEPTADO:</strong> ${resultado.perigo}</div>
-                        `;
-                        resultsList.appendChild(divTarget);
-                        resultsList.scrollTop = resultsList.scrollHeight; // Rola pra baixo sozinho
-                        
-                        // Espera 1 segundinho pra dar um charme visual de "processamento"
-                        await new Promise(r => setTimeout(r, 800));
+                    if (place.reviews && place.reviews.length > 0) {
+                        place.reviews.forEach(rev => {
+                            if (rev.text && rev.text.text) comentariosReais += `"${rev.text.text}"\n`;
+                        });
+                    } else {
+                        continue; // Pula locais sem comentário
                     }
 
-                } catch (iaErr) {
-                    console.log("Erro no Gemini para este alvo");
+                    statusMsg.innerHTML = `<i class="fas fa-satellite-dish fa-spin" style="font-size: 1.5rem; color: var(--warning);"></i><span>Lendo a mente de: ${nomeReal}...</span>`;
+
+                    // Prompt mestre da IA
+                    let prompt = `Você é um radar tático da Vigilância Sanitária caçando irregularidades.
+                    Leia estas avaliações reais sobre "${nomeReal}" no endereço "${enderecoReal}".
+                    
+                    Avaliações:
+                    ${comentariosReais}
+
+                    Se as avaliações forem boas, normais ou falarem de coisas irrelevantes (comida fria, atraso, caro, mau atendimento), retorne APENAS a palavra IGNORAR.
+                    Se as avaliações mencionarem sujeira pesada, rato, barata, pelo na comida, intoxicação alimentar, carne podre, material não esterilizado ou risco à saúde:
+                    Retorne um JSON com o motivo do perigo (máx 20 palavras).
+                    Exemplo: {"perigo": "Clientes relataram baratas andando pelas mesas e cheiro forte de esgoto na cozinha."}`;
+
+                    try {
+                        const respostaIA = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                        });
+                        
+                        const dataIA = await respostaIA.json();
+                        let resposta = dataIA.candidates[0].content.parts[0].text.trim();
+
+                        if (!resposta.includes("IGNORAR")) {
+                            // ACHOU UMA AMEAÇA!
+                            if(!radarCircle.classList.contains('danger-mode')) {
+                                radarCircle.classList.add('danger-mode');
+                            }
+
+                            // Coloca um "Blip" no radar
+                            let blip = document.createElement('div');
+                            blip.className = 'radar-blip';
+                            blip.style.top = `${Math.floor(Math.random() * 60) + 20}%`;
+                            blip.style.left = `${Math.floor(Math.random() * 60) + 20}%`;
+                            radarCircle.appendChild(blip);
+
+                            // Lê o JSON do Gemini
+                            let textoLimpo = resposta.replace(/```json/g, '').replace(/```/g, '').trim();
+                            let resultado = JSON.parse(textoLimpo);
+
+                            // Cria o card
+                            let divTarget = document.createElement('div');
+                            divTarget.className = 'target-card-hud';
+                            divTarget.innerHTML = `
+                                <h4><i class="fas fa-crosshairs"></i> ${nomeReal}</h4>
+                                <span class="loc">${enderecoReal}</span>
+                                <div class="reason"><strong>RELATO INTERCEPTADO:</strong> ${resultado.perigo}</div>
+                            `;
+                            statusMsg.insertAdjacentElement('afterend', divTarget);
+                            
+                            // Aguarda 1 segundo para visual
+                            await new Promise(r => setTimeout(r, 1000));
+                        }
+
+                    } catch (iaErr) {
+                        console.log("Erro no Gemini para este alvo");
+                    }
+                } // Fim do For
+
+                radarNextPageToken = dadosGoogle.nextPageToken;
+                
+                if (!radarNextPageToken) {
+                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--success);"></i><span style="color:var(--success);">Varredura profunda concluída. Sem mais dados.</span>`;
+                    isRadarScanning = false;
+                    break;
+                } else if (isRadarScanning) {
+                    statusMsg.innerHTML = `<i class="fas fa-sync fa-spin" style="font-size: 1.5rem; color: var(--info);"></i><span>Mapeando próxima camada do satélite...</span>`;
+                    // Espera 3 segundos para não estourar o limite de requisições
+                    await new Promise(r => setTimeout(r, 3000));
                 }
 
-                // Para se bater 20 resultados (Segurança)
-                if (resultsList.children.length >= 20) break;
+            } catch (error) {
+                console.error("Falha no Radar HUD:", error);
+                statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; color: var(--danger);"></i><span style="color:var(--danger)">Erro: ${error.message}</span>`;
+                isRadarScanning = false;
             }
+        } // Fim do While
 
-            if (!achouPerigo) {
-                radarCircle.classList.remove('danger-mode');
-                resultsList.innerHTML = `<div class="osint-idle-msg"><i class="fas fa-shield-alt" style="font-size: 2rem; color: var(--success);"></i><span style="color:var(--success);">Nenhuma infração sanitária grave detectada nas avaliações recentes deste setor.</span></div>`;
-            }
-
-            registrarLog("Radar HUD Acionado", `Varredura em ${radarTargetCity} (${radarThreatType}) finalizada.`);
-
-        } catch (error) {
-            console.error("Falha no Radar HUD:", error);
-            resultsList.innerHTML = `<div class="osint-idle-msg" style="color:var(--danger)"><i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i><span>Erro de conexão com o Satélite.</span></div>`;
-        } finally {
-            pararRadar(btn, radarSweep);
-        }
-    };
-
-    function pararRadar(btn, sweep) {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Nova Varredura';
-        sweep.style.display = 'none';
-        // Remove os blips depois de um tempo
+        btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura';
+        btn.style.borderColor = 'var(--danger)';
+        btn.style.color = 'var(--danger)';
+        radarSweep.style.display = 'none';
+        
         setTimeout(() => {
             document.querySelectorAll('.radar-blip').forEach(el => el.remove());
             document.getElementById('radar-circle-ui').classList.remove('danger-mode');
         }, 5000);
-    }
+    };
 
     function converterArquivoParaBase64(file) {
       return new Promise((resolve, reject) => {
@@ -1323,6 +1368,29 @@
       setTimeout(() => { toast.remove(); }, 4500);
     }
 
+    // INSIGHT IA RÁPIDO PARA O PAINEL PRINCIPAL
+    window.gerarInsightRapido = async () => {
+        const insightElement = document.getElementById("smart-insight");
+        insightElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando inteligência baseada nos dados atuais...';
+        
+        const pendentes = document.getElementById("count-pendente").innerText;
+        const total = document.getElementById("count-total").innerText;
+        
+        let promptInsight = `Você é o sistema analítico da vigilância sanitária. 
+        Temos hoje ${total} processos totais no servidor, e ${pendentes} estão aguardando sua análise.
+        Crie 1 frase curta (máximo 12 palavras) dando um insight inteligente ou encorajador sobre o dia para o fiscal que abriu o painel.`;
+
+        try {
+            const envio = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: promptInsight }] }] })
+            });
+            const resp = await envio.json();
+            insightElement.innerHTML = `"${resp.candidates[0].content.parts[0].text.trim()}"`;
+        } catch(e) { 
+            insightElement.innerHTML = "O volume de dados está alto. Foco na fila pendente."; 
+        }
+    }
+
     window.checkPin = () => {
       const pinValor = document.getElementById('pin-input').value;
       if (pinValor === '1533') { 
@@ -1332,6 +1400,7 @@
           document.getElementById('app-container').style.display = 'flex'; 
           initCharts(); 
           registrarLog("Autenticação", "Login Mestre efetuado com sucesso via PIN.");
+          gerarInsightRapido(); // Chama o insight na entrada
         }, 500);
         showToast('Acesso Permitido', 'Sessão administrativa iniciada.', 'success');
       } else { 
