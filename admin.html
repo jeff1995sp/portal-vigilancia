@@ -139,11 +139,6 @@
     .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; }
     .stat-info p { font-size: 2.5rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
 
-    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 50px; }
-    .chart-card { background: var(--bg-card); padding: 35px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
-    .chart-header { font-size: 1.3rem; font-weight: 800; color: white; margin-bottom: 25px; }
-    .chart-container { position: relative; height: 280px; width: 100%; }
-
     .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; margin-bottom: 50px; box-shadow: var(--shadow-md); }
     .data-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
     .data-header h2 { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 15px; margin: 0; color: white; }
@@ -422,10 +417,10 @@
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
               <div>
                 <h3 style="color: white; margin: 0; font-size: 1.4rem; font-weight: 900;"><i class="fas fa-satellite-dish" style="color: var(--danger);"></i> Escuta Social Real (Google Maps + IA)</h3>
-                <p style="color: var(--text-muted); margin-top: 5px;">Digite um setor (Ex: "Açougues Inamar Diadema") para a IA ler as avaliações reais ao vivo.</p>
+                <p style="color: var(--text-muted); margin-top: 5px;">Digite um setor (Ex: "Açougues Centro São Paulo") para a IA ler as avaliações reais ao vivo.</p>
               </div>
               <div style="display: flex; gap: 10px; width: 100%; max-width: 500px;">
-                  <input type="text" id="osint-query-input" class="form-input" placeholder="Ex: Pizzarias Serraria Diadema" style="border-color: var(--danger);">
+                  <input type="text" id="osint-query-input" class="form-input" placeholder="Ex: Pizzarias Bairro Liberdade" style="border-color: var(--danger);">
                   <button onclick="varreduraRealGoogleMaps()" id="btn-osint" class="btn" style="background: var(--danger); color: white; border: none; white-space: nowrap;"><i class="fas fa-radar"></i> Rastrear</button>
               </div>
             </div>
@@ -445,19 +440,8 @@
               </div>
             </div>
 
-            <div id="osint-results-container" style="display: flex; flex-direction: column; gap: 15px; max-height: 350px; overflow-y: auto; padding-right: 10px;">
+            <div id="osint-results-container" style="display: flex; flex-direction: column; gap: 15px; max-height: 600px; overflow-y: auto; padding-right: 10px;">
               </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 50px;">
-            <div class="chart-card">
-              <div class="chart-header">Entrada Semanal</div>
-              <div class="chart-container" style="height: 220px;"><canvas id="barChart"></canvas></div>
-            </div>
-            <div class="chart-card">
-              <div class="chart-header">Status Geral</div>
-              <div class="chart-container" style="height: 220px;"><canvas id="doughnutChart"></canvas></div>
-            </div>
           </div>
           
           <section class="data-section">
@@ -890,7 +874,7 @@
     let idProcessoAtual = null;
     let dadosProcessoAtual = null; 
     let todosProcessos = []; 
-    let chartBar, chartDoughnut;
+    // Variáveis dos gráficos removidas para limpeza de código
     const logsAuditoria = [];
     
     let memoriaDoChat = []; 
@@ -1042,7 +1026,7 @@
         setTimeout(() => {
           document.getElementById('lock-screen').style.display = 'none';
           document.getElementById('app-container').style.display = 'flex'; 
-          initCharts(); 
+          iniciarMonitorDeTrafegoReal(); // Iniciando o monitor em tempo real no lugar dos gráficos
           registrarLog("Autenticação", "Login Mestre efetuado com sucesso via PIN.");
           gerarInsightRapido(); // Chama o insight na entrada
         }, 500);
@@ -1121,7 +1105,6 @@
       document.getElementById("count-pago").innerText = countPagos;
       document.getElementById("count-total").innerText = snapshot.size;
       
-      updateCharts(countPendentes, countAguardando, countPagos); 
       renderizarTabelas(todosProcessos);
     });
 
@@ -1204,7 +1187,7 @@
     // =================================================================================
     window.varreduraRealGoogleMaps = async () => {
         const queryInput = document.getElementById('osint-query-input').value.trim();
-        if(!queryInput) return showToast("Aviso", "Digite a região para rastrear (Ex: Pizzarias Serraria Diadema).", "warning");
+        if(!queryInput) return showToast("Aviso", "Digite a região para rastrear (Ex: Pizzarias Bairro Liberdade).", "warning");
         
         if(GOOGLE_MAPS_API_KEY === 'AIzaSyBOFL5KRaRj7xgTuYFmAanAqMzFW0vmxek') {
             return showToast("Chave Google Ausente", "Abra o código e cole sua API Key do Google Cloud na variável GOOGLE_MAPS_API_KEY.", "error");
@@ -2111,34 +2094,6 @@
             if(onlineAgora > picoMaximo) picoMaximo = onlineAgora;
             document.getElementById('trafego-pico').innerText = picoMaximo;
         }, 2000);
-    }
-
-    // Inicialização Geral dos Gráficos e Radar
-    function initCharts() {
-      try {
-          const contextoBarra = document.getElementById('barChart').getContext('2d');
-          chartBar = new Chart(contextoBarra, { 
-              type: 'line', 
-              data: { labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], datasets: [{ label: 'Cadastros e Entradas', data: [0,0,0,0,0,0,0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] }, 
-              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)'} }, x: { grid: { display: false } } } } 
-          });
-          
-          const contextoRosca = document.getElementById('doughnutChart').getContext('2d');
-          chartDoughnut = new Chart(contextoRosca, { 
-              type: 'doughnut', 
-              data: { labels: ['Aprovados e Pagos', 'Taxas Aguardando', 'Casos de Risco'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#ef4444'], borderWidth: 0 }] }, 
-              options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
-          });
-
-          iniciarMonitorDeTrafegoReal();
-      } catch (err) {
-          console.error("Erro ao iniciar gráficos: ", err);
-      }
-    }
-
-    function updateCharts(pen, agu, pag) {
-      if(chartDoughnut) { chartDoughnut.data.datasets[0].data = [pag, agu, pen]; chartDoughnut.update(); }
-      if(chartBar) { let totalProcessos = pen + agu + pag; chartBar.data.datasets[0].data = [Math.floor(totalProcessos*0.1), Math.floor(totalProcessos*0.3), Math.floor(totalProcessos*0.2), Math.floor(totalProcessos*0.1), totalProcessos, 0, 0]; chartBar.update(); }
     }
 
     window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
