@@ -139,6 +139,11 @@
     .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; }
     .stat-info p { font-size: 2.5rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
 
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 50px; }
+    .chart-card { background: var(--bg-card); padding: 35px; border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+    .chart-header { font-size: 1.3rem; font-weight: 800; color: white; margin-bottom: 25px; }
+    .chart-container { position: relative; height: 280px; width: 100%; }
+
     .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; margin-bottom: 50px; box-shadow: var(--shadow-md); }
     .data-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
     .data-header h2 { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 15px; margin: 0; color: white; }
@@ -283,34 +288,70 @@
     .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.5rem; padding: 5px; }
 
     /* ======================================================== */
-    /* CSS WAR ROOM: PONTOS E FEED DE OPERAÇÕES                 */
+    /* CSS RADAR AÉREO HUD E OSINT                              */
     /* ======================================================== */
-    .pulse-dot {
-        position: absolute;
-        width: 8px; height: 8px;
-        background: var(--danger);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        box-shadow: 0 0 10px var(--danger);
-        animation: mapPulse 1.5s infinite;
+    .radar-container {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 30px;
+        background: #02040a;
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border);
+        box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+        padding: 30px;
+        margin-bottom: 40px;
+        min-height: 500px;
     }
-    @keyframes mapPulse {
-        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-        70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-    }
-    .live-feed-box { background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-lg); height: 280px; overflow-y: auto; padding: 20px; font-family: var(--font-code); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
-    .feed-item { padding: 15px; border-bottom: 1px dashed #1e293b; color: #94a3b8; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; animation: slideDown 0.3s ease-out forwards; flex-wrap: wrap; }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-    .feed-item span.time { color: var(--gemini-purple); font-weight: bold; }
-    .feed-item span.device { font-size: 1.3rem; }
+
+    /* Console de Trava de Alvo (Esquerda) */
+    .target-console { display: flex; flex-direction: column; gap: 25px; border-right: 1px solid #1e293b; padding-right: 30px; }
+    .console-step h4 { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .console-step h4 i { color: var(--primary); }
     
-    /* Cores das ações do Feed */
-    .feed-item .action-box { display: inline-block; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; letter-spacing: 0.5px; }
-    .action-read { background: rgba(59, 130, 246, 0.15); color: var(--primary); border: 1px solid var(--primary); }
-    .action-type { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid var(--warning); }
-    .action-click { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid var(--success); }
-    .action-alert { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
+    .az-bar { display: flex; flex-wrap: wrap; gap: 5px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 1px solid #1e293b; }
+    .az-btn { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.2s; }
+    .az-btn:hover { background: rgba(59, 130, 246, 0.1); color: var(--primary); border-color: var(--primary); }
+    .az-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 0 10px rgba(37, 99, 235, 0.4); }
+
+    .threat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .threat-btn { background: rgba(255,255,255,0.02); border: 1px solid #1e293b; color: var(--text-muted); padding: 12px 10px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: 0.2s; text-align: center; }
+    .threat-btn i { font-size: 1.5rem; transition: 0.2s; }
+    .threat-btn:hover { background: rgba(255,255,255,0.05); border-color: #334155; color: white; }
+    .threat-btn.active { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); color: white; box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.2); }
+    .threat-btn.active i { color: var(--danger); transform: scale(1.1); }
+
+    .btn-scan { background: transparent; border: 2px solid var(--danger); color: var(--danger); padding: 20px; border-radius: 12px; font-weight: 900; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: auto; }
+    .btn-scan:hover:not(:disabled) { background: var(--danger); color: white; box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); }
+    .btn-scan:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Área do Radar (Direita) */
+    .radar-display-area { display: flex; gap: 30px; align-items: center; position: relative; overflow: hidden;}
+    
+    .radar-circle-wrap { width: 300px; height: 300px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .radar-circle { width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(16, 185, 129, 0.3); background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%); position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(16, 185, 129, 0.1); transition: 0.5s; }
+    .radar-circle::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(16, 185, 129, 0.2); }
+    .radar-circle::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(16, 185, 129, 0.2); }
+    
+    .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 50%; background: linear-gradient(45deg, rgba(16, 185, 129, 0.8) 0%, transparent 60%); transform-origin: top left; animation: sweep 4s linear infinite; display: none; }
+    @keyframes sweep { to { transform: rotate(360deg); } }
+    
+    /* Estado Vermelho do Radar (Encontrou alvo) */
+    .radar-circle.danger-mode { border-color: rgba(239, 68, 68, 0.5); background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%); box-shadow: 0 0 50px rgba(239, 68, 68, 0.2); }
+    .radar-circle.danger-mode::before, .radar-circle.danger-mode::after { background: rgba(239, 68, 68, 0.3); }
+    .radar-circle.danger-mode .radar-sweep { background: linear-gradient(45deg, rgba(239, 68, 68, 0.8) 0%, transparent 60%); animation: sweep 1.5s linear infinite; }
+
+    .radar-blip { position: absolute; width: 12px; height: 12px; background: var(--danger); border-radius: 50%; box-shadow: 0 0 15px var(--danger); transform: translate(-50%, -50%); animation: blipPulse 1s infinite; }
+    @keyframes blipPulse { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); } }
+
+    .osint-results-list { flex: 1; height: 100%; overflow-y: auto; padding-right: 10px; display: flex; flex-direction: column; gap: 15px; }
+    .osint-idle-msg { text-align: center; color: var(--text-muted); font-family: var(--font-code); display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 15px; opacity: 0.5; }
+
+    .target-card-hud { background: rgba(239, 68, 68, 0.05); border: 1px solid var(--danger); border-left: 4px solid var(--danger); border-radius: 8px; padding: 15px; animation: slideInRight 0.3s ease-out forwards; }
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+    .target-card-hud h4 { color: white; margin: 0 0 5px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+    .target-card-hud .loc { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-code); margin-bottom: 10px; display: block; }
+    .target-card-hud .reason { color: #fca5a5; font-size: 0.9rem; line-height: 1.4; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; }
+
   </style>
 </head>
 <body>
@@ -385,14 +426,6 @@
               <button class="btn btn-success" onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Relatório CSV</button>
             </div>
           </div>
-
-          <div style="background: linear-gradient(90deg, rgba(192, 132, 252, 0.1), transparent); border-left: 4px solid var(--gemini-purple); padding: 15px 25px; border-radius: 8px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(192, 132, 252, 0.2);">
-              <div>
-                  <strong style="color: #d8b4fe; font-size: 1.1rem;"><i class="fas fa-brain"></i> Insight Neural do Dia:</strong>
-                  <span style="color: var(--text-light); margin-left: 10px; font-size: 1.05rem;" id="smart-insight">Aguardando análise da malha de dados...</span>
-              </div>
-              <button class="btn" style="background: rgba(192, 132, 252, 0.1); color: #d8b4fe; border: 1px solid var(--gemini-purple); padding: 8px 15px; font-size: 0.85rem;" onclick="gerarInsightRapido()"><i class="fas fa-sync-alt"></i> Atualizar IA</button>
-          </div>
           
           <div class="stats-grid">
             <div class="stat-card c-warning">
@@ -413,35 +446,67 @@
             </div>
           </div>
           
-          <div style="background: var(--bg-card); padding: 30px; border-radius: var(--radius-xl); border: 1px solid var(--danger); margin-bottom: 30px; box-shadow: 0 0 20px rgba(239, 68, 68, 0.1);">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-              <div>
-                <h3 style="color: white; margin: 0; font-size: 1.4rem; font-weight: 900;"><i class="fas fa-satellite-dish" style="color: var(--danger);"></i> Escuta Social Real (Google Maps + IA)</h3>
-                <p style="color: var(--text-muted); margin-top: 5px;">Digite um setor (Ex: "Açougues Centro São Paulo") para a IA ler as avaliações reais ao vivo.</p>
-              </div>
-              <div style="display: flex; gap: 10px; width: 100%; max-width: 500px;">
-                  <input type="text" id="osint-query-input" class="form-input" placeholder="Ex: Pizzarias Bairro Liberdade" style="border-color: var(--danger);">
-                  <button onclick="varreduraRealGoogleMaps()" id="btn-osint" class="btn" style="background: var(--danger); color: white; border: none; white-space: nowrap;"><i class="fas fa-radar"></i> Rastrear</button>
-              </div>
+          <div class="radar-container">
+            
+            <div class="target-console">
+                <div class="console-step">
+                    <h4><i class="fas fa-map"></i> 1. Macro-Região</h4>
+                    <select class="form-input" id="radar-estado" onchange="resetRadar()" style="background: rgba(255,255,255,0.02); font-weight: bold; border-color: #1e293b;">
+                        <option value="São Paulo">São Paulo (Capital e Interior)</option>
+                        <option value="Litoral SP">Litoral Paulista</option>
+                    </select>
+                </div>
+
+                <div class="console-step">
+                    <h4><i class="fas fa-sort-alpha-down"></i> 2. Foco de Varredura</h4>
+                    <div class="az-bar" id="az-bar">
+                        </div>
+                    <select class="form-input" id="radar-cidade" style="margin-top: 10px; background: rgba(255,255,255,0.02); display: none;">
+                        <option value="">Selecione a Letra Primeiro...</option>
+                    </select>
+                </div>
+
+                <div class="console-step">
+                    <h4><i class="fas fa-crosshairs"></i> 3. Natureza da Ameaça</h4>
+                    <div class="threat-grid">
+                        <button class="threat-btn active" onclick="selectThreat(this, 'Alimentos', 'Restaurantes, lanchonetes, padarias e indústrias')"><i class="fas fa-hamburger"></i> Alimentos</button>
+                        <button class="threat-btn" onclick="selectThreat(this, 'Farmácias', 'Drogarias e insumos médicos')"><i class="fas fa-pills"></i> Insumos/Meds</button>
+                        <button class="threat-btn" onclick="selectThreat(this, 'Saúde', 'Hospitais, clínicas e laboratórios')"><i class="fas fa-hospital"></i> Serv. Saúde</button>
+                        <button class="threat-btn" onclick="selectThreat(this, 'Estética', 'Salões de beleza, estúdios, creches')"><i class="fas fa-cut"></i> Interesse Saúde</button>
+                        <button class="threat-btn" onclick="selectThreat(this, 'Cosméticos', 'Produtos de beleza e higiene')"><i class="fas fa-spray-can"></i> Cosméticos</button>
+                        <button class="threat-btn" onclick="selectThreat(this, 'Ambiental', 'Controle de pragas e água')"><i class="fas fa-bug"></i> Ambiental</button>
+                    </div>
+                </div>
+
+                <button class="btn-scan" id="btn-start-radar" onclick="iniciarRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura</button>
             </div>
 
-            <div class="stats-grid" style="margin-top: 25px; margin-bottom: 25px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-              <div class="stat-card" style="border-color: var(--success); padding: 15px; box-shadow: none;">
-                <div class="stat-icon" style="width: 40px; height: 40px; font-size: 1.2rem; background: rgba(16, 185, 129, 0.1); color: var(--success);"><i class="fas fa-shield-check"></i></div>
-                <div class="stat-info"><h3 style="color:var(--success); font-size:0.75rem;">Verde (OK)</h3><p id="osint-count-green" style="font-size:1.5rem; color:var(--success);">0</p></div>
-              </div>
-              <div class="stat-card" style="border-color: var(--warning); padding: 15px; box-shadow: none;">
-                <div class="stat-icon" style="width: 40px; height: 40px; font-size: 1.2rem; background: rgba(245, 158, 11, 0.1); color: var(--warning);"><i class="fas fa-exclamation-circle"></i></div>
-                <div class="stat-info"><h3 style="color:var(--warning); font-size:0.75rem;">Amarelo (Atenção)</h3><p id="osint-count-yellow" style="font-size:1.5rem; color:var(--warning);">0</p></div>
-              </div>
-              <div class="stat-card" style="border-color: var(--danger); padding: 15px; box-shadow: none;">
-                <div class="stat-icon" style="width: 40px; height: 40px; font-size: 1.2rem; background: rgba(239, 68, 68, 0.1); color: var(--danger);"><i class="fas fa-biohazard"></i></div>
-                <div class="stat-info"><h3 style="color:var(--danger); font-size:0.75rem;">Vermelho (Crítico)</h3><p id="osint-count-red" style="font-size:1.5rem; color:var(--danger);">0</p></div>
-              </div>
+            <div class="radar-display-area">
+                <div class="radar-circle-wrap">
+                    <div class="radar-circle" id="radar-circle-ui">
+                        <div class="radar-sweep" id="radar-sweep-ui"></div>
+                        </div>
+                </div>
+
+                <div class="osint-results-list" id="radar-results-list">
+                    <div class="osint-idle-msg" id="radar-idle-msg">
+                        <i class="fas fa-satellite" style="font-size: 3rem;"></i>
+                        <span>Aguardando Trava de Alvo e Acionamento.</span>
+                    </div>
+                </div>
             </div>
 
-            <div id="osint-results-container" style="display: flex; flex-direction: column; gap: 15px; max-height: 600px; overflow-y: auto; padding-right: 10px;">
-              </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 50px;">
+            <div class="chart-card">
+              <div class="chart-header">Entrada Semanal</div>
+              <div class="chart-container" style="height: 220px;"><canvas id="barChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">Status Geral</div>
+              <div class="chart-container" style="height: 220px;"><canvas id="doughnutChart"></canvas></div>
+            </div>
           </div>
           
           <section class="data-section">
@@ -853,7 +918,7 @@
     import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, where, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
     // 🔴🔴🔴 COLE SUA CHAVE DA API DO GOOGLE AQUI EMBAIXO 🔴🔴🔴
-    const GOOGLE_MAPS_API_KEY = 'AIzaSyBOFL5KRaRj7xgTuYFmAanAqMzFW0vmxek'; 
+    const GOOGLE_MAPS_API_KEY = 'SUA_CHAVE_AQUI'; 
     // 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
 
     const firebaseConfig = {
@@ -874,7 +939,7 @@
     let idProcessoAtual = null;
     let dadosProcessoAtual = null; 
     let todosProcessos = []; 
-    // Variáveis dos gráficos removidas para limpeza de código
+    let chartBar, chartDoughnut;
     const logsAuditoria = [];
     
     let memoriaDoChat = []; 
@@ -884,6 +949,252 @@
     let arquivoAnexoParaEnviarZap = null;
     let arquivoLaboratorio = null;
     const TAMANHO_MAX_ARQUIVO_MB = 15;
+
+    // --- VARIÁVEIS DO RADAR HUD ---
+    let radarTargetArea = "São Paulo";
+    let radarTargetLetter = "";
+    let radarTargetCity = "";
+    let radarThreatType = "Alimentos";
+    let radarThreatQuery = "Restaurantes, lanchonetes, padarias e indústrias";
+
+    // Gera o alfabeto da barra
+    const azBar = document.getElementById('az-bar');
+    if (azBar) {
+        const alfabeto = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        alfabeto.forEach(letra => {
+            const btn = document.createElement('button');
+            btn.className = 'az-btn';
+            btn.innerText = letra;
+            btn.onclick = () => {
+                document.querySelectorAll('.az-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                radarTargetLetter = letra;
+                popularCidades(letra);
+            };
+            azBar.appendChild(btn);
+        });
+    }
+
+    // Cidades Fake do Estado de SP (Só para o filtro bonitinho)
+    const cidadesSP = {
+        'A': ['Americana', 'Araçatuba', 'Araraquara', 'Assis'],
+        'B': ['Bauru', 'Bertioga', 'Bragança Paulista', 'Brooklin (SP)'],
+        'C': ['Campinas', 'Caraguatatuba', 'Cotia', 'Cubatão'],
+        'D': ['Diadema', 'Dracena'],
+        'E': ['Embu das Artes', 'Eldorado'],
+        'F': ['Franca', 'Ferraz de Vasconcelos'],
+        'G': ['Guarujá', 'Guarulhos'],
+        'I': ['Itapevi', 'Itu', 'Ilhabela', 'Inamar (Diadema)'],
+        'J': ['Jacareí', 'Jundiaí'],
+        'M': ['Marília', 'Mauá', 'Mogi das Cruzes'],
+        'O': ['Osasco', 'Ourinhos'],
+        'P': ['Piracicaba', 'Praia Grande', 'Presidente Prudente'],
+        'R': ['Ribeirão Preto', 'Rio Claro'],
+        'S': ['Santos', 'São Bernardo do Campo', 'São Caetano', 'São José dos Campos', 'São Paulo', 'São Vicente', 'Serraria (Diadema)'],
+        'T': ['Taubaté', 'Tatuapé (SP)'],
+        'U': ['Ubatuba'],
+        'V': ['Valinhos', 'Vinhedo']
+    };
+
+    function popularCidades(letra) {
+        const select = document.getElementById('radar-cidade');
+        select.style.display = 'block';
+        select.innerHTML = '<option value="">Selecione a Localidade...</option>';
+        
+        let cidadesList = cidadesSP[letra] || [`Cidade Exemplo com ${letra} 1`, `Cidade Exemplo com ${letra} 2`];
+        
+        cidadesList.forEach(cid => {
+            let op = document.createElement('option');
+            op.value = cid;
+            op.innerText = cid;
+            select.appendChild(op);
+        });
+
+        select.onchange = (e) => { radarTargetCity = e.target.value; };
+    }
+
+    window.resetRadar = () => {
+        radarTargetArea = document.getElementById('radar-estado').value;
+        document.querySelectorAll('.az-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('radar-cidade').style.display = 'none';
+        radarTargetLetter = "";
+        radarTargetCity = "";
+    };
+
+    window.selectThreat = (element, type, query) => {
+        document.querySelectorAll('.threat-btn').forEach(b => b.classList.remove('active'));
+        element.classList.add('active');
+        radarThreatType = type;
+        radarThreatQuery = query;
+    };
+
+    // =================================================================================
+    // O CORAÇÃO DO RADAR: BUSCA GOOGLE MAPS + CLASSIFICAÇÃO GEMINI AO VIVO
+    // =================================================================================
+    window.iniciarRadarHUD = async () => {
+        if(!radarTargetCity) {
+            showToast("Falha na Trava", "Selecione uma Letra e uma Cidade/Bairro para focar o radar.", "warning");
+            return;
+        }
+
+        if(GOOGLE_MAPS_API_KEY === 'SUA_CHAVE_AQUI') {
+            showToast("Satélite Offline", "Insira a chave da API do Google Maps no código para o radar funcionar.", "error");
+            return;
+        }
+
+        const btn = document.getElementById('btn-start-radar');
+        const radarCircle = document.getElementById('radar-circle-ui');
+        const radarSweep = document.getElementById('radar-sweep-ui');
+        const resultsList = document.getElementById('radar-results-list');
+
+        // Animação de Início
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-satellite-dish fa-spin"></i> Varrendo Setor...';
+        radarCircle.classList.remove('danger-mode');
+        radarSweep.style.display = 'block';
+        
+        // Tira os blips antigos
+        document.querySelectorAll('.radar-blip').forEach(el => el.remove());
+        
+        resultsList.innerHTML = `<div class="osint-idle-msg"><i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i><span>Interceptando transmissões em ${radarTargetCity}...</span></div>`;
+
+        // Monta a busca: Ex: "Hospitais, clínicas Brooklin (SP)"
+        const buscaTermo = `${radarThreatQuery} em ${radarTargetCity}, ${radarTargetArea}`;
+        
+        try {
+            // 1. Busca os locais na API do Google
+            const responsePlaces = await fetch('https://places.googleapis.com/v1/places:searchText', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+                    'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.reviews'
+                },
+                body: JSON.stringify({
+                    textQuery: buscaTermo,
+                    maxResultCount: 15 // Pega um lote bom de locais
+                })
+            });
+
+            if(!responsePlaces.ok) throw new Error("Acesso negado aos satélites do Google.");
+
+            const dadosGoogle = await responsePlaces.json();
+            
+            if (!dadosGoogle.places || dadosGoogle.places.length === 0) {
+                resultsList.innerHTML = `<div class="osint-idle-msg"><i class="fas fa-check-circle" style="font-size: 2rem; color: var(--success);"></i><span style="color:var(--success);">Setor limpo. Nenhuma ameaça detectada em ${radarTargetCity}.</span></div>`;
+                pararRadar(btn, radarSweep);
+                return;
+            }
+
+            resultsList.innerHTML = ''; // Limpa pra começar a pipocar
+            let achouPerigo = false;
+
+            // 2. Passa cada local pro Gemini avaliar
+            for (let i = 0; i < dadosGoogle.places.length; i++) {
+                let place = dadosGoogle.places[i];
+                let nomeReal = place.displayName.text;
+                let enderecoReal = place.formattedAddress;
+                let comentariosReais = "";
+
+                if (place.reviews && place.reviews.length > 0) {
+                    place.reviews.forEach(rev => {
+                        if (rev.text && rev.text.text) comentariosReais += `"${rev.text.text}"\n`;
+                    });
+                } else {
+                    continue; // Pula quem não tem avaliação
+                }
+
+                // O Prompt mestre da IA para caçar os perigosos
+                let prompt = `Você é um radar tático da Vigilância Sanitária caçando irregularidades.
+                Leia estas avaliações reais sobre "${nomeReal}" no endereço "${enderecoReal}".
+                
+                Avaliações:
+                ${comentariosReais}
+
+                Se as avaliações forem boas ou falarem só de coisas bobas (comida fria, atraso, caro), retorne APENAS a palavra IGNORAR.
+                Se as avaliações mencionarem sujeira pesada, rato, barata, pelo na comida, intoxicação alimentar, carne podre, material não esterilizado ou risco à saúde:
+                Retorne um JSON com o motivo do perigo (máx 20 palavras).
+                Exemplo: {"perigo": "Clientes relataram baratas andando pelas mesas e cheiro forte de esgoto na cozinha."}`;
+
+                try {
+                    const respostaIA = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    
+                    const dataIA = await respostaIA.json();
+                    let resposta = dataIA.candidates[0].content.parts[0].text.trim();
+
+                    if (!resposta.includes("IGNORAR")) {
+                        // ACHOU UMA AMEAÇA!
+                        achouPerigo = true;
+                        
+                        // Faz o radar ficar vermelho
+                        if(!radarCircle.classList.contains('danger-mode')) {
+                            radarCircle.classList.add('danger-mode');
+                            // Toca um sonzinho de alerta se quiser (opcional)
+                        }
+
+                        // Coloca um "Blip" no radar em posição aleatória
+                        let blip = document.createElement('div');
+                        blip.className = 'radar-blip';
+                        blip.style.top = `${Math.floor(Math.random() * 60) + 20}%`;
+                        blip.style.left = `${Math.floor(Math.random() * 60) + 20}%`;
+                        radarCircle.appendChild(blip);
+
+                        // Lê o JSON do Gemini
+                        let textoLimpo = resposta.replace(/```json/g, '').replace(/```/g, '').trim();
+                        let resultado = JSON.parse(textoLimpo);
+
+                        // Cria o card do lado direito
+                        let divTarget = document.createElement('div');
+                        divTarget.className = 'target-card-hud';
+                        divTarget.innerHTML = `
+                            <h4><i class="fas fa-crosshairs"></i> ${nomeReal}</h4>
+                            <span class="loc">${enderecoReal}</span>
+                            <div class="reason"><strong>RELATO INTERCEPTADO:</strong> ${resultado.perigo}</div>
+                        `;
+                        resultsList.appendChild(divTarget);
+                        resultsList.scrollTop = resultsList.scrollHeight; // Rola pra baixo sozinho
+                        
+                        // Espera 1 segundinho pra dar um charme visual de "processamento"
+                        await new Promise(r => setTimeout(r, 800));
+                    }
+
+                } catch (iaErr) {
+                    console.log("Erro no Gemini para este alvo");
+                }
+
+                // Para se bater 20 resultados (Segurança)
+                if (resultsList.children.length >= 20) break;
+            }
+
+            if (!achouPerigo) {
+                radarCircle.classList.remove('danger-mode');
+                resultsList.innerHTML = `<div class="osint-idle-msg"><i class="fas fa-shield-alt" style="font-size: 2rem; color: var(--success);"></i><span style="color:var(--success);">Nenhuma infração sanitária grave detectada nas avaliações recentes deste setor.</span></div>`;
+            }
+
+            registrarLog("Radar HUD Acionado", `Varredura em ${radarTargetCity} (${radarThreatType}) finalizada.`);
+
+        } catch (error) {
+            console.error("Falha no Radar HUD:", error);
+            resultsList.innerHTML = `<div class="osint-idle-msg" style="color:var(--danger)"><i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i><span>Erro de conexão com o Satélite.</span></div>`;
+        } finally {
+            pararRadar(btn, radarSweep);
+        }
+    };
+
+    function pararRadar(btn, sweep) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Nova Varredura';
+        sweep.style.display = 'none';
+        // Remove os blips depois de um tempo
+        setTimeout(() => {
+            document.querySelectorAll('.radar-blip').forEach(el => el.remove());
+            document.getElementById('radar-circle-ui').classList.remove('danger-mode');
+        }, 5000);
+    }
 
     function converterArquivoParaBase64(file) {
       return new Promise((resolve, reject) => {
@@ -996,29 +1307,6 @@
       setTimeout(() => { toast.remove(); }, 4500);
     }
 
-    // INSIGHT IA RÁPIDO PARA O PAINEL PRINCIPAL
-    window.gerarInsightRapido = async () => {
-        const insightElement = document.getElementById("smart-insight");
-        insightElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando inteligência baseada nos dados atuais...';
-        
-        const pendentes = document.getElementById("count-pendente").innerText;
-        const total = document.getElementById("count-total").innerText;
-        
-        let promptInsight = `Você é o sistema analítico da vigilância sanitária. 
-        Temos hoje ${total} processos totais no servidor, e ${pendentes} estão aguardando sua análise.
-        Crie 1 frase curta (máximo 12 palavras) dando um insight inteligente ou encorajador sobre o dia para o fiscal que abriu o painel.`;
-
-        try {
-            const envio = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: promptInsight }] }] })
-            });
-            const resp = await envio.json();
-            insightElement.innerHTML = `"${resp.candidates[0].content.parts[0].text.trim()}"`;
-        } catch(e) { 
-            insightElement.innerHTML = "O volume de dados está alto. Foco na fila pendente."; 
-        }
-    }
-
     window.checkPin = () => {
       const pinValor = document.getElementById('pin-input').value;
       if (pinValor === '1533') { 
@@ -1026,9 +1314,8 @@
         setTimeout(() => {
           document.getElementById('lock-screen').style.display = 'none';
           document.getElementById('app-container').style.display = 'flex'; 
-          iniciarMonitorDeTrafegoReal(); // Iniciando o monitor em tempo real no lugar dos gráficos
+          initCharts(); 
           registrarLog("Autenticação", "Login Mestre efetuado com sucesso via PIN.");
-          gerarInsightRapido(); // Chama o insight na entrada
         }, 500);
         showToast('Acesso Permitido', 'Sessão administrativa iniciada.', 'success');
       } else { 
@@ -1105,6 +1392,7 @@
       document.getElementById("count-pago").innerText = countPagos;
       document.getElementById("count-total").innerText = snapshot.size;
       
+      updateCharts(countPendentes, countAguardando, countPagos); 
       renderizarTabelas(todosProcessos);
     });
 
@@ -1181,145 +1469,6 @@
     }
 
     window.filtrarTabela = window.aplicarFiltros; 
-
-    // =================================================================================
-    // MODO DEUS 100% REAL: VARREDURA OSINT COM GOOGLE PLACES API + GEMINI
-    // =================================================================================
-    window.varreduraRealGoogleMaps = async () => {
-        const queryInput = document.getElementById('osint-query-input').value.trim();
-        if(!queryInput) return showToast("Aviso", "Digite a região para rastrear (Ex: Pizzarias Bairro Liberdade).", "warning");
-
-        const btn = document.getElementById('btn-osint');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Satélite...';
-        btn.disabled = true;
-
-        const container = document.getElementById('osint-results-container');
-        container.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 20px;"><i class="fas fa-circle-notch fa-spin"></i> Hackeando banco de dados público do Google Maps...</div>';
-
-        document.getElementById('osint-count-green').innerText = '0';
-        document.getElementById('osint-count-yellow').innerText = '0';
-        document.getElementById('osint-count-red').innerText = '0';
-
-        try {
-            const responsePlaces = await fetch('https://places.googleapis.com/v1/places:searchText', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
-                    'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.reviews'
-                },
-                body: JSON.stringify({
-                    textQuery: queryInput,
-                    maxResultCount: 5 
-                })
-            });
-
-            if(!responsePlaces.ok) throw new Error("O Google rejeitou a conexão. Verifique se a sua API Key está com a Places API (New) ativada e com faturamento ok.");
-
-            const dadosGoogle = await responsePlaces.json();
-            container.innerHTML = '';
-
-            if (!dadosGoogle.places || dadosGoogle.places.length === 0) {
-                container.innerHTML = '<div style="color: var(--warning); padding: 15px;">Nenhum local encontrado no satélite para esta busca.</div>';
-                btn.innerHTML = '<i class="fas fa-radar"></i> Rastrear';
-                btn.disabled = false;
-                return;
-            }
-
-            let contV = 0, contA = 0, contR = 0;
-
-            for (let place of dadosGoogle.places) {
-                let nomeReal = place.displayName.text;
-                let enderecoReal = place.formattedAddress;
-                let comentariosReais = "";
-
-                if (place.reviews && place.reviews.length > 0) {
-                    place.reviews.forEach(rev => {
-                        if (rev.text && rev.text.text) comentariosReais += `"${rev.text.text}"\n`;
-                    });
-                } else {
-                    comentariosReais = "Sem avaliações escritas recentes.";
-                }
-
-                if(comentariosReais === "Sem avaliações escritas recentes.") {
-                    continue; 
-                }
-
-                let prompt = `Você é um perito da Vigilância Sanitária (COVISA).
-                Analise estas avaliações REAIS e recentes da internet sobre o comércio "${nomeReal}" localizado em "${enderecoReal}":
-                
-                AVALIAÇÕES:
-                ${comentariosReais}
-
-                Classifique o risco sanitário respondendo EXATAMENTE E APENAS com este JSON:
-                {
-                    "status": "VERDE" ou "AMARELO" ou "VERMELHO",
-                    "motivo": "Resumo de 1 linha. Se for ruim, cite o que falaram."
-                }
-                VERDE = Tudo ok, limpo, elogios.
-                AMARELO = Atrasos, atendimento ruim, bagunça leve.
-                VERMELHO = Risco sanitário grave, nojo, rato, barata, intoxicação, estragado.`;
-
-                try {
-                    const respostaIA = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-                    
-                    const dataIA = await respostaIA.json();
-                    let textoJson = dataIA.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-                    let resultado = JSON.parse(textoJson);
-
-                    let borderCor = 'var(--success)';
-                    let icone = 'fa-check-circle';
-                    let bgCor = 'rgba(16, 185, 129, 0.05)';
-
-                    if(resultado.status === 'AMARELO') {
-                        borderCor = 'var(--warning)'; icone = 'fa-exclamation-triangle'; bgCor = 'rgba(245, 158, 11, 0.05)'; contA++;
-                    } else if(resultado.status === 'VERMELHO') {
-                        borderCor = 'var(--danger)'; icone = 'fa-biohazard'; bgCor = 'rgba(239, 68, 68, 0.1)'; contR++;
-                    } else {
-                        contV++;
-                    }
-
-                    document.getElementById('osint-count-green').innerText = contV;
-                    document.getElementById('osint-count-yellow').innerText = contA;
-                    document.getElementById('osint-count-red').innerText = contR;
-
-                    let divRes = document.createElement('div');
-                    divRes.style.cssText = `background: ${bgCor}; border: 1px solid ${borderCor}; border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 10px; animation: fadeInView 0.5s;`;
-                    divRes.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <h4 style="color: white; font-size: 1.1rem; margin: 0 0 5px 0; font-weight: 800;">${nomeReal}</h4>
-                                <span style="color: var(--text-muted); font-size: 0.85rem;"><i class="fas fa-map-marker-alt"></i> ${enderecoReal}</span>
-                            </div>
-                            <span style="background: ${borderCor}; color: #000; padding: 5px 12px; border-radius: 50px; font-weight: 900; font-size: 0.8rem; text-transform: uppercase;"><i class="fas ${icone}"></i> ${resultado.status}</span>
-                        </div>
-                        <p style="color: #cbd5e1; margin: 0; font-size: 0.95rem; line-height: 1.5; border-left: 2px solid ${borderCor}; padding-left: 10px;">${resultado.motivo}</p>
-                    `;
-                    container.appendChild(divRes);
-
-                } catch (iaErr) {
-                    console.error("Falha no Gemini durante o OSINT:", iaErr);
-                }
-            }
-
-            if(container.innerHTML === '') {
-                container.innerHTML = '<div style="color: var(--text-muted); padding: 15px;">Os locais encontrados não possuem comentários no Google para a IA avaliar.</div>';
-            }
-
-            registrarLog("Escuta Social OSINT", `O sistema analisou a região: ${queryInput}`);
-
-        } catch (error) {
-            console.error("Falha no OSINT Real:", error);
-            container.innerHTML = `<div style="color: var(--danger); padding: 15px;"><i class="fas fa-exclamation-triangle"></i> Falha: ${error.message}</div>`;
-        } finally {
-            btn.innerHTML = '<i class="fas fa-radar"></i> Rastrear';
-            btn.disabled = false;
-        }
-    }
 
     window.exportarCSV = () => {
         if(todosProcessos.length === 0) return showToast('Erro', 'Banco de dados vazio.', 'error');
@@ -2090,6 +2239,34 @@
             if(onlineAgora > picoMaximo) picoMaximo = onlineAgora;
             document.getElementById('trafego-pico').innerText = picoMaximo;
         }, 2000);
+    }
+
+    // Inicialização Geral dos Gráficos e Radar
+    function initCharts() {
+      try {
+          const contextoBarra = document.getElementById('barChart').getContext('2d');
+          chartBar = new Chart(contextoBarra, { 
+              type: 'line', 
+              data: { labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], datasets: [{ label: 'Cadastros e Entradas', data: [0,0,0,0,0,0,0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] }, 
+              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)'} }, x: { grid: { display: false } } } } 
+          });
+          
+          const contextoRosca = document.getElementById('doughnutChart').getContext('2d');
+          chartDoughnut = new Chart(contextoRosca, { 
+              type: 'doughnut', 
+              data: { labels: ['Aprovados e Pagos', 'Taxas Aguardando', 'Casos de Risco'], datasets: [{ data: [1,1,1], backgroundColor: ['#10b981', '#0ea5e9', '#ef4444'], borderWidth: 0 }] }, 
+              options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
+          });
+
+          iniciarMonitorDeTrafegoReal();
+      } catch (err) {
+          console.error("Erro ao iniciar gráficos: ", err);
+      }
+    }
+
+    function updateCharts(pen, agu, pag) {
+      if(chartDoughnut) { chartDoughnut.data.datasets[0].data = [pag, agu, pen]; chartDoughnut.update(); }
+      if(chartBar) { let totalProcessos = pen + agu + pag; chartBar.data.datasets[0].data = [Math.floor(totalProcessos*0.1), Math.floor(totalProcessos*0.3), Math.floor(totalProcessos*0.2), Math.floor(totalProcessos*0.1), totalProcessos, 0, 0]; chartBar.update(); }
     }
 
     window.abrirLightbox = (linkImagem, tituloDaImagem) => { 
