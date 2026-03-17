@@ -90,7 +90,7 @@
     nav a { color: var(--text-dark); font-weight: 700; font-size: 0.9rem; padding: 10px 18px; border-radius: 999px; transition: 0.3s; }
     nav a:hover, nav a.active { background: rgba(218, 37, 28, 0.08); color: var(--sp-red); }
 
-    .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+    .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
     .btn-login { background: var(--gov-blue); color: white; padding: 10px 18px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
     .btn-login:hover { background: var(--gov-dark-blue); box-shadow: 0 4px 15px rgba(19, 81, 180, 0.3); }
     .btn-login i { font-size: 1.15rem; }
@@ -437,6 +437,8 @@
       </nav>
 
       <div class="header-actions">
+        <img src="imagens/alerta.jpeg" alt="Alerta de Fraude" style="height: 40px; border-radius: 6px; cursor: pointer; border: 1px solid var(--sp-red); box-shadow: 0 2px 8px rgba(218,37,28,0.25); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" title="Alerta de Fraude - Clique para ler" />
+        
         <a href="https://sso.acesso.gov.br/" target="_blank" class="btn-login"><i class="fas fa-user-circle"></i> Entrar com gov.br</a>
       </div>
       <button class="hamburger-btn" onclick="window.openDrawer()" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
@@ -455,24 +457,7 @@
       </div>
       
       <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
-
-      <div style="background: white; border-radius: 12px; padding: 12px; max-width: 600px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.3s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 90px; height: auto; border-radius: 6px;" />
-        <div style="text-align: left;">
-          <h4 style="color: var(--sp-red); margin: 0; font-size: 1.1rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
-          <p style="color: #444; margin: 0; font-size: 0.9rem; font-weight: 600;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
-        </div>
-      </div>
-
-      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 20px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
-        <h4 style="margin-bottom: 10px; font-size: 1.1rem;"><i class="fas fa-search"></i> Consulta Pública de Regularidade</h4>
-        <div style="display: flex; gap: 10px;">
-          <input type="text" id="fake_consulta_cnpj" placeholder="Digite seu CPF ou CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;" oninput="window.maskCPFinCNPJ(this)">
-          <button onclick="window.realizarConsultaFake()" style="background: var(--sp-red); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;">Consultar</button>
-        </div>
-        <div id="fake_consulta_resultado" style="display: none; margin-top: 15px; padding: 15px; background: #fff3cd; color: #856404; border-radius: 8px; font-weight: bold;"></div>
-      </div>
-
+      
     </div>
     <div class="live-stats-bar">
       <div class="container live-grid">
@@ -1107,18 +1092,6 @@
       document.getElementById('nome_fantasia_pf').value = '';
       document.getElementById('google-map-frame').src = '';
       localStorage.removeItem('rascunho_nome');
-    };
-
-    window.realizarConsultaFake = function() {
-      const input = document.getElementById('fake_consulta_cnpj').value;
-      if(input.length < 5) { alert("Digite um CPF/CNPJ válido."); return; }
-      let res = document.getElementById('fake_consulta_resultado');
-      res.style.display = 'block'; res.style.background = '#e0f2fe'; res.style.color = '#0369a1';
-      res.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando no sistema de fiscalização estadual...';
-      setTimeout(() => {
-        res.style.background = '#fee2e2'; res.style.color = '#b91c1c';
-        res.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>STATUS: PENDENTE DE REGULARIZAÇÃO</strong><br><span style="font-size:0.95rem; font-weight:normal; display:block; margin-top:5px;">Este CPF/CNPJ encontra-se irregular e sujeito a notificação. <a href="#regularize" style="color: #991b1b; text-decoration: underline; font-weight: 900;">Clique aqui e Regularize agora</a>.</span>';
-      }, 1500);
     };
 
     window.openDrawer = function() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; };
