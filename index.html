@@ -90,7 +90,7 @@
     nav a { color: var(--text-dark); font-weight: 700; font-size: 0.9rem; padding: 10px 18px; border-radius: 999px; transition: 0.3s; }
     nav a:hover, nav a.active { background: rgba(218, 37, 28, 0.08); color: var(--sp-red); }
 
-    .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
+    .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
     .btn-login { background: var(--gov-blue); color: white; padding: 10px 18px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
     .btn-login:hover { background: var(--gov-dark-blue); box-shadow: 0 4px 15px rgba(19, 81, 180, 0.3); }
     .btn-login i { font-size: 1.15rem; }
@@ -437,8 +437,6 @@
       </nav>
 
       <div class="header-actions">
-        <img src="imagens/alerta.jpeg" alt="Alerta de Fraude" style="height: 40px; border-radius: 6px; cursor: pointer; border: 1px solid var(--sp-red); box-shadow: 0 2px 8px rgba(218,37,28,0.25); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" title="Alerta de Fraude - Clique para ler" />
-        
         <a href="https://sso.acesso.gov.br/" target="_blank" class="btn-login"><i class="fas fa-user-circle"></i> Entrar com gov.br</a>
       </div>
       <button class="hamburger-btn" onclick="window.openDrawer()" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
@@ -458,6 +456,14 @@
       
       <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
       
+      <div style="background: white; border-radius: 12px; padding: 12px 18px; max-width: 550px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 100px; height: auto; border-radius: 6px;" />
+        <div style="text-align: left;">
+          <h4 style="color: var(--sp-red); margin: 0 0 5px 0; font-size: 1.1rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
+          <p style="color: #444; margin: 0; font-size: 0.9rem; font-weight: 600; line-height: 1.3;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
+        </div>
+      </div>
+
     </div>
     <div class="live-stats-bar">
       <div class="container live-grid">
@@ -889,7 +895,6 @@
     // RASTREADOR DE TRÁFEGO E AÇÕES (MODO ESPIÃO) COM LOCALIZAÇÃO
     // =========================================================
     try {
-        // Detectando Aparelho com mais precisão
         const ua = navigator.userAgent.toLowerCase();
         let osInfo = "Computador";
         if (ua.includes("android")) osInfo = "Android";
@@ -900,7 +905,6 @@
         const isMobile = /iphone|ipad|ipod|android/i.test(ua);
         const deviceIcon = isMobile ? '📱' : '💻';
 
-        // FEATURE 14: Verificação de Retorno
         let isRecorrente = false;
         let tagRetorno = "👤 Novo";
         if(localStorage.getItem('ja_visitou')) {
@@ -910,7 +914,6 @@
             localStorage.setItem('ja_visitou', 'sim');
         }
 
-        // Sistema de Localização Agressivo (salva na memória para ser mais rápido)
         let userLocation = localStorage.getItem('user_loc') || "Buscando IP...";
         let userRegion = localStorage.getItem('user_reg') || "BR";
 
@@ -929,7 +932,7 @@
                 userLocation = "Localização Protegida";
             }
         }
-        buscarLocalizacao(); // Dispara logo que abre o site
+        buscarLocalizacao(); 
 
         const dataIso = new Date().toISOString().split('T')[0]; 
         setDoc(doc(db, "estatisticas", dataIso), { total: increment(1) }, { merge: true }).catch(()=>{});
@@ -945,7 +948,6 @@
 
         window.addEventListener('beforeunload', () => { deleteDoc(sessionRef).catch(()=>{}); });
 
-        // --- SISTEMA DE LEITURA DE CLIQUES E TOQUES NA TELA ---
         async function registrarAcaoUsuario(acaoStr) {
             try {
                 await addDoc(collection(db, "logs_visitantes"), {
@@ -961,7 +963,6 @@
             } catch(e){}
         }
 
-        // Lê todos os cliques em botões e links
         document.addEventListener('click', (e) => {
             let target = e.target.closest('button, a, .doc-item');
             if(target) {
@@ -971,7 +972,6 @@
             }
         });
 
-        // Lê quando a pessoa termina de preencher um campo
         document.addEventListener('focusout', (e) => {
             if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
                 let label = e.target.placeholder || e.target.id || 'campo';
@@ -984,13 +984,13 @@
     } catch(e) {}
 
     // ==============================================================
-    // CHAVE DO GOOGLE GEMINI (PARA O CHATBOT E PESQUISA)
+    // CHAVE DO GOOGLE GEMINI E VARIÁVEIS GLOBAIS
     // ==============================================================
     const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
-    // FUNÇÕES GLOBAIS GERAIS E GERADOR DE PIX
     window.idPedidoConsultaAtual = null; 
+    window.dadosPedidoAtual = {}; // NOVO: Guarda os dados do cliente para gerar o PDF
     window.captchaValidado = false;
     
     // --- FUNÇÕES DO NOVO GERADOR DINÂMICO DE PIX ---
@@ -1011,13 +1011,11 @@
     };
 
     window.gerarPixDinamico = function(valorStr) {
-        // Limpa e converte o valor para o formato numérico americano "0.00"
         let valorNum = valorStr.replace(/[^\d.,]/g, '').replace(',', '.');
         if (!valorNum || isNaN(parseFloat(valorNum))) valorNum = "0.00";
         let valorFloat = parseFloat(valorNum).toFixed(2);
         let valorLen = valorFloat.length.toString().padStart(2, '0');
 
-        // Cria a String oficial do Banco Central baseada no código estático que você já usava
         let payloadStr = "000201" +
                          "26580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe2" +
                          "52040000" +
@@ -1028,7 +1026,6 @@
                          "6009SAO PAULO" +
                          "62070503***" +
                          "6304";
-        // Adiciona a criptografia CRC obrigatória no final do código do pix
         let crc = window.crc16(payloadStr);
         return payloadStr + crc;
     };
@@ -1054,7 +1051,6 @@
       i.value = v;
     };
 
-    // MÁSCARA DATA DE NASCIMENTO
     window.maskData = function(i) {
         let v = i.value.replace(/\D/g,'');
         if(v.length >= 5) {
@@ -1200,24 +1196,20 @@
     };
 
     let cnpjParaComprovante = "";
-    // O VALOR ABAIXO IRÁ GUARDAR O VALOR DO PIX RECUPERADO DO FIREBASE
     let valorPixParaComprovante = "0,00";
 
     window.enviarWhatsAppComprovanteConsulta = async function() {
       if(!cnpjParaComprovante) return;
-      
       const q = query(collection(db, "pedidos"), where("cnpj", "==", cnpjParaComprovante));
       const snapshot = await getDocs(q);
       let nome = "Cliente";
       if(!snapshot.empty) nome = snapshot.docs[0].data().nome;
 
-      // AGORA O VALOR FICA SALVO AQUI TAMBÉM NO ZAP DO CLIENTE (SE VOCÊ PRECISAR)
       const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${nome}\n*CNPJ/CPF:* ${cnpjParaComprovante}\n*Valor da Guia (R$):* ${valorPixParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
       const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msg);
       window.open(url, '_blank');
     };
 
-    // FUNÇÃO QUE ESPREME QUALQUER IMAGEM PARA CABER NO FIREBASE
     const comprimirEConverterFoto = (file) => {
       return new Promise((resolve) => {
           const reader = new FileReader();
@@ -1246,7 +1238,6 @@
       });
     };
 
-    // ENVIA A FOTO DO DOCUMENTO ASSINADO PRO ADMIN
     window.enviarAssinatura = async function(inputElement) {
         if (!inputElement.files || inputElement.files.length === 0) return;
         if (!window.idPedidoConsultaAtual) return alert("Erro: Protocolo não encontrado.");
@@ -1267,7 +1258,7 @@
             });
             
             labelBtn.innerHTML = '<i class="fas fa-check-circle"></i> Documento Recebido com Sucesso!';
-            labelBtn.style.background = '#10b981'; // Fica verde escuro
+            labelBtn.style.background = '#10b981';
             alert("Perfeito! A foto do documento assinado foi enviada diretamente para o sistema da COVISA.");
         } catch (error) {
             console.error(error);
@@ -1301,18 +1292,91 @@
       c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
     };
 
+    // ==============================================================================
+    // NOVO GERADOR DE PDF DA LICENÇA PROVISÓRIA (AUTOMÁTICO E PREENCHIDO)
+    // ==============================================================================
     window.gerarPDF = async function() {
-        alert("Função de PDF disponível. Prepare a impressão!");
+        try {
+            const btn = document.getElementById('btn-baixar-pdf');
+            const txtOriginal = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Documento Oficial...';
+            btn.disabled = true;
+
+            // Puxa os dados que foram consultados na tela
+            const p = window.dadosPedidoAtual || {};
+            const nome = p.nome || "Não informado";
+            const cnpj = p.cnpj || "Não informado";
+            const tipo = p.tipo || "Não informado";
+            const dataEmissao = new Date().toLocaleDateString('pt-BR');
+
+            // Cria o documento do zero usando a biblioteca PDF-Lib que já está no seu site
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const pdfDoc = await PDFDocument.create();
+            const page = pdfDoc.addPage([595.28, 841.89]); // Tamanho da Folha A4
+            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            const fontNormal = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+            const govBlue = rgb(0.05, 0.23, 0.52);
+            const spRed = rgb(0.85, 0.14, 0.11);
+            const black = rgb(0, 0, 0);
+
+            // Cabeçalho Oficial
+            page.drawText('PREFEITURA DO MUNICÍPIO DE SÃO PAULO', { x: 50, y: 780, size: 16, font: fontBold, color: govBlue });
+            page.drawText('COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA', { x: 50, y: 760, size: 14, font: fontBold, color: spRed });
+            page.drawLine({ start: { x: 50, y: 745 }, end: { x: 545, y: 745 }, thickness: 2, color: govBlue });
+
+            // Título
+            page.drawText('LICENÇA SANITÁRIA PROVISÓRIA', { x: 130, y: 690, size: 18, font: fontBold, color: black });
+
+            // Texto Padrão e Legal
+            let y = 630;
+            page.drawText('A Coordenação de Vigilância em Saúde (COVISA), no uso de suas atribuições', { x: 50, y, size: 12, font: fontNormal }); y -= 20;
+            page.drawText('legais, atesta que o estabelecimento abaixo encontra-se em processo de', { x: 50, y, size: 12, font: fontNormal }); y -= 20;
+            page.drawText('regularização e com a taxa de análise documental devidamente recolhida.', { x: 50, y, size: 12, font: fontNormal }); y -= 50;
+
+            // Injeta os dados do cliente no PDF
+            page.drawText('DADOS DO ESTABELECIMENTO:', { x: 50, y, size: 14, font: fontBold, color: govBlue }); y -= 30;
+            
+            page.drawText(`Razão Social / Nome:`, { x: 50, y, size: 12, font: fontBold });
+            page.drawText(`${nome}`, { x: 190, y, size: 12, font: fontNormal }); y -= 25;
+
+            page.drawText(`CNPJ / CPF:`, { x: 50, y, size: 12, font: fontBold });
+            page.drawText(`${cnpj}`, { x: 190, y, size: 12, font: fontNormal }); y -= 25;
+
+            page.drawText(`Ramo de Atividade:`, { x: 50, y, size: 12, font: fontBold });
+            page.drawText(`${tipo}`, { x: 190, y, size: 12, font: fontNormal }); y -= 50;
+
+            page.drawText('STATUS DA REGULARIZAÇÃO:', { x: 50, y, size: 14, font: fontBold, color: govBlue }); y -= 30;
+            page.drawText(`REGULARIZADO (TAXA RECOLHIDA / PENDÊNCIAS BAIXADAS)`, { x: 50, y, size: 12, font: fontBold, color: rgb(0.1, 0.6, 0.1) }); y -= 50;
+
+            page.drawText(`Data de Emissão: ${dataEmissao}`, { x: 50, y, size: 12, font: fontNormal }); y -= 25;
+            page.drawText('Validade: 90 dias a partir da data de emissão.', { x: 50, y, size: 12, font: fontBold }); y -= 80;
+
+            // Linha para Assinatura do Cliente
+            page.drawLine({ start: { x: 150, y }, end: { x: 445, y }, thickness: 1, color: black }); y -= 20;
+            page.drawText('Assinatura do Responsável / Representante Legal', { x: 175, y, size: 11, font: fontNormal });
+
+            // Salva e aciona o Download
+            const pdfBytes = await pdfDoc.save();
+            download(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
+
+            // Volta o botão ao normal
+            btn.innerHTML = txtOriginal;
+            btn.disabled = false;
+        } catch(e) {
+            console.error("Erro ao gerar PDF:", e);
+            alert("Erro ao gerar o PDF. Verifique a conexão.");
+            document.getElementById('btn-baixar-pdf').innerHTML = '<i class="fas fa-file-pdf"></i> Baixar Licença Provisória';
+            document.getElementById('btn-baixar-pdf').disabled = false;
+        }
     };
 
-    // --- NOVA FUNÇÃO: PESQUISA DA TELA INICIAL INTEGRADA COM IA E ANTI-BLOQUEIO ---
     window.realizarPesquisaIA = async function() {
         const input = document.getElementById('main-search-input');
         const btn = document.getElementById('main-search-btn');
         const query = input.value.trim();
         if(!query) return;
 
-        // Anti-Bloqueio Cooldown
         btn.disabled = true;
         input.disabled = true;
         const textoAntigoBtn = btn.innerHTML;
@@ -1366,10 +1430,6 @@
         }
     };
 
-    // ==============================================================================
-    // EVENTOS E LOGICA PRINCIPAL DOS FORMULÁRIOS
-    // ==============================================================================
-      
     if(localStorage.getItem('rascunho_nome')) {
       document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
     }
@@ -1417,7 +1477,6 @@
       }, 1000);
     }
 
-    // BUSCA DE CNPJ PARA A ÁREA DE DENÚNCIA
     const docInputDenuncia = document.getElementById('cnpj_denuncia');
     if (docInputDenuncia) {
         docInputDenuncia.addEventListener('keyup', async function(e) {
@@ -1438,7 +1497,6 @@
         });
     }
 
-    // BUSCA DE CNPJ PARA A ÁREA DE REGULARIZAÇÃO
     const docInput = document.getElementById('cnpj_empresa');
     if (docInput) {
         docInput.addEventListener('keyup', async function(e) {
@@ -1524,7 +1582,6 @@
         });
     }
 
-    // ENVIO REGULARIZAÇÃO
     const formRegularizacao = document.getElementById('form-regularizacao');
     if (formRegularizacao) {
         formRegularizacao.addEventListener('submit', async (e) => {
@@ -1599,7 +1656,6 @@
         });
     }
 
-    // ENVIO DENÚNCIA DIRETO PRO ADMIN
     const formDenuncia = document.getElementById('form-denuncia');
     if (formDenuncia) {
         formDenuncia.addEventListener('submit', async (e) => {
@@ -1653,7 +1709,6 @@
         });
     }
 
-    // CONSULTA STATUS E MOSTRA PIX
     const formConsulta = document.getElementById('form-consulta');
     if (formConsulta) {
         formConsulta.addEventListener('submit', async (e) => {
@@ -1680,6 +1735,9 @@
                   window.idPedidoConsultaAtual = snapshot.docs[0].id;
                   
                   if (pedido.pago === true) {
+                      // NOVO: Salvando os dados do cliente para a função de PDF conseguir usar depois!
+                      window.dadosPedidoAtual = pedido; 
+
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
                       
@@ -1709,9 +1767,6 @@
                   } else {
                       divMsg.style.display = 'none'; divPix.style.display = 'block';
                       
-                      // =========================================================================
-                      // LÓGICA DO VALOR DO PIX: MOSTRA O VALOR CORRETO E GERA QR CODE AUTOMÁTICO
-                      // =========================================================================
                       let valorLimpo = pedido.valor.replace('R$', '').replace(/\s/g, ''); 
                       let valorFormatado = parseFloat(valorLimpo.replace(',','.')).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
                       
@@ -1722,14 +1777,11 @@
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
                       valorPixParaComprovante = valorFormatado;
 
-                      // NOVO: Aqui o sistema gera o BR Code exato com o valor da taxa
                       let pixDinamico = window.gerarPixDinamico(valorLimpo);
                       document.getElementById('pix-copia-cola').value = pixDinamico;
                       
-                      // Atualiza a imagem do QR Code instantaneamente para forçar o banco a ler o valor
                       let qrImgUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(pixDinamico);
                       document.querySelector('.qr-container img').src = qrImgUrl;
-                      // =========================================================================
                       
                       cnpjParaComprovante = cnpj;
                       atualizarBarraProgresso(3); 
@@ -1745,9 +1797,6 @@
         });
     }
 
-    // ==============================================================================
-    // CHATBOT GEMINI - COM ANTI-BLOQUEIO (COOLDOWN de 3 Segundos)
-    // ==============================================================================
     let memoriaChatCidadao = [];
     const chatForm = document.getElementById('chat-form');
     
@@ -1812,7 +1861,6 @@
                 </div>`;
                 body.scrollTop = body.scrollHeight;
             } finally {
-                // ANTI-BLOQUEIO: Espera 3 segundos antes de liberar o botão e o input.
                 setTimeout(() => {
                     txtInput.disabled = false;
                     btnSend.disabled = false;
