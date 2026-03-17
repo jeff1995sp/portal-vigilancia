@@ -454,16 +454,16 @@
         <button onclick="window.realizarPesquisaIA()" id="main-search-btn"><i class="fas fa-search"></i> Pesquisar</button>
       </div>
       
-      <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
-      
-      <div style="background: white; border-radius: 12px; padding: 12px 18px; max-width: 550px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 100px; height: auto; border-radius: 6px;" />
+      <div style="background: white; border-radius: 12px; padding: 12px 18px; max-width: 500px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 85px; height: auto; border-radius: 6px;" />
         <div style="text-align: left;">
-          <h4 style="color: var(--sp-red); margin: 0 0 5px 0; font-size: 1.1rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
-          <p style="color: #444; margin: 0; font-size: 0.9rem; font-weight: 600; line-height: 1.3;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
+          <h4 style="color: var(--sp-red); margin: 0 0 5px 0; font-size: 1.05rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
+          <p style="color: #444; margin: 0; font-size: 0.85rem; font-weight: 600; line-height: 1.3;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
         </div>
       </div>
 
+      <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
+      
     </div>
     <div class="live-stats-bar">
       <div class="container live-grid">
@@ -990,7 +990,7 @@
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
     window.idPedidoConsultaAtual = null; 
-    window.dadosPedidoAtual = {}; // NOVO: Guarda os dados do cliente para gerar o PDF
+    window.dadosPedidoAtual = {}; 
     window.captchaValidado = false;
     
     // --- FUNÇÕES DO NOVO GERADOR DINÂMICO DE PIX ---
@@ -1293,7 +1293,7 @@
     };
 
     // ==============================================================================
-    // NOVO GERADOR DE PDF DA LICENÇA PROVISÓRIA (AUTOMÁTICO E PREENCHIDO)
+    // NOVO GERADOR DE PDF DA LICENÇA PROVISÓRIA (PUXA DO GITHUB E PREENCHE)
     // ==============================================================================
     window.gerarPDF = async function() {
         try {
@@ -1302,74 +1302,58 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Documento Oficial...';
             btn.disabled = true;
 
-            // Puxa os dados que foram consultados na tela
+            // 1. Puxa os dados que foram consultados na tela
             const p = window.dadosPedidoAtual || {};
             const nome = p.nome || "Não informado";
             const cnpj = p.cnpj || "Não informado";
             const tipo = p.tipo || "Não informado";
             const dataEmissao = new Date().toLocaleDateString('pt-BR');
 
-            // Cria o documento do zero usando a biblioteca PDF-Lib que já está no seu site
+            // 2. Carrega a biblioteca do PDF-Lib
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
-            const pdfDoc = await PDFDocument.create();
-            const page = pdfDoc.addPage([595.28, 841.89]); // Tamanho da Folha A4
+
+            // 3. Busca o PDF Original que está salvo no seu GitHub
+            // ATENÇÃO: O nome do arquivo precisa estar EXATAMENTE igual ao que está na sua pasta.
+            const urlTemplate = 'Alvara Provisório.pdf'; 
+            const existingPdfBytes = await fetch(urlTemplate).then(res => {
+                if (!res.ok) throw new Error("Não encontrou o PDF base.");
+                return res.arrayBuffer();
+            });
+
+            // 4. Abre o PDF e prepara a fonte para escrever por cima dele
+            const pdfDoc = await PDFDocument.load(existingPdfBytes);
+            const page = pdfDoc.getPages()[0]; // Pega a primeira página do Alvará
             const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-            const fontNormal = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-            const govBlue = rgb(0.05, 0.23, 0.52);
-            const spRed = rgb(0.85, 0.14, 0.11);
-            const black = rgb(0, 0, 0);
-
-            // Cabeçalho Oficial
-            page.drawText('PREFEITURA DO MUNICÍPIO DE SÃO PAULO', { x: 50, y: 780, size: 16, font: fontBold, color: govBlue });
-            page.drawText('COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA', { x: 50, y: 760, size: 14, font: fontBold, color: spRed });
-            page.drawLine({ start: { x: 50, y: 745 }, end: { x: 545, y: 745 }, thickness: 2, color: govBlue });
-
-            // Título
-            page.drawText('LICENÇA SANITÁRIA PROVISÓRIA', { x: 130, y: 690, size: 18, font: fontBold, color: black });
-
-            // Texto Padrão e Legal
-            let y = 630;
-            page.drawText('A Coordenação de Vigilância em Saúde (COVISA), no uso de suas atribuições', { x: 50, y, size: 12, font: fontNormal }); y -= 20;
-            page.drawText('legais, atesta que o estabelecimento abaixo encontra-se em processo de', { x: 50, y, size: 12, font: fontNormal }); y -= 20;
-            page.drawText('regularização e com a taxa de análise documental devidamente recolhida.', { x: 50, y, size: 12, font: fontNormal }); y -= 50;
-
-            // Injeta os dados do cliente no PDF
-            page.drawText('DADOS DO ESTABELECIMENTO:', { x: 50, y, size: 14, font: fontBold, color: govBlue }); y -= 30;
+            // ===========================================================================
+            // 5. ESCREVE OS DADOS DO CLIENTE POR CIMA DO PDF.
+            // ===========================================================================
+            // ATENÇÃO PARA AJUSTE: 
+            // Como eu não sei exatamente onde estão as linhas pontilhadas no seu PDF em branco,
+            // eu coloquei posições estimadas (x = Esquerda para Direita, y = Baixo para Cima).
+            // Se o texto sair um pouco fora da linha, basta aumentar ou diminuir os números "x" e "y" abaixo:
+            // ===========================================================================
             
-            page.drawText(`Razão Social / Nome:`, { x: 50, y, size: 12, font: fontBold });
-            page.drawText(`${nome}`, { x: 190, y, size: 12, font: fontNormal }); y -= 25;
+            page.drawText(nome, { x: 150, y: 550, size: 14, font: fontBold, color: rgb(0, 0, 0) });
+            page.drawText(cnpj, { x: 150, y: 510, size: 14, font: fontBold, color: rgb(0, 0, 0) });
+            page.drawText(tipo, { x: 150, y: 470, size: 12, font: fontBold, color: rgb(0, 0, 0) });
+            page.drawText(dataEmissao, { x: 150, y: 430, size: 12, font: fontBold, color: rgb(0, 0, 0) });
 
-            page.drawText(`CNPJ / CPF:`, { x: 50, y, size: 12, font: fontBold });
-            page.drawText(`${cnpj}`, { x: 190, y, size: 12, font: fontNormal }); y -= 25;
-
-            page.drawText(`Ramo de Atividade:`, { x: 50, y, size: 12, font: fontBold });
-            page.drawText(`${tipo}`, { x: 190, y, size: 12, font: fontNormal }); y -= 50;
-
-            page.drawText('STATUS DA REGULARIZAÇÃO:', { x: 50, y, size: 14, font: fontBold, color: govBlue }); y -= 30;
-            page.drawText(`REGULARIZADO (TAXA RECOLHIDA / PENDÊNCIAS BAIXADAS)`, { x: 50, y, size: 12, font: fontBold, color: rgb(0.1, 0.6, 0.1) }); y -= 50;
-
-            page.drawText(`Data de Emissão: ${dataEmissao}`, { x: 50, y, size: 12, font: fontNormal }); y -= 25;
-            page.drawText('Validade: 90 dias a partir da data de emissão.', { x: 50, y, size: 12, font: fontBold }); y -= 80;
-
-            // Linha para Assinatura do Cliente
-            page.drawLine({ start: { x: 150, y }, end: { x: 445, y }, thickness: 1, color: black }); y -= 20;
-            page.drawText('Assinatura do Responsável / Representante Legal', { x: 175, y, size: 11, font: fontNormal });
-
-            // Salva e aciona o Download
+            // 6. Salva o novo PDF preenchido e força o download
             const pdfBytes = await pdfDoc.save();
             download(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
 
-            // Volta o botão ao normal
+            // 7. Volta o botão ao normal
             btn.innerHTML = txtOriginal;
             btn.disabled = false;
         } catch(e) {
             console.error("Erro ao gerar PDF:", e);
-            alert("Erro ao gerar o PDF. Verifique a conexão.");
+            alert("Erro ao gerar o PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está salvo exatamente com esse nome e na mesma pasta do seu index.html no GitHub.");
             document.getElementById('btn-baixar-pdf').innerHTML = '<i class="fas fa-file-pdf"></i> Baixar Licença Provisória';
             document.getElementById('btn-baixar-pdf').disabled = false;
         }
     };
+    // ==============================================================================
 
     window.realizarPesquisaIA = async function() {
         const input = document.getElementById('main-search-input');
