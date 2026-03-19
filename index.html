@@ -1840,3 +1840,509 @@
   </script>
 </body>
 </html>
+
+                <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Oficial de Vigilância Sanitária | SP</title>
+  <meta name="description" content="Portal de Gestão, Licenciamento e Fiscalização Sanitária da Prefeitura de São Paulo." />
+
+  <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "vumfbqba1l");
+  </script>
+  <link rel="icon" href="imagens/5.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@400;500;600;700;800&family=Times+New+Roman&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
+
+  <style>
+    :root {
+      --sp-red: #da251c;
+      --sp-dark-red: #a81009;
+      --gov-blue: #1351b4;
+      --gov-dark-blue: #0d3c85;
+      --success-color: #2e7d32;
+      --text-dark: #2c3e50;
+      --text-light: #555555;
+      --bg-light: #f4f6f8;
+      --white: #ffffff;
+      --glass: rgba(255, 255, 255, 0.95);
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    /* --- RESET GERAL --- */
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Roboto', sans-serif; background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; line-height: 1.6; padding-bottom: 60px; }
+    h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; font-weight: 700; }
+    a { text-decoration: none; color: inherit; transition: 0.3s; }
+    ul { list-style: none; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+
+    /* --- CAPTCHA --- */
+    .captcha-container { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 4px; width: 100%; max-width: 300px; height: 74px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); user-select: none; }
+    .captcha-checkbox { display: flex; align-items: center; gap: 12px; cursor: pointer; height: 100%; flex-grow: 1; }
+    .checkmark-box { width: 24px; height: 24px; border: 2px solid #c1c1c1; border-radius: 2px; background: #fff; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .checkmark-box:hover { border-color: #b2b2b2; }
+    .captcha-spinner { width: 18px; height: 18px; border: 3px solid #dbdbdb; border-top: 3px solid #4a90e2; border-radius: 50%; animation: spin 1s linear infinite; display: none; }
+    .captcha-check { color: #009688; font-size: 22px; display: none; }
+    .captcha-label { font-family: 'Roboto', sans-serif; font-size: 14px; color: #000; font-weight: 500; }
+    .captcha-logo { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .captcha-logo img { width: 32px; height: 32px; opacity: 0.6; }
+    .captcha-logo span { font-size: 10px; color: #999; margin-top: 2px; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* --- ESTILO PARA MENSAGEM DE SUCESSO DO CPF --- */
+    .cpf-success-msg { background: #dcfce3; color: #166534; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; margin-top: 10px; display: none; border: 1px solid #22c55e; text-align: center; }
+
+    /* --- WIDGET DE ACESSIBILIDADE LATERAL --- */
+    .access-widget { position: fixed; right: 0; top: 40%; transform: translateY(-50%); display: flex; flex-direction: column; z-index: 9999; }
+    .access-widget a { background: #0d3c85; color: white; font-size: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); border-radius: 8px 0 0 8px; margin-bottom: 2px; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; text-decoration: none;}
+    .access-widget a:hover { background: var(--sp-red); width: 55px; }
+
+    /* --- FEATURE: BARRA DE SEGURANÇA --- */
+    .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
+      
+    /* --- BARRA GOV VERMELHA --- */
+    .gov-bar { background: var(--sp-red); color: #fff; padding: 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2000; position: relative; }
+    .gov-left { font-weight: 700; opacity: 0.95; }
+    .gov-links { display: flex; gap: 10px; }
+    .gov-links a { color: #fff; font-weight: 800; opacity: 0.95; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); white-space: nowrap; }
+    .gov-links a:hover { opacity: 1; background: rgba(255,255,255,0.14); }
+
+    /* --- HEADER --- */
+    header { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 14px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+    .header-grid { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
+    .brand img { height: 68px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+    .brand-text h1 { font-size: 1.35rem; line-height: 1; color: var(--text-dark); letter-spacing: -0.5px; text-transform: uppercase; font-weight: 900; }
+    .brand-text span { font-size: 0.75rem; color: var(--sp-red); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+
+    nav ul { display: flex; gap: 10px; }
+    nav a { color: var(--text-dark); font-weight: 700; font-size: 0.9rem; padding: 10px 18px; border-radius: 999px; transition: 0.3s; }
+    nav a:hover, nav a.active { background: rgba(218, 37, 28, 0.08); color: var(--sp-red); }
+
+    .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+    .btn-login { background: var(--gov-blue); color: white; padding: 10px 18px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; white-space: nowrap; }
+    .btn-login:hover { background: var(--gov-dark-blue); box-shadow: 0 4px 15px rgba(19, 81, 180, 0.3); }
+    .btn-login i { font-size: 1.15rem; }
+    .hamburger-btn { display: none; width: 44px; height: 44px; border-radius: 12px; background: #f8f9fa; border: 1px solid #e9ecef; cursor: pointer; align-items: center; justify-content: center; color: #333; transition: 0.2s; }
+    .hamburger-btn:hover { background: #f1f3f5; }
+
+    /* --- DRAWER MOBILE --- */
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; display: none; }
+    .drawer { position: fixed; top: 0; left: 0; height: 100%; width: 310px; max-width: 86vw; background: #fff; z-index: 10000; transform: translateX(-110%); transition: transform 0.25s ease; box-shadow: 0 20px 60px rgba(0,0,0,0.25); display: flex; flex-direction: column; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-overlay.open { display: block; }
+    .drawer-top { padding: 18px 18px 14px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .drawer-title { font-weight: 900; color: var(--text-dark); letter-spacing: -0.2px; }
+    .drawer-close { width: 40px; height: 40px; border-radius: 12px; border: 1px solid #e9ecef; background: #f8f9fa; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+    .drawer-nav { padding: 10px 12px 18px; display: flex; flex-direction: column; gap: 20px; }
+    .drawer-nav a { padding: 12px 12px; border-radius: 14px; font-weight: 800; color: #2c3e50; display: flex; align-items: center; gap: 10px; border: 1px solid #f1f3f5; background: #fff; }
+    .drawer-nav a:hover { background: #f8f9fa; }
+    .drawer-nav a.denuncia { background: rgba(218, 37, 28, 0.08); border-color: rgba(218, 37, 28, 0.25); color: var(--sp-red); }
+    .drawer-nav a.denuncia strong { background: var(--sp-red); color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; margin-left: auto; }
+    .drawer-bottom { margin-top: auto; padding: 16px; border-top: 1px solid #eee; background: #fafafa; color: #666; font-size: 0.9rem; }
+
+    /* --- HERO --- */
+    .hero { background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center; color: white; padding-top: 40px; padding-bottom: 150px; }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
+    .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
+    .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
+    
+    /* --- BARRA DE PESQUISA (Agora com IA Integrada) --- */
+    .search-box { background: white; padding: 8px; border-radius: 50px; display: flex; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 600px; margin: 0 auto 10px; transition: 0.3s; border: 2px solid transparent;}
+    .search-box:focus-within { border-color: var(--sp-red); box-shadow: 0 10px 40px rgba(218, 37, 28, 0.3); }
+    .search-box input { border: none; flex: 1; padding: 15px 25px; font-size: 1.1rem; color: #333; outline: none; background: transparent; }
+    .search-box button { background: var(--sp-red); color: white; border: none; padding: 0 35px; border-radius: 50px; cursor: pointer; font-weight: 900; font-size: 1rem; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+    .search-box button:hover:not(:disabled) { background: var(--sp-dark-red); }
+    .search-box button:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* --- SIMULAÇÃO EM TEMPO REAL --- */
+    .live-stats-bar { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 25px 0; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; position: absolute; bottom: 0; }
+    .live-grid { display: flex; justify-content: center; gap: 60px; text-align: center; color: white; }
+    .live-item h4 { font-size: 2.8rem; font-weight: 900; margin: 0; color: #ffeb3b; font-family: 'Courier New', monospace; line-height: 1; }
+    .live-item span { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 800; }
+
+    /* --- STATUS CARDS --- */
+    .status-bar { margin-top: 60px; padding-bottom: 60px; background: white; }
+    .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
+    .status-card { background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #eee; display: flex; align-items: center; gap: 15px; transition: 0.3s; box-shadow: var(--shadow); }
+    .status-card:hover { transform: translateY(-5px); border-color: var(--sp-red); }
+    .icon-box { width: 60px; height: 60px; background: #f0f4ff; color: var(--gov-blue); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+    .status-info h4 { font-size: 0.9rem; color: var(--text-light); margin-bottom: 5px; text-transform: uppercase; font-weight: 900; }
+    .status-info strong { font-size: 1.2rem; color: var(--text-dark); display: block; font-weight: 900; }
+
+    /* --- ESTILOS GERAIS DE FORMULÁRIO --- */
+    .form-control { width: 100%; padding: 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; margin-bottom: 15px; transition: 0.3s; font-family: 'Roboto', sans-serif; background: #fff; }
+    .form-control:focus { border-color: var(--gov-blue); outline: none; }
+    .form-control[readonly] { background-color: #f1f3f5; color: #6c757d; cursor: not-allowed; }
+    .btn-success { background: var(--success-color); color: white; border: none; padding: 20px; border-radius: 10px; font-weight: 900; font-size: 1.2rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+    .btn-success:hover { background: #1b5e20; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2); }
+    .btn-primary { background: var(--gov-blue); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: 900; font-size: 1.1rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; text-transform: uppercase; }
+    .btn-primary:hover { background: var(--gov-dark-blue); transform: translateY(-2px); }
+
+    /* --- REGULARIZE SECTION --- */
+    .checklist-section { padding: 100px 0; background: #f4f7fa; border-top: 1px solid #e1e8ed; border-bottom: 1px solid #e1e8ed; }
+    .checklist-wrapper { display: flex; gap: 60px; flex-wrap: wrap; align-items: flex-start; }
+    .checklist-intro { flex: 1; min-width: 320px; }
+    .checklist-intro h2 { font-size: 2.8rem; color: var(--gov-dark-blue); margin-bottom: 20px; font-family: 'Montserrat', sans-serif; font-weight: 900; line-height: 1.2; }
+    .checklist-intro p.lead { font-size: 1.15rem; color: #4a5568; margin-bottom: 30px; line-height: 1.7; }
+      
+    .process-steps { display: flex; gap: 15px; margin-bottom: 35px; }
+    .process-step { background: #fff; padding: 18px 15px; border-radius: 12px; border-top: 4px solid var(--gov-blue); box-shadow: 0 6px 15px rgba(0,0,0,0.04); flex: 1; text-align: center; }
+    .process-step i { font-size: 1.8rem; color: var(--gov-blue); margin-bottom: 12px; display: block; }
+    .process-step span { font-size: 0.85rem; font-weight: 800; color: #2d3748; text-transform: uppercase; }
+
+    .steps-box { background: #fff5f5; padding: 30px; border-radius: 12px; border-left: 6px solid var(--sp-red); box-shadow: 0 5px 20px rgba(218, 37, 28, 0.08); margin-bottom: 30px; }
+    .steps-box h4 { color: var(--sp-red); margin-bottom: 15px; font-size: 1.35rem; font-weight: 900; display: flex; align-items: center; gap: 10px; line-height: 1.3; }
+    .steps-box p { font-size: 1.05rem; color: #4a5568; margin-bottom: 20px; line-height: 1.6; }
+    .steps-list { list-style: none; padding: 0; margin: 0; }
+    .steps-list li { position: relative; padding-left: 30px; margin-bottom: 15px; font-weight: 600; font-size: 0.95rem; color: #2d3748; line-height: 1.5; }
+    .steps-list li i { position: absolute; left: 0; top: 3px; color: var(--sp-red); font-size: 1.1rem; }
+
+    .checklist-form-container { flex: 1.2; min-width: 350px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+    .form-tabs { display: flex; gap: 10px; margin-bottom: 30px; background: #f1f5f9; padding: 6px; border-radius: 12px; }
+    .form-tab { flex: 1; text-align: center; padding: 12px; font-weight: 800; font-size: 0.9rem; color: #64748b; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+    .form-tab.active { background: #fff; color: var(--gov-blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+
+    .docs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+    .doc-item { padding: 15px; border: 2px solid #e2e8f0; border-radius: 10px; display: flex; flex-direction: column; align-items: center; text-align: center; background: #fff; cursor: pointer; transition: 0.2s; position: relative; }
+    .doc-item input[type="checkbox"] { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+    .doc-item i { font-size: 2rem; color: #a0aec0; margin-bottom: 10px; transition: 0.2s; }
+    .doc-item span { font-size: 0.85rem; font-weight: 700; color: #4a5568; }
+    .doc-item:hover { border-color: #cbd5e0; background: #f8fafc; }
+    .doc-item input[type="checkbox"]:checked ~ i { color: var(--gov-blue); }
+    .doc-item input[type="checkbox"]:checked ~ span { color: var(--gov-blue); }
+    .doc-item:has(input[type="checkbox"]:checked) { border-color: var(--gov-blue); background: #f0f4f8; }
+
+    /* Map Styles */
+    #map-container { width: 100%; height: 250px; background: #e9ecef; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; display: none; overflow: hidden; position: relative; }
+    .map-legend { background: #fff; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; color: var(--sp-red); border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 5px; }
+
+    .invoice-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: left; }
+    .invoice-header { background: #f8fafc; padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+    .invoice-header h4 { margin: 0; color: var(--gov-dark-blue); font-size: 1.1rem; }
+    .invoice-header .badge { background: #e6fffa; color: #319795; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+    .invoice-body { padding: 30px; }
+    .invoice-value { text-align: center; margin-bottom: 25px; }
+    .invoice-value span { display: block; font-size: 0.9rem; color: #718096; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
+    .invoice-value h2 { font-size: 2.5rem; color: #2d3748; margin: 0; }
+    .qr-container { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e0; text-align: center; margin-bottom: 25px; position: relative;}
+
+    /* --- BARRA DE PROGRESSO VISUAL --- */
+    .progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 35px; margin-top: 10px; padding: 0 20px;}
+    .progress-container::before { content: ''; position: absolute; top: 50%; left: 30px; right: 30px; height: 4px; background: #e2e8f0; z-index: 0; transform: translateY(-50%); }
+    .progress-step { position: relative; z-index: 1; background: white; border: 4px solid #e2e8f0; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #cbd5e0; }
+    .progress-step.active { border-color: var(--gov-blue); color: var(--gov-blue); }
+    .progress-step.completed { border-color: var(--success-color); background: var(--success-color); color: white; }
+    .progress-label { position: absolute; top: 55px; font-size: 0.75rem; text-align: center; width: 100px; left: -27px; font-weight: 800; color: #64748b; line-height: 1.2;}
+
+    /* --- OUTRAS SEÇÕES --- */
+    .areas-section { padding: 100px 0; background: #fff; text-align: center; }
+    .areas-header { max-width: 700px; margin: 0 auto 60px; }
+    .areas-header h2 { font-size: 2.5rem; color: var(--text-dark); margin-bottom: 15px; }
+    .areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+    .area-card { background: #fff; padding: 40px 30px; border-radius: 12px; border: 1px solid #eee; transition: 0.3s; position: relative; overflow: hidden; }
+    .area-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: var(--sp-red); }
+    .area-icon { width: 80px; height: 80px; background: #fff0f0; color: var(--sp-red); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 25px; transition: 0.3s; }
+    .area-card:hover .area-icon { background: var(--sp-red); color: white; }
+    .area-card h3 { font-size: 1.3rem; margin-bottom: 15px; color: var(--text-dark); }
+
+    .impact-section { padding: 120px 0; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1595855729736-2a725902f232?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-attachment: fixed; background-position: center; color: white; text-align: center; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
+    .stat-item h3 { font-size: 4rem; font-weight: 900; color: #ffeb3b; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; line-height: 1; }
+    .stat-item p { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+
+    .news-section { padding: 100px 0; background: var(--bg-light); }
+    .section-header h2 { font-size: 2.2rem; color: var(--text-dark); margin-bottom: 40px; border-left: 5px solid var(--sp-red); padding-left: 15px; }
+    .news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+    .news-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; height: 100%; display: flex; flex-direction: column; }
+    .news-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+    .news-img { height: 220px; background: #ddd; overflow: hidden; }
+    .news-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+    .news-card:hover .news-img img { transform: scale(1.1); }
+    .news-body { padding: 25px; flex: 1; display: flex; flex-direction: column; }
+    .news-tag { align-self: flex-start; background: var(--sp-red); color: white; padding: 5px 12px; font-size: 0.7rem; font-weight: 900; border-radius: 4px; text-transform: uppercase; margin-bottom: 10px; }
+    .news-body h3 { font-size: 1.3rem; font-weight: 900; color: #222; line-height: 1.3; margin-bottom: 15px; }
+    .news-body p { font-size: 0.95rem; color: #666; flex: 1; margin-bottom: 20px; }
+    .read-more { color: var(--gov-blue); font-weight: 900; font-size: 0.9rem; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+
+    .laws-section { padding: 80px 0; background: white; border-top: 1px solid #eee; }
+    .law-table { width: 100%; border-collapse: collapse; margin-top: 30px; background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
+    .law-table th { background: var(--text-dark); color: white; padding: 18px; text-align: left; font-weight: 900; text-transform: uppercase; font-size: 0.9rem; }
+    .law-table td { padding: 18px; border-bottom: 1px solid #eee; color: #555; font-size: 0.95rem; }
+    .law-table tr:hover { background: #f9f9f9; }
+    .download-btn { color: var(--sp-red); font-size: 1.2rem; transition: 0.3s; }
+    .download-btn:hover { transform: scale(1.2); }
+
+    .faq-section { padding: 80px 0; background: #f4f6f8; }
+    .faq-item { background: white; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+    .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 1.05rem; color: #333; transition: 0.3s; }
+    .faq-question:hover { background: #fff0f0; color: var(--sp-red); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; padding: 0 20px; color: #666; line-height: 1.6; background: #fff; }
+    .faq-item.active .faq-answer { padding-bottom: 20px; }
+    .faq-item.active .faq-question i { transform: rotate(180deg); color: var(--sp-red); }
+
+    .report-section { padding: 100px 0; background: #fff; border-top: 5px solid var(--sp-red); }
+    .report-header { text-align: center; margin-bottom: 60px; }
+    .report-header h2 { font-size: 3rem; color: var(--text-dark); margin-bottom: 15px; }
+    .report-header p { font-size: 1.2rem; color: #666; max-width: 700px; margin: 0 auto; }
+    .report-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 60px; align-items: start; }
+    .report-guide { background: var(--bg-light); padding: 40px; border-radius: 20px; border: 1px solid #eee; }
+    .report-guide h3 { color: var(--sp-red); margin-bottom: 25px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+    .guide-steps { list-style: none; counter-reset: step-counter; }
+    .guide-steps li { position: relative; margin-bottom: 25px; padding-left: 50px; font-weight: 800; color: var(--text-dark); font-size: 1.05rem; }
+    .guide-steps li::before { counter-increment: step-counter; content: counter(step-counter); position: absolute; left: 0; top: -5px; width: 35px; height: 35px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; }
+    .guide-steps p { font-weight: 400; font-size: 0.9rem; color: #666; margin-top: 5px; }
+    .anon-badge { display: inline-flex; align-items: center; gap: 10px; background: #e0f7fa; color: #00796b; padding: 10px 20px; border-radius: 50px; font-weight: 900; margin-top: 20px; }
+
+    .report-form-container { padding: 10px; }
+    .input-with-icon { position: relative; }
+    .input-with-icon i { position: absolute; left: 20px; top: 18px; color: #999; font-size: 1.1rem; z-index: 2; }
+    .input-with-icon .form-control { padding-left: 55px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .char-counter { text-align: right; font-size: 0.85rem; color: #999; margin-top: -10px; margin-bottom: 15px; }
+    
+    .file-upload-zone { border: 3px dashed #cbd5e0; border-radius: 15px; padding: 25px; text-align: center; background: #f8fafc; transition: 0.3s; margin-bottom: 25px; position: relative; }
+    .file-upload-zone:hover { border-color: var(--sp-red); background: #fff5f5; }
+    .file-upload-zone i { font-size: 2.5rem; color: var(--sp-red); margin-bottom: 10px; }
+    .file-upload-zone h4 { color: var(--text-dark); margin-bottom: 5px; font-size: 1.1rem; }
+    .file-upload-zone p { color: #64748b; font-size: 0.85rem; }
+    .file-upload-zone input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    
+    .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 900; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
+    .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
+
+    /* --- FOOTER ATUALIZADO --- */
+    footer { background: #17191d; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+    img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
+    .footer h4 { color: white; font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; font-weight: 900; border-left: 3px solid var(--sp-red); padding-left: 10px; }
+    .footer ul li { margin-bottom: 12px; }
+    .footer a { color: #aaa; transition: 0.3s; }
+    .footer a:hover { color: white; padding-left: 5px; }
+    .footer-bottom { background: #0c0d10; padding: 25px 0; text-align: center; border-top: 1px solid #222; font-size: 0.9rem; }
+
+    .selo-link { display: block; transition: transform 0.3s ease; }
+    .selo-link:hover { transform: translateY(-4px) scale(1.05); }
+    .selo-link img { width: 100%; height: auto; display: block; mix-blend-mode: lighten; border-radius: 8px; }
+
+    /* CHATBOT OTIMIZADO GEMINI IA E ANTI-BLOQUEIO */
+    .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; transition: 0.3s;}
+    .chat-widget-btn:hover { transform: scale(1.1); }
+    .chat-interface { position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9998; display: none; flex-direction: column; border: 1px solid #eee; overflow: hidden; }
+    .chat-header { background: var(--sp-red); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
+    .chat-body { flex: 1; padding: 20px; overflow-y: auto; background: #f8f9fa; display: flex; flex-direction: column; gap: 10px; }
+    .chat-input { padding: 15px; background: white; display: flex; border-top: 1px solid #eee; gap: 10px; }
+    .chat-input input { flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; font-family: var(--font-base); transition: 0.3s; }
+    .chat-input input:disabled { background: #f1f1f1; cursor: not-allowed; }
+    .chat-input button { background: var(--sp-red); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: 0.3s; }
+    .chat-input button:disabled { background: #ccc; cursor: not-allowed; }
+    .chat-input button:hover:not(:disabled) { background: var(--sp-dark-red); }
+    .chat-bubble { padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; max-width: 85%; line-height: 1.5; word-wrap: break-word; }
+    .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333; border: 1px solid #eee;}
+    .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(218,37,28,0.2); }
+
+    /* --- MODAL DE ALERTA DE FRAUDE --- */
+    .modal-alerta-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+    .modal-alerta-box { background: #fff; max-width: 650px; width: 90%; border-radius: 12px; padding: 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border-top: 5px solid var(--sp-red); text-align: left; max-height: 90vh; overflow-y: auto;}
+    .modal-alerta-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #999; cursor: pointer; transition: 0.3s; }
+    .modal-alerta-close:hover { color: var(--sp-red); }
+    .modal-alerta-box h3 { color: var(--text-dark); margin-bottom: 20px; font-size: 1.35rem; font-weight: 900;}
+    .modal-alerta-box p { color: #444; font-size: 0.95rem; margin-bottom: 15px; line-height: 1.6; }
+    .modal-alerta-box strong { color: #222; }
+
+    /* --- MOBILE AJUSTES OTIMIZADOS E PERFEITOS --- */
+    @media (max-width: 900px) {
+      .gov-bar { font-size: 10px; padding: 8px 0; }
+      .flex-between { align-items: flex-start; }
+      .gov-left { display: block; max-width: 62%; line-height: 1.2; }
+      .gov-links { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+      .gov-links a { padding: 6px 10px; }
+      
+      /* AJUSTE FIXO PARA IPHONE / MOBILE - LOGO E MENU */
+      header { position: relative; padding: 10px 0; }
+      .header-grid { display: flex; flex-direction: column; align-items: center; position: relative; padding-top: 10px; }
+      .brand { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px; margin-bottom: 10px; }
+      .brand img { height: 50px; margin: 0 auto; }
+      .hamburger-btn { position: absolute; right: 15px; top: 15px; display: inline-flex; }
+      .header-actions { display: none; }
+      nav { display: none; } 
+      
+      .brand-text h1 { font-size: 1.05rem; }
+      .brand-text span { font-size: 0.68rem; }
+      
+      .form-control { padding: 18px 16px; font-size: 1.05rem; }
+      .btn-primary, .btn-success, .btn-report { padding: 20px 15px; font-size: 1.1rem; }
+      .btn-login { padding: 10px 12px; font-size: 0.88rem; border-radius: 12px; gap: 8px; }
+      
+      .hero { min-height: auto; padding-top: 40px; padding-bottom: 120px; }
+      .hero h2 { font-size: 2.2rem; }
+      .hero p { font-size: 1.05rem; margin-bottom: 22px; }
+      
+      .search-box { flex-direction: column; background: transparent; padding: 0; box-shadow: none; gap: 10px; max-width: 95%; margin: 0 auto; border: none;}
+      .search-box input { border-radius: 12px; padding: 16px; background: white; width: 100%; border: 1px solid #ccc; font-size: 1rem;}
+      .search-box button { border-radius: 12px; padding: 16px; width: 100%; height: auto; font-size: 1.1rem; justify-content: center;}
+      
+      #search-result-area { max-width: 95% !important; margin: 15px auto !important; font-size: 0.95rem; }
+
+      .live-stats-bar { position: relative; background: rgba(0,0,0,0.78); }
+      .live-grid { flex-direction: column; gap: 16px; }
+      .live-item h4 { font-size: 2.4rem; }
+      .status-grid { grid-template-columns: 1fr; }
+      .news-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .areas-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .checklist-form-container { padding: 22px; min-width: auto; }
+      .report-grid { grid-template-columns: 1fr; gap: 25px; }
+      .report-header h2 { font-size: 2.2rem; }
+      
+      .chat-interface { right: 0; left: 0; bottom: 0; width: 100%; height: 85vh; border-radius: 20px 20px 0 0; z-index: 100000; position: fixed;}
+      .chat-widget-btn { right: 16px; bottom: 18px; width: 60px; height: 60px; z-index: 99999;}
+      
+      .process-steps { flex-direction: column; }
+      .progress-container { padding: 0; }
+      .selos-container { flex-direction: column; gap: 15px !important; }
+      .selos-container a { width: 100% !important; max-width: 250px; margin: 0 auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="access-widget">
+    <a href="#" title="Acessibilidade"><i class="fab fa-accessible-icon"></i></a>
+    <a href="#" title="Libras"><i class="fas fa-sign-language"></i></a>
+  </div>
+
+  <div class="security-bar">
+    <i class="fas fa-lock"></i> Ambiente Seguro | Criptografia SSL de 256 bits
+  </div>
+
+  <div class="gov-bar">
+    <div class="container flex-between">
+      <span class="gov-left">Prefeitura do Município de São Paulo</span>
+      <div class="gov-links">
+        <a href="#">Acessibilidade</a>
+        <a href="#">Alto Contraste</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-overlay" id="drawerOverlay" onclick="window.closeDrawer()"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-top">
+      <div class="drawer-title">Menu</div>
+      <button class="drawer-close" onclick="window.closeDrawer()" aria-label="Fechar menu"><i class="fas fa-times"></i></button>
+    </div>
+    <nav class="drawer-nav">
+      <a href="#inicio" onclick="window.closeDrawer()"><i class="fas fa-chart-line"></i> Painel</a>
+      <a href="#regularize" onclick="window.closeDrawer()"><i class="fas fa-clipboard-check"></i> Regularize-se</a>
+      <a href="#legislacao" onclick="window.closeDrawer()"><i class="fas fa-gavel"></i> Legislação</a>
+      <a href="#formularios" onclick="window.closeDrawer()"><i class="fas fa-file-lines"></i> Formulários</a>
+      <a href="#noticias" onclick="window.closeDrawer()"><i class="fas fa-newspaper"></i> Notícias</a>
+      <a class="denuncia" href="#contato" onclick="window.closeDrawer()"><i class="fas fa-triangle-exclamation"></i> Denúncia <strong>Destaque</strong></a>
+    </nav>
+  </aside>
+
+  <header>
+    <div class="container header-grid">
+      <a class="brand" onclick="window.acessoAdmin()">
+        <img src="imagens/5.png" alt="Brasão SP" />
+        <div class="brand-text">
+          <h1>COVISA</h1>
+          <span>Vigilância em Saúde</span>
+        </div>
+      </a>
+
+      <nav>
+        <ul>
+          <li><a href="#inicio" class="active">Painel</a></li>
+          <li><a href="#regularize">Regularize-se</a></li>
+          <li><a href="#legislacao">Legislação</a></li>
+          <li><a href="#formularios">Formulários</a></li>
+          <li><a href="#noticias">Notícias</a></li>
+          <li><a href="#contato">Denúncia</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a href="https://sso.acesso.gov.br/" target="_blank" class="btn-login"><i class="fas fa-user-circle"></i> Entrar com gov.br</a>
+      </div>
+      <button class="hamburger-btn" onclick="window.openDrawer()" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
+    </div>
+  </header>
+
+  <section id="inicio" class="hero">
+    <div class="container hero-content">
+      <span class="hero-badge">● Monitoramento Online 2026</span>
+      <h2>Gestão Integrada de<br />Vigilância e Saúde.</h2>
+      <p>Fiscalização ativa, controle de riscos e segurança sanitária.</p>
+      
+      <div class="search-box">
+        <input type="text" id="main-search-input" placeholder="Buscar protocolos, legislação ou pergunte à IA..." onkeypress="if(event.key === 'Enter') window.realizarPesquisaIA()" />
+        <button onclick="window.realizarPesquisaIA()" id="main-search-btn"><i class="fas fa-search"></i> Pesquisar</button>
+      </div>
+      
+      <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
+      
+      <div style="background: white; border-radius: 12px; padding: 12px 18px; max-width: 500px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 85px; height: auto; border-radius: 6px;" />
+        <div style="text-align: left;">
+          <h4 style="color: var(--sp-red); margin: 0 0 5px 0; font-size: 1.05rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
+          <p style="color: #444; margin: 0; font-size: 0.85rem; font-weight: 600; line-height: 1.3;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="live-stats-bar">
+      <div class="container live-grid">
+        <div class="live-item"><h4 id="count-fiscal">1246</h4><span>Estabelecimentos Fiscalizados</span></div>
+        <div class="live-item"><h4 id="count-multa" style="color: #ff5252;">12</h4><span>Autuações Hoje</span></div>
+        <div class="live-item"><h4 id="count-regular" style="color: #69f0ae;">64%</h4><span>Índice de Regularidade</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container status-bar">
+    <div class="status-grid">
+      <div class="status-card"><div class="icon-box"><i class="fas fa-clipboard-check"></i></div><div class="status-info"><h4>Licenciamento</h4><strong>Online</strong></div></div>
+      <div class="status-card"><div class="icon-box"><i class="fas fa-box-open"></i></div><div class="status-info"><h4>Apreensões</h4><strong>Ativas</strong></div></div>
+      <div class="status-card"><div class="icon-box"><i class="fas fa-hard-hat"></i></div><div class="status-info"><h4>Segurança</h4><strong>Monitorada</strong></div></div>
+      <div class="status-card"><div class="icon-box"><i class="fas fa-file-contract"></i></div><div class="status-info"><h4>Protocolos</h4><strong>Abertos</strong></div></div>
+    </div>
+  </div>
+
+  <section id="regularize" class="checklist-section">
+    <div class="container">
+      <div class="checklist-wrapper">
+        <div class="checklist-intro">
+          <h2>Regularização e<br>Análise Documental</h2>
+          <p class="lead">O processo de Regularização Sanitária garante que seu estabelecimento opere dentro das normas de saúde, promovendo segurança para seus clientes e evitando sanções legais rigorosas.</p>
+            
+          <div class="process-steps">
+            <div class="process-step"><i class="fas fa-file-signature"></i><span>1. Enviar<br>Documentos</span></div>
+            <div class="process-step"><i class="fas fa-search"></i><span>2. Análise<br>Técnica</span></div>
+            <div class="process-step"><i class="fas fa-file-invoice-dollar"></i><span>3. Consultar<br>Taxa/Multa</span></div>
+          </div>
+
+          <div class="steps-box">
+            <h4><i class="fas fa-exclamation-triangle"></i> Atenção à Taxa de Análise de Pendências Documentais</h4>
+            <p>A <strong>Taxa de Análise de Pendências Documentais</strong> é um requisito legal obrigatório e fundamental para o destravamento e andamento do seu processo. O descumprimento dos prazos e o não pagamento da taxa sujeitam o estabelecimento a penalidades severas.</p>
+            <ul class="steps-list">
+              <li><i class="fas fa-check"></i> Garante prioridade na análise pelos fiscais de plantão.</li>
+              <li><i class="fas fa-check"></i> Evita a suspensão preventiva das atividades em até 48 horas.</li>
+              <li><i class="fas fa-check"></i> Protege o CNPJ contra multas por irregularidade administrativa
