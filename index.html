@@ -1293,7 +1293,7 @@
     };
 
     // ==============================================================================
-    // NOVO GERADOR DE PDF DA LICENÇA PROVISÓRIA (AUTOMÁTICO E PREENCHIDO)
+    // NOVO GERADOR DE PDF DA LICENÇA PROVISÓRIA (FORMATO IDÊNTICO AO PRINT)
     // ==============================================================================
     window.gerarPDF = async function() {
         try {
@@ -1302,61 +1302,59 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Documento Oficial...';
             btn.disabled = true;
 
-            // Puxa os dados que foram consultados na tela
+            // 1. Pega os dados do cliente que foram pesquisados
             const p = window.dadosPedidoAtual || {};
-            const nome = p.nome || "Não informado";
-            const cnpj = p.cnpj || "Não informado";
-            const tipo = p.tipo || "Não informado";
-            const dataEmissao = new Date().toLocaleDateString('pt-BR');
-
-            // Cria o documento do zero usando a biblioteca PDF-Lib que já está no seu site
-            const { PDFDocument, rgb, StandardFonts } = PDFLib;
-            const pdfDoc = await PDFDocument.create();
-            const page = pdfDoc.addPage([595.28, 841.89]); // Tamanho da Folha A4
-            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-            const fontNormal = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-            const govBlue = rgb(0.05, 0.23, 0.52);
-            const spRed = rgb(0.85, 0.14, 0.11);
-            const black = rgb(0, 0, 0);
-
-            // Cabeçalho Oficial
-            page.drawText('PREFEITURA DO MUNICÍPIO DE SÃO PAULO', { x: 50, y: 780, size: 16, font: fontBold, color: govBlue });
-            page.drawText('COORDENAÇÃO DE VIGILÂNCIA EM SAÚDE - COVISA', { x: 50, y: 760, size: 14, font: fontBold, color: spRed });
-            page.drawLine({ start: { x: 50, y: 745 }, end: { x: 545, y: 745 }, thickness: 2, color: govBlue });
-
-            // Título
-            page.drawText('LICENÇA SANITÁRIA PROVISÓRIA', { x: 130, y: 690, size: 18, font: fontBold, color: black });
-
-            // Texto Padrão e Legal
-            let y = 630;
-            page.drawText('A Coordenação de Vigilância em Saúde (COVISA), no uso de suas atribuições', { x: 50, y, size: 12, font: fontNormal }); y -= 20;
-            page.drawText('legais, atesta que o estabelecimento abaixo encontra-se em processo de', { x: 50, y, size: 12, font: fontNormal }); y -= 20;
-            page.drawText('regularização e com a taxa de análise documental devidamente recolhida.', { x: 50, y, size: 12, font: fontNormal }); y -= 50;
-
-            // Injeta os dados do cliente no PDF
-            page.drawText('DADOS DO ESTABELECIMENTO:', { x: 50, y, size: 14, font: fontBold, color: govBlue }); y -= 30;
+            const nome = p.nome ? p.nome.toUpperCase() : "NÃO INFORMADO";
+            const cnpj = p.cnpj || "NÃO INFORMADO";
             
-            page.drawText(`Razão Social / Nome:`, { x: 50, y, size: 12, font: fontBold });
-            page.drawText(`${nome}`, { x: 190, y, size: 12, font: fontNormal }); y -= 25;
+            // 2. Define as datas (Hoje e Validade de 1 ano)
+            const dataAtual = new Date();
+            const dataEmissao = dataAtual.toLocaleDateString('pt-BR');
+            const dataValidade = new Date(dataAtual.setFullYear(dataAtual.getFullYear() + 1)).toLocaleDateString('pt-BR');
 
-            page.drawText(`CNPJ / CPF:`, { x: 50, y, size: 12, font: fontBold });
-            page.drawText(`${cnpj}`, { x: 190, y, size: 12, font: fontNormal }); y -= 25;
+            // 3. Carrega o seu documento em branco (as linhas brancas) da pasta do site
+            const urlArquivoMolde = 'Alvara Provisório.pdf'; 
+            const existingPdfBytes = await fetch(urlArquivoMolde).then(res => res.arrayBuffer());
 
-            page.drawText(`Ramo de Atividade:`, { x: 50, y, size: 12, font: fontBold });
-            page.drawText(`${tipo}`, { x: 190, y, size: 12, font: fontNormal }); y -= 50;
+            // 4. Inicia a biblioteca e carrega o seu molde
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const pdfDoc = await PDFDocument.load(existingPdfBytes);
+            const page = pdfDoc.getPages()[0]; 
+            
+            // 5. PREPARANDO AS FONTES (Times Roman como no seu print)
+            const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);     // Letra Normal
+            const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold); // Letra em NEGRITO
+            const black = rgb(0, 0, 0); // Cor preta
 
-            page.drawText('STATUS DA REGULARIZAÇÃO:', { x: 50, y, size: 14, font: fontBold, color: govBlue }); y -= 30;
-            page.drawText(`REGULARIZADO (TAXA RECOLHIDA / PENDÊNCIAS BAIXADAS)`, { x: 50, y, size: 12, font: fontBold, color: rgb(0.1, 0.6, 0.1) }); y -= 50;
+            // =========================================================
+            // CONTROLE DE ALINHAMENTO (Ajuste se precisar encaixar nas linhas brancas)
+            // =========================================================
+            const margemEsquerdaTextos = 55;  // Posição para: RAZÃO SOCIAL:, CNPJ:, etc.
+            const margemEsquerdaDados = 200;  // Posição para: PADARIA SAO PAULO, 09.244..., etc.
+            let alturaAtual = 450;           // Altura que o texto vai começar (vai descendo)
+            const espacoEntreLinhas = 22;    // Distância de uma linha para a de baixo
+            const tamanhoLetra = 11;         // Tamanho da fonte
 
-            page.drawText(`Data de Emissão: ${dataEmissao}`, { x: 50, y, size: 12, font: fontNormal }); y -= 25;
-            page.drawText('Validade: 90 dias a partir da data de emissão.', { x: 50, y, size: 12, font: fontBold }); y -= 80;
+            // Linha 1: Razão Social
+            page.drawText('RAZÃO SOCIAL:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(nome, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
 
-            // Linha para Assinatura do Cliente
-            page.drawLine({ start: { x: 150, y }, end: { x: 445, y }, thickness: 1, color: black }); y -= 20;
-            page.drawText('Assinatura do Responsável / Representante Legal', { x: 175, y, size: 11, font: fontNormal });
+            // Linha 2: CNPJ
+            page.drawText('CNPJ:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(cnpj, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
 
-            // Salva e aciona o Download
+            // Linha 3: Data de Emissão
+            page.drawText('DATA DE EMISSÃO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(dataEmissao, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
+
+            // Linha 4: Validade
+            page.drawText('VÁLIDO ATÉ:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(dataValidade, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+
+            // 6. Salva e baixa o PDF preenchido pro cliente
             const pdfBytes = await pdfDoc.save();
             download(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
 
@@ -1365,12 +1363,11 @@
             btn.disabled = false;
         } catch(e) {
             console.error("Erro ao gerar PDF:", e);
-            alert("Erro ao gerar o PDF. Verifique a conexão.");
+            alert("Erro ao gerar o PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está na mesma pasta do seu site (index.html).");
             document.getElementById('btn-baixar-pdf').innerHTML = '<i class="fas fa-file-pdf"></i> Baixar Licença Provisória';
             document.getElementById('btn-baixar-pdf').disabled = false;
         }
     };
-
     window.realizarPesquisaIA = async function() {
         const input = document.getElementById('main-search-input');
         const btn = document.getElementById('main-search-btn');
