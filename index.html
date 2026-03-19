@@ -1213,10 +1213,11 @@
     const comprimirEConverterFoto = (file) => {
       return new Promise((resolve) => {
           const reader = new FileReader();
+          reader.onerror = () => resolve(""); // EVITA TRAVAR SE O ARQUIVO FALHAR
           reader.readAsDataURL(file);
           reader.onload = (event) => {
               const img = new Image();
-              img.src = event.target.result;
+              img.onerror = () => resolve(""); // EVITA TRAVAR SE NÃO FOR UMA IMAGEM VÁLIDA
               img.onload = () => {
                   const canvas = document.createElement('canvas');
                   const MAX_WIDTH = 700;
@@ -1234,6 +1235,7 @@
                   const base64Reduzido = canvas.toDataURL('image/jpeg', 0.5);
                   resolve(base64Reduzido);
               };
+              img.src = event.target.result;
           };
       });
     };
