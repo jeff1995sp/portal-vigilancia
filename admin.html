@@ -1141,7 +1141,11 @@
                     body: JSON.stringify(requestBody)
                 });
 
-                if(!responsePlaces.ok) throw new Error("Acesso negado aos satélites do Google.");
+                if(!responsePlaces.ok) {
+                    const erroGoogle = await responsePlaces.json();
+                    console.error("Erro Google Maps API:", erroGoogle);
+                    throw new Error(erroGoogle.error?.message || "Acesso negado aos satélites do Google. Verifique a API Key.");
+                }
 
                 const dadosGoogle = await responsePlaces.json();
                 
@@ -1153,7 +1157,7 @@
 
                 // 2. Passa cada local pro Gemini avaliar
                 for (let i = 0; i < dadosGoogle.places.length; i++) {
-                    if (!isRadarScanning) break; // Para na hora se o usuário pausar
+                    if (!isRadarScanning) break; 
 
                     let place = dadosGoogle.places[i];
                     let nomeReal = place.displayName?.text || "Desconhecido";
@@ -1165,13 +1169,15 @@
                             if (rev.text && rev.text.text) comentariosReais += `"${rev.text.text}"\n`;
                         });
                     } else {
-                        continue; // Pula locais sem comentário para ir mais rápido
+                        // NOVO: Feedback visual quando pula o local para não parecer travado
+                        statusMsg.innerHTML = `<i class="fas fa-forward" style="font-size: 1.2rem; color: var(--text-muted);"></i><span style="color:var(--text-muted);">Pulando ${nomeReal} (Local sem avaliações)</span>`;
+                        await new Promise(r => setTimeout(r, 400));
+                        continue; 
                     }
 
                     totalAnalisados++;
                     statusMsg.innerHTML = `<i class="fas fa-satellite-dish fa-spin" style="font-size: 1.5rem; color: var(--warning);"></i><span>Lendo a mente de: ${nomeReal}... (Analisados: ${totalAnalisados})</span>`;
 
-                    // Prompt mestre da IA OTIMIZADO PARA PEGAR QUALQUER COISA
                     let prompt = `Você é um radar tático da Vigilância Sanitária e do Procon caçando QUALQUER irregularidade.
                     Leia estas avaliações reais sobre "${nomeReal}" no endereço "${enderecoReal}".
                     
@@ -1181,7 +1187,7 @@
                     Se as avaliações forem 100% perfeitas, maravilhosas e sem NENHUMA crítica, retorne APENAS a palavra IGNORAR.
                     MAS, se houver QUALQUER RECLAMAÇÃO (comida fria, atraso, mau atendimento, sujeira, insetos, preço errado, etc), você DEVE reportar.
                     
-                    Retorne um JSON:
+                    Retorne um JSON puro, sem crases de formatação:
                     {
                         "nivel": "AMARELO" ou "VERMELHO",
                         "perigo": "Resumo da pior reclamação encontrada (máx 20 palavras)."
@@ -1196,11 +1202,18 @@
                             body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                         });
                         
+                        if (!respostaIA.ok) {
+                            const errData = await respostaIA.json();
+                            if(errData.error && errData.error.code === 429) {
+                                throw new Error("Limite da IA atingido! O plano gratuito bloqueou temporariamente.");
+                            }
+                            throw new Error("Erro na IA: " + (errData.error?.message || "Desconhecido"));
+                        }
+
                         const dataIA = await respostaIA.json();
                         let resposta = dataIA.candidates[0].content.parts[0].text.trim();
 
                         if (!resposta.includes("IGNORAR")) {
-                            // Lê o JSON do Gemini
                             let textoLimpo = resposta.replace(/```json/g, '').replace(/```/g, '').trim();
                             let resultado = JSON.parse(textoLimpo);
 
@@ -1211,11 +1224,9 @@
                                 radarCircle.classList.add('danger-mode');
                             }
                             
-                            // Ajusta a cor do radar pro tipo de perigo
                             radarCircle.style.borderColor = color;
                             radarCircle.style.background = `radial-gradient(circle, ${bgClass} 0%, transparent 70%)`;
 
-                            // Coloca um "Blip" no radar
                             let blip = document.createElement('div');
                             blip.className = 'radar-blip';
                             blip.style.background = color;
@@ -1224,14 +1235,6 @@
                             blip.style.left = `${Math.floor(Math.random() * 60) + 20}%`;
                             radarCircle.appendChild(blip);
 
-                            // Atualiza os painéis de cima
-                            if (resultado.nivel === 'AMARELO') {
-                                document.getElementById('osint-count-yellow').innerText = parseInt(document.getElementById('osint-count-yellow').innerText) + 1;
-                            } else {
-                                document.getElementById('osint-count-red').innerText = parseInt(document.getElementById('osint-count-red').innerText) + 1;
-                            }
-
-                            // Cria o card
                             let divTarget = document.createElement('div');
                             divTarget.className = 'target-card-hud';
                             divTarget.style.borderColor = color;
@@ -1244,30 +1247,38 @@
                             `;
                             statusMsg.insertAdjacentElement('afterend', divTarget);
                             
-                            // Aguarda 1 segundo para o charme visual do radar rodando
                             await new Promise(r => setTimeout(r, 1000));
                         }
 
                     } catch (iaErr) {
-                        console.log("Erro no Gemini para este alvo");
+                        console.error("Erro no Gemini para este alvo", iaErr);
+                        statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size: 1.2rem; color: var(--warning);"></i><span style="color:var(--warning);">${iaErr.message}</span>`;
+                        
+                        if(iaErr.message.includes('Limite')) {
+                            isRadarScanning = false;
+                            break;
+                        }
+                        await new Promise(r => setTimeout(r, 2000));
                     }
                 } // Fim do For
+
+                if (!isRadarScanning) break;
 
                 radarNextPageToken = dadosGoogle.nextPageToken;
                 
                 if (!radarNextPageToken) {
-                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--success);"></i><span style="color:var(--success);">Varredura profunda concluída. Sem mais dados.</span>`;
+                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--success);"></i><span style="color:var(--success);">Varredura profunda concluída. Sem mais dados nesta cidade.</span>`;
                     isRadarScanning = false;
                     break;
                 } else if (isRadarScanning) {
-                    statusMsg.innerHTML = `<i class="fas fa-sync fa-spin" style="font-size: 1.5rem; color: var(--info);"></i><span>Carregando novos satélites (Página 2)...</span>`;
+                    statusMsg.innerHTML = `<i class="fas fa-sync fa-spin" style="font-size: 1.5rem; color: var(--info);"></i><span>Carregando novos satélites (Próxima Página)...</span>`;
                     // O Google exige aguardar uns segundos antes de usar o nextPageToken
                     await new Promise(r => setTimeout(r, 3500));
                 }
 
             } catch (error) {
                 console.error("Falha no Radar HUD:", error);
-                statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; color: var(--danger);"></i><span style="color:var(--danger)">Erro: ${error.message}</span>`;
+                statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; color: var(--danger);"></i><span style="color:var(--danger)">Erro Maps: ${error.message}</span>`;
                 isRadarScanning = false;
             }
         } // Fim do While
