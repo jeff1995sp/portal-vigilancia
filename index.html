@@ -1330,35 +1330,35 @@
             // CONTROLE MESTRE DE POSIÇÃO - MEXA AQUI SE PRECISAR ALINHAR!
             // posicaoY: Move o bloco todo para cima (aumente o número) ou para baixo (diminua)
             // posicaoX: Move os títulos ("RAZÃO SOCIAL:") para a direita ou esquerda
-            // alinhamentoValores: A distância onde começam as respostas em negrito
+            // alinhamentoValoresX: A distância onde começam os valores em negrito
             // =====================================================================
-            let posicaoY = 380; // Tente ajustar de 10 em 10 (ex: 390, 400, 370) até encaixar no branco
+            let posicaoY = 480; // Tente ajustar de 10 em 10 (ex: 490, 500, 470) até encaixar no branco
             const posicaoX = 55; // Margem esquerda
-            const alinhamentoValores = 180; // Onde os dados em negrito começam
+            const alinhamentoValoresX = 180; // Onde os dados em negrito começam
             const espacoEntreLinhas = 15; // Distância entre uma linha e outra
 
-            const tamanhoTextoNormal = 8;
-            const tamanhoTextoNegrito = 9;
+            const tamanhoTextoRotulo = 8;
+            const tamanhoTextoValor = 10;
             const textColor = rgb(0, 0, 0);
 
             // 1. RAZÃO SOCIAL
-            page.drawText('RAZÃO SOCIAL:', { x: posicaoX, y: posicaoY, size: tamanhoTextoNormal, font: fontNormal, color: textColor });
-            page.drawText(nome, { x: alinhamentoValores, y: posicaoY, size: tamanhoTextoNegrito, font: fontBold, color: textColor });
+            page.drawText('RAZÃO SOCIAL:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontNormal, color: textColor });
+            page.drawText(nome, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontBold, color: textColor });
             
             // 2. CNPJ (Desce uma linha)
             posicaoY -= espacoEntreLinhas;
-            page.drawText('CNPJ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoNormal, font: fontNormal, color: textColor });
-            page.drawText(cnpj, { x: alinhamentoValores, y: posicaoY, size: tamanhoTextoNegrito, font: fontBold, color: textColor });
+            page.drawText('CNPJ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontNormal, color: textColor });
+            page.drawText(cnpj, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontBold, color: textColor });
 
             // 3. DATA DE EMISSÃO (Desce uma linha)
             posicaoY -= espacoEntreLinhas;
-            page.drawText('DATA DE EMISSÃO:', { x: posicaoX, y: posicaoY, size: tamanhoTextoNormal, font: fontNormal, color: textColor });
-            page.drawText(dataEmissao, { x: alinhamentoValores, y: posicaoY, size: tamanhoTextoNegrito, font: fontBold, color: textColor });
+            page.drawText('DATA DE EMISSÃO:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontNormal, color: textColor });
+            page.drawText(dataEmissao, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontBold, color: textColor });
 
             // 4. VÁLIDO ATÉ (Desce uma linha)
             posicaoY -= espacoEntreLinhas;
-            page.drawText('VÁLIDO ATÉ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoNormal, font: fontNormal, color: textColor });
-            page.drawText(validadeStr, { x: alinhamentoValores, y: posicaoY, size: tamanhoTextoNegrito, font: fontBold, color: textColor });
+            page.drawText('VÁLIDO ATÉ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontNormal, color: textColor });
+            page.drawText(validadeStr, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontBold, color: textColor });
 
 
             // Salva e aciona o Download
