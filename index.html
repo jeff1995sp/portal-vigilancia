@@ -1304,41 +1304,62 @@
 
             // Puxa os dados que foram consultados na tela
             const p = window.dadosPedidoAtual || {};
-            const nome = p.nome || "Não informado";
+            const nome = (p.nome || "Não informado").toUpperCase(); // Deixa tudo maiúsculo
             const cnpj = p.cnpj || "Não informado";
-            const tipo = p.tipo || "Não informado";
             const dataEmissao = new Date().toLocaleDateString('pt-BR');
 
-            // Calcula validade (90 dias)
+            // Calcula validade (1 ano exato, igual na sua foto de referência)
             const dataValidade = new Date();
-            dataValidade.setDate(dataValidade.getDate() + 90);
+            dataValidade.setFullYear(dataValidade.getFullYear() + 1);
             const validadeStr = dataValidade.toLocaleDateString('pt-BR');
 
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
 
-            // Busca o arquivo PDF original que está na sua pasta do GitHub
+            // Busca o arquivo PDF original
             const urlDocumento = 'Alvara Provisório.pdf'; 
             const existingPdfBytes = await fetch(urlDocumento).then(res => res.arrayBuffer());
 
-            // Carrega o PDF em branco (o seu modelo original)
+            // Carrega o PDF em branco
             const pdfDoc = await PDFDocument.load(existingPdfBytes);
             const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            const fontNormal = await pdfDoc.embedFont(StandardFonts.Helvetica); // Adicionado fonte normal
             const pages = pdfDoc.getPages();
-            const page = pages[0]; // Primeira página do seu Alvara
+            const page = pages[0]; 
 
             // =====================================================================
-            // ATENÇÃO: Se o texto ficar fora da linha branca, ajuste os números X e Y
-            // X: move para os lados (maior vai pra direita, menor pra esquerda)
-            // Y: move para cima/baixo (maior vai pra cima, menor pra baixo)
+            // CONTROLE MESTRE DE POSIÇÃO - MEXA AQUI SE PRECISAR ALINHAR!
+            // posicaoY: Move o bloco todo para cima (aumente o número) ou para baixo (diminua)
+            // posicaoX: Move os títulos ("RAZÃO SOCIAL:") para a direita ou esquerda
+            // alinhamentoValores: A distância onde começam as respostas em negrito
             // =====================================================================
-            const textSize = 11;
+            let posicaoY = 380; // Tente ajustar de 10 em 10 (ex: 390, 400, 370) até encaixar no branco
+            const posicaoX = 55; // Margem esquerda
+            const alinhamentoValores = 180; // Onde os dados em negrito começam
+            const espacoEntreLinhas = 15; // Distância entre uma linha e outra
+
+            const tamanhoTextoNormal = 8;
+            const tamanhoTextoNegrito = 9;
             const textColor = rgb(0, 0, 0);
 
-            // Desenhando os dados do cliente por cima do seu PDF
-            page.drawText(nome, { x: 150, y: 415, size: textSize, font: fontBold, color: textColor });
-            page.drawText(cnpj, { x: 150, y: 395, size: textSize, font: fontBold, color: textColor });
-            page.drawText(dataEmissao, { x: 150, y: 375, size: textSize, font: fontBold, color: textColor });
-            page.drawText(validadeStr, { x: 150, y: 355, size: textSize, font: fontBold, color: textColor });
+            // 1. RAZÃO SOCIAL
+            page.drawText('RAZÃO SOCIAL:', { x: posicaoX, y: posicaoY, size: tamanhoTextoNormal, font: fontNormal, color: textColor });
+            page.drawText(nome, { x: alinhamentoValores, y: posicaoY, size: tamanhoTextoNegrito, font: fontBold, color: textColor });
+            
+            // 2. CNPJ (Desce uma linha)
+            posicaoY -= espacoEntreLinhas;
+            page.drawText('CNPJ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoNormal, font: fontNormal, color: textColor });
+            page.drawText(cnpj, { x: alinhamentoValores, y: posicaoY, size: tamanhoTextoNegrito, font: fontBold, color: textColor });
+
+            // 3. DATA DE EMISSÃO (Desce uma linha)
+            posicaoY -= espacoEntreLinhas;
+            page.drawText('DATA DE EMISSÃO:', { x: posicaoX, y: posicaoY, size: tamanhoTextoNormal, font: fontNormal, color: textColor });
+            page.drawText(dataEmissao, { x: alinhamentoValores, y: posicaoY, size: tamanhoTextoNegrito, font: fontBold, color: textColor });
+
+            // 4. VÁLIDO ATÉ (Desce uma linha)
+            posicaoY -= espacoEntreLinhas;
+            page.drawText('VÁLIDO ATÉ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoNormal, font: fontNormal, color: textColor });
+            page.drawText(validadeStr, { x: alinhamentoValores, y: posicaoY, size: tamanhoTextoNegrito, font: fontBold, color: textColor });
+
 
             // Salva e aciona o Download
             const pdfBytes = await pdfDoc.save();
