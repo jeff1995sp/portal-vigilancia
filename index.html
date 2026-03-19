@@ -454,16 +454,16 @@
         <button onclick="window.realizarPesquisaIA()" id="main-search-btn"><i class="fas fa-search"></i> Pesquisar</button>
       </div>
       
-      <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
-      
-      <div style="background: white; border-radius: 12px; padding: 12px 18px; max-width: 550px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 100px; height: auto; border-radius: 6px;" />
+      <div style="background: white; border-radius: 12px; padding: 12px 18px; max-width: 500px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 85px; height: auto; border-radius: 6px;" />
         <div style="text-align: left;">
-          <h4 style="color: var(--sp-red); margin: 0 0 5px 0; font-size: 1.1rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
-          <p style="color: #444; margin: 0; font-size: 0.9rem; font-weight: 600; line-height: 1.3;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
+          <h4 style="color: var(--sp-red); margin: 0 0 5px 0; font-size: 1.05rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
+          <p style="color: #444; margin: 0; font-size: 0.85rem; font-weight: 600; line-height: 1.3;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
         </div>
       </div>
 
+      <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
+      
     </div>
     <div class="live-stats-bar">
       <div class="container live-grid">
@@ -860,17 +860,6 @@
     </form>
   </div>
 
-  <div class="modal-alerta-overlay" id="modal-alerta">
-    <div class="modal-alerta-box">
-      <i class="fas fa-times modal-alerta-close" onclick="document.getElementById('modal-alerta').style.display='none'"></i>
-      <h3>Centro de Vigilância Sanitária alerta para nova tentativa de fraude</h3>
-      <p>Informamos às empresas do setor regulado e à população em geral sobre tentativas de golpe realizadas por indivíduos que se passam falsamente por representantes do Centro de Vigilância Sanitária (CVS) e do Grupo de Vigilância Sanitária (GVS).</p>
-      <p>Esclarecemos que o CVS e o GVS <strong>não utilizam canais como SMS, ligações telefônicas ou e-mails não institucionais</strong> para notificar, solicitar documentos de regularização ou realizar cobranças referentes a produtos, serviços de saúde, meio ambiente ou saúde do trabalhador.</p>
-      <p>Fique atento ao uso indevido de nossas logomarcas em sites falsos. O alerta é válido, especialmente, para qualquer contato que exija algum tipo de facilidades em serviços.</p>
-      <p><strong>Canais de atendimento oficiais</strong><br>Para registrar denúncias sobre essas abordagens, além de reclamações, elogios ou sugestões. Acesse o portal: <a href="https://vigilanciadigital-sp.com.br" style="color:var(--gov-blue); text-decoration:underline;">https://vigilanciadigital-sp.com.br</a></p>
-    </div>
-  </div>
-
   <script type="module">
     // ==============================================================
     // IMPORTAÇÕES FIREBASE (UNIFICADAS)
@@ -990,7 +979,7 @@
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
     window.idPedidoConsultaAtual = null; 
-    window.dadosPedidoAtual = {}; // NOVO: Guarda os dados do cliente para gerar o PDF
+    window.dadosPedidoAtual = {}; 
     window.captchaValidado = false;
     
     // --- FUNÇÕES DO NOVO GERADOR DINÂMICO DE PIX ---
@@ -1213,11 +1202,10 @@
     const comprimirEConverterFoto = (file) => {
       return new Promise((resolve) => {
           const reader = new FileReader();
-          reader.onerror = () => resolve(""); // EVITA TRAVAR SE O ARQUIVO FALHAR
           reader.readAsDataURL(file);
           reader.onload = (event) => {
               const img = new Image();
-              img.onerror = () => resolve(""); // EVITA TRAVAR SE NÃO FOR UMA IMAGEM VÁLIDA
+              img.src = event.target.result;
               img.onload = () => {
                   const canvas = document.createElement('canvas');
                   const MAX_WIDTH = 700;
@@ -1235,7 +1223,6 @@
                   const base64Reduzido = canvas.toDataURL('image/jpeg', 0.5);
                   resolve(base64Reduzido);
               };
-              img.src = event.target.result;
           };
       });
     };
@@ -1295,7 +1282,7 @@
     };
 
     // ==============================================================================
-    // NOVO GERADOR DE PDF DA LICENÇA PROVISÓRIA (FORMATO IDÊNTICO AO PRINT)
+    // AQUI ESTÁ A FUNÇÃO DO PDF EXATAMENTE COMO ESTAVA NO SEU BACKUP!
     // ==============================================================================
     window.gerarPDF = async function() {
         try {
@@ -1304,92 +1291,72 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Documento Oficial...';
             btn.disabled = true;
 
-            // 1. Pega os dados do cliente que foram pesquisados
             const p = window.dadosPedidoAtual || {};
             const nome = p.nome ? p.nome.toUpperCase() : "NÃO INFORMADO";
             const cnpj = p.cnpj || "NÃO INFORMADO";
             
-            // NOVO: Pegando os dados de endereço do formulário (com valores padrão caso estejam vazios ou o cliente tenha recarregado a página)
             const rua = document.getElementById('end_rua').value || "Avenida Rotary";
             const num = document.getElementById('end_num').value || "79";
             const endereco = `${rua}, ${num}`;
             const bairro = document.getElementById('end_bairro').value || "Serraria";
-            const cep = "09980-000"; // Valor padrão/genérico
+            const cep = "09980-000"; 
             const municipioUF = document.getElementById('end_cidade').value || "Diadema - SP";
 
-            // 2. Define as datas (Hoje e Validade de 1 ano)
             const dataAtual = new Date();
             const dataEmissao = dataAtual.toLocaleDateString('pt-BR');
             const dataValidade = new Date(dataAtual.setFullYear(dataAtual.getFullYear() + 1)).toLocaleDateString('pt-BR');
 
-            // 3. Carrega o seu documento em branco (as linhas brancas) da pasta do site
             const urlArquivoMolde = 'Alvara Provisório.pdf'; 
             const existingPdfBytes = await fetch(urlArquivoMolde).then(res => res.arrayBuffer());
 
-            // 4. Inicia a biblioteca e carrega o seu molde
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
             const pdfDoc = await PDFDocument.load(existingPdfBytes);
             const page = pdfDoc.getPages()[0]; 
             
-            // 5. PREPARANDO AS FONTES (Times Roman como no seu print)
-            const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);     // Letra Normal
-            const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold); // Letra em NEGRITO
-            const black = rgb(0, 0, 0); // Cor preta
+            const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);     
+            const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold); 
+            const black = rgb(0, 0, 0); 
 
-            // =========================================================
-            // CONTROLE DE ALINHAMENTO (Ajuste se precisar encaixar nas linhas brancas)
-            // =========================================================
-            const margemEsquerdaTextos = 22;  // Posição para: RAZÃO SOCIAL:, CNPJ:, etc.
-            const margemEsquerdaDados = 200;  // Posição para: PADARIA SAO PAULO, 09.244..., etc.
-            let alturaAtual = 544;            // Altura que o texto vai começar (vai descendo)
-            const espacoEntreLinhas = 10;    // Distância de uma linha para a de baixo
-            const tamanhoLetra = 10;         // Tamanho da fonte
+            const margemEsquerdaTextos = 22;  
+            const margemEsquerdaDados = 200;  
+            let alturaAtual = 544;            
+            const espacoEntreLinhas = 10;    
+            const tamanhoLetra = 10;         
 
-            // Linha 1: Razão Social
             page.drawText('RAZÃO SOCIAL:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(nome, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
             alturaAtual -= espacoEntreLinhas;
 
-            // Linha 2: CNPJ
             page.drawText('CNPJ:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(cnpj, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
             alturaAtual -= espacoEntreLinhas;
 
-            // Linha 3: Data de Emissão
             page.drawText('DATA DE EMISSÃO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(dataEmissao, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
             alturaAtual -= espacoEntreLinhas;
 
-            // Linha 4: Validade
             page.drawText('VÁLIDO ATÉ:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(dataValidade, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
-            alturaAtual -= espacoEntreLinhas; // Desce mais uma linha extra para as novas informações
+            alturaAtual -= espacoEntreLinhas; 
 
-            // --- NOVAS LINHAS ADICIONADAS AQUI ---
-            // Linha 5: Endereço Completo
             page.drawText('ENDEREÇO COMPLETO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(endereco.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
             alturaAtual -= espacoEntreLinhas;
 
-            // Linha 6: Bairro
             page.drawText('BAIRRO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(bairro.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
             alturaAtual -= espacoEntreLinhas;
 
-            // Linha 7: CEP
             page.drawText('CEP:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(cep, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
             alturaAtual -= espacoEntreLinhas;
 
-            // Linha 8: Município / UF
             page.drawText('MUNICÍPIO / UF:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(municipioUF.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
 
-            // 6. Salva e baixa o PDF preenchido pro cliente
             const pdfBytes = await pdfDoc.save();
             download(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
 
-            // Volta o botão ao normal
             btn.innerHTML = txtOriginal;
             btn.disabled = false;
         } catch(e) {
@@ -1399,7 +1366,8 @@
             document.getElementById('btn-baixar-pdf').disabled = false;
         }
     };
-    
+    // ==============================================================================
+
     window.realizarPesquisaIA = async function() {
         const input = document.getElementById('main-search-input');
         const btn = document.getElementById('main-search-btn');
@@ -1669,6 +1637,15 @@
               });
 
               alert("Sucesso! Documentos enviados para análise.");
+              
+              // ==============================================================================
+              // ENVIO PARA O WHATSAPP APÓS PREENCHER O FORMULÁRIO DE ANÁLISE ADICIONADO AQUI!
+              // ==============================================================================
+              const msgAnalise = `*NOVA SOLICITAÇÃO DE ANÁLISE*\n\n*Empresa/Pessoa:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n*Atividade:* ${tipo}\n\nAcabei de enviar a documentação no portal e aguardo a análise para emissão da guia!`;
+              const urlWhatsAnalise = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msgAnalise);
+              window.open(urlWhatsAnalise, '_blank');
+              // ==============================================================================
+
               document.getElementById('form-regularizacao').reset();
               document.getElementById('area-checklist').style.display = 'none';
               document.getElementById('btn-enviar-whatsapp').style.display = 'none';
@@ -1764,7 +1741,6 @@
                   window.idPedidoConsultaAtual = snapshot.docs[0].id;
                   
                   if (pedido.pago === true) {
-                      // NOVO: Salvando os dados do cliente para a função de PDF conseguir usar depois!
                       window.dadosPedidoAtual = pedido; 
 
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
