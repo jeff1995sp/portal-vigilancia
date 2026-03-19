@@ -329,15 +329,15 @@
       .gov-left { display: block; max-width: 62%; line-height: 1.2; }
       .gov-links { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
       .gov-links a { padding: 6px 10px; }
-      
-      /* AJUSTE FIXO PARA IPHONE / MOBILE - LOGO E MENU */
-      header { position: relative; padding: 10px 0; }
-      .header-grid { display: flex; flex-direction: column; align-items: center; position: relative; padding-top: 10px; }
-      .brand { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px; margin-bottom: 10px; }
-      .brand img { height: 50px; margin: 0 auto; }
-      .hamburger-btn { position: absolute; right: 15px; top: 15px; display: inline-flex; }
-      .header-actions { display: none; }
+      header { position: relative; padding: 15px 0; }
       nav { display: none; } 
+      
+      /* AJUSTE FIXO PARA IPHONE / MOBILE - LOGO NO TOPO CENTRALIZADA */
+      .header-grid { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; gap: 10px;}
+      .brand { flex-direction: column; text-align: center; gap: 5px; width: 100%; justify-content: center; }
+      .brand img { height: 55px; margin: 0 auto; }
+      .hamburger-btn { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: inline-flex; }
+      .header-actions { display: none; /* Esconde botões desnecessários no cabeçalho mobile */ }
       
       .brand-text h1 { font-size: 1.05rem; }
       .brand-text span { font-size: 0.68rem; }
@@ -350,10 +350,12 @@
       .hero h2 { font-size: 2.2rem; }
       .hero p { font-size: 1.05rem; margin-bottom: 22px; }
       
+      /* AJUSTE RESPONSIVO DA BARRA DE PESQUISA NA TELA INICIAL */
       .search-box { flex-direction: column; background: transparent; padding: 0; box-shadow: none; gap: 10px; max-width: 95%; margin: 0 auto; border: none;}
       .search-box input { border-radius: 12px; padding: 16px; background: white; width: 100%; border: 1px solid #ccc; font-size: 1rem;}
       .search-box button { border-radius: 12px; padding: 16px; width: 100%; height: auto; font-size: 1.1rem; justify-content: center;}
       
+      /* AJUSTE RESPONSIVO DA CAIXA DE RESULTADO DA IA (TELA INICIAL) */
       #search-result-area { max-width: 95% !important; margin: 15px auto !important; font-size: 0.95rem; }
 
       .live-stats-bar { position: relative; background: rgba(0,0,0,0.78); }
@@ -368,6 +370,7 @@
       .report-grid { grid-template-columns: 1fr; gap: 25px; }
       .report-header h2 { font-size: 2.2rem; }
       
+      /* CHATBOT TELA CHEIA NO MOBILE PARA FICAR PERFEITO */
       .chat-interface { right: 0; left: 0; bottom: 0; width: 100%; height: 85vh; border-radius: 20px 20px 0 0; z-index: 100000; position: fixed;}
       .chat-widget-btn { right: 16px; bottom: 18px; width: 60px; height: 60px; z-index: 99999;}
       
@@ -418,7 +421,7 @@
   <header>
     <div class="container header-grid">
       <a class="brand" onclick="window.acessoAdmin()">
-        <img src="imagens/5.png" alt="Brasão SP" />
+        <img src="imagens/5.png" alt="Brasão SP" style="height: 60px; width: auto;" />
         <div class="brand-text">
           <h1>COVISA</h1>
           <span>Vigilância em Saúde</span>
@@ -455,13 +458,14 @@
       </div>
       
       <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
-      
-      <div style="background: white; border-radius: 12px; padding: 12px 18px; max-width: 550px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 100px; height: auto; border-radius: 6px;" />
-        <div style="text-align: left;">
-          <h4 style="color: var(--sp-red); margin: 0 0 5px 0; font-size: 1.1rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
-          <p style="color: #444; margin: 0; font-size: 0.9rem; font-weight: 600; line-height: 1.3;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
+
+      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 30px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
+        <h4 style="margin-bottom: 10px; font-size: 1.1rem;"><i class="fas fa-search"></i> Consulta Pública de Regularidade</h4>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="fake_consulta_cnpj" placeholder="Digite seu CPF ou CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;" oninput="window.maskCPFinCNPJ(this)">
+          <button onclick="window.realizarConsultaFake()" style="background: var(--sp-red); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;">Consultar</button>
         </div>
+        <div id="fake_consulta_resultado" style="display: none; margin-top: 15px; padding: 15px; background: #fff3cd; color: #856404; border-radius: 8px; font-weight: bold;"></div>
       </div>
 
     </div>
@@ -637,11 +641,11 @@
                       
                     <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
                       
-                    <img src="imagens/pix.jpeg" alt="QR Code Pix Dinâmico" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
+                    <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
                     <div style="display: flex; gap: 8px;">
-                      <input type="text" id="pix-copia-cola" value="" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
+                      <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
                       <button onclick="window.copiarPix()" style="background: var(--gov-blue); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
                     </div>
                   </div>
@@ -895,6 +899,7 @@
     // RASTREADOR DE TRÁFEGO E AÇÕES (MODO ESPIÃO) COM LOCALIZAÇÃO
     // =========================================================
     try {
+        // Detectando Aparelho com mais precisão
         const ua = navigator.userAgent.toLowerCase();
         let osInfo = "Computador";
         if (ua.includes("android")) osInfo = "Android";
@@ -905,34 +910,31 @@
         const isMobile = /iphone|ipad|ipod|android/i.test(ua);
         const deviceIcon = isMobile ? '📱' : '💻';
 
+        // FEATURE 14: Verificação de Retorno
         let isRecorrente = false;
-        let tagRetorno = "👤 Novo";
         if(localStorage.getItem('ja_visitou')) {
             isRecorrente = true;
-            tagRetorno = "🔄 Recorrente";
         } else {
             localStorage.setItem('ja_visitou', 'sim');
         }
 
-        let userLocation = localStorage.getItem('user_loc') || "Buscando IP...";
-        let userRegion = localStorage.getItem('user_reg') || "BR";
+        // Sistema de Localização Agressivo (salva na memória para ser mais rápido)
+        let userLocation = localStorage.getItem('user_loc') || "Buscando...";
 
         async function buscarLocalizacao() {
-            if(userLocation !== "Buscando IP...") return;
+            if(userLocation !== "Buscando...") return;
             try {
                 let req = await fetch('https://ipapi.co/json/');
                 let data = await req.json();
                 if(data.city) {
                     userLocation = `${data.city} - ${data.region}`;
-                    userRegion = `BR-${data.region_code}`;
                     localStorage.setItem('user_loc', userLocation);
-                    localStorage.setItem('user_reg', userRegion);
                 }
             } catch(e) {
                 userLocation = "Localização Protegida";
             }
         }
-        buscarLocalizacao(); 
+        buscarLocalizacao(); // Dispara logo que abre o site
 
         const dataIso = new Date().toISOString().split('T')[0]; 
         setDoc(doc(db, "estatisticas", dataIso), { total: increment(1) }, { merge: true }).catch(()=>{});
@@ -948,6 +950,7 @@
 
         window.addEventListener('beforeunload', () => { deleteDoc(sessionRef).catch(()=>{}); });
 
+        // --- SISTEMA DE LEITURA DE CLIQUES E TOQUES NA TELA ---
         async function registrarAcaoUsuario(acaoStr) {
             try {
                 await addDoc(collection(db, "logs_visitantes"), {
@@ -955,14 +958,13 @@
                     dispositivo: deviceIcon,
                     modelo: osInfo,
                     localizacao: userLocation,
-                    regiao: userRegion,
-                    recorrente: isRecorrente,
-                    tipoVisitante: tagRetorno,
-                    dataHora: new Date().getTime()
+                    dataHora: new Date().getTime(),
+                    recorrente: isRecorrente
                 });
             } catch(e){}
         }
 
+        // Lê todos os cliques em botões e links
         document.addEventListener('click', (e) => {
             let target = e.target.closest('button, a, .doc-item');
             if(target) {
@@ -972,6 +974,7 @@
             }
         });
 
+        // Lê quando a pessoa termina de preencher um campo
         document.addEventListener('focusout', (e) => {
             if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
                 let label = e.target.placeholder || e.target.id || 'campo';
@@ -984,51 +987,15 @@
     } catch(e) {}
 
     // ==============================================================
-    // CHAVE DO GOOGLE GEMINI E VARIÁVEIS GLOBAIS
+    // CHAVE DO GOOGLE GEMINI (PARA O CHATBOT E PESQUISA)
     // ==============================================================
     const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
+    // FUNÇÕES GLOBAIS GERAIS
     window.idPedidoConsultaAtual = null; 
-    window.dadosPedidoAtual = {}; // NOVO: Guarda os dados do cliente para gerar o PDF
+    window.dadosPedidoAtual = {}; // GUARDA DADOS PARA O PDF
     window.captchaValidado = false;
-    
-    // --- FUNÇÕES DO NOVO GERADOR DINÂMICO DE PIX ---
-    window.crc16 = function(payload) {
-        let polynomial = 0x1021;
-        let result = 0xFFFF;
-        for (let i = 0; i < payload.length; i++) {
-            result ^= payload.charCodeAt(i) << 8;
-            for (let j = 0; j < 8; j++) {
-                if ((result & 0x8000) !== 0) {
-                    result = (result << 1) ^ polynomial;
-                } else {
-                    result <<= 1;
-                }
-            }
-        }
-        return (result & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
-    };
-
-    window.gerarPixDinamico = function(valorStr) {
-        let valorNum = valorStr.replace(/[^\d.,]/g, '').replace(',', '.');
-        if (!valorNum || isNaN(parseFloat(valorNum))) valorNum = "0.00";
-        let valorFloat = parseFloat(valorNum).toFixed(2);
-        let valorLen = valorFloat.length.toString().padStart(2, '0');
-
-        let payloadStr = "000201" +
-                         "26580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe2" +
-                         "52040000" +
-                         "5303986" +
-                         "54" + valorLen + valorFloat +
-                         "5802BR" +
-                         "5925GILIARD DE OLIVEIRA SANTI" +
-                         "6009SAO PAULO" +
-                         "62070503***" +
-                         "6304";
-        let crc = window.crc16(payloadStr);
-        return payloadStr + crc;
-    };
     
     window.ativarCaptcha = function() {
         if(window.captchaValidado) return;
@@ -1051,6 +1018,7 @@
       i.value = v;
     };
 
+    // MÁSCARA DATA DE NASCIMENTO
     window.maskData = function(i) {
         let v = i.value.replace(/\D/g,'');
         if(v.length >= 5) {
@@ -1088,6 +1056,18 @@
       document.getElementById('nome_fantasia_pf').value = '';
       document.getElementById('google-map-frame').src = '';
       localStorage.removeItem('rascunho_nome');
+    };
+
+    window.realizarConsultaFake = function() {
+      const input = document.getElementById('fake_consulta_cnpj').value;
+      if(input.length < 5) { alert("Digite um CPF/CNPJ válido."); return; }
+      let res = document.getElementById('fake_consulta_resultado');
+      res.style.display = 'block'; res.style.background = '#e0f2fe'; res.style.color = '#0369a1';
+      res.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando no sistema de fiscalização estadual...';
+      setTimeout(() => {
+        res.style.background = '#fee2e2'; res.style.color = '#b91c1c';
+        res.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>STATUS: PENDENTE DE REGULARIZAÇÃO</strong><br><span style="font-size:0.95rem; font-weight:normal; display:block; margin-top:5px;">Este CPF/CNPJ encontra-se irregular e sujeito a notificação. <a href="#regularize" style="color: #991b1b; text-decoration: underline; font-weight: 900;">Clique aqui e Regularize agora</a>.</span>';
+      }, 1500);
     };
 
     window.openDrawer = function() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; };
@@ -1196,20 +1176,20 @@
     };
 
     let cnpjParaComprovante = "";
-    let valorPixParaComprovante = "0,00";
-
     window.enviarWhatsAppComprovanteConsulta = async function() {
       if(!cnpjParaComprovante) return;
+      
       const q = query(collection(db, "pedidos"), where("cnpj", "==", cnpjParaComprovante));
       const snapshot = await getDocs(q);
       let nome = "Cliente";
       if(!snapshot.empty) nome = snapshot.docs[0].data().nome;
 
-      const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${nome}\n*CNPJ/CPF:* ${cnpjParaComprovante}\n*Valor da Guia (R$):* ${valorPixParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
+      const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${nome}\n*CNPJ/CPF:* ${cnpjParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
       const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msg);
       window.open(url, '_blank');
     };
 
+    // FUNÇÃO QUE ESPREME QUALQUER IMAGEM PARA CABER NO FIREBASE
     const comprimirEConverterFoto = (file) => {
       return new Promise((resolve) => {
           const reader = new FileReader();
@@ -1238,6 +1218,7 @@
       });
     };
 
+    // ENVIA A FOTO DO DOCUMENTO ASSINADO PRO ADMIN
     window.enviarAssinatura = async function(inputElement) {
         if (!inputElement.files || inputElement.files.length === 0) return;
         if (!window.idPedidoConsultaAtual) return alert("Erro: Protocolo não encontrado.");
@@ -1258,7 +1239,7 @@
             });
             
             labelBtn.innerHTML = '<i class="fas fa-check-circle"></i> Documento Recebido com Sucesso!';
-            labelBtn.style.background = '#10b981';
+            labelBtn.style.background = '#10b981'; // Fica verde escuro
             alert("Perfeito! A foto do documento assinado foi enviada diretamente para o sistema da COVISA.");
         } catch (error) {
             console.error(error);
@@ -1304,11 +1285,11 @@
 
             // Puxa os dados que foram consultados na tela
             const p = window.dadosPedidoAtual || {};
-            const nome = (p.nome || "Não informado").toUpperCase(); // Deixa tudo maiúsculo
+            const nome = (p.nome || "Não informado").toUpperCase(); 
             const cnpj = p.cnpj || "Não informado";
             const dataEmissao = new Date().toLocaleDateString('pt-BR');
 
-            // Calcula validade (1 ano exato, igual na sua foto de referência)
+            // Calcula validade (1 ano exato)
             const dataValidade = new Date();
             dataValidade.setFullYear(dataValidade.getFullYear() + 1);
             const validadeStr = dataValidade.toLocaleDateString('pt-BR');
@@ -1319,46 +1300,43 @@
             const urlDocumento = 'Alvara Provisório.pdf'; 
             const existingPdfBytes = await fetch(urlDocumento).then(res => res.arrayBuffer());
 
-            // Carrega o PDF em branco
+            // Carrega o PDF base
             const pdfDoc = await PDFDocument.load(existingPdfBytes);
             const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-            const fontNormal = await pdfDoc.embedFont(StandardFonts.Helvetica); // Adicionado fonte normal
+            const fontNormal = await pdfDoc.embedFont(StandardFonts.Helvetica); 
             const pages = pdfDoc.getPages();
             const page = pages[0]; 
 
             // =====================================================================
-            // CONTROLE MESTRE DE POSIÇÃO - MEXA AQUI SE PRECISAR ALINHAR!
-            // posicaoY: Move o bloco todo para cima (aumente o número) ou para baixo (diminua)
-            // posicaoX: Move os títulos ("RAZÃO SOCIAL:") para a direita ou esquerda
-            // alinhamentoValoresX: A distância onde começam os valores em negrito
+            // CONTROLE MESTRE DE POSIÇÃO
             // =====================================================================
-            let posicaoY = 480; // Tente ajustar de 10 em 10 (ex: 490, 500, 470) até encaixar no branco
-            const posicaoX = 55; // Margem esquerda
-            const alinhamentoValoresX = 180; // Onde os dados em negrito começam
-            const espacoEntreLinhas = 15; // Distância entre uma linha e outra
+            let posicaoY = 480; 
+            const posicaoX = 55; 
+            const alinhamentoValoresX = 160; 
+            const espacoEntreLinhas = 18; 
 
             const tamanhoTextoRotulo = 8;
-            const tamanhoTextoValor = 10;
+            const tamanhoTextoValor = 9; 
             const textColor = rgb(0, 0, 0);
 
-            // 1. RAZÃO SOCIAL
-            page.drawText('RAZÃO SOCIAL:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontNormal, color: textColor });
-            page.drawText(nome, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontBold, color: textColor });
+            // 1. RAZÃO SOCIAL (Rótulo BOLD, valor NORMAL)
+            page.drawText('RAZÃO SOCIAL:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontBold, color: textColor });
+            page.drawText(nome, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontNormal, color: textColor });
             
             // 2. CNPJ (Desce uma linha)
             posicaoY -= espacoEntreLinhas;
-            page.drawText('CNPJ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontNormal, color: textColor });
-            page.drawText(cnpj, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontBold, color: textColor });
+            page.drawText('CNPJ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontBold, color: textColor });
+            page.drawText(cnpj, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontNormal, color: textColor });
 
             // 3. DATA DE EMISSÃO (Desce uma linha)
             posicaoY -= espacoEntreLinhas;
-            page.drawText('DATA DE EMISSÃO:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontNormal, color: textColor });
-            page.drawText(dataEmissao, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontBold, color: textColor });
+            page.drawText('DATA DE EMISSÃO:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontBold, color: textColor });
+            page.drawText(dataEmissao, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontNormal, color: textColor });
 
             // 4. VÁLIDO ATÉ (Desce uma linha)
             posicaoY -= espacoEntreLinhas;
-            page.drawText('VÁLIDO ATÉ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontNormal, color: textColor });
-            page.drawText(validadeStr, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontBold, color: textColor });
+            page.drawText('VÁLIDO ATÉ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontBold, color: textColor });
+            page.drawText(validadeStr, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontNormal, color: textColor });
 
 
             // Salva e aciona o Download
@@ -1376,12 +1354,15 @@
         }
     };
 
+
+    // --- NOVA FUNÇÃO: PESQUISA DA TELA INICIAL INTEGRADA COM IA E ANTI-BLOQUEIO ---
     window.realizarPesquisaIA = async function() {
         const input = document.getElementById('main-search-input');
         const btn = document.getElementById('main-search-btn');
         const query = input.value.trim();
         if(!query) return;
 
+        // Anti-Bloqueio Cooldown
         btn.disabled = true;
         input.disabled = true;
         const textoAntigoBtn = btn.innerHTML;
@@ -1435,6 +1416,10 @@
         }
     };
 
+    // ==============================================================================
+    // EVENTOS E LOGICA PRINCIPAL DOS FORMULÁRIOS
+    // ==============================================================================
+      
     if(localStorage.getItem('rascunho_nome')) {
       document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
     }
@@ -1482,6 +1467,7 @@
       }, 1000);
     }
 
+    // BUSCA DE CNPJ PARA A ÁREA DE DENÚNCIA
     const docInputDenuncia = document.getElementById('cnpj_denuncia');
     if (docInputDenuncia) {
         docInputDenuncia.addEventListener('keyup', async function(e) {
@@ -1502,6 +1488,7 @@
         });
     }
 
+    // BUSCA DE CNPJ PARA A ÁREA DE REGULARIZAÇÃO
     const docInput = document.getElementById('cnpj_empresa');
     if (docInput) {
         docInput.addEventListener('keyup', async function(e) {
@@ -1587,6 +1574,7 @@
         });
     }
 
+    // ENVIO REGULARIZAÇÃO
     const formRegularizacao = document.getElementById('form-regularizacao');
     if (formRegularizacao) {
         formRegularizacao.addEventListener('submit', async (e) => {
@@ -1661,6 +1649,7 @@
         });
     }
 
+    // ENVIO DENÚNCIA DIRETO PRO ADMIN
     const formDenuncia = document.getElementById('form-denuncia');
     if (formDenuncia) {
         formDenuncia.addEventListener('submit', async (e) => {
@@ -1714,6 +1703,7 @@
         });
     }
 
+    // CONSULTA STATUS
     const formConsulta = document.getElementById('form-consulta');
     if (formConsulta) {
         formConsulta.addEventListener('submit', async (e) => {
@@ -1740,11 +1730,11 @@
                   window.idPedidoConsultaAtual = snapshot.docs[0].id;
                   
                   if (pedido.pago === true) {
-                      // NOVO: Salvando os dados do cliente para a função de PDF conseguir usar depois!
-                      window.dadosPedidoAtual = pedido; 
-
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
+                      
+                      // Salvando dados para a geração de PDF
+                      window.dadosPedidoAtual = pedido; 
                       
                       textMsg.innerHTML = `
                           <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
@@ -1771,22 +1761,13 @@
                       atualizarBarraProgresso(2); 
                   } else {
                       divMsg.style.display = 'none'; divPix.style.display = 'block';
-                      
-                      let valorLimpo = pedido.valor.replace('R$', '').replace(/\s/g, ''); 
-                      let valorFormatado = parseFloat(valorLimpo.replace(',','.')).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-                      
-                      if(valorFormatado === "NaN" || !valorLimpo.match(/[0-9]/)) {
-                          valorFormatado = "R$ " + valorLimpo;
-                      }
-                      
+                      let valorFormatado = parseFloat(pedido.valor).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+                      if(valorFormatado === "NaN" || !pedido.valor.match(/[0-9]/)) valorFormatado = "R$ " + pedido.valor;
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
-                      valorPixParaComprovante = valorFormatado;
-
-                      let pixDinamico = window.gerarPixDinamico(valorLimpo);
-                      document.getElementById('pix-copia-cola').value = pixDinamico;
                       
-                      let qrImgUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(pixDinamico);
-                      document.querySelector('.qr-container img').src = qrImgUrl;
+                      if (pedido.pix_copia_e_cola) {
+                          document.getElementById('pix-copia-cola').value = pedido.pix_copia_e_cola;
+                      }
                       
                       cnpjParaComprovante = cnpj;
                       atualizarBarraProgresso(3); 
@@ -1802,6 +1783,9 @@
         });
     }
 
+    // ==============================================================================
+    // CHATBOT GEMINI - COM ANTI-BLOQUEIO (COOLDOWN de 3 Segundos)
+    // ==============================================================================
     let memoriaChatCidadao = [];
     const chatForm = document.getElementById('chat-form');
     
@@ -1866,6 +1850,7 @@
                 </div>`;
                 body.scrollTop = body.scrollHeight;
             } finally {
+                // ANTI-BLOQUEIO: Espera 3 segundos antes de liberar o botão e o input.
                 setTimeout(() => {
                     txtInput.disabled = false;
                     btnSend.disabled = false;
