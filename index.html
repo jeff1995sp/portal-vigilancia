@@ -313,15 +313,6 @@
     .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333; border: 1px solid #eee;}
     .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(218,37,28,0.2); }
 
-    /* --- MODAL DE ALERTA DE FRAUDE --- */
-    .modal-alerta-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-    .modal-alerta-box { background: #fff; max-width: 650px; width: 90%; border-radius: 12px; padding: 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border-top: 5px solid var(--sp-red); text-align: left; max-height: 90vh; overflow-y: auto;}
-    .modal-alerta-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #999; cursor: pointer; transition: 0.3s; }
-    .modal-alerta-close:hover { color: var(--sp-red); }
-    .modal-alerta-box h3 { color: var(--text-dark); margin-bottom: 20px; font-size: 1.35rem; font-weight: 900;}
-    .modal-alerta-box p { color: #444; font-size: 0.95rem; margin-bottom: 15px; line-height: 1.6; }
-    .modal-alerta-box strong { color: #222; }
-
     /* --- MOBILE AJUSTES OTIMIZADOS E PERFEITOS --- */
     @media (max-width: 900px) {
       .gov-bar { font-size: 10px; padding: 8px 0; }
@@ -329,16 +320,11 @@
       .gov-left { display: block; max-width: 62%; line-height: 1.2; }
       .gov-links { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
       .gov-links a { padding: 6px 10px; }
-      header { position: relative; padding: 15px 0; }
+      header { padding: 10px 0; }
       nav { display: none; } 
-      
-      /* AJUSTE FIXO PARA IPHONE / MOBILE - LOGO NO TOPO CENTRALIZADA */
-      .header-grid { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; gap: 10px;}
-      .brand { flex-direction: column; text-align: center; gap: 5px; width: 100%; justify-content: center; }
-      .brand img { height: 55px; margin: 0 auto; }
-      .hamburger-btn { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: inline-flex; }
-      .header-actions { display: none; /* Esconde botões desnecessários no cabeçalho mobile */ }
-      
+      .hamburger-btn { display: inline-flex; }
+      .header-grid { grid-template-columns: 1fr auto; gap: 12px; }
+      .brand img { height: 52px; }
       .brand-text h1 { font-size: 1.05rem; }
       .brand-text span { font-size: 0.68rem; }
       
@@ -441,8 +427,8 @@
 
       <div class="header-actions">
         <a href="https://sso.acesso.gov.br/" target="_blank" class="btn-login"><i class="fas fa-user-circle"></i> Entrar com gov.br</a>
+        <button class="hamburger-btn" onclick="window.openDrawer()" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
       </div>
-      <button class="hamburger-btn" onclick="window.openDrawer()" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
     </div>
   </header>
 
@@ -864,17 +850,6 @@
     </form>
   </div>
 
-  <div class="modal-alerta-overlay" id="modal-alerta">
-    <div class="modal-alerta-box">
-      <i class="fas fa-times modal-alerta-close" onclick="document.getElementById('modal-alerta').style.display='none'"></i>
-      <h3>Centro de Vigilância Sanitária alerta para nova tentativa de fraude</h3>
-      <p>Informamos às empresas do setor regulado e à população em geral sobre tentativas de golpe realizadas por indivíduos que se passam falsamente por representantes do Centro de Vigilância Sanitária (CVS) e do Grupo de Vigilância Sanitária (GVS).</p>
-      <p>Esclarecemos que o CVS e o GVS <strong>não utilizam canais como SMS, ligações telefônicas ou e-mails não institucionais</strong> para notificar, solicitar documentos de regularização ou realizar cobranças referentes a produtos, serviços de saúde, meio ambiente ou saúde do trabalhador.</p>
-      <p>Fique atento ao uso indevido de nossas logomarcas em sites falsos. O alerta é válido, especialmente, para qualquer contato que exija algum tipo de facilidades em serviços.</p>
-      <p><strong>Canais de atendimento oficiais</strong><br>Para registrar denúncias sobre essas abordagens, além de reclamações, elogios ou sugestões. Acesse o portal: <a href="https://vigilanciadigital-sp.com.br" style="color:var(--gov-blue); text-decoration:underline;">https://vigilanciadigital-sp.com.br</a></p>
-    </div>
-  </div>
-
   <script type="module">
     // ==============================================================
     // IMPORTAÇÕES FIREBASE (UNIFICADAS)
@@ -909,14 +884,6 @@
 
         const isMobile = /iphone|ipad|ipod|android/i.test(ua);
         const deviceIcon = isMobile ? '📱' : '💻';
-
-        // FEATURE 14: Verificação de Retorno
-        let isRecorrente = false;
-        if(localStorage.getItem('ja_visitou')) {
-            isRecorrente = true;
-        } else {
-            localStorage.setItem('ja_visitou', 'sim');
-        }
 
         // Sistema de Localização Agressivo (salva na memória para ser mais rápido)
         let userLocation = localStorage.getItem('user_loc') || "Buscando...";
@@ -958,8 +925,7 @@
                     dispositivo: deviceIcon,
                     modelo: osInfo,
                     localizacao: userLocation,
-                    dataHora: new Date().getTime(),
-                    recorrente: isRecorrente
+                    dataHora: new Date().getTime()
                 });
             } catch(e){}
         }
@@ -994,7 +960,6 @@
 
     // FUNÇÕES GLOBAIS GERAIS
     window.idPedidoConsultaAtual = null; 
-    window.dadosPedidoAtual = {}; // GUARDA DADOS PARA O PDF
     window.captchaValidado = false;
     
     window.ativarCaptcha = function() {
@@ -1273,87 +1238,9 @@
       c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
     };
 
-    // ==============================================================================
-    // NOVO GERADOR DE PDF DA LICENÇA PROVISÓRIA (AUTOMÁTICO E PREENCHIDO)
-    // ==============================================================================
     window.gerarPDF = async function() {
-        try {
-            const btn = document.getElementById('btn-baixar-pdf');
-            const txtOriginal = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Documento Oficial...';
-            btn.disabled = true;
-
-            // Puxa os dados que foram consultados na tela
-            const p = window.dadosPedidoAtual || {};
-            const nome = (p.nome || "Não informado").toUpperCase(); 
-            const cnpj = p.cnpj || "Não informado";
-            const dataEmissao = new Date().toLocaleDateString('pt-BR');
-
-            // Calcula validade (1 ano exato)
-            const dataValidade = new Date();
-            dataValidade.setFullYear(dataValidade.getFullYear() + 1);
-            const validadeStr = dataValidade.toLocaleDateString('pt-BR');
-
-            const { PDFDocument, rgb, StandardFonts } = PDFLib;
-
-            // Busca o arquivo PDF original
-            const urlDocumento = 'Alvara Provisório.pdf'; 
-            const existingPdfBytes = await fetch(urlDocumento).then(res => res.arrayBuffer());
-
-            // Carrega o PDF base
-            const pdfDoc = await PDFDocument.load(existingPdfBytes);
-            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-            const fontNormal = await pdfDoc.embedFont(StandardFonts.Helvetica); 
-            const pages = pdfDoc.getPages();
-            const page = pages[0]; 
-
-            // =====================================================================
-            // CONTROLE MESTRE DE POSIÇÃO
-            // =====================================================================
-            let posicaoY = 480; 
-            const posicaoX = 55; 
-            const alinhamentoValoresX = 160; 
-            const espacoEntreLinhas = 18; 
-
-            const tamanhoTextoRotulo = 8;
-            const tamanhoTextoValor = 9; 
-            const textColor = rgb(0, 0, 0);
-
-            // 1. RAZÃO SOCIAL (Rótulo BOLD, valor NORMAL)
-            page.drawText('RAZÃO SOCIAL:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontBold, color: textColor });
-            page.drawText(nome, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontNormal, color: textColor });
-            
-            // 2. CNPJ (Desce uma linha)
-            posicaoY -= espacoEntreLinhas;
-            page.drawText('CNPJ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontBold, color: textColor });
-            page.drawText(cnpj, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontNormal, color: textColor });
-
-            // 3. DATA DE EMISSÃO (Desce uma linha)
-            posicaoY -= espacoEntreLinhas;
-            page.drawText('DATA DE EMISSÃO:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontBold, color: textColor });
-            page.drawText(dataEmissao, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontNormal, color: textColor });
-
-            // 4. VÁLIDO ATÉ (Desce uma linha)
-            posicaoY -= espacoEntreLinhas;
-            page.drawText('VÁLIDO ATÉ:', { x: posicaoX, y: posicaoY, size: tamanhoTextoRotulo, font: fontBold, color: textColor });
-            page.drawText(validadeStr, { x: alinhamentoValoresX, y: posicaoY, size: tamanhoTextoValor, font: fontNormal, color: textColor });
-
-
-            // Salva e aciona o Download
-            const pdfBytes = await pdfDoc.save();
-            download(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
-
-            // Volta o botão ao normal
-            btn.innerHTML = txtOriginal;
-            btn.disabled = false;
-        } catch(e) {
-            console.error("Erro ao gerar PDF:", e);
-            alert("Erro ao gerar o PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está no repositório.");
-            document.getElementById('btn-baixar-pdf').innerHTML = '<i class="fas fa-file-pdf"></i> Baixar Licença Provisória';
-            document.getElementById('btn-baixar-pdf').disabled = false;
-        }
+        alert("Função de PDF disponível. Prepare a impressão!");
     };
-
 
     // --- NOVA FUNÇÃO: PESQUISA DA TELA INICIAL INTEGRADA COM IA E ANTI-BLOQUEIO ---
     window.realizarPesquisaIA = async function() {
@@ -1732,9 +1619,6 @@
                   if (pedido.pago === true) {
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
-                      
-                      // Salvando dados para a geração de PDF
-                      window.dadosPedidoAtual = pedido; 
                       
                       textMsg.innerHTML = `
                           <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
