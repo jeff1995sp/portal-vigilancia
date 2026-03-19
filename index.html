@@ -418,7 +418,7 @@
   <header>
     <div class="container header-grid">
       <a class="brand" onclick="window.acessoAdmin()">
-        <img src="imagens/5.png" alt="Brasão SP" style="height: 60px; width: auto;" />
+        <img src="imagens/5.png" alt="Brasão SP" />
         <div class="brand-text">
           <h1>COVISA</h1>
           <span>Vigilância em Saúde</span>
@@ -454,17 +454,16 @@
         <button onclick="window.realizarPesquisaIA()" id="main-search-btn"><i class="fas fa-search"></i> Pesquisar</button>
       </div>
       
-      <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
-
-      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 30px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
-        <h4 style="margin-bottom: 10px; font-size: 1.1rem;"><i class="fas fa-search"></i> Consulta Pública de Regularidade</h4>
-        <div style="display: flex; gap: 10px;">
-          <input type="text" id="fake_consulta_cnpj" placeholder="Digite seu CPF ou CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;" oninput="window.maskCPFinCNPJ(this)">
-          <button onclick="window.realizarConsultaFake()" style="background: var(--sp-red); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;">Consultar</button>
+      <div style="background: white; border-radius: 12px; padding: 12px 18px; max-width: 500px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 85px; height: auto; border-radius: 6px;" />
+        <div style="text-align: left;">
+          <h4 style="color: var(--sp-red); margin: 0 0 5px 0; font-size: 1.05rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
+          <p style="color: #444; margin: 0; font-size: 0.85rem; font-weight: 600; line-height: 1.3;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
         </div>
-        <div id="fake_consulta_resultado" style="display: none; margin-top: 15px; padding: 15px; background: #fff3cd; color: #856404; border-radius: 8px; font-weight: bold;"></div>
       </div>
 
+      <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
+      
     </div>
     <div class="live-stats-bar">
       <div class="container live-grid">
@@ -1286,6 +1285,9 @@
       c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
     };
 
+    // ==============================================================================
+    // NOVO GERADOR DE PDF DA LICENÇA PROVISÓRIA (FORMATO IDÊNTICO AO PRINT)
+    // ==============================================================================
     window.gerarPDF = async function() {
         try {
             const btn = document.getElementById('btn-baixar-pdf');
@@ -1293,42 +1295,99 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Documento Oficial...';
             btn.disabled = true;
 
+            // 1. Pega os dados do cliente que foram pesquisados
             const p = window.dadosPedidoAtual || {};
             const nome = p.nome ? p.nome.toUpperCase() : "NÃO INFORMADO";
             const cnpj = p.cnpj || "NÃO INFORMADO";
-            const tipo = p.tipo || "Não informado";
-            const dataEmissao = new Date().toLocaleDateString('pt-BR');
+            
+            // NOVO: Pegando os dados de endereço do formulário (com valores padrão caso estejam vazios ou o cliente tenha recarregado a página)
+            const rua = document.getElementById('end_rua').value || "Avenida Rotary";
+            const num = document.getElementById('end_num').value || "79";
+            const endereco = `${rua}, ${num}`;
+            const bairro = document.getElementById('end_bairro').value || "Serraria";
+            const cep = "09980-000"; // Valor padrão/genérico
+            const municipioUF = document.getElementById('end_cidade').value || "Diadema - SP";
 
+            // 2. Define as datas (Hoje e Validade de 1 ano)
+            const dataAtual = new Date();
+            const dataEmissao = dataAtual.toLocaleDateString('pt-BR');
+            const dataValidade = new Date(dataAtual.setFullYear(dataAtual.getFullYear() + 1)).toLocaleDateString('pt-BR');
+
+            // 3. Carrega o seu documento em branco (as linhas brancas) da pasta do site
+            const urlArquivoMolde = 'Alvara Provisório.pdf'; 
+            const existingPdfBytes = await fetch(urlArquivoMolde).then(res => res.arrayBuffer());
+
+            // 4. Inicia a biblioteca e carrega o seu molde
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
-
-            const urlTemplate = 'Alvara Provisório.pdf'; 
-            const existingPdfBytes = await fetch(urlTemplate).then(res => {
-                if (!res.ok) throw new Error("Não encontrou o PDF base.");
-                return res.arrayBuffer();
-            });
-
             const pdfDoc = await PDFDocument.load(existingPdfBytes);
             const page = pdfDoc.getPages()[0]; 
-            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            
+            // 5. PREPARANDO AS FONTES (Times Roman como no seu print)
+            const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);     // Letra Normal
+            const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold); // Letra em NEGRITO
+            const black = rgb(0, 0, 0); // Cor preta
 
-            page.drawText(nome, { x: 150, y: 550, size: 14, font: fontBold, color: rgb(0, 0, 0) });
-            page.drawText(cnpj, { x: 150, y: 510, size: 14, font: fontBold, color: rgb(0, 0, 0) });
-            page.drawText(tipo, { x: 150, y: 470, size: 12, font: fontBold, color: rgb(0, 0, 0) });
-            page.drawText(dataEmissao, { x: 150, y: 430, size: 12, font: fontBold, color: rgb(0, 0, 0) });
+            // =========================================================
+            // CONTROLE DE ALINHAMENTO (Ajuste se precisar encaixar nas linhas brancas)
+            // =========================================================
+            const margemEsquerdaTextos = 22;  // Posição para: RAZÃO SOCIAL:, CNPJ:, etc.
+            const margemEsquerdaDados = 200;  // Posição para: PADARIA SAO PAULO, 09.244..., etc.
+            let alturaAtual = 544;            // Altura que o texto vai começar (vai descendo)
+            const espacoEntreLinhas = 10;    // Distância de uma linha para a de baixo
+            const tamanhoLetra = 10;         // Tamanho da fonte
 
+            // Linha 1: Razão Social
+            page.drawText('RAZÃO SOCIAL:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(nome, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
+
+            // Linha 2: CNPJ
+            page.drawText('CNPJ:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(cnpj, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
+
+            // Linha 3: Data de Emissão
+            page.drawText('DATA DE EMISSÃO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(dataEmissao, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
+
+            // Linha 4: Validade
+            page.drawText('VÁLIDO ATÉ:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(dataValidade, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas; // Desce mais uma linha extra para as novas informações
+
+            // --- NOVAS LINHAS ADICIONADAS AQUI ---
+            // Linha 5: Endereço Completo
+            page.drawText('ENDEREÇO COMPLETO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(endereco.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
+
+            // Linha 6: Bairro
+            page.drawText('BAIRRO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(bairro.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
+
+            // Linha 7: CEP
+            page.drawText('CEP:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(cep, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
+
+            // Linha 8: Município / UF
+            page.drawText('MUNICÍPIO / UF:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(municipioUF.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+
+            // 6. Salva e baixa o PDF preenchido pro cliente
             const pdfBytes = await pdfDoc.save();
             download(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
 
+            // Volta o botão ao normal
             btn.innerHTML = txtOriginal;
             btn.disabled = false;
         } catch(e) {
             console.error("Erro ao gerar PDF:", e);
-            alert("Erro ao gerar o PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está salvo exatamente com esse nome e na mesma pasta do seu index.html no GitHub.");
-            const btnError = document.getElementById('btn-baixar-pdf');
-            if (btnError) {
-                btnError.innerHTML = '<i class="fas fa-file-pdf"></i> Baixar Licença Provisória';
-                btnError.disabled = false;
-            }
+            alert("Erro ao gerar o PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está na mesma pasta do seu site (index.html).");
+            document.getElementById('btn-baixar-pdf').innerHTML = '<i class="fas fa-file-pdf"></i> Baixar Licença Provisória';
+            document.getElementById('btn-baixar-pdf').disabled = false;
         }
     };
 
@@ -1602,11 +1661,13 @@
 
               alert("Sucesso! Documentos enviados para análise.");
               
-              // O REDIRECIONAMENTO PRO WHATSAPP JÁ ESTAVA AQUI - SE NÃO ABRIR O NAVEGADOR BLOQUEOU O POPUP
+              // ==============================================================================
+              // ENVIO PARA O WHATSAPP APÓS PREENCHER O FORMULÁRIO DE ANÁLISE ADICIONADO AQUI!
+              // ==============================================================================
               const msgAnalise = `*NOVA SOLICITAÇÃO DE ANÁLISE*\n\n*Empresa/Pessoa:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n*Atividade:* ${tipo}\n\nAcabei de enviar a documentação no portal e aguardo a análise para emissão da guia!`;
               const urlWhatsAnalise = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msgAnalise);
               window.open(urlWhatsAnalise, '_blank');
-              // -----------------------------------------------------------------------------------------
+              // ==============================================================================
 
               document.getElementById('form-regularizacao').reset();
               document.getElementById('area-checklist').style.display = 'none';
