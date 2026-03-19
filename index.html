@@ -1307,6 +1307,14 @@
             const nome = p.nome ? p.nome.toUpperCase() : "NÃO INFORMADO";
             const cnpj = p.cnpj || "NÃO INFORMADO";
             
+            // NOVO: Pegando os dados de endereço do formulário (com valores padrão caso estejam vazios ou o cliente tenha recarregado a página)
+            const rua = document.getElementById('end_rua').value || "Avenida Rotary";
+            const num = document.getElementById('end_num').value || "79";
+            const endereco = `${rua}, ${num}`;
+            const bairro = document.getElementById('end_bairro').value || "Serraria";
+            const cep = "09980-000"; // Valor padrão/genérico
+            const municipioUF = document.getElementById('end_cidade').value || "Diadema - SP";
+
             // 2. Define as datas (Hoje e Validade de 1 ano)
             const dataAtual = new Date();
             const dataEmissao = dataAtual.toLocaleDateString('pt-BR');
@@ -1331,7 +1339,7 @@
             // =========================================================
             const margemEsquerdaTextos = 22;  // Posição para: RAZÃO SOCIAL:, CNPJ:, etc.
             const margemEsquerdaDados = 200;  // Posição para: PADARIA SAO PAULO, 09.244..., etc.
-            let alturaAtual = 544;           // Altura que o texto vai começar (vai descendo)
+            let alturaAtual = 544;            // Altura que o texto vai começar (vai descendo)
             const espacoEntreLinhas = 11;    // Distância de uma linha para a de baixo
             const tamanhoLetra = 10;         // Tamanho da fonte
 
@@ -1353,6 +1361,27 @@
             // Linha 4: Validade
             page.drawText('VÁLIDO ATÉ:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(dataValidade, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas; // Desce mais uma linha extra para as novas informações
+
+            // --- NOVAS LINHAS ADICIONADAS AQUI ---
+            // Linha 5: Endereço Completo
+            page.drawText('ENDEREÇO COMPLETO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(endereco.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
+
+            // Linha 6: Bairro
+            page.drawText('BAIRRO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(bairro.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
+
+            // Linha 7: CEP
+            page.drawText('CEP:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(cep, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            alturaAtual -= espacoEntreLinhas;
+
+            // Linha 8: Município / UF
+            page.drawText('MUNICÍPIO / UF:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText(municipioUF.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
 
             // 6. Salva e baixa o PDF preenchido pro cliente
             const pdfBytes = await pdfDoc.save();
@@ -1368,6 +1397,7 @@
             document.getElementById('btn-baixar-pdf').disabled = false;
         }
     };
+    
     window.realizarPesquisaIA = async function() {
         const input = document.getElementById('main-search-input');
         const btn = document.getElementById('main-search-btn');
