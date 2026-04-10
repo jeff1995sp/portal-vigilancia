@@ -1187,7 +1187,7 @@
 
       const msg = `*COMPROVANTE DE PAGAMENTO*\n\n*Empresa/Pessoa:* ${nome}\n*CNPJ/CPF:* ${cnpjParaComprovante}\n*Valor da Guia (R$):* ${valorPixParaComprovante}\nEstou enviando o comprovante do pagamento para liberação da minha licença no sistema!`;
       const url = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msg);
-      window.open(url, '_blank');
+      window.location.href = url;
     };
 
     const comprimirEConverterFoto = (file) => {
@@ -1283,7 +1283,6 @@
             const nome = p.nome ? p.nome.toUpperCase() : "NÃO INFORMADO";
             const cnpj = p.cnpj || "NÃO INFORMADO";
             
-            // BUSCA O ENDEREÇO REAL NA HORA DE GERAR O PDF PARA NÃO SAIR O PADRÃO:
             let rua = "Avenida Rotary";
             let num = "79";
             let bairro = "Serraria";
@@ -1293,18 +1292,34 @@
             let cnpjLimpo = cnpj.replace(/\D/g, '');
             if (cnpjLimpo.length === 14) {
                 try {
-                    let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
-                    if (req.ok) {
-                        let dados = await req.json();
-                        if (dados.logradouro) rua = dados.logradouro;
-                        if (dados.numero) num = dados.numero;
-                        if (dados.bairro) bairro = dados.bairro;
-                        if (dados.cep) {
-                            let c = dados.cep.replace(/\D/g, '');
-                            if (c.length === 8) cep = c.substring(0,5) + '-' + c.substring(5);
-                            else cep = dados.cep;
+                    let req1 = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
+                    let dados1 = req1.ok ? await req1.json() : {};
+
+                    if (dados1.logradouro) {
+                        rua = dados1.logradouro;
+                        num = dados1.numero || "S/N";
+                        bairro = dados1.bairro || "";
+                        if (dados1.cep) {
+                            let c = dados1.cep.replace(/\D/g, '');
+                            cep = c.length === 8 ? c.substring(0,5) + '-' + c.substring(5) : dados1.cep;
                         }
-                        if (dados.municipio && dados.uf) municipioUF = `${dados.municipio} - ${dados.uf}`;
+                        if (dados1.municipio && dados1.uf) municipioUF = `${dados1.municipio} - ${dados1.uf}`;
+                    } else {
+                        let req2 = await fetch(`https://publica.cnpj.ws/cnpj/${cnpjLimpo}`);
+                        if (req2.ok) {
+                            let dados2 = await req2.json();
+                            let estab = dados2.estabelecimento;
+                            if (estab && estab.logradouro) {
+                                rua = estab.logradouro;
+                                num = estab.numero || "S/N";
+                                bairro = estab.bairro || "";
+                                if (estab.cep) {
+                                    let c = estab.cep.replace(/\D/g, '');
+                                    cep = c.length === 8 ? c.substring(0,5) + '-' + c.substring(5) : estab.cep;
+                                }
+                                if (estab.cidade && estab.estado) municipioUF = `${estab.cidade.nome} - ${estab.estado.sigla}`;
+                            }
+                        }
                     }
                 } catch(e) { console.log("Erro ao puxar endereço pro PDF", e); }
             } else if (cnpjLimpo.length === 11) {
@@ -1324,7 +1339,7 @@
             const urlArquivoMolde = 'Alvara Provisório.pdf'; 
             const existingPdfBytes = await fetch(urlArquivoMolde).then(res => res.arrayBuffer());
 
-            const { PDFDocument, rgb, StandardFonts } = window.PDFLib || PDFLib;
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
             const pdfDoc = await PDFDocument.load(existingPdfBytes);
             const page = pdfDoc.getPages()[0]; 
             
@@ -1370,14 +1385,13 @@
             page.drawText(municipioUF.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
 
             const pdfBytes = await pdfDoc.save();
-            const dl = window.download || download;
-            dl(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
+            download(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
 
             btn.innerHTML = txtOriginal;
             btn.disabled = false;
         } catch(e) {
             console.error("Erro ao gerar PDF:", e);
-            alert("Erro ao gerar o PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está na mesma pasta do seu site.");
+            alert("Erro ao gerar o PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está salvo exatamente com esse nome e na mesma pasta do seu index.html no GitHub.");
             const btnError = document.getElementById('btn-baixar-pdf');
             if (btnError) {
                 btnError.innerHTML = '<i class="fas fa-file-pdf"></i> Baixar Licença Provisória';
@@ -1594,6 +1608,138 @@
                 } catch(error) { console.log("Erro ao buscar CNPJ"); }
                 document.getElementById('loading-cnpj').style.display = 'none';
             }
+        });
+    }
+
+    const formRegularizacao = document.getElementById('form-regularizacao');
+    if (formRegularizacao) {
+        formRegularizacao.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if(!window.captchaValidado) { alert("Por favor, confirme que você não é um robô."); return; }
+
+          const btnSubmit = document.getElementById('btn-enviar-whatsapp');
+          const textoOriginal = btnSubmit.innerHTML;
+          btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando evidências... (Aguarde)';
+          btnSubmit.disabled = true;
+
+          try {
+              const todasOpcoes = document.querySelectorAll('.doc-check');
+              const marcados = []; const naoMarcados = [];
+              let erroUpload = false; let nomeDocErro = "";
+              const listaEvidencias = [];
+
+              for (const el of todasOpcoes) {
+                  if(el.checked) {
+                      marcados.push(el.value);
+                      const fileInput = el.closest('.doc-wrapper').querySelector('.file-upload input[type="file"]');
+                      const nomeDoc = el.nextElementSibling.nextElementSibling.innerText;
+                      
+                      if(fileInput && fileInput.files.length === 0) {
+                          erroUpload = true; nomeDocErro = nomeDoc;
+                      } else if (fileInput && fileInput.files.length > 0) {
+                          const arquivo = fileInput.files[0];
+                          const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+                          listaEvidencias.push({ nome: nomeDoc, url: fotoTextoBase64 });
+                      }
+                  } else { naoMarcados.push(el.value); }
+              }
+
+              if(erroUpload) {
+                  alert(`ERRO DE SEGURANÇA:\nVocê marcou que possui "${nomeDocErro}", mas não anexou a foto.\nAnexe o arquivo ou desmarque a opção.`);
+                  btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return;
+              }
+
+              if (marcados.length === 0 && todasOpcoes.length > 0) {
+                  alert("Selecione e comprove pelo menos um documento.");
+                  btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return; 
+              }
+
+              const nomePJ = document.getElementById('nome_empresa').value;
+              const nomePF = document.getElementById('nome_pf').value;
+              const nomeFantasiaPF = document.getElementById('nome_fantasia_pf').value;
+              const nomeFinal = nomePJ || (nomePF + (nomeFantasiaPF ? " (" + nomeFantasiaPF + ")" : "")) || "Cidadão";
+              const cnpj = document.getElementById('cnpj_empresa').value;
+              const tipo = document.getElementById('tipo_estab').value;
+              const docsTextAdmin = `POSSUI: ${marcados.join(", ")}\nFALTA: ${naoMarcados.join(", ")}`;
+
+              await addDoc(collection(db, "pedidos"), {
+                  nome: nomeFinal, cnpj: cnpj, tipo: tipo, docs: docsTextAdmin,
+                  evidencias: listaEvidencias, valor: null, pago: false,
+                  data: new Date().toLocaleString()
+              });
+
+              alert("Sucesso! Documentos enviados para análise.");
+              
+              const msgAnalise = `*NOVA SOLICITAÇÃO DE ANÁLISE*\n\n*Empresa/Pessoa:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n*Atividade:* ${tipo}\n\nAcabei de enviar a documentação no portal e aguardo a análise para emissão da guia!`;
+              const urlWhatsAnalise = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msgAnalise);
+              window.location.href = urlWhatsAnalise;
+
+              document.getElementById('form-regularizacao').reset();
+              document.getElementById('area-checklist').style.display = 'none';
+              document.getElementById('btn-enviar-whatsapp').style.display = 'none';
+              window.limparCamposEndereco();
+              window.alternarAba('pagamento');
+              document.getElementById('consulta_cnpj').value = cnpj;
+
+          } catch (error) {
+              console.error(error);
+              alert("Erro ao enviar. Verifique se anexou muitas fotos grandes de uma vez.");
+          } finally {
+              btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false;
+          }
+        });
+    }
+
+    const formDenuncia = document.getElementById('form-denuncia');
+    if (formDenuncia) {
+        formDenuncia.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const btnSubmit = document.getElementById('btn-submit-denuncia');
+          const textoOriginal = btnSubmit.innerHTML;
+          btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando Sigilosamente...';
+          btnSubmit.disabled = true;
+
+          try {
+              let assunto = document.getElementById('assunto').value;
+              if (assunto === 'Outros') assunto = "Outros: " + document.getElementById('resumo_outros').value;
+              const local = document.getElementById('local').value;
+              const relato = document.getElementById('relato').value;
+              const cnpj_denuncia = document.getElementById('cnpj_denuncia').value;
+              
+              const fileInputDenuncia = document.getElementById('evidencia_denuncia');
+              const listaEvidenciasDenuncia = [];
+
+              if (fileInputDenuncia.files.length > 0) {
+                  for (let i = 0; i < fileInputDenuncia.files.length; i++) {
+                      const arquivo = fileInputDenuncia.files[i];
+                      const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+                      listaEvidenciasDenuncia.push({ nome: `Evidência ${i+1}`, url: fotoTextoBase64 });
+                  }
+              }
+
+              await addDoc(collection(db, "pedidos"), {
+                  nome: "DENÚNCIA: " + assunto,
+                  cnpj: cnpj_denuncia || "Não informado",
+                  tipo: "🚨 DENÚNCIA",
+                  docs: `Local: ${local}\n\nRelato: ${relato}`,
+                  evidencias: listaEvidenciasDenuncia,
+                  valor: null,
+                  pago: false,
+                  data: new Date().toLocaleString()
+              });
+
+              alert("Denúncia registrada com sucesso! A base central de fiscalização já recebeu seu protocolo anonimamente.");
+              document.getElementById('form-denuncia').reset();
+              document.getElementById('qtd-fotos-denuncia').innerText = "";
+
+          } catch (error) {
+              console.error(error);
+              alert("Erro ao enviar a denúncia. Tente novamente.");
+          } finally {
+              btnSubmit.innerHTML = textoOriginal;
+              btnSubmit.disabled = false;
+          }
         });
     }
 
