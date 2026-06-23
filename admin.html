@@ -1498,7 +1498,7 @@
         let valNum = dados.valor ? parseFloat(dados.valor.replace(',','.')) : 0;
         if(isNaN(valNum)) valNum = 0;
 
-        if(dados.pago) { 
+        if(dados.pago === true || dados.pago === "true") { 
             countPagos++; 
         } else if(dados.valor) { 
             countAguardando++; 
@@ -1535,7 +1535,7 @@
         
         if(processo.tipo === "🚨 DENÚNCIA") { 
             classBadge = 'badge-denuncia'; txtBadge = 'DENÚNCIA'; iconeBadge = 'fa-bullhorn'; 
-        } else if(processo.pago) { 
+        } else if(processo.pago === true || processo.pago === "true") { 
             classBadge = 'badge-pago'; txtBadge = 'Aprovado'; iconeBadge = 'fa-check'; 
         } else if(processo.valor) { 
             classBadge = 'badge-aguardando'; txtBadge = 'Aguard. Pagto'; iconeBadge = 'fa-dollar-sign'; 
@@ -1582,9 +1582,9 @@
             listaFiltrada = listaFiltrada.filter(p => p.tipo === selectRamo);
         }
         if(selectStatus !== 'todos') {
-            if(selectStatus === 'pago') listaFiltrada = listaFiltrada.filter(p => p.pago === true);
-            else if(selectStatus === 'aguardando') listaFiltrada = listaFiltrada.filter(p => p.valor && p.pago === false);
-            else if(selectStatus === 'pendente') listaFiltrada = listaFiltrada.filter(p => !p.valor && p.pago === false && p.tipo !== "🚨 DENÚNCIA");
+            if(selectStatus === 'pago') listaFiltrada = listaFiltrada.filter(p => p.pago === true || p.pago === "true");
+            else if(selectStatus === 'aguardando') listaFiltrada = listaFiltrada.filter(p => p.valor && p.pago !== true && p.pago !== "true");
+            else if(selectStatus === 'pendente') listaFiltrada = listaFiltrada.filter(p => !p.valor && p.pago !== true && p.pago !== "true" && p.tipo !== "🚨 DENÚNCIA");
             else if(selectStatus === 'denuncia') listaFiltrada = listaFiltrada.filter(p => p.tipo === "🚨 DENÚNCIA");
         }
 
@@ -1599,7 +1599,7 @@
         let stringCSV = 'Data,Razao_Social,CNPJ_CPF,Ramo,Status_Sistemico,Taxa_Valor,Observacoes_Internas\n';
         
         todosProcessos.forEach(p => { 
-            let statusExport = p.pago ? 'Aprovado' : (p.valor ? 'Aguardando Pagamento' : 'Analise Pendente');
+            let statusExport = (p.pago === true || p.pago === "true") ? 'Aprovado' : (p.valor ? 'Aguardando Pagamento' : 'Analise Pendente');
             if (p.tipo === "🚨 DENÚNCIA") statusExport = 'Denúncia Externa';
             let notaLimpa = p.notas ? p.notas.replace(/(\r\n|\n|\r)/gm, " ") : "";
             stringCSV += `"${p.data||''}","${p.nome}","${p.cnpj}","${p.tipo}","${statusExport}","${p.valor||'0'}","${notaLimpa}"\n`; 
@@ -1762,7 +1762,8 @@
           document.getElementById('evidence-title').innerText = `Evidências Fotográficas (${totalDeArquivos} arquivos anexados)`;
 
           document.getElementById("modal-valor-input").value = dadosDoCliente.valor || "";
-          let selectStatus = dadosDoCliente.pago ? "pago" : (dadosDoCliente.valor ? "aguardando" : "pendente");
+          let isPago = (dadosDoCliente.pago === true || dadosDoCliente.pago === "true");
+          let selectStatus = isPago ? "pago" : (dadosDoCliente.valor ? "aguardando" : "pendente");
           document.getElementById("modal-status-select").value = selectStatus;
           document.getElementById("modal-notas-input").value = dadosDoCliente.notas || "";
           
