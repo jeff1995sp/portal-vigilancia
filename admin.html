@@ -559,10 +559,10 @@
                   <tr>
                     <th width="30%">Identificação da Empresa</th>
                     <th width="15%">Ramo / Risco</th>
-                    <th width="15%">Data Entrada</th>
+                    <th width="15%">Data / Protocolo</th>
                     <th width="15%">Status Atual</th>
-                    <th width="10%">Taxa Base</th>
-                    <th width="15%">Ação de Auditoria</th>
+                    <th width="10%" style="text-align: right; padding-right: 40px;">Taxa Base</th>
+                    <th width="15%" style="text-align: center;">Ação de Auditoria</th>
                   </tr>
                 </thead>
                 <tbody id="tabela-corpo-full"></tbody>
@@ -1522,48 +1522,72 @@
     window.renderizarTabelas = (arrayDeDados) => {
       const tbFull = document.getElementById("tabela-corpo-full");
       if(!tbFull) return;
-      
+
       tbFull.innerHTML = "";
 
-      if(arrayDeDados.length === 0) { 
-          tbFull.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:50px; font-size: 1.2rem; color: var(--text-muted);">Nenhum registro encontrado com estes filtros.</td></tr>'; 
-          return; 
+      if(arrayDeDados.length === 0) {
+          tbFull.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:50px; font-size: 1.2rem; color: var(--text-muted);">Nenhum registro encontrado com estes filtros.</td></tr>';
+          return;
       }
 
       arrayDeDados.forEach((processo, index) => {
         let classBadge = 'badge-pendente', txtBadge = 'Análise Pendente', iconeBadge = 'fa-clock';
-        
-        if(processo.tipo === "🚨 DENÚNCIA") { 
-            classBadge = 'badge-denuncia'; txtBadge = 'DENÚNCIA'; iconeBadge = 'fa-bullhorn'; 
-        } else if(processo.pago === true || processo.pago === "true") { 
-            classBadge = 'badge-pago'; txtBadge = 'Aprovado'; iconeBadge = 'fa-check'; 
-        } else if(processo.valor) { 
-            classBadge = 'badge-aguardando'; txtBadge = 'Aguard. Pagto'; iconeBadge = 'fa-dollar-sign'; 
+
+        if(processo.tipo === "🚨 DENÚNCIA") {
+            classBadge = 'badge-denuncia'; txtBadge = 'DENÚNCIA'; iconeBadge = 'fa-bullhorn';
+        } else if(processo.pago === true || processo.pago === "true") {
+            classBadge = 'badge-pago'; txtBadge = 'Aprovado'; iconeBadge = 'fa-check';
+        } else if(processo.valor) {
+            classBadge = 'badge-aguardando'; txtBadge = 'Aguard. Pagto'; iconeBadge = 'fa-dollar-sign';
         }
 
         let letraInicial = processo.nome ? processo.nome.charAt(0).toUpperCase() : 'C';
         let corDestaqueDenuncia = processo.tipo === "🚨 DENÚNCIA" ? 'color: var(--danger); font-weight: 900;' : '';
+
+        // Calcula a quantidade de documentos enviados
+        let numDocs = (processo.evidencias ? processo.evidencias.length : 0) + (processo.documento_assinado ? 1 : 0);
+        let docBadge = numDocs > 0 ? `<span style="font-size:0.75rem; background:rgba(56, 189, 248, 0.1); color:var(--accent); padding:3px 8px; border-radius:4px; border: 1px solid rgba(56, 189, 248, 0.2); margin-left:10px;"><i class="fas fa-paperclip"></i> ${numDocs} Anexo(s)</span>` : '';
+
+        let dataFormatada = processo.data ? processo.data.split(',')[0] : 'Hoje';
+        let idCurto = processo.id ? processo.id.substring(0, 7).toUpperCase() : 'NO-ID';
 
         let htmlColunaBase = `
           <td>
             <div class="td-empresa">
               <div class="td-empresa-icon">${letraInicial}</div>
               <div class="td-empresa-info">
-                <strong style="${corDestaqueDenuncia}">${processo.nome}</strong>
-                <span>${processo.cnpj}</span>
+                <strong style="${corDestaqueDenuncia} font-size: 1.15rem;">${processo.nome} ${docBadge}</strong>
+                <span style="font-family: var(--font-code); color: var(--text-muted);"><i class="fas fa-id-card"></i> ${processo.cnpj}</span>
               </div>
             </div>
           </td>
-          <td><span style="background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:6px; font-size:0.85rem; border:1px solid var(--border); font-weight: bold;">${processo.tipo}</span></td>
-          <td><span style="color:var(--text-muted); font-size:0.9rem; font-weight: 600;">${processo.data ? processo.data.split(',')[0] : 'Hoje'}</span></td>
+          <td>
+             <span style="background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:6px; font-size:0.85rem; border:1px solid var(--border); font-weight: bold;">
+               ${processo.tipo}
+             </span>
+          </td>
+          <td>
+             <div style="display: flex; flex-direction: column; gap: 4px;">
+               <span style="color:var(--text-light); font-size:0.95rem; font-weight: 700;"><i class="fas fa-calendar-alt" style="color: var(--text-muted);"></i> ${dataFormatada}</span>
+               <span style="font-size:0.75rem; font-family: var(--font-code); color:var(--primary);">#${idCurto}</span>
+             </div>
+          </td>
           <td><span class="status-badge ${classBadge}"><i class="fas ${iconeBadge}"></i> ${txtBadge}</span></td>
         `;
-        
-        let trCompleta = document.createElement("tr"); 
+
+        let trCompleta = document.createElement("tr");
         trCompleta.innerHTML = htmlColunaBase + `
-            <td><strong style="color:var(--primary); font-size: 1.2rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
-            <td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:auto; padding:0 20px; background:var(--primary); color:white;"><i class="fas fa-search-plus"></i> Auditar Processo</button></td>
-        `; 
+            <td style="text-align: right;">
+               <strong style="color:var(--primary); font-size: 1.15rem; font-family: var(--font-code); background: var(--bg-body); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);">
+                 ${processo.valor ? 'R$ ' + processo.valor : '--'}
+               </strong>
+            </td>
+            <td style="text-align: center;">
+               <button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width: 100%; border-radius: 8px; font-size: 0.95rem; font-weight: 800; background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid var(--primary); transition: 0.3s;" onmouseover="this.style.background='var(--primary)'; this.style.color='white';" onmouseout="this.style.background='rgba(59, 130, 246, 0.1)'; this.style.color='var(--primary)';">
+                 <i class="fas fa-microscope" style="margin-right: 5px;"></i> Auditar
+               </button>
+            </td>
+        `;
         tbFull.appendChild(trCompleta);
       });
     }
