@@ -203,6 +203,13 @@
     .mini-info-box h5 { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
     .mini-info-box p { color: var(--text-light); font-size: 1.05rem; margin:0; line-height: 1.6; }
 
+    /* NOVOS ESTILOS: Divisórias de Data e Bloco de Horário */
+    .date-separator { background: rgba(59, 130, 246, 0.1); color: var(--accent); padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; border-left: 3px solid var(--primary); display: inline-flex; align-items: center; gap: 10px; margin-top: 20px; margin-bottom: 5px; box-shadow: var(--shadow-sm); }
+    .date-separator.old { background: rgba(255,255,255,0.03); color: var(--text-muted); border-color: var(--text-muted); }
+    .date-block { display: flex; flex-direction: column; gap: 4px; }
+    .date-block .date { font-weight: 700; color: white; font-size: 0.95rem; }
+    .date-block .time { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-code); }
+
     /* Resto do CSS Original Abaixo... */
 
     .chat-container { display: flex; flex-direction: column; height: 700px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); }
@@ -585,9 +592,9 @@
               <table>
                 <thead>
                   <tr>
-                    <th width="35%">Identificação da Empresa</th>
+                    <th width="32%">Identificação da Empresa</th>
                     <th width="15%">Ramo / Risco</th>
-                    <th width="15%">Data Entrada</th>
+                    <th width="18%">Data e Horário</th>
                     <th width="15%">Status Atual</th>
                     <th width="10%">Taxa Base</th>
                     <th width="10%" style="text-align: right;">Ações</th>
@@ -1005,7 +1012,7 @@
     let isRadarScanning = false;
     let radarNextPageToken = "";
 
-    // LISTA COMPLETA DOS 645 MUNICÍPIOS DE SP AGRUPADOS POR LETRA INICIAL
+    // LISTA OFICIAL E COMPLETA DE TODOS OS 645 MUNICÍPIOS DE SP (IBGE)
     const cidadesSP = {
         'A': ["Adamantina", "Adolfo", "Aguaí", "Águas da Prata", "Águas de Lindóia", "Águas de Santa Bárbara", "Águas de São Pedro", "Agudos", "Alambari", "Alfredo Marcondes", "Altair", "Altinópolis", "Alto Alegre", "Alumínio", "Álvares Florence", "Álvares Machado", "Álvaro de Carvalho", "Alvinlândia", "Americana", "Américo Brasiliense", "Américo de Campos", "Amparo", "Analândia", "Andradina", "Angatuba", "Anhembi", "Anhumas", "Aparecida", "Aparecida d'Oeste", "Apiaí", "Araçariguama", "Araçatuba", "Araçoiaba da Serra", "Aramina", "Arandu", "Arapeí", "Araraquara", "Araras", "Arco-Íris", "Arealva", "Areias", "Areiópolis", "Ariranha", "Artur Nogueira", "Arujá", "Aspásia", "Assis", "Atibaia", "Auriflama", "Avaí", "Avanhandava", "Avaré"],
         'B': ["Bady Bassitt", "Balbinos", "Bálsamo", "Bananal", "Barão de Antonina", "Barbosa", "Bariri", "Barra Bonita", "Barra do Chapéu", "Barra do Turvo", "Barretos", "Barrinha", "Barueri", "Bastos", "Batatais", "Bauru", "Bebedouro", "Bento de Abreu", "Bernardino de Campos", "Bertioga", "Bilac", "Birigui", "Biritiba-Mirim", "Boa Esperança do Sul", "Bocaina", "Bofete", "Boituva", "Bom Jesus dos Perdões", "Bom Sucesso de Itararé", "Borá", "Boracéia", "Borborema", "Borebi", "Botucatu", "Bragança Paulista", "Braúna", "Brejo Alegre", "Brodowski", "Brotas", "Buri", "Buritama", "Buritizal"],
@@ -1015,7 +1022,7 @@
         'F': ["Fartura", "Fernando Prestes", "Fernandópolis", "Fernão", "Ferraz de Vasconcelos", "Flora Rica", "Floreal", "Flórida Paulista", "Florínia", "Franca", "Francisco Morato", "Franco da Rocha"],
         'G': ["Gabriel Monteiro", "Gália", "Garça", "Gastão Vidigal", "Gavião Peixoto", "General Salgado", "Getulina", "Glicério", "Guaiçara", "Guaimbê", "Guaíra", "Guapiaçu", "Guapiara", "Guará", "Guaraçaí", "Guaraci", "Guarani d'Oeste", "Guarantã", "Guararapes", "Guararema", "Guaratinguetá", "Guareí", "Guariba", "Guarujá", "Guarulhos", "Guatapará", "Guzolândia"],
         'H': ["Herculândia", "Holambra", "Hortolândia"],
-        'I': ["Iacanga", "Iacri", "Iaras", "Ibaté", "Ibirá", "Ibirarema", "Ibitinga", "Ibiúna", "Icém", "Iepê", "Igaraçu do Tietê", "Igarapava", "Igaratá", "Iguape", "Ilhabela", "Ilha Comprida", "Ilha Solteira", "Indaiatuba", "Indiana", "Indiaporã", "Inúbia Paulista", "Ipaussu", "Iperó", "Ipeúna", "Ipiguá", "Iporanga", "Ipuã", "Iracemápolis", "Irapuã", "Irapuru", "Itaberá", "Itaí", "Itajobi", "Itaju", "Itanhaém", "Itaóca", "Itapecerica da Serra", "Itapetininga", "Itapeva", "Itapevi", "Itapira", "Itapirapuã Paulista", "Itápolis", "Itaporanga", "Itapuí", "Itapura", "Itaquaquecetuba", "Itararé", "Itariri", "Itatiba", "Itatinga", "Itatinga", "Itirapina", "Itirapuã", "Itobi", "Itu", "Itupeva", "Ituverava"],
+        'I': ["Iacanga", "Iacri", "Iaras", "Ibaté", "Ibirá", "Ibirarema", "Ibitinga", "Ibiúna", "Icém", "Iepê", "Igaraçu do Tietê", "Igarapava", "Igaratá", "Iguape", "Ilhabela", "Ilha Comprida", "Ilha Solteira", "Indaiatuba", "Indiana", "Indiaporã", "Inúbia Paulista", "Ipaussu", "Iperó", "Ipeúna", "Ipiguá", "Iporanga", "Ipuã", "Iracemápolis", "Irapuã", "Irapuru", "Itaberá", "Itaí", "Itajobi", "Itaju", "Itanhaém", "Itaóca", "Itapecerica da Serra", "Itapetininga", "Itapeva", "Itapevi", "Itapira", "Itapirapuã Paulista", "Itápolis", "Itaporanga", "Itapuí", "Itapura", "Itaquaquecetuba", "Itararé", "Itariri", "Itatiba", "Itatinga", "Itirapina", "Itirapuã", "Itobi", "Itu", "Itupeva", "Ituverava"],
         'J': ["Jaborandi", "Jaboticabal", "Jacareí", "Jaci", "Jacupiranga", "Jaguariúna", "Jales", "Jambeiro", "Jandira", "Jardinópolis", "Jarinu", "Jaú", "Jeriquara", "Joanópolis", "João Ramalho", "José Bonifácio", "Júlio Mesquita", "Jumirim", "Jundiaí", "Junqueirópolis", "Juquiá", "Juquitiba"],
         'L': ["Lagoinha", "Laranjal Paulista", "Lavínia", "Lavrinhas", "Leme", "Lençóis Paulista", "Limeira", "Lindóia", "Lins", "Lorena", "Lourdes", "Louveira", "Lucélia", "Lucianópolis", "Luís Antônio", "Luiziânia", "Lupércio", "Lutécia"],
         'M': ["Macatuba", "Macaubal", "Macedônia", "Magda", "Mairinque", "Mairiporã", "Manduri", "Marabá Paulista", "Maracaí", "Marapoama", "Mariápolis", "Marília", "Marinópolis", "Martinópolis", "Matão", "Mauá", "Mendonça", "Meridiano", "Mesópolis", "Miguelópolis", "Mineiros do Tietê", "Mira Estrela", "Miracatu", "Mirandópolis", "Mirante do Paranapanema", "Mirassol", "Mirassolândia", "Mococa", "Mogi das Cruzes", "Mogi Guaçu", "Mogi Mirim", "Mombuca", "Monções", "Mongaguá", "Monte Alegre do Sul", "Monte Alto", "Monte Aprazível", "Monte Azul Paulista", "Monte Castelo", "Monte Mor", "Monteiro Lobato", "Morro Agudo", "Morungaba", "Motuca", "Murutinga do Sul"],
@@ -1024,8 +1031,8 @@
         'P': ["Pacaembu", "Palestina", "Palmares Paulista", "Palmeira d'Oeste", "Palmital", "Panorama", "Paraguaçu Paulista", "Paraibuna", "Paraíso", "Paranapanema", "Paranapuã", "Parapuã", "Pardinho", "Pariquera-Açu", "Parisi", "Patrocínio Paulista", "Paulicéia", "Paulínia", "Paulistânia", "Paulo de Faria", "Pederneiras", "Pedra Bela", "Pedranópolis", "Pedregulho", "Pedreira", "Pedrinhas Paulista", "Pedro de Toledo", "Penápolis", "Pereira Barreto", "Pereiras", "Peruíbe", "Piacatu", "Piedade", "Pilar do Sul", "Pindamonhangaba", "Pindorama", "Pinhalzinho", "Piquerobi", "Piquete", "Piracaia", "Piracicaba", "Piraju", "Pirajuí", "Pirangi", "Pirapora do Bom Jesus", "Pirapozinho", "Pirassununga", "Piratininga", "Pitangueiras", "Planalto", "Platina", "Poá", "Poloni", "Pompéia", "Pongaí", "Pontal", "Pontalinda", "Pontes Gestal", "Populina", "Porangaba", "Porto Feliz", "Porto Ferreira", "Potim", "Potirendaba", "Pracinha", "Pradópolis", "Praia Grande", "Pratânia", "Presidente Alves", "Presidente Bernardes", "Presidente Epitácio", "Presidente Prudente", "Presidente Venceslau", "Promissão"],
         'Q': ["Quadra", "Quatá", "Queiroz", "Queluz", "Quintana"],
         'R': ["Rafard", "Rancharia", "Redenção da Serra", "Regente Feijó", "Reginópolis", "Registro", "Restinga", "Ribeira", "Ribeirão Bonito", "Ribeirão Branco", "Ribeirão Corrente", "Ribeirão do Sul", "Ribeirão dos Índios", "Ribeirão Grande", "Ribeirão Pires", "Ribeirão Preto", "Rifaina", "Rincão", "Rinópolis", "Rio Claro", "Rio das Pedras", "Rio Grande da Serra", "Riolândia", "Riversul", "Rosana", "Roseira", "Rubiácea", "Rubinéia"],
-        'S': ["Sabino", "Sagres", "Sales", "Sales Oliveira", "Salesópolis", "Salmourão", "Saltinho", "Salto", "Salto de Pirapora", "Salto Grande", "Sandovalina", "Santa Adélia", "Santa Albertina", "Santa Bárbara d'Oeste", "Santa Branca", "Santa Clara d'Oeste", "Santa Cruz da Conceição", "Santa Cruz da Esperança", "Santa Cruz das Palmeiras", "Santa Cruz do Rio Pardo", "Santa Ernestina", "Santa Fé do Sul", "Santa Gertrudes", "Santa Isabel", "Santa Lúcia", "Santa Maria da Serra", "Santa Mercedes", "Santa Rita d'Oeste", "Santa Rita do Passa Quatro", "Santa Rosa de Viterbo", "Santa Salete", "Santana da Ponte Pensa", "Santana de Parnaíba", "Santo Anastácio", "Santo André", "Santo Antônio da Alegria", "Santo Antônio de Posse", "Santo Antônio do Aracanguá", "Santo Antônio do Jardim", "Santo Antônio do Pinhal", "Santo Expedito", "Santópolis do Aguapeí", "Santos", "São Bento do Sapucaí", "São Bernardo do Campo", "São Caetano do Sul", "São Carlos", "São Francisco", "São João da Boa Vista", "São João das Duas Pontes", "São João de Iracema", "São João do Pau d'Alho", "São Joaquim da Barra", "São José da Bela Vista", "São José do Barreiro", "São José do Rio Pardo", "São José do Rio Preto", "São José dos Campos", "São Lourenço da Serra", "São Luís do Paraitinga", "São Manuel", "São Miguel Arcanjo", "São Paulo", "São Pedro", "São Pedro do Turvo", "São Roque", "São Sebastião", "São Sebastião da Grama", "São Simão", "São Vicente", "Sarapuí", "Sarutaiá", "Sebastianópolis do Sul", "Serra Azul", "Serrana", "Sertãozinho", "Sete Barras", "Severínia", "Silveiras", "Socorro", "Socorro", "Sorocaba", "Sud Mennucci", "Sumaré", "Suzanápolis", "Suzano"],
-        'T': ["Tabapuã", "Tabatinga", "Taboão da Serra", "Taciba", "Taguaí", "Taiaçu", "Taiúva", "Tambaú", "Tambaú", "Tanabi", "Tapiraí", "Tapiratiba", "Taquaral", "Taquaritinga", "Taquarituba", "Taquarivaí", "Tarabai", "Tarumã", "Tatuí", "Taubaté", "Tejupá", "Teodoro Sampaio", "Terra Roxa", "Tietê", "Timburi", "Torre de Pedra", "Torrinha", "Trabiju", "Tremembé", "Três Fronteiras", "Tuiuti", "Tupã", "Tupi Paulista", "Turiúba", "Turmalina"],
+        'S': ["Sabino", "Sagres", "Sales", "Sales Oliveira", "Salesópolis", "Salmourão", "Saltinho", "Salto", "Salto de Pirapora", "Salto Grande", "Sandovalina", "Santa Adélia", "Santa Albertina", "Santa Bárbara d'Oeste", "Santa Branca", "Santa Clara d'Oeste", "Santa Cruz da Conceição", "Santa Cruz da Esperança", "Santa Cruz das Palmeiras", "Santa Cruz do Rio Pardo", "Santa Ernestina", "Santa Fé do Sul", "Santa Gertrudes", "Santa Isabel", "Santa Lúcia", "Santa Maria da Serra", "Santa Mercedes", "Santa Rita d'Oeste", "Santa Rita do Passa Quatro", "Santa Rosa de Viterbo", "Santa Salete", "Santana da Ponte Pensa", "Santana de Parnaíba", "Santo Anastácio", "Santo André", "Santo Antônio da Alegria", "Santo Antônio de Posse", "Santo Antônio do Aracanguá", "Santo Antônio do Jardim", "Santo Antônio do Pinhal", "Santo Expedito", "Santópolis do Aguapeí", "Santos", "São Bento do Sapucaí", "São Bernardo do Campo", "São Caetano do Sul", "São Carlos", "São Francisco", "São João da Boa Vista", "São João das Duas Pontes", "São João de Iracema", "São João do Pau d'Alho", "São Joaquim da Barra", "São José da Bela Vista", "São José do Barreiro", "São José do Rio Pardo", "São José do Rio Preto", "São José dos Campos", "São Lourenço da Serra", "São Luís do Paraitinga", "São Manuel", "São Miguel Arcanjo", "São Paulo", "São Pedro", "São Pedro do Turvo", "São Roque", "São Sebastião", "São Sebastião da Grama", "São Simão", "São Vicente", "Sarapuí", "Sarutaiá", "Sebastianópolis do Sul", "Serra Azul", "Serrana", "Sertãozinho", "Sete Barras", "Severínia", "Silveiras", "Socorro", "Sorocaba", "Sud Mennucci", "Sumaré", "Suzanápolis", "Suzano"],
+        'T': ["Tabapuã", "Tabatinga", "Taboão da Serra", "Taciba", "Taguaí", "Taiaçu", "Taiúva", "Tambaú", "Tanabi", "Tapiraí", "Tapiratiba", "Taquaral", "Taquaritinga", "Taquarituba", "Taquarivaí", "Tarabai", "Tarumã", "Tatuí", "Taubaté", "Tejupá", "Teodoro Sampaio", "Terra Roxa", "Tietê", "Timburi", "Torre de Pedra", "Torrinha", "Trabiju", "Tremembé", "Três Fronteiras", "Tuiuti", "Tupã", "Tupi Paulista", "Turiúba", "Turmalina"],
         'U': ["Ubarana", "Ubatuba", "Ubirajara", "Uchoa", "União Paulista", "Urânia", "Uru", "Urupês"],
         'V': ["Valentim Gentil", "Valinhos", "Valparaíso", "Vargem", "Vargem Grande do Sul", "Vargem Grande Paulista", "Várzea Paulista", "Vera Cruz", "Vinhedo", "Viradouro", "Vista Alegre do Alto", "Vitória Brasil", "Votorantim", "Votuporanga"],
         'Z': ["Zacarias"]
@@ -1507,6 +1514,24 @@
         return null;
     }
 
+    // ====== FUNÇÃO PARA PADRONIZAR E ORDENAR DATAS DO FIREBASE ======
+    function parseDateBR(dateStr) {
+        if(!dateStr) return new Date(0); // Se não tiver data, joga pro fim
+        if(dateStr.includes('T')) return new Date(dateStr); // Se já for ISO
+        
+        // Ex: "25/08/2026" ou "25/08/2026, 14:30:00"
+        let parts = dateStr.split(/[\s,]+/); 
+        let datePart = parts[0];
+        let timePart = parts[1] || "00:00:00";
+        
+        let dParts = datePart.split('/');
+        if(dParts.length === 3) {
+            // No formato YYYY-MM-DDTHH:MM
+            return new Date(`${dParts[2]}-${dParts[1]}-${dParts[0]}T${timePart}`);
+        }
+        return new Date(dateStr);
+    }
+
     const fireQuery = query(collection(db, "pedidos"), orderBy("data", "desc"));
     
     onSnapshot(fireQuery, (snapshot) => {
@@ -1544,13 +1569,12 @@
       document.getElementById("count-pago").innerText = countPagos;
       document.getElementById("count-total").innerText = snapshot.size;
       
-      renderizarTabelas(todosProcessos);
+      aplicarFiltros(); // Já filtra e renderiza ordenado
     });
 
     window.renderizarTabelas = (arrayDeDados) => {
       const tbFull = document.getElementById("tabela-corpo-full");
       if(!tbFull) return;
-      
       tbFull.innerHTML = "";
 
       if(arrayDeDados.length === 0) { 
@@ -1558,7 +1582,37 @@
           return; 
       }
 
+      // Ordena rigorosamente os dados da data mais recente para a mais antiga
+      arrayDeDados.sort((a, b) => parseDateBR(b.data) - parseDateBR(a.data));
+
+      let currentDateGroup = "";
+      let today = new Date();
+      let yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+
       arrayDeDados.forEach((processo) => {
+        
+        // Lógica de Agrupamento por Divisórias de Data
+        let procDate = parseDateBR(processo.data);
+        let groupName = "Registros Anteriores";
+        
+        if(procDate.toDateString() === today.toDateString()) groupName = "HOJE";
+        else if(procDate.toDateString() === yesterday.toDateString()) groupName = "ONTEM";
+        else if(today - procDate <= 7 * 24 * 60 * 60 * 1000) groupName = "ÚLTIMOS 7 DIAS";
+
+        if(groupName !== currentDateGroup) {
+            let trGroup = document.createElement("tr");
+            let extraClass = groupName !== "HOJE" ? "old" : "";
+            let groupIcon = groupName === "HOJE" ? "fa-calendar-day" : "fa-history";
+            trGroup.innerHTML = `<td colspan="6" style="padding: 0 30px;"><div class="date-separator ${extraClass}"><i class="fas ${groupIcon}"></i> ${groupName}</div></td>`;
+            tbFull.appendChild(trGroup);
+            currentDateGroup = groupName;
+        }
+
+        // Formatação bonita da Data para a Coluna
+        let fDate = procDate.toLocaleDateString('pt-BR', {day:'2-digit', month:'short', year:'numeric'}).replace('.','');
+        let fTime = procDate.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+        if(fTime === "00:00") fTime = "--:--"; // Caso o Firebase não tenha salvo a hora
+
         let classBadge = 'badge-pendente', txtBadge = 'Análise Pendente', iconeBadge = 'fa-clock';
         let isDenuncia = processo.tipo === "🚨 DENÚNCIA";
         let isPago = (processo.pago === true || processo.pago === "true");
@@ -1574,19 +1628,14 @@
         let letraInicial = processo.nome ? processo.nome.charAt(0).toUpperCase() : 'C';
         let rowClass = isDenuncia ? "table-row-main is-denuncia pulse-danger" : "table-row-main";
         
-        // Cores e tamanhos para a mini barra de risco baseada no status
         let riskColor = isPago ? "var(--success)" : (isDenuncia ? "var(--danger)" : "var(--warning)");
         let riskWidth = isPago ? "15%" : (isDenuncia ? "95%" : "50%");
         let riskText = isPago ? "Baixo" : (isDenuncia ? "Crítico" : "Médio");
 
-        // Cria a linha principal
         let trMain = document.createElement("tr"); 
         trMain.className = rowClass;
         trMain.onclick = (e) => {
-            // Só expande se o clique NÃO for nos botões de ação rápida
-            if(!e.target.closest('.btn-quick')) {
-                toggleRow(processo.id);
-            }
+            if(!e.target.closest('.btn-quick')) toggleRow(processo.id);
         };
 
         trMain.innerHTML = `
@@ -1605,19 +1654,22 @@
                 <div class="risk-bar-fill" style="width: ${riskWidth}; background: ${riskColor};"></div>
              </div>
           </td>
-          <td><span style="color:var(--text-muted); font-size:0.95rem; font-weight: 600;">${processo.data ? processo.data.split(',')[0] : 'Hoje'}</span></td>
+          <td>
+             <div class="date-block">
+                <span class="date">${fDate.toUpperCase()}</span>
+                <span class="time">${fTime}</span>
+             </div>
+          </td>
           <td><span class="status-badge ${classBadge}"><i class="fas ${iconeBadge}"></i> ${txtBadge}</span></td>
           <td><strong style="color:var(--primary); font-size: 1.15rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
           <td>
              <div class="quick-actions">
-                <button class="btn-quick q-success" title="Aprovar Diretamente (Em breve)" onclick="showToast('Aviso', 'Aprovação expressa em desenvolvimento.', 'warning')"><i class="fas fa-check"></i></button>
                 <button class="btn-quick q-danger" title="Solicitar Parecer IA Jurídica" onclick="abrirModal('${processo.id}')"><i class="fas fa-brain"></i></button>
                 <button class="btn-quick" title="Abrir Dossiê Completo" onclick="abrirModal('${processo.id}')"><i class="fas fa-folder-open"></i></button>
              </div>
           </td>
         `; 
         
-        // Cria a sub-linha expansível oculta
         let trExpanded = document.createElement("tr");
         trExpanded.id = "exp-" + processo.id;
         trExpanded.className = "row-expanded-content";
