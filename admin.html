@@ -121,11 +121,7 @@
     .btn-gemini:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(192, 132, 252, 0.5); }
     .btn-secondary { background: var(--bg-card); border: 1px solid var(--border-light); color: white; }
     .btn-secondary:hover { background: var(--border); border-color: var(--text-muted); }
-    .btn-icon { width: 45px; height: 45px; border-radius: var(--radius-md); border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-size: 1.2rem; color: white; }
-    .btn-icon.view { background: var(--border-light); } 
-    .btn-icon.view:hover { background: var(--primary); transform: translateY(-2px); }
-
-    /* CORREÇÃO DO DROPDOWN (Scroll e Cor) */
+    
     select.form-input { 
         appearance: auto; 
         -webkit-appearance: auto; 
@@ -153,6 +149,9 @@
     .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; display: flex; align-items: center; }
     .stat-info p { font-size: 2.5rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
 
+    /* ======================================================== */
+    /* NOVA TABELA MALHA FINA (DESIGN PREMIUM & EXPANSÍVEL)     */
+    /* ======================================================== */
     .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; margin-bottom: 50px; box-shadow: var(--shadow-md); }
     .data-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
     .data-header h2 { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 15px; margin: 0; color: white; }
@@ -161,10 +160,8 @@
     
     .table-wrapper { overflow-x: auto; width: 100%; }
     table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { background: rgba(0,0,0,0.4); padding: 20px 40px; font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 2; }
-    td { padding: 25px 40px; border-bottom: 1px solid var(--border); font-size: 1.05rem; color: var(--text-light); vertical-align: middle; }
-    tr { transition: background-color 0.2s ease; }
-    tr:hover { background: rgba(255,255,255,0.03); }
+    th { background: rgba(0,0,0,0.4); padding: 20px 30px; font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 2; }
+    td { padding: 20px 30px; border-bottom: 1px solid var(--border); font-size: 1.05rem; color: var(--text-light); vertical-align: middle; }
     
     .td-empresa { display: flex; align-items: center; gap: 18px; }
     .td-empresa-icon { width: 50px; height: 50px; background: var(--border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; font-weight: 900; }
@@ -176,6 +173,37 @@
     .badge-aguardando { background: var(--info-light); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3); }
     .badge-pago { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-denuncia { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    /* Estilos Interativos da Linha (Hover e Pulso) */
+    .table-row-main { cursor: pointer; transition: all 0.2s ease; position: relative; }
+    .table-row-main:hover { background: rgba(59, 130, 246, 0.05); }
+    .table-row-main.is-denuncia { border-left: 4px solid var(--danger); background: rgba(239, 68, 68, 0.05); }
+    .table-row-main.is-denuncia:hover { background: rgba(239, 68, 68, 0.1); }
+    .pulse-danger { animation: pulseDanger 2s infinite; }
+    @keyframes pulseDanger { 0% { box-shadow: inset 4px 0 0 var(--danger); } 50% { box-shadow: inset 4px 0 15px rgba(239,68,68,0.5); } 100% { box-shadow: inset 4px 0 0 var(--danger); } }
+    
+    /* Ações Rápidas Flutuantes */
+    .quick-actions { opacity: 0; transition: 0.3s; display: flex; gap: 8px; justify-content: flex-end; }
+    .table-row-main:hover .quick-actions { opacity: 1; }
+    .btn-quick { background: var(--bg-sidebar); border: 1px solid var(--border); color: var(--text-light); width: 40px; height: 40px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .btn-quick:hover { background: var(--primary); color: white; border-color: var(--primary); transform: scale(1.1); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
+    .btn-quick.q-danger:hover { background: var(--gemini-purple); border-color: var(--gemini-purple); box-shadow: 0 4px 10px rgba(192, 132, 252, 0.3); }
+    .btn-quick.q-success:hover { background: var(--success); border-color: var(--success); color: #000; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+
+    /* Barra de Risco na coluna */
+    .risk-bar-bg { width: 100px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 8px; }
+    .risk-bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease;}
+
+    /* Conteúdo Expansível (Sub-Row) */
+    .row-expanded-content { display: none; background: var(--bg-sidebar); border-bottom: 1px solid var(--border); padding: 0; }
+    .row-expanded-content.show { display: table-row; animation: fadeInView 0.3s ease; }
+    .expanded-inner { padding: 30px 40px; display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 25px; border-left: 4px solid var(--primary); }
+    .is-denuncia + .row-expanded-content .expanded-inner { border-left-color: var(--danger); }
+    .mini-info-box { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
+    .mini-info-box h5 { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
+    .mini-info-box p { color: var(--text-light); font-size: 1.05rem; margin:0; line-height: 1.6; }
+
+    /* Resto do CSS Original Abaixo... */
 
     .chat-container { display: flex; flex-direction: column; height: 700px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); }
     .chat-header { background: var(--bg-sidebar); padding: 25px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
@@ -494,7 +522,7 @@
                     <div class="az-bar" id="az-bar">
                         </div>
                     <select class="form-input" id="radar-cidade" style="margin-top: 10px; background: rgba(255,255,255,0.02); display: none;">
-                        <option value="">Selecione a Letra Primeiro...</option>
+                        <option value="">Selecione a Localidade...</option>
                     </select>
                 </div>
 
@@ -557,12 +585,12 @@
               <table>
                 <thead>
                   <tr>
-                    <th width="30%">Identificação da Empresa</th>
+                    <th width="35%">Identificação da Empresa</th>
                     <th width="15%">Ramo / Risco</th>
                     <th width="15%">Data Entrada</th>
                     <th width="15%">Status Atual</th>
                     <th width="10%">Taxa Base</th>
-                    <th width="15%">Ação de Auditoria</th>
+                    <th width="10%" style="text-align: right;">Ações</th>
                   </tr>
                 </thead>
                 <tbody id="tabela-corpo-full"></tbody>
@@ -1530,42 +1558,110 @@
           return; 
       }
 
-      arrayDeDados.forEach((processo, index) => {
+      arrayDeDados.forEach((processo) => {
         let classBadge = 'badge-pendente', txtBadge = 'Análise Pendente', iconeBadge = 'fa-clock';
+        let isDenuncia = processo.tipo === "🚨 DENÚNCIA";
+        let isPago = (processo.pago === true || processo.pago === "true");
         
-        if(processo.tipo === "🚨 DENÚNCIA") { 
+        if(isDenuncia) { 
             classBadge = 'badge-denuncia'; txtBadge = 'DENÚNCIA'; iconeBadge = 'fa-bullhorn'; 
-        } else if(processo.pago === true || processo.pago === "true") { 
+        } else if(isPago) { 
             classBadge = 'badge-pago'; txtBadge = 'Aprovado'; iconeBadge = 'fa-check'; 
         } else if(processo.valor) { 
-            classBadge = 'badge-aguardando'; txtBadge = 'Aguard. Pagto'; iconeBadge = 'fa-dollar-sign'; 
+            classBadge = 'badge-aguardando'; txtBadge = 'Aguard. Pix'; iconeBadge = 'fa-dollar-sign'; 
         }
 
         let letraInicial = processo.nome ? processo.nome.charAt(0).toUpperCase() : 'C';
-        let corDestaqueDenuncia = processo.tipo === "🚨 DENÚNCIA" ? 'color: var(--danger); font-weight: 900;' : '';
+        let rowClass = isDenuncia ? "table-row-main is-denuncia pulse-danger" : "table-row-main";
+        
+        // Cores e tamanhos para a mini barra de risco baseada no status
+        let riskColor = isPago ? "var(--success)" : (isDenuncia ? "var(--danger)" : "var(--warning)");
+        let riskWidth = isPago ? "15%" : (isDenuncia ? "95%" : "50%");
+        let riskText = isPago ? "Baixo" : (isDenuncia ? "Crítico" : "Médio");
 
-        let htmlColunaBase = `
+        // Cria a linha principal
+        let trMain = document.createElement("tr"); 
+        trMain.className = rowClass;
+        trMain.onclick = (e) => {
+            // Só expande se o clique NÃO for nos botões de ação rápida
+            if(!e.target.closest('.btn-quick')) {
+                toggleRow(processo.id);
+            }
+        };
+
+        trMain.innerHTML = `
           <td>
             <div class="td-empresa">
-              <div class="td-empresa-icon">${letraInicial}</div>
+              <div class="td-empresa-icon" style="${isDenuncia ? 'background: var(--danger); color: white;' : ''}">${letraInicial}</div>
               <div class="td-empresa-info">
-                <strong style="${corDestaqueDenuncia}">${processo.nome}</strong>
+                <strong style="${isDenuncia ? 'color: #fca5a5;' : 'color: white;'}">${processo.nome}</strong>
                 <span>${processo.cnpj}</span>
               </div>
             </div>
           </td>
-          <td><span style="background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:6px; font-size:0.85rem; border:1px solid var(--border); font-weight: bold;">${processo.tipo}</span></td>
-          <td><span style="color:var(--text-muted); font-size:0.9rem; font-weight: 600;">${processo.data ? processo.data.split(',')[0] : 'Hoje'}</span></td>
+          <td>
+             <span style="font-size:0.85rem; font-weight: 800; color: ${riskColor}; text-transform: uppercase;">${processo.tipo}</span>
+             <div class="risk-bar-bg" title="Risco ${riskText}">
+                <div class="risk-bar-fill" style="width: ${riskWidth}; background: ${riskColor};"></div>
+             </div>
+          </td>
+          <td><span style="color:var(--text-muted); font-size:0.95rem; font-weight: 600;">${processo.data ? processo.data.split(',')[0] : 'Hoje'}</span></td>
           <td><span class="status-badge ${classBadge}"><i class="fas ${iconeBadge}"></i> ${txtBadge}</span></td>
-        `;
-        
-        let trCompleta = document.createElement("tr"); 
-        trCompleta.innerHTML = htmlColunaBase + `
-            <td><strong style="color:var(--primary); font-size: 1.2rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
-            <td><button class="btn-icon view" onclick="abrirModal('${processo.id}')" style="width:auto; padding:0 20px; background:var(--primary); color:white;"><i class="fas fa-search-plus"></i> Auditar Processo</button></td>
+          <td><strong style="color:var(--primary); font-size: 1.15rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
+          <td>
+             <div class="quick-actions">
+                <button class="btn-quick q-success" title="Aprovar Diretamente (Em breve)" onclick="showToast('Aviso', 'Aprovação expressa em desenvolvimento.', 'warning')"><i class="fas fa-check"></i></button>
+                <button class="btn-quick q-danger" title="Solicitar Parecer IA Jurídica" onclick="abrirModal('${processo.id}')"><i class="fas fa-brain"></i></button>
+                <button class="btn-quick" title="Abrir Dossiê Completo" onclick="abrirModal('${processo.id}')"><i class="fas fa-folder-open"></i></button>
+             </div>
+          </td>
         `; 
-        tbFull.appendChild(trCompleta);
+        
+        // Cria a sub-linha expansível oculta
+        let trExpanded = document.createElement("tr");
+        trExpanded.id = "exp-" + processo.id;
+        trExpanded.className = "row-expanded-content";
+        
+        let notaLimpa = processo.notas ? processo.notas : "Nenhuma anotação privada registrada pelo auditor.";
+        let docsLimpos = processo.docs ? processo.docs : "Nenhum relato descrito no preenchimento.";
+        
+        trExpanded.innerHTML = `
+          <td colspan="6">
+            <div class="expanded-inner">
+                <div class="mini-info-box">
+                    <h5><i class="fas fa-user-secret"></i> Bloco de Notas do Auditor (Privado)</h5>
+                    <p style="font-style: italic; color: #cbd5e1;">"${notaLimpa}"</p>
+                </div>
+                <div class="mini-info-box">
+                    <h5><i class="fas fa-file-alt"></i> Declaração / Relato do Requerente</h5>
+                    <p>${docsLimpos.substring(0, 200)}${docsLimpos.length > 200 ? '...' : ''}</p>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
+                    <button class="btn btn-primary" style="padding: 12px 20px; font-size: 0.95rem; width: 100%;" onclick="abrirModal('${processo.id}')"><i class="fas fa-search-plus"></i> Expandir Dossiê Oficial</button>
+                </div>
+            </div>
+          </td>
+        `;
+
+        tbFull.appendChild(trMain);
+        tbFull.appendChild(trExpanded);
       });
+    }
+
+    // Lógica para Expandir/Recolher as linhas da tabela
+    window.toggleRow = (id) => {
+        const rowToToggle = document.getElementById("exp-" + id);
+        const isCurrentlyOpen = rowToToggle.classList.contains('show');
+
+        // Fecha todas as outras que estiverem abertas
+        document.querySelectorAll('.row-expanded-content.show').forEach(el => {
+            el.classList.remove('show');
+        });
+
+        // Se a clicada não estava aberta, abre agora
+        if(!isCurrentlyOpen) {
+            rowToToggle.classList.add('show');
+        }
     }
 
     window.aplicarFiltros = () => {
