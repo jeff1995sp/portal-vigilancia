@@ -149,9 +149,6 @@
     .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 800; display: flex; align-items: center; }
     .stat-info p { font-size: 2.5rem; font-weight: 900; color: white; margin: 0; line-height: 1; letter-spacing: -1px;}
 
-    /* ======================================================== */
-    /* NOVA TABELA MALHA FINA (DESIGN PREMIUM & EXPANSÍVEL)     */
-    /* ======================================================== */
     .data-section { background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; margin-bottom: 50px; box-shadow: var(--shadow-md); }
     .data-header { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
     .data-header h2 { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 15px; margin: 0; color: white; }
@@ -174,7 +171,6 @@
     .badge-pago { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-denuncia { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
-    /* Estilos Interativos da Linha (Hover e Pulso) */
     .table-row-main { cursor: pointer; transition: all 0.2s ease; position: relative; }
     .table-row-main:hover { background: rgba(59, 130, 246, 0.05); }
     .table-row-main.is-denuncia { border-left: 4px solid var(--danger); background: rgba(239, 68, 68, 0.05); }
@@ -182,7 +178,6 @@
     .pulse-danger { animation: pulseDanger 2s infinite; }
     @keyframes pulseDanger { 0% { box-shadow: inset 4px 0 0 var(--danger); } 50% { box-shadow: inset 4px 0 15px rgba(239,68,68,0.5); } 100% { box-shadow: inset 4px 0 0 var(--danger); } }
     
-    /* Ações Rápidas Flutuantes */
     .quick-actions { opacity: 0; transition: 0.3s; display: flex; gap: 8px; justify-content: flex-end; }
     .table-row-main:hover .quick-actions { opacity: 1; }
     .btn-quick { background: var(--bg-sidebar); border: 1px solid var(--border); color: var(--text-light); width: 40px; height: 40px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
@@ -190,11 +185,9 @@
     .btn-quick.q-danger:hover { background: var(--gemini-purple); border-color: var(--gemini-purple); box-shadow: 0 4px 10px rgba(192, 132, 252, 0.3); }
     .btn-quick.q-success:hover { background: var(--success); border-color: var(--success); color: #000; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
 
-    /* Barra de Risco na coluna */
     .risk-bar-bg { width: 100px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 8px; }
     .risk-bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease;}
 
-    /* Conteúdo Expansível (Sub-Row) */
     .row-expanded-content { display: none; background: var(--bg-sidebar); border-bottom: 1px solid var(--border); padding: 0; }
     .row-expanded-content.show { display: table-row; animation: fadeInView 0.3s ease; }
     .expanded-inner { padding: 30px 40px; display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 25px; border-left: 4px solid var(--primary); }
@@ -203,14 +196,11 @@
     .mini-info-box h5 { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
     .mini-info-box p { color: var(--text-light); font-size: 1.05rem; margin:0; line-height: 1.6; }
 
-    /* NOVOS ESTILOS: Divisórias de Data e Bloco de Horário */
     .date-separator { background: rgba(59, 130, 246, 0.1); color: var(--accent); padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; border-left: 3px solid var(--primary); display: inline-flex; align-items: center; gap: 10px; margin-top: 20px; margin-bottom: 5px; box-shadow: var(--shadow-sm); }
     .date-separator.old { background: rgba(255,255,255,0.03); color: var(--text-muted); border-color: var(--text-muted); }
     .date-block { display: flex; flex-direction: column; gap: 4px; }
     .date-block .date { font-weight: 700; color: white; font-size: 0.95rem; }
     .date-block .time { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-code); }
-
-    /* Resto do CSS Original Abaixo... */
 
     .chat-container { display: flex; flex-direction: column; height: 700px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); }
     .chat-header { background: var(--bg-sidebar); padding: 25px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
@@ -411,6 +401,50 @@
     .action-type { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid var(--warning); }
     .action-click { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid var(--success); }
     .action-alert { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
+
+    /* ======================================================== */
+    /* RESPONSIVIDADE MOBILE (CELULAR) - NOVO                   */
+    /* ======================================================== */
+    @media (max-width: 768px) {
+      body { overflow-y: auto; overflow-x: hidden; height: auto; }
+      #app-container { flex-direction: column; height: auto; overflow: visible; }
+      .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+      .sidebar-header { padding: 20px; justify-content: center; }
+      .nav-menu { flex-direction: row; overflow-x: auto; padding: 10px; gap: 10px; -webkit-overflow-scrolling: touch; }
+      .nav-item { padding: 12px 15px; white-space: nowrap; font-size: 0.95rem; }
+      .sidebar-footer { display: none; }
+      .main-content { overflow: visible; height: auto; }
+      header.topbar { flex-direction: column; padding: 20px; gap: 20px; align-items: stretch; }
+      .search-bar { width: 100%; }
+      .user-profile { justify-content: flex-end; }
+      .view-container { padding: 15px; }
+      .page-title { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .page-title h1 { font-size: 1.8rem; }
+      .filters-row { flex-direction: column; gap: 15px; padding: 20px; }
+      .radar-container { grid-template-columns: 1fr; padding: 20px; min-height: auto; }
+      .target-console { border-right: none; border-bottom: 1px solid #1e293b; padding-right: 0; padding-bottom: 30px; }
+      .radar-display-area { flex-direction: column; padding-top: 20px; }
+      .radar-circle-wrap { width: 250px; height: 250px; }
+      .lab-container { grid-template-columns: 1fr; height: auto; }
+      .info-grid { grid-template-columns: 1fr; }
+      .modal-box { max-height: none; min-height: 100vh; border-radius: 0; margin: 0; border: none; }
+      .modal-overlay { padding: 0; align-items: flex-start; overflow-y: auto; }
+      .modal-header { flex-direction: column; align-items: flex-start; gap: 15px; padding: 20px; position: relative; }
+      .modal-header .btn-close { position: absolute; top: 15px; right: 15px; }
+      .modal-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .modal-footer { flex-direction: column; gap: 15px; padding: 20px; }
+      .modal-footer button { width: 100%; justify-content: center; }
+      .chat-input-row { flex-direction: column; }
+      .chat-input-row select, .chat-input-row input { width: 100%; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .data-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .chat-container { height: 600px; }
+      .chat-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .chat-header > div:last-child { width: 100%; text-align: left; }
+      .chat-header select { width: 100% !important; }
+      .expanded-inner { grid-template-columns: 1fr; }
+      .table-wrapper { overflow-x: auto; }
+    }
   </style>
 </head>
 <body>
@@ -816,9 +850,13 @@
 
   <div class="modal-overlay" id="modalDetalhes">
     <div class="modal-box">
+      <!-- O BOTÃO DE EXCLUIR O CASO NO DOSSIÊ FOI ADICIONADO AQUI -->
       <div class="modal-header">
         <h3><i class="fas fa-folder-open" style="color: var(--primary);"></i> Dossiê de Investigação Digital</h3>
-        <div class="protocol-id">Protocolo ID: <span id="modal-id-text" style="color: white; font-weight: bold;">...</span></div>
+        <div style="display: flex; gap: 10px; align-items: center; margin-right: 40px;">
+            <div class="protocol-id">Protocolo ID: <span id="modal-id-text" style="color: white; font-weight: bold;">...</span></div>
+            <button class="btn-quick" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); width: 38px; height: 38px;" onclick="deletarProcessoAtual()" title="Excluir Caso Definitivamente"><i class="fas fa-times"></i></button>
+        </div>
         <button class="btn-close" onclick="fecharModal()"><i class="fas fa-times"></i></button>
       </div>
       
@@ -1638,6 +1676,7 @@
             if(!e.target.closest('.btn-quick')) toggleRow(processo.id);
         };
 
+        // O BOTÃO DE EXCLUIR O CASO NA TABELA FOI ADICIONADO AQUI
         trMain.innerHTML = `
           <td>
             <div class="td-empresa">
@@ -1666,6 +1705,7 @@
              <div class="quick-actions">
                 <button class="btn-quick q-danger" title="Solicitar Parecer IA Jurídica" onclick="abrirModal('${processo.id}')"><i class="fas fa-brain"></i></button>
                 <button class="btn-quick" title="Abrir Dossiê Completo" onclick="abrirModal('${processo.id}')"><i class="fas fa-folder-open"></i></button>
+                <button class="btn-quick" style="color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1);" title="Excluir Caso Definitivamente" onclick="event.stopPropagation(); idProcessoAtual = '${processo.id}'; deletarProcessoAtual();"><i class="fas fa-times"></i></button>
              </div>
           </td>
         `; 
