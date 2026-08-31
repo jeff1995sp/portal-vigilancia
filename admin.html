@@ -1676,7 +1676,7 @@
             if(!e.target.closest('.btn-quick')) toggleRow(processo.id);
         };
 
-        // O BOTÃO DE EXCLUIR O CASO NA TABELA FOI ADICIONADO AQUI
+        // O BOTÃO DE EXCLUIR O CASO NA TABELA AGORA DELETA IMEDIATAMENTE (SEM CONFIRM)
         trMain.innerHTML = `
           <td>
             <div class="td-empresa">
@@ -1705,7 +1705,7 @@
              <div class="quick-actions">
                 <button class="btn-quick q-danger" title="Solicitar Parecer IA Jurídica" onclick="abrirModal('${processo.id}')"><i class="fas fa-brain"></i></button>
                 <button class="btn-quick" title="Abrir Dossiê Completo" onclick="abrirModal('${processo.id}')"><i class="fas fa-folder-open"></i></button>
-                <button class="btn-quick" style="color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1);" title="Excluir Caso Definitivamente" onclick="event.stopPropagation(); idProcessoAtual = '${processo.id}'; deletarProcessoAtual();"><i class="fas fa-times"></i></button>
+                <button class="btn-quick" style="color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1);" title="Excluir Imediatamente" onclick="event.stopPropagation(); deletarDiretoDaTabela('${processo.id}');"><i class="fas fa-times"></i></button>
              </div>
           </td>
         `; 
@@ -2214,6 +2214,17 @@
         showToast('Base Limpa', 'O dossiê foi erradicado do sistema.', 'success');
         registrarLog("Destruição de Dossiê", `O documento mestre do processo ID: ${idProcessoAtual.substring(0,8)} foi apagado.`, "ERRO");
         fecharModal();
+      }
+    };
+    
+    // NOVA FUNÇÃO: Deleta imediatamente da tabela sem exibir o prompt de confirmação ("já aperta e apaga")
+    window.deletarDiretoDaTabela = async (idDoProcesso) => {
+      try {
+        await deleteDoc(doc(db, "pedidos", idDoProcesso));
+        showToast('Caso Apagado', 'O processo foi removido do painel.', 'success');
+        registrarLog("Exclusão Rápida", `O processo ID: ${idDoProcesso.substring(0,8)} foi apagado diretamente pela tabela.`, "ERRO");
+      } catch (e) {
+        showToast('Erro', 'Não foi possível apagar.', 'error');
       }
     };
 
