@@ -1133,8 +1133,8 @@
           <div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;">
             <label class="doc-item"><input type="checkbox" class="doc-check" value="${valor}" onchange="window.toggleUpload(this)"/><i class="fas ${icone}"></i><span>${titulo}</span></label>
             <div class="file-upload" style="display:none;">
-              <p style="font-size:0.75rem; color:#666; margin-bottom:5px;">Anexe a foto do documento (Câmera ou Galeria):</p>
-              <input type="file" class="form-control" style="padding: 6px; font-size: 0.75rem; border: 1px dashed var(--gov-blue); background: #f8fafc;" accept="image/*">
+              <p style="font-size:0.75rem; color:#666; margin-bottom:5px;">Anexar foto ou PDF:</p>
+              <input type="file" class="form-control" style="padding: 6px; font-size: 0.75rem; border: 1px dashed var(--gov-blue); background: #f8fafc;" accept="application/pdf, image/*" multiple>
             </div>
           </div>
         `;
