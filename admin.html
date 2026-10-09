@@ -296,6 +296,19 @@
     @keyframes toastSlideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes toastFadeOut { to { opacity: 0; transform: translateX(120%); } }
 
+    .lab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: calc(100vh - 250px); }
+    .lab-upload-box { background: var(--bg-card); border: 2px dashed var(--border-light); border-radius: var(--radius-xl); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; transition: 0.3s; position: relative; cursor: pointer; }
+    .lab-upload-box:hover { border-color: var(--gemini-purple); background: rgba(192, 132, 252, 0.05); }
+    .lab-upload-box i.icon-big { font-size: 4rem; color: var(--text-muted); margin-bottom: 20px; transition: 0.3s; }
+    .lab-upload-box:hover i.icon-big { color: var(--gemini-purple); transform: scale(1.1); }
+    .lab-preview-area { width: 100%; height: 300px; margin-top: 20px; border-radius: var(--radius-md); overflow: hidden; display: none; background: #000; border: 1px solid var(--border); position: relative;}
+    .lab-preview-area img, .lab-preview-area video { width: 100%; height: 100%; object-fit: contain; }
+    .lab-btn-close-preview { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+    
+    .lab-result-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 40px; overflow-y: auto; box-shadow: var(--shadow-md); }
+    .lab-result-content { font-size: 1.1rem; line-height: 1.7; color: var(--text-light); }
+    .lab-loader { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 20px; }
+
     .triagem-box { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); padding: 20px; border-radius: var(--radius-md); margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
     .triagem-box.risk { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
     .triagem-box i { font-size: 2.5rem; color: var(--primary); }
@@ -308,6 +321,71 @@
     .preview-item img, .preview-item video { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
     .btn-remove-attachment { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.5rem; padding: 5px; }
 
+    /* ======================================================== */
+    /* CSS RADAR AÉREO HUD E OSINT                              */
+    /* ======================================================== */
+    .radar-container {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 30px;
+        background: #02040a;
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border);
+        box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+        padding: 30px;
+        margin-bottom: 40px;
+        min-height: 500px;
+    }
+
+    /* Console de Trava de Alvo (Esquerda) */
+    .target-console { display: flex; flex-direction: column; gap: 25px; border-right: 1px solid #1e293b; padding-right: 30px; }
+    .console-step h4 { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .console-step h4 i { color: var(--primary); }
+    
+    .az-bar { display: flex; flex-wrap: wrap; gap: 5px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 1px solid #1e293b; }
+    .az-btn { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.2s; }
+    .az-btn:hover { background: rgba(59, 130, 246, 0.1); color: var(--primary); border-color: var(--primary); }
+    .az-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 0 10px rgba(37, 99, 235, 0.4); }
+
+    .threat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .threat-btn { background: rgba(255,255,255,0.02); border: 1px solid #1e293b; color: var(--text-muted); padding: 12px 10px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: 0.2s; text-align: center; }
+    .threat-btn i { font-size: 1.5rem; transition: 0.2s; }
+    .threat-btn:hover { background: rgba(255,255,255,0.05); border-color: #334155; color: white; }
+    .threat-btn.active { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); color: white; box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.2); }
+    .threat-btn.active i { color: var(--danger); transform: scale(1.1); }
+
+    .btn-scan { background: transparent; border: 2px solid var(--danger); color: var(--danger); padding: 20px; border-radius: 12px; font-weight: 900; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: auto; }
+    .btn-scan:hover:not(:disabled) { background: var(--danger); color: white; box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); }
+    .btn-scan:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Área do Radar (Direita) */
+    .radar-display-area { display: flex; gap: 30px; align-items: center; position: relative; overflow: hidden;}
+    
+    .radar-circle-wrap { width: 300px; height: 300px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .radar-circle { width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(16, 185, 129, 0.3); background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%); position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(16, 185, 129, 0.1); transition: 0.5s; }
+    .radar-circle::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(16, 185, 129, 0.2); }
+    .radar-circle::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(16, 185, 129, 0.2); }
+    
+    .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 50%; background: linear-gradient(45deg, rgba(16, 185, 129, 0.8) 0%, transparent 60%); transform-origin: top left; animation: sweep 4s linear infinite; display: none; }
+    @keyframes sweep { to { transform: rotate(360deg); } }
+    
+    /* Estado Vermelho do Radar (Encontrou alvo) */
+    .radar-circle.danger-mode { border-color: rgba(239, 68, 68, 0.5); background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%); box-shadow: 0 0 50px rgba(239, 68, 68, 0.2); }
+    .radar-circle.danger-mode::before, .radar-circle.danger-mode::after { background: rgba(239, 68, 68, 0.3); }
+    .radar-circle.danger-mode .radar-sweep { background: linear-gradient(45deg, rgba(239, 68, 68, 0.8) 0%, transparent 60%); animation: sweep 1.5s linear infinite; }
+
+    .radar-blip { position: absolute; width: 12px; height: 12px; background: var(--danger); border-radius: 50%; box-shadow: 0 0 15px var(--danger); transform: translate(-50%, -50%); animation: blipPulse 1s infinite; }
+    @keyframes blipPulse { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); } }
+
+    .osint-results-list { flex: 1; height: 400px; overflow-y: auto; padding-right: 10px; display: flex; flex-direction: column; gap: 15px; }
+    .osint-idle-msg { text-align: center; color: var(--text-muted); font-family: var(--font-code); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; gap: 15px; opacity: 0.8; background: rgba(0,0,0,0.2); border-radius: 8px;}
+
+    .target-card-hud { background: rgba(239, 68, 68, 0.05); border: 1px solid var(--danger); border-left: 4px solid var(--danger); border-radius: 8px; padding: 15px; animation: slideInRight 0.3s ease-out forwards; }
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+    .target-card-hud h4 { color: white; margin: 0 0 5px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+    .target-card-hud .loc { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-code); margin-bottom: 10px; display: block; }
+    .target-card-hud .reason { font-size: 0.9rem; line-height: 1.4; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; }
+    
     /* ======================================================== */
     /* CSS MONITOR ESPIÃO (FEED DE OPERAÇÕES)                   */
     /* ======================================================== */
@@ -325,7 +403,7 @@
     .action-alert { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
 
     /* ======================================================== */
-    /* RESPONSIVIDADE MOBILE (CELULAR)                          */
+    /* RESPONSIVIDADE MOBILE (CELULAR) - NOVO                   */
     /* ======================================================== */
     @media (max-width: 768px) {
       body { overflow-y: auto; overflow-x: hidden; height: auto; }
@@ -343,6 +421,11 @@
       .page-title { flex-direction: column; align-items: flex-start; gap: 15px; }
       .page-title h1 { font-size: 1.8rem; }
       .filters-row { flex-direction: column; gap: 15px; padding: 20px; }
+      .radar-container { grid-template-columns: 1fr; padding: 20px; min-height: auto; }
+      .target-console { border-right: none; border-bottom: 1px solid #1e293b; padding-right: 0; padding-bottom: 30px; }
+      .radar-display-area { flex-direction: column; padding-top: 20px; }
+      .radar-circle-wrap { width: 250px; height: 250px; }
+      .lab-container { grid-template-columns: 1fr; height: auto; }
       .info-grid { grid-template-columns: 1fr; }
       .modal-box { max-height: none; min-height: 100vh; border-radius: 0; margin: 0; border: none; }
       .modal-overlay { padding: 0; align-items: flex-start; overflow-y: auto; }
@@ -390,6 +473,8 @@
         <a class="nav-item active" onclick="switchView('view-processos', this)"><i class="fas fa-satellite-dish"></i> Centro de Comando</a>
         <a class="nav-item" onclick="switchView('view-financeiro', this)"><i class="fas fa-comment-dots"></i> Assistente WhatsApp</a>
         <a class="nav-item" onclick="switchView('view-trafego', this)"><i class="fas fa-eye"></i> Monitor Espião</a>
+        <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot"></i> IA Jurídica</a>
+        <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
       </nav>
       
@@ -460,6 +545,58 @@
               <div class="stat-icon"><i class="fas fa-server"></i></div>
               <div class="stat-info"><h3>Total no Servidor</h3><p id="count-total">0</p></div>
             </div>
+          </div>
+          
+          <div class="radar-container" style="grid-template-columns: 350px 1fr; margin-bottom: 50px;">
+            
+            <div class="target-console">
+                <div class="console-step">
+                    <h4><i class="fas fa-map"></i> 1. Macro-Região</h4>
+                    <select class="form-input" id="radar-estado" onchange="resetRadar()" style="background: rgba(255,255,255,0.02); font-weight: bold; border-color: #1e293b;">
+                        <option value="São Paulo (Estado Inteiro)">São Paulo (Estado Inteiro)</option>
+                        <option value="Litoral SP">Litoral Paulista</option>
+                    </select>
+                </div>
+
+                <div class="console-step">
+                    <h4><i class="fas fa-sort-alpha-down"></i> 2. Foco de Varredura</h4>
+                    <div class="az-bar" id="az-bar">
+                        </div>
+                    <select class="form-input" id="radar-cidade" style="margin-top: 10px; background: rgba(255,255,255,0.02); display: none;">
+                        <option value="">Selecione a Localidade...</option>
+                    </select>
+                </div>
+
+                <div class="console-step">
+                    <h4><i class="fas fa-crosshairs"></i> 3. Natureza da Ameaça</h4>
+                    <div class="threat-grid">
+                        <button class="threat-btn active" data-query="Restaurantes, lanchonetes, padarias, supermercados" onclick="toggleThreat(this)"><i class="fas fa-hamburger"></i> Alimentos</button>
+                        <button class="threat-btn" data-query="Farmácias e drogarias" onclick="toggleThreat(this)"><i class="fas fa-pills"></i> Insumos/Meds</button>
+                        <button class="threat-btn" data-query="Hospitais, clínicas e laboratórios" onclick="toggleThreat(this)"><i class="fas fa-hospital"></i> Serv. Saúde</button>
+                        <button class="threat-btn" data-query="Salões de beleza, estúdios de tatuagem, academias" onclick="toggleThreat(this)"><i class="fas fa-cut"></i> Interesse Saúde</button>
+                        <button class="threat-btn" data-query="Cosméticos, produtos de beleza e limpeza" onclick="toggleThreat(this)"><i class="fas fa-spray-can"></i> Cosméticos</button>
+                        <button class="threat-btn" data-query="Controle de pragas, água" onclick="toggleThreat(this)"><i class="fas fa-bug"></i> Ambiental</button>
+                    </div>
+                </div>
+
+                <button class="btn-scan" id="btn-start-radar" onclick="toggleRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura</button>
+            </div>
+
+            <div class="radar-display-area">
+                <div class="radar-circle-wrap">
+                    <div class="radar-circle" id="radar-circle-ui">
+                        <div class="radar-sweep" id="radar-sweep-ui"></div>
+                        </div>
+                </div>
+
+                <div class="osint-results-list" id="radar-results-list">
+                    <div class="osint-idle-msg" id="radar-idle-msg">
+                        <i class="fas fa-satellite" style="font-size: 3rem;"></i>
+                        <span>Aguardando Trava de Alvo e Acionamento.</span>
+                    </div>
+                </div>
+            </div>
+
           </div>
           
           <section class="data-section">
@@ -578,6 +715,92 @@
               <div style="text-align: center; color: var(--text-muted); margin-top: 50px;"><i class="fas fa-circle-notch fa-spin"></i> Monitorando toques e cliques na tela...</div>
           </div>
 
+        </div>
+
+        <div id="view-laboratorio" class="page-view">
+          <div class="page-title">
+            <div>
+              <h1><i class="fas fa-microscope" style="color: var(--gemini-purple);"></i> Laboratório Forense de Mídia</h1>
+              <p>Envie fotos ou vídeos para a IA caçar infrações, analisar Photoshop e mapear riscos.</p>
+            </div>
+          </div>
+          
+          <div class="lab-container">
+            <div class="lab-upload-box" id="lab-drop-area" onclick="document.getElementById('lab-file-input').click()">
+              <i class="fas fa-cloud-upload-alt icon-big"></i>
+              <h3 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">Solte a Foto ou Vídeo Aqui</h3>
+              <p style="color: var(--text-muted); margin-bottom: 20px;">Ou clique para procurar no seu computador (Máx 15MB)</p>
+              <button class="btn btn-gemini"><i class="fas fa-search"></i> Selecionar Arquivo</button>
+              
+              <input type="file" id="lab-file-input" style="display: none;" accept="image/*,video/*">
+              
+              <div class="lab-preview-area" id="lab-preview"></div>
+            </div>
+
+            <div class="lab-result-box">
+              <div id="lab-idle-state" style="text-align: center; color: var(--text-muted); padding-top: 50px;">
+                <i class="fas fa-robot" style="font-size: 4rem; opacity: 0.3; margin-bottom: 20px;"></i>
+                <h2>Aguardando Arquivo</h2>
+                <p>O laudo pericial detalhado aparecerá aqui.</p>
+              </div>
+
+              <div id="lab-loading-state" class="lab-loader">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 4rem; color: var(--gemini-purple);"></i>
+                <h3 style="color: white;">Dissecando frames e metadados...</h3>
+                <p style="color: var(--text-muted);">A IA está a processar a visão computacional.</p>
+              </div>
+
+              <div id="lab-final-result" style="display: none;">
+                <h3 style="color: var(--gemini-purple); font-size: 1.5rem; margin-bottom: 20px; font-weight: 900;"><i class="fas fa-file-contract"></i> Laudo Técnico Multimídia</h3>
+                <div id="lab-result-content" class="lab-result-content"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-chat" class="page-view">
+          <div class="page-title">
+            <div>
+              <h1>Consultor Jurídico e Auditor IA</h1>
+              <p>Peça para a IA analisar um protocolo da lista ou faça consultas sobre o Código Sanitário Municipal.</p>
+            </div>
+          </div>
+
+          <div class="chat-container">
+            <div class="chat-header">
+              <div class="avatar" style="width: 55px; height: 55px; font-size: 2rem;"><i class="fas fa-robot"></i></div>
+              <div style="flex: 1;">
+                <h3 style="color: white; margin: 0; font-size: 1.3rem;">Gemini Legal Assistant</h3>
+                <span id="chat-header-status" style="color: var(--success); font-size: 0.9rem; font-weight: bold;">Rede Neural Conectada</span>
+              </div>
+              <div style="text-align: right;">
+                  <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 8px;">Analisar Processo Específico:</label>
+                  <select id="chat-process-selector" class="form-input" style="width: 350px; margin: 0; font-size: 1rem; padding: 15px 20px; border-color: var(--gemini-purple);">
+                    <option value="">Geral (Falar apenas sobre Leis)</option>
+                  </select>
+              </div>
+            </div>
+            
+            <div class="chat-history" id="chat-historico">
+              <div class="chat-msg msg-ai">
+                <strong style="color:var(--gemini-purple); font-size: 1.2rem;"><i class="fas fa-robot"></i> Sistema Auditor AI:</strong><br><br>
+                Olá! Como posso te ajudar hoje? Você pode me perguntar qualquer coisa, enviar fotos/vídeos ou selecionar um processo acima para que eu possa analisá-lo com você.
+              </div>
+            </div>
+
+            <div class="chat-input-area">
+              <div id="chat-attachment-preview" class="attachment-preview-box"></div>
+              <div class="chat-input-row">
+                <button class="chat-attachment-btn" onclick="document.getElementById('chat-file-input').click()" title="Anexar foto ou vídeo curto para análise local">
+                  <i class="fas fa-paperclip"></i>
+                </button>
+                <input type="file" id="chat-file-input" style="display: none;" accept="image/*,video/*">
+
+                <input type="text" id="chat-input-text" placeholder="Escreva a sua mensagem aqui..." onkeypress="if(event.key === 'Enter') enviarChat()">
+                <button class="btn btn-gemini" onclick="enviarChat()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px;"><i class="fas fa-paper-plane"></i> Enviar</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div id="view-logs" class="page-view">
@@ -812,10 +1035,339 @@
     let todosProcessos = []; 
     const logsAuditoria = [];
     
+    let memoriaDoChat = []; 
     let memoriaDoChatZap = [];
 
+    let arquivoAnexoParaEnviar = null;
     let arquivoAnexoParaEnviarZap = null;
+    let arquivoLaboratorio = null;
     const TAMANHO_MAX_ARQUIVO_MB = 15;
+
+    // --- VARIÁVEIS DO RADAR HUD ---
+    let radarTargetArea = "São Paulo (Estado Inteiro)";
+    let radarTargetLetter = "";
+    let radarTargetCity = "";
+    let isRadarScanning = false;
+    let radarNextPageToken = "";
+
+    // LISTA OFICIAL E COMPLETA DE TODOS OS 645 MUNICÍPIOS DE SP (IBGE)
+    const cidadesSP = {
+        'A': ["Adamantina", "Adolfo", "Aguaí", "Águas da Prata", "Águas de Lindóia", "Águas de Santa Bárbara", "Águas de São Pedro", "Agudos", "Alambari", "Alfredo Marcondes", "Altair", "Altinópolis", "Alto Alegre", "Alumínio", "Álvares Florence", "Álvares Machado", "Álvaro de Carvalho", "Alvinlândia", "Americana", "Américo Brasiliense", "Américo de Campos", "Amparo", "Analândia", "Andradina", "Angatuba", "Anhembi", "Anhumas", "Aparecida", "Aparecida d'Oeste", "Apiaí", "Araçariguama", "Araçatuba", "Araçoiaba da Serra", "Aramina", "Arandu", "Arapeí", "Araraquara", "Araras", "Arco-Íris", "Arealva", "Areias", "Areiópolis", "Ariranha", "Artur Nogueira", "Arujá", "Aspásia", "Assis", "Atibaia", "Auriflama", "Avaí", "Avanhandava", "Avaré"],
+        'B': ["Bady Bassitt", "Balbinos", "Bálsamo", "Bananal", "Barão de Antonina", "Barbosa", "Bariri", "Barra Bonita", "Barra do Chapéu", "Barra do Turvo", "Barretos", "Barrinha", "Barueri", "Bastos", "Batatais", "Bauru", "Bebedouro", "Bento de Abreu", "Bernardino de Campos", "Bertioga", "Bilac", "Birigui", "Biritiba-Mirim", "Boa Esperança do Sul", "Bocaina", "Bofete", "Boituva", "Bom Jesus dos Perdões", "Bom Sucesso de Itararé", "Borá", "Boracéia", "Borborema", "Borebi", "Botucatu", "Bragança Paulista", "Braúna", "Brejo Alegre", "Brodowski", "Brotas", "Buri", "Buritama", "Buritizal"],
+        'C': ["Cabrália Paulista", "Cabreúva", "Caçapava", "Cachoeira Paulista", "Caconde", "Cafelândia", "Caiabu", "Caieiras", "Caiuá", "Cajamar", "Cajati", "Cajobi", "Cajuru", "Campina do Monte Alegre", "Campinas", "Campo Limpo Paulista", "Campos do Jordão", "Campos Novos Paulista", "Cananéia", "Canas", "Cândido Mota", "Cândido Rodrigues", "Canitar", "Capão Bonito", "Capela do Alto", "Capivari", "Caraguatatuba", "Carapicuíba", "Cardoso", "Casa Branca", "Cássia dos Coqueiros", "Castilho", "Catanduva", "Catiguá", "Cedral", "Cerqueira César", "Cerquilho", "Cesário Lange", "Charqueada", "Chavantes", "Clementina", "Colina", "Colômbia", "Conchal", "Conchas", "Cordeirópolis", "Coroados", "Coronel Macedo", "Corumbataí", "Cosmópolis", "Cosmorama", "Cotia", "Cravinhos", "Cristais Paulista", "Cruzália", "Cruzeiro", "Cubatão", "Cunha"],
+        'D': ["Descalvado", "Diadema", "Dirce Reis", "Divinolândia", "Dobrada", "Dois Córregos", "Dolcinópolis", "Dourado", "Dracena", "Duartina", "Dumont"],
+        'E': ["Echaporã", "Eldorado", "Elias Fausto", "Elisiário", "Embaúba", "Embu das Artes", "Embu-Guaçu", "Emilianópolis", "Engenheiro Coelho", "Espírito Santo do Pinhal", "Espírito Santo do Turvo", "Estiva Gerbi", "Estrela d'Oeste", "Estrela do Norte", "Euclides da Cunha Paulista"],
+        'F': ["Fartura", "Fernando Prestes", "Fernandópolis", "Fernão", "Ferraz de Vasconcelos", "Flora Rica", "Floreal", "Flórida Paulista", "Florínia", "Franca", "Francisco Morato", "Franco da Rocha"],
+        'G': ["Gabriel Monteiro", "Gália", "Garça", "Gastão Vidigal", "Gavião Peixoto", "General Salgado", "Getulina", "Glicério", "Guaiçara", "Guaimbê", "Guaíra", "Guapiaçu", "Guapiara", "Guará", "Guaraçaí", "Guaraci", "Guarani d'Oeste", "Guarantã", "Guararapes", "Guararema", "Guaratinguetá", "Guareí", "Guariba", "Guarujá", "Guarulhos", "Guatapará", "Guzolândia"],
+        'H': ["Herculândia", "Holambra", "Hortolândia"],
+        'I': ["Iacanga", "Iacri", "Iaras", "Ibaté", "Ibirá", "Ibirarema", "Ibitinga", "Ibiúna", "Icém", "Iepê", "Igaraçu do Tietê", "Igarapava", "Igaratá", "Iguape", "Ilhabela", "Ilha Comprida", "Ilha Solteira", "Indaiatuba", "Indiana", "Indiaporã", "Inúbia Paulista", "Ipaussu", "Iperó", "Ipeúna", "Ipiguá", "Iporanga", "Ipuã", "Iracemápolis", "Irapuã", "Irapuru", "Itaberá", "Itaí", "Itajobi", "Itaju", "Itanhaém", "Itaóca", "Itapecerica da Serra", "Itapetininga", "Itapeva", "Itapevi", "Itapira", "Itapirapuã Paulista", "Itápolis", "Itaporanga", "Itapuí", "Itapura", "Itaquaquecetuba", "Itararé", "Itariri", "Itatiba", "Itatinga", "Itirapina", "Itirapuã", "Itobi", "Itu", "Itupeva", "Ituverava"],
+        'J': ["Jaborandi", "Jaboticabal", "Jacareí", "Jaci", "Jacupiranga", "Jaguariúna", "Jales", "Jambeiro", "Jandira", "Jardinópolis", "Jarinu", "Jaú", "Jeriquara", "Joanópolis", "João Ramalho", "José Bonifácio", "Júlio Mesquita", "Jumirim", "Jundiaí", "Junqueirópolis", "Juquiá", "Juquitiba"],
+        'L': ["Lagoinha", "Laranjal Paulista", "Lavínia", "Lavrinhas", "Leme", "Lençóis Paulista", "Limeira", "Lindóia", "Lins", "Lorena", "Lourdes", "Louveira", "Lucélia", "Lucianópolis", "Luís Antônio", "Luiziânia", "Lupércio", "Lutécia"],
+        'M': ["Macatuba", "Macaubal", "Macedônia", "Magda", "Mairinque", "Mairiporã", "Manduri", "Marabá Paulista", "Maracaí", "Marapoama", "Mariápolis", "Marília", "Marinópolis", "Martinópolis", "Matão", "Mauá", "Mendonça", "Meridiano", "Mesópolis", "Miguelópolis", "Mineiros do Tietê", "Mira Estrela", "Miracatu", "Mirandópolis", "Mirante do Paranapanema", "Mirassol", "Mirassolândia", "Mococa", "Mogi das Cruzes", "Mogi Guaçu", "Mogi Mirim", "Mombuca", "Monções", "Mongaguá", "Monte Alegre do Sul", "Monte Alto", "Monte Aprazível", "Monte Azul Paulista", "Monte Castelo", "Monte Mor", "Monteiro Lobato", "Morro Agudo", "Morungaba", "Motuca", "Murutinga do Sul"],
+        'N': ["Nantes", "Narandiba", "Natividade da Serra", "Nazaré Paulista", "Neves Paulista", "Nhandeara", "Nipoã", "Nova Aliança", "Nova Campina", "Nova Canaã Paulista", "Nova Castilho", "Nova Europa", "Nova Granada", "Nova Guataporanga", "Nova Independência", "Nova Luzitânia", "Nova Odessa", "Novais", "Novo Horizonte", "Nuporanga"],
+        'O': ["Ocauçu", "Óleo", "Olímpia", "Onda Verde", "Oriente", "Orindiúva", "Orlândia", "Osasco", "Oscar Bressane", "Osvaldo Cruz", "Ourinhos", "Ouro Verde", "Ouroeste"],
+        'P': ["Pacaembu", "Palestina", "Palmares Paulista", "Palmeira d'Oeste", "Palmital", "Panorama", "Paraguaçu Paulista", "Paraibuna", "Paraíso", "Paranapanema", "Paranapuã", "Parapuã", "Pardinho", "Pariquera-Açu", "Parisi", "Patrocínio Paulista", "Paulicéia", "Paulínia", "Paulistânia", "Paulo de Faria", "Pederneiras", "Pedra Bela", "Pedranópolis", "Pedregulho", "Pedreira", "Pedrinhas Paulista", "Pedro de Toledo", "Penápolis", "Pereira Barreto", "Pereiras", "Peruíbe", "Piacatu", "Piedade", "Pilar do Sul", "Pindamonhangaba", "Pindorama", "Pinhalzinho", "Piquerobi", "Piquete", "Piracaia", "Piracicaba", "Piraju", "Pirajuí", "Pirangi", "Pirapora do Bom Jesus", "Pirapozinho", "Pirassununga", "Piratininga", "Pitangueiras", "Planalto", "Platina", "Poá", "Poloni", "Pompéia", "Pongaí", "Pontal", "Pontalinda", "Pontes Gestal", "Populina", "Porangaba", "Porto Feliz", "Porto Ferreira", "Potim", "Potirendaba", "Pracinha", "Pradópolis", "Praia Grande", "Pratânia", "Presidente Alves", "Presidente Bernardes", "Presidente Epitácio", "Presidente Prudente", "Presidente Venceslau", "Promissão"],
+        'Q': ["Quadra", "Quatá", "Queiroz", "Queluz", "Quintana"],
+        'R': ["Rafard", "Rancharia", "Redenção da Serra", "Regente Feijó", "Reginópolis", "Registro", "Restinga", "Ribeira", "Ribeirão Bonito", "Ribeirão Branco", "Ribeirão Corrente", "Ribeirão do Sul", "Ribeirão dos Índios", "Ribeirão Grande", "Ribeirão Pires", "Ribeirão Preto", "Rifaina", "Rincão", "Rinópolis", "Rio Claro", "Rio das Pedras", "Rio Grande da Serra", "Riolândia", "Riversul", "Rosana", "Roseira", "Rubiácea", "Rubinéia"],
+        'S': ["Sabino", "Sagres", "Sales", "Sales Oliveira", "Salesópolis", "Salmourão", "Saltinho", "Salto", "Salto de Pirapora", "Salto Grande", "Sandovalina", "Santa Adélia", "Santa Albertina", "Santa Bárbara d'Oeste", "Santa Branca", "Santa Clara d'Oeste", "Santa Cruz da Conceição", "Santa Cruz da Esperança", "Santa Cruz das Palmeiras", "Santa Cruz do Rio Pardo", "Santa Ernestina", "Santa Fé do Sul", "Santa Gertrudes", "Santa Isabel", "Santa Lúcia", "Santa Maria da Serra", "Santa Mercedes", "Santa Rita d'Oeste", "Santa Rita do Passa Quatro", "Santa Rosa de Viterbo", "Santa Salete", "Santana da Ponte Pensa", "Santana de Parnaíba", "Santo Anastácio", "Santo André", "Santo Antônio da Alegria", "Santo Antônio de Posse", "Santo Antônio do Aracanguá", "Santo Antônio do Jardim", "Santo Antônio do Pinhal", "Santo Expedito", "Santópolis do Aguapeí", "Santos", "São Bento do Sapucaí", "São Bernardo do Campo", "São Caetano do Sul", "São Carlos", "São Francisco", "São João da Boa Vista", "São João das Duas Pontes", "São João de Iracema", "São João do Pau d'Alho", "São Joaquim da Barra", "São José da Bela Vista", "São José do Barreiro", "São José do Rio Pardo", "São José do Rio Preto", "São José dos Campos", "São Lourenço da Serra", "São Luís do Paraitinga", "São Manuel", "São Miguel Arcanjo", "São Paulo", "São Pedro", "São Pedro do Turvo", "São Roque", "São Sebastião", "São Sebastião da Grama", "São Simão", "São Vicente", "Sarapuí", "Sarutaiá", "Sebastianópolis do Sul", "Serra Azul", "Serrana", "Sertãozinho", "Sete Barras", "Severínia", "Silveiras", "Socorro", "Sorocaba", "Sud Mennucci", "Sumaré", "Suzanápolis", "Suzano"],
+        'T': ["Tabapuã", "Tabatinga", "Taboão da Serra", "Taciba", "Taguaí", "Taiaçu", "Taiúva", "Tambaú", "Tanabi", "Tapiraí", "Tapiratiba", "Taquaral", "Taquaritinga", "Taquarituba", "Taquarivaí", "Tarabai", "Tarumã", "Tatuí", "Taubaté", "Tejupá", "Teodoro Sampaio", "Terra Roxa", "Tietê", "Timburi", "Torre de Pedra", "Torrinha", "Trabiju", "Tremembé", "Três Fronteiras", "Tuiuti", "Tupã", "Tupi Paulista", "Turiúba", "Turmalina"],
+        'U': ["Ubarana", "Ubatuba", "Ubirajara", "Uchoa", "União Paulista", "Urânia", "Uru", "Urupês"],
+        'V': ["Valentim Gentil", "Valinhos", "Valparaíso", "Vargem", "Vargem Grande do Sul", "Vargem Grande Paulista", "Várzea Paulista", "Vera Cruz", "Vinhedo", "Viradouro", "Vista Alegre do Alto", "Vitória Brasil", "Votorantim", "Votuporanga"],
+        'Z': ["Zacarias"]
+    };
+
+    // Gera o alfabeto da barra
+    const azBar = document.getElementById('az-bar');
+    if (azBar) {
+        const alfabeto = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        alfabeto.forEach(letra => {
+            const btn = document.createElement('button');
+            btn.className = 'az-btn';
+            btn.innerText = letra;
+            btn.onclick = () => {
+                document.querySelectorAll('.az-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                radarTargetLetter = letra;
+                popularCidades(letra);
+            };
+            azBar.appendChild(btn);
+        });
+    }
+
+    function popularCidades(letra) {
+        const select = document.getElementById('radar-cidade');
+        select.style.display = 'block';
+        select.innerHTML = '<option value="">Selecione a Localidade...</option>';
+        
+        let cidadesList = cidadesSP[letra];
+        if(!cidadesList) {
+             select.innerHTML = '<option value="">Nenhuma cidade com esta letra</option>';
+             return;
+        }
+        
+        cidadesList.forEach(cid => {
+            let op = document.createElement('option');
+            op.value = cid;
+            op.innerText = cid;
+            select.appendChild(op);
+        });
+
+        select.onchange = (e) => { radarTargetCity = e.target.value; };
+    }
+
+    window.resetRadar = () => {
+        radarTargetArea = document.getElementById('radar-estado').value;
+        document.querySelectorAll('.az-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('radar-cidade').style.display = 'none';
+        radarTargetLetter = "";
+        radarTargetCity = "";
+    };
+
+    window.toggleThreat = (element) => {
+        element.classList.toggle('active');
+    };
+
+    // =================================================================================
+    // O CORAÇÃO DO RADAR: BUSCA GOOGLE MAPS + CLASSIFICAÇÃO GEMINI AO VIVO E CONTÍNUA
+    // =================================================================================
+    window.toggleRadarHUD = async () => {
+        const btn = document.getElementById('btn-start-radar');
+        const radarCircle = document.getElementById('radar-circle-ui');
+        const radarSweep = document.getElementById('radar-sweep-ui');
+        const resultsList = document.getElementById('radar-results-list');
+
+        // Se já está escaneando, o botão serve para Pausar
+        if (isRadarScanning) {
+            isRadarScanning = false;
+            btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Retomar Varredura';
+            btn.style.borderColor = 'var(--primary)';
+            btn.style.color = 'var(--primary)';
+            radarSweep.style.display = 'none';
+            return;
+        }
+
+        // Validações
+        if(!radarTargetCity) {
+            showToast("Falha na Trava", "Selecione uma Letra e uma Cidade para focar o radar.", "warning");
+            return;
+        }
+        
+        if(GOOGLE_MAPS_API_KEY === 'SUA_CHAVE_AQUI') {
+            showToast("Satélite Offline", "Insira a chave da API do Google Maps no código para o radar funcionar.", "error");
+            return;
+        }
+
+        let activeThreatsBtn = document.querySelectorAll('.threat-btn.active');
+        if(activeThreatsBtn.length === 0) {
+            showToast("Falha na Trava", "Selecione pelo menos um tipo de ameaça.", "warning");
+            return;
+        }
+
+        // Monta a string de busca unindo todos os botões ativos
+        let queries = Array.from(activeThreatsBtn).map(b => b.getAttribute('data-query')).join(' e ');
+        const buscaTermo = `${queries} em ${radarTargetCity}, ${radarTargetArea}`;
+
+        // Inicia a Varredura Contínua
+        isRadarScanning = true;
+        radarNextPageToken = ""; // Reseta a paginação para iniciar do começo
+        let totalAnalisados = 0; // Contador de locais vistos
+
+        btn.innerHTML = '<i class="fas fa-pause"></i> Pausar Satélite';
+        btn.style.borderColor = 'var(--warning)';
+        btn.style.color = 'var(--warning)';
+        radarCircle.classList.remove('danger-mode');
+        radarSweep.style.display = 'block';
+
+        if(resultsList.innerHTML.includes('Aguardando Trava')) {
+            resultsList.innerHTML = '';
+            document.querySelectorAll('.radar-blip').forEach(el => el.remove());
+        }
+
+        while (isRadarScanning) {
+            let statusMsg = document.getElementById('radar-status-msg');
+            if(!statusMsg) {
+                resultsList.insertAdjacentHTML('afterbegin', `<div id="radar-status-msg" class="osint-idle-msg" style="opacity: 0.8; margin-bottom: 15px;"><i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary);"></i><span>Iniciando varredura em lote...</span></div>`);
+                statusMsg = document.getElementById('radar-status-msg');
+            } else {
+                statusMsg.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary);"></i><span>Buscando próximo lote em ${radarTargetCity}...</span>`;
+            }
+
+            try {
+                let requestBody = {
+                    textQuery: buscaTermo,
+                    maxResultCount: 15 // Pega de 15 em 15 para não travar a IA
+                };
+                
+                // Se tiver token de próxima página, adiciona na requisição
+                if (radarNextPageToken) {
+                    requestBody.pageToken = radarNextPageToken;
+                }
+
+                // 1. Busca os locais na API do Google
+                const responsePlaces = await fetch('https://places.googleapis.com/v1/places:searchText', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+                        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.reviews,nextPageToken'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if(!responsePlaces.ok) {
+                    const erroGoogle = await responsePlaces.json();
+                    console.error("Erro Google Maps API:", erroGoogle);
+                    throw new Error(erroGoogle.error?.message || "Acesso negado aos satélites do Google. Verifique a API Key.");
+                }
+
+                const dadosGoogle = await responsePlaces.json();
+                
+                if (!dadosGoogle.places || dadosGoogle.places.length === 0) {
+                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--success);"></i><span style="color:var(--success);">Varredura profunda concluída. Sem mais alvos na região.</span>`;
+                    isRadarScanning = false;
+                    break;
+                }
+
+                // 2. Passa cada local pro Gemini avaliar
+                for (let i = 0; i < dadosGoogle.places.length; i++) {
+                    if (!isRadarScanning) break; 
+
+                    let place = dadosGoogle.places[i];
+                    let nomeReal = place.displayName?.text || "Desconhecido";
+                    let enderecoReal = place.formattedAddress;
+                    let comentariosReais = "";
+
+                    if (place.reviews && place.reviews.length > 0) {
+                        place.reviews.forEach(rev => {
+                            if (rev.text && rev.text.text) comentariosReais += `"${rev.text.text}"\n`;
+                        });
+                    } else {
+                        // NOVO: Feedback visual quando pula o local para não parecer travado
+                        statusMsg.innerHTML = `<i class="fas fa-forward" style="font-size: 1.2rem; color: var(--text-muted);"></i><span style="color:var(--text-muted);">Pulando ${nomeReal} (Local sem avaliações)</span>`;
+                        await new Promise(r => setTimeout(r, 400));
+                        continue; 
+                    }
+
+                    totalAnalisados++;
+                    statusMsg.innerHTML = `<i class="fas fa-satellite-dish fa-spin" style="font-size: 1.5rem; color: var(--warning);"></i><span>Lendo a mente de: ${nomeReal}... (Analisados: ${totalAnalisados})</span>`;
+
+                    let prompt = `Você é um radar tático da Vigilância Sanitária e do Procon caçando QUALQUER irregularidade.
+                    Leia estas avaliações reais sobre "${nomeReal}" no endereço "${enderecoReal}".
+                    
+                    Avaliações:
+                    ${comentariosReais}
+
+                    Se as avaliações forem 100% perfeitas, maravilhosas e sem NENHUMA crítica, retorne APENAS a palavra IGNORAR.
+                    MAS, se houver QUALQUER RECLAMAÇÃO (comida fria, atraso, mau atendimento, sujeira, insetos, preço errado, etc), você DEVE reportar.
+                    
+                    Retorne um JSON puro, sem crases de formatação:
+                    {
+                        "nivel": "AMARELO" ou "VERMELHO",
+                        "perigo": "Resumo da pior reclamação encontrada (máx 20 palavras)."
+                    }
+                    Use VERMELHO para risco à saúde (sujeira, bicho, comida estragada, intoxicação).
+                    Use AMARELO para má gestão (atraso, erro de pedido, comida fria, atendimento ruim).`;
+
+                    try {
+                        const respostaIA = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                        });
+                        
+                        if (!respostaIA.ok) {
+                            const errData = await respostaIA.json();
+                            if(errData.error && errData.error.code === 429) {
+                                throw new Error("Limite da IA atingido! O plano gratuito bloqueou temporariamente.");
+                            }
+                            throw new Error("Erro na IA: " + (errData.error?.message || "Desconhecido"));
+                        }
+
+                        const dataIA = await respostaIA.json();
+                        let resposta = dataIA.candidates[0].content.parts[0].text.trim();
+
+                        if (!resposta.includes("IGNORAR")) {
+                            let textoLimpo = resposta.replace(/```json/g, '').replace(/```/g, '').trim();
+                            let resultado = JSON.parse(textoLimpo);
+
+                            let color = resultado.nivel === 'AMARELO' ? 'var(--warning)' : 'var(--danger)';
+                            let bgClass = resultado.nivel === 'AMARELO' ? 'rgba(245, 158, 11, 0.05)' : 'rgba(239, 68, 68, 0.05)';
+
+                            if(!radarCircle.classList.contains('danger-mode')) {
+                                radarCircle.classList.add('danger-mode');
+                            }
+                            
+                            radarCircle.style.borderColor = color;
+                            radarCircle.style.background = `radial-gradient(circle, ${bgClass} 0%, transparent 70%)`;
+
+                            let blip = document.createElement('div');
+                            blip.className = 'radar-blip';
+                            blip.style.background = color;
+                            blip.style.boxShadow = `0 0 15px ${color}`;
+                            blip.style.top = `${Math.floor(Math.random() * 60) + 20}%`;
+                            blip.style.left = `${Math.floor(Math.random() * 60) + 20}%`;
+                            radarCircle.appendChild(blip);
+
+                            let divTarget = document.createElement('div');
+                            divTarget.className = 'target-card-hud';
+                            divTarget.style.borderColor = color;
+                            divTarget.style.borderLeftColor = color;
+                            divTarget.style.background = bgClass;
+                            divTarget.innerHTML = `
+                                <h4 style="color:white;"><i class="fas fa-crosshairs" style="color:${color}"></i> ${nomeReal} <span style="background:${color}; color:#000; padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-left:10px;">${resultado.nivel}</span></h4>
+                                <span class="loc">${enderecoReal}</span>
+                                <div class="reason" style="color: ${resultado.nivel === 'AMARELO' ? '#fcd34d' : '#fca5a5'};"><strong>RELATO INTERCEPTADO:</strong> ${resultado.perigo}</div>
+                            `;
+                            statusMsg.insertAdjacentElement('afterend', divTarget);
+                            
+                            await new Promise(r => setTimeout(r, 1000));
+                        }
+
+                    } catch (iaErr) {
+                        console.error("Erro no Gemini para este alvo", iaErr);
+                        statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size: 1.2rem; color: var(--warning);"></i><span style="color:var(--warning);">${iaErr.message}</span>`;
+                        
+                        if(iaErr.message.includes('Limite')) {
+                            isRadarScanning = false;
+                            break;
+                        }
+                        await new Promise(r => setTimeout(r, 2000));
+                    }
+                } // Fim do For
+
+                if (!isRadarScanning) break;
+
+                radarNextPageToken = dadosGoogle.nextPageToken;
+                
+                if (!radarNextPageToken) {
+                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--success);"></i><span style="color:var(--success);">Varredura profunda concluída. Sem mais dados nesta cidade.</span>`;
+                    isRadarScanning = false;
+                    break;
+                } else if (isRadarScanning) {
+                    statusMsg.innerHTML = `<i class="fas fa-sync fa-spin" style="font-size: 1.5rem; color: var(--info);"></i><span>Carregando novos satélites (Próxima Página)...</span>`;
+                    // O Google exige aguardar uns segundos antes de usar o nextPageToken
+                    await new Promise(r => setTimeout(r, 3500));
+                }
+
+            } catch (error) {
+                console.error("Falha no Radar HUD:", error);
+                statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; color: var(--danger);"></i><span style="color:var(--danger)">Erro Maps: ${error.message}</span>`;
+                isRadarScanning = false;
+            }
+        } // Fim do While
+
+        btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura';
+        btn.style.borderColor = 'var(--danger)';
+        btn.style.color = 'var(--danger)';
+        radarSweep.style.display = 'none';
+        
+        setTimeout(() => {
+            document.querySelectorAll('.radar-blip').forEach(el => el.remove());
+            document.getElementById('radar-circle-ui').classList.remove('danger-mode');
+            document.getElementById('radar-circle-ui').style.borderColor = 'rgba(16, 185, 129, 0.3)';
+            document.getElementById('radar-circle-ui').style.background = 'radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%)';
+        }, 5000);
+    };
 
     function converterArquivoParaBase64(file) {
       return new Promise((resolve, reject) => {
@@ -826,7 +1378,7 @@
       });
     }
 
-    function configurarInputArquivo(inputId, previewId, btnRemoveFuncStr, tipoChat = 'normal') {
+    function configurarInputArquivo(inputId, previewId, btnRemoveFuncStr, flagLab, tipoChat = 'normal') {
       const el = document.getElementById(inputId);
       if(!el) return;
       el.addEventListener('change', function(e) {
@@ -838,32 +1390,48 @@
           e.target.value = ''; return;
         }
         
-        if (tipoChat === 'zap') {
-            arquivoAnexoParaEnviarZap = file;
-        } 
-        
-        const previewArea = document.getElementById(previewId);
-        previewArea.innerHTML = '';
-        const item = document.createElement('div');
-        item.className = 'preview-item';
-        item.style.display = 'flex'; item.style.alignItems = 'center'; item.style.gap = '15px'; item.style.width = '100%';
-        if (file.type.startsWith('image/')) {
-            const img = document.createElement('img'); img.src = URL.createObjectURL(file); item.appendChild(img);
-        } else if (file.type.startsWith('video/')) {
-            const video = document.createElement('video'); video.src = URL.createObjectURL(file); item.appendChild(video);
+        if(flagLab) {
+            arquivoLaboratorio = file;
+            iniciarAnaliseLaboratorioForense(); 
+        } else {
+            if (tipoChat === 'zap') {
+                arquivoAnexoParaEnviarZap = file;
+            } else {
+                arquivoAnexoParaEnviar = file;
+            }
+            const previewArea = document.getElementById(previewId);
+            previewArea.innerHTML = '';
+            const item = document.createElement('div');
+            item.className = 'preview-item';
+            item.style.display = 'flex'; item.style.alignItems = 'center'; item.style.gap = '15px'; item.style.width = '100%';
+            if (file.type.startsWith('image/')) {
+              const img = document.createElement('img'); img.src = URL.createObjectURL(file); item.appendChild(img);
+            } else if (file.type.startsWith('video/')) {
+              const video = document.createElement('video'); video.src = URL.createObjectURL(file); item.appendChild(video);
+            }
+            item.innerHTML += `
+              <div style="flex:1"><strong>${file.name}</strong><br><span style="font-size:0.8rem; color:var(--text-muted)">${tamanhoMB.toFixed(2)} MB</span></div>
+              <button class="btn-remove-attachment" onclick="${btnRemoveFuncStr}()"><i class="fas fa-times-circle"></i></button>
+            `;
+            previewArea.appendChild(item);
+            previewArea.style.display = 'flex';
         }
-        item.innerHTML += `
-            <div style="flex:1"><strong>${file.name}</strong><br><span style="font-size:0.8rem; color:var(--text-muted)">${tamanhoMB.toFixed(2)} MB</span></div>
-            <button class="btn-remove-attachment" onclick="${btnRemoveFuncStr}()"><i class="fas fa-times-circle"></i></button>
-        `;
-        previewArea.appendChild(item);
-        previewArea.style.display = 'flex';
       });
     }
     
-    configurarInputArquivo('zap-file-input', 'zap-attachment-preview', 'removerAnexoZap', 'zap');
+    configurarInputArquivo('chat-file-input', 'chat-attachment-preview', 'removerAnexoChat', false, 'normal');
+    configurarInputArquivo('zap-file-input', 'zap-attachment-preview', 'removerAnexoZap', false, 'zap');
+    configurarInputArquivo('lab-file-input', 'lab-preview', 'fecharPreviewLab', true, 'lab');
 
+    window.removerAnexoChat = () => { arquivoAnexoParaEnviar = null; document.getElementById('chat-file-input').value = ''; document.getElementById('chat-attachment-preview').style.display = 'none'; }
     window.removerAnexoZap = () => { arquivoAnexoParaEnviarZap = null; document.getElementById('zap-file-input').value = ''; document.getElementById('zap-attachment-preview').style.display = 'none'; }
+    
+    window.fecharPreviewLab = () => {
+        arquivoLaboratorio = null; document.getElementById('lab-file-input').value = '';
+        document.getElementById('lab-preview').style.display = 'none'; document.getElementById('lab-drop-area').style.display = 'flex';
+        document.getElementById('lab-idle-state').style.display = 'block'; document.getElementById('lab-loading-state').style.display = 'none';
+        document.getElementById('lab-final-result').style.display = 'none';
+    }
 
     function registrarLog(acaoRealizada, detalhesTecnicos, nivel = "INFO") {
         const log = { dataHora: new Date().toLocaleString(), acao: acaoRealizada, detalhes: detalhesTecnicos, nivel };
@@ -1007,6 +1575,11 @@
     onSnapshot(fireQuery, (snapshot) => {
       todosProcessos = []; 
       let countPendentes = 0, countAguardando = 0, countPagos = 0; 
+      
+      const chatSelect = document.getElementById('chat-process-selector');
+      if(chatSelect) {
+          chatSelect.innerHTML = '<option value="">Geral (Falar apenas sobre Leis)</option>';
+      }
 
       snapshot.forEach((docSnap) => {
         const dados = docSnap.data(); 
@@ -1022,6 +1595,10 @@
             countAguardando++; 
         } else {
             countPendentes++;
+        }
+
+        if(chatSelect && dados.nome) {
+            chatSelect.innerHTML += `<option value="${dados.id}">${dados.nome} (${dados.cnpj})</option>`;
         }
       });
       
@@ -1605,7 +2182,7 @@
       if(!idProcessoAtual) return;
       const botaoDeSalvar = document.getElementById('btn-salvar-modal');
       const textOriginalBotao = botaoDeSalvar.innerHTML;
-      botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+      botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sincronizando BD Central...';
       
       let valorInputado = document.getElementById("modal-valor-input").value; 
       let statusSelecionado = document.getElementById("modal-status-select").value; 
@@ -1616,89 +2193,16 @@
       if(statusSelecionado === "pendente") valorInputado = null; 
 
       try {
-        let updateData = { 
+        await updateDoc(doc(db, "pedidos", idProcessoAtual), { 
             valor: valorInputado, 
             pago: flagPago, 
             notas: notasDigitadas 
-        };
-
-        // GERAÇÃO DE PIX OFICIAL (PRODUÇÃO)
-        if (statusSelecionado === "aguardando" && valorInputado) {
-            botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A gerar Pix Oficial...';
-            
-            let valorLimpo = parseFloat(valorInputado.replace('R$', '').replace(/\s/g, '').replace(',', '.'));
-            
-            // Tratamento rigoroso do CPF/CNPJ exigido pelas APIs bancárias
-            let documentoCliente = (dadosProcessoAtual.cnpj || "").replace(/\D/g, '');
-            if (documentoCliente.length !== 11 && documentCliente.length !== 14) {
-                showToast("Documento Inválido", "O processo não tem um CPF/CNPJ válido para emitir o Pix.", "error");
-                botaoDeSalvar.innerHTML = textOriginalBotao; 
-                return;
-            }
-
-            const corpoRequisicao = {
-                amount: valorLimpo,
-                description: `Taxa Vigilancia - Prot: ${idProcessoAtual.substring(0,8)}`,
-                payerName: (dadosProcessoAtual.nome || "Contribuinte").substring(0, 50),
-                payerDocument: documentoCliente
-            };
-
-            const ELITEPAY_CLIENT_ID = "ep_be70f2f62f4114906ea2e6d828f0a4dc";
-            const ELITEPAY_CLIENT_SECRET = "eps_747a2b33ed923f3b3a65afc22d07575ba34417193de94244d5dd151c2be68cdd";
-            
-            try {
-                // Rota de Produção com Bypass de CORS para Front-End
-                const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent("https://api.elitepaybr.com/api/v1/deposit");
-                
-                const response = await fetch(proxyUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-client-id': ELITEPAY_CLIENT_ID,
-                        'x-client-secret': ELITEPAY_CLIENT_SECRET
-                    },
-                    body: JSON.stringify(corpoRequisicao)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Erro na Gateway HTTP ${response.status}`);
-                }
-
-                const dataElitePay = await response.json();
-                
-                if (dataElitePay.success) {
-                    updateData.pix_copia_cola = dataElitePay.copyPaste;
-                    updateData.pix_qr_code_base64 = dataElitePay.qrcodeUrl.replace('data:image/png;base64,', '').replace('base64:', ''); // Handling both potential formats
-                    updateData.transaction_id_gateway = dataElitePay.transactionId;
-                } else {
-                    showToast("Pix Recusado", "A ElitePay rejeitou a geração (verifique se o CPF é real).", "warning");
-                    botaoDeSalvar.innerHTML = textOriginalBotao;
-                    return;
-                }
-            } catch (errApi) {
-                console.error("Falha na API de Pagamento:", errApi);
-                showToast('Erro de Conexão', 'O servidor da ElitePay bloqueou o pedido ou está indisponível.', 'error');
-                botaoDeSalvar.innerHTML = textOriginalBotao;
-                return; 
-            }
-        } else if (statusSelecionado === "pendente" || statusSelecionado === "pago") {
-            // Limpa o Pix se a licença for aprovada ou bloqueada
-            updateData.pix_copia_cola = null;
-            updateData.pix_qr_code_base64 = null;
-            updateData.transaction_id_gateway = null;
-        }
-
-        // Gravação final na base de dados
-        await updateDoc(doc(db, "pedidos", idProcessoAtual), updateData);
-        
-        showToast('Veredicto Finalizado', 'A base de dados foi atualizada com sucesso.', 'success');
-        registrarLog("Veredicto Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
+        });
+        showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase.', 'success');
+        registrarLog("Veredito Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
         fecharModal();
-        
       } catch (erroDeRede) { 
-        showToast('Falha Crítica', 'Acesso negado à base de dados na nuvem.', 'error'); 
-        console.error(erroDeRede);
-      } finally {
+        showToast('Falha Crítica', 'Acesso negado no banco de dados da nuvem.', 'error'); 
         botaoDeSalvar.innerHTML = textOriginalBotao; 
       } 
     };
@@ -1723,6 +2227,51 @@
         showToast('Erro', 'Não foi possível apagar.', 'error');
       }
     };
+
+    window.iniciarAnaliseLaboratorioForense = async () => {
+        if (!arquivoLaboratorio) return;
+
+        const previewArea = document.getElementById('lab-preview');
+        previewArea.innerHTML = `<img src="${URL.createObjectURL(arquivoLaboratorio)}"><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+        
+        document.getElementById('lab-drop-area').style.display = 'block';
+        previewArea.style.display = 'block';
+        
+        document.getElementById('lab-idle-state').style.display = 'none';
+        document.getElementById('lab-final-result').style.display = 'none';
+        document.getElementById('lab-loading-state').style.display = 'flex';
+
+        let promptFinal = `Você é um Perito Forense da Vigilância Sanitária. Analise a mídia anexada e retorne um Laudo Técnico Oficial.
+        Procure por:
+        1. Problemas de Higiene e Estrutura (RDC 216).
+        2. Indícios de manipulação ou fraude digital (Photoshop).
+        3. Análise do ambiente para verificar se condiz com local comercial.
+        Formate a resposta em HTML (use <b> para negrito e <br> para quebras). Não use asteriscos markdown.`;
+
+        let pacoteDeEnvio = [{ text: promptFinal }];
+
+        try {
+            const dadosMdia = await converterArquivoParaBase64(arquivoLaboratorio);
+            pacoteDeEnvio.push({ inline_data: dadosMdia });
+
+            const envioApi = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: pacoteDeEnvio }] })
+            });
+            
+            if(!envioApi.ok) throw new Error("Falha na API do Google");
+            
+            const respostaCompleta = await envioApi.json(); 
+            document.getElementById('lab-loading-state').style.display = 'none';
+            document.getElementById('lab-final-result').style.display = 'block';
+            document.getElementById('lab-result-content').innerHTML = respostaCompleta.candidates[0].content.parts[0].text;
+
+            registrarLog("Laboratório de Mídia", `Arquivo local processado (${arquivoLaboratorio.name}).`);
+        } catch(e) {
+            document.getElementById('lab-loading-state').style.display = 'none';
+            document.getElementById('lab-final-result').style.display = 'block';
+            document.getElementById('lab-result-content').innerHTML = `<div style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Falha: ${e.message}</div>`;
+        }
+    }
 
     window.enviarChatZap = async () => {
         const campoDeTexto = document.getElementById('zap-input-text'); 
@@ -1819,6 +2368,100 @@
             areaHistorico.scrollTop = areaHistorico.scrollHeight;
         } finally {
             removerAnexoZap();
+        }
+    }
+
+    window.enviarChat = async () => {
+        const campoDeTexto = document.getElementById('chat-input-text'); 
+        const perguntaDoFiscal = campoDeTexto.value.trim(); 
+        if(!perguntaDoFiscal && !arquivoAnexoParaEnviar) return;
+        
+        const areaHistorico = document.getElementById('chat-historico');
+        
+        const bolhaUser = document.createElement('div');
+        bolhaUser.className = 'chat-msg msg-user';
+        if(perguntaDoFiscal) bolhaUser.innerHTML = perguntaDoFiscal;
+
+        if (arquivoAnexoParaEnviar) {
+          if (perguntaDoFiscal) bolhaUser.innerHTML += '<br><br>';
+          if (arquivoAnexoParaEnviar.type.startsWith('image/')) bolhaUser.innerHTML += `<img src="${URL.createObjectURL(arquivoAnexoParaEnviar)}" style="max-width:100%; border-radius:8px;">`;
+          else if (arquivoAnexoParaEnviar.type.startsWith('video/')) bolhaUser.innerHTML += `<i class="fas fa-video"></i> [Vídeo Anexado: ${arquivoAnexoParaEnviar.name}]`;
+        }
+
+        areaHistorico.appendChild(bolhaUser);
+        campoDeTexto.value = ''; 
+        areaHistorico.scrollTop = areaHistorico.scrollHeight;
+        
+        const idLoaderChat = 'loader_' + Date.now(); 
+        const bolhaLoader = document.createElement('div');
+        bolhaLoader.id = idLoaderChat;
+        bolhaLoader.className = 'chat-msg msg-ai';
+        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--gemini-purple); font-size:1.5rem; margin-right: 10px;"></i> Pensando...`;
+        areaHistorico.appendChild(bolhaLoader);
+        areaHistorico.scrollTop = areaHistorico.scrollHeight;
+
+        let promptFinal = `${perguntaDoFiscal}\n\n(Instrução do sistema: Responda de forma natural. Formate em HTML básico <b> e <br>. NUNCA uses asteriscos).`;
+
+        const idProcChat = document.getElementById('chat-process-selector').value;
+        if (idProcChat && idProcChat !== "") {
+            let p = todosProcessos.find(proc => proc.id === idProcChat);
+            if(p) {
+                promptFinal = `Aqui estão os dados da empresa que analiso:\n- Empresa: ${p.nome}\n- CNPJ: ${p.cnpj}\n- Ramo: ${p.tipo}\n- Declaração: ${p.docs}\n\nA minha pergunta é: "${perguntaDoFiscal}"\n\n(Responda ajudando o usuário. Formate em HTML <b>, <br>).`;
+            }
+        }
+
+        let partesDoEnvio = [{ text: promptFinal }];
+
+        if (arquivoAnexoParaEnviar) {
+          try {
+            const dadosMdia = await converterArquivoParaBase64(arquivoAnexoParaEnviar);
+            partesDoEnvio.push({ inline_data: dadosMdia });
+          } catch (e) {
+             document.getElementById(idLoaderChat).innerHTML = "Erro ao ler arquivo."; removerAnexoChat(); return;
+          }
+        }
+
+        memoriaDoChat.push({ role: "user", parts: partesDoEnvio });
+
+        try {
+            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const envioPergunta = await fetch(url_api_gemini, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ 
+                    contents: memoriaDoChat 
+                })
+            });
+            
+            if(!envioPergunta.ok) {
+                const erroDoGoogle = await envioPergunta.json();
+                memoriaDoChat.pop();
+                throw new Error(erroDoGoogle.error?.message || "Erro desconhecido na API do Chat.");
+            }
+            
+            const respostaCompleta = await envioPergunta.json(); 
+            document.getElementById(idLoaderChat).remove(); 
+            
+            let textoDoAssistente = respostaCompleta.candidates[0].content.parts[0].text;
+            
+            memoriaDoChat.push({ role: "model", parts: [{ text: textoDoAssistente }] });
+            
+            const bolhaIA = document.createElement('div');
+            bolhaIA.className = 'chat-msg msg-ai';
+            bolhaIA.innerHTML = `<strong style="color:var(--gemini-purple); font-size: 1.1rem;"><i class="fas fa-robot"></i> Parecer Oficial Gemini:</strong><br><br>${textoDoAssistente}`;
+            areaHistorico.appendChild(bolhaIA);
+
+            areaHistorico.scrollTop = areaHistorico.scrollHeight;
+            registrarLog("Consulta Jurídica IA", "Fiscal interagiu com o Chatbot.");
+
+        } catch(erroNoChat) { 
+            console.error("Erro no Chatbot:", erroNoChat);
+            const loaderElement = document.getElementById(idLoaderChat);
+            if(loaderElement) loaderElement.remove(); 
+            areaHistorico.innerHTML += `<div class="chat-msg msg-ai" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Erro: ${erroNoChat.message}</div>`;
+            areaHistorico.scrollTop = areaHistorico.scrollHeight;
+        } finally {
+            removerAnexoChat();
         }
     }
 
@@ -2029,6 +2672,23 @@
                     arquivoAnexoParaEnviarZap = arquivoFinal;
                     renderizarPreviewColado(arquivoFinal, 'zap-attachment-preview', 'removerAnexoZap');
                     showToast("Print Anexado", "Pronto para gerar o texto do WhatsApp.", "success");
+                    
+                } else if (abaAtual.id === 'view-chat') {
+                    arquivoAnexoParaEnviar = arquivoFinal;
+                    renderizarPreviewColado(arquivoFinal, 'chat-attachment-preview', 'removerAnexoChat');
+                    showToast("Print Anexado", "Imagem pronta para a IA Jurídica.", "success");
+                    
+                } else if (abaAtual.id === 'view-laboratorio') {
+                    arquivoLaboratorio = arquivoFinal;
+                    
+                    const previewArea = document.getElementById('lab-preview');
+                    previewArea.innerHTML = `<img src="${URL.createObjectURL(arquivoFinal)}"><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+                    
+                    document.getElementById('lab-drop-area').style.display = 'block';
+                    previewArea.style.display = 'block';
+                    
+                    iniciarAnaliseLaboratorioForense();
+                    showToast("Print Anexado", "Enviando para o microscópio IA...", "success");
                 }
                 
                 e.preventDefault(); 
