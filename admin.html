@@ -1622,25 +1622,35 @@
             notas: notasDigitadas 
         };
 
-        // GERAÇÃO DE PIX
+        // GERAÇÃO DE PIX OFICIAL (PRODUÇÃO)
         if (statusSelecionado === "aguardando" && valorInputado) {
-            botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Pix...';
+            botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A gerar Pix Oficial...';
             
             let valorLimpo = parseFloat(valorInputado.replace('R$', '').replace(/\s/g, '').replace(',', '.'));
             
+            // Tratamento rigoroso do CPF/CNPJ exigido pelas APIs bancárias
+            let documentoCliente = (dadosProcessoAtual.cnpj || "").replace(/\D/g, '');
+            if (documentoCliente.length !== 11 && documentCliente.length !== 14) {
+                showToast("Documento Inválido", "O processo não tem um CPF/CNPJ válido para emitir o Pix.", "error");
+                botaoDeSalvar.innerHTML = textOriginalBotao; 
+                return;
+            }
+
             const corpoRequisicao = {
                 amount: valorLimpo,
-                description: `Taxa Vigilancia - Protocolo: ${idProcessoAtual}`,
-                payerName: (dadosProcessoAtual.nome || "Cliente").substring(0, 50),
-                payerDocument: (dadosProcessoAtual.cnpj || "00000000000").replace(/\D/g, '')
+                description: `Taxa Vigilancia - Prot: ${idProcessoAtual.substring(0,8)}`,
+                payerName: (dadosProcessoAtual.nome || "Contribuinte").substring(0, 50),
+                payerDocument: documentoCliente
             };
 
             const ELITEPAY_CLIENT_ID = "ep_be70f2f62f4114906ea2e6d828f0a4dc";
             const ELITEPAY_CLIENT_SECRET = "eps_747a2b33ed923f3b3a65afc22d07575ba34417193de94244d5dd151c2be68cdd";
             
             try {
-                // Tenta ElitePay nativamente
-                const response = await fetch("https://api.elitepaybr.com/api/v1/deposit", {
+                // Rota de Produção com Bypass de CORS para Front-End
+                const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent("https://api.elitepaybr.com/api/v1/deposit");
+                
+                const response = await fetch(proxyUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1650,41 +1660,43 @@
                     body: JSON.stringify(corpoRequisicao)
                 });
 
-                if (response.ok) {
-                    const dataElitePay = await response.json();
-                    if (dataElitePay.success) {
-                        updateData.pix_copia_cola = dataElitePay.copyPaste;
-                        updateData.pix_qr_code_base64 = dataElitePay.qrcodeUrl.replace('base64:', '');
-                        updateData.transaction_id_gateway = dataElitePay.transactionId;
-                    } else {
-                        throw new Error("Recusado pela API (CPF Inválido)");
-                    }
+                if (!response.ok) {
+                    throw new Error(`Erro na Gateway HTTP ${response.status}`);
+                }
+
+                const dataElitePay = await response.json();
+                
+                if (dataElitePay.success) {
+                    updateData.pix_copia_cola = dataElitePay.copyPaste;
+                    updateData.pix_qr_code_base64 = dataElitePay.qrcodeUrl.replace('data:image/png;base64,', '').replace('base64:', ''); // Handling both potential formats
+                    updateData.transaction_id_gateway = dataElitePay.transactionId;
                 } else {
-                    throw new Error("CORS / Bloqueio");
+                    showToast("Pix Recusado", "A ElitePay rejeitou a geração (verifique se o CPF é real).", "warning");
+                    botaoDeSalvar.innerHTML = textOriginalBotao;
+                    return;
                 }
             } catch (errApi) {
-                console.warn("A API da ElitePay falhou ou bloqueou via CORS. Gerando PIX de Teste (Simulação)...");
-                // FALLBACK: Cria um Pix simulado para o sistema não travar e atualizar o Firebase corretamente
-                updateData.pix_copia_cola = "00020126580014br.gov.bcb.pix0136PIX-FICTICIO-TESTE-SISTEMA" + Date.now();
-                updateData.pix_qr_code_base64 = ""; // Sem imagem de QR code para não quebrar a tela
-                updateData.transaction_id_gateway = "SIMULACAO_" + Date.now();
-                showToast('Aviso', 'CORS bloqueou a API de Pagamento. Um Pix simulado foi gerado para testes.', 'warning');
+                console.error("Falha na API de Pagamento:", errApi);
+                showToast('Erro de Conexão', 'O servidor da ElitePay bloqueou o pedido ou está indisponível.', 'error');
+                botaoDeSalvar.innerHTML = textOriginalBotao;
+                return; 
             }
         } else if (statusSelecionado === "pendente" || statusSelecionado === "pago") {
-            // Se aprovou ou bloqueou, limpa o pix
+            // Limpa o Pix se a licença for aprovada ou bloqueada
             updateData.pix_copia_cola = null;
             updateData.pix_qr_code_base64 = null;
             updateData.transaction_id_gateway = null;
         }
 
-        // Salva no Firebase
+        // Gravação final na base de dados
         await updateDoc(doc(db, "pedidos", idProcessoAtual), updateData);
         
-        showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase.', 'success');
-        registrarLog("Veredito Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
+        showToast('Veredicto Finalizado', 'A base de dados foi atualizada com sucesso.', 'success');
+        registrarLog("Veredicto Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
         fecharModal();
+        
       } catch (erroDeRede) { 
-        showToast('Falha Crítica', 'Acesso negado no banco de dados da nuvem.', 'error'); 
+        showToast('Falha Crítica', 'Acesso negado à base de dados na nuvem.', 'error'); 
         console.error(erroDeRede);
       } finally {
         botaoDeSalvar.innerHTML = textOriginalBotao; 
