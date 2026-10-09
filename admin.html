@@ -2182,7 +2182,7 @@
       if(!idProcessoAtual) return;
       const botaoDeSalvar = document.getElementById('btn-salvar-modal');
       const textOriginalBotao = botaoDeSalvar.innerHTML;
-      botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sincronizando BD Central...';
+      botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
       
       let valorInputado = document.getElementById("modal-valor-input").value; 
       let statusSelecionado = document.getElementById("modal-status-select").value; 
@@ -2193,19 +2193,101 @@
       if(statusSelecionado === "pendente") valorInputado = null; 
 
       try {
-        await updateDoc(doc(db, "pedidos", idProcessoAtual), { 
+        let updateData = { 
             valor: valorInputado, 
             pago: flagPago, 
-            notas: notasDigitadas,
-            // A MÁGICA AQUI: Se for aguardando, zera o Pix para a Nuvem gerar um novo
-            pix_copia_cola: statusSelecionado === "aguardando" ? "" : null,
-            pix_qr_code_base64: statusSelecionado === "aguardando" ? "" : null
-        });
+            notas: notasDigitadas 
+        };
+
+        // INTEGRAÇÃO DIRETA COM A ELITEPAY PELO ADMIN
+        if (statusSelecionado === "aguardando" && valorInputado) {
+            botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Pix ElitePay...';
+            
+            // Pega o valor limpo (ex: "20,00" vira 20.00)
+            let valorLimpo = parseFloat(valorInputado.replace('R$', '').replace(/\s/g, '').replace(',', '.'));
+            
+            const corpoRequisicao = {
+                amount: valorLimpo,
+                description: `Taxa Vigilancia - Protocolo: ${idProcessoAtual}`,
+                payerName: (dadosProcessoAtual.nome || "Cliente").substring(0, 50),
+                payerDocument: (dadosProcessoAtual.cnpj || "00000000000").replace(/\D/g, '')
+            };
+
+            const ELITEPAY_CLIENT_ID = "ep_be70f2f62f4114906ea2e6d828f0a4dc";
+            const ELITEPAY_CLIENT_SECRET = "eps_747a2b33ed923f3b3a65afc22d07575ba34417193de94244d5dd151c2be68cdd";
+            
+            try {
+                // Tenta fazer a requisição direto para a ElitePay
+                const response = await fetch("https://api.elitepaybr.com/api/v1/deposit", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-client-id': ELITEPAY_CLIENT_ID,
+                        'x-client-secret': ELITEPAY_CLIENT_SECRET
+                    },
+                    body: JSON.stringify(corpoRequisicao)
+                });
+
+                if (response.ok) {
+                    const dataElitePay = await response.json();
+                    if (dataElitePay.success) {
+                        let base64Limpo = dataElitePay.qrcodeUrl.replace('base64:', '');
+                        updateData.pix_copia_cola = dataElitePay.copyPaste;
+                        updateData.pix_qr_code_base64 = base64Limpo;
+                        updateData.transaction_id_gateway = dataElitePay.transactionId;
+                    } else {
+                        alert("A ElitePay recusou a geração do Pix. Verifique se o valor ou CPF são válidos.");
+                    }
+                } else {
+                    console.error("Erro ElitePay HTTP:", response.status);
+                    alert("Erro ao conectar com a ElitePay. Verifique as chaves da API.");
+                }
+            } catch (errApi) {
+                console.error("CORS ou Erro na API ElitePay:", errApi);
+                
+                // FALLBACK COM CORS PROXY CASO A ELITEPAY BLOQUEIE CHAMADAS DO NAVEGADOR
+                try {
+                    const proxyUrl = "https://corsproxy.io/?https://api.elitepaybr.com/api/v1/deposit";
+                    const proxyResponse = await fetch(proxyUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-client-id': ELITEPAY_CLIENT_ID,
+                            'x-client-secret': ELITEPAY_CLIENT_SECRET
+                        },
+                        body: JSON.stringify(corpoRequisicao)
+                    });
+                    
+                    if (proxyResponse.ok) {
+                        const dataElitePayProxy = await proxyResponse.json();
+                        if (dataElitePayProxy.success) {
+                            let base64Limpo = dataElitePayProxy.qrcodeUrl.replace('base64:', '');
+                            updateData.pix_copia_cola = dataElitePayProxy.copyPaste;
+                            updateData.pix_qr_code_base64 = base64Limpo;
+                            updateData.transaction_id_gateway = dataElitePayProxy.transactionId;
+                        }
+                    }
+                } catch(eProxy) {
+                    alert("Não foi possível gerar o Pix. Verifique a sua ligação à internet ou chaves da API.");
+                }
+            }
+        } else if (statusSelecionado === "pendente" || statusSelecionado === "pago") {
+            // Se aprovou ou bloqueou, limpa o pix antigo da tela do cliente
+            updateData.pix_copia_cola = null;
+            updateData.pix_qr_code_base64 = null;
+            updateData.transaction_id_gateway = null;
+        }
+
+        // Salva tudo no Firebase (com ou sem o pix embutido)
+        await updateDoc(doc(db, "pedidos", idProcessoAtual), updateData);
+        
         showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase.', 'success');
         registrarLog("Veredito Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
         fecharModal();
       } catch (erroDeRede) { 
         showToast('Falha Crítica', 'Acesso negado no banco de dados da nuvem.', 'error'); 
+        console.error(erroDeRede);
+      } finally {
         botaoDeSalvar.innerHTML = textOriginalBotao; 
       } 
     };
