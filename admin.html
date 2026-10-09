@@ -2196,7 +2196,10 @@
         await updateDoc(doc(db, "pedidos", idProcessoAtual), { 
             valor: valorInputado, 
             pago: flagPago, 
-            notas: notasDigitadas 
+            notas: notasDigitadas,
+            // A MÁGICA AQUI: Se for aguardando, zera o Pix para a Nuvem gerar um novo
+            pix_copia_cola: statusSelecionado === "aguardando" ? "" : null,
+            pix_qr_code_base64: statusSelecionado === "aguardando" ? "" : null
         });
         showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase.', 'success');
         registrarLog("Veredito Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
