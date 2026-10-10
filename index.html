@@ -1815,17 +1815,15 @@
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
                       valorPixParaComprovante = valorFormatado;
 
-                      // --- INÍCIO DA INTEGRAÇÃO ELITEPAY ---
+                      // --- INÍCIO DA INTEGRAÇÃO ELITEPAY VIA VERCEL ---
                       document.getElementById('pix-copia-cola').value = "Gerando Pix oficial, aguarde...";
                       document.querySelector('.qr-container img').src = "https://i.gifer.com/ZKZg.gif"; 
 
                       try {
                           let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
                           
-                          // 👇👇👇 ATENÇÃO: COLE O SEU LINK DO VERCEL AQUI ABAIXO 👇👇👇
-                          const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix';
-
-                          const responsePix = await fetch(LINK_DO_VERCEL, {
+                          // CHAMANDO A API DO VERCEL QUE CRIAMOS
+                          const responsePix = await fetch('https://portal-vigilancia-one.vercel.app/api/pix', {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({
