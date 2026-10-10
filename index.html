@@ -1822,8 +1822,10 @@
                       try {
                           let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
                           
-                          // CHAMANDO A API DO VERCEL QUE CRIAMOS
-                          const responsePix = await fetch('https://portal-vigilancia-one.vercel.app/api/pix', {
+                          // 👇👇👇 ADICIONADO .js NO FINAL DA ROTA DA API 👇👇👇
+                          const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
+
+                          const responsePix = await fetch(LINK_DO_VERCEL, {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({
@@ -1850,7 +1852,7 @@
                               document.querySelector('.qr-container img').src = "imagens/pix.jpeg";
                           }
                       } catch (e) {
-                          console.error(e);
+                          console.error("ERRO DO FETCH:", e);
                           alert("Erro de comunicação com o servidor de pagamento.");
                           document.getElementById('pix-copia-cola').value = "Falha de conexão com a API.";
                           document.querySelector('.qr-container img').src = "imagens/pix.jpeg";
