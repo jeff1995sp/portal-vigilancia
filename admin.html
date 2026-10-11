@@ -962,7 +962,8 @@
               <select class="form-input" id="modal-status-select" style="font-size: 1.3rem; font-weight: 800; padding: 25px;">
                 <option value="pendente">🟠 BLOQUEAR (Análise Pendente)</option>
                 <option value="aguardando">🔵 AÇÃO: Cobrar Taxa (Aguardar Pix)</option>
-                <option value="pago">🟢 SUCESSO: Aprovar Licença</option>
+                <option value="pagamento_confirmado">🟡 AVISO: Pagamento Confirmado (Aguardando Alvará)</option>
+                <option value="pago">🟢 SUCESSO: Aprovar Licença (PDF Liberado)</option>
               </select>
             </div>
           </div>
@@ -1654,11 +1655,14 @@
         let classBadge = 'badge-pendente', txtBadge = 'Análise Pendente', iconeBadge = 'fa-clock';
         let isDenuncia = processo.tipo === "🚨 DENÚNCIA";
         let isPago = (processo.pago === true || processo.pago === "true");
+        let isAguardandoAlvara = (processo.aguardando_alvara === true || processo.aguardando_alvara === "true");
         
         if(isDenuncia) { 
             classBadge = 'badge-denuncia'; txtBadge = 'DENÚNCIA'; iconeBadge = 'fa-bullhorn'; 
         } else if(isPago) { 
             classBadge = 'badge-pago'; txtBadge = 'Aprovado'; iconeBadge = 'fa-check'; 
+        } else if(isAguardandoAlvara) {
+            classBadge = 'badge-pago'; txtBadge = 'Pago (Aguardando)'; iconeBadge = 'fa-hourglass-half';
         } else if(processo.valor) { 
             classBadge = 'badge-aguardando'; txtBadge = 'Aguard. Pix'; iconeBadge = 'fa-dollar-sign'; 
         }
@@ -1854,6 +1858,7 @@
             textoZap = `Prefeitura de São Paulo - COVISA\n*${dadosProcessoAtual.nome}*\n`;
             if(st === 'pendente') textoZap += `Aviso: Seu processo está pendente de análise.`;
             if(st === 'aguardando') textoZap += `A taxa foi emitida. Para prosseguirmos com a sua licença, por favor, realize o pagamento no site oficial.`;
+            if(st === 'pagamento_confirmado') textoZap += `Aviso: O seu pagamento foi confirmado! A sua licença está em fase de emissão. Aguarde.`;
             if(st === 'pago') textoZap += `PARABÉNS! Sua licença sanitária foi *APROVADA*.`;
         }
         document.getElementById("modal-btn-zap").href = `https://api.whatsapp.com/send?phone=55&text=${encodeURIComponent(textoZap)}`;
@@ -1950,9 +1955,17 @@
           document.getElementById('evidence-title').innerText = `Evidências Fotográficas (${totalDeArquivos} arquivos anexados)`;
 
           document.getElementById("modal-valor-input").value = dadosDoCliente.valor || "";
+          
           let isPago = (dadosDoCliente.pago === true || dadosDoCliente.pago === "true");
-          let selectStatus = isPago ? "pago" : (dadosDoCliente.valor ? "aguardando" : "pendente");
+          let isAguardandoAlvara = (dadosDoCliente.aguardando_alvara === true || dadosDoCliente.aguardando_alvara === "true");
+          
+          let selectStatus = "pendente";
+          if (isPago) selectStatus = "pago";
+          else if (isAguardandoAlvara) selectStatus = "pagamento_confirmado";
+          else if (dadosDoCliente.valor) selectStatus = "aguardando";
+          
           document.getElementById("modal-status-select").value = selectStatus;
+          
           document.getElementById("modal-notas-input").value = dadosDoCliente.notas || "";
           
           document.getElementById("modal-zap-input").value = "";
@@ -2189,13 +2202,17 @@
       let notasDigitadas = document.getElementById("modal-notas-input").value;
       
       let flagPago = false; 
+      let flagAguardandoAlvara = false;
+      
       if(statusSelecionado === "pago") flagPago = true; 
+      if(statusSelecionado === "pagamento_confirmado") flagAguardandoAlvara = true;
       if(statusSelecionado === "pendente") valorInputado = null; 
 
       try {
         await updateDoc(doc(db, "pedidos", idProcessoAtual), { 
             valor: valorInputado, 
             pago: flagPago, 
+            aguardando_alvara: flagAguardandoAlvara,
             notas: notasDigitadas 
         });
         showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase.', 'success');
