@@ -867,7 +867,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc, setDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc, setDoc, deleteDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
@@ -1773,7 +1773,7 @@
                   const pedido = snapshot.docs[0].data();
                   window.idPedidoConsultaAtual = snapshot.docs[0].id;
 
-                  if (pedido.pago === true) {
+                  if (pedido.pago === true || pedido.pago === "true") {
                       window.dadosPedidoAtual = pedido; 
 
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
@@ -1781,11 +1781,11 @@
 
                       textMsg.innerHTML = `
                           <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
-                          <strong style="font-size:1.3rem;">Taxa Regularizada!</strong><br><br>
+                          <strong style="font-size:1.3rem;">Licença Emitida!</strong><br><br>
                           Seu processo foi concluído e as pendências baixadas.
                           <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;">
                           <button id="btn-baixar-pdf" class="btn-primary" style="margin-bottom: 20px;" onclick="window.gerarPDF()">
-                              <i class="fas fa-file-pdf"></i> Baixar Licença Provisória
+                              <i class="fas fa-file-pdf"></i> Baixar Licença Definitiva
                           </button>
                           <p style="font-size:0.85rem; color:#64748b; font-weight:800; margin-bottom:10px; border-top: 1px solid #eee; padding-top: 15px;">PASSO FINAL OBRIGATÓRIO:</p>
                           <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e tire uma foto clicando no botão abaixo.</p>
@@ -1796,6 +1796,11 @@
                           <input type="file" id="upload-assinado" style="display:none;" accept="image/*" onchange="window.enviarAssinatura(this)">
                           </div>
                       `;
+                      atualizarBarraProgresso(4); 
+                  } else if (pedido.aguardando_alvara === true || pedido.aguardando_alvara === "true") {
+                      divPix.style.display = 'none'; divMsg.style.display = 'block';
+                      divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
+                      textMsg.innerHTML = '<i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px; color: #10b981;"></i><br><strong style="font-size:1.3rem;">Pagamento Confirmado!</strong><br><br>A sua taxa foi processada com sucesso.<br><div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 15px;"><i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br><strong>Aguarde a emissão da sua licença.</strong><br>O sistema está gerando o seu documento oficial, que ficará disponível nesta página em breve.</div>';
                       atualizarBarraProgresso(4); 
                   } else if (!pedido.valor) {
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
@@ -1822,7 +1827,7 @@
                       try {
                           let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
                           
-                          // 👇👇👇 ADICIONADO .js NO FINAL DA ROTA DA API 👇👇👇
+                          // CHAMANDO A API DO VERCEL QUE CRIAMOS
                           const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
 
                           const responsePix = await fetch(LINK_DO_VERCEL, {
@@ -1846,6 +1851,50 @@
                                   qrSrc = 'data:image/png;base64,' + qrSrc.replace('base64:', '');
                               }
                               document.querySelector('.qr-container img').src = qrSrc;
+
+                              // --- NOVO: ESCUTADOR EM TEMPO REAL ---
+                              const docRefAtual = doc(db, "pedidos", window.idPedidoConsultaAtual);
+                              const unsubscribePagamento = onSnapshot(docRefAtual, (docSnap) => {
+                                  if (docSnap.exists()) {
+                                      const dadosAtualizados = docSnap.data();
+                                      
+                                      if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
+                                          unsubscribePagamento(); 
+                                          
+                                          document.getElementById('resultado-pix').style.display = 'none';
+                                          document.getElementById('mensagem-status').style.display = 'block';
+                                          document.getElementById('mensagem-status').style.background = '#dcfce3';
+                                          document.getElementById('mensagem-status').style.color = '#166534';
+                                          document.getElementById('mensagem-status').style.borderColor = '#10b981';
+                                          
+                                          document.getElementById('texto-mensagem').innerHTML = `
+                                              <i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br>
+                                              <strong style="font-size:1.6rem; text-transform:uppercase;">Pagamento Autorizado!</strong><br><br>
+                                              O seu Pix foi processado e a taxa regularizada.<br><br>
+                                              <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 10px;">
+                                                  <i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br>
+                                                  <strong>Aguarde a emissão da sua licença.</strong><br>
+                                                  O documento oficial ficará disponível aqui.
+                                              </div>
+                                          `;
+                                          atualizarBarraProgresso(4);
+                                          if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                                      } else if (dadosAtualizados.pago === true || dadosAtualizados.pago === "true") {
+                                          // Mantém a escuta do botão final caso você libere o PDF direto
+                                          unsubscribePagamento();
+                                          document.getElementById('resultado-pix').style.display = 'none';
+                                          document.getElementById('mensagem-status').style.display = 'block';
+                                          document.getElementById('mensagem-status').style.background = '#dcfce3';
+                                          document.getElementById('mensagem-status').style.color = '#166534';
+                                          document.getElementById('mensagem-status').style.borderColor = '#10b981';
+                                          document.getElementById('texto-mensagem').innerHTML = '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
+                                          atualizarBarraProgresso(4);
+                                          if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                                      }
+                                  }
+                              });
+                              // --- FIM DO ESCUTADOR ---
+
                           } else {
                               alert("Erro no Gateway: " + JSON.stringify(dadosPix));
                               document.getElementById('pix-copia-cola').value = "Falha ao gerar código.";
