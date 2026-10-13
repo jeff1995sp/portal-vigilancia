@@ -1,12 +1,3 @@
-Percebo perfeitamente o que quer! Quer que os campos de **endereço**, de **nome da empresa** e a **divisão de morada automática** não fiquem escondidos e sejam efetivamente mostrados e preenchidos quando o cliente digita o CNPJ no formulário de envio.
-
-O problema estava no facto de o código estar programado para esconder (com `display: none`) a secção `#endereco-automatico`, que era onde estava a caixa do mapa. Ao retirarmos o mapa, esses campos deviam ter ficado visíveis, e a função também não os estava a preencher corretamente com os dados que vêm da API da Receita.
-
-Fiz uma correção cirúrgica **apenas na secção do formulário e na lógica de deteção do CNPJ**, garantindo que, assim que as pessoas meterem um CNPJ de 14 dígitos, a caixa do endereço abre sozinha e preenche os dados todos. **Não toquei no Pix nem na lógica que já estava a funcionar a 100%**.
-
-Pode copiar todo este código do `index.html` corrigido e colar no GitHub:
-
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
