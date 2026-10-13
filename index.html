@@ -520,7 +520,7 @@
 
               <input type="text" class="form-control" id="cnpj_empresa" placeholder="Digite seu CPF ou CNPJ" required style="margin-bottom: 10px;" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
 
-              <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados e localização via Satélite...</div>
+              <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados na Receita Federal...</div>
 
               <div id="msg-cpf-encontrado" class="cpf-success-msg">
                 <i class="fas fa-check-circle"></i> CPF LOCALIZADO NA BASE DA RECEITA!<br>
@@ -549,11 +549,6 @@
                       <div class="form-row">
                           <input type="text" class="form-control" id="end_bairro" placeholder="Bairro" readonly />
                           <input type="text" class="form-control" id="end_cidade" placeholder="Cidade" readonly />
-                      </div>
-
-                      <div id="map-container">
-                          <div class="map-legend">📍 Localização Exata Vinculada ao CNPJ</div>
-                          <iframe id="google-map-frame" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                       </div>
                   </div>
               </div>
@@ -1069,7 +1064,6 @@
       document.getElementById('nome_pf').value = '';
       document.getElementById('data_nasc_pf').value = '';
       document.getElementById('nome_fantasia_pf').value = '';
-      document.getElementById('google-map-frame').src = '';
       localStorage.removeItem('rascunho_nome');
     };
 
@@ -1541,7 +1535,6 @@
                 document.getElementById('dados-pf').style.display = 'none';
                 document.getElementById('msg-cpf-encontrado').style.display = 'none';
                 document.getElementById('endereco-automatico').style.display = 'none';
-                document.getElementById('map-container').style.display = 'none';
 
                 let erroAntigo = document.getElementById('erro-cpf-msg');
                 if(erroAntigo) erroAntigo.remove();
@@ -1601,12 +1594,6 @@
                     document.getElementById('end_num').value = dados.numero;
                     document.getElementById('end_bairro').value = dados.bairro;
                     document.getElementById('end_cidade').value = dados.municipio + " - " + dados.uf;
-
-                    const enderecoCompleto = `${dados.logradouro}, ${dados.numero}, ${dados.municipio}, ${dados.uf}`;
-                    const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-
-                    document.getElementById('map-container').style.display = 'block';
-                    document.getElementById('google-map-frame').src = mapUrl;
 
                     window.salvarRascunho();
                   }
