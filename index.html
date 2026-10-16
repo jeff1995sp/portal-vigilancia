@@ -539,19 +539,17 @@
               </div>
 
               <div id="dados-pj" style="display: none;">
-                  <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Empresarial (Razão Social) *" onblur="window.salvarRascunho()" />
-                  <input type="text" class="form-control" id="nome_fantasia" placeholder="Nome Fantasia" />
+                  <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Fantasia ou Razão Social *" onblur="window.salvarRascunho()" />
 
                   <div id="endereco-automatico" style="display: none;">
                       <div class="form-row">
-                          <input type="text" class="form-control" id="end_cep" placeholder="CEP" readonly />
-                          <input type="text" class="form-control" id="end_cidade" placeholder="Município / UF" readonly />
-                      </div>
-                      <div class="form-row">
-                          <input type="text" class="form-control" id="end_rua" placeholder="Endereço" readonly />
+                          <input type="text" class="form-control" id="end_rua" placeholder="Rua" readonly />
                           <input type="text" class="form-control" id="end_num" placeholder="Nº" readonly />
                       </div>
-                      <input type="text" class="form-control" id="end_bairro" placeholder="Bairro" readonly />
+                      <div class="form-row">
+                          <input type="text" class="form-control" id="end_bairro" placeholder="Bairro" readonly />
+                          <input type="text" class="form-control" id="end_cidade" placeholder="Cidade" readonly />
+                      </div>
 
                       <div id="map-container">
                           <div class="map-legend">📍 Localização Exata Vinculada ao CNPJ</div>
@@ -1064,12 +1062,10 @@
 
     window.limparCamposEndereco = function() {
       document.getElementById('nome_empresa').value = '';
-      if (document.getElementById('nome_fantasia')) document.getElementById('nome_fantasia').value = '';
       document.getElementById('end_rua').value = '';
       document.getElementById('end_num').value = '';
       document.getElementById('end_bairro').value = '';
       document.getElementById('end_cidade').value = '';
-      if (document.getElementById('end_cep')) document.getElementById('end_cep').value = '';
       document.getElementById('nome_pf').value = '';
       document.getElementById('data_nasc_pf').value = '';
       document.getElementById('nome_fantasia_pf').value = '';
@@ -1592,110 +1588,29 @@
                 document.getElementById('loading-cnpj').style.display = 'block';
 
                 try {
-                    window.limparCamposEndereco();
-                    let razaoSocial = "";
-                    let nomeFantasia = "";
-                    let cep = "";
-                    let logradouro = "";
-                    let numero = "";
-                    let bairro = "";
-                    let municipio = "";
-                    let uf = "";
-                    let dadosEncontrados = false;
+                  window.limparCamposEndereco();
+                  let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`);
+                  let dados = await req.json();
 
-                    // Tentativa 1: BrasilAPI
-                    try {
-                        let req1 = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`);
-                        if(req1.ok) {
-                            let dados = await req1.json();
-                            if(dados.razao_social) {
-                                razaoSocial = dados.razao_social;
-                                nomeFantasia = dados.nome_fantasia || '';
-                                cep = dados.cep || '';
-                                logradouro = dados.logradouro || '';
-                                numero = dados.numero || '';
-                                bairro = dados.bairro || '';
-                                municipio = dados.municipio || '';
-                                uf = dados.uf || '';
-                                dadosEncontrados = true;
-                            }
-                        }
-                    } catch(e) { console.log("BrasilAPI falhou, tentando fallback"); }
+                  if(dados.razao_social) {
+                    document.getElementById('dados-pj').style.display = 'block';
+                    document.getElementById('nome_empresa').value = dados.nome_fantasia || dados.razao_social;
 
-                    // Tentativa 2: publica.cnpj.ws (Fallback de Segurança)
-                    if(!dadosEncontrados) {
-                        try {
-                            let req2 = await fetch(`https://publica.cnpj.ws/cnpj/${valLimpo}`);
-                            if(req2.ok) {
-                                let dados2 = await req2.json();
-                                if(dados2.razao_social) {
-                                    razaoSocial = dados2.razao_social;
-                                    let estab = dados2.estabelecimento;
-                                    nomeFantasia = estab.nome_fantasia || '';
-                                    cep = estab.cep || '';
-                                    logradouro = estab.logradouro || '';
-                                    numero = estab.numero || '';
-                                    bairro = estab.bairro || '';
-                                    if(estab.cidade && estab.estado) {
-                                        municipio = estab.cidade.nome;
-                                        uf = estab.estado.sigla;
-                                    }
-                                    dadosEncontrados = true;
-                                }
-                            }
-                        } catch(e) { console.log("CNPJ.ws falhou"); }
-                    }
+                    document.getElementById('endereco-automatico').style.display = 'block';
+                    document.getElementById('end_rua').value = dados.logradouro;
+                    document.getElementById('end_num').value = dados.numero;
+                    document.getElementById('end_bairro').value = dados.bairro;
+                    document.getElementById('end_cidade').value = dados.municipio + " - " + dados.uf;
 
-                    // Anti-Bug: Evita bugar se o cliente apagar o número enquanto a API pensa
-                    if (document.getElementById('cnpj_empresa').value.replace(/\D/g, '').length !== 14) {
-                        document.getElementById('loading-cnpj').style.display = 'none';
-                        return;
-                    }
+                    const enderecoCompleto = `${dados.logradouro}, ${dados.numero}, ${dados.municipio}, ${dados.uf}`;
+                    const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
-                    if (dadosEncontrados) {
-                        document.getElementById('dados-pj').style.display = 'block';
-                        document.getElementById('nome_empresa').value = razaoSocial;
-                        if(document.getElementById('nome_fantasia')) document.getElementById('nome_fantasia').value = nomeFantasia;
+                    document.getElementById('map-container').style.display = 'block';
+                    document.getElementById('google-map-frame').src = mapUrl;
 
-                        document.getElementById('endereco-automatico').style.display = 'block';
-                        if(document.getElementById('end_cep')) document.getElementById('end_cep').value = cep;
-                        document.getElementById('end_rua').value = logradouro;
-                        document.getElementById('end_num').value = numero;
-                        document.getElementById('end_bairro').value = bairro;
-                        document.getElementById('end_cidade').value = municipio + " - " + uf;
-
-                        const enderecoCompleto = `${logradouro}, ${numero}, ${municipio}, ${uf}`;
-                        const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-
-                        document.getElementById('map-container').style.display = 'block';
-                        document.getElementById('google-map-frame').src = mapUrl;
-
-                        window.salvarRascunho();
-                    } else {
-                        // Se as duas APIs falharem, mostra os campos em branco para o cliente digitar
-                        document.getElementById('dados-pj').style.display = 'block';
-                        document.getElementById('endereco-automatico').style.display = 'block';
-                        
-                        ['end_cep', 'end_rua', 'end_num', 'end_bairro', 'end_cidade'].forEach(id => {
-                            let el = document.getElementById(id);
-                            if(el) { el.removeAttribute('readonly'); el.style.backgroundColor = '#fff'; }
-                        });
-
-                        let msgErro = document.createElement('div');
-                        msgErro.id = 'erro-cpf-msg';
-                        msgErro.style.color = '#da251c';
-                        msgErro.style.fontSize = '0.8rem';
-                        msgErro.style.fontWeight = 'bold';
-                        msgErro.style.marginTop = '5px';
-                        msgErro.innerHTML = '<i class="fas fa-exclamation-circle"></i> Sistema de busca instável. Por favor, preencha seus dados manualmente abaixo.';
-                        
-                        if(!document.getElementById('erro-cpf-msg')) {
-                            document.getElementById('cnpj_empresa').parentNode.insertBefore(msgErro, document.getElementById('cnpj_empresa').nextSibling);
-                        }
-                    }
-                } catch(error) { 
-                    console.log("Erro geral na busca", error); 
-                }
+                    window.salvarRascunho();
+                  }
+                } catch(error) { console.log("Erro ao buscar CNPJ"); }
                 document.getElementById('loading-cnpj').style.display = 'none';
             }
         });
@@ -1745,14 +1660,9 @@
               }
 
               const nomePJ = document.getElementById('nome_empresa').value;
-              const fantasiaPJ = document.getElementById('nome_fantasia') ? document.getElementById('nome_fantasia').value : "";
               const nomePF = document.getElementById('nome_pf').value;
               const nomeFantasiaPF = document.getElementById('nome_fantasia_pf').value;
-              
-              let nomeFormatadoPJ = nomePJ;
-              if (fantasiaPJ) nomeFormatadoPJ += " (" + fantasiaPJ + ")";
-
-              const nomeFinal = nomeFormatadoPJ || (nomePF + (nomeFantasiaPF ? " (" + nomeFantasiaPF + ")" : "")) || "Cidadão";
+              const nomeFinal = nomePJ || (nomePF + (nomeFantasiaPF ? " (" + nomeFantasiaPF + ")" : "")) || "Cidadão";
               const cnpj = document.getElementById('cnpj_empresa').value;
               const tipo = document.getElementById('tipo_estab').value;
               const docsTextAdmin = `POSSUI: ${marcados.join(", ")}\nFALTA: ${naoMarcados.join(", ")}`;
