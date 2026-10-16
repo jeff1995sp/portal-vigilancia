@@ -1200,14 +1200,10 @@
     };
 
     const comprimirEConverterFoto = (file) => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
           reader.onload = (event) => {
-              if (file.type === 'application/pdf') {
-                  resolve(event.target.result);
-                  return;
-              }
               const img = new Image();
               img.src = event.target.result;
               img.onload = () => {
@@ -1227,11 +1223,7 @@
                   const base64Reduzido = canvas.toDataURL('image/jpeg', 0.5);
                   resolve(base64Reduzido);
               };
-              img.onerror = () => {
-                  resolve(event.target.result);
-              };
           };
-          reader.onerror = error => reject(error);
       });
     };
 
