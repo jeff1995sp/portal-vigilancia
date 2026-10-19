@@ -1251,15 +1251,6 @@
 
         try {
             const arquivo = inputElement.files[0];
-            
-            // Verifica o tamanho (limite de 10MB para a assinatura final para evitar travar o Firebase)
-            if (arquivo.size > 10 * 1024 * 1024) {
-                 alert("O arquivo é muito grande. O limite máximo é de 10MB.");
-                 labelBtn.innerHTML = textoOriginal;
-                 labelBtn.style.pointerEvents = 'auto';
-                 return;
-            }
-
             const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
 
             const docRef = doc(db, "pedidos", window.idPedidoConsultaAtual);
@@ -1272,7 +1263,7 @@
             alert("Perfeito! A foto/documento assinado foi enviado diretamente para o sistema da COVISA.");
         } catch (error) {
             console.error(error);
-            alert("Erro ao enviar o documento. Tente anexar uma imagem menor.");
+            alert("Erro ao enviar o documento.");
             labelBtn.innerHTML = textoOriginal;
             labelBtn.style.pointerEvents = 'auto';
         }
@@ -1291,7 +1282,7 @@
     window.mostrarQtdFotosDenuncia = function(input) {
         const div = document.getElementById('qtd-fotos-denuncia');
         if(input.files.length > 0) {
-            div.innerText = `${input.files.length} foto(s) selecionada(s) prontas para envio.`;
+            div.innerText = `${input.files.length} arquivo(s) selecionado(s) pronto(s) para envio.`;
         } else {
             div.innerText = '';
         }
@@ -1737,7 +1728,6 @@
               const todasOpcoes = document.querySelectorAll('.doc-check');
               const marcados = []; const naoMarcados = [];
               let erroUpload = false; let nomeDocErro = "";
-              let tamanhoTotal = 0;
               const listaEvidencias = [];
 
               for (const el of todasOpcoes) {
@@ -1750,14 +1740,6 @@
                           erroUpload = true; nomeDocErro = nomeDoc;
                       } else if (fileInput && fileInput.files.length > 0) {
                           const arquivo = fileInput.files[0];
-                          tamanhoTotal += arquivo.size;
-
-                          // Impede envios exagerados que dariam tela branca (Limita a soma em 10MB)
-                          if (tamanhoTotal > 10 * 1024 * 1024) {
-                               alert("Os arquivos anexados são muito grandes e excedem o limite de 10MB. Por favor, compacte os PDFs ou reduza a qualidade das fotos antes de enviar.");
-                               btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return;
-                          }
-
                           const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
                           listaEvidencias.push({ nome: nomeDoc, url: fotoTextoBase64 });
                       }
@@ -1808,7 +1790,7 @@
 
           } catch (error) {
               console.error(error);
-              alert("Erro ao enviar. O banco de dados pode estar sobrecarregado ou você tentou anexar um PDF protegido. Tente atualizar a página e enviar apenas os arquivos essenciais.");
+              alert("Erro ao enviar. O banco de dados pode estar sobrecarregado ou você tentou anexar um arquivo corrompido. Tente novamente.");
           } finally {
               btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false;
           }
@@ -1860,7 +1842,7 @@
 
           } catch (error) {
               console.error(error);
-              alert("Erro ao enviar a denúncia. Tente anexar uma imagem menor.");
+              alert("Erro ao enviar a denúncia.");
           } finally {
               btnSubmit.innerHTML = textoOriginal;
               btnSubmit.disabled = false;
