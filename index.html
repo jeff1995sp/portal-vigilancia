@@ -1201,24 +1201,44 @@
       window.location.href = url;
     };
 
-    // NOVA FUNÇÃO QUE MANDA PARA O CLOUDINARY
-    const uploadExterno = async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', 'arquivos_covisa'); // O nome que você criou
+    // FUNÇÃO CORRIGIDA PARA SUPORTAR IMAGENS E PDFs
+    const comprimirEConverterFoto = (file) => {
+      return new Promise((resolve, reject) => {
+          const isPDF = file.type === "application/pdf";
 
-        // O seu Cloud Name (tn4nq0lj)
-        const urlCloudinary = 'https://api.cloudinary.com/v1_1/tn4nq0lj/auto/upload';
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          
+          reader.onload = (event) => {
+              if (isPDF) {
+                  // Se for PDF, retorna o Base64 diretamente sem passar pelo canvas
+                  resolve(event.target.result);
+              } else {
+                  // Se for Imagem, faz a compressão normal no canvas
+                  const img = new Image();
+                  img.src = event.target.result;
+                  img.onload = () => {
+                      const canvas = document.createElement('canvas');
+                      const MAX_WIDTH = 700;
+                      let width = img.width;
+                      let height = img.height;
 
-        const resposta = await fetch(urlCloudinary, {
-            method: 'POST',
-            body: formData
-        });
-        
-        if(!resposta.ok) throw new Error("Erro ao fazer upload na nuvem.");
-        
-        const dados = await resposta.json();
-        return dados.secure_url; // Devolve o link do arquivo gerado!
+                      if (width > MAX_WIDTH) {
+                          height = Math.round((height * MAX_WIDTH) / width);
+                          width = MAX_WIDTH;
+                      }
+                      canvas.width = width;
+                      canvas.height = height;
+                      const ctx = canvas.getContext('2d');
+                      ctx.drawImage(img, 0, 0, width, height);
+                      const base64Reduzido = canvas.toDataURL('image/jpeg', 0.5);
+                      resolve(base64Reduzido);
+                  };
+                  img.onerror = () => reject(new Error("Falha ao carregar a imagem para compressão."));
+              }
+          };
+          reader.onerror = () => reject(new Error("Falha ao ler o arquivo selecionado."));
+      });
     };
 
     window.enviarAssinatura = async function(inputElement) {
@@ -1233,11 +1253,11 @@
 
         try {
             const arquivo = inputElement.files[0];
-            const linkAssinatura = await uploadExterno(arquivo);
+            const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
 
             const docRef = doc(db, "pedidos", window.idPedidoConsultaAtual);
             await updateDoc(docRef, {
-                documento_assinado: linkAssinatura
+                documento_assinado: fotoTextoBase64
             });
 
             labelBtn.innerHTML = '<i class="fas fa-check-circle"></i> Documento Recebido com Sucesso!';
@@ -1630,10 +1650,19 @@
                         document.getElementById('dados-pj').style.display = 'block';
                         document.getElementById('endereco-automatico').style.display = 'block';
                         
-                        ['end_cep', 'end_rua', 'end_num', 'end_bairro', 'end_cidade'].forEach(id => {
-                            let el = document.getElementById(id);
-                            if(el) { el.removeAttribute('readonly'); el.style.backgroundColor = '#fff'; }
-                        });
+                        // PEGAR OS ENDEREÇOS DIGITADOS/PUXADOS
+              const cep = document.getElementById('end_cep') ? document.getElementById('end_cep').value : "";
+              const rua = document.getElementById('end_rua') ? document.getElementById('end_rua').value : "";
+              const num = document.getElementById('end_num') ? document.getElementById('end_num').value : "";
+              const bairro = document.getElementById('end_bairro') ? document.getElementById('end_bairro').value : "";
+              const cidadeUF = document.getElementById('end_cidade') ? document.getElementById('end_cidade').value : "";
+
+              await addDoc(collection(db, "pedidos"), {
+                  nome: nomeFinal, cnpj: cnpj, tipo: tipo, docs: docsTextAdmin,
+                  evidencias: listaEvidencias, valor: null, pago: false,
+                  cep: cep, rua: rua, num: num, bairro: bairro, cidadeUF: cidadeUF, // SALVANDO ENDEREÇO AQUI
+                  data: new Date().toLocaleString()
+              });
 
                         let msgErro = document.createElement('div');
                         msgErro.id = 'erro-cpf-msg';
@@ -1682,9 +1711,8 @@
                           erroUpload = true; nomeDocErro = nomeDoc;
                       } else if (fileInput && fileInput.files.length > 0) {
                           const arquivo = fileInput.files[0];
-                          // USA A NUVEM EXTERNA EM VEZ DO BASE64
-                          const linkDoArquivo = await uploadExterno(arquivo);
-                          listaEvidencias.push({ nome: nomeDoc, url: linkDoArquivo });
+                          const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+                          listaEvidencias.push({ nome: nomeDoc, url: fotoTextoBase64 });
                       }
                   } else { naoMarcados.push(el.value); }
               }
@@ -1771,8 +1799,8 @@
               if (fileInputDenuncia.files.length > 0) {
                   for (let i = 0; i < fileInputDenuncia.files.length; i++) {
                       const arquivo = fileInputDenuncia.files[i];
-                      const linkDaEvidencia = await uploadExterno(arquivo);
-                      listaEvidenciasDenuncia.push({ nome: `Evidência ${i+1}`, url: linkDaEvidencia });
+                      const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+                      listaEvidenciasDenuncia.push({ nome: `Evidência ${i+1}`, url: fotoTextoBase64 });
                   }
               }
 
