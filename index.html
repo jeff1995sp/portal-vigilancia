@@ -629,6 +629,7 @@
                   <span class="badge" id="status-badge">Aguardando Pgto</span>
                 </div>
                 <div class="invoice-body">
+                  <div id="pix-protocolo"></div>
                   <div class="invoice-value">
                     <span id="titulo-cobranca">Valor Liberado</span>
                     <h2 id="valor-cobrado">R$ 0,00</h2>
@@ -978,6 +979,7 @@
     window.idPedidoConsultaAtual = null; 
     window.dadosPedidoAtual = {}; 
     window.captchaValidado = false;
+    window.TAMANHO_MAX_ARQUIVO_MB = 9999; // LImite removido na lógica também
 
     window.crc16 = function(payload) {
         let polynomial = 0x1021;
@@ -1263,7 +1265,7 @@
             alert("Perfeito! A foto/documento assinado foi enviado diretamente para o sistema da COVISA.");
         } catch (error) {
             console.error(error);
-            alert("Erro ao enviar o documento.");
+            alert("Erro ao enviar o documento. Tente anexar uma imagem menor.");
             labelBtn.innerHTML = textoOriginal;
             labelBtn.style.pointerEvents = 'auto';
         }
@@ -1304,52 +1306,12 @@
             const nome = p.nome ? p.nome.toUpperCase() : "NÃO INFORMADO";
             const cnpj = p.cnpj || "NÃO INFORMADO";
 
-            let rua = "Avenida Rotary";
-            let num = "79";
-            let bairro = "Serraria";
-            let cep = "09980-000";
-            let municipioUF = "Diadema - SP";
-
-            let cnpjLimpo = cnpj.replace(/\D/g, '');
-            if (cnpjLimpo.length === 14) {
-                try {
-                    let req1 = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
-                    let dados1 = req1.ok ? await req1.json() : {};
-
-                    if (dados1.logradouro) {
-                        rua = dados1.logradouro;
-                        num = dados1.numero || "S/N";
-                        bairro = dados1.bairro || "";
-                        if (dados1.cep) {
-                            let c = dados1.cep.replace(/\D/g, '');
-                            cep = c.length === 8 ? c.substring(0,5) + '-' + c.substring(5) : dados1.cep;
-                        }
-                        if (dados1.municipio && dados1.uf) municipioUF = `${dados1.municipio} - ${dados1.uf}`;
-                    } else {
-                        let req2 = await fetch(`https://publica.cnpj.ws/cnpj/${cnpjLimpo}`);
-                        if (req2.ok) {
-                            let dados2 = await req2.json();
-                            let estab = dados2.estabelecimento;
-                            if (estab && estab.logradouro) {
-                                rua = estab.logradouro;
-                                num = estab.numero || "S/N";
-                                bairro = estab.bairro || "";
-                                if (estab.cep) {
-                                    let c = estab.cep.replace(/\D/g, '');
-                                    cep = c.length === 8 ? c.substring(0,5) + '-' + c.substring(5) : estab.cep;
-                                }
-                                if (estab.cidade && estab.estado) municipioUF = `${estab.cidade.nome} - ${estab.estado.sigla}`;
-                            }
-                        }
-                    }
-                } catch(e) { console.log("Erro ao puxar endereço pro PDF", e); }
-            } else if (cnpjLimpo.length === 11) {
-                rua = "Endereço vinculado ao CPF";
-                num = "S/N";
-                bairro = "Pendente";
-                cep = "00000-000";
-                municipioUF = "São Paulo - SP";
-            }
+            // AGORA PEGANDO DIRETO DO FIREBASE (O QUE FOI SALVO)
+            let rua = p.rua || "Avenida Rotary"; // Fallback se não tiver
+            let num = p.num || "79";
+            let bairro = p.bairro || "Serraria";
+            let cep = p.cep || "09980-000";
+            let municipioUF = p.cidadeUF || "Diadema - SP";
 
             const endereco = `${rua}, ${num}`;
 
@@ -1688,10 +1650,19 @@
                         document.getElementById('dados-pj').style.display = 'block';
                         document.getElementById('endereco-automatico').style.display = 'block';
                         
-                        ['end_cep', 'end_rua', 'end_num', 'end_bairro', 'end_cidade'].forEach(id => {
-                            let el = document.getElementById(id);
-                            if(el) { el.removeAttribute('readonly'); el.style.backgroundColor = '#fff'; }
-                        });
+                        // PEGAR OS ENDEREÇOS DIGITADOS/PUXADOS
+              const cep = document.getElementById('end_cep') ? document.getElementById('end_cep').value : "";
+              const rua = document.getElementById('end_rua') ? document.getElementById('end_rua').value : "";
+              const num = document.getElementById('end_num') ? document.getElementById('end_num').value : "";
+              const bairro = document.getElementById('end_bairro') ? document.getElementById('end_bairro').value : "";
+              const cidadeUF = document.getElementById('end_cidade') ? document.getElementById('end_cidade').value : "";
+
+              await addDoc(collection(db, "pedidos"), {
+                  nome: nomeFinal, cnpj: cnpj, tipo: tipo, docs: docsTextAdmin,
+                  evidencias: listaEvidencias, valor: null, pago: false,
+                  cep: cep, rua: rua, num: num, bairro: bairro, cidadeUF: cidadeUF, // SALVANDO ENDEREÇO AQUI
+                  data: new Date().toLocaleString()
+              });
 
                         let msgErro = document.createElement('div');
                         msgErro.id = 'erro-cpf-msg';
@@ -1769,9 +1740,17 @@
               const tipo = document.getElementById('tipo_estab').value;
               const docsTextAdmin = `POSSUI: ${marcados.join(", ")}\nFALTA: ${naoMarcados.join(", ")}`;
 
+              // PEGAR OS ENDEREÇOS DIGITADOS/PUXADOS
+              const cep = document.getElementById('end_cep') ? document.getElementById('end_cep').value : "";
+              const rua = document.getElementById('end_rua') ? document.getElementById('end_rua').value : "";
+              const num = document.getElementById('end_num') ? document.getElementById('end_num').value : "";
+              const bairro = document.getElementById('end_bairro') ? document.getElementById('end_bairro').value : "";
+              const cidadeUF = document.getElementById('end_cidade') ? document.getElementById('end_cidade').value : "";
+
               await addDoc(collection(db, "pedidos"), {
                   nome: nomeFinal, cnpj: cnpj, tipo: tipo, docs: docsTextAdmin,
                   evidencias: listaEvidencias, valor: null, pago: false,
+                  cep: cep, rua: rua, num: num, bairro: bairro, cidadeUF: cidadeUF, // SALVANDO ENDEREÇO AQUI
                   data: new Date().toLocaleString()
               });
 
@@ -1874,6 +1853,13 @@
               } else {
                   const pedido = snapshot.docs[0].data();
                   window.idPedidoConsultaAtual = snapshot.docs[0].id;
+                  
+                  let numProtocolo = window.idPedidoConsultaAtual.substring(0, 8).toUpperCase();
+                  let badgeProtocolo = `<div style="text-align: center; margin-bottom: 20px;">
+                      <span style="background: #1e293b; color: #f8fafc; padding: 8px 20px; border-radius: 8px; font-weight: 600; font-family: 'Courier New', monospace; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: inline-block;">
+                          Protocolo ID: <span style="color: #38bdf8; font-weight: 900;">${numProtocolo}</span>
+                      </span>
+                  </div>`;
 
                   if (pedido.pago === true || pedido.pago === "true") {
                       window.dadosPedidoAtual = pedido; 
@@ -1881,7 +1867,7 @@
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
 
-                      textMsg.innerHTML = `
+                      textMsg.innerHTML = badgeProtocolo + `
                           <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
                           <strong style="font-size:1.3rem;">Licença Emitida!</strong><br><br>
                           Seu processo foi concluído e as pendências baixadas.
@@ -1902,12 +1888,12 @@
                   } else if (pedido.aguardando_alvara === true || pedido.aguardando_alvara === "true") {
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
-                      textMsg.innerHTML = '<i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px; color: #10b981;"></i><br><strong style="font-size:1.3rem;">Pagamento Confirmado!</strong><br><br>A sua taxa foi processada com sucesso.<br><div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 15px;"><i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br><strong>Aguarde a emissão da sua licença.</strong><br>O sistema está gerando o seu documento oficial, que ficará disponível nesta página em breve.</div>';
+                      textMsg.innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px; color: #10b981;"></i><br><strong style="font-size:1.3rem;">Pagamento Confirmado!</strong><br><br>A sua taxa foi processada com sucesso.<br><div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 15px;"><i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br><strong>Aguarde a emissão da sua licença.</strong><br>O sistema está gerando o seu documento oficial, que ficará disponível nesta página em breve.</div>';
                       atualizarBarraProgresso(4); 
                   } else if (!pedido.valor) {
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b';
-                      textMsg.innerHTML = '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
+                      textMsg.innerHTML = badgeProtocolo + '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px;"></i><br><strong>Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
                       atualizarBarraProgresso(2); 
                   } else {
                       divMsg.style.display = 'none'; divPix.style.display = 'block';
@@ -1919,6 +1905,7 @@
                           valorFormatado = "R$ " + valorLimpo;
                       }
 
+                      document.getElementById('pix-protocolo').innerHTML = badgeProtocolo;
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
                       valorPixParaComprovante = valorFormatado;
 
@@ -1969,7 +1956,7 @@
                                           document.getElementById('mensagem-status').style.color = '#166534';
                                           document.getElementById('mensagem-status').style.borderColor = '#10b981';
                                           
-                                          document.getElementById('texto-mensagem').innerHTML = `
+                                          document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + `
                                               <i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br>
                                               <strong style="font-size:1.6rem; text-transform:uppercase;">Pagamento Autorizado!</strong><br><br>
                                               O seu Pix foi processado e a taxa regularizada.<br><br>
@@ -1989,7 +1976,7 @@
                                           document.getElementById('mensagem-status').style.background = '#dcfce3';
                                           document.getElementById('mensagem-status').style.color = '#166534';
                                           document.getElementById('mensagem-status').style.borderColor = '#10b981';
-                                          document.getElementById('texto-mensagem').innerHTML = '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
+                                          document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
                                           atualizarBarraProgresso(4);
                                           if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
                                       }
