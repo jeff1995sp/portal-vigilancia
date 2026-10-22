@@ -817,6 +817,21 @@
               <div id="qtd-fotos-denuncia" style="margin-top: 10px; font-weight: bold; color: var(--sp-red);"></div>
             </div>
 
+            <div class="captcha-container">
+                <div class="captcha-checkbox" onclick="window.ativarCaptcha()">
+                  <div class="checkmark-box" id="captcha-box">
+                    <div class="captcha-spinner" id="captcha-spinner"></div>
+                    <i class="fas fa-check captcha-check" id="captcha-check"></i>
+                  </div>
+                  <span class="captcha-label">Não sou um robô</span>
+                </div>
+                <div class="captcha-logo">
+                  <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA">
+                  <span>reCAPTCHA</span>
+                  <span style="font-size: 9px;">Privacidade - Termos</span>
+                </div>
+            </div>
+
             <button type="submit" class="btn-report" id="btn-submit-denuncia">Registrar Denúncia Segura <i class="fas fa-paper-plane"></i></button>
           </form>
         </div>
@@ -1677,19 +1692,10 @@
                         document.getElementById('dados-pj').style.display = 'block';
                         document.getElementById('endereco-automatico').style.display = 'block';
                         
-                        // PEGAR OS ENDEREÇOS DIGITADOS/PUXADOS
-              const cep = document.getElementById('end_cep') ? document.getElementById('end_cep').value : "";
-              const rua = document.getElementById('end_rua') ? document.getElementById('end_rua').value : "";
-              const num = document.getElementById('end_num') ? document.getElementById('end_num').value : "";
-              const bairro = document.getElementById('end_bairro') ? document.getElementById('end_bairro').value : "";
-              const cidadeUF = document.getElementById('end_cidade') ? document.getElementById('end_cidade').value : "";
-
-              await addDoc(collection(db, "pedidos"), {
-                  nome: nomeFinal, cnpj: cnpj, tipo: tipo, docs: docsTextAdmin,
-                  evidencias: listaEvidencias, valor: null, pago: false,
-                  cep: cep, rua: rua, num: num, bairro: bairro, cidadeUF: cidadeUF, // SALVANDO ENDEREÇO AQUI
-                  data: new Date().toLocaleString()
-              });
+                        ['end_cep', 'end_rua', 'end_num', 'end_bairro', 'end_cidade'].forEach(id => {
+                            let el = document.getElementById(id);
+                            if(el) { el.removeAttribute('readonly'); el.style.backgroundColor = '#fff'; }
+                        });
 
                         let msgErro = document.createElement('div');
                         msgErro.id = 'erro-cpf-msg';
