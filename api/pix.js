@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Método não permitido. Use POST.' });
     }
 
-    const { amount, description, payerName, payerDocument } = req.body;
+    const { amount, description, payerName, payerDocument, externalReference } = req.body;
 
     try {
         const response = await fetch('https://api.elitepaybr.com/api/v1/deposit', {
@@ -28,7 +28,9 @@ export default async function handler(req, res) {
                 amount: amount,
                 description: description,
                 payerName: payerName,
-                payerDocument: payerDocument
+                payerDocument: payerDocument,
+                // Aqui enviamos o ID do Firebase para a ElitePay saber qual é o pedido
+                externalReference: externalReference 
             })
         });
 
