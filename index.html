@@ -146,9 +146,9 @@
           <p class="lead">O processo de Regularização Sanitária garante que seu estabelecimento opere dentro das normas de saúde, promovendo segurança para seus clientes e evitando sanções legais rigorosas.</p>
 
           <div class="process-steps" id="visual-steps-container">
-            <div class="process-step active-step" id="step-visual-1" style="border-top-color: var(--gov-blue); background: #f0f4f8;"><i class="fas fa-file-upload"></i><span>1. Enviar<br>Documentação</span></div>
-            <div class="process-step" id="step-visual-2" style="border-top-color: #e2e8f0; opacity: 0.6;"><i class="fas fa-search"></i><span>2. Análise<br>do Processo</span></div>
-            <div class="process-step" id="step-visual-3" style="border-top-color: #e2e8f0; opacity: 0.6;"><i class="fas fa-file-invoice-dollar"></i><span>3. Pagamento<br>e Alvará</span></div>
+            <div class="process-step active-step" id="step-visual-1" style="border-top-color: var(--gov-blue); background: #f0f4f8; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);"><i class="fas fa-file-upload"></i><span>1. Enviar<br>Documentação</span></div>
+            <div class="process-step" id="step-visual-2" style="border-top-color: #e2e8f0; opacity: 0.6; transition: 0.3s;"><i class="fas fa-search"></i><span>2. Análise<br>do Processo</span></div>
+            <div class="process-step" id="step-visual-3" style="border-top-color: #e2e8f0; opacity: 0.6; transition: 0.3s;"><i class="fas fa-file-invoice-dollar"></i><span>3. Pagamento<br>e Alvará</span></div>
           </div>
 
           <div class="steps-box">
@@ -526,6 +526,12 @@
     </form>
   </div>
 
+  <style>
+    .form-tabs { display: flex; gap: 10px; margin-bottom: 30px; background: #f1f5f9; padding: 6px; border-radius: 12px; }
+    #area-envio, #area-pagamento { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+
   <script type="module">
     window.destravarEndereco = function() {
         ['end_cep', 'end_rua', 'end_num', 'end_bairro', 'end_cidade'].forEach(id => {
@@ -551,9 +557,9 @@
     };
 
     window.updateVisualSteps = function(stepNumber) {
-        document.getElementById('step-visual-1').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff;';
-        document.getElementById('step-visual-2').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff;';
-        document.getElementById('step-visual-3').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff;';
+        document.getElementById('step-visual-1').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff; transform: scale(1); box-shadow: none;';
+        document.getElementById('step-visual-2').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff; transform: scale(1); box-shadow: none;';
+        document.getElementById('step-visual-3').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff; transform: scale(1); box-shadow: none;';
         
         if(stepNumber === 1) document.getElementById('step-visual-1').style = 'border-top-color: var(--gov-blue); opacity: 1; background: #f0f4f8; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
         if(stepNumber === 2) document.getElementById('step-visual-2').style = 'border-top-color: var(--warning); opacity: 1; background: #fffbeb; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
