@@ -2056,9 +2056,18 @@
                                   if (docSnap.exists()) {
                                       const dadosAtualizados = docSnap.data();
 
-                                      if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
-                                          unsubscribePagamento(); 
-
+                                      if (dadosAtualizados.pago === true || dadosAtualizados.pago === "true") {
+                                          unsubscribePagamento();
+                                          document.getElementById('resultado-pix').style.display = 'none';
+                                          document.getElementById('mensagem-status').style.display = 'block';
+                                          document.getElementById('mensagem-status').style.background = '#dcfce3';
+                                          document.getElementById('mensagem-status').style.color = '#166534';
+                                          document.getElementById('mensagem-status').style.borderColor = '#10b981';
+                                          document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
+                                          atualizarBarraProgresso(4); window.updateVisualSteps(3);
+                                          if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                                      } else if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
+                                          // ATENÇÃO: NÃO DAMOS UNSUBSCRIBE AQUI! ASSIM ELE CONTINUA ESCUTANDO PARA QUANDO O ADMIN LIBERAR O ALVARÁ
                                           document.getElementById('resultado-pix').style.display = 'none';
                                           document.getElementById('mensagem-status').style.display = 'block';
                                           document.getElementById('mensagem-status').style.background = '#dcfce3';
@@ -2075,17 +2084,6 @@
                                                   O documento oficial ficará disponível aqui.
                                               </div>
                                           `;
-                                          atualizarBarraProgresso(4); window.updateVisualSteps(3);
-                                          if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
-                                      } else if (dadosAtualizados.pago === true || dadosAtualizados.pago === "true") {
-                                          // Mantém a escuta do botão final caso você libere o PDF direto
-                                          unsubscribePagamento();
-                                          document.getElementById('resultado-pix').style.display = 'none';
-                                          document.getElementById('mensagem-status').style.display = 'block';
-                                          document.getElementById('mensagem-status').style.background = '#dcfce3';
-                                          document.getElementById('mensagem-status').style.color = '#166534';
-                                          document.getElementById('mensagem-status').style.borderColor = '#10b981';
-                                          document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
                                           atualizarBarraProgresso(4); window.updateVisualSteps(3);
                                           if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
                                       }
