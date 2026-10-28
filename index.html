@@ -21,6 +21,8 @@
   <!-- Adicionado para converter PDF em Imagem antes de guardar -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
+  <!-- API OFICIAL DO GOOGLE RECAPTCHA -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
   <style>
     :root {
@@ -49,19 +51,6 @@
 
     .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
-
-    /* --- CAPTCHA --- */
-    .captcha-container { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 4px; width: 100%; max-width: 300px; height: 74px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); user-select: none; }
-    .captcha-checkbox { display: flex; align-items: center; gap: 12px; cursor: pointer; height: 100%; flex-grow: 1; }
-    .checkmark-box { width: 24px; height: 24px; border: 2px solid #c1c1c1; border-radius: 2px; background: #fff; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-    .checkmark-box:hover { border-color: #b2b2b2; }
-    .captcha-spinner { width: 18px; height: 18px; border: 3px solid #dbdbdb; border-top: 3px solid #4a90e2; border-radius: 50%; animation: spin 1s linear infinite; display: none; }
-    .captcha-check { color: #009688; font-size: 22px; display: none; }
-    .captcha-label { font-family: 'Roboto', sans-serif; font-size: 14px; color: #000; font-weight: 500; }
-    .captcha-logo { display: flex; flex-direction: column; align-items: center; text-align: center; }
-    .captcha-logo img { width: 32px; height: 32px; opacity: 0.6; }
-    .captcha-logo span { font-size: 10px; color: #999; margin-top: 2px; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* --- ESTILO PARA MENSAGEM DE SUCESSO DO CPF --- */
     .cpf-success-msg { background: #dcfce3; color: #166534; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; margin-top: 10px; display: none; border: 1px solid #22c55e; text-align: center; }
@@ -174,16 +163,9 @@
     .steps-list li i { position: absolute; left: 0; top: 3px; color: var(--sp-red); font-size: 1.1rem; }
 
     .checklist-form-container { flex: 1.2; min-width: 350px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-    .form-tabs {
-      margin-bottom: 30px;
-    }
-    #area-envio, #area-pagamento {
-      animation: fadeIn 0.4s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .form-tabs { margin-bottom: 30px; }
+    #area-envio, #area-pagamento { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .form-tabs { display: flex; gap: 10px; background: #f1f5f9; padding: 6px; border-radius: 12px; }
     .form-tab { flex: 1; text-align: center; padding: 12px; font-weight: 800; font-size: 0.9rem; color: #64748b; cursor: pointer; border-radius: 8px; transition: 0.3s; }
     .form-tab.active { background: #fff; color: var(--gov-blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
@@ -335,7 +317,7 @@
     .btn-alert-ok { background: var(--gov-blue); color: white; border: none; padding: 14px 35px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(19, 81, 180, 0.3); width: 100%; }
     .btn-alert-ok:hover { background: var(--gov-dark-blue); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(19, 81, 180, 0.4); }
     @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
-    
+
     /* --- MODAL DE ALERTA DE FRAUDE --- */
     .modal-alerta-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
     .modal-alerta-box { background: #fff; max-width: 650px; width: 90%; border-radius: 12px; padding: 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border-top: 5px solid var(--sp-red); text-align: left; max-height: 90vh; overflow-y: auto;}
@@ -407,9 +389,20 @@
   <div class="custom-alert-overlay" id="customAlertModal">
     <div class="custom-alert-box">
       <div class="custom-alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
-      <h3>Aviso Importante</h3>
-      <p>Não é obrigatório possuir e enviar todos os documentos da lista agora.<br><br>Selecione e envie <strong>SOMENTE</strong> os que você já tem no momento para iniciarmos a sua análise técnica!</p>
+      <h3 style="color: var(--warning);">ATENÇÃO: Análise Documental</h3>
+      <p><strong>Não se preocupe se faltar algum documento!</strong><br><br>Você <strong>NÃO</strong> precisa enviar tudo agora. Selecione apenas os documentos que você já tem em mãos para darmos andamento ao seu processo sem atrasos.</p>
       <button class="btn-alert-ok" onclick="document.getElementById('customAlertModal').style.display='none'">ENTENDI, CONTINUAR</button>
+    </div>
+  </div>
+
+  <!-- NOVO MODAL DE SUCESSO (ENVIO COMPROVANTE WHATSAPP) -->
+  <div class="custom-alert-overlay" id="successSubmitModal">
+    <div class="custom-alert-box" style="border-top-color: var(--success-color);">
+      <div class="custom-alert-icon" style="color: var(--success-color); background: #dcfce3;"><i class="fas fa-check-circle"></i></div>
+      <h3>Protocolo Recebido!</h3>
+      <p style="font-size: 1rem; color: #444;">Seus documentos foram enviados para análise técnica.<br><br><strong>ATENÇÃO:</strong> É altamente recomendado que você envie o comprovante deste protocolo para o nosso WhatsApp oficial para acelerar o processo.</p>
+      <button class="btn-success" id="btn-whats-comprovante" style="margin-bottom: 10px; width: 100%;"><i class="fab fa-whatsapp"></i> ENVIAR COMPROVANTE</button>
+      <button class="btn-alert-ok" style="background: #94a3b8; width: 100%;" onclick="document.getElementById('successSubmitModal').style.display='none'">FECHAR AVISO</button>
     </div>
   </div>
 
@@ -544,7 +537,7 @@
 
           <div class="form-tabs">
             <div class="form-tab active" id="tab-envio" onclick="window.alternarAba('envio'); window.updateVisualSteps(1);">1. Iniciar Processo</div>
-            <div class="form-tab" id="tab-pagamento" onclick="window.alternarAba('pagamento'); window.updateVisualSteps(3);">2. Consultar Andamento</div>
+            <div class="form-tab" id="tab-pagamento" onclick="window.alternarAba('pagamento'); window.updateVisualSteps(2);">2. Consultar Andamento</div>
           </div>
 
           <div id="area-envio">
@@ -617,23 +610,9 @@
               </div>
 
               <div style="display: flex; align-items: center; gap: 15px; margin: 20px 0;">
-                  <div class="captcha-container" style="margin: 0; flex: 1; border: 1px solid #d3d3d3; background: #f9f9f9; border-radius: 3px; height: 78px; box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.08); padding: 0 12px 0 14px;">
-                      <div class="captcha-checkbox" onclick="window.ativarCaptcha()">
-                        <div class="checkmark-box" id="captcha-box" style="width: 28px; height: 28px; border: 2px solid #c1c1c1; border-radius: 2px; background: #fff; margin-right: 12px;">
-                          <div class="captcha-spinner" id="captcha-spinner" style="width: 20px; height: 20px;"></div>
-                          <img src="https://www.gstatic.com/images/icons/material/system/2x/check_black_24dp.png" id="captcha-check" style="display:none; width: 24px; filter: invert(43%) sepia(91%) saturate(2220%) hue-rotate(130deg) brightness(96%) contrast(101%);" />
-                        </div>
-                        <span class="captcha-label" style="font-family: 'Roboto', sans-serif; font-size: 14px; color: #222; font-weight: 400;">Não sou um robô</span>
-                      </div>
-                      <div class="captcha-logo" style="display: flex; flex-direction: column; align-items: center; margin-top: 4px;">
-                        <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" style="width: 28px; height: 28px; margin-bottom: 2px; opacity: 0.8;">
-                        <span style="font-family: 'Roboto', sans-serif; font-size: 10px; color: #555;">reCAPTCHA</span>
-                        <div style="font-family: 'Roboto', sans-serif; font-size: 8.5px; color: #555; margin-top: 1px;">
-                            <a href="#" style="color: #555; text-decoration: none;">Privacidade</a> - <a href="#" style="color: #555; text-decoration: none;">Termos</a>
-                        </div>
-                      </div>
-                  </div>
-                  
+                  <!-- RECAPTCHA GOOGLE OFICIAL -->
+                  <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" style="flex: 1; display: flex; align-items: center; justify-content: flex-start; overflow: hidden;"></div>
+
                   <a href="https://api.whatsapp.com/send?phone=5511920665012&text=Ol%C3%A1%2C%20estou%20com%20dificuldades%20para%20enviar%20o%20formul%C3%A1rio%20no%20portal." target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #25D366; color: white; border-radius: 4px; padding: 0 15px; text-decoration: none; font-weight: 800; font-size: 0.75rem; height: 74px; border: 1px solid #20b858; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: opacity 0.2s;">
                       <i class="fab fa-whatsapp" style="font-size: 1.8rem; margin-bottom: 3px;"></i>
                       <span>Suporte</span>
@@ -858,28 +837,14 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 15px; margin: 20px 0;">
-                  <div class="captcha-container" style="margin: 0; flex: 1; border: 1px solid #d3d3d3; background: #f9f9f9; border-radius: 3px; height: 78px; box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.08); padding: 0 12px 0 14px;">
-                      <div class="captcha-checkbox" onclick="window.ativarCaptcha()">
-                        <div class="checkmark-box" id="captcha-box" style="width: 28px; height: 28px; border: 2px solid #c1c1c1; border-radius: 2px; background: #fff; margin-right: 12px;">
-                          <div class="captcha-spinner" id="captcha-spinner" style="width: 20px; height: 20px;"></div>
-                          <img src="https://www.gstatic.com/images/icons/material/system/2x/check_black_24dp.png" id="captcha-check" style="display:none; width: 24px; filter: invert(43%) sepia(91%) saturate(2220%) hue-rotate(130deg) brightness(96%) contrast(101%);" />
-                        </div>
-                        <span class="captcha-label" style="font-family: 'Roboto', sans-serif; font-size: 14px; color: #222; font-weight: 400;">Não sou um robô</span>
-                      </div>
-                      <div class="captcha-logo" style="display: flex; flex-direction: column; align-items: center; margin-top: 4px;">
-                        <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" style="width: 28px; height: 28px; margin-bottom: 2px; opacity: 0.8;">
-                        <span style="font-family: 'Roboto', sans-serif; font-size: 10px; color: #555;">reCAPTCHA</span>
-                        <div style="font-family: 'Roboto', sans-serif; font-size: 8.5px; color: #555; margin-top: 1px;">
-                            <a href="#" style="color: #555; text-decoration: none;">Privacidade</a> - <a href="#" style="color: #555; text-decoration: none;">Termos</a>
-                        </div>
-                      </div>
-                  </div>
-                  
-                  <a href="https://api.whatsapp.com/send?phone=5511920665012&text=Ol%C3%A1%2C%20estou%20com%20dificuldades%20para%20enviar%20o%20formul%C3%A1rio%20no%20portal." target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #25D366; color: white; border-radius: 4px; padding: 0 15px; text-decoration: none; font-weight: 800; font-size: 0.75rem; height: 74px; border: 1px solid #20b858; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: opacity 0.2s;">
-                      <i class="fab fa-whatsapp" style="font-size: 1.8rem; margin-bottom: 3px;"></i>
-                      <span>Suporte</span>
-                  </a>
-              </div>
+                <!-- RECAPTCHA GOOGLE OFICIAL -->
+                <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" style="flex: 1; display: flex; align-items: center; justify-content: flex-start; overflow: hidden;"></div>
+
+                <a href="https://api.whatsapp.com/send?phone=5511920665012&text=Ol%C3%A1%2C%20estou%20com%20dificuldades%20para%20enviar%20o%20formul%C3%A1rio%20no%20portal." target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #25D366; color: white; border-radius: 4px; padding: 0 15px; text-decoration: none; font-weight: 800; font-size: 0.75rem; height: 74px; border: 1px solid #20b858; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: opacity 0.2s;">
+                    <i class="fab fa-whatsapp" style="font-size: 1.8rem; margin-bottom: 3px;"></i>
+                    <span>Suporte</span>
+                </a>
+            </div>
 
             <button type="submit" class="btn-report" id="btn-submit-denuncia">Registrar Denúncia Segura <i class="fas fa-paper-plane"></i></button>
           </form>
@@ -962,7 +927,7 @@
         document.getElementById('step-visual-1').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff;';
         document.getElementById('step-visual-2').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff;';
         document.getElementById('step-visual-3').style = 'border-top-color: #e2e8f0; opacity: 0.6; background: #fff;';
-        
+
         if(stepNumber === 1) document.getElementById('step-visual-1').style = 'border-top-color: var(--gov-blue); opacity: 1; background: #f0f4f8; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
         if(stepNumber === 2) document.getElementById('step-visual-2').style = 'border-top-color: var(--warning); opacity: 1; background: #fffbeb; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
         if(stepNumber === 3) document.getElementById('step-visual-3').style = 'border-top-color: var(--success-color); opacity: 1; background: #f0fdf4; transform: scale(1.05); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.05);';
@@ -972,7 +937,7 @@
         const input = document.getElementById('main-search-input');
         const btn = document.getElementById('main-search-btn');
         let query = input.value.replace(/\D/g, ''); // Limpa tudo que nao for numero
-        
+
         if(query.length !== 11 && query.length !== 14) {
             alert("Por favor, digite um CPF (11 números) ou CNPJ (14 números) válido.");
             return;
@@ -1009,11 +974,11 @@
                 let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${query}`);
                 if(!req.ok) throw new Error("CNPJ não encontrado");
                 let dados = await req.json();
-                
+
                 let nome = dados.nome_fantasia || dados.razao_social;
                 let situacao = dados.descricao_situacao_cadastral || "ATIVA";
                 let corSituacao = situacao.toUpperCase() === "ATIVA" ? "var(--success-color)" : "var(--sp-red)";
-                
+
                 resultArea.innerHTML = `
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #ccc; padding-bottom:10px;">
                     <strong style="color:var(--gov-dark-blue); font-size:1.1rem;"><i class="fas fa-building"></i> Dados da Empresa</strong>
@@ -1148,7 +1113,6 @@
 
     window.idPedidoConsultaAtual = null; 
     window.dadosPedidoAtual = {}; 
-    window.captchaValidado = false;
 
     window.crc16 = function(payload) {
         let polynomial = 0x1021;
@@ -1184,17 +1148,6 @@
                          "6304";
         let crc = window.crc16(payloadStr);
         return payloadStr + crc;
-    };
-
-    window.ativarCaptcha = function() {
-        if(window.captchaValidado) return;
-        document.getElementById('captcha-spinner').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('captcha-spinner').style.display = 'none';
-            document.getElementById('captcha-check').style.display = 'block';
-            document.getElementById('captcha-box').style.borderColor = 'transparent';
-            window.captchaValidado = true;
-        }, 1200);
     };
 
     window.maskCPFinCNPJ = function(i) {
@@ -1366,21 +1319,21 @@
                   const arrayBuffer = await file.arrayBuffer();
                   const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
                   const page = await pdf.getPage(1); // Pega só a primeira página para caber no banco
-                  
+
                   const viewport = page.getViewport({scale: 1.0}); // Renderiza num tamanho normal
                   const canvas = document.createElement('canvas');
                   const ctx = canvas.getContext('2d');
-                  
+
                   // Força um tamanho menor se o PDF for gigante
                   let scale = 1;
                   if (viewport.width > 800) scale = 800 / viewport.width;
                   const scaledViewport = page.getViewport({scale: scale});
-                  
+
                   canvas.height = scaledViewport.height;
                   canvas.width = scaledViewport.width;
 
                   await page.render({canvasContext: ctx, viewport: scaledViewport}).promise;
-                  
+
                   // Converte o canvas para imagem JPEG de baixa qualidade (leve)
                   const base64Reduzido = canvas.toDataURL('image/jpeg', 0.4); 
                   resolve(base64Reduzido);
@@ -1391,7 +1344,7 @@
               // SE FOR IMAGEM: Comprime bem mais forte que antes
               const reader = new FileReader();
               reader.readAsDataURL(file);
-              
+
               reader.onload = (event) => {
                   const img = new Image();
                   img.src = event.target.result;
@@ -1409,7 +1362,7 @@
                       canvas.height = height;
                       const ctx = canvas.getContext('2d');
                       ctx.drawImage(img, 0, 0, width, height);
-                      
+
                       // Qualidade de 0.5 para 0.4 (comprime mais)
                       const base64Reduzido = canvas.toDataURL('image/jpeg', 0.4);
                       resolve(base64Reduzido);
@@ -1770,7 +1723,7 @@
                         // Se as duas APIs falharem, mostra os campos em branco para o cliente digitar
                         document.getElementById('dados-pj').style.display = 'block';
                         document.getElementById('endereco-automatico').style.display = 'block';
-                        
+
                         ['end_cep', 'end_rua', 'end_num', 'end_bairro', 'end_cidade'].forEach(id => {
                             let el = document.getElementById(id);
                             if(el) { el.removeAttribute('readonly'); el.style.backgroundColor = '#fff'; }
@@ -1783,7 +1736,7 @@
                         msgErro.style.fontWeight = 'bold';
                         msgErro.style.marginTop = '5px';
                         msgErro.innerHTML = '<i class="fas fa-exclamation-circle"></i> Sistema de busca instável. Por favor, preencha seus dados manualmente abaixo.';
-                        
+
                         if(!document.getElementById('erro-cpf-msg')) {
                             document.getElementById('cnpj_empresa').parentNode.insertBefore(msgErro, document.getElementById('cnpj_empresa').nextSibling);
                         }
@@ -1800,7 +1753,10 @@
     if (formRegularizacao) {
         formRegularizacao.addEventListener('submit', async (e) => {
           e.preventDefault();
-          if(!window.captchaValidado) { alert("Por favor, confirme que você não é um robô."); return; }
+
+          // VALIDAÇÃO GOOGLE RECAPTCHA
+          const recaptchaResponse = e.target.querySelector('[name="g-recaptcha-response"]').value;
+          if(!recaptchaResponse) { alert("Por favor, confirme que você não é um robô (reCAPTCHA)."); return; }
 
           const btnSubmit = document.getElementById('btn-enviar-whatsapp');
           const textoOriginal = btnSubmit.innerHTML;
@@ -1843,7 +1799,7 @@
               const fantasiaPJ = document.getElementById('nome_fantasia') ? document.getElementById('nome_fantasia').value : "";
               const nomePF = document.getElementById('nome_pf').value;
               const nomeFantasiaPF = document.getElementById('nome_fantasia_pf').value;
-              
+
               let nomeFormatadoPJ = nomePJ;
               if (fantasiaPJ) nomeFormatadoPJ += " (" + fantasiaPJ + ")";
 
@@ -1866,16 +1822,22 @@
                   data: new Date().toLocaleString()
               });
 
-              // alert("Sucesso! Documentos enviados para análise.");
-              // Mudei o alerta simples para um envio de comprovante no WhatsApp automaticamente
+              // ABRE O MODAL PARA ENVIAR COMPROVANTE VIA WHATSAPP E FINALIZAR A ABA 1
               const msgAnalise = `*COMPROVANTE DE PROTOCOLO GERADO*\n\n*Empresa/Pessoa:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n\nSeus documentos foram enviados para análise técnica. Guarde esta mensagem. O seu processo já está no sistema!`;
               const urlWhatsAnalise = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msgAnalise);
-              window.open(urlWhatsAnalise, '_blank');
+              
+              document.getElementById('btn-whats-comprovante').onclick = function() {
+                  window.open(urlWhatsAnalise, '_blank');
+                  document.getElementById('successSubmitModal').style.display = 'none';
+              };
+              document.getElementById('successSubmitModal').style.display = 'flex';
 
               document.getElementById('form-regularizacao').reset();
               document.getElementById('area-checklist').style.display = 'none';
               document.getElementById('btn-enviar-whatsapp').style.display = 'none';
               window.limparCamposEndereco();
+              
+              // JÁ ABRE A ABA DE CONSULTA E PREENCHE O CNPJ PARA ELE
               window.alternarAba('pagamento');
               document.getElementById('consulta_cnpj').value = cnpj;
 
@@ -1892,6 +1854,10 @@
     if (formDenuncia) {
         formDenuncia.addEventListener('submit', async (e) => {
           e.preventDefault();
+
+          // VALIDAÇÃO GOOGLE RECAPTCHA
+          const recaptchaResponse = e.target.querySelector('[name="g-recaptcha-response"]').value;
+          if(!recaptchaResponse) { alert("Por favor, confirme que você não é um robô (reCAPTCHA)."); return; }
 
           const btnSubmit = document.getElementById('btn-submit-denuncia');
           const textoOriginal = btnSubmit.innerHTML;
@@ -1930,6 +1896,7 @@
               alert("Denúncia registrada com sucesso! A base central de fiscalização já recebeu seu protocolo anonimamente.");
               document.getElementById('form-denuncia').reset();
               document.getElementById('qtd-fotos-denuncia').innerText = "";
+              grecaptcha.reset();
 
           } catch (error) {
               console.error(error);
@@ -1965,7 +1932,7 @@
               } else {
                   const pedido = snapshot.docs[0].data();
                   window.idPedidoConsultaAtual = snapshot.docs[0].id;
-                  
+
                   let numProtocolo = window.idPedidoConsultaAtual.substring(0, 8).toUpperCase();
                   let badgeProtocolo = `<div style="text-align: center; margin-bottom: 20px;">
                       <span style="background: #1e293b; color: #f8fafc; padding: 8px 20px; border-radius: 8px; font-weight: 600; font-family: 'Courier New', monospace; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: inline-block;">
@@ -2027,7 +1994,7 @@
 
                       try {
                           let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
-                          
+
                           // CHAMANDO A API DO VERCEL QUE CRIAMOS
                           const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
 
@@ -2046,7 +2013,7 @@
 
                           if (dadosPix.success) {
                               document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
-                              
+
                               let qrSrc = dadosPix.qrcodeUrl;
                               if (qrSrc.startsWith('base64:')) {
                                   qrSrc = 'data:image/png;base64,' + qrSrc.replace('base64:', '');
@@ -2058,16 +2025,16 @@
                               const unsubscribePagamento = onSnapshot(docRefAtual, (docSnap) => {
                                   if (docSnap.exists()) {
                                       const dadosAtualizados = docSnap.data();
-                                      
+
                                       if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
                                           unsubscribePagamento(); 
-                                          
+
                                           document.getElementById('resultado-pix').style.display = 'none';
                                           document.getElementById('mensagem-status').style.display = 'block';
                                           document.getElementById('mensagem-status').style.background = '#dcfce3';
                                           document.getElementById('mensagem-status').style.color = '#166534';
                                           document.getElementById('mensagem-status').style.borderColor = '#10b981';
-                                          
+
                                           document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + `
                                               <i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br>
                                               <strong style="font-size:1.6rem; text-transform:uppercase;">Pagamento Autorizado!</strong><br><br>
