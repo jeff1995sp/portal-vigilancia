@@ -14,35 +14,35 @@ export default async function handler(req, res) {
             console.log("Pagamento recebido da ElitePay:", JSON.stringify(pagamento));
             
             // Procura o status do pagamento na mensagem da ElitePay
-            const status = pagamento.status || pagamento.state || pagamento.situacao || '';
+            const status = pagamento.status || pagamento.state || pagamento.situacao || pagamento.transactionState || '';
             
-            // Procura a descrição que enviámos na hora de gerar o Pix
-            const descricao = pagamento.description || pagamento.reference_id || pagamento.external_reference || pagamento.observacao || '';
+            // Procura o ID do Firebase que enviámos na hora de gerar o Pix
+            const idProcesso = pagamento.externalReference || pagamento.external_reference || '';
 
             // Verifica se o pagamento foi confirmado
             const pagoComSucesso = status.toUpperCase() === 'PAID' || 
                                    status.toUpperCase() === 'APPROVED' || 
                                    status.toUpperCase() === 'PAGO' ||
+                                   status.toUpperCase() === 'COMPLETO' ||
                                    status.toUpperCase() === 'CONCLUIDO';
 
-            // Se foi pago e tem o ID do processo na descrição
-            if (pagoComSucesso && descricao.includes('Taxa COVISA - Processo ')) {
+            // Se foi pago e a ElitePay devolveu o ID do Firebase
+            if (pagoComSucesso && idProcesso) {
                 
-                // Extrai o ID do Firebase que escondemos na descrição
-                const idProcesso = descricao.split('Processo ')[1].trim();
-
                 // A SUA CHAVE DO FIREBASE
                 const apiKey = "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg";
 
                 // URL do Firebase COM a chave de segurança para permitir a gravação
-                const firebaseUrl = `https://firestore.googleapis.com/v1/projects/site-8dfaf/databases/(default)/documents/pedidos/${idProcesso}?updateMask.fieldPaths=pago&key=${apiKey}`;
+                // Gravamos pago: true e aguardando_alvara: true
+                const firebaseUrl = `https://firestore.googleapis.com/v1/projects/site-8dfaf/databases/(default)/documents/pedidos/${idProcesso}?updateMask.fieldPaths=pago&updateMask.fieldPaths=aguardando_alvara&key=${apiKey}`;
                 
                 const updateReq = await fetch(firebaseUrl, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         fields: {
-                            pago: { booleanValue: true }
+                            pago: { booleanValue: true },
+                            aguardando_alvara: { booleanValue: true }
                         }
                     })
                 });
@@ -54,6 +54,7 @@ export default async function handler(req, res) {
                     return res.status(500).json({ error: 'Erro ao gravar no banco de dados' });
                 }
 
+                console.log(`Pedido ${idProcesso} marcado como pago no Firebase!`);
                 return res.status(200).json({ success: true, message: "Firebase atualizado, tela do cliente liberada!" });
             }
 
