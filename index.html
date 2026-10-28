@@ -1988,7 +1988,7 @@
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
                       valorPixParaComprovante = valorFormatado;
 
-                      // --- INÍCIO DA INTEGRAÇÃO ELITEPAY VIA VERCEL (COM BLOQUEIO DE 30 MIN) ---
+                      // --- INÍCIO DA INTEGRAÇÃO ELITEPAY VIA VERCEL (COM BLOQUEIO DE 30 MIN E WEBHOOK) ---
                       document.getElementById('pix-copia-cola').value = "Gerando Pix oficial, aguarde...";
                       document.querySelector('.qr-container img').src = "https://i.gifer.com/ZKZg.gif"; 
 
@@ -2026,7 +2026,8 @@
                                       amount: valorCobrado,
                                       description: `Taxa COVISA - Processo ${window.idPedidoConsultaAtual}`,
                                       payerName: pedido.nome,
-                                      payerDocument: pedido.cnpj.replace(/\D/g, '') // Manda só os números
+                                      payerDocument: pedido.cnpj.replace(/\D/g, ''),
+                                      externalReference: window.idPedidoConsultaAtual // ADD ESSA LINHA PARA O WEBHOOK SABER QUEM PAGOU
                                   })
                               });
 
