@@ -4,7 +4,6 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
 
-    // Responde ao 'preflight' do navegador
     if (req.method === 'OPTIONS') {
         res.status(200).end();
         return;
@@ -29,8 +28,7 @@ export default async function handler(req, res) {
                 description: description,
                 payerName: payerName,
                 payerDocument: payerDocument,
-                // Aqui enviamos o ID do Firebase para a ElitePay saber qual é o pedido
-                externalReference: externalReference 
+                externalReference: externalReference // Envia o ID para o Webhook ler depois
             })
         });
 
