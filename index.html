@@ -18,10 +18,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <!-- Adicionado para converter PDF em Imagem antes de guardar -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
-  <!-- API OFICIAL DO GOOGLE RECAPTCHA -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
   <style>
@@ -40,7 +38,6 @@
       --warning: #f59e0b;
     }
 
-    /* --- RESET GERAL --- */
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
     html { scroll-behavior: smooth; }
     body { font-family: 'Roboto', sans-serif; background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; line-height: 1.6; padding-bottom: 60px; }
@@ -52,25 +49,20 @@
     .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
-    /* --- ESTILO PARA MENSAGEM DE SUCESSO DO CPF --- */
     .cpf-success-msg { background: #dcfce3; color: #166534; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; margin-top: 10px; display: none; border: 1px solid #22c55e; text-align: center; }
 
-    /* --- WIDGET DE ACESSIBILIDADE LATERAL --- */
     .access-widget { position: fixed; right: 0; top: 40%; transform: translateY(-50%); display: flex; flex-direction: column; z-index: 9999; }
     .access-widget a { background: #0d3c85; color: white; font-size: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); border-radius: 8px 0 0 8px; margin-bottom: 2px; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; text-decoration: none;}
     .access-widget a:hover { background: var(--sp-red); width: 55px; }
 
-    /* --- FEATURE: BARRA DE SEGURANÇA --- */
     .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
 
-    /* --- BARRA GOV VERMELHA --- */
     .gov-bar { background: var(--sp-red); color: #fff; padding: 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2000; position: relative; }
     .gov-left { font-weight: 700; opacity: 0.95; }
     .gov-links { display: flex; gap: 10px; }
     .gov-links a { color: #fff; font-weight: 800; opacity: 0.95; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); white-space: nowrap; }
     .gov-links a:hover { opacity: 1; background: rgba(255,255,255,0.14); }
 
-    /* --- HEADER --- */
     header { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; padding: 14px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
     .header-grid { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
     .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
@@ -89,7 +81,6 @@
     .hamburger-btn { display: none; width: 44px; height: 44px; border-radius: 12px; background: #f8f9fa; border: 1px solid #e9ecef; cursor: pointer; align-items: center; justify-content: center; color: #333; transition: 0.2s; }
     .hamburger-btn:hover { background: #f1f3f5; }
 
-    /* --- DRAWER MOBILE --- */
     .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; display: none; }
     .drawer { position: fixed; top: 0; left: 0; height: 100%; width: 310px; max-width: 86vw; background: #fff; z-index: 10000; transform: translateX(-110%); transition: transform 0.25s ease; box-shadow: 0 20px 60px rgba(0,0,0,0.25); display: flex; flex-direction: column; }
     .drawer.open { transform: translateX(0); }
@@ -104,14 +95,12 @@
     .drawer-nav a.denuncia strong { background: var(--sp-red); color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; margin-left: auto; }
     .drawer-bottom { margin-top: auto; padding: 16px; border-top: 1px solid #eee; background: #fafafa; color: #666; font-size: 0.9rem; }
 
-    /* --- HERO --- */
     .hero { background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(44, 62, 80, 0.7) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; min-height: 600px; position: relative; display: flex; flex-direction: column; justify-content: center; color: white; padding-top: 40px; padding-bottom: 150px; }
     .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; }
     .hero-badge { background: var(--sp-red); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 25px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
     .hero h2 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 40px; font-weight: 300; }
 
-    /* --- BARRA DE PESQUISA (Nova: Consulta Rápida) --- */
     .search-box { background: white; padding: 8px; border-radius: 50px; display: flex; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 600px; margin: 0 auto 10px; transition: 0.3s; border: 2px solid transparent;}
     .search-box:focus-within { border-color: var(--sp-red); box-shadow: 0 10px 40px rgba(218, 37, 28, 0.3); }
     .search-box input { border: none; flex: 1; padding: 15px 25px; font-size: 1.1rem; color: #333; outline: none; background: transparent; }
@@ -119,13 +108,11 @@
     .search-box button:hover:not(:disabled) { background: var(--sp-dark-red); }
     .search-box button:disabled { background: #ccc; cursor: not-allowed; }
 
-    /* --- SIMULAÇÃO EM TEMPO REAL --- */
     .live-stats-bar { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 25px 0; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; position: absolute; bottom: 0; }
     .live-grid { display: flex; justify-content: center; gap: 60px; text-align: center; color: white; }
     .live-item h4 { font-size: 2.8rem; font-weight: 900; margin: 0; color: #ffeb3b; font-family: 'Courier New', monospace; line-height: 1; }
     .live-item span { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 800; }
 
-    /* --- STATUS CARDS --- */
     .status-bar { margin-top: 60px; padding-bottom: 60px; background: white; }
     .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
     .status-card { background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #eee; display: flex; align-items: center; gap: 15px; transition: 0.3s; box-shadow: var(--shadow); }
@@ -134,7 +121,6 @@
     .status-info h4 { font-size: 0.9rem; color: var(--text-light); margin-bottom: 5px; text-transform: uppercase; font-weight: 900; }
     .status-info strong { font-size: 1.2rem; color: var(--text-dark); display: block; font-weight: 900; }
 
-    /* --- ESTILOS GERAIS DE FORMULÁRIO --- */
     .form-control { width: 100%; padding: 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; margin-bottom: 15px; transition: 0.3s; font-family: 'Roboto', sans-serif; background: #fff; }
     .form-control:focus { border-color: var(--gov-blue); outline: none; }
     .form-control[readonly] { background-color: #f1f3f5; color: #6c757d; cursor: not-allowed; }
@@ -143,7 +129,6 @@
     .btn-primary { background: var(--gov-blue); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: 900; font-size: 1.1rem; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; text-transform: uppercase; }
     .btn-primary:hover { background: var(--gov-dark-blue); transform: translateY(-2px); }
 
-    /* --- REGULARIZE SECTION --- */
     .checklist-section { padding: 100px 0; background: #f4f7fa; border-top: 1px solid #e1e8ed; border-bottom: 1px solid #e1e8ed; }
     .checklist-wrapper { display: flex; gap: 60px; flex-wrap: wrap; align-items: flex-start; }
     .checklist-intro { flex: 1; min-width: 320px; }
@@ -180,7 +165,6 @@
     .doc-item input[type="checkbox"]:checked ~ span { color: var(--gov-blue); }
     .doc-item:has(input[type="checkbox"]:checked) { border-color: var(--gov-blue); background: #f0f4f8; }
 
-    /* Map Styles */
     #map-container { width: 100%; height: 250px; background: #e9ecef; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; display: none; overflow: hidden; position: relative; }
     .map-legend { background: #fff; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; color: var(--sp-red); border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 5px; }
 
@@ -194,7 +178,6 @@
     .invoice-value h2 { font-size: 2.5rem; color: #2d3748; margin: 0; }
     .qr-container { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e0; text-align: center; margin-bottom: 25px; position: relative;}
 
-    /* --- BARRA DE PROGRESSO VISUAL --- */
     .progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 35px; margin-top: 10px; padding: 0 20px;}
     .progress-container::before { content: ''; position: absolute; top: 50%; left: 30px; right: 30px; height: 4px; background: #e2e8f0; z-index: 0; transform: translateY(-50%); }
     .progress-step { position: relative; z-index: 1; background: white; border: 4px solid #e2e8f0; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #cbd5e0; }
@@ -202,7 +185,6 @@
     .progress-step.completed { border-color: var(--success-color); background: var(--success-color); color: white; }
     .progress-label { position: absolute; top: 55px; font-size: 0.75rem; text-align: center; width: 100px; left: -27px; font-weight: 800; color: #64748b; line-height: 1.2;}
 
-    /* --- OUTRAS SEÇÕES --- */
     .areas-section { padding: 100px 0; background: #fff; text-align: center; }
     .areas-header { max-width: 700px; margin: 0 auto 60px; }
     .areas-header h2 { font-size: 2.5rem; color: var(--text-dark); margin-bottom: 15px; }
@@ -278,7 +260,6 @@
     .btn-report { background: var(--sp-red); color: white; border: none; padding: 22px; width: 100%; font-weight: 900; font-size: 1.3rem; border-radius: 12px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3); }
     .btn-report:hover { background: var(--sp-dark-red); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(218, 37, 28, 0.4); }
 
-    /* --- FOOTER ATUALIZADO --- */
     footer { background: #17191d; color: #aaa; padding-top: 50px; margin-top: 0; padding-bottom: 80px; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
     img.footer-logo { height: 80px !important; width: auto !important; max-width: none !important; filter: grayscale(100%) brightness(200%); opacity: 0.5; margin-bottom: 20px; }
@@ -292,7 +273,6 @@
     .selo-link:hover { transform: translateY(-4px) scale(1.05); }
     .selo-link img { width: 100%; height: auto; display: block; mix-blend-mode: lighten; border-radius: 8px; }
 
-    /* CHATBOT OTIMIZADO GEMINI IA E ANTI-BLOQUEIO */
     .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--sp-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(218, 37, 28, 0.5); z-index: 9998; transition: 0.3s;}
     .chat-widget-btn:hover { transform: scale(1.1); }
     .chat-interface { position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9998; display: none; flex-direction: column; border: 1px solid #eee; overflow: hidden; }
@@ -308,7 +288,6 @@
     .bubble-ai { background: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333; border: 1px solid #eee;}
     .bubble-user { background: var(--sp-red); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(218,37,28,0.2); }
 
-    /* --- CUSTOM ALERT MODAL --- */
     .custom-alert-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 999999; display: none; align-items: center; justify-content: center; }
     .custom-alert-box { background: white; width: 90%; max-width: 450px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); text-align: center; padding: 30px; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-top: 6px solid var(--warning); }
     .custom-alert-icon { width: 70px; height: 70px; background: #fffbeb; color: var(--warning); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 20px; }
@@ -318,7 +297,6 @@
     .btn-alert-ok:hover { background: var(--gov-dark-blue); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(19, 81, 180, 0.4); }
     @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
 
-    /* --- MODAL DE ALERTA DE FRAUDE --- */
     .modal-alerta-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
     .modal-alerta-box { background: #fff; max-width: 650px; width: 90%; border-radius: 12px; padding: 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border-top: 5px solid var(--sp-red); text-align: left; max-height: 90vh; overflow-y: auto;}
     .modal-alerta-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #999; cursor: pointer; transition: 0.3s; }
@@ -327,7 +305,6 @@
     .modal-alerta-box p { color: #444; font-size: 0.95rem; margin-bottom: 15px; line-height: 1.6; }
     .modal-alerta-box strong { color: #222; }
 
-    /* --- MOBILE AJUSTES OTIMIZADOS E PERFEITOS --- */
     @media (max-width: 900px) {
       .gov-bar { font-size: 10px; padding: 8px 0; }
       .flex-between { align-items: flex-start; }
@@ -335,7 +312,6 @@
       .gov-links { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
       .gov-links a { padding: 6px 10px; }
 
-      /* AJUSTE FIXO PARA IPHONE / MOBILE - LOGO E MENU */
       header { position: relative; padding: 10px 0; }
       .header-grid { display: flex; flex-direction: column; align-items: center; position: relative; padding-top: 10px; }
       .brand { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px; margin-bottom: 10px; }
@@ -385,7 +361,6 @@
 </head>
 
 <body>
-  <!-- CUSTOM ALERT MODAL -->
   <div class="custom-alert-overlay" id="customAlertModal">
     <div class="custom-alert-box">
       <div class="custom-alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
@@ -395,7 +370,6 @@
     </div>
   </div>
 
-  <!-- NOVO MODAL DE SUCESSO (ENVIO COMPROVANTE WHATSAPP) -->
   <div class="custom-alert-overlay" id="successSubmitModal">
     <div class="custom-alert-box" style="border-top-color: var(--success-color);">
       <div class="custom-alert-icon" style="color: var(--success-color); background: #dcfce3;"><i class="fas fa-check-circle"></i></div>
@@ -567,28 +541,31 @@
               <div id="dados-pj" style="display: none;">
                   <input type="text" class="form-control" id="nome_empresa" placeholder="Nome Empresarial (Razão Social) *" onblur="window.salvarRascunho()" />
                   <input type="text" class="form-control" id="nome_fantasia" placeholder="Nome Fantasia" />
+              </div>
 
-                  <div id="endereco-automatico" style="display: none;">
-                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                          <label style="font-weight: 800; color: #555; font-size: 0.9rem; margin: 0;">Endereço Localizado</label>
-                          <button type="button" onclick="window.destravarEndereco()" style="background: none; border: none; color: var(--gov-blue); font-weight: bold; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;"><i class="fas fa-pen"></i> Editar Manualmente</button>
-                      </div>
-                      <div class="form-row">
-                          <input type="text" class="form-control" id="end_cep" placeholder="CEP" readonly style="margin-bottom: 0;" />
-                          <input type="text" class="form-control" id="end_cidade" placeholder="Município / UF" readonly style="margin-bottom: 0;" />
-                      </div>
-                      <div class="form-row">
-                          <input type="text" class="form-control" id="end_rua" placeholder="Endereço" readonly />
-                          <input type="text" class="form-control" id="end_num" placeholder="Nº" readonly />
-                      </div>
-                      <input type="text" class="form-control" id="end_bairro" placeholder="Bairro" readonly />
+              <!-- NOVO: Área de Endereço unificada para CPF e CNPJ -->
+              <div id="endereco-automatico" style="display: none; margin-top: 15px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                      <label id="label-endereco" style="font-weight: 800; color: #555; font-size: 0.9rem; margin: 0;">Endereço Localizado</label>
+                      <button type="button" onclick="window.destravarEndereco()" style="background: none; border: none; color: var(--gov-blue); font-weight: bold; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;"><i class="fas fa-pen"></i> Editar Manualmente</button>
+                  </div>
+                  <div class="form-row">
+                      <!-- Para o CPF poder digitar o CEP, adicionei onkeyup e tirei o readonly padrao inline (o JS controla isso) -->
+                      <input type="text" class="form-control" id="end_cep" placeholder="CEP (Apenas números)" style="margin-bottom: 0;" onkeyup="window.buscarCEP(this.value)" maxlength="9" readonly />
+                      <input type="text" class="form-control" id="end_cidade" placeholder="Município / UF" style="margin-bottom: 0;" readonly />
+                  </div>
+                  <div class="form-row">
+                      <input type="text" class="form-control" id="end_rua" placeholder="Endereço" readonly />
+                      <input type="text" class="form-control" id="end_num" placeholder="Nº" oninput="window.atualizarMapaCEP()" readonly />
+                  </div>
+                  <input type="text" class="form-control" id="end_bairro" placeholder="Bairro" readonly />
 
-                      <div id="map-container">
-                          <div class="map-legend">📍 Localização Exata Vinculada ao CNPJ</div>
-                          <iframe id="google-map-frame" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                      </div>
+                  <div id="map-container">
+                      <div class="map-legend" id="map-legend-text">📍 Localização Exata Vinculada ao Documento</div>
+                      <iframe id="google-map-frame" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                   </div>
               </div>
+              <!-- FIM Área de Endereço unificada -->
 
               <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Ramo de Atividade *</label>
               <select class="form-control" id="tipo_estab" required onchange="window.mostrarChecklist()">
@@ -837,7 +814,6 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 15px; margin: 20px 0;">
-                <!-- RECAPTCHA GOOGLE OFICIAL -->
                 <div class="g-recaptcha" data-sitekey="6Lf5bAQuAAAAANMZqVRKmKYJJ4rys-9DRE0SGaIW" style="flex: 1; display: flex; align-items: center; justify-content: flex-start; overflow: hidden;"></div>
 
                 <a href="https://api.whatsapp.com/send?phone=5511920665012&text=Ol%C3%A1%2C%20estou%20com%20dificuldades%20para%20enviar%20o%20formul%C3%A1rio%20no%20portal." target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #25D366; color: white; border-radius: 4px; padding: 0 15px; text-decoration: none; font-weight: 800; font-size: 0.75rem; height: 74px; border: 1px solid #20b858; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: opacity 0.2s;">
@@ -908,6 +884,41 @@
         document.getElementById('end_rua').focus();
     };
 
+    window.buscarCEP = async function(cep) {
+        let cepLimpo = cep.replace(/\D/g, '');
+        let cepFormat = cepLimpo;
+        if (cepLimpo.length > 5) {
+            cepFormat = cepLimpo.replace(/^(\d{5})(\d)/, '$1-$2');
+        }
+        document.getElementById('end_cep').value = cepFormat;
+
+        if(cepLimpo.length === 8) {
+            try {
+                let req = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+                let dados = await req.json();
+                if(!dados.erro) {
+                    document.getElementById('end_rua').value = dados.logradouro;
+                    document.getElementById('end_bairro').value = dados.bairro;
+                    document.getElementById('end_cidade').value = dados.localidade + " - " + dados.uf;
+                    document.getElementById('end_num').focus();
+                    window.atualizarMapaCEP();
+                }
+            } catch(e) { console.log("Erro ao buscar CEP"); }
+        }
+    };
+
+    window.atualizarMapaCEP = function() {
+        let rua = document.getElementById('end_rua').value;
+        let num = document.getElementById('end_num').value;
+        let cidade = document.getElementById('end_cidade').value;
+        if(rua && cidade) {
+            let enderecoCompleto = `${rua}, ${num}, ${cidade}`;
+            let mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoCompleto)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+            document.getElementById('map-container').style.display = 'block';
+            document.getElementById('google-map-frame').src = mapUrl;
+        }
+    };
+
     window.limparCamposEndereco = function() {
       document.getElementById('nome_empresa').value = '';
       if (document.getElementById('nome_fantasia')) document.getElementById('nome_fantasia').value = '';
@@ -936,7 +947,7 @@
     window.consultarDocumentoTopo = async function() {
         const input = document.getElementById('main-search-input');
         const btn = document.getElementById('main-search-btn');
-        let query = input.value.replace(/\D/g, ''); // Limpa tudo que nao for numero
+        let query = input.value.replace(/\D/g, ''); 
 
         if(query.length !== 11 && query.length !== 14) {
             alert("Por favor, digite um CPF (11 números) ou CNPJ (14 números) válido.");
@@ -954,7 +965,6 @@
 
         try {
             if (query.length === 11) {
-                // É CPF
                 if(window.validarCPF(query)) {
                     resultArea.innerHTML = `
                       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #ccc; padding-bottom:10px;">
@@ -970,7 +980,6 @@
                     throw new Error("CPF Inválido");
                 }
             } else if (query.length === 14) {
-                // É CNPJ
                 let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${query}`);
                 if(!req.ok) throw new Error("CNPJ não encontrado");
                 let dados = await req.json();
@@ -1309,22 +1318,19 @@
     };
 
     const comprimirEConverterFoto = async (file) => {
-      // NOVA LOGICA DE COMPRESSÃO FORTE
       return new Promise(async (resolve, reject) => {
           const isPDF = file.type === "application/pdf";
 
           if (isPDF) {
-              // SE FOR PDF: Usa o pdf.js para ler a primeira página e transformar numa imagem levinha
               try {
                   const arrayBuffer = await file.arrayBuffer();
                   const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-                  const page = await pdf.getPage(1); // Pega só a primeira página para caber no banco
+                  const page = await pdf.getPage(1); 
 
-                  const viewport = page.getViewport({scale: 1.0}); // Renderiza num tamanho normal
+                  const viewport = page.getViewport({scale: 1.0}); 
                   const canvas = document.createElement('canvas');
                   const ctx = canvas.getContext('2d');
 
-                  // Força um tamanho menor se o PDF for gigante
                   let scale = 1;
                   if (viewport.width > 800) scale = 800 / viewport.width;
                   const scaledViewport = page.getViewport({scale: scale});
@@ -1334,14 +1340,12 @@
 
                   await page.render({canvasContext: ctx, viewport: scaledViewport}).promise;
 
-                  // Converte o canvas para imagem JPEG de baixa qualidade (leve)
                   const base64Reduzido = canvas.toDataURL('image/jpeg', 0.4); 
                   resolve(base64Reduzido);
               } catch (e) {
                   reject(new Error("Falha ao converter o PDF. O arquivo pode estar corrompido ou protegido."));
               }
           } else {
-              // SE FOR IMAGEM: Comprime bem mais forte que antes
               const reader = new FileReader();
               reader.readAsDataURL(file);
 
@@ -1350,7 +1354,7 @@
                   img.src = event.target.result;
                   img.onload = () => {
                       const canvas = document.createElement('canvas');
-                      const MAX_WIDTH = 600; // Reduzi de 700 para 600 para ficar mais leve
+                      const MAX_WIDTH = 600; 
                       let width = img.width;
                       let height = img.height;
 
@@ -1363,7 +1367,6 @@
                       const ctx = canvas.getContext('2d');
                       ctx.drawImage(img, 0, 0, width, height);
 
-                      // Qualidade de 0.5 para 0.4 (comprime mais)
                       const base64Reduzido = canvas.toDataURL('image/jpeg', 0.4);
                       resolve(base64Reduzido);
                   };
@@ -1439,8 +1442,7 @@
             const nome = p.nome ? p.nome.toUpperCase() : "NÃO INFORMADO";
             const cnpj = p.cnpj || "NÃO INFORMADO";
 
-            // AGORA PEGANDO DIRETO DO FIREBASE (O QUE FOI SALVO)
-            let rua = p.rua || "Avenida Rotary"; // Fallback se não tiver
+            let rua = p.rua || "Avenida Rotary"; 
             let num = p.num || "79";
             let bairro = p.bairro || "Serraria";
             let cep = p.cep || "09980-000";
@@ -1469,11 +1471,12 @@
             const espacoEntreLinhas = 10;   
             const tamanhoLetra = 10;         
 
-            page.drawText('RAZÃO SOCIAL:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            page.drawText('NOME / RAZÃO SOCIAL:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(nome, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
             alturaAtual -= espacoEntreLinhas;
 
-            page.drawText('CNPJ:', { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
+            const labelDoc = (cnpj.replace(/\D/g, '').length === 11) ? 'CPF:' : 'CNPJ:';
+            page.drawText(labelDoc, { x: margemEsquerdaTextos, y: alturaAtual, size: tamanhoLetra, font: fontNormal, color: black });
             page.drawText(cnpj, { x: margemEsquerdaDados, y: alturaAtual, size: tamanhoLetra, font: fontBold, color: black });
             alturaAtual -= espacoEntreLinhas;
 
@@ -1614,6 +1617,12 @@
                             document.getElementById('loading-cnpj').style.display = 'none';
                             document.getElementById('msg-cpf-encontrado').style.display = 'block';
                             document.getElementById('dados-pf').style.display = 'block';
+                            
+                            document.getElementById('endereco-automatico').style.display = 'block';
+                            document.getElementById('label-endereco').innerText = "Endereço do Solicitante";
+                            document.getElementById('map-legend-text').innerText = "📍 Localização Exata";
+                            window.destravarEndereco();
+                            
                             document.getElementById('nome_pf').focus();
                         }, 1000); 
                     }
@@ -1651,7 +1660,6 @@
                     let uf = "";
                     let dadosEncontrados = false;
 
-                    // Tentativa 1: BrasilAPI
                     try {
                         let req1 = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${valLimpo}`);
                         if(req1.ok) {
@@ -1670,7 +1678,6 @@
                         }
                     } catch(e) { console.log("BrasilAPI falhou, tentando fallback"); }
 
-                    // Tentativa 2: publica.cnpj.ws (Fallback de Segurança)
                     if(!dadosEncontrados) {
                         try {
                             let req2 = await fetch(`https://publica.cnpj.ws/cnpj/${valLimpo}`);
@@ -1694,7 +1701,6 @@
                         } catch(e) { console.log("CNPJ.ws falhou"); }
                     }
 
-                    // Anti-Bug: Evita bugar se o cliente apagar o número enquanto a API pensa
                     if (document.getElementById('cnpj_empresa').value.replace(/\D/g, '').length !== 14) {
                         document.getElementById('loading-cnpj').style.display = 'none';
                         return;
@@ -1706,6 +1712,14 @@
                         if(document.getElementById('nome_fantasia')) document.getElementById('nome_fantasia').value = nomeFantasia;
 
                         document.getElementById('endereco-automatico').style.display = 'block';
+                        document.getElementById('label-endereco').innerText = "Endereço Localizado";
+                        document.getElementById('map-legend-text').innerText = "📍 Localização Exata Vinculada ao CNPJ";
+                        
+                        ['end_cep', 'end_rua', 'end_num', 'end_bairro', 'end_cidade'].forEach(id => {
+                            let el = document.getElementById(id);
+                            if(el) { el.setAttribute('readonly', 'true'); el.style.backgroundColor = ''; }
+                        });
+
                         if(document.getElementById('end_cep')) document.getElementById('end_cep').value = cep;
                         document.getElementById('end_rua').value = logradouro;
                         document.getElementById('end_num').value = numero;
@@ -1720,14 +1734,12 @@
 
                         window.salvarRascunho();
                     } else {
-                        // Se as duas APIs falharem, mostra os campos em branco para o cliente digitar
                         document.getElementById('dados-pj').style.display = 'block';
+                        
                         document.getElementById('endereco-automatico').style.display = 'block';
-
-                        ['end_cep', 'end_rua', 'end_num', 'end_bairro', 'end_cidade'].forEach(id => {
-                            let el = document.getElementById(id);
-                            if(el) { el.removeAttribute('readonly'); el.style.backgroundColor = '#fff'; }
-                        });
+                        document.getElementById('label-endereco').innerText = "Endereço da Empresa";
+                        
+                        window.destravarEndereco(); 
 
                         let msgErro = document.createElement('div');
                         msgErro.id = 'erro-cpf-msg';
@@ -1754,7 +1766,6 @@
         formRegularizacao.addEventListener('submit', async (e) => {
           e.preventDefault();
 
-          // VALIDAÇÃO GOOGLE RECAPTCHA
           const recaptchaResponse = e.target.querySelector('[name="g-recaptcha-response"]').value;
           if(!recaptchaResponse) { alert("Por favor, confirme que você não é um robô (reCAPTCHA)."); return; }
 
@@ -1808,7 +1819,6 @@
               const tipo = document.getElementById('tipo_estab').value;
               const docsTextAdmin = `POSSUI: ${marcados.join(", ")}\nFALTA: ${naoMarcados.join(", ")}`;
 
-              // PEGAR OS ENDEREÇOS DIGITADOS/PUXADOS
               const cep = document.getElementById('end_cep') ? document.getElementById('end_cep').value : "";
               const rua = document.getElementById('end_rua') ? document.getElementById('end_rua').value : "";
               const num = document.getElementById('end_num') ? document.getElementById('end_num').value : "";
@@ -1818,11 +1828,10 @@
               await addDoc(collection(db, "pedidos"), {
                   nome: nomeFinal, cnpj: cnpj, tipo: tipo, docs: docsTextAdmin,
                   evidencias: listaEvidencias, valor: null, pago: false,
-                  cep: cep, rua: rua, num: num, bairro: bairro, cidadeUF: cidadeUF, // SALVANDO ENDEREÇO AQUI
+                  cep: cep, rua: rua, num: num, bairro: bairro, cidadeUF: cidadeUF, 
                   data: new Date().toLocaleString()
               });
 
-              // ABRE O MODAL PARA ENVIAR COMPROVANTE VIA WHATSAPP E FINALIZAR A ABA 1
               const msgAnalise = `*COMPROVANTE DE PROTOCOLO GERADO*\n\n*Empresa/Pessoa:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n\nSeus documentos foram enviados para análise técnica. Guarde esta mensagem. O seu processo já está no sistema!`;
               const urlWhatsAnalise = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msgAnalise);
               
@@ -1838,7 +1847,6 @@
               document.getElementById('btn-enviar-whatsapp').style.display = 'none';
               window.limparCamposEndereco();
               
-              // JÁ ABRE A ABA DE CONSULTA E PREENCHE O CNPJ PARA ELE
               window.alternarAba('pagamento');
               document.getElementById('consulta_cnpj').value = cnpj;
 
@@ -1856,7 +1864,6 @@
         formDenuncia.addEventListener('submit', async (e) => {
           e.preventDefault();
 
-          // VALIDAÇÃO GOOGLE RECAPTCHA
           const recaptchaResponse = e.target.querySelector('[name="g-recaptcha-response"]').value;
           if(!recaptchaResponse) { alert("Por favor, confirme que você não é um robô (reCAPTCHA)."); return; }
 
@@ -1990,7 +1997,6 @@
                       document.getElementById('valor-cobrado').innerText = valorFormatado;
                       valorPixParaComprovante = valorFormatado;
 
-                      // --- INÍCIO DA INTEGRAÇÃO ELITEPAY VIA VERCEL (COM BLOQUEIO DE 30 MIN E WEBHOOK) ---
                       document.getElementById('pix-copia-cola').value = "Gerando Pix oficial, aguarde...";
                       document.querySelector('.qr-container img').src = "https://i.gifer.com/ZKZg.gif"; 
 
@@ -1998,8 +2004,6 @@
 
                       try {
                           let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
-
-                          // CHAMANDO A API DO VERCEL QUE CRIAMOS
                           const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
 
                           let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
@@ -2029,7 +2033,7 @@
                                       description: `Taxa COVISA - Processo ${window.idPedidoConsultaAtual}`,
                                       payerName: pedido.nome,
                                       payerDocument: pedido.cnpj.replace(/\D/g, ''),
-                                      externalReference: window.idPedidoConsultaAtual // ADD ESSA LINHA PARA O WEBHOOK SABER QUEM PAGOU
+                                      externalReference: window.idPedidoConsultaAtual 
                                   })
                               });
 
@@ -2052,7 +2056,6 @@
                               }
                               document.querySelector('.qr-container img').src = qrSrc;
 
-                              // --- NOVO: ESCUTADOR EM TEMPO REAL ---
                               const docRefAtual = doc(db, "pedidos", window.idPedidoConsultaAtual);
                               const unsubscribePagamento = onSnapshot(docRefAtual, (docSnap) => {
                                   if (docSnap.exists()) {
@@ -2069,7 +2072,6 @@
                                           atualizarBarraProgresso(4); window.updateVisualSteps(3);
                                           if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
                                       } else if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
-                                          // ATENÇÃO: NÃO DAMOS UNSUBSCRIBE AQUI! ASSIM ELE CONTINUA ESCUTANDO PARA QUANDO O ADMIN LIBERAR O ALVARÁ
                                           document.getElementById('resultado-pix').style.display = 'none';
                                           document.getElementById('mensagem-status').style.display = 'block';
                                           document.getElementById('mensagem-status').style.background = '#dcfce3';
@@ -2091,7 +2093,6 @@
                                       }
                                   }
                               });
-                              // --- FIM DO ESCUTADOR ---
 
                           } else {
                               alert("Erro no Gateway: " + JSON.stringify(dadosPix));
@@ -2104,7 +2105,6 @@
                           document.getElementById('pix-copia-cola').value = "Falha de conexão com a API.";
                           document.querySelector('.qr-container img').src = "imagens/pix.jpeg";
                       }
-                      // --- FIM DA INTEGRAÇÃO ELITEPAY ---
 
                       cnpjParaComprovante = cnpj;
                       atualizarBarraProgresso(3); window.updateVisualSteps(3);
