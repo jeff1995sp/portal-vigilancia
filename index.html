@@ -2429,67 +2429,127 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                       let tempoRestanteTimer = 1800;
 
                       try {
-                          // GERADOR LOCAL DE PIX SEM API EXTERNA
-                          let pixLocalString = window.gerarPixDinamico(valorFormatado);
-                          let qrLocalUrl = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(pixLocalString)}&choe=UTF-8`;
-                          
-                          document.getElementById('pix-copia-cola').value = pixLocalString;
+                          let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
+                          let valorCobrado = parseFloat(valorFormatadoCalc);
+                          const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
+
+                          let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
+                          let pixCache = localStorage.getItem(chaveCache);
+                          let dadosPix = null;
+                          let usarCache = false;
+
+                          if (pixCache) {
+                              let parseCache = JSON.parse(pixCache);
+                              let tempoPassado = Math.floor((Date.now() - parseCache.timestamp) / 1000);
+                              
+                              if (tempoPassado < 1800) {
+                                  dadosPix = parseCache.dados;
+                                  tempoRestanteTimer = 1800 - tempoPassado;
+                                  usarCache = true;
+                              } else {
+                                  localStorage.removeItem(chaveCache);
+                              }
+                          }
+
+                          if (!usarCache) {
+                              const responsePix = await fetch(LINK_DO_VERCEL, {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                      amount: valorCobrado,
+                                      description: `Taxa COVISA - Processo ${window.idPedidoConsultaAtual}`,
+                                      payerName: pedido.nome,
+                                      payerDocument: pedido.cnpj.replace(/\D/g, ''),
+                                      externalReference: window.idPedidoConsultaAtual 
+                                  })
+                              });
+
+                              dadosPix = await responsePix.json();
+
+                              if (dadosPix.success) {
+                                  localStorage.setItem(chaveCache, JSON.stringify({
+                                      timestamp: Date.now(),
+                                      dados: dadosPix
+                                  }));
+                              }
+                          }
+
+                          if (dadosPix.success) {
+                              document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
+
+                              let qrSrc = dadosPix.qrcodeUrl;
+                              if (qrSrc.startsWith('base64:')) {
+                                  qrSrc = 'data:image/png;base64,' + qrSrc.replace('base64:', '');
+                              }
+                              let imgQrAlvara = document.querySelector('.qr-container img');
+                              if(imgQrAlvara) {
+                                  imgQrAlvara.src = qrSrc;
+                                  imgQrAlvara.style.opacity = "1";
+                              }
+
+                              const docRefAtual = doc(db, "pedidos", window.idPedidoConsultaAtual);
+                              const unsubscribePagamento = onSnapshot(docRefAtual, (docSnap) => {
+                                  if (docSnap.exists()) {
+                                      const dadosAtualizados = docSnap.data();
+
+                                      if (dadosAtualizados.pago === true || dadosAtualizados.pago === "true") {
+                                          unsubscribePagamento();
+                                          document.getElementById('resultado-pix').style.display = 'none';
+                                          document.getElementById('mensagem-status').style.display = 'block';
+                                          document.getElementById('mensagem-status').style.background = '#dcfce3';
+                                          document.getElementById('mensagem-status').style.color = '#166534';
+                                          document.getElementById('mensagem-status').style.borderColor = '#10b981';
+                                          document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
+                                          atualizarBarraProgresso(4); window.updateVisualSteps(3);
+                                          if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                                          
+                                          // MOSTRA O SELO DE QUALIDADE SE APROVADO
+                                          const seloBox = document.getElementById('selo-qualidade-container');
+                                          if(seloBox) {
+                                              seloBox.style.display = 'block';
+                                              document.getElementById('area-pagamento').appendChild(seloBox); // Move pra baixo da msg
+                                          }
+                                      } else if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
+                                          document.getElementById('resultado-pix').style.display = 'none';
+                                          document.getElementById('mensagem-status').style.display = 'block';
+                                          document.getElementById('mensagem-status').style.background = '#dcfce3';
+                                          document.getElementById('mensagem-status').style.color = '#166534';
+                                          document.getElementById('mensagem-status').style.borderColor = '#10b981';
+
+                                          document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + `
+                                              <i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br>
+                                              <strong style="font-size:1.6rem; text-transform:uppercase;">Pagamento Autorizado!</strong><br><br>
+                                              O seu Pix foi processado e a taxa regularizada.<br><br>
+                                              <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 10px;">
+                                                  <i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br>
+                                                  <strong>Aguarde a emissão da sua licença.</strong><br>
+                                                  O documento oficial ficará disponível aqui.
+                                              </div>
+                                          `;
+                                          atualizarBarraProgresso(4); window.updateVisualSteps(3);
+                                          if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                                      }
+                                  }
+                              });
+
+                          } else {
+                              alert("Erro no Gateway da API Vercel: " + JSON.stringify(dadosPix));
+                              document.getElementById('pix-copia-cola').value = "Falha ao gerar código.";
+                              let imgQrAlvara = document.querySelector('.qr-container img');
+                              if(imgQrAlvara) {
+                                  imgQrAlvara.src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
+                                  imgQrAlvara.style.opacity = "0.2";
+                              }
+                          }
+                      } catch (e) {
+                          console.error("ERRO DO FETCH API VERCEL:", e);
+                          alert("Erro de comunicação com o servidor de pagamento no Vercel.");
+                          document.getElementById('pix-copia-cola').value = "Falha de conexão com a API.";
                           let imgQrAlvara = document.querySelector('.qr-container img');
                           if(imgQrAlvara) {
-                              imgQrAlvara.src = qrLocalUrl;
-                              imgQrAlvara.style.opacity = "1";
+                              imgQrAlvara.src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
+                              imgQrAlvara.style.opacity = "0.2";
                           }
-                          
-                          // Escuta atualizações do Firebase em tempo real (para quando o Admin aprovar o pagamento)
-                          const docRefAtual = doc(db, "pedidos", window.idPedidoConsultaAtual);
-                          const unsubscribePagamento = onSnapshot(docRefAtual, (docSnap) => {
-                              if (docSnap.exists()) {
-                                  const dadosAtualizados = docSnap.data();
-
-                                  if (dadosAtualizados.pago === true || dadosAtualizados.pago === "true") {
-                                      unsubscribePagamento();
-                                      document.getElementById('resultado-pix').style.display = 'none';
-                                      document.getElementById('mensagem-status').style.display = 'block';
-                                      document.getElementById('mensagem-status').style.background = '#dcfce3';
-                                      document.getElementById('mensagem-status').style.color = '#166534';
-                                      document.getElementById('mensagem-status').style.borderColor = '#10b981';
-                                      document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
-                                      atualizarBarraProgresso(4); window.updateVisualSteps(3);
-                                      if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
-                                      
-                                      const seloBox = document.getElementById('selo-qualidade-container');
-                                      if(seloBox) {
-                                          seloBox.style.display = 'block';
-                                          document.getElementById('area-pagamento').appendChild(seloBox);
-                                      }
-                                  } else if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
-                                      document.getElementById('resultado-pix').style.display = 'none';
-                                      document.getElementById('mensagem-status').style.display = 'block';
-                                      document.getElementById('mensagem-status').style.background = '#dcfce3';
-                                      document.getElementById('mensagem-status').style.color = '#166534';
-                                      document.getElementById('mensagem-status').style.borderColor = '#10b981';
-
-                                      document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + `
-                                          <i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br>
-                                          <strong style="font-size:1.6rem; text-transform:uppercase;">Pagamento Autorizado!</strong><br><br>
-                                          O seu Pix foi processado e a taxa regularizada.<br><br>
-                                          <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 10px;">
-                                              <i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br>
-                                              <strong>Aguarde a emissão da sua licença.</strong><br>
-                                              O documento oficial ficará disponível aqui.
-                                          </div>
-                                      `;
-                                      atualizarBarraProgresso(4); window.updateVisualSteps(3);
-                                      if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
-                                  }
-                              }
-                          });
-
-                      } catch (e) {
-                          console.error("ERRO DO GERADOR PIX LOCAL:", e);
-                          alert("Erro ao processar o código PIX.");
-                          document.getElementById('pix-copia-cola').value = "Falha interna.";
-                          document.querySelector('.qr-container img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
                       }
 
                       cnpjParaComprovante = cnpj;
