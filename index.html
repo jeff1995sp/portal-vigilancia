@@ -794,7 +794,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     </p>
                   </div>
 
-                  <button onclick="window.enviarWhatsAppComprovanteConsulta()" class="btn-success">
+                  <button onclick="window.gerarPDFGuia()" class="btn-success" id="btn-baixar-guia">
                     💳 Emitir Guia e Suspender Ações Fiscais Temporariamente
                   </button>
                 </div>
@@ -1588,6 +1588,114 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
     window.toggleChat = function() {
       const c = document.getElementById('chat-interface');
       c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
+    };
+
+    window.gerarPDFGuia = async function() {
+        try {
+            const btn = document.getElementById('btn-baixar-guia');
+            const txtOriginal = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Guia de Pagamento...';
+            btn.disabled = true;
+
+            const p = window.dadosPedidoAtual || {};
+            
+            // Verifica se está puxando os dados certos baseado no input da tela
+            const cnpj = document.getElementById('consulta_cnpj').value || document.getElementById('consulta_cnpj_multa').value || p.cnpj || "NÃO INFORMADO";
+            
+            // Buscar dados frescos do Firebase se não tiver no window
+            let nome = "CONTRIBUINTE";
+            let valor = "0,00";
+            let codigoPix = document.getElementById('pix-copia-cola') ? document.getElementById('pix-copia-cola').value : "";
+            
+            if (!codigoPix || codigoPix.includes("Gerando")) {
+                codigoPix = document.getElementById('pix-copia-cola-multa') ? document.getElementById('pix-copia-cola-multa').value : "PIX_GERADO_NO_SISTEMA";
+            }
+
+            try {
+                const q = query(collection(db, "pedidos"), where("cnpj", "==", cnpj));
+                const snap = await getDocs(q);
+                if (!snap.empty) {
+                    const dados = snap.docs[0].data();
+                    nome = dados.nome || nome;
+                    valor = dados.valor || valor;
+                } else {
+                     // Tenta buscar nas multas
+                    const qM = query(collection(db, "multas"), where("cnpj", "==", cnpj));
+                    const snapM = await getDocs(qM);
+                    if (!snapM.empty) {
+                        const dadosM = snapM.docs[0].data();
+                        nome = dadosM.nome || nome;
+                        valor = dadosM.valor || valor;
+                    }
+                }
+            } catch(e) {}
+
+            const dataAtual = new Date();
+            const dataEmissao = dataAtual.toLocaleDateString('pt-BR');
+            const horaEmissao = dataAtual.toLocaleTimeString('pt-BR');
+            
+            // Data de vencimento = hoje + 3 dias
+            const dataVenc = new Date(dataAtual);
+            dataVenc.setDate(dataVenc.getDate() + 3);
+            const dataVencimento = dataVenc.toLocaleDateString('pt-BR');
+
+            // Carrega o template PDF
+            const urlArquivoMolde = 'TAXA VIGILANCIA.pdf'; 
+            const existingPdfBytes = await fetch(urlArquivoMolde).then(res => res.arrayBuffer());
+
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const pdfDoc = await PDFDocument.load(existingPdfBytes);
+            const page = pdfDoc.getPages()[0]; 
+
+            const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);     
+            const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold); 
+            const fontMono = await pdfDoc.embedFont(StandardFonts.Courier);
+            const black = rgb(0, 0, 0); 
+            
+            // === COORDENADAS DE PREENCHIMENTO (Ajuste os valores X e Y conforme o seu design PDF) ===
+            const tamanhoLetra = 12;
+            const tamanhoPix = 9;
+
+            // 1. Razão Social / Nome
+            page.drawText(nome.toUpperCase(), { x: 50, y: 700, size: tamanhoLetra, font: fontBold, color: black });
+            
+            // 2. CNPJ
+            page.drawText(cnpj, { x: 50, y: 670, size: tamanhoLetra, font: fontNormal, color: black });
+            
+            // 3. Data de Emissão
+            page.drawText(`${dataEmissao} ${horaEmissao}`, { x: 400, y: 700, size: tamanhoLetra, font: fontNormal, color: black });
+            
+            // 4. Data de Vencimento
+            page.drawText(dataVencimento, { x: 400, y: 670, size: tamanhoLetra, font: fontBold, color: rgb(0.8, 0, 0) });
+            
+            // 5. Valor a Pagar
+            let valorFormat = valor.includes('R$') ? valor : `R$ ${valor}`;
+            page.drawText(valorFormat, { x: 400, y: 640, size: 14, font: fontBold, color: black });
+            
+            // 6. Código PIX (Copia e Cola) - Quebrando em linhas se for muito longo
+            if(codigoPix.length > 50) {
+                 page.drawText(codigoPix.substring(0, 50), { x: 50, y: 550, size: tamanhoPix, font: fontMono, color: black });
+                 page.drawText(codigoPix.substring(50, 100), { x: 50, y: 535, size: tamanhoPix, font: fontMono, color: black });
+                 if(codigoPix.length > 100) page.drawText(codigoPix.substring(100), { x: 50, y: 520, size: tamanhoPix, font: fontMono, color: black });
+            } else {
+                 page.drawText(codigoPix, { x: 50, y: 550, size: tamanhoPix, font: fontMono, color: black });
+            }
+
+            // Gerar e baixar
+            const pdfBytes = await pdfDoc.save();
+            download(pdfBytes, `Guia_Vigilancia_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
+
+            btn.innerHTML = txtOriginal;
+            btn.disabled = false;
+        } catch(e) {
+            console.error("Erro ao gerar PDF:", e);
+            alert("Erro ao gerar a guia. Verifique se o arquivo 'TAXA VIGILANCIA.pdf' está na raiz do seu site no GitHub.");
+            const btnError = document.getElementById('btn-baixar-guia');
+            if (btnError) {
+                btnError.innerHTML = '💳 Emitir Guia e Suspender Ações Fiscais Temporariamente';
+                btnError.disabled = false;
+            }
+        }
     };
 
     window.gerarPDF = async function() {
