@@ -1143,13 +1143,27 @@
                 </div>
                 <div>
                     <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Artigo Enquadrado (Lei 10.083/1998)</label>
-                    <select id="multa-artigo" class="form-input" style="border-color: var(--danger);" required>
-                        <option value="122, I">Art 122, I - Sem licença sanitária</option>
-                        <option value="122, II">Art 122, II - Sem responsável técnico</option>
-                        <option value="122, III">Art 122, III - Risco no saneamento</option>
-                        <option value="122, VIII">Art 122, VIII - Impedir fiscalização</option>
-                        <option value="122, XIII">Art 122, XIII - Produtos vencidos</option>
-                        <option value="122, XX">Art 122, XX - Descumprir determinações</option>
+                    <select id="multa-artigo" class="form-input" style="border-color: var(--danger); font-size: 0.95rem;" required>
+                        <option value="122, I">Art 122, I - Sem licença sanitária ou contrariando normas</option>
+                        <option value="122, II">Art 122, II - Sem responsável técnico habilitado</option>
+                        <option value="122, III">Art 122, III - Risco no saneamento ambiental</option>
+                        <option value="122, IV">Art 122, IV - Produtos perigosos/tóxicos irregulares</option>
+                        <option value="122, V">Art 122, V - Criação/reprodução irregular de animais</option>
+                        <option value="122, VI">Art 122, VI - Reciclagem de lixo infectante</option>
+                        <option value="122, VII">Art 122, VII - Risco à saúde do trabalhador</option>
+                        <option value="122, VIII">Art 122, VIII - Impedir/atrasar fiscalização</option>
+                        <option value="122, IX">Art 122, IX - Omitir riscos à saúde</option>
+                        <option value="122, X">Art 122, X - Equipamentos com risco ao trabalhador</option>
+                        <option value="122, XI">Art 122, XI - Produtos sem padrão de qualidade/segurança</option>
+                        <option value="122, XII">Art 122, XII - Venda de produto gratuito/institucional</option>
+                        <option value="122, XIII">Art 122, XIII - Produtos vencidos ou sem validade</option>
+                        <option value="122, XIV">Art 122, XIV - Rotulagem irregular</option>
+                        <option value="122, XV">Art 122, XV - Propaganda enganosa (Saúde)</option>
+                        <option value="122, XVI">Art 122, XVI - Propaganda irregular de medicamentos</option>
+                        <option value="122, XVII">Art 122, XVII - Equipamento inadequado em saúde</option>
+                        <option value="122, XVIII">Art 122, XVIII - Alterar fabricação sem autorização</option>
+                        <option value="122, XIX">Art 122, XIX - Descumprir outras normas de saúde</option>
+                        <option value="122, XX">Art 122, XX - Descumprir determinações do fiscal</option>
                         <option value="Outros">Outros Enquadramentos</option>
                     </select>
                 </div>
@@ -1162,7 +1176,7 @@
 
             <div class="info-grid" style="align-items: end;">
                 <div>
-                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Quantidade de UFESPs (Mín. 10 / Máx. 10.000)</label>
+                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Quantidade de UFESPs</label>
                     <input type="number" id="multa-ufesps" class="form-input" placeholder="Ex: 50" required oninput="calcularUfespAdmin()">
                 </div>
                 <div>
