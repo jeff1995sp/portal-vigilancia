@@ -746,6 +746,19 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
               </button>
             </form>
           </div>
+          
+          <!-- SELO COVISA DE QUALIDADE - Oculto por padrão, ativado após aprovação -->
+          <div id="selo-qualidade-container" style="display: none; margin-top: 30px; text-align: center; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; border-radius: 20px; color: white; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3); border: 2px solid #34d399;">
+             <i class="fas fa-certificate" style="font-size: 4rem; color: #fde047; text-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 15px;"></i>
+             <h3 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; text-transform: uppercase;">Selo COVISA de Qualidade</h3>
+             <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 25px; line-height: 1.5;">O seu estabelecimento foi certificado! Baixe o seu QR Code oficial e cole na vitrine ou no balcão para garantir total segurança aos seus clientes.</p>
+             <div style="background: white; padding: 20px; border-radius: 12px; display: inline-block; margin-bottom: 20px;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://covisa-sp.gov.br/verificacao" alt="QR Code Selo" style="display: block;">
+             </div>
+             <br>
+             <button onclick="window.print()" style="background: white; color: #059669; border: none; padding: 12px 30px; font-size: 1.1rem; font-weight: 900; border-radius: 50px; cursor: pointer; transition: 0.3s; text-transform: uppercase; box-shadow: 0 5px 15px rgba(0,0,0,0.2);"><i class="fas fa-print"></i> Imprimir Selo Oficial</button>
+             <p style="font-size: 0.8rem; margin-top: 15px; opacity: 0.7;">Válido até 31/12/2026. A falsificação deste selo constitui crime.</p>
+          </div>
 
           <div id="area-pagamento" style="display: none;">
             <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
@@ -2359,6 +2372,15 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                           </div>
                       `;
                       atualizarBarraProgresso(4); window.updateVisualSteps(3);
+                      
+                      // MOSTRA O SELO DE QUALIDADE
+                      setTimeout(() => {
+                          const seloBox = document.getElementById('selo-qualidade-container');
+                          if(seloBox) {
+                              seloBox.style.display = 'block';
+                              document.getElementById('area-pagamento').appendChild(seloBox);
+                          }
+                      }, 500);
                   } else if (pedido.aguardando_alvara === true || pedido.aguardando_alvara === "true") {
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
@@ -2467,6 +2489,13 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                                           document.getElementById('texto-mensagem').innerHTML = badgeProtocolo + '<i class="fas fa-check-circle" style="font-size:3rem; margin-bottom: 15px; color: #10b981;"></i><br><strong style="font-size:1.6rem; text-transform:uppercase;">Licença Emitida!</strong><br><br>Atualize a página para baixar seu alvará.';
                                           atualizarBarraProgresso(4); window.updateVisualSteps(3);
                                           if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                                          
+                                          // MOSTRA O SELO DE QUALIDADE SE APROVADO
+                                          const seloBox = document.getElementById('selo-qualidade-container');
+                                          if(seloBox) {
+                                              seloBox.style.display = 'block';
+                                              document.getElementById('area-pagamento').appendChild(seloBox); // Move pra baixo da msg
+                                          }
                                       } else if (dadosAtualizados.aguardando_alvara === true || dadosAtualizados.aguardando_alvara === "true") {
                                           document.getElementById('resultado-pix').style.display = 'none';
                                           document.getElementById('mensagem-status').style.display = 'block';
