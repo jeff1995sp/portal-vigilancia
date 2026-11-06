@@ -92,7 +92,8 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                         </div>
                     `;
                     
-                    let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
+                    let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
+                    let valorCobrado = parseFloat(valorFormatadoCalc);
                     const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
                     
                     try {
@@ -102,7 +103,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             body: JSON.stringify({
                                 amount: valorCobrado,
                                 description: 'Multa COVISA - ' + idMulta.substring(0,6),
-                                payerName: multa.nome || "Infrator Autuado",
+                                payerName: (multa.nome && multa.nome.trim() !== "") ? multa.nome : "Contribuinte Autuado",
                                 payerDocument: cnpj.replace(/\D/g, ''),
                                 externalReference: 'MULTA_' + idMulta
                             })
@@ -131,13 +132,16 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             }
                             document.getElementById('qr-multa-img').src = qrSrc;
                         } else {
+                            console.error("Erro da API Pix:", dadosPix);
                             document.getElementById('pix-copia-cola-multa').value = "Erro ao gerar código Pix.";
-                            document.getElementById('qr-multa-img').src = "imagens/pix.jpeg";
+                            document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png"; // Fallback visível
+                            document.getElementById('qr-multa-img').style.opacity = "0.2";
                         }
                     } catch (e) {
-                        console.error("Erro no Pix:", e);
+                        console.error("Erro no Pix (Catch):", e);
                         document.getElementById('pix-copia-cola-multa').value = "Erro de conexão com Gateway.";
-                        document.getElementById('qr-multa-img').src = "imagens/pix.jpeg";
+                        document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
+                        document.getElementById('qr-multa-img').style.opacity = "0.2";
                     }
                 }
             } catch (error) {
@@ -2329,17 +2333,34 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
           btnConsulta.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
 
           try {
+              // Procura o protocolo, mas ignora se for apenas uma denúncia vinculada a esse CNPJ
               const q = query(collection(db, "pedidos"), where("cnpj", "==", cnpj));
               const snapshot = await getDocs(q);
+              
+              let pedidoValido = null;
+              let idPedidoValido = null;
+              
+              if (!snapshot.empty) {
+                  // Filtra os documentos para encontrar um que NÃO seja denúncia
+                  snapshot.forEach(doc => {
+                      let data = doc.data();
+                      if (data.tipo !== "🚨 DENÚNCIA") {
+                          pedidoValido = data;
+                          idPedidoValido = doc.id;
+                      }
+                  });
+              }
 
-              if (snapshot.empty) {
+              if (!pedidoValido) {
                   divPix.style.display = 'none'; divMsg.style.display = 'block';
                   divMsg.style.background = '#fff3cd'; divMsg.style.color = '#856404'; divMsg.style.borderColor = '#f59e0b';
-                  textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum protocolo encontrado para este CNPJ/CPF.';
+                  textMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Nenhum processo de Alvará ou Licenciamento encontrado para este CNPJ/CPF.';
                   document.getElementById('barra-progresso').style.display = 'none';
               } else {
-                  const pedido = snapshot.docs[0].data();
-                  window.idPedidoConsultaAtual = snapshot.docs[0].id;
+                  const pedido = pedidoValido;
+                  window.idPedidoConsultaAtual = idPedidoValido;
+                  window.dadosPedidoAtual = pedido;
+                  
 
                   let numProtocolo = window.idPedidoConsultaAtual.substring(0, 6).toUpperCase();
                   let badgeProtocolo = `<div style="text-align: center; margin-bottom: 20px;">
@@ -2421,7 +2442,8 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                       let tempoRestanteTimer = 1800;
 
                       try {
-                          let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
+                          let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
+                          let valorCobrado = parseFloat(valorFormatadoCalc);
                           const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
 
                           let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
@@ -2698,7 +2720,8 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                         </div>
                     `;
                     
-                    let valorCobrado = parseFloat(valorLimpo.replace(',', '.'));
+                    let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
+                    let valorCobrado = parseFloat(valorFormatadoCalc);
                     const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
                     
                     try {
@@ -2708,7 +2731,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             body: JSON.stringify({
                                 amount: valorCobrado,
                                 description: 'Multa COVISA - ' + idMulta.substring(0,6),
-                                payerName: multa.nome || "Infrator Autuado",
+                                payerName: (multa.nome && multa.nome.trim() !== "") ? multa.nome : "Contribuinte Autuado",
                                 payerDocument: cnpj.replace(/\D/g, ''),
                                 externalReference: 'MULTA_' + idMulta
                             })
@@ -2737,13 +2760,16 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             }
                             document.getElementById('qr-multa-img').src = qrSrc;
                         } else {
+                            console.error("Erro da API Pix:", dadosPix);
                             document.getElementById('pix-copia-cola-multa').value = "Erro ao gerar código Pix.";
-                            document.getElementById('qr-multa-img').src = "imagens/pix.jpeg";
+                            document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png"; // Fallback visível
+                            document.getElementById('qr-multa-img').style.opacity = "0.2";
                         }
                     } catch (e) {
-                        console.error("Erro no Pix:", e);
+                        console.error("Erro no Pix (Catch):", e);
                         document.getElementById('pix-copia-cola-multa').value = "Erro de conexão com Gateway.";
-                        document.getElementById('qr-multa-img').src = "imagens/pix.jpeg";
+                        document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
+                        document.getElementById('qr-multa-img').style.opacity = "0.2";
                     }
                 }
             } catch (error) {
