@@ -2071,7 +2071,7 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
             try {
                 const cnpjAlvo = document.getElementById('multa-cnpj-alvo').value;
                 if(!cnpjAlvo) {
-                    showToast("Erro", "É obrigatório informar o CNPJ ou CPF alvo da infração.", "error");
+                    showToast("Erro", "CNPJ/CPF alvo da infração não encontrado.", "error");
                     throw new Error("CNPJ ausente");
                 }
 
@@ -2081,12 +2081,10 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
 
                 const motivoFinal = `[${artigo}] ${motivoDigitado}`;
                 
-                // Tratar a imagem da evidência (se houver)
                 const fileInputEvidencia = document.getElementById('multa-evidencia-input');
                 let urlEvidencia = null;
                 
                 if (fileInputEvidencia.files && fileInputEvidencia.files.length > 0) {
-                     // Utiliza a função global que já existe no admin.html (mas com compressão alta por ser pro BD)
                      const arquivo = fileInputEvidencia.files[0];
                      const base64 = await new Promise((resolve, reject) => {
                           const reader = new FileReader();
@@ -2104,42 +2102,39 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
                                   ctx.drawImage(img, 0, 0, width, height);
                                   resolve(canvas.toDataURL('image/jpeg', 0.8));
                               };
+                              img.onerror = () => reject("Erro ao ler imagem");
                           };
+                          reader.onerror = () => reject("Erro no file reader");
                           reader.readAsDataURL(arquivo);
                      });
                      urlEvidencia = base64;
                 }
                 
-                // Verifica se já existe um pedido (processo) para esse CNPJ
-                const qProc = query(collection(db, "pedidos"), where("cnpj", "==", cnpjAlvo));
-                const snapProc = await getDocs(qProc);
-                let nomeAlvo = "Contribuinte Autuado";
-                if(!snapProc.empty) nomeAlvo = snapProc.docs[0].data().nome;
+                let nomeAlvo = dadosProcessoAtual && dadosProcessoAtual.nome ? dadosProcessoAtual.nome : "Contribuinte Autuado";
 
-                // Salva a Multa na coleção própria (multas)
+                // Certifique-se de que a coleção multas pode ser escrita
                 await addDoc(collection(db, "multas"), {
                     cnpj: cnpjAlvo,
                     nome: nomeAlvo,
                     motivo: motivoFinal,
                     valor: valorCalculado,
-                    foto_prova: urlEvidencia, // Salva a foto
+                    foto_prova: urlEvidencia,
                     data_emissao: new Date().toLocaleString(),
                     status: "Pendente de Pagamento"
                 });
 
-                showToast("Multa Lançada", "O auto de infração foi registrado com sucesso e já está disponível para o cidadão no site público.", "success");
+                showToast("Multa Lançada", "O auto de infração foi registrado com sucesso.", "success");
                 registrarLog("Lançamento de Infração", `Multa gerada para o CNPJ ${cnpjAlvo}. Valor: ${valorCalculado}`);
                 
-                // Limpa o form
                 document.getElementById('multa-motivo').value = '';
                 document.getElementById('multa-valor-real').value = '';
                 document.getElementById('multa-evidencia-input').value = '';
                 document.getElementById('multa-evidencia-nome').innerText = 'Clique para anexar 1 foto da infração (Opcional)';
                 
             } catch (error) {
-                console.error("Erro ao salvar multa", error);
+                console.error("Erro CRITICO ao salvar multa", error);
                 if(error.message !== "CNPJ ausente") {
-                    showToast("Erro de Banco de Dados", "Não foi possível registrar a multa.", "error");
+                    showToast("Erro de Banco de Dados", "Falha na comunicação com o servidor Firestore.", "error");
                 }
             } finally {
                 btnSubmit.innerHTML = textoOriginal;
