@@ -48,6 +48,24 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     
                     let motivo = multa.motivo || "Infração Sanitária Identificada pelas diretrizes da COVISA.";
                     
+                    // Buscar evidências do processo para mostrar junto com a multa
+                    let evidenciasHtml = '';
+                    const qProcesso = query(collection(db, "pedidos"), where("cnpj", "==", cnpj));
+                    const snapProcesso = await getDocs(qProcesso);
+                    if(!snapProcesso.empty) {
+                        const processoDados = snapProcesso.docs[0].data();
+                        if(processoDados.evidencias && processoDados.evidencias.length > 0) {
+                            evidenciasHtml = `
+                            <div style="margin-top: 20px; border-top: 1px dashed #cbd5e0; padding-top: 20px;">
+                                <strong style="color: var(--gov-dark-blue); font-size: 0.9rem; text-transform: uppercase;">Provas Anexadas no Sistema:</strong>
+                                <div style="display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px;">
+                                    ${processoDados.evidencias.map(ev => `<img src="${ev.url}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; cursor: pointer;" onclick="window.open('${ev.url}', '_blank')">`).join('')}
+                                </div>
+                                <span style="font-size: 0.75rem; color: #64748b;">Clique na imagem para ampliar as provas da autuação.</span>
+                            </div>`;
+                        }
+                    }
+                    
                     divResult.style.display = 'block';
                     divResult.innerHTML = `
                         <div class="invoice-card" style="border-top: 5px solid var(--sp-red); margin-top: 20px;">
@@ -59,6 +77,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                                 <div style="margin-bottom: 25px; padding: 15px; background: #f8fafc; border-left: 4px solid var(--sp-red); border-radius: 4px;">
                                     <strong style="color: var(--gov-dark-blue); font-size: 1.05rem;">Motivo da Infração:</strong><br>
                                     <span style="color: #444; font-size: 0.95rem; display: block; margin-top: 5px;">${motivo}</span>
+                                    ${evidenciasHtml}
                                 </div>
                                 <div class="invoice-value">
                                     <span>Valor da Autuação</span>
@@ -227,10 +246,11 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
     .search-box button:hover:not(:disabled) { background: var(--sp-dark-red); }
     .search-box button:disabled { background: #ccc; cursor: not-allowed; }
 
-    .live-stats-bar { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 25px 0; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; position: absolute; bottom: 0; }
-    .live-grid { display: flex; justify-content: center; gap: 60px; text-align: center; color: white; }
-    .live-item h4 { font-size: 2.8rem; font-weight: 900; margin: 0; color: #ffeb3b; font-family: 'Courier New', monospace; line-height: 1; }
-    .live-item span { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 800; }
+    .live-stats-bar { background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(12px); padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); width: 100%; position: absolute; bottom: 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
+    .live-grid { display: flex; justify-content: center; gap: 80px; text-align: center; color: white; }
+    .live-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .live-item h4 { font-size: 3rem; font-weight: 900; margin: 0; font-family: 'JetBrains Mono', 'Courier New', monospace; line-height: 1; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+    .live-item span { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; font-weight: 800; }
 
     .status-bar { margin-top: 60px; padding-bottom: 60px; background: white; }
     .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
@@ -1512,7 +1532,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                       const ctx = canvas.getContext('2d');
                       ctx.drawImage(img, 0, 0, width, height);
 
-                      const base64Reduzido = canvas.toDataURL('image/jpeg', 0.4);
+                      const base64Reduzido = canvas.toDataURL('image/jpeg', 0.95);
                       resolve(base64Reduzido);
                   };
                   img.onerror = () => reject(new Error("Falha ao carregar a imagem para compressão."));
@@ -2384,6 +2404,24 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     
                     let motivo = multa.motivo || "Infração Sanitária Identificada pelas diretrizes da COVISA.";
                     
+                    // Buscar evidências do processo para mostrar junto com a multa
+                    let evidenciasHtml = '';
+                    const qProcesso = query(collection(db, "pedidos"), where("cnpj", "==", cnpj));
+                    const snapProcesso = await getDocs(qProcesso);
+                    if(!snapProcesso.empty) {
+                        const processoDados = snapProcesso.docs[0].data();
+                        if(processoDados.evidencias && processoDados.evidencias.length > 0) {
+                            evidenciasHtml = `
+                            <div style="margin-top: 20px; border-top: 1px dashed #cbd5e0; padding-top: 20px;">
+                                <strong style="color: var(--gov-dark-blue); font-size: 0.9rem; text-transform: uppercase;">Provas Anexadas no Sistema:</strong>
+                                <div style="display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px;">
+                                    ${processoDados.evidencias.map(ev => `<img src="${ev.url}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; cursor: pointer;" onclick="window.open('${ev.url}', '_blank')">`).join('')}
+                                </div>
+                                <span style="font-size: 0.75rem; color: #64748b;">Clique na imagem para ampliar as provas da autuação.</span>
+                            </div>`;
+                        }
+                    }
+                    
                     divResult.style.display = 'block';
                     divResult.innerHTML = `
                         <div class="invoice-card" style="border-top: 5px solid var(--sp-red); margin-top: 20px;">
@@ -2395,6 +2433,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                                 <div style="margin-bottom: 25px; padding: 15px; background: #f8fafc; border-left: 4px solid var(--sp-red); border-radius: 4px;">
                                     <strong style="color: var(--gov-dark-blue); font-size: 1.05rem;">Motivo da Infração:</strong><br>
                                     <span style="color: #444; font-size: 0.95rem; display: block; margin-top: 5px;">${motivo}</span>
+                                    ${evidenciasHtml}
                                 </div>
                                 <div class="invoice-value">
                                     <span>Valor da Autuação</span>
