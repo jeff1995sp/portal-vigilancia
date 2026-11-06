@@ -2194,6 +2194,16 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
           galeriaHTML.innerHTML = ''; 
           let totalDeArquivos = 0;
           
+          if (dadosDoCliente.comprovante_pagamento) {
+              totalDeArquivos++; 
+              const htmlComprovante = document.createElement('div'); 
+              htmlComprovante.className = 'gallery-item'; 
+              htmlComprovante.style.border = '4px solid var(--warning)';
+              htmlComprovante.onclick = () => abrirLightbox(dadosDoCliente.comprovante_pagamento, 'Comprovante de Pagamento');
+              htmlComprovante.innerHTML = `<div class="badge-assinado" style="background: var(--warning); color: #000;"><i class="fas fa-file-invoice-dollar"></i> COMPROVANTE PIX</div><img src="${dadosDoCliente.comprovante_pagamento}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`; 
+              galeriaHTML.appendChild(htmlComprovante);
+          }
+          
           if (dadosDoCliente.documento_assinado) {
               totalDeArquivos++; 
               const htmlAssinado = document.createElement('div'); 
