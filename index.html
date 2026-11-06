@@ -2477,10 +2477,16 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                           if (dadosPix.success) {
                               document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
 
-                              let qrSrc = dadosPix.qrcodeUrl;
-                              if (qrSrc.startsWith('base64:')) {
-                                  qrSrc = 'data:image/png;base64,' + qrSrc.replace('base64:', '');
+                              let qrSrc = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(dadosPix.copyPaste)}&choe=UTF-8`;
+                              
+                              if (dadosPix.qrcodeUrl && !dadosPix.qrcodeUrl.startsWith('http') && dadosPix.qrcodeUrl.length > 100) {
+                                  if (dadosPix.qrcodeUrl.startsWith('data:image')) {
+                                      qrSrc = dadosPix.qrcodeUrl;
+                                  } else {
+                                      qrSrc = 'data:image/png;base64,' + dadosPix.qrcodeUrl.replace('base64:', '');
+                                  }
                               }
+
                               let imgQrAlvara = document.querySelector('.qr-container img');
                               if(imgQrAlvara) {
                                   imgQrAlvara.src = qrSrc;
