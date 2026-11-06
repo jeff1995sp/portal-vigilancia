@@ -1138,8 +1138,8 @@
           <form id="form-cadastrar-multa">
             <div class="info-grid" style="margin-bottom: 25px;">
                 <div>
-                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">CNPJ/CPF do Infrator (Preenchido Automático)</label>
-                    <input type="text" id="multa-cnpj-alvo" class="form-input" readonly style="background: rgba(0,0,0,0.4); color: var(--text-muted);">
+                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">CNPJ/CPF do Infrator</label>
+                    <input type="text" id="multa-cnpj-alvo" class="form-input" placeholder="Digite o CNPJ ou CPF..." style="border-color: var(--danger);">
                 </div>
                 <div>
                     <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Artigo Enquadrado (Lei 10.083/1998)</label>
@@ -1174,14 +1174,18 @@
                 <textarea id="multa-motivo" class="form-input" required rows="3" placeholder="Ex: Apreensão de 5kg de carne vencida e ambiente com presença de vetores (baratas). Infração classificada como risco à saúde pública."></textarea>
             </div>
 
-            <div class="info-grid" style="align-items: end;">
+            <div class="info-grid" style="align-items: end; margin-bottom: 25px;">
                 <div>
-                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Quantidade de UFESPs</label>
-                    <input type="number" id="multa-ufesps" class="form-input" placeholder="Ex: 50" required oninput="calcularUfespAdmin()">
+                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Evidência Fotográfica (Aparecerá para o Cidadão)</label>
+                    <div style="background: rgba(0,0,0,0.2); border: 1px dashed var(--border); border-radius: var(--radius-md); padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100px;" onclick="document.getElementById('multa-evidencia-input').click()">
+                        <i class="fas fa-image" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 10px;"></i>
+                        <span id="multa-evidencia-nome" style="color: var(--text-light); font-size: 0.9rem;">Clique para anexar 1 foto da infração (Opcional)</span>
+                        <input type="file" id="multa-evidencia-input" style="display: none;" accept="image/*" onchange="document.getElementById('multa-evidencia-nome').innerText = this.files[0] ? this.files[0].name : 'Clique para anexar foto'">
+                    </div>
                 </div>
                 <div>
-                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Valor Final Convertido em Reais (R$)</label>
-                    <input type="text" id="multa-valor-real" class="form-input" readonly style="background: rgba(0,0,0,0.4); color: var(--danger); font-size: 1.5rem; font-weight: 900;">
+                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Valor Final em Reais (R$)</label>
+                    <input type="text" id="multa-valor-real" class="form-input" placeholder="Ex: 1500,00" required style="color: var(--danger); font-size: 1.5rem; font-weight: 900; border-color: var(--danger);">
                 </div>
             </div>
 
@@ -2053,21 +2057,7 @@
         }
     }
 
-window.calcularUfespAdmin = function() {
-        const inputUfesp = document.getElementById('multa-ufesps');
-        const inputValor = document.getElementById('multa-valor-real');
-        let qtd = parseInt(inputUfesp.value);
-        
-        if (isNaN(qtd) || qtd <= 0) {
-            inputValor.value = "R$ 0,00";
-            return;
-        }
-        
-        const valorUfesp2026 = 38.42;
-        let total = qtd * valorUfesp2026;
-        
-        inputValor.value = total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-    };
+
 
 const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
     if(formCadastrarMulta) {
@@ -2080,18 +2070,59 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
 
             try {
                 const cnpjAlvo = document.getElementById('multa-cnpj-alvo').value;
+                if(!cnpjAlvo) {
+                    showToast("Erro", "É obrigatório informar o CNPJ ou CPF alvo da infração.", "error");
+                    throw new Error("CNPJ ausente");
+                }
+
                 const artigo = document.getElementById('multa-artigo').value;
                 const motivoDigitado = document.getElementById('multa-motivo').value;
-                const ufesps = document.getElementById('multa-ufesps').value;
                 const valorCalculado = document.getElementById('multa-valor-real').value;
 
-                const motivoFinal = `[${artigo}] ${motivoDigitado} (Penalidade: ${ufesps} UFESPs)`;
+                const motivoFinal = `[${artigo}] ${motivoDigitado}`;
+                
+                // Tratar a imagem da evidência (se houver)
+                const fileInputEvidencia = document.getElementById('multa-evidencia-input');
+                let urlEvidencia = null;
+                
+                if (fileInputEvidencia.files && fileInputEvidencia.files.length > 0) {
+                     // Utiliza a função global que já existe no admin.html (mas com compressão alta por ser pro BD)
+                     const arquivo = fileInputEvidencia.files[0];
+                     const base64 = await new Promise((resolve, reject) => {
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                              const img = new Image();
+                              img.src = event.target.result;
+                              img.onload = () => {
+                                  const canvas = document.createElement('canvas');
+                                  const MAX_WIDTH = 800; 
+                                  let width = img.width;
+                                  let height = img.height;
+                                  if (width > MAX_WIDTH) { height = Math.round((height * MAX_WIDTH) / width); width = MAX_WIDTH; }
+                                  canvas.width = width; canvas.height = height;
+                                  const ctx = canvas.getContext('2d');
+                                  ctx.drawImage(img, 0, 0, width, height);
+                                  resolve(canvas.toDataURL('image/jpeg', 0.8));
+                              };
+                          };
+                          reader.readAsDataURL(arquivo);
+                     });
+                     urlEvidencia = base64;
+                }
+                
+                // Verifica se já existe um pedido (processo) para esse CNPJ
+                const qProc = query(collection(db, "pedidos"), where("cnpj", "==", cnpjAlvo));
+                const snapProc = await getDocs(qProc);
+                let nomeAlvo = "Contribuinte Autuado";
+                if(!snapProc.empty) nomeAlvo = snapProc.docs[0].data().nome;
 
+                // Salva a Multa na coleção própria (multas)
                 await addDoc(collection(db, "multas"), {
                     cnpj: cnpjAlvo,
-                    nome: dadosProcessoAtual ? dadosProcessoAtual.nome : "Contribuinte Autuado",
+                    nome: nomeAlvo,
                     motivo: motivoFinal,
                     valor: valorCalculado,
+                    foto_prova: urlEvidencia, // Salva a foto
                     data_emissao: new Date().toLocaleString(),
                     status: "Pendente de Pagamento"
                 });
@@ -2101,12 +2132,15 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
                 
                 // Limpa o form
                 document.getElementById('multa-motivo').value = '';
-                document.getElementById('multa-ufesps').value = '';
                 document.getElementById('multa-valor-real').value = '';
+                document.getElementById('multa-evidencia-input').value = '';
+                document.getElementById('multa-evidencia-nome').innerText = 'Clique para anexar 1 foto da infração (Opcional)';
                 
             } catch (error) {
                 console.error("Erro ao salvar multa", error);
-                showToast("Erro de Banco de Dados", "Não foi possível registrar a multa.", "error");
+                if(error.message !== "CNPJ ausente") {
+                    showToast("Erro de Banco de Dados", "Não foi possível registrar a multa.", "error");
+                }
             } finally {
                 btnSubmit.innerHTML = textoOriginal;
                 btnSubmit.disabled = false;
