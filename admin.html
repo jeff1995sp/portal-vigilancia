@@ -1197,7 +1197,7 @@
 
       </div>
       
-      <div class="modal-footer">
+      <div class="modal-footer" id="modal-geral-footer">
         <button class="btn btn-secondary" onclick="deletarProcessoAtual()" style="color: var(--danger); border-color: var(--danger); background: transparent;"><i class="fas fa-trash-alt"></i> Excluir Definitivamente</button>
         <div style="flex:1"></div>
         <button class="btn btn-secondary" onclick="fecharModal()">Cancelar Operação</button>
@@ -2018,6 +2018,16 @@
       document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
       document.getElementById(idDaAba).classList.add('active'); 
       botaoClicado.classList.add('active');
+      
+      // Esconde o rodapé padrão se estiver na aba de multas, pois ela tem seu próprio botão de envio
+      const footer = document.getElementById('modal-geral-footer');
+      if(footer) {
+          if(idDaAba === 'tab-lancar-multa') {
+              footer.style.display = 'none';
+          } else {
+              footer.style.display = 'flex';
+          }
+      }
     }
 
     async function verificarAPI_CNPJ(cnpjCliente) {
@@ -2501,7 +2511,10 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
     }
 
     window.salvarEdicaoModal = async () => {
-      if(!idProcessoAtual) return;
+      if(!idProcessoAtual) {
+          showToast('Aviso', 'Nenhum processo selecionado para salvar edição.', 'warning');
+          return;
+      }
       const botaoDeSalvar = document.getElementById('btn-salvar-modal');
       const textOriginalBotao = botaoDeSalvar.innerHTML;
       botaoDeSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sincronizando BD Central...';
