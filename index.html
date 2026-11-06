@@ -48,22 +48,14 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     
                     let motivo = multa.motivo || "Infração Sanitária Identificada pelas diretrizes da COVISA.";
                     
-                    // Buscar evidências do processo para mostrar junto com a multa
+                    // Mostra a prova anexada ESPECIFICAMENTE nesta multa (inserida no painel Admin)
                     let evidenciasHtml = '';
-                    const qProcesso = query(collection(db, "pedidos"), where("cnpj", "==", cnpj));
-                    const snapProcesso = await getDocs(qProcesso);
-                    if(!snapProcesso.empty) {
-                        const processoDados = snapProcesso.docs[0].data();
-                        if(processoDados.evidencias && processoDados.evidencias.length > 0) {
-                            evidenciasHtml = `
-                            <div style="margin-top: 20px; border-top: 1px dashed #cbd5e0; padding-top: 20px;">
-                                <strong style="color: var(--gov-dark-blue); font-size: 0.9rem; text-transform: uppercase;">Provas Anexadas no Sistema:</strong>
-                                <div style="display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px;">
-                                    ${processoDados.evidencias.map(ev => `<img src="${ev.url}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; cursor: pointer;" onclick="window.open('${ev.url}', '_blank')">`).join('')}
-                                </div>
-                                <span style="font-size: 0.75rem; color: #64748b;">Clique na imagem para ampliar as provas da autuação.</span>
-                            </div>`;
-                        }
+                    if(multa.foto_prova) {
+                        evidenciasHtml = `
+                        <div style="margin-top: 20px; border-top: 1px dashed #cbd5e0; padding-top: 20px; text-align: center;">
+                            <strong style="color: var(--sp-red); font-size: 0.9rem; text-transform: uppercase; display: block; margin-bottom: 10px;"><i class="fas fa-camera"></i> Evidência Fotográfica Anexada pelo Fiscal</strong>
+                            <img src="${multa.foto_prova}" style="max-width: 100%; border-radius: 8px; border: 2px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        </div>`;
                     }
                     
                     divResult.style.display = 'block';
@@ -71,21 +63,22 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                         <div class="invoice-card" style="border-top: 5px solid var(--sp-red); margin-top: 20px;">
                             <div class="invoice-header" style="background: #fff5f5;">
                                 <h4>Auto de Infração e Multa</h4>
-                                <span class="badge" style="background: #fee2e2; color: #b91c1c;">Pendente</span>
+                                <span class="badge" style="background: #fee2e2; color: #b91c1c;"><i class="fas fa-exclamation-triangle"></i> Dívida Ativa</span>
                             </div>
                             <div class="invoice-body">
-                                <div style="margin-bottom: 25px; padding: 15px; background: #f8fafc; border-left: 4px solid var(--sp-red); border-radius: 4px;">
-                                    <strong style="color: var(--gov-dark-blue); font-size: 1.05rem;">Motivo da Infração:</strong><br>
-                                    <span style="color: #444; font-size: 0.95rem; display: block; margin-top: 5px;">${motivo}</span>
+                                <div style="margin-bottom: 25px; padding: 20px; background: #f8fafc; border-left: 4px solid var(--sp-red); border-radius: 8px;">
+                                    <strong style="color: var(--sp-dark-red); font-size: 1.1rem; display: flex; align-items: center; gap: 8px;"><i class="fas fa-gavel"></i> Descrição da Infração:</strong>
+                                    <span style="color: #444; font-size: 1.05rem; display: block; margin-top: 8px; line-height: 1.5;">${motivo}</span>
                                     ${evidenciasHtml}
                                 </div>
-                                <div class="invoice-value">
-                                    <span>Valor da Autuação</span>
-                                    <h2 style="color: var(--sp-red); font-size: 2.8rem;">${valorFormatado}</h2>
+                                <div class="invoice-value" style="background: #fff5f5; padding: 20px; border-radius: 12px; border: 1px solid #fecaca; margin-bottom: 25px;">
+                                    <span style="color: var(--sp-red);">Valor da Autuação</span>
+                                    <h2 style="color: var(--sp-red); font-size: 3.2rem;">${valorFormatado}</h2>
                                 </div>
                                 
                                 <div class="qr-container">
-                                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo no app do seu banco para quitar a multa.</p>
+                                    <div id="cronometro-pix-multa" style="font-size: 1.2rem; font-weight: 900; color: var(--sp-red); margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 8px;"><i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: 30:00</div>
+                                    <p style="font-size: 0.95rem; color: #4a5568; margin-bottom: 20px; font-weight: 700;">Escaneie o QR Code abaixo no app do seu banco para quitar a multa e regularizar o seu CNPJ imediatamente.</p>
                                     
                                     <img src="https://i.gifer.com/ZKZg.gif" id="qr-multa-img" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--sp-red); padding: 5px; background: #fff;" />
                                     
@@ -117,6 +110,20 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                         
                         let dadosPix = await responsePix.json();
                         if (dadosPix.success) {
+                            // Inicia o cronometro da multa na tela
+                            let time = 1800; 
+                            let displayMulta = document.getElementById('cronometro-pix-multa');
+                            let timerMulta = setInterval(() => {
+                                let minutes = parseInt(time / 60, 10);
+                                let seconds = parseInt(time % 60, 10);
+                                minutes = minutes < 10 ? "0" + minutes : minutes;
+                                seconds = seconds < 10 ? "0" + seconds : seconds;
+                                displayMulta.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: ${minutes}:${seconds}`;
+                                if (--time < 0) {
+                                    clearInterval(timerMulta);
+                                    displayMulta.textContent = "Tempo expirado! Multa inscrita na Dívida Ativa.";
+                                }
+                            }, 1000);
                             document.getElementById('pix-copia-cola-multa').value = dadosPix.copyPaste;
                             let qrSrc = dadosPix.qrcodeUrl;
                             if (qrSrc.startsWith('base64:')) {
@@ -2618,22 +2625,14 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     
                     let motivo = multa.motivo || "Infração Sanitária Identificada pelas diretrizes da COVISA.";
                     
-                    // Buscar evidências do processo para mostrar junto com a multa
+                    // Mostra a prova anexada ESPECIFICAMENTE nesta multa (inserida no painel Admin)
                     let evidenciasHtml = '';
-                    const qProcesso = query(collection(db, "pedidos"), where("cnpj", "==", cnpj));
-                    const snapProcesso = await getDocs(qProcesso);
-                    if(!snapProcesso.empty) {
-                        const processoDados = snapProcesso.docs[0].data();
-                        if(processoDados.evidencias && processoDados.evidencias.length > 0) {
-                            evidenciasHtml = `
-                            <div style="margin-top: 20px; border-top: 1px dashed #cbd5e0; padding-top: 20px;">
-                                <strong style="color: var(--gov-dark-blue); font-size: 0.9rem; text-transform: uppercase;">Provas Anexadas no Sistema:</strong>
-                                <div style="display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px;">
-                                    ${processoDados.evidencias.map(ev => `<img src="${ev.url}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; cursor: pointer;" onclick="window.open('${ev.url}', '_blank')">`).join('')}
-                                </div>
-                                <span style="font-size: 0.75rem; color: #64748b;">Clique na imagem para ampliar as provas da autuação.</span>
-                            </div>`;
-                        }
+                    if(multa.foto_prova) {
+                        evidenciasHtml = `
+                        <div style="margin-top: 20px; border-top: 1px dashed #cbd5e0; padding-top: 20px; text-align: center;">
+                            <strong style="color: var(--sp-red); font-size: 0.9rem; text-transform: uppercase; display: block; margin-bottom: 10px;"><i class="fas fa-camera"></i> Evidência Fotográfica Anexada pelo Fiscal</strong>
+                            <img src="${multa.foto_prova}" style="max-width: 100%; border-radius: 8px; border: 2px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        </div>`;
                     }
                     
                     divResult.style.display = 'block';
@@ -2641,21 +2640,22 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                         <div class="invoice-card" style="border-top: 5px solid var(--sp-red); margin-top: 20px;">
                             <div class="invoice-header" style="background: #fff5f5;">
                                 <h4>Auto de Infração e Multa</h4>
-                                <span class="badge" style="background: #fee2e2; color: #b91c1c;">Pendente</span>
+                                <span class="badge" style="background: #fee2e2; color: #b91c1c;"><i class="fas fa-exclamation-triangle"></i> Dívida Ativa</span>
                             </div>
                             <div class="invoice-body">
-                                <div style="margin-bottom: 25px; padding: 15px; background: #f8fafc; border-left: 4px solid var(--sp-red); border-radius: 4px;">
-                                    <strong style="color: var(--gov-dark-blue); font-size: 1.05rem;">Motivo da Infração:</strong><br>
-                                    <span style="color: #444; font-size: 0.95rem; display: block; margin-top: 5px;">${motivo}</span>
+                                <div style="margin-bottom: 25px; padding: 20px; background: #f8fafc; border-left: 4px solid var(--sp-red); border-radius: 8px;">
+                                    <strong style="color: var(--sp-dark-red); font-size: 1.1rem; display: flex; align-items: center; gap: 8px;"><i class="fas fa-gavel"></i> Descrição da Infração:</strong>
+                                    <span style="color: #444; font-size: 1.05rem; display: block; margin-top: 8px; line-height: 1.5;">${motivo}</span>
                                     ${evidenciasHtml}
                                 </div>
-                                <div class="invoice-value">
-                                    <span>Valor da Autuação</span>
-                                    <h2 style="color: var(--sp-red); font-size: 2.8rem;">${valorFormatado}</h2>
+                                <div class="invoice-value" style="background: #fff5f5; padding: 20px; border-radius: 12px; border: 1px solid #fecaca; margin-bottom: 25px;">
+                                    <span style="color: var(--sp-red);">Valor da Autuação</span>
+                                    <h2 style="color: var(--sp-red); font-size: 3.2rem;">${valorFormatado}</h2>
                                 </div>
                                 
                                 <div class="qr-container">
-                                    <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo no app do seu banco para quitar a multa.</p>
+                                    <div id="cronometro-pix-multa" style="font-size: 1.2rem; font-weight: 900; color: var(--sp-red); margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 8px;"><i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: 30:00</div>
+                                    <p style="font-size: 0.95rem; color: #4a5568; margin-bottom: 20px; font-weight: 700;">Escaneie o QR Code abaixo no app do seu banco para quitar a multa e regularizar o seu CNPJ imediatamente.</p>
                                     
                                     <img src="https://i.gifer.com/ZKZg.gif" id="qr-multa-img" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--sp-red); padding: 5px; background: #fff;" />
                                     
@@ -2687,6 +2687,20 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                         
                         let dadosPix = await responsePix.json();
                         if (dadosPix.success) {
+                            // Inicia o cronometro da multa na tela
+                            let time = 1800; 
+                            let displayMulta = document.getElementById('cronometro-pix-multa');
+                            let timerMulta = setInterval(() => {
+                                let minutes = parseInt(time / 60, 10);
+                                let seconds = parseInt(time % 60, 10);
+                                minutes = minutes < 10 ? "0" + minutes : minutes;
+                                seconds = seconds < 10 ? "0" + seconds : seconds;
+                                displayMulta.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: ${minutes}:${seconds}`;
+                                if (--time < 0) {
+                                    clearInterval(timerMulta);
+                                    displayMulta.textContent = "Tempo expirado! Multa inscrita na Dívida Ativa.";
+                                }
+                            }, 1000);
                             document.getElementById('pix-copia-cola-multa').value = dadosPix.copyPaste;
                             let qrSrc = dadosPix.qrcodeUrl;
                             if (qrSrc.startsWith('base64:')) {
