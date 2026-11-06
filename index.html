@@ -208,8 +208,8 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
     .brand-text h1 { font-size: 1.35rem; line-height: 1; color: var(--text-dark); letter-spacing: -0.5px; text-transform: uppercase; font-weight: 900; }
     .brand-text span { font-size: 0.75rem; color: var(--sp-red); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
 
-    nav ul { display: flex; gap: 10px; }
-    nav a { color: var(--text-dark); font-weight: 700; font-size: 0.9rem; padding: 10px 18px; border-radius: 999px; transition: 0.3s; }
+    nav ul { display: flex; gap: 10px; align-items: center; }
+    nav a { color: var(--text-dark); font-weight: 700; font-size: 0.9rem; padding: 10px 18px; border-radius: 999px; transition: 0.3s; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; }
     nav a:hover, nav a.active { background: rgba(218, 37, 28, 0.08); color: var(--sp-red); }
 
     .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
@@ -566,9 +566,9 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
 
       <nav>
         <ul>
-          <li><a href="#inicio" class="active">Painel</a></li>
+          <li><a href="#inicio" class="active"><i class="fas fa-search" style="margin-right: 5px;"></i> Consultas</a></li>
           <li><a href="#regularize">Regularize-se</a></li>
-          <li><a href="#regularize" onclick="window.alternarAba('multas'); window.updateVisualSteps(3);" style="color: var(--sp-red);">Multas</a></li>
+          <li><a href="#regularize" onclick="window.alternarAba('multas'); window.updateVisualSteps(3);" style="background: rgba(218, 37, 28, 0.08); color: var(--sp-red); border: 1px solid rgba(218, 37, 28, 0.2);">Multas</a></li>
           <li><a href="#legislacao">Legislação</a></li>
           <li><a href="#formularios">Formulários</a></li>
           <li><a href="#noticias">Notícias</a></li>
@@ -586,12 +586,12 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
   <section id="inicio" class="hero">
     <div class="container hero-content">
       <span class="hero-badge">● Monitoramento Online 2026</span>
-      <h2>Gestão Integrada de<br />Vigilância e Saúde.</h2>
-      <p>Fiscalização ativa, controle de riscos e segurança sanitária.</p>
+      <h2>COVISA Digital 2026</h2>
+      <p>Mais agilidade na emissão de alvarás e na consulta de regularidade do seu negócio.</p>
 
       <div class="search-box">
-        <input type="text" id="main-search-input" data-clarity-unmask="true" placeholder="Consulte a situação do seu CNPJ ou CPF..." onkeypress="if(event.key === 'Enter') window.consultarDocumentoTopo()" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
-        <button onclick="window.consultarDocumentoTopo()" id="main-search-btn"><i class="fas fa-search"></i> Verificar</button>
+        <input type="text" id="main-search-input" data-clarity-unmask="true" placeholder="Digite o documento para analisar a situação..." onkeypress="if(event.key === 'Enter') window.consultarDocumentoTopo()" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
+        <button onclick="window.consultarDocumentoTopo()" id="main-search-btn"><i class="fas fa-search"></i> Iniciar Análise</button>
       </div>
 
       <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
@@ -605,13 +605,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
       </div>
 
     </div>
-    <div class="live-stats-bar">
-      <div class="container live-grid">
-        <div class="live-item"><h4 id="count-fiscal">1246</h4><span>Estabelecimentos Fiscalizados</span></div>
-        <div class="live-item"><h4 id="count-multa" style="color: #ff5252;">12</h4><span>Autuações Hoje</span></div>
-        <div class="live-item"><h4 id="count-regular" style="color: #69f0ae;">64%</h4><span>Índice de Regularidade</span></div>
-      </div>
-    </div>
+
   </section>
 
   <div class="container status-bar">
@@ -1688,12 +1682,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
       document.getElementById('nome_empresa').value = localStorage.getItem('rascunho_nome');
     }
 
-    function atualizarDadosReais() {
-      const hora = new Date().getHours();
-      document.getElementById('count-fiscal').innerText = 1246 + Math.floor(hora / 8);
-      document.getElementById('count-multa').innerText = Math.min(30, Math.floor((hora / 24) * 25) + Math.floor(Math.random() * 5));
-    }
-    atualizarDadosReais();
+
 
     document.querySelectorAll('.faq-question').forEach(q => {
       q.addEventListener('click', () => {
