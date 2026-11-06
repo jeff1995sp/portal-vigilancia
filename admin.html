@@ -476,6 +476,7 @@
         <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot"></i> IA Jurídica</a>
         <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
+        <a class="nav-item" onclick="switchView('view-ufesp', this)"><i class="fas fa-balance-scale"></i> Tabela UFESP 2026</a>
       </nav>
       
       <div class="sidebar-footer">
@@ -803,6 +804,137 @@
           </div>
         </div>
 
+        <div id="view-ufesp" class="page-view">
+          <div class="page-title">
+            <div>
+              <h1>Tabela de Multas - UFESP 2026</h1>
+              <p>Valores e infrações baseados na Lei Estadual 10.083/1998 (Art. 112 a 122).</p>
+            </div>
+            <div>
+              <span style="background: var(--bg-sidebar); border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; color: var(--success);"><i class="fas fa-coins"></i> 1 UFESP = R$ 38,42</span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
+              <!-- COLUNA ESQUERDA: Tabela de Valores UFESP -->
+              <section class="data-section" style="margin-bottom: 30px;">
+                <div class="data-header">
+                  <h2><i class="fas fa-calculator" style="color: var(--primary);"></i> Escalonamento de Multas</h2>
+                </div>
+                <div class="table-wrapper" style="max-height: 600px; overflow-y: auto;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Quantidade (UFESP)</th>
+                        <th style="text-align: right;">Valor em Reais (R$)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td><strong>10 (Mínima)</strong></td><td style="text-align: right; color: var(--success); font-weight: bold;">R$ 384,20</td></tr>
+                      <tr><td>20</td><td style="text-align: right; color: var(--text-main);">R$ 768,40</td></tr>
+                      <tr><td>50</td><td style="text-align: right; color: var(--text-main);">R$ 1.921,00</td></tr>
+                      <tr><td>100</td><td style="text-align: right; color: var(--text-main);">R$ 3.842,00</td></tr>
+                      <tr><td>200</td><td style="text-align: right; color: var(--text-main);">R$ 7.684,00</td></tr>
+                      <tr><td>300</td><td style="text-align: right; color: var(--warning); font-weight: bold;">R$ 11.526,00</td></tr>
+                      <tr><td>500</td><td style="text-align: right; color: var(--warning); font-weight: bold;">R$ 19.210,00</td></tr>
+                      <tr><td>1.000</td><td style="text-align: right; color: var(--warning); font-weight: bold;">R$ 38.420,00</td></tr>
+                      <tr><td>2.000</td><td style="text-align: right; color: var(--danger); font-weight: bold;">R$ 76.840,00</td></tr>
+                      <tr><td>3.000</td><td style="text-align: right; color: var(--danger); font-weight: bold;">R$ 115.260,00</td></tr>
+                      <tr><td>5.000</td><td style="text-align: right; color: var(--danger); font-weight: bold;">R$ 192.100,00</td></tr>
+                      <tr><td>7.000</td><td style="text-align: right; color: var(--danger); font-weight: bold;">R$ 268.940,00</td></tr>
+                      <tr><td><strong>10.000 (Máxima)</strong></td><td style="text-align: right; color: var(--danger); font-weight: 900; font-size: 1.2rem;">R$ 384.200,00</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <!-- COLUNA DIREITA: Outras Regras e Penalidades -->
+              <div style="display: flex; flex-direction: column; gap: 30px;">
+                  
+                  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 25px;">
+                      <h3 style="color: white; margin-bottom: 15px; font-weight: 800;"><i class="fas fa-gavel" style="color: var(--danger);"></i> Agravantes e Reincidência (Art. 116, 118 e 120)</h3>
+                      <ul style="list-style: none; color: var(--text-light); line-height: 1.6; padding: 0;">
+                          <li style="margin-bottom: 10px;"><i class="fas fa-caret-right" style="color: var(--primary);"></i> <strong>Atenuantes:</strong> Ser infrator primário e procurar reparar o dano imediatamente.</li>
+                          <li style="margin-bottom: 10px;"><i class="fas fa-caret-right" style="color: var(--danger);"></i> <strong>Agravantes:</strong> Fraude/má-fé, obtenção de vantagem financeira, coagir terceiros ou recusar correção.</li>
+                          <li style="margin-bottom: 10px; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px; border-left: 3px solid var(--danger);"><i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> <strong>Reincidência:</strong> Torna o infrator passível de enquadramento na <strong>penalidade máxima (R$ 384.200,00)</strong>.</li>
+                      </ul>
+                  </div>
+
+                  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 25px;">
+                      <h3 style="color: white; margin-bottom: 15px; font-weight: 800;"><i class="fas fa-clock" style="color: var(--warning);"></i> Prazos Legais Estaduais</h3>
+                      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; text-align: center;">
+                          <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
+                              <span style="display: block; font-size: 1.8rem; font-weight: 900; color: white;">10</span>
+                              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Dias para Defesa</span>
+                          </div>
+                          <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
+                              <span style="display: block; font-size: 1.8rem; font-weight: 900; color: white;">10</span>
+                              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Dias p/ Recurso</span>
+                          </div>
+                          <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--success);">
+                              <span style="display: block; font-size: 1.8rem; font-weight: 900; color: var(--success);">30</span>
+                              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Dias p/ Pagamento</span>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 25px;">
+                      <h3 style="color: white; margin-bottom: 15px; font-weight: 800;"><i class="fas fa-ban" style="color: var(--secondary);"></i> Outras Penalidades Aplicáveis (Art. 112)</h3>
+                      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                          <span class="status-badge" style="background: rgba(255,255,255,0.05); color: white;">Advertência</span>
+                          <span class="status-badge" style="background: rgba(255,255,255,0.05); color: white;">Apreensão</span>
+                          <span class="status-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">Interdição Total/Parcial</span>
+                          <span class="status-badge" style="background: rgba(255,255,255,0.05); color: white;">Inutilização (Destruição)</span>
+                          <span class="status-badge" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">Suspensão de Vendas</span>
+                          <span class="status-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">Cancelamento de Alvará</span>
+                          <span class="status-badge" style="background: rgba(255,255,255,0.05); color: white;">Prestação de Serviços Educativos</span>
+                      </div>
+                  </div>
+
+              </div>
+          </div>
+
+          <!-- Tabela Completa de Infrações do Art 122 -->
+          <section class="data-section" style="margin-top: 30px;">
+            <div class="data-header">
+              <h2><i class="fas fa-list-alt" style="color: var(--gemini-purple);"></i> Lista Completa de Infrações (Art. 122 - Lei 10.083/1998)</h2>
+            </div>
+            <div class="table-wrapper" style="max-height: 500px; overflow-y: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th width="15%">Artigo</th>
+                    <th width="70%">Descrição da Infração Sanitária</th>
+                    <th width="15%" style="text-align: center;">Multa Aplicável?</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>122, I</td><td>Funcionamento de estabelecimento de interesse à saúde sem licença sanitária ou contrariando normas.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, II</td><td>Funcionamento sem responsável técnico legalmente habilitado, quando exigido.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, III</td><td>Procedimentos de saneamento ambiental que ofereçam risco à saúde.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, IV</td><td>Produção, manipulação ou utilização irregular de produtos perigosos ou tóxicos.</td><td style="text-align: center;"><span class="status-badge badge-aguardando" style="background: rgba(255,255,255,0.1); color: #fff;">INDIRETA</span></td></tr>
+                  <tr><td>122, V</td><td>Criação, manutenção ou reprodução irregular de animais.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, VI</td><td>Reciclagem de resíduos sólidos infectantes de serviços de saúde.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, VII</td><td>Condições de trabalho que ofereçam risco à saúde do trabalhador.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, VIII</td><td>Dificultar, impedir ou atrasar a fiscalização sanitária.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, IX</td><td>Omitir informações sobre riscos conhecidos à saúde.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, X</td><td>Fabricação, operação ou comércio de equipamentos que ofereçam risco à saúde do trabalhador.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, XI</td><td>Comercialização ou utilização de produtos sem padrões de identidade, qualidade e segurança.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, XII</td><td>Comercialização de produtos institucionais ou de distribuição gratuita.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, XIII</td><td>Comercialização de produtos vencidos ou sem identificação de validade exigida.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, XIV</td><td>Rotulagem irregular de produtos de interesse à saúde.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, XV</td><td>Propaganda enganosa de produtos ou serviços de saúde.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, XVI</td><td>Propaganda irregular de produtos farmacêuticos em promoções ou ofertas.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, XVII</td><td>Equipamentos inadequados ou insuficientes em estabelecimentos de saúde.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, XVIII</td><td>Alteração de processo de fabricação sem autorização sanitária.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, XIX</td><td>Descumprimento de outras normas federais ou estaduais de proteção à saúde.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                  <tr><td>122, XX</td><td>Descumprimento de determinações da autoridade sanitária.</td><td style="text-align: center;"><span class="status-badge badge-pago">SIM</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+        
         <div id="view-logs" class="page-view">
           <div class="page-title">
             <div>
@@ -865,6 +997,7 @@
         <button class="tab-btn" onclick="abrirAba('tab-detalhes', this)"><i class="fas fa-building"></i> Dados Empresariais</button>
         <button class="tab-btn" onclick="abrirAba('tab-fotos', this)"><i class="fas fa-images"></i> Provas Documentais</button>
         <button class="tab-btn" onclick="abrirAba('tab-financeiro', this)"><i class="fas fa-file-invoice-dollar"></i> Decisão & Comunicação</button>
+        <button class="tab-btn" onclick="abrirAba('tab-lancar-multa', this)" style="color: var(--danger);"><i class="fas fa-gavel"></i> Lançar Infração (UFESP)</button>
       </div>
 
       <div class="modal-body" style="background: var(--bg-body);">
@@ -968,6 +1101,12 @@
             </div>
           </div>
           
+          <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.15); margin-top: 30px;">
+            <label style="font-weight: 900; color: white; font-size: 1rem; display: block; margin-bottom: 15px; text-transform: uppercase;"><i class="fas fa-file-signature" style="color: var(--primary);"></i> Enquadramento Legal / Motivo (Visível ao Cliente)</label>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Este texto aparecerá acima do valor na tela de consulta do cidadão. Use para justificar a taxa ou multa.</p>
+            <textarea class="form-input" id="modal-motivo-cliente" placeholder="Ex: Multa por Infração Sanitária (Art. 122) ou Taxa de Expedição de Alvará..." style="font-size: 1.1rem; padding: 25px; min-height: 100px; border-color: rgba(59, 130, 246, 0.5);"></textarea>
+          </div>
+
           <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-top: 30px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <label style="font-weight: 900; color: var(--danger); font-size: 1rem; display: block; text-transform: uppercase;"><i class="fas fa-user-secret"></i> Notas Privadas do Auditor</label>
@@ -987,6 +1126,55 @@
             
             <a href="#" id="modal-btn-zap" target="_blank" class="btn btn-success" style="font-size: 1.4rem; padding: 20px 50px; border-radius: 50px; display: flex; justify-content: center;" onclick="atualizarLinkZap()"><i class="fab fa-whatsapp" style="font-size: 2rem;"></i> Acionar Contribuinte via WhatsApp</a>
           </div>
+        </div>
+        
+        <!-- NOVA ABA: LANÇAR MULTA UFESP -->
+        <div id="tab-lancar-multa" class="tab-content">
+          <div style="background: rgba(239, 68, 68, 0.05); padding: 30px; border-radius: var(--radius-lg); border-left: 5px solid var(--danger); margin-bottom: 30px;">
+            <h3 style="color: var(--danger); margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i> Cadastro de Auto de Infração Sanitária</h3>
+            <p style="color: var(--text-light); font-size: 1.05rem;">Este formulário gera um auto de infração e envia a cobrança (Pix) diretamente para o painel do cidadão, vinculada ao CNPJ autuado.</p>
+          </div>
+
+          <form id="form-cadastrar-multa">
+            <div class="info-grid" style="margin-bottom: 25px;">
+                <div>
+                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">CNPJ/CPF do Infrator (Preenchido Automático)</label>
+                    <input type="text" id="multa-cnpj-alvo" class="form-input" readonly style="background: rgba(0,0,0,0.4); color: var(--text-muted);">
+                </div>
+                <div>
+                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Artigo Enquadrado (Lei 10.083/1998)</label>
+                    <select id="multa-artigo" class="form-input" style="border-color: var(--danger);" required>
+                        <option value="122, I">Art 122, I - Sem licença sanitária</option>
+                        <option value="122, II">Art 122, II - Sem responsável técnico</option>
+                        <option value="122, III">Art 122, III - Risco no saneamento</option>
+                        <option value="122, VIII">Art 122, VIII - Impedir fiscalização</option>
+                        <option value="122, XIII">Art 122, XIII - Produtos vencidos</option>
+                        <option value="122, XX">Art 122, XX - Descumprir determinações</option>
+                        <option value="Outros">Outros Enquadramentos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Descrição e Motivo da Infração (Aparecerá para o Cidadão)</label>
+                <textarea id="multa-motivo" class="form-input" required rows="3" placeholder="Ex: Apreensão de 5kg de carne vencida e ambiente com presença de vetores (baratas). Infração classificada como risco à saúde pública."></textarea>
+            </div>
+
+            <div class="info-grid" style="align-items: end;">
+                <div>
+                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Quantidade de UFESPs (Mín. 10 / Máx. 10.000)</label>
+                    <input type="number" id="multa-ufesps" class="form-input" placeholder="Ex: 50" required oninput="calcularUfespAdmin()">
+                </div>
+                <div>
+                    <label style="color: var(--text-muted); font-weight: bold; margin-bottom: 8px; display: block;">Valor Final Convertido em Reais (R$)</label>
+                    <input type="text" id="multa-valor-real" class="form-input" readonly style="background: rgba(0,0,0,0.4); color: var(--danger); font-size: 1.5rem; font-weight: 900;">
+                </div>
+            </div>
+
+            <div style="text-align: right; margin-top: 30px;">
+                <button type="submit" class="btn btn-primary" style="background: var(--danger); border-color: var(--danger); padding: 15px 40px; font-size: 1.1rem;"><i class="fas fa-file-signature"></i> Lavrar Auto e Enviar Cobrança ao Cidadão</button>
+            </div>
+          </form>
         </div>
 
       </div>
@@ -1851,6 +2039,67 @@
         }
     }
 
+window.calcularUfespAdmin = function() {
+        const inputUfesp = document.getElementById('multa-ufesps');
+        const inputValor = document.getElementById('multa-valor-real');
+        let qtd = parseInt(inputUfesp.value);
+        
+        if (isNaN(qtd) || qtd <= 0) {
+            inputValor.value = "R$ 0,00";
+            return;
+        }
+        
+        const valorUfesp2026 = 38.42;
+        let total = qtd * valorUfesp2026;
+        
+        inputValor.value = total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+    };
+
+const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
+    if(formCadastrarMulta) {
+        formCadastrarMulta.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnSubmit = e.target.querySelector('button[type="submit"]');
+            const textoOriginal = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lavrando Infração...';
+            btnSubmit.disabled = true;
+
+            try {
+                const cnpjAlvo = document.getElementById('multa-cnpj-alvo').value;
+                const artigo = document.getElementById('multa-artigo').value;
+                const motivoDigitado = document.getElementById('multa-motivo').value;
+                const ufesps = document.getElementById('multa-ufesps').value;
+                const valorCalculado = document.getElementById('multa-valor-real').value;
+
+                const motivoFinal = `[${artigo}] ${motivoDigitado} (Penalidade: ${ufesps} UFESPs)`;
+
+                await addDoc(collection(db, "multas"), {
+                    cnpj: cnpjAlvo,
+                    nome: dadosProcessoAtual ? dadosProcessoAtual.nome : "Contribuinte Autuado",
+                    motivo: motivoFinal,
+                    valor: valorCalculado,
+                    data_emissao: new Date().toLocaleString(),
+                    status: "Pendente de Pagamento"
+                });
+
+                showToast("Multa Lançada", "O auto de infração foi registrado com sucesso e já está disponível para o cidadão no site público.", "success");
+                registrarLog("Lançamento de Infração", `Multa gerada para o CNPJ ${cnpjAlvo}. Valor: ${valorCalculado}`);
+                
+                // Limpa o form
+                document.getElementById('multa-motivo').value = '';
+                document.getElementById('multa-ufesps').value = '';
+                document.getElementById('multa-valor-real').value = '';
+                
+            } catch (error) {
+                console.error("Erro ao salvar multa", error);
+                showToast("Erro de Banco de Dados", "Não foi possível registrar a multa.", "error");
+            } finally {
+                btnSubmit.innerHTML = textoOriginal;
+                btnSubmit.disabled = false;
+            }
+        });
+    }
+
     window.atualizarLinkZap = () => {
         let textoZap = document.getElementById("modal-zap-input").value;
         if(!textoZap && dadosProcessoAtual) {
@@ -1966,10 +2215,17 @@
           
           document.getElementById("modal-status-select").value = selectStatus;
           
+          if(document.getElementById("modal-motivo-cliente")) {
+              document.getElementById("modal-motivo-cliente").value = dadosDoCliente.motivo_cliente || "";
+          }
+          
           document.getElementById("modal-notas-input").value = dadosDoCliente.notas || "";
           
           document.getElementById("modal-zap-input").value = "";
           atualizarLinkZap();
+
+          // PREENCHE O CNPJ DA MULTA AUTOMATICAMENTE
+          document.getElementById('multa-cnpj-alvo').value = dadosDoCliente.cnpj || "";
 
           document.getElementById('alerta-offline-container').innerHTML = '';
           iniciarRadarIAGemini();
@@ -2200,6 +2456,7 @@
       let valorInputado = document.getElementById("modal-valor-input").value; 
       let statusSelecionado = document.getElementById("modal-status-select").value; 
       let notasDigitadas = document.getElementById("modal-notas-input").value;
+      let motivoCliente = document.getElementById("modal-motivo-cliente") ? document.getElementById("modal-motivo-cliente").value : "";
       
       let flagPago = false; 
       let flagAguardandoAlvara = false;
@@ -2213,7 +2470,8 @@
             valor: valorInputado, 
             pago: flagPago, 
             aguardando_alvara: flagAguardandoAlvara,
-            notas: notasDigitadas 
+            notas: notasDigitadas,
+            motivo_cliente: motivoCliente
         });
         showToast('Veredito Finalizado', 'A base de dados foi atualizada no Firebase.', 'success');
         registrarLog("Veredito Executado", `ID ${idProcessoAtual.substring(0,8)} modificado para ${statusSelecionado.toUpperCase()}`);
