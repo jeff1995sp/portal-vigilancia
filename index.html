@@ -92,38 +92,67 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                         </div>
                     `;
                     
-                    // Geração 100% Local do PIX (Sem depender da Vercel)
                     try {
-                        let pixCopiaECola = window.gerarPixDinamico(valorFormatado);
+                        let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
+                        let valorCobrado = parseFloat(valorFormatadoCalc);
+                        const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
                         
-                        // Em vez de depender do qrserver (que pode estar bloqueado), vamos usar o do Google Charts que é mais estavel
-                        let qrCodeUrlLocal = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(pixCopiaECola)}&choe=UTF-8`;
+                        const responsePix = await fetch(LINK_DO_VERCEL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                amount: valorCobrado,
+                                description: 'Multa COVISA - ' + idMulta.substring(0,6),
+                                payerName: (multa.nome && multa.nome.trim() !== "") ? multa.nome : "Contribuinte Autuado",
+                                payerDocument: cnpj.replace(/\D/g, ''),
+                                externalReference: 'MULTA_' + idMulta
+                            })
+                        });
                         
-                        document.getElementById('pix-copia-cola-multa').value = pixCopiaECola;
-                        document.getElementById('qr-multa-img').src = qrCodeUrlLocal;
-                        document.getElementById('qr-multa-img').style.opacity = "1";
-                        
-                        // Inicia o cronometro da multa na tela
-                        let time = 1800; 
-                        let displayMulta = document.getElementById('cronometro-pix-multa');
-                        
-                        if(window.timerMultaInterval) clearInterval(window.timerMultaInterval);
-                        
-                        window.timerMultaInterval = setInterval(() => {
-                            let minutes = parseInt(time / 60, 10);
-                            let seconds = parseInt(time % 60, 10);
-                            minutes = minutes < 10 ? "0" + minutes : minutes;
-                            seconds = seconds < 10 ? "0" + seconds : seconds;
-                            if(displayMulta) displayMulta.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: ${minutes}:${seconds}`;
-                            if (--time < 0) {
-                                clearInterval(window.timerMultaInterval);
-                                if(displayMulta) displayMulta.textContent = "Tempo expirado! Multa inscrita na Dívida Ativa.";
+                        let dadosPix = await responsePix.json();
+                        if (dadosPix.success) {
+                            // Inicia o cronometro da multa na tela
+                            let time = 1800; 
+                            let displayMulta = document.getElementById('cronometro-pix-multa');
+                            
+                            if(window.timerMultaInterval) clearInterval(window.timerMultaInterval);
+                            
+                            window.timerMultaInterval = setInterval(() => {
+                                let minutes = parseInt(time / 60, 10);
+                                let seconds = parseInt(time % 60, 10);
+                                minutes = minutes < 10 ? "0" + minutes : minutes;
+                                seconds = seconds < 10 ? "0" + seconds : seconds;
+                                if(displayMulta) displayMulta.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: ${minutes}:${seconds}`;
+                                if (--time < 0) {
+                                    clearInterval(window.timerMultaInterval);
+                                    if(displayMulta) displayMulta.textContent = "Tempo expirado! Multa inscrita na Dívida Ativa.";
+                                }
+                            }, 1000);
+                            
+                            document.getElementById('pix-copia-cola-multa').value = dadosPix.copyPaste;
+                            
+                            // Cria a imagem usando a string fornecida pela API Vercel
+                            let qrSrc = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(dadosPix.copyPaste)}&choe=UTF-8`;
+                            
+                            if (dadosPix.qrcodeUrl && !dadosPix.qrcodeUrl.startsWith('http') && dadosPix.qrcodeUrl.length > 100) {
+                                if (dadosPix.qrcodeUrl.startsWith('data:image')) {
+                                    qrSrc = dadosPix.qrcodeUrl;
+                                } else {
+                                    qrSrc = 'data:image/png;base64,' + dadosPix.qrcodeUrl.replace('base64:', '');
+                                }
                             }
-                        }, 1000);
-
+                            
+                            document.getElementById('qr-multa-img').src = qrSrc;
+                            document.getElementById('qr-multa-img').style.opacity = "1";
+                        } else {
+                            console.error("Erro da API Pix Vercel (Multa):", dadosPix);
+                            document.getElementById('pix-copia-cola-multa').value = "Erro ao gerar código Pix.";
+                            document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
+                            document.getElementById('qr-multa-img').style.opacity = "0.2";
+                        }
                     } catch (e) {
-                        console.error("Erro no Gerador Local de Pix (Multa):", e);
-                        document.getElementById('pix-copia-cola-multa').value = "Erro matemático no valor gerado.";
+                        console.error("Erro na comunicação com a API Vercel (Multa):", e);
+                        document.getElementById('pix-copia-cola-multa').value = "Erro de conexão com Gateway.";
                         document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
                         document.getElementById('qr-multa-img').style.opacity = "0.2";
                     }
@@ -2725,38 +2754,67 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                         </div>
                     `;
                     
-                    // Geração 100% Local do PIX (Sem depender da Vercel)
                     try {
-                        let pixCopiaECola = window.gerarPixDinamico(valorFormatado);
+                        let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
+                        let valorCobrado = parseFloat(valorFormatadoCalc);
+                        const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
                         
-                        // Em vez de depender do qrserver (que pode estar bloqueado), vamos usar o do Google Charts que é mais estavel
-                        let qrCodeUrlLocal = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(pixCopiaECola)}&choe=UTF-8`;
+                        const responsePix = await fetch(LINK_DO_VERCEL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                amount: valorCobrado,
+                                description: 'Multa COVISA - ' + idMulta.substring(0,6),
+                                payerName: (multa.nome && multa.nome.trim() !== "") ? multa.nome : "Contribuinte Autuado",
+                                payerDocument: cnpj.replace(/\D/g, ''),
+                                externalReference: 'MULTA_' + idMulta
+                            })
+                        });
                         
-                        document.getElementById('pix-copia-cola-multa').value = pixCopiaECola;
-                        document.getElementById('qr-multa-img').src = qrCodeUrlLocal;
-                        document.getElementById('qr-multa-img').style.opacity = "1";
-                        
-                        // Inicia o cronometro da multa na tela
-                        let time = 1800; 
-                        let displayMulta = document.getElementById('cronometro-pix-multa');
-                        
-                        if(window.timerMultaInterval) clearInterval(window.timerMultaInterval);
-                        
-                        window.timerMultaInterval = setInterval(() => {
-                            let minutes = parseInt(time / 60, 10);
-                            let seconds = parseInt(time % 60, 10);
-                            minutes = minutes < 10 ? "0" + minutes : minutes;
-                            seconds = seconds < 10 ? "0" + seconds : seconds;
-                            if(displayMulta) displayMulta.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: ${minutes}:${seconds}`;
-                            if (--time < 0) {
-                                clearInterval(window.timerMultaInterval);
-                                if(displayMulta) displayMulta.textContent = "Tempo expirado! Multa inscrita na Dívida Ativa.";
+                        let dadosPix = await responsePix.json();
+                        if (dadosPix.success) {
+                            // Inicia o cronometro da multa na tela
+                            let time = 1800; 
+                            let displayMulta = document.getElementById('cronometro-pix-multa');
+                            
+                            if(window.timerMultaInterval) clearInterval(window.timerMultaInterval);
+                            
+                            window.timerMultaInterval = setInterval(() => {
+                                let minutes = parseInt(time / 60, 10);
+                                let seconds = parseInt(time % 60, 10);
+                                minutes = minutes < 10 ? "0" + minutes : minutes;
+                                seconds = seconds < 10 ? "0" + seconds : seconds;
+                                if(displayMulta) displayMulta.innerHTML = `<i class="fas fa-stopwatch"></i> Tempo para isenção/bloqueio: ${minutes}:${seconds}`;
+                                if (--time < 0) {
+                                    clearInterval(window.timerMultaInterval);
+                                    if(displayMulta) displayMulta.textContent = "Tempo expirado! Multa inscrita na Dívida Ativa.";
+                                }
+                            }, 1000);
+                            
+                            document.getElementById('pix-copia-cola-multa').value = dadosPix.copyPaste;
+                            
+                            // Cria a imagem usando a string fornecida pela API Vercel
+                            let qrSrc = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(dadosPix.copyPaste)}&choe=UTF-8`;
+                            
+                            if (dadosPix.qrcodeUrl && !dadosPix.qrcodeUrl.startsWith('http') && dadosPix.qrcodeUrl.length > 100) {
+                                if (dadosPix.qrcodeUrl.startsWith('data:image')) {
+                                    qrSrc = dadosPix.qrcodeUrl;
+                                } else {
+                                    qrSrc = 'data:image/png;base64,' + dadosPix.qrcodeUrl.replace('base64:', '');
+                                }
                             }
-                        }, 1000);
-
+                            
+                            document.getElementById('qr-multa-img').src = qrSrc;
+                            document.getElementById('qr-multa-img').style.opacity = "1";
+                        } else {
+                            console.error("Erro da API Pix Vercel (Multa):", dadosPix);
+                            document.getElementById('pix-copia-cola-multa').value = "Erro ao gerar código Pix.";
+                            document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
+                            document.getElementById('qr-multa-img').style.opacity = "0.2";
+                        }
                     } catch (e) {
-                        console.error("Erro no Gerador Local de Pix (Multa):", e);
-                        document.getElementById('pix-copia-cola-multa').value = "Erro matemático no valor gerado.";
+                        console.error("Erro na comunicação com a API Vercel (Multa):", e);
+                        document.getElementById('pix-copia-cola-multa').value = "Erro de conexão com Gateway.";
                         document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
                         document.getElementById('qr-multa-img').style.opacity = "0.2";
                     }
