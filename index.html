@@ -472,97 +472,107 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
     @media (max-width: 900px) {
       body { font-size: 15px; background-color: #f0f2f5; }
       
-      .gov-bar { padding: 10px 15px; }
-      .flex-between { flex-direction: column; align-items: center; gap: 10px; text-align: center; }
-      .gov-left { max-width: 100%; font-size: 0.75rem; }
-      .gov-links { justify-content: center; }
-      .gov-links a { font-size: 0.7rem; padding: 8px 12px; }
+      /* Hide elements that clutter the mobile view */
+      .security-bar { display: none !important; }
+      .gov-bar { display: none !important; }
+      .access-widget { display: none !important; }
 
-      header { padding: 15px 0; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
-      .header-grid { display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 0 15px; }
-      .brand { flex-direction: row; text-align: left; margin: 0; }
-      .brand img { height: 45px; }
-      .brand-text h1 { font-size: 1.1rem; }
-      .brand-text span { font-size: 0.65rem; }
+      header { padding: 12px 0; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000; }
+      .header-grid { display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 0 15px; gap: 0; width: 100%;}
+      .brand { flex-direction: row; text-align: left; margin: 0; align-items: center; gap: 10px;}
+      .brand img { height: 35px; }
+      .brand-text { display: flex; flex-direction: column; }
+      .brand-text h1 { font-size: 1.15rem; letter-spacing: -0.5px; margin: 0;}
+      .brand-text span { font-size: 0.65rem; margin-top: 0; color: #666;}
       
-      .hamburger-btn { position: static; display: flex; width: 40px; height: 40px; background: transparent; border: none; font-size: 1.5rem; color: var(--gov-dark-blue); }
+      .hamburger-btn { position: static; display: flex; width: 40px; height: 40px; background: transparent; border: none; font-size: 1.4rem; color: #333; justify-content: flex-end;}
       .header-actions { display: none; }
       nav { display: none; } 
 
-      /* Tweak forms to feel like mobile apps */
-      .form-control { padding: 16px; font-size: 1rem; border-radius: 12px; border: 1px solid #d1d5db; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-      .form-control:focus { border-color: var(--gov-blue); box-shadow: 0 0 0 3px rgba(19, 81, 180, 0.15); }
-      .btn-primary, .btn-success, .btn-report { padding: 18px; font-size: 1.1rem; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: center; }
+      /* Tweak forms to feel like modern mobile apps (Magalu style) */
+      .form-control { padding: 16px; font-size: 1rem; border-radius: 8px; border: 1px solid #d1d5db; box-shadow: none; }
+      .form-control:focus { border-color: var(--gov-blue); box-shadow: 0 0 0 2px rgba(19, 81, 180, 0.15); }
+      
+      .btn-primary, .btn-success, .btn-report { padding: 16px; font-size: 1.05rem; border-radius: 8px; box-shadow: none; width: 100%; display: flex; justify-content: center; font-weight: 800;}
 
-      /* Hero section optimization */
-      .hero { padding: 40px 20px 80px; min-height: auto; text-align: center; }
-      .hero h2 { font-size: 2rem; line-height: 1.1; margin-bottom: 12px; }
-      .hero p { font-size: 1rem; margin-bottom: 25px; padding: 0 10px; }
+      /* Hero section edge-to-edge optimization - APP STYLE */
+      .hero { padding: 25px 15px 40px; min-height: auto; text-align: left; background: var(--gov-blue); border-radius: 0;}
+      .hero h2 { font-size: 1.6rem; line-height: 1.2; margin-bottom: 8px; font-weight: 800; color: #fff; }
+      .hero p { font-size: 0.95rem; margin-bottom: 20px; padding: 0; color: rgba(255,255,255,0.9); }
+      .hero-badge { display: none; }
 
-      .search-box { flex-direction: column; background: transparent; padding: 0; box-shadow: none; gap: 12px; width: 100%; max-width: 100%; margin: 0; border: none;}
-      .search-box input { border-radius: 14px; padding: 18px 20px; background: white; width: 100%; border: 1px solid #ccc; font-size: 1.05rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
-      .search-box button { border-radius: 14px; padding: 18px; width: 100%; height: auto; font-size: 1.1rem; justify-content: center; box-shadow: 0 6px 15px rgba(218, 37, 28, 0.3);}
+      /* SEARCH BOX APP STYLE (Like Magalu) */
+      .search-box { flex-direction: row; background: #fff; padding: 5px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); gap: 5px; width: 100%; margin: 0; align-items: center; border: none;}
+      .search-box input { border-radius: 8px; padding: 12px 15px; background: transparent; width: 100%; border: none; font-size: 1rem; box-shadow: none; color: #333;}
+      .search-box button { border-radius: 8px; padding: 12px 20px; width: auto; height: auto; font-size: 1rem; justify-content: center; box-shadow: none; background: transparent; color: var(--sp-red); margin: 0;}
+      .search-box button i { font-size: 1.2rem; }
+      .search-box button span { display: none; } /* Hide text on mobile button */
 
-      #search-result-area { max-width: 100% !important; margin: 20px 0 0 0 !important; font-size: 0.95rem; border-radius: 14px; padding: 15px; }
+      #search-result-area { max-width: 100% !important; margin: 15px 0 0 0 !important; font-size: 0.95rem; border-radius: 12px; padding: 15px; }
 
       /* Mobile layout adjustments */
       .live-stats-bar { position: relative; background: #0a0f1e; border-top: none; }
-      .live-grid { flex-direction: column; gap: 20px; padding: 10px 0; }
-      .live-item h4 { font-size: 2.2rem; }
+      .live-grid { flex-direction: row; flex-wrap: wrap; gap: 15px; padding: 15px 10px; justify-content: space-around;}
+      .live-item { flex: 1 1 40%; }
+      .live-item h4 { font-size: 1.8rem; }
+      .live-item span { font-size: 0.65rem; }
       
-      .status-bar { padding-top: 30px; padding-bottom: 40px; background: transparent; }
-      .status-grid { grid-template-columns: 1fr; gap: 15px; padding: 0 15px; }
-      .status-card { padding: 20px; border-radius: 16px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: none; }
+      .status-bar { padding-top: 25px; padding-bottom: 25px; background: transparent; }
+      .status-grid { grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; }
+      .status-card { padding: 15px; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: none; flex-direction: column; text-align: center; gap: 8px;}
+      .icon-box { width: 45px; height: 45px; font-size: 1.4rem;}
 
-      .checklist-section { padding: 40px 15px; }
-      .checklist-intro { margin-bottom: 20px; }
-      .checklist-intro h2 { font-size: 2rem; margin-bottom: 15px; }
-      .checklist-intro p.lead { font-size: 1rem; margin-bottom: 25px; }
+      .checklist-section { padding: 25px 10px; }
+      .checklist-intro { margin-bottom: 15px; text-align: center;}
+      .checklist-intro h2 { font-size: 1.6rem; margin-bottom: 10px; }
+      .checklist-intro p.lead { font-size: 0.95rem; margin-bottom: 20px; }
 
-      .process-steps { flex-direction: column; gap: 10px; margin-bottom: 25px; }
-      .process-step { padding: 20px 15px; border-radius: 12px; border-left: 5px solid transparent; border-top: 1px solid #e2e8f0; display: flex; align-items: center; text-align: left; gap: 15px; flex-direction: row; }
-      .process-step.active-step { border-left-color: var(--gov-blue); border-top-color: #e2e8f0; transform: translateX(5px); }
-      .process-step i { margin: 0; font-size: 1.8rem; }
-      .process-step span { font-size: 0.95rem; line-height: 1.2; br { display: none; } } /* Hide br inside span on mobile */
+      .process-steps { flex-direction: row; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; justify-content: space-between;}
+      .process-step { padding: 12px 10px; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; align-items: center; text-align: center; gap: 8px; flex-direction: column; min-width: 100px; border-top: none; border-bottom: 3px solid transparent;}
+      .process-step.active-step { border-bottom-color: var(--gov-blue); background: #f8fafc; transform: translateY(-2px); border-top: 1px solid #cbd5e1;}
+      .process-step i { margin: 0; font-size: 1.4rem; }
+      .process-step span { font-size: 0.75rem; line-height: 1.2; white-space: pre-wrap; }
       
-      .steps-box { padding: 25px; border-radius: 16px; margin-bottom: 20px; }
-      .steps-box h4 { font-size: 1.2rem; margin-bottom: 15px; }
+      .steps-box { padding: 20px; border-radius: 12px; margin-bottom: 15px; }
+      .steps-box h4 { font-size: 1.1rem; margin-bottom: 10px; }
 
       /* The Card itself */
-      .checklist-form-container { padding: 25px 20px; border-radius: 20px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin: 0 -5px; }
+      .checklist-form-container { padding: 20px 15px; border-radius: 16px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.06); margin: 0; background: #fff;}
       
       /* Form Tabs */
-      .form-tabs { flex-direction: column; gap: 5px; padding: 5px; border-radius: 16px; background: #f1f5f9; }
-      .form-tab { padding: 14px; font-size: 0.95rem; border-radius: 12px; }
+      .form-tabs { flex-direction: row; gap: 5px; padding: 4px; border-radius: 12px; background: #f1f5f9; overflow-x: auto;}
+      .form-tab { padding: 10px 12px; font-size: 0.85rem; border-radius: 10px; white-space: nowrap;}
 
       .docs-grid { grid-template-columns: 1fr; gap: 10px; }
-      .doc-item { padding: 15px; border-radius: 12px; flex-direction: row; justify-content: flex-start; text-align: left; gap: 15px; }
-      .doc-item i { margin: 0; font-size: 1.6rem; }
-      .doc-wrapper .file-upload { padding-left: 55px; margin-top: -5px; }
+      .doc-item { padding: 12px; border-radius: 10px; flex-direction: row; justify-content: flex-start; text-align: left; gap: 12px; }
+      .doc-item i { margin: 0; font-size: 1.4rem; }
+      .doc-wrapper .file-upload { padding-left: 45px; margin-top: -5px; }
 
-      .progress-container { flex-direction: column; gap: 25px; padding: 20px 0 20px 45px; align-items: flex-start; }
-      .progress-container::before { width: 4px; height: 100%; top: 20px; left: 66px; transform: none; bottom: 20px; }
-      .progress-step { width: 40px; height: 40px; font-size: 0.9rem; }
-      .progress-label { position: static; text-align: left; width: auto; font-size: 1rem; color: #334155; padding-left: 20px; display: flex; align-items: center; height: 40px; }
+      .progress-container { flex-direction: column; gap: 20px; padding: 15px 0 15px 35px; align-items: flex-start; }
+      .progress-container::before { width: 3px; height: 100%; top: 15px; left: 51px; transform: none; bottom: 15px; }
+      .progress-step { width: 35px; height: 35px; font-size: 0.85rem; }
+      .progress-label { position: static; text-align: left; width: auto; font-size: 0.95rem; color: #334155; padding-left: 15px; display: flex; align-items: center; height: 35px; }
       
-      #resultado-pix .invoice-card { border-radius: 16px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-      .invoice-header { padding: 15px 20px; flex-direction: column; gap: 10px; align-items: flex-start; }
-      .invoice-body { padding: 20px; }
-      .invoice-value { padding: 15px; border-radius: 12px; }
-      .invoice-value h2 { font-size: 2.2rem; }
+      #resultado-pix .invoice-card { border-radius: 12px; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 4px solid var(--sp-red);}
+      .invoice-header { padding: 12px 15px; flex-direction: row; gap: 10px; align-items: center; }
+      .invoice-header h4 { font-size: 0.95rem; }
+      .invoice-body { padding: 15px; }
+      .invoice-value { padding: 15px; border-radius: 10px; }
+      .invoice-value h2 { font-size: 1.8rem; }
       
-      .qr-container { padding: 15px; }
-      #qr-multa-img, .qr-container img { width: 180px; height: 180px; }
+      .qr-container { padding: 15px 10px; }
+      #qr-multa-img, .qr-container img { width: 160px; height: 160px; }
       
-      .areas-section, .impact-section, .news-section, .laws-section, .faq-section, .report-section { padding: 50px 15px; }
-      .areas-header h2, .report-header h2 { font-size: 1.8rem; }
-      .areas-grid, .news-grid, .stats-grid { grid-template-columns: 1fr; gap: 20px; }
-      .report-grid { grid-template-columns: 1fr; gap: 30px; }
+      .areas-section, .impact-section, .news-section, .laws-section, .faq-section, .report-section { padding: 40px 15px; }
+      .areas-header h2, .report-header h2 { font-size: 1.6rem; }
+      .areas-grid, .news-grid, .stats-grid { grid-template-columns: 1fr; gap: 15px; }
+      .report-grid { grid-template-columns: 1fr; gap: 20px; }
 
       .chat-interface { right: 0; left: 0; bottom: 0; width: 100%; height: 85vh; border-radius: 20px 20px 0 0; z-index: 100000; position: fixed; }
-      .chat-widget-btn { right: 20px; bottom: 20px; width: 60px; height: 60px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); }
+      .chat-widget-btn { right: 15px; bottom: 15px; width: 55px; height: 55px; box-shadow: 0 4px 15px rgba(218, 37, 28, 0.4); font-size: 1.5rem;}
 
-      .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+      footer { padding-top: 30px;}
+      .footer-grid { grid-template-columns: 1fr; gap: 25px; text-align: left; }
       .footer h4 { border-left: none; padding-left: 0; border-bottom: 2px solid var(--sp-red); display: inline-block; padding-bottom: 5px; }
       .selos-container { flex-direction: column; gap: 15px !important; }
       .selos-container a { width: 100% !important; max-width: 250px; margin: 0 auto; }
@@ -662,7 +672,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
 
       <div class="search-box">
         <input type="text" id="main-search-input" data-clarity-unmask="true" placeholder="Digite o documento para analisar a situação..." onkeypress="if(event.key === 'Enter') window.consultarDocumentoTopo()" oninput="window.maskCPFinCNPJ(this)" maxlength="18" />
-        <button onclick="window.consultarDocumentoTopo()" id="main-search-btn"><i class="fas fa-search"></i> Iniciar Análise</button>
+        <button onclick="window.consultarDocumentoTopo()" id="main-search-btn"><i class="fas fa-search"></i> <span>Iniciar Análise</span></button>
       </div>
 
       <div id="search-result-area" style="display:none; background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; border: 1px solid rgba(255,255,255,0.2); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
@@ -1462,9 +1472,8 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
     window.acessoAdmin = function() {
       cliquesLogo++; clearTimeout(timerCliques);
       if(cliquesLogo >= 3) {
-        let senha = prompt("ACESSO RESTRITO - Digite a senha do painel:");
-        if(senha === "1912") { window.location.href = "admin.html"; } 
-        else if(senha !== null) { alert("Senha incorreta!"); }
+        // Redireciona diretamente para o painel (a segurança agora é feita pelo Firebase no admin.html)
+        window.location.href = "admin.html"; 
         cliquesLogo = 0;
       }
       timerCliques = setTimeout(() => cliquesLogo = 0, 1500);
