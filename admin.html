@@ -406,34 +406,49 @@
     /* RESPONSIVIDADE MOBILE (CELULAR) - NOVO                   */
     /* ======================================================== */
     @media (max-width: 768px) {
-      body { overflow-y: auto; overflow-x: hidden; height: auto; }
+      body { overflow-y: auto; overflow-x: hidden; height: auto; font-size: 15px; }
       #app-container { flex-direction: column; height: auto; overflow: visible; }
       .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-      .sidebar-header { padding: 20px; justify-content: center; }
+      .sidebar-header { padding: 15px; justify-content: center; }
+      .sidebar-header i.logo-icon { font-size: 2rem; }
+      .sidebar-header h2 { font-size: 1.2rem; }
+      
       .nav-menu { flex-direction: row; overflow-x: auto; padding: 10px; gap: 10px; -webkit-overflow-scrolling: touch; }
-      .nav-item { padding: 12px 15px; white-space: nowrap; font-size: 0.95rem; }
+      .nav-item { padding: 10px 12px; white-space: nowrap; font-size: 0.9rem; }
       .sidebar-footer { display: none; }
+      
       .main-content { overflow: visible; height: auto; }
-      header.topbar { flex-direction: column; padding: 20px; gap: 20px; align-items: stretch; }
-      .search-bar { width: 100%; }
-      .user-profile { justify-content: flex-end; }
+      header.topbar { flex-direction: column; padding: 15px; gap: 15px; align-items: stretch; }
+      .search-bar { width: 100%; border-radius: 12px; }
+      .user-profile { justify-content: space-between; }
+      
       .view-container { padding: 15px; }
-      .page-title { flex-direction: column; align-items: flex-start; gap: 15px; }
-      .page-title h1 { font-size: 1.8rem; }
-      .filters-row { flex-direction: column; gap: 15px; padding: 20px; }
-      .radar-container { grid-template-columns: 1fr; padding: 20px; min-height: auto; }
-      .target-console { border-right: none; border-bottom: 1px solid #1e293b; padding-right: 0; padding-bottom: 30px; }
+      .page-title { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 20px;}
+      .page-title h1 { font-size: 1.6rem; }
+      .page-title div:last-child { display: flex; flex-direction: column; width: 100%; gap: 10px;}
+      .page-title div:last-child button { width: 100%; margin: 0; }
+      
+      .filters-row { flex-direction: column; gap: 15px; padding: 15px; }
+      
+      .radar-container { grid-template-columns: 1fr; padding: 15px; min-height: auto; }
+      .target-console { border-right: none; border-bottom: 1px solid #1e293b; padding-right: 0; padding-bottom: 25px; }
       .radar-display-area { flex-direction: column; padding-top: 20px; }
-      .radar-circle-wrap { width: 250px; height: 250px; }
+      .radar-circle-wrap { width: 220px; height: 220px; }
+      
       .lab-container { grid-template-columns: 1fr; height: auto; }
       .info-grid { grid-template-columns: 1fr; }
+      
       .modal-box { max-height: none; min-height: 100vh; border-radius: 0; margin: 0; border: none; }
       .modal-overlay { padding: 0; align-items: flex-start; overflow-y: auto; }
       .modal-header { flex-direction: column; align-items: flex-start; gap: 15px; padding: 20px; position: relative; }
       .modal-header .btn-close { position: absolute; top: 15px; right: 15px; }
+      
       .modal-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .tab-btn { padding: 15px 20px; font-size: 0.95rem; }
+      
       .modal-footer { flex-direction: column; gap: 15px; padding: 20px; }
       .modal-footer button { width: 100%; justify-content: center; }
+      
       .chat-input-row { flex-direction: column; }
       .chat-input-row select, .chat-input-row input { width: 100%; }
       .stats-grid { grid-template-columns: 1fr; }
@@ -450,12 +465,30 @@
 <body>
 
   <div id="lock-screen">
-    <div class="lock-box">
-      <i class="fas fa-fingerprint"></i>
-      <h2>Auditoria Central</h2>
-      <p>Acesso restrito a Fiscais COVISA</p>
-      <input type="password" id="pin-input" class="pin-input" placeholder="••••" maxlength="4" autocomplete="off" onkeypress="if(event.key === 'Enter') checkPin()">
-      <button class="btn-unlock" onclick="checkPin()"><i class="fas fa-unlock-alt"></i> Iniciar Sessão Segura</button>
+    <div class="lock-box" id="login-box-primary">
+      <i class="fas fa-shield-alt" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.4));"></i>
+      <h2>Painel do Fiscal</h2>
+      <p style="margin-bottom: 20px;">Acesso restrito COVISA</p>
+      
+      <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; text-align: left;">
+          <input type="email" id="admin-email" class="form-input" placeholder="E-mail corporativo" autocomplete="email" style="font-family: var(--font-base); letter-spacing: normal;" onkeypress="if(event.key === 'Enter') realizarLoginSeguro()">
+          <input type="password" id="admin-senha" class="form-input" placeholder="Senha do Firebase" autocomplete="current-password" style="font-family: var(--font-base); letter-spacing: normal;" onkeypress="if(event.key === 'Enter') realizarLoginSeguro()">
+      </div>
+      
+      <button class="btn-unlock" id="btn-login-auth" onclick="realizarLoginSeguro()"><i class="fas fa-lock"></i> Autenticar no Servidor</button>
+    </div>
+
+    <div class="lock-box" id="login-box-mfa" style="display: none;">
+      <i class="fas fa-mobile-alt" style="font-size: 4rem; color: var(--warning); margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.4));"></i>
+      <h2>Google Authenticator</h2>
+      <p style="margin-bottom: 20px;">Digite o código de 6 dígitos gerado no seu telemóvel.</p>
+      
+      <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+          <input type="text" id="mfa-codigo" class="form-input" placeholder="000000" maxlength="6" style="font-family: var(--font-code); font-size: 2rem; letter-spacing: 15px; text-align: center;" onkeypress="if(event.key === 'Enter') verificarCodigoMFA()">
+      </div>
+      
+      <button class="btn-unlock" id="btn-mfa-auth" style="background: var(--warning);" onclick="verificarCodigoMFA()"><i class="fas fa-check-circle"></i> Verificar Código</button>
+      <button class="btn" style="background: transparent; color: var(--text-muted); margin-top: 15px; width: 100%; border: 1px solid var(--border);" onclick="cancelarMFA()"><i class="fas fa-arrow-left"></i> Voltar</button>
     </div>
   </div>
 
@@ -503,7 +536,7 @@
             <span>Nível: Administrador</span>
           </div>
           <div class="avatar"><i class="fas fa-user-shield"></i></div>
-          <button class="btn-icon" onclick="location.reload()" title="Deslogar" style="margin-left: 20px; color: var(--danger); background: transparent; border: 1px solid var(--danger);"><i class="fas fa-power-off"></i></button>
+          <button class="btn-icon" onclick="fazerLogout()" title="Deslogar (Firebase)" style="margin-left: 20px; color: var(--danger); background: transparent; border: 1px solid var(--danger);"><i class="fas fa-power-off"></i></button>
         </div>
       </header>
 
@@ -1217,6 +1250,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, where, orderBy, getDoc, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, multiFactor, TotpMultiFactorGenerator } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     // 🔴🔴🔴 COLE SUA CHAVE DA API DO GOOGLE AQUI EMBAIXO 🔴🔴🔴
     const GOOGLE_MAPS_API_KEY = 'AIzaSyBUSQAQDUszuPMqBMDca5NbdahmYI5W8Lw'; 
@@ -1233,6 +1267,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
     const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
@@ -1710,24 +1745,128 @@
         }
     }
 
-    window.checkPin = () => {
-      const pinValor = document.getElementById('pin-input').value;
-      if (pinValor === '1912') { 
-        document.getElementById('lock-screen').style.opacity = '0';
-        setTimeout(() => {
-          document.getElementById('lock-screen').style.display = 'none';
-          document.getElementById('app-container').style.display = 'flex'; 
-          initCharts(); 
-          registrarLog("Autenticação", "Login Mestre efetuado com sucesso via PIN.");
-          gerarInsightRapido(); // Chama o insight na entrada
-        }, 500);
-        showToast('Acesso Permitido', 'Sessão administrativa iniciada.', 'success');
-      } else { 
-        document.getElementById('pin-input').value = ''; 
-        showToast('Alerta de Invasão', 'Senha incorreta registrada no log.', 'error'); 
-        registrarLog("Falha Crítica de Autenticação", "Tentativa de login com senha inválida.", "ERRO");
-      }
-    }
+    // Monitora o estado de autenticação em tempo real
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // Usuário está logado
+            document.getElementById('lock-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'flex'; 
+                initCharts(); 
+                gerarInsightRapido(); 
+            }, 500);
+        } else {
+            // Usuário não está logado, mostra a tela de login
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('lock-screen').style.display = 'flex';
+            document.getElementById('lock-screen').style.opacity = '1';
+        }
+    });
+
+    let pendingResolver = null; // Guarda o resolver temporário do MFA
+
+    window.realizarLoginSeguro = async () => {
+        const email = document.getElementById('admin-email').value.trim();
+        const senha = document.getElementById('admin-senha').value.trim();
+        const btn = document.getElementById('btn-login-auth');
+        
+        if(!email || !senha) return showToast('Aviso', 'Preencha o e-mail e a senha.', 'warning');
+        
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando no Firebase...';
+        btn.disabled = true;
+        
+        try {
+            await signInWithEmailAndPassword(auth, email, senha);
+            // Se passar direto (sem 2FA configurado), entra normalmente
+            showToast('Acesso Permitido', 'Autenticação Firebase realizada com sucesso.', 'success');
+            registrarLog("Autenticação Segura", `Login aprovado para o email: ${email}`);
+            document.getElementById('admin-email').value = '';
+            document.getElementById('admin-senha').value = '';
+            
+        } catch (error) {
+            if (error.code === 'auth/multi-factor-auth-required') {
+                // A senha está correta, mas exige o Google Authenticator (TOTP)
+                pendingResolver = multiFactor(auth).getResolver(error);
+                document.getElementById('login-box-primary').style.display = 'none';
+                document.getElementById('login-box-mfa').style.display = 'block';
+                document.getElementById('mfa-codigo').focus();
+                showToast('2FA Exigido', 'Abra o Google Authenticator.', 'warning');
+            } else {
+                console.error("Erro no login:", error);
+                document.getElementById('admin-senha').value = '';
+                
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    showToast('Acesso Negado', 'E-mail ou senha incorretos.', 'error');
+                } else if (error.code === 'auth/too-many-requests') {
+                    showToast('Bloqueio de Segurança', 'Muitas tentativas falhas. Tente novamente mais tarde.', 'error');
+                } else {
+                    showToast('Erro do Servidor', 'Falha ao conectar com o banco de dados.', 'error');
+                }
+                registrarLog("Tentativa de Invasão", `Tentativa de login falha para: ${email} (${error.code})`, "ERRO");
+            }
+        } finally {
+            btn.innerHTML = textoOriginal;
+            btn.disabled = false;
+        }
+    };
+
+    window.verificarCodigoMFA = async () => {
+        if (!pendingResolver) return;
+        
+        const codigo = document.getElementById('mfa-codigo').value.trim();
+        const btn = document.getElementById('btn-mfa-auth');
+        
+        if (codigo.length !== 6) return showToast('Aviso', 'O código deve ter 6 dígitos.', 'warning');
+        
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validando Código...';
+        btn.disabled = true;
+
+        try {
+            // O Firebase suporta TOTP. O enroll é feito no painel Admin, aqui nós apenas verificamos
+            const fatorTOTP = pendingResolver.hints.find(hint => hint.factorId === TotpMultiFactorGenerator.FACTOR_ID);
+            
+            if(!fatorTOTP) throw new Error("Método 2FA não configurado corretamente.");
+
+            const multiFactorAssertion = TotpMultiFactorGenerator.assertionForSignIn(fatorTOTP.uid, codigo);
+            await pendingResolver.resolveSignIn(multiFactorAssertion);
+            
+            showToast('Acesso MFA Permitido', 'Identidade confirmada com sucesso.', 'success');
+            registrarLog("Autenticação 2FA", `Verificação MFA em Duas Etapas passou.`);
+            
+            document.getElementById('admin-email').value = '';
+            document.getElementById('admin-senha').value = '';
+            document.getElementById('mfa-codigo').value = '';
+            pendingResolver = null;
+            
+        } catch (error) {
+            console.error("Erro no MFA:", error);
+            document.getElementById('mfa-codigo').value = '';
+            showToast('Acesso Negado', 'Código inválido ou expirado.', 'error');
+            registrarLog("Falha 2FA", `Tentativa de invasão barra no Google Authenticator.`, "ERRO");
+        } finally {
+            btn.innerHTML = textoOriginal;
+            btn.disabled = false;
+        }
+    };
+
+    window.cancelarMFA = () => {
+        pendingResolver = null;
+        document.getElementById('mfa-codigo').value = '';
+        document.getElementById('login-box-mfa').style.display = 'none';
+        document.getElementById('login-box-primary').style.display = 'block';
+        document.getElementById('admin-senha').value = ''; // Limpa a senha por segurança
+    };
+    
+    // Altera o botão de deslogar na Topbar para usar o Firebase SignOut
+    window.fazerLogout = async () => {
+        if(confirm("Deseja realmente encerrar a sessão administrativa?")) {
+            await signOut(auth);
+            registrarLog("Logout", "Sessão encerrada pelo usuário.");
+        }
+    };
 
     async function obterDadosImagemSeguro(urlOuBase64) {
         if (!urlOuBase64) return null;
