@@ -1,6 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <script>
+    // ========================================================
+    // ESCUDO ANTI-CLONAGEM E ANTI-IFRAME (SEGURANÇA MÁXIMA)
+    // ========================================================
+    (function() {
+        // 1. Anti-Iframe (Impede que o site seja aberto dentro de outro site falso)
+        if (window.top !== window.self) {
+            window.top.location = window.self.location;
+        }
+
+        // 2. Trava de Domínio (Bloqueia cópias hospedadas noutros endereços)
+        // Coloque aqui o domínio original do seu site. Ex: 'covisa-sp.gov.br' ou 'seusite.com'
+        const dominiosPermitidos = ['localhost', '127.0.0.1', 'seu-dominio-aqui.com', 'vercel.app', 'github.io']; 
+        
+        const dominioAtual = window.location.hostname;
+        let dominioAutorizado = false;
+
+        for (let i = 0; i < dominiosPermitidos.length; i++) {
+            if (dominioAtual.includes(dominiosPermitidos[i])) {
+                dominioAutorizado = true;
+                break;
+            }
+        }
+
+        // Se quiser ativar a trava de domínio rigorosa, descomente as linhas abaixo
+        /*
+        if (!dominioAutorizado && dominioAtual !== "") {
+            document.documentElement.innerHTML = `
+                <div style="background: #000; color: #fff; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif; text-align: center; padding: 20px;">
+                    <div style="border: 2px solid #ef4444; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                        <span style="font-size: 40px; color: #ef4444;">&times;</span>
+                    </div>
+                    <h2 style="margin-bottom: 10px;">Acesso Bloqueado</h2>
+                    <p style="font-size: 1.2rem; max-width: 500px; line-height: 1.5;">Esta plataforma não pode ser clonada. Sites de governo e grandes plataformas são bloqueados para proteger a segurança dos utentes.</p>
+                </div>
+            `;
+            window.stop(); // Para o carregamento do resto da página
+        }
+        */
+        
+        // 3. Desativar Botão Direito e Atalhos de Inspeção (F12, Ctrl+Shift+I) para dificultar cópia de código
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) { return false; } // F12
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; } // Ctrl+Shift+I
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; } // Ctrl+Shift+C
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; } // Ctrl+Shift+J
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; } // Ctrl+U
+        }
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal Oficial de Vigilância Sanitária | SP</title>
