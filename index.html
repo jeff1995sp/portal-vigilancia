@@ -213,9 +213,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
 
     .cpf-success-msg { background: #dcfce3; color: #166534; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; margin-top: 10px; display: none; border: 1px solid #22c55e; text-align: center; }
 
-    .access-widget { position: fixed; right: 0; top: 40%; transform: translateY(-50%); display: flex; flex-direction: column; z-index: 9999; }
-    .access-widget a { background: #0d3c85; color: white; font-size: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); border-radius: 8px 0 0 8px; margin-bottom: 2px; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; text-decoration: none;}
-    .access-widget a:hover { background: var(--sp-red); width: 55px; }
+
 
     .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
 
@@ -475,7 +473,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
       /* Hide elements that clutter the mobile view */
       .security-bar { display: none !important; }
       .gov-bar { display: none !important; }
-      .access-widget { display: none !important; }
+      
 
       header { padding: 12px 0; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000; }
       .header-grid { display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 0 15px; gap: 0; width: 100%;}
@@ -600,10 +598,16 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
     </div>
   </div>
 
-  <div class="access-widget">
-    <a href="#" title="Acessibilidade"><i class="fab fa-accessible-icon"></i></a>
-    <a href="#" title="Libras"><i class="fas fa-sign-language"></i></a>
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
   </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+  </script>
 
   <div class="security-bar">
     <i class="fas fa-lock"></i> Ambiente Seguro | Criptografia SSL de 256 bits
