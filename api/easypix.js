@@ -25,7 +25,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 // A chave whsec_ gerada na plataforma EasyPix
-const EASYPIX_SIGNATURE_KEY = process.env.EASYPIX_SIGNATURE_KEY || 'whsec_sua_chave_aqui'; // COLE SUA CHAVE WHSEC AQUI
+const EASYPIX_SIGNATURE_KEY = process.env.EASYPIX_SIGNATURE_KEY || 'whsec_sua_chave_aqui'; // process.env.EASYPIX_SIGNATURE_KEY
 
 // Função auxiliar para ler o raw body no Next.js
 async function buffer(readable) {
