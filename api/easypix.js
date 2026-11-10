@@ -20,7 +20,7 @@ async function buffer(readable) {
   return Buffer.concat(chunks);
 }
 
-module.exports = async function handler(req, res) {
+module.exports = async function (req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
 
@@ -28,14 +28,17 @@ module.exports = async function handler(req, res) {
         return res.status(200).end();
     }
 
-    if (req.method !== 'POST') return res.status(405).send('Método não permitido');
+    if (req.method !== 'POST') {
+        return res.status(405).send('Método não permitido');
+    }
 
     const signature = req.headers['x-signature'];
-    if (!signature) return res.status(401).send('Assinatura ausente');
+    if (!signature) {
+        return res.status(401).send('Assinatura ausente');
+    }
 
     try {
         const rawBody = await buffer(req);
-        
         const EASYPIX_SIGNATURE_KEY = "whsec_0f96c90b9a820b85a15bc1486c657fbedd994e90227667967f55169e722f73fa";
         
         const hash = crypto.createHmac('sha256', EASYPIX_SIGNATURE_KEY)
@@ -47,10 +50,10 @@ module.exports = async function handler(req, res) {
         }
 
         const payload = JSON.parse(rawBody.toString());
-        console.log("Pagamento verificado recebido da EasyPix:", JSON.stringify(payload));
+        console.log("Webhook EasyPix recebido:", JSON.stringify(payload));
 
         if (payload.event === 'payment_verified') {
-            const idempotencyKey = payload.data.idempotencyKey;
+            const idempotencyKey = payload.data && payload.data.idempotencyKey;
             
             if (idempotencyKey) {
                 const parts = idempotencyKey.split('_');
