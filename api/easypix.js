@@ -1,4 +1,5 @@
-import crypto from 'crypto';
+const crypto = require('crypto');
+const admin = require('firebase-admin');
 
 export const config = {
   api: {
@@ -6,14 +7,12 @@ export const config = {
   },
 };
 
-import admin from 'firebase-admin';
-
 if (!admin.apps.length) {
     admin.initializeApp({
         credential: admin.credential.cert({
             projectId: "site-8dfaf",
             clientEmail: process.env.FIREBASE_CLIENT_EMAIL, 
-            privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+            privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined,
         })
     });
 }
@@ -43,7 +42,6 @@ export default async function handler(req, res) {
                            .digest('hex');
 
         if (crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(signature)) === false) {
-            console.error("Assinatura de Webhook inválida.");
             return res.status(401).send('Assinatura inválida');
         }
 
@@ -51,7 +49,6 @@ export default async function handler(req, res) {
 
         if (payload.event === 'payment_verified') {
             const idempotencyKey = payload.data.idempotencyKey;
-            
             if (idempotencyKey) {
                 const parts = idempotencyKey.split('_');
                 const tipo = parts[0]; 
