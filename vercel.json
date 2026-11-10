@@ -6,8 +6,22 @@
       "use": "@vercel/node"
     },
     {
-      "src": "**/*.html",
+      "src": "*.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "imagens/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/pix",
+      "dest": "/api/pix.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ]
 }
