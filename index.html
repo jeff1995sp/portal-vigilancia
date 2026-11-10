@@ -164,7 +164,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     try {
                         let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                         let valorCobrado = parseFloat(valorFormatadoCalc);
-                        const LINK_DO_VERCEL = '/api/pix.js';
+                        const LINK_DO_VERCEL = '/api/pix';
                         
                         const responsePix = await fetch(LINK_DO_VERCEL, {
                             method: 'POST',
@@ -2589,7 +2589,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                       try {
                           let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                           let valorCobrado = parseFloat(valorFormatadoCalc);
-                          const LINK_DO_VERCEL = '/api/pix.js';
+                          const LINK_DO_VERCEL = '/api/pix';
 
                           let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
                           let pixCache = localStorage.getItem(chaveCache);
@@ -2886,7 +2886,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     try {
                         let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                         let valorCobrado = parseFloat(valorFormatadoCalc);
-                        const LINK_DO_VERCEL = '/api/pix.js';
+                        const LINK_DO_VERCEL = '/api/pix';
                         
                         const responsePix = await fetch(LINK_DO_VERCEL, {
                             method: 'POST',
