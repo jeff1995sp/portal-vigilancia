@@ -1,13 +1,8 @@
-const https = require('https');
-
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*'); 
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
-    );
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
 
     if (req.method === 'OPTIONS') {
         res.status(200).end();
@@ -23,7 +18,6 @@ export default async function handler(req, res) {
     try {
         const apiKey = process.env.EASYPIX_API_KEY;
         if(!apiKey) {
-             console.error("ERRO GRAVE: A variável EASYPIX_API_KEY não foi encontrada na Vercel.");
              return res.status(500).json({ success: false, error: 'Chave API não configurada na Vercel.' });
         }
 
@@ -51,12 +45,10 @@ export default async function handler(req, res) {
         if (data.id && data.method && data.method.qrCode) {
             return res.status(200).json({ success: true, copyPaste: data.method.qrCode });
         } else {
-            console.error("Erro da EasyPix:", data);
             return res.status(400).json({ success: false, error: data });
         }
 
     } catch (error) {
-        console.error("Erro Gateway Vercel:", error);
         return res.status(500).json({ success: false, error: 'Erro interno no servidor' });
     }
 }
