@@ -1,25 +1,43 @@
-// Gateway de Pagamento (Node.js) - Integração EasyPix API
-// Este arquivo deve rodar no seu servidor (Firebase Functions, Vercel, Netlify, etc.)
-
+// Gateway de Pagamento (Node.js) - Integração EasyPix API + Firebase Admin
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const app = express();
+// Adicionando o Firebase Admin para alterar o banco de dados de forma segura via backend
+const admin = require('firebase-admin');
 
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Chaves da EasyPix (Preferencialmente usar Variáveis de Ambiente)
-const EASYPIX_API_KEY = process.env.EASYPIX_API_KEY || 'sk_live_Pwa7cnvDygwDtHR8Pdsamh-4YEGyA603Vx8lrs4JCIM';
+// INICIALIZAR O FIREBASE ADMIN
+// É necessário configurar a variável de ambiente FIREBASE_SERVICE_ACCOUNT na Vercel
+// contendo o JSON da chave de serviço do seu Firebase (Firebase Console > Project Settings > Service Accounts > Generate new private key)
+if (!admin.apps.length) {
+    try {
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+        console.log("Firebase Admin inicializado com sucesso.");
+    } catch (error) {
+        console.error("Erro ao inicializar Firebase Admin. Verifique a variável FIREBASE_SERVICE_ACCOUNT.", error);
+    }
+}
 
-// Rota que o seu index_atualizado.html vai chamar para GERAR COBRANÇA
+const db = admin.firestore();
+
+// Chaves da EasyPix
+const EASYPIX_API_KEY = process.env.EASYPIX_API_KEY;
+const EASYPIX_WEBHOOK_SECRET = process.env.EASYPIX_WEBHOOK_SECRET;
+
+// 1. Rota para GERAR o PIX (Chamada pelo seu site)
 app.post('/api/pix', async (req, res) => {
     const { amount, description, payerName, payerDocument, externalReference } = req.body;
 
     try {
         const response = await axios.post('https://api.easy-pix.com/payments', {
             currency: "BRL",
-            amount: Math.round(amount * 100), // Converte para centavos (ex: 10.00 -> 1000)
+            amount: Math.round(amount * 100), // Converte para centavos
             idempotencyKey: externalReference || `req_${Date.now()}`,
             method: { type: "qr_code" },
             customer: {
@@ -33,8 +51,9 @@ app.post('/api/pix', async (req, res) => {
             }
         });
         
-        // Verifica se a resposta contém o QR Code (verifique a documentação exata da sua conta)
-        const qrCodeData = response.data.method && response.data.method.qrCode ? response.data.method.qrCode : response.data.id;
+        const qrCodeData = response.data.method && response.data.method.qrCode 
+                           ? response.data.method.qrCode 
+                           : "";
 
         return res.json({
             success: true,
@@ -43,30 +62,54 @@ app.post('/api/pix', async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Erro no Gateway EasyPix:", error.response ? error.response.data : error.message);
+        console.error("Erro na EasyPix:", error.response ? error.response.data : error.message);
         return res.status(500).json({ success: false, error: 'Erro ao gerar cobrança' });
     }
 });
 
-// Opcional: Rota de Webhook para receber confirmações de pagamento da EasyPix
-app.post('/api/webhook/easypix', express.json(), (req, res) => {
+// 2. Rota do WEBHOOK (Para receber confirmação automática e atualizar o Firebase)
+app.post('/api/webhook/easypix', express.json(), async (req, res) => {
     const payload = req.body;
-    console.log("Webhook Recebido:", payload);
+    console.log("Webhook Recebido da EasyPix:", payload);
     
-    // Verifique o secret do webhook aqui, usando whsec_0f96c90b9a820b85a15bc1486c657fbedd994e90227667967f55169e722f73fa
+    // O ideal em produção é validar a assinatura usando o EASYPIX_WEBHOOK_SECRET aqui
     
     if (payload.event === 'payment_verified') {
-        // Atualize o status no seu banco de dados Firebase
-        console.log(`Pagamento ${payload.data.id} confirmado!`);
+        const idPagamento = payload.data.id;
+        const valorPago = payload.data.paidAmount;
+        // O externalReference que enviamos na criação volta no idempotencyKey ou meta
+        const protocoloId = payload.data.idempotencyKey; 
+        
+        console.log(`Sucesso: Pagamento ${idPagamento} confirmado. Protocolo/ExternalRef: ${protocoloId}`);
+        
+        if (protocoloId && protocoloId.startsWith('MULTA_')) {
+             // Lógica para baixar multas
+             const idMulta = protocoloId.replace('MULTA_', '');
+             try {
+                 await db.collection('multas').doc(idMulta).update({
+                     pago: true,
+                     dataPagamento: new Date().toISOString()
+                 });
+                 console.log(`Multa ${idMulta} atualizada para pago.`);
+             } catch (e) {
+                 console.error(`Erro ao atualizar multa ${idMulta} no Firebase:`, e);
+             }
+        } else if (protocoloId) {
+             // Lógica para baixar taxas/alvarás normais
+             try {
+                 await db.collection('pedidos').doc(protocoloId).update({
+                     pago: true,
+                     aguardando_alvara: false,
+                     dataPagamento: new Date().toISOString()
+                 });
+                 console.log(`Pedido ${protocoloId} atualizado para pago.`);
+             } catch (e) {
+                 console.error(`Erro ao atualizar pedido ${protocoloId} no Firebase:`, e);
+             }
+        }
     }
 
     res.status(200).send('OK');
 });
 
-// A Vercel espera exportar a aplicação
 module.exports = app;
-
-// Se for rodar local:
-if (require.main === module) {
-    app.listen(3000, () => console.log('Novo Gateway rodando na porta 3000'));
-}
