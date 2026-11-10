@@ -20,7 +20,7 @@ async function buffer(readable) {
   return Buffer.concat(chunks);
 }
 
-module.exports = async function (req, res) {
+module.exports = async function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
 
@@ -28,11 +28,15 @@ module.exports = async function (req, res) {
         return res.status(200).end();
     }
 
+    if (req.method === 'GET') {
+        return res.status(200).json({ status: "Webhook EasyPix Online" });
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).send('Método não permitido');
     }
 
-    const signature = req.headers['x-signature'];
+    const signature = req.headers['x-signature'] || req.headers['X-Signature'];
     if (!signature) {
         return res.status(401).send('Assinatura ausente');
     }
@@ -40,7 +44,7 @@ module.exports = async function (req, res) {
     try {
         const rawBody = await buffer(req);
         const EASYPIX_SIGNATURE_KEY = "whsec_0f96c90b9a820b85a15bc1486c657fbedd994e90227667967f55169e722f73fa";
-        
+
         const hash = crypto.createHmac('sha256', EASYPIX_SIGNATURE_KEY)
                            .update(rawBody)
                            .digest('hex');
@@ -50,33 +54,30 @@ module.exports = async function (req, res) {
         }
 
         const payload = JSON.parse(rawBody.toString());
-        console.log("Webhook EasyPix recebido:", JSON.stringify(payload));
 
         if (payload.event === 'payment_verified') {
             const idempotencyKey = payload.data && payload.data.idempotencyKey;
-            
+
             if (idempotencyKey) {
                 const parts = idempotencyKey.split('_');
                 const tipo = parts[0]; 
                 const docId = parts[1];
 
-                if (tipo === 'TAXA') {
+                if (tipo === 'TAXA' && docId) {
                     await db.collection('pedidos').doc(docId).update({
                         pago: false, 
                         aguardando_alvara: true 
                     });
-                } else if (tipo === 'MULTA') {
+                } else if (tipo === 'MULTA' && docId) {
                     await db.collection('multas').doc(docId).update({
                         status: 'Pago' 
                     });
                 }
             }
         }
-        
-        return res.status(200).send('OK');
 
+        return res.status(200).send('OK');
     } catch (error) {
-        console.error("Erro no Webhook:", error);
         return res.status(500).send('Falha no processamento');
     }
 };
