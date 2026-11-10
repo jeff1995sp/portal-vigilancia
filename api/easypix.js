@@ -1,60 +1,75 @@
+import crypto from 'crypto';
+import admin from 'firebase-admin';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert({
+            projectId: "site-8dfaf",
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL, 
+            privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined,
+        })
+    });
+}
+const db = admin.firestore();
+
+const EASYPIX_SIGNATURE_KEY = process.env.EASYPIX_SIGNATURE_KEY; 
+
+async function buffer(readable) {
+  const chunks = [];
+  for await (const chunk of readable) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks);
+}
+
 export default async function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*'); 
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
-    );
+    if (req.method !== 'POST') return res.status(405).send('Método não permitido');
 
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
-    }
-
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Método não permitido.' });
-    }
-
-    const { amount, payerName, payerDocument, externalReference } = req.body;
+    const signature = req.headers['x-signature'];
+    if (!signature) return res.status(401).send('Assinatura ausente');
 
     try {
-        const apiKey = process.env.EASYPIX_API_KEY;
-        if(!apiKey) {
-             console.error("ERRO GRAVE: A variável EASYPIX_API_KEY não foi encontrada.");
-             return res.status(500).json({ success: false, error: 'Chave API não configurada na Vercel.' });
-        }
-
-        const response = await fetch('https://app-api.easy-pix.com/payments', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}` 
-            },
-            body: JSON.stringify({
-                amount: Math.round(amount * 100), 
-                currency: 'BRL',
-                idempotencyKey: externalReference + '_' + Date.now(),
-                method: { type: 'qr_code' },
-                customer: {
-                    id: payerDocument || 'cliente_padrao',
-                    name: payerName || "Contribuinte Autuado",
-                    document: payerDocument
-                }
-            })
-        });
-
-        const data = await response.json();
+        const rawBody = await buffer(req);
         
-        if (data.id && data.method && data.method.qrCode) {
-            return res.status(200).json({ success: true, copyPaste: data.method.qrCode });
-        } else {
-            console.error("Erro da EasyPix:", data);
-            return res.status(400).json({ success: false, error: data });
+        const hash = crypto.createHmac('sha256', EASYPIX_SIGNATURE_KEY)
+                           .update(rawBody)
+                           .digest('hex');
+
+        if (crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(signature)) === false) {
+            return res.status(401).send('Assinatura inválida');
         }
+
+        const payload = JSON.parse(rawBody.toString());
+
+        if (payload.event === 'payment_verified') {
+            const idempotencyKey = payload.data.idempotencyKey;
+            if (idempotencyKey) {
+                const parts = idempotencyKey.split('_');
+                const tipo = parts[0]; 
+                const docId = parts[1];
+
+                if (tipo === 'TAXA') {
+                    await db.collection('pedidos').doc(docId).update({
+                        pago: false, 
+                        aguardando_alvara: true
+                    });
+                } else if (tipo === 'MULTA') {
+                    await db.collection('multas').doc(docId).update({
+                        status: 'Pago'
+                    });
+                }
+            }
+        }
+        
+        return res.status(200).send('OK');
 
     } catch (error) {
-        console.error("Erro Gateway Vercel:", error);
-        return res.status(500).json({ success: false, error: 'Erro interno no servidor' });
+        return res.status(500).send('Erro interno');
     }
 }
