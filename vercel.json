@@ -20,6 +20,10 @@
       "dest": "/api/pix.js"
     },
     {
+      "src": "/api/webhook",
+      "dest": "/api/webhook.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }

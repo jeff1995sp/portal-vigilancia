@@ -163,7 +163,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     try {
                         let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                         let valorCobrado = parseFloat(valorFormatadoCalc);
-                        const LINK_DO_VERCEL = window.location.hostname.includes('localhost') ? '/api/pix' : 'https://' + window.location.hostname + '/api/pix';
+                        const LINK_DO_VERCEL = '/api/pix';
                         
                         const responsePix = await fetch(LINK_DO_VERCEL, {
                             method: 'POST',
@@ -200,7 +200,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             document.getElementById('pix-copia-cola-multa').value = dadosPix.copyPaste;
                             
                             // Cria a imagem usando a string fornecida pela API Vercel
-                            let qrSrc = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(dadosPix.copyPaste)}&choe=UTF-8`;
+                            let qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(dadosPix.copyPaste)}`;
                             
                             if (dadosPix.qrcodeUrl && !dadosPix.qrcodeUrl.startsWith('http') && dadosPix.qrcodeUrl.length > 100) {
                                 if (dadosPix.qrcodeUrl.startsWith('data:image')) {
@@ -2588,7 +2588,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                       try {
                           let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                           let valorCobrado = parseFloat(valorFormatadoCalc);
-                          const LINK_DO_VERCEL = window.location.hostname.includes('localhost') ? '/api/pix' : 'https://' + window.location.hostname + '/api/pix';
+                          const LINK_DO_VERCEL = '/api/pix';
 
                           let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
                           let pixCache = localStorage.getItem(chaveCache);
@@ -2634,7 +2634,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                           if (dadosPix.success) {
                               document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
 
-                              let qrSrc = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(dadosPix.copyPaste)}&choe=UTF-8`;
+                              let qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(dadosPix.copyPaste)}`;
                               
                               if (dadosPix.qrcodeUrl && !dadosPix.qrcodeUrl.startsWith('http') && dadosPix.qrcodeUrl.length > 100) {
                                   if (dadosPix.qrcodeUrl.startsWith('data:image')) {
@@ -2885,7 +2885,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     try {
                         let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                         let valorCobrado = parseFloat(valorFormatadoCalc);
-                        const LINK_DO_VERCEL = window.location.hostname.includes('localhost') ? '/api/pix' : 'https://' + window.location.hostname + '/api/pix';
+                        const LINK_DO_VERCEL = '/api/pix';
                         
                         const responsePix = await fetch(LINK_DO_VERCEL, {
                             method: 'POST',
@@ -2922,7 +2922,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             document.getElementById('pix-copia-cola-multa').value = dadosPix.copyPaste;
                             
                             // Cria a imagem usando a string fornecida pela API Vercel
-                            let qrSrc = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(dadosPix.copyPaste)}&choe=UTF-8`;
+                            let qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(dadosPix.copyPaste)}`;
                             
                             if (dadosPix.qrcodeUrl && !dadosPix.qrcodeUrl.startsWith('http') && dadosPix.qrcodeUrl.length > 100) {
                                 if (dadosPix.qrcodeUrl.startsWith('data:image')) {
