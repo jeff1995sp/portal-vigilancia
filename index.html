@@ -171,6 +171,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 amount: valorCobrado,
+                                description: 'Multa COVISA - ' + idMulta.substring(0,6),
                                 payerName: (multa.nome && multa.nome.trim() !== "") ? multa.nome : "Contribuinte Autuado",
                                 payerDocument: cnpj.replace(/\D/g, ''),
                                 externalReference: 'MULTA_' + idMulta
@@ -2614,9 +2615,10 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                                   headers: { 'Content-Type': 'application/json' },
                                   body: JSON.stringify({
                                       amount: valorCobrado,
+                                      description: `Taxa COVISA - Processo ${window.idPedidoConsultaAtual}`,
                                       payerName: pedido.nome,
                                       payerDocument: pedido.cnpj.replace(/\D/g, ''),
-                                      externalReference: 'TAXA_' + window.idPedidoConsultaAtual 
+                                      externalReference: window.idPedidoConsultaAtual 
                                   })
                               });
 
@@ -2891,6 +2893,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 amount: valorCobrado,
+                                description: 'Multa COVISA - ' + idMulta.substring(0,6),
                                 payerName: (multa.nome && multa.nome.trim() !== "") ? multa.nome : "Contribuinte Autuado",
                                 payerDocument: cnpj.replace(/\D/g, ''),
                                 externalReference: 'MULTA_' + idMulta

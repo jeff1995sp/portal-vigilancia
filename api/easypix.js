@@ -21,6 +21,13 @@ async function buffer(readable) {
 }
 
 module.exports = async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     if (req.method !== 'POST') return res.status(405).send('Método não permitido');
 
     const signature = req.headers['x-signature'];
@@ -29,7 +36,6 @@ module.exports = async function handler(req, res) {
     try {
         const rawBody = await buffer(req);
         
-        // Chave do webhook que você me enviou
         const EASYPIX_SIGNATURE_KEY = "whsec_0f96c90b9a820b85a15bc1486c657fbedd994e90227667967f55169e722f73fa";
         
         const hash = crypto.createHmac('sha256', EASYPIX_SIGNATURE_KEY)
@@ -41,24 +47,24 @@ module.exports = async function handler(req, res) {
         }
 
         const payload = JSON.parse(rawBody.toString());
+        console.log("Pagamento verificado recebido da EasyPix:", JSON.stringify(payload));
 
         if (payload.event === 'payment_verified') {
             const idempotencyKey = payload.data.idempotencyKey;
             
-            // O idempotencyKey foi criado no pix.js como externalReference_Timestamp
             if (idempotencyKey) {
                 const parts = idempotencyKey.split('_');
-                const tipo = parts[0]; // Vai ser 'TAXA' ou 'MULTA'
-                const docId = parts[1]; // ID do documento no Firebase
+                const tipo = parts[0]; 
+                const docId = parts[1];
 
                 if (tipo === 'TAXA') {
                     await db.collection('pedidos').doc(docId).update({
-                        pago: false, // Bloqueia o "pago"
-                        aguardando_alvara: true // Aciona a tela verde "Aguardando Alvará"
+                        pago: false, 
+                        aguardando_alvara: true 
                     });
                 } else if (tipo === 'MULTA') {
                     await db.collection('multas').doc(docId).update({
-                        status: 'Pago' // Confirma a multa
+                        status: 'Pago' 
                     });
                 }
             }
@@ -68,6 +74,6 @@ module.exports = async function handler(req, res) {
 
     } catch (error) {
         console.error("Erro no Webhook:", error);
-        return res.status(500).send('Erro interno');
+        return res.status(500).send('Falha no processamento');
     }
-}
+};
