@@ -1,11 +1,5 @@
-import crypto from 'crypto';
-import admin from 'firebase-admin';
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+const crypto = require('crypto');
+const admin = require('firebase-admin');
 
 if (!admin.apps.length) {
     admin.initializeApp({
@@ -18,8 +12,6 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 
-const EASYPIX_SIGNATURE_KEY = process.env.EASYPIX_SIGNATURE_KEY; 
-
 async function buffer(readable) {
   const chunks = [];
   for await (const chunk of readable) {
@@ -28,7 +20,7 @@ async function buffer(readable) {
   return Buffer.concat(chunks);
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).send('Método não permitido');
 
     const signature = req.headers['x-signature'];
@@ -36,6 +28,9 @@ export default async function handler(req, res) {
 
     try {
         const rawBody = await buffer(req);
+        
+        // Chave do webhook que você me enviou
+        const EASYPIX_SIGNATURE_KEY = "whsec_0f96c90b9a820b85a15bc1486c657fbedd994e90227667967f55169e722f73fa";
         
         const hash = crypto.createHmac('sha256', EASYPIX_SIGNATURE_KEY)
                            .update(rawBody)
@@ -49,19 +44,21 @@ export default async function handler(req, res) {
 
         if (payload.event === 'payment_verified') {
             const idempotencyKey = payload.data.idempotencyKey;
+            
+            // O idempotencyKey foi criado no pix.js como externalReference_Timestamp
             if (idempotencyKey) {
                 const parts = idempotencyKey.split('_');
-                const tipo = parts[0]; 
-                const docId = parts[1];
+                const tipo = parts[0]; // Vai ser 'TAXA' ou 'MULTA'
+                const docId = parts[1]; // ID do documento no Firebase
 
                 if (tipo === 'TAXA') {
                     await db.collection('pedidos').doc(docId).update({
-                        pago: false, 
-                        aguardando_alvara: true
+                        pago: false, // Bloqueia o "pago"
+                        aguardando_alvara: true // Aciona a tela verde "Aguardando Alvará"
                     });
                 } else if (tipo === 'MULTA') {
                     await db.collection('multas').doc(docId).update({
-                        status: 'Pago'
+                        status: 'Pago' // Confirma a multa
                     });
                 }
             }
@@ -70,6 +67,7 @@ export default async function handler(req, res) {
         return res.status(200).send('OK');
 
     } catch (error) {
+        console.error("Erro no Webhook:", error);
         return res.status(500).send('Erro interno');
     }
 }
