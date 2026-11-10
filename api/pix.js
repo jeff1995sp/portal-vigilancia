@@ -1,8 +1,10 @@
-module.exports = async function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Credentials', true);
+const https = require('https');
+
+module.exports = async function (req, res) {
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type, Authorization');
 
     if (req.method === 'OPTIONS') {
         res.status(200).end();
@@ -13,7 +15,7 @@ module.exports = async function handler(req, res) {
         return res.status(405).json({ error: 'Método não permitido. Use POST.' });
     }
 
-    const { amount, description, payerName, payerDocument, externalReference } = req.body;
+    const { amount, description, payerName, payerDocument, externalReference } = req.body || {};
 
     try {
         const apiKey = "sk_live_Pwa7cnvDygwDtHR8Pdsamh-4YEGyA603Vx8lrs4JCIM";
@@ -22,12 +24,12 @@ module.exports = async function handler(req, res) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}` 
+                'Authorization': 'Bearer ' + apiKey
             },
             body: JSON.stringify({
-                amount: Math.round(amount * 100), 
+                amount: Math.round((amount || 0) * 100),
                 currency: 'BRL',
-                idempotencyKey: externalReference + '_' + Date.now(),
+                idempotencyKey: (externalReference || 'ref') + '_' + Date.now(),
                 method: { type: 'qr_code' },
                 customer: {
                     id: payerDocument || '00000000000',
@@ -39,7 +41,7 @@ module.exports = async function handler(req, res) {
 
         const data = await response.json();
         
-        if (data.id && data.method && data.method.qrCode) {
+        if (data && data.id && data.method && data.method.qrCode) {
             return res.status(200).json({ success: true, copyPaste: data.method.qrCode });
         } else {
             console.error("Erro da EasyPix:", data);
@@ -48,6 +50,6 @@ module.exports = async function handler(req, res) {
 
     } catch (error) {
         console.error("Erro no Gateway:", error);
-        return res.status(500).json({ success: false, error: 'Erro de comunicação com o Gateway' });
+        return res.status(500).json({ success: false, error: 'Erro interno no servidor' });
     }
 };
