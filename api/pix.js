@@ -1,5 +1,6 @@
+const https = require('https');
+
 export default async function handler(req, res) {
-    // Configuração de CORS permissiva para evitar bloqueios do navegador
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*'); 
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -22,10 +23,11 @@ export default async function handler(req, res) {
     try {
         const apiKey = process.env.EASYPIX_API_KEY;
         if(!apiKey) {
-             console.error("ERRO GRAVE: A variável EASYPIX_API_KEY não foi encontrada na Vercel.");
-             return res.status(500).json({ success: false, error: 'Chave API não configurada.' });
+             console.error("ERRO GRAVE: A variável EASYPIX_API_KEY não foi encontrada.");
+             return res.status(500).json({ success: false, error: 'Chave API não configurada na Vercel.' });
         }
 
+        // Requisição para a EasyPix usando fetch nativo da Vercel Node
         const response = await fetch('https://app-api.easy-pix.com/payments', {
             method: 'POST',
             headers: {
@@ -50,12 +52,12 @@ export default async function handler(req, res) {
         if (data.id && data.method && data.method.qrCode) {
             return res.status(200).json({ success: true, copyPaste: data.method.qrCode });
         } else {
-            console.error("Erro detalhado da EasyPix:", data);
+            console.error("Erro da EasyPix:", data);
             return res.status(400).json({ success: false, error: data });
         }
 
     } catch (error) {
-        console.error("Erro crítico no Gateway (Vercel):", error);
-        return res.status(500).json({ success: false, error: 'Erro interno no servidor Vercel' });
+        console.error("Erro Gateway Vercel:", error);
+        return res.status(500).json({ success: false, error: 'Erro interno no servidor' });
     }
 }
