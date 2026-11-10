@@ -164,9 +164,9 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     try {
                         let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                         let valorCobrado = parseFloat(valorFormatadoCalc);
-                        const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
+                        const LINK_DO_GATEWAY = '/api/pix'; // TODO: Colocar URL do novo gateway
                         
-                        const responsePix = await fetch(LINK_DO_VERCEL, {
+                        const responsePix = await fetch(LINK_DO_GATEWAY, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -2589,7 +2589,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                       try {
                           let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                           let valorCobrado = parseFloat(valorFormatadoCalc);
-                          const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
+                          const LINK_DO_GATEWAY = '/api/pix'; // TODO: Colocar URL do novo gateway
 
                           let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
                           let pixCache = localStorage.getItem(chaveCache);
@@ -2610,7 +2610,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                           }
 
                           if (!usarCache) {
-                              const responsePix = await fetch(LINK_DO_VERCEL, {
+                              const responsePix = await fetch(LINK_DO_GATEWAY, {
                                   method: 'POST',
                                   headers: { 'Content-Type': 'application/json' },
                                   body: JSON.stringify({
@@ -2886,9 +2886,9 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     try {
                         let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                         let valorCobrado = parseFloat(valorFormatadoCalc);
-                        const LINK_DO_VERCEL = 'https://portal-vigilancia-one.vercel.app/api/pix.js';
+                        const LINK_DO_GATEWAY = '/api/pix'; // TODO: Colocar URL do novo gateway
                         
-                        const responsePix = await fetch(LINK_DO_VERCEL, {
+                        const responsePix = await fetch(LINK_DO_GATEWAY, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
