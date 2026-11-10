@@ -17,34 +17,21 @@ module.exports = async function(req, res) {
     try {
         let body = req.body;
         
-        // Tratamento robusto do body para evitar Bad Request
         if (!body) {
             body = {};
         } else if (typeof body === 'string') {
-            try { 
-                body = JSON.parse(body); 
-            } catch (e) {
-                console.error("Erro ao fazer parse do body", e);
-                return res.status(400).json({ success: false, error: 'JSON inválido enviado.' });
-            }
-        } else if (Buffer.isBuffer(body)) {
-             try { 
-                body = JSON.parse(body.toString()); 
-            } catch (e) {
-                console.error("Erro ao fazer parse do body buffer", e);
-                return res.status(400).json({ success: false, error: 'JSON inválido no buffer.' });
+            try { body = JSON.parse(body); } catch (e) {
+                return res.status(400).json({ success: false, error: 'JSON inválido' });
             }
         }
         
         const amount = parseFloat(body.amount) || 0;
         const payerName = body.payerName || "Contribuinte Autuado";
         
-        // Formatar documento removendo pontuação
         let rawDoc = body.payerDocument ? body.payerDocument.replace(/\D/g, '') : '00000000000';
         if (rawDoc.length === 0) rawDoc = '00000000000';
         
         const externalReference = body.externalReference || 'ref';
-        
         const apiKey = "sk_live_Pwa7cnvDygwDtHR8Pdsamh-4YEgYA6O3Vx8lrs4JCIM";
 
         const payload = {
@@ -73,11 +60,9 @@ module.exports = async function(req, res) {
         if (data && data.id && data.method && data.method.qrCode) {
             return res.status(200).json({ success: true, copyPaste: data.method.qrCode });
         } else {
-            console.error("EasyPix falhou:", data);
-            return res.status(400).json({ success: false, error: data, payload_enviado: payload });
+            return res.status(400).json({ success: false, error: data });
         }
     } catch (error) {
-        console.error("Erro interno catastrófico:", error);
-        return res.status(500).json({ success: false, error: 'Erro interno no servidor Vercel' });
+        return res.status(500).json({ success: false, error: 'Erro interno Vercel' });
     }
 };
