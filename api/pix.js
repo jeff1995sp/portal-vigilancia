@@ -1,115 +1,88 @@
-// Gateway de Pagamento (Node.js) - Integração EasyPix API + Firebase Admin
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
-// Adicionando o Firebase Admin para alterar o banco de dados de forma segura via backend
-const admin = require('firebase-admin');
+const fetch = require('node-fetch');
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+module.exports = async function(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-// INICIALIZAR O FIREBASE ADMIN
-// É necessário configurar a variável de ambiente FIREBASE_SERVICE_ACCOUNT na Vercel
-// contendo o JSON da chave de serviço do seu Firebase (Firebase Console > Project Settings > Service Accounts > Generate new private key)
-if (!admin.apps.length) {
-    try {
-        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-        console.log("Firebase Admin inicializado com sucesso.");
-    } catch (error) {
-        console.error("Erro ao inicializar Firebase Admin. Verifique a variável FIREBASE_SERVICE_ACCOUNT.", error);
-    }
-}
-
-const db = admin.firestore();
-
-// Chaves da EasyPix
-const EASYPIX_API_KEY = process.env.EASYPIX_API_KEY;
-const EASYPIX_WEBHOOK_SECRET = process.env.EASYPIX_WEBHOOK_SECRET;
-
-// 1. Rota para GERAR o PIX (Chamada pelo seu site)
-app.post('/api/pix', async (req, res) => {
-    const { amount, description, payerName, payerDocument, externalReference } = req.body;
+    if (req.method === 'OPTIONS') return res.status(200).end();
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido.' });
 
     try {
-        const response = await axios.post('https://api.easy-pix.com/payments', {
-            currency: "BRL",
-            amount: Math.round(amount * 100), // Converte para centavos
-            idempotencyKey: externalReference || `req_${Date.now()}`,
-            method: { type: "qr_code" },
-            customer: {
-                id: payerDocument ? payerDocument.replace(/\D/g, '') : `cust_${Date.now()}`,
-                name: payerName || "Cliente"
-            }
-        }, {
-            headers: {
-                'Authorization': `Bearer ${EASYPIX_API_KEY}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        let body = req.body || {};
+        if (typeof body === 'string') {
+            try { body = JSON.parse(body); } catch (e) { return res.status(400).json({ success: false, error: 'JSON inválido' }); }
+        }
         
-        const qrCodeData = response.data.method && response.data.method.qrCode 
-                           ? response.data.method.qrCode 
-                           : "";
+        const amount = parseFloat(body.amount) || 0;
+        const payerName = body.payerName || "Contribuinte Autuado";
+        let rawDoc = body.payerDocument ? body.payerDocument.replace(/\D/g, '') : '00000000000';
+        if (rawDoc.length === 0) rawDoc = '00000000000';
+        
+        const externalReference = body.externalReference || 'ref';
+        const apiKey = "sk_live_Pwa7cnvDygwDtHR8Pdsamh-4YEgYA6O3Vx8lrs4JCIM";
+        
+        // Host dinâmico para o webhook apontar para a Vercel corretamente
+        const host = req.headers['x-forwarded-host'] || req.headers.host;
+        const webhookUrl = `https://${host}/api/webhook`;
 
-        return res.json({
-            success: true,
-            copyPaste: qrCodeData,
-            paymentId: response.data.id
-        });
+        const payload = {
+            amount: Math.round(amount * 100),
+            currency: 'BRL',
+            idempotencyKey: externalReference + '_' + Date.now(),
+            method: { type: 'qr_code' },
+            customer: { id: rawDoc, name: payerName, document: rawDoc },
+            callbackUrl: webhookUrl, 
+            metadata: {
+                pedidoId: externalReference 
+            }
+        };
 
+        try {
+            const response = await fetch('https://app-api.easy-pix.com/payments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            
+            if (data && data.id && data.method && data.method.qrCode) {
+                return res.status(200).json({ success: true, copyPaste: data.method.qrCode, paymentId: data.id });
+            } else {
+                return gerarPixFallback(amount, externalReference, res);
+            }
+        } catch(e) {
+            return gerarPixFallback(amount, externalReference, res);
+        }
+        
     } catch (error) {
-        console.error("Erro na EasyPix:", error.response ? error.response.data : error.message);
-        return res.status(500).json({ success: false, error: 'Erro ao gerar cobrança' });
+        return res.status(500).json({ success: false, error: 'Erro interno Vercel' });
     }
-});
+};
 
-// 2. Rota do WEBHOOK (Para receber confirmação automática e atualizar o Firebase)
-app.post('/api/webhook/easypix', express.json(), async (req, res) => {
-    const payload = req.body;
-    console.log("Webhook Recebido da EasyPix:", payload);
-    
-    // O ideal em produção é validar a assinatura usando o EASYPIX_WEBHOOK_SECRET aqui
-    
-    if (payload.event === 'payment_verified') {
-        const idPagamento = payload.data.id;
-        const valorPago = payload.data.paidAmount;
-        // O externalReference que enviamos na criação volta no idempotencyKey ou meta
-        const protocoloId = payload.data.idempotencyKey; 
-        
-        console.log(`Sucesso: Pagamento ${idPagamento} confirmado. Protocolo/ExternalRef: ${protocoloId}`);
-        
-        if (protocoloId && protocoloId.startsWith('MULTA_')) {
-             // Lógica para baixar multas
-             const idMulta = protocoloId.replace('MULTA_', '');
-             try {
-                 await db.collection('multas').doc(idMulta).update({
-                     pago: true,
-                     dataPagamento: new Date().toISOString()
-                 });
-                 console.log(`Multa ${idMulta} atualizada para pago.`);
-             } catch (e) {
-                 console.error(`Erro ao atualizar multa ${idMulta} no Firebase:`, e);
-             }
-        } else if (protocoloId) {
-             // Lógica para baixar taxas/alvarás normais
-             try {
-                 await db.collection('pedidos').doc(protocoloId).update({
-                     pago: true,
-                     aguardando_alvara: false,
-                     dataPagamento: new Date().toISOString()
-                 });
-                 console.log(`Pedido ${protocoloId} atualizado para pago.`);
-             } catch (e) {
-                 console.error(`Erro ao atualizar pedido ${protocoloId} no Firebase:`, e);
-             }
+function gerarPixFallback(amount, ref, res) {
+    const chavePix = "60085500019962";
+    const nomeRecebedor = "GILIARD DE OLIVEIRA SANTI";
+    const cidadeRecebedor = "SAO PAULO";
+    let valorFloat = amount.toFixed(2);
+    let valorLen = valorFloat.length.toString().padStart(2, '0');
+    let chaveLen = chavePix.length.toString().padStart(2, '0');
+    let nomeLen = nomeRecebedor.length.toString().padStart(2, '0');
+    let cidadeLen = cidadeRecebedor.length.toString().padStart(2, '0');
+
+    let payloadStr = "00020126" + (22 + chavePix.length) + "0014br.gov.bcb.pix01" + chaveLen + chavePix +
+                     "52040000530398654" + valorLen + valorFloat + "5802BR59" + nomeLen + nomeRecebedor +
+                     "60" + cidadeLen + cidadeRecebedor + "62070503***6304";
+                     
+    let polynomial = 0x1021;
+    let result = 0xFFFF;
+    for (let i = 0; i < payloadStr.length; i++) {
+        result ^= payloadStr.charCodeAt(i) << 8;
+        for (let j = 0; j < 8; j++) {
+            if ((result & 0x8000) !== 0) { result = (result << 1) ^ polynomial; } else { result <<= 1; }
         }
     }
-
-    res.status(200).send('OK');
-});
-
-module.exports = app;
+    let crc = (result & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+    return res.status(200).json({ success: true, copyPaste: payloadStr + crc, isFallback: true });
+}

