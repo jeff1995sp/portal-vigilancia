@@ -5,7 +5,7 @@ module.exports = async function(req, res) {
     // Configuração de CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Idempotency-Key');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Idempotency-Key, token');
 
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido.' });
@@ -25,21 +25,20 @@ module.exports = async function(req, res) {
         const externalReference = body.externalReference || 'ref';
         
         const apiKey = process.env.ALURAPAY_API_KEY;
-        const apiSecret = process.env.ALURAPAY_WEBHOOK_SECRET;
 
-        if (!apiKey || !apiSecret) {
-            console.error("ERRO: Credenciais da Alura Pay não encontradas no Vercel Env Vars.");
+        if (!apiKey) {
+            console.error("ERRO: ALURAPAY_API_KEY não encontrada no Vercel Env Vars.");
             return res.status(500).json({ success: false, error: 'Credenciais ausentes no servidor.' });
         }
 
-        const credentials = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64');
         const idempotencyKey = crypto.randomUUID();
         const valorCentavos = Math.round(amount * 100);
 
+        // O payload exato que a documentação pede
         const payload = {
             method: "PIX",
             amount: valorCentavos,
-            externalId: externalReference, // <-- Amarração do ID do Firebase para o Webhook!
+            externalId: externalReference, 
             payer: {
               name: payerName,
               email: "contribuinte@sp.gov.br",
@@ -55,7 +54,10 @@ module.exports = async function(req, res) {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json', 
-                    'Authorization': `Basic ${credentials}`,
+                    // Removido o 'Basic' com base64 que estava causando Forbidden
+                    // E adicionado token direto no cabeçalho ou Authorization Bearer
+                    'Authorization': `Bearer ${apiKey}`,
+                    'token': apiKey,
                     'X-Idempotency-Key': idempotencyKey
                 },
                 body: JSON.stringify(payload)
@@ -73,7 +75,7 @@ module.exports = async function(req, res) {
                 });
             } else {
                 console.error("Erro na Alura Pay:", data);
-                return res.status(502).json({ success: false, error: 'Falha no Gateway de Pagamento', details: data });
+                return res.status(response.status || 502).json({ success: false, error: 'Falha no Gateway de Pagamento', details: data });
             }
         } catch(gatewayError) {
             console.error("Exceção ao chamar Alura Pay:", gatewayError);
