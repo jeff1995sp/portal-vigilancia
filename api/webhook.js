@@ -13,11 +13,9 @@ module.exports = async function(req, res) {
         let statusPagamento = transaction.status || '';
         
         if (statusPagamento === 'APPROVED') {
-            
             let pedidoId = transaction.externalId;
 
             if (pedidoId) {
-                console.log("ID do Pedido identificado no Webhook da Alura Pay:", pedidoId);
                 const projectId = 'site-8dfaf'; 
                 const apiKey = process.env.FIREBASE_WEB_API_KEY || 'AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg'; 
                 
@@ -27,14 +25,9 @@ module.exports = async function(req, res) {
                     pedidoId = pedidoId.replace("MULTA_", "");
                 }
 
-                // ATUALIZANDO PARA "aguardando_alvara" PARA BATER COM O ADMIN!
                 const firebaseUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${colecao}/${pedidoId}?updateMask.fieldPaths=aguardando_alvara&key=${apiKey}`;
 
-                const updatePayload = {
-                    fields: {
-                        aguardando_alvara: { booleanValue: true }
-                    }
-                };
+                const updatePayload = { fields: { aguardando_alvara: { booleanValue: true } } };
 
                 const fireRes = await fetch(firebaseUrl, {
                     method: 'PATCH',
@@ -43,16 +36,9 @@ module.exports = async function(req, res) {
                 });
 
                 if (fireRes.ok) {
-                    console.log(`Sucesso: Firebase atualizado. ${colecao}/${pedidoId} marcado como AGUARDANDO ALVARÁ.`);
-                } else {
-                    const fireError = await fireRes.text();
-                    console.error("Falha ao atualizar Firebase via Webhook. Resposta do Firebase:", fireError);
+                    console.log(`Sucesso: Firebase atualizado via Alura. ${colecao}/${pedidoId} marcado como AGUARDANDO ALVARÁ.`);
                 }
-            } else {
-                console.warn("Webhook recebido, mas não achei o externalId no payload da Alura Pay.");
             }
-        } else {
-            console.log("Ignorando webhook pois o status não é APPROVED. Status recebido:", statusPagamento);
         }
 
         return res.status(200).json({ received: true });

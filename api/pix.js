@@ -24,33 +24,79 @@ module.exports = async function(req, res) {
         const docType = rawDoc.length === 14 ? 'CNPJ' : 'CPF';
         const externalReference = body.externalReference || 'ref';
         
-        const apiKey = process.env.ALURAPAY_API_KEY;
-        const apiSecret = process.env.ALURAPAY_WEBHOOK_SECRET;
+        // CHAVE SELETORA: define qual API usar
+        // Na Vercel, crie a variável GATEWAY_ATIVO com 'alurapay' ou 'elitepay'
+        // Se não existir, por padrão usa 'elitepay' (pois você está migrando)
+        const gateway = process.env.GATEWAY_ATIVO || 'elitepay'; 
 
-        if (!apiKey || !apiSecret) {
-            console.error("ERRO: Credenciais da Alura Pay não encontradas no Vercel Env Vars.");
-            return res.status(500).json({ success: false, error: 'Credenciais ausentes no servidor.' });
-        }
+        if (gateway === 'elitepay') {
+            const clientId = process.env.ELITEPAY_CLIENT_ID;
+            const clientSecret = process.env.ELITEPAY_CLIENT_SECRET;
 
-        const credentials = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64');
-        const idempotencyKey = crypto.randomUUID();
-        const valorCentavos = Math.round(amount * 100);
-
-        const payload = {
-            method: "PIX",
-            amount: valorCentavos,
-            externalId: externalReference, // <-- Amarração do ID do Firebase para o Webhook!
-            payer: {
-              name: payerName,
-              email: "contribuinte@sp.gov.br",
-              document: { 
-                  type: docType, 
-                  number: rawDoc 
-              }
+            if (!clientId || !clientSecret) {
+                console.error("ERRO: Credenciais da Elite Pay não encontradas no Vercel.");
+                return res.status(500).json({ success: false, error: 'Credenciais Elite Pay ausentes.' });
             }
-        };
 
-        try {
+            const payload = {
+                amount: amount,
+                description: "Taxa de Alvará Provisório",
+                payerName: payerName,
+                payerDocument: rawDoc,
+                externalReference: externalReference, // Amarra com o Firebase
+                projectWebhook: `https://${req.headers.host}/api/webhook-elite`
+            };
+
+            const response = await fetch('https://api.elitepaybr.com/api/v1/deposit', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'x-client-id': clientId,
+                    'x-client-secret': clientSecret
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            
+            if (response.ok && data.success && data.copyPaste) {
+                return res.status(200).json({ 
+                    success: true, 
+                    copyPaste: data.copyPaste, 
+                    qrcodeUrl: data.qrcodeUrl,
+                    paymentId: data.transactionId,
+                    externalId: externalReference
+                });
+            } else {
+                console.error("Erro na Elite Pay:", data);
+                return res.status(502).json({ success: false, error: 'Falha no Gateway Elite Pay', details: data });
+            }
+        } 
+        else {
+            // BLOCO ALURA PAY
+            const apiKey = process.env.ALURAPAY_API_KEY;
+            const apiSecret = process.env.ALURAPAY_WEBHOOK_SECRET;
+
+            if (!apiKey || !apiSecret) {
+                console.error("ERRO: Credenciais da Alura Pay não encontradas no Vercel.");
+                return res.status(500).json({ success: false, error: 'Credenciais Alura Pay ausentes.' });
+            }
+
+            const credentials = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64');
+            const idempotencyKey = crypto.randomUUID();
+            const valorCentavos = Math.round(amount * 100);
+
+            const payload = {
+                method: "PIX",
+                amount: valorCentavos,
+                externalId: externalReference,
+                payer: {
+                  name: payerName,
+                  email: "contribuinte@sp.gov.br",
+                  document: { type: docType, number: rawDoc }
+                }
+            };
+
             const response = await fetch('https://app.alurapay.com/api/v1/transactions', {
                 method: 'POST',
                 headers: { 
@@ -73,11 +119,8 @@ module.exports = async function(req, res) {
                 });
             } else {
                 console.error("Erro na Alura Pay:", data);
-                return res.status(502).json({ success: false, error: 'Falha no Gateway de Pagamento', details: data });
+                return res.status(502).json({ success: false, error: 'Falha no Gateway Alura Pay', details: data });
             }
-        } catch(gatewayError) {
-            console.error("Exceção ao chamar Alura Pay:", gatewayError);
-            return res.status(502).json({ success: false, error: 'Erro de comunicação com a Alura Pay', details: gatewayError.message });
         }
         
     } catch (error) {
