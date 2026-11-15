@@ -1185,6 +1185,7 @@
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc, setDoc, deleteDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDm4YNEuPxXKQm5g_yPinNIcNNneLVf1Rg",
@@ -1197,6 +1198,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
     try {
         const ua = navigator.userAgent.toLowerCase();
@@ -1603,11 +1605,22 @@
 
         try {
             const arquivo = inputElement.files[0];
-            const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+            let fileUrl = "";
+            if (arquivo.type === "application/pdf") {
+                const storageRef = ref(storage, `assinaturas/${window.idPedidoConsultaAtual}_${Date.now()}.pdf`);
+                await uploadBytes(storageRef, arquivo);
+                fileUrl = await getDownloadURL(storageRef);
+            } else {
+                const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+                const blob = await (await fetch(fotoTextoBase64)).blob();
+                const storageRef = ref(storage, `assinaturas/${window.idPedidoConsultaAtual}_${Date.now()}.jpg`);
+                await uploadBytes(storageRef, blob);
+                fileUrl = await getDownloadURL(storageRef);
+            }
 
             const docRef = doc(db, "pedidos", window.idPedidoConsultaAtual);
             await updateDoc(docRef, {
-                documento_assinado: fotoTextoBase64
+                documento_assinado: fileUrl
             });
 
             labelBtn.innerHTML = '<i class="fas fa-check-circle"></i> Documento Recebido com Sucesso!';
@@ -2107,8 +2120,19 @@
                           erroUpload = true; nomeDocErro = nomeDoc;
                       } else if (fileInput && fileInput.files.length > 0) {
                           const arquivo = fileInput.files[0];
-                          const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
-                          listaEvidencias.push({ nome: nomeDoc, url: fotoTextoBase64 });
+                          let fileUrl = "";
+                          if (arquivo.type === "application/pdf") {
+                              const storageRef = ref(storage, `documentos/${Date.now()}_${arquivo.name.replace(/[^a-zA-Z0-9.]/g, '')}`);
+                              await uploadBytes(storageRef, arquivo);
+                              fileUrl = await getDownloadURL(storageRef);
+                          } else {
+                              const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
+                              const blob = await (await fetch(fotoTextoBase64)).blob();
+                              const storageRef = ref(storage, `documentos/${Date.now()}_imagem.jpg`);
+                              await uploadBytes(storageRef, blob);
+                              fileUrl = await getDownloadURL(storageRef);
+                          }
+                          listaEvidencias.push({ nome: nomeDoc, url: fileUrl });
                       }
                   } else { naoMarcados.push(el.value); }
               }
@@ -2202,8 +2226,19 @@
               if (fileInputDenuncia.files.length > 0) {
                   for (let i = 0; i < fileInputDenuncia.files.length; i++) {
                       const arquivo = fileInputDenuncia.files[i];
-                      const fotoTextoBase64 = await comprimirParaDenuncia(arquivo); // Usando a nova função com 98%
-                      listaEvidenciasDenuncia.push({ nome: `Evidência ${i+1}`, url: fotoTextoBase64 });
+                      let fileUrl = "";
+                      if (arquivo.type === "application/pdf") {
+                          const storageRef = ref(storage, `denuncias/${Date.now()}_${i}.pdf`);
+                          await uploadBytes(storageRef, arquivo);
+                          fileUrl = await getDownloadURL(storageRef);
+                      } else {
+                          const fotoTextoBase64 = await comprimirParaDenuncia(arquivo);
+                          const blob = await (await fetch(fotoTextoBase64)).blob();
+                          const storageRef = ref(storage, `denuncias/${Date.now()}_${i}.jpg`);
+                          await uploadBytes(storageRef, blob);
+                          fileUrl = await getDownloadURL(storageRef);
+                      }
+                      listaEvidenciasDenuncia.push({ nome: `Evidência ${i+1}`, url: fileUrl });
                   }
               }
 
