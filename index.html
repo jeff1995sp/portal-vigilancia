@@ -2466,7 +2466,7 @@
                               });
 
                           } else {
-                              alert("Erro no Gateway da API Vercel: " + JSON.stringify(dadosPix));
+                              alert("O sistema de pagamentos está momentaneamente indisponível. Por favor, aguarde alguns minutos e tente novamente.");
                               document.getElementById('pix-copia-cola').value = "Falha ao gerar código.";
                               let imgQrAlvara = document.querySelector('.qr-container img');
                               if(imgQrAlvara) {
@@ -2476,7 +2476,7 @@
                           }
                       } catch (e) {
                           console.error("ERRO DO FETCH API VERCEL:", e);
-                          alert("Erro de comunicação com o servidor de pagamento no Vercel.");
+                          alert("Não foi possível gerar a cobrança neste momento. Verifique a sua conexão ou tente novamente mais tarde.");
                           document.getElementById('pix-copia-cola').value = "Falha de conexão com a API.";
                           let imgQrAlvara = document.querySelector('.qr-container img');
                           if(imgQrAlvara) {
@@ -2727,12 +2727,14 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                             // ==========================================================
                             } else {
                             console.error("Erro da API Pix Vercel (Multa):", dadosPix);
+                            alert("O sistema de pagamentos está momentaneamente indisponível. Por favor, aguarde alguns minutos e tente novamente.");
                             document.getElementById('pix-copia-cola-multa').value = "Erro ao gerar código Pix.";
                             document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
                             document.getElementById('qr-multa-img').style.opacity = "0.2";
                         }
                     } catch (e) {
                         console.error("Erro na comunicação com a API Vercel (Multa):", e);
+                        alert("Não foi possível gerar a cobrança neste momento. Verifique a sua conexão ou tente novamente mais tarde.");
                         document.getElementById('pix-copia-cola-multa').value = "Erro de conexão com Gateway.";
                         document.getElementById('qr-multa-img').src = "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_QRCode.png";
                         document.getElementById('qr-multa-img').style.opacity = "0.2";
