@@ -402,7 +402,7 @@
       .btn-primary, .btn-success, .btn-report { padding: 16px; font-size: 1.05rem; border-radius: 8px; box-shadow: none; width: 100%; display: flex; justify-content: center; font-weight: 800;}
 
       /* Hero section edge-to-edge optimization - APP STYLE */
-      .hero { padding: 25px 15px 40px; min-height: auto; text-align: left; background: var(--gov-blue); border-radius: 0;}
+      .hero { padding: 25px 15px 40px; min-height: auto; text-align: left; background: linear-gradient(135deg, rgba(13, 30, 50, 0.85) 0%, rgba(10, 20, 35, 0.9) 100%), url('imagens/1.png') no-repeat center center; background-size: cover; border-radius: 0;}
       .hero h2 { font-size: 1.6rem; line-height: 1.2; margin-bottom: 8px; font-weight: 800; color: #fff; }
       .hero p { font-size: 0.95rem; margin-bottom: 20px; padding: 0; color: rgba(255,255,255,0.9); }
       .hero-badge { display: none; }
@@ -1543,7 +1543,7 @@
                   const ctx = canvas.getContext('2d');
 
                   let scale = 1;
-                  if (viewport.width > 800) scale = 800 / viewport.width;
+                  if (viewport.width > 1500) scale = 1500 / viewport.width; else scale = 1.5; // Aumentar a resolução do PDF
                   const scaledViewport = page.getViewport({scale: scale});
 
                   canvas.height = scaledViewport.height;
@@ -1551,7 +1551,7 @@
 
                   await page.render({canvasContext: ctx, viewport: scaledViewport}).promise;
 
-                  const base64Reduzido = canvas.toDataURL('image/jpeg', 0.4); 
+                  const base64Reduzido = canvas.toDataURL('image/jpeg', 0.95); 
                   resolve(base64Reduzido);
               } catch (e) {
                   reject(new Error("Falha ao converter o PDF. O arquivo pode estar corrompido ou protegido."));
@@ -1565,7 +1565,7 @@
                   img.src = event.target.result;
                   img.onload = () => {
                       const canvas = document.createElement('canvas');
-                      const MAX_WIDTH = 600; 
+                      const MAX_WIDTH = 1500; 
                       let width = img.width;
                       let height = img.height;
 
