@@ -28,10 +28,6 @@
   ],
   "routes": [
     {
-      "src": "/api/pix",
-      "dest": "/api/pix.js"
-    },
-    {
       "src": "/api/webhook",
       "dest": "/api/webhook.js"
     },
