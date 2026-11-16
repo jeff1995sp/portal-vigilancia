@@ -1810,7 +1810,7 @@
             const dataValidade = new Date(dataAtual.setFullYear(dataAtual.getFullYear() + 1)).toLocaleDateString('pt-BR');
 
             // ATENÇÃO: NOME DO ARQUIVO ATUALIZADO AQUI
-            const urlArquivoMolde = 'Alvara Provisório.pdf'; 
+            const urlArquivoMolde = 'certificacao_provisoria.pdf'; 
             const existingPdfBytes = await fetch(urlArquivoMolde).then(res => res.arrayBuffer());
 
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
