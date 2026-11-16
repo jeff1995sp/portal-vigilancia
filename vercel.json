@@ -10,7 +10,19 @@
       "use": "@vercel/static"
     },
     {
-      "src": "imagens/*",
+      "src": "*.pdf",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "imagens/**/*",
       "use": "@vercel/static"
     }
   ],
