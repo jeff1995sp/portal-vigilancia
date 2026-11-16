@@ -121,8 +121,6 @@
 
     .cpf-success-msg { background: #dcfce3; color: #166534; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; margin-top: 10px; display: none; border: 1px solid #22c55e; text-align: center; }
 
-
-
     .security-bar { background: #222; color: #00ff88; font-size: 0.75rem; padding: 5px 0; text-align: center; font-family: monospace; border-bottom: 1px solid #444; position: relative; z-index: 2001; }
 
     .gov-bar { background: var(--sp-red); color: #fff; padding: 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2000; position: relative; }
@@ -482,6 +480,41 @@
       .footer h4 { border-left: none; padding-left: 0; border-bottom: 2px solid var(--sp-red); display: inline-block; padding-bottom: 5px; }
       .selos-container { flex-direction: column; gap: 15px !important; }
       .selos-container a { width: 100% !important; max-width: 250px; margin: 0 auto; }
+    }
+
+    @media print {
+        /* Oculta TUDO no body por padrão na hora de imprimir */
+        body * {
+            visibility: hidden;
+        }
+        
+        /* Remove margens e fundos escuros do body para a folha branca */
+        body {
+            background-color: white !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Torna visível APENAS a div do selo e todos os seus filhos */
+        #selo-qualidade-container, #selo-qualidade-container * {
+            visibility: visible;
+        }
+        
+        /* Posiciona o selo no topo esquerdo da folha de impressão */
+        #selo-qualidade-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            margin: 0;
+            padding: 20px;
+            box-shadow: none !important;
+        }
+        
+        /* Oculta o botão de "Imprimir Selo Oficial" para não sair no papel */
+        #selo-qualidade-container button {
+            display: none !important;
+        }
     }
   </style>
 </head>
@@ -1776,7 +1809,8 @@
             const dataEmissao = dataAtual.toLocaleDateString('pt-BR');
             const dataValidade = new Date(dataAtual.setFullYear(dataAtual.getFullYear() + 1)).toLocaleDateString('pt-BR');
 
-            const urlArquivoMolde = 'Alvara Provisório.pdf'; 
+            // ATENÇÃO: NOME DO ARQUIVO ATUALIZADO AQUI
+            const urlArquivoMolde = 'certificacao_provisoria.pdf'; 
             const existingPdfBytes = await fetch(urlArquivoMolde).then(res => res.arrayBuffer());
 
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
@@ -1831,7 +1865,8 @@
             btn.disabled = false;
         } catch(e) {
             console.error("Erro ao gerar PDF:", e);
-            alert("Erro ao gerar o PDF. Verifique se o arquivo 'Alvara Provisório.pdf' está salvo exatamente com esse nome e na mesma pasta do seu index.html no GitHub.");
+            // Mensagem de alerta atualizada para refletir o novo nome do arquivo esperado.
+            alert("Erro ao gerar o PDF. Verifique se o arquivo 'certificacao_provisoria.pdf' está salvo exatamente com esse nome e na mesma pasta do seu index.html no GitHub.");
             const btnError = document.getElementById('btn-baixar-pdf');
             if (btnError) {
                 btnError.innerHTML = '<i class="fas fa-file-pdf"></i> Baixar Licença Provisória';
