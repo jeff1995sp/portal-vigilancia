@@ -1746,8 +1746,9 @@
         if (viewId === 'view-financeiro') {
             carregarConversasWhatsApp();
         }
-    }`);
     }
+
+    window.showToast = (titulo, mensagem, tipo = 'success') => {
 
     window.showToast = (titulo, mensagem, tipo = 'success') => {
       const container = document.getElementById('toast-container');
