@@ -402,6 +402,43 @@
     .action-click { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid var(--success); }
     .action-alert { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
 
+    
+    /* ======================================================== */
+    /* CSS DO PAINEL DO ATENDIMENTO IA (WHATSAPP)                */
+    /* ======================================================== */
+    .wa-dashboard { display: flex; flex-direction: column; gap: 20px; }
+    .wa-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 20px 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+    .wa-header h2 { font-size: 1.5rem; color: white; display: flex; align-items: center; gap: 10px; margin: 0; }
+    
+    /* Input Search no estilo WhatsApp */
+    .wa-search-box { width: 100%; margin-bottom: 15px; }
+    .wa-search-box input { width: 100%; padding: 15px 25px; border-radius: 50px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; font-size: 1rem; transition: 0.3s; }
+    .wa-search-box input:focus { border-color: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+    
+    .wa-conversations-list { display: flex; flex-direction: column; gap: 15px; max-height: 600px; overflow-y: auto; padding-right: 10px; }
+    
+    .wa-chat-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+    .wa-chat-item:hover { border-color: var(--border-light); transform: translateY(-2px); }
+    
+    .wa-chat-info { display: flex; flex-direction: column; gap: 5px; }
+    .wa-phone { font-size: 1.2rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; }
+    .wa-time { font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-code); }
+    
+    /* Botões Verde/Vermelho de Ativar/Pausar IA */
+    .btn-ia-toggle { padding: 10px 25px; border-radius: 50px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; border: 2px solid transparent; width: 220px; justify-content: center; }
+    
+    /* IA ATIVA = Verde, borda verde, texto escuro. Hover = Fica Vermelho para indicar que vai PAUSAR */
+    .btn-ia-toggle.active-ia { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: var(--success); }
+    .btn-ia-toggle.active-ia:hover { background: var(--danger); color: white; border-color: var(--danger); }
+    
+    /* IA PAUSADA = Vermelha, borda vermelha, texto escuro. Hover = Fica Verde para indicar que vai ATIVAR */
+    .btn-ia-toggle.paused-ia { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: var(--danger); }
+    .btn-ia-toggle.paused-ia:hover { background: var(--success); color: #022c22; border-color: var(--success); }
+
+    .btn-global-pause { background: var(--danger); color: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+    .btn-global-pause:hover { background: #b91c1c; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+
+
     /* ======================================================== */
     /* RESPONSIVIDADE MOBILE (CELULAR) - NOVO                   */
     /* ======================================================== */
@@ -677,40 +714,40 @@
         <div id="view-financeiro" class="page-view">
           <div class="page-title">
             <div>
-              <h1>Assistente Automático para WhatsApp</h1>
-              <p>Envie textos, fotos ou vídeos de irregularidades. A IA analisará o material e criará a mensagem exata para você copiar e mandar para o contribuinte.</p>
+              <h1>Painel de Atendimento (WhatsApp)</h1>
+              <p>Acompanhe e assuma as conversas dos clientes em tempo real. Pause a IA para falar diretamente.</p>
             </div>
           </div>
 
-          <div class="chat-container">
-            <div class="chat-header">
-              <div class="avatar" style="width: 55px; height: 55px; font-size: 2rem; background: var(--success);"><i class="fab fa-whatsapp"></i></div>
-              <div style="flex: 1;">
-                <h3 style="color: white; margin: 0; font-size: 1.3rem;">Gerador Oficial de Mensagens (IA)</h3>
-                <span style="color: var(--success); font-size: 0.9rem; font-weight: bold;">Foco: Notificação e Orientação ao Cliente</span>
-              </div>
+          <div class="wa-dashboard">
+            <div class="wa-header">
+                <div>
+                    <h2><i class="fab fa-whatsapp" style="color: var(--success); font-size: 2rem;"></i> Controle Geral do WhatsApp</h2>
+                    <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 0.95rem;">Todas as conexões estão sendo monitoradas.</p>
+                </div>
+                <!-- BOTÃO GLOBAL -->
+                <button class="btn-global-pause" onclick="toggleGlobalIA()" id="btn-toggle-global">
+                    <i class="fas fa-power-off"></i> Desativar TODA a IA
+                </button>
             </div>
             
-            <div class="chat-history" id="chat-historico-whatsapp">
-              <div class="chat-msg msg-ai">
-                <strong style="color:var(--success); font-size: 1.2rem;"><i class="fas fa-robot"></i> Gerador IA:</strong><br><br>
-                Olá! Me descreva a situação, ou envie uma foto/vídeo da irregularidade. Eu vou criar uma mensagem formal, pronta para você copiar e colar no WhatsApp do contribuinte, informando o que ele precisa fazer ou corrigir.
-              </div>
+            <div class="wa-search-box">
+                <input type="text" id="wa-search-input" placeholder="Buscar por número de telefone..." onkeyup="filtrarConversasWhatsApp()">
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px;">
+                <h4 style="color: white; margin: 0;">Conversas Ativas</h4>
+                <span style="color: var(--text-muted); font-size: 0.9rem;" id="wa-total-count">0 conversas</span>
             </div>
 
-            <div class="chat-input-area">
-              <div id="zap-attachment-preview" class="attachment-preview-box"></div>
-              <div class="chat-input-row">
-                <button class="chat-attachment-btn" onclick="document.getElementById('zap-file-input').click()" title="Anexar foto ou vídeo curto para análise local">
-                  <i class="fas fa-camera"></i>
-                </button>
-                <input type="file" id="zap-file-input" style="display: none;" accept="image/*,video/*">
-
-                <input type="text" id="zap-input-text" placeholder="Ex: O cliente mandou foto do estabelecimento sem lixeira com pedal. Gere a cobrança para ele arrumar." onkeypress="if(event.key === 'Enter') enviarChatZap()">
-                <button class="btn btn-success" onclick="enviarChatZap()" style="padding: 18px 40px; font-size: 1.2rem; border-radius: 50px; background: var(--success); color: #022c22; border: none; font-weight: 900;"><i class="fab fa-whatsapp"></i> Gerar Texto</button>
-              </div>
+            <div class="wa-conversations-list" id="wa-lista-conversas">
+                <div style="text-align: center; color: var(--text-muted); padding: 50px;">
+                    <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; margin-bottom: 15px; color: var(--primary);"></i>
+                    <p>Carregando conversas do servidor...</p>
+                </div>
             </div>
           </div>
+        </div>
         </div>
 
         <div id="view-trafego" class="page-view">
@@ -1272,6 +1309,9 @@
     const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
+    const CLOUDFLARE_WORKER_URL = "https://covisa.jeffinho1995sp.workers.dev";
+
+
     let idProcessoAtual = null;
     let dadosProcessoAtual = null; 
     let todosProcessos = []; 
@@ -1701,6 +1741,12 @@
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         if(elementClicked) elementClicked.classList.add('active');
         registrarLog("Navegação", `Acessou o módulo: ${viewId}`);
+
+        // SE CLICOU NA ABA DO WHATSAPP, CARREGA AS CONVERSAS NA HORA
+        if (viewId === 'view-financeiro') {
+            carregarConversasWhatsApp();
+        }
+    }`);
     }
 
     window.showToast = (titulo, mensagem, tipo = 'success') => {
@@ -1746,6 +1792,193 @@
     }
 
     // Monitora o estado de autenticação em tempo real
+    
+    // =================================================================================
+    // LÓGICA DO NOVO PAINEL DE CONTROLE DO WHATSAPP (CONECTA NO CLOUDFLARE)
+    // =================================================================================
+    
+    let listaDeConversasAtuais = [];
+    let isGlobalPaused = false;
+    let autoRefreshWhatsApp = null;
+
+    // Busca as conversas na nova API da Cloudflare Worker
+    async function carregarConversasWhatsApp() {
+        const containerLista = document.getElementById('wa-lista-conversas');
+        try {
+            const resposta = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations`);
+            if (!resposta.ok) throw new Error("Erro ao acessar a API do Worker");
+            
+            const dados = await resposta.json();
+            if (dados.success) {
+                listaDeConversasAtuais = dados.conversations;
+                renderizarListaWhatsApp();
+            } else {
+                throw new Error(dados.error || "Erro desconhecido");
+            }
+        } catch (error) {
+            console.error("Falha ao buscar conversas:", error);
+            containerLista.innerHTML = `
+                <div style="text-align: center; color: var(--danger); padding: 50px; background: rgba(239, 68, 68, 0.1); border-radius: 12px; border: 1px dashed var(--danger);">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                    <p style="font-size: 1.1rem; margin:0;">Falha de comunicação com o Servidor (Cloudflare Worker).</p>
+                    <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px;">Verifique se a URL da Worker está correta no código do admin.html e se a Worker está online.</p>
+                    <button class="btn btn-secondary" style="margin-top: 15px;" onclick="carregarConversasWhatsApp()">Tentar Novamente</button>
+                </div>`;
+        }
+
+        // Configura auto-refresh a cada 15 segundos, se já não existir
+        if (!autoRefreshWhatsApp) {
+            autoRefreshWhatsApp = setInterval(carregarConversasWhatsApp, 15000);
+        }
+    }
+
+    function renderizarListaWhatsApp() {
+        const containerLista = document.getElementById('wa-lista-conversas');
+        const countSpan = document.getElementById('wa-total-count');
+        const termoBusca = document.getElementById('wa-search-input').value.toLowerCase().trim();
+
+        let filtrados = listaDeConversasAtuais;
+        if (termoBusca) {
+            filtrados = filtrados.filter(conv => conv.phone.includes(termoBusca));
+        }
+
+        countSpan.innerText = `${filtrados.length} clientes conectados`;
+        containerLista.innerHTML = '';
+
+        if (filtrados.length === 0) {
+            containerLista.innerHTML = `
+                <div style="text-align: center; color: var(--text-muted); padding: 50px;">
+                    <i class="fas fa-comment-slash" style="font-size: 3rem; opacity: 0.3; margin-bottom: 20px;"></i>
+                    <h3 style="color: white;">Nenhum atendimento no momento</h3>
+                    <p>Quando alguém mandar mensagem no WhatsApp, aparecerá aqui.</p>
+                </div>`;
+            return;
+        }
+
+        // Verifica se TODAS estão pausadas (para ajustar o botão global)
+        const todasPausadas = filtrados.every(c => c.paused === 1);
+        const btnGlobal = document.getElementById('btn-toggle-global');
+        if (filtrados.length > 0 && todasPausadas) {
+            isGlobalPaused = true;
+            btnGlobal.innerHTML = '<i class="fas fa-play"></i> Ligar a IA para Todos';
+            btnGlobal.style.background = 'var(--success)';
+        } else {
+            isGlobalPaused = false;
+            btnGlobal.innerHTML = '<i class="fas fa-power-off"></i> Desativar TODA a IA';
+            btnGlobal.style.background = 'var(--danger)';
+        }
+
+        filtrados.forEach(conv => {
+            const dataAtualizacao = new Date(conv.updated_at).toLocaleString('pt-BR');
+            const ehPausado = conv.paused === 1;
+
+            const iconeBtn = ehPausado ? 'fa-play' : 'fa-pause';
+            const textoBtn = ehPausado ? 'Pausada (Ativar)' : 'IA Ativa (Pausar)';
+            const classeBtn = ehPausado ? 'paused-ia' : 'active-ia';
+            const novaAcao = ehPausado ? 0 : 1; // 0 = Ligar, 1 = Pausar
+
+            containerLista.innerHTML += `
+                <div class="wa-chat-item">
+                    <div class="wa-chat-info">
+                        <span class="wa-phone"><i class="fab fa-whatsapp" style="color: #25D366;"></i> +${conv.phone}</span>
+                        <span class="wa-time"><i class="fas fa-clock"></i> Última mensagem: ${dataAtualizacao}</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <a href="https://web.whatsapp.com/send?phone=${conv.phone}" target="_blank" class="btn btn-secondary" style="border-radius: 50px; font-size: 0.9rem;" title="Abrir conversa no WhatsApp Web">
+                            <i class="fas fa-external-link-alt"></i> Responder Cliente
+                        </a>
+                        <button class="btn-ia-toggle ${classeBtn}" onclick="alterarEstadoIA('${conv.phone}', ${novaAcao})" id="btn-ia-${conv.phone}">
+                            <i class="fas ${iconeBtn}"></i> ${textoBtn}
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    window.filtrarConversasWhatsApp = () => {
+        renderizarListaWhatsApp();
+    }
+
+    // Função para ligar/desligar IA de UM cliente específico
+    window.alterarEstadoIA = async (telefone, novoEstadoPaused) => {
+        const btn = document.getElementById(`btn-ia-${telefone}`);
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+        btn.disabled = true;
+
+        try {
+            const resposta = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations/pause`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: telefone, paused: novoEstadoPaused })
+            });
+
+            if (!resposta.ok) throw new Error("Erro na rede");
+
+            const dados = await resposta.json();
+            if (dados.success) {
+                showToast("Sucesso", novoEstadoPaused === 1 ? `IA pausada para o número ${telefone}.` : `IA reativada para o número ${telefone}.`, "success");
+                registrarLog("Controle IA WhatsApp", `Alterou IA do número ${telefone} para: ${novoEstadoPaused === 1 ? 'PAUSADO' : 'ATIVO'}`);
+                
+                // Atualiza localmente e re-renderiza
+                const idx = listaDeConversasAtuais.findIndex(c => c.phone === telefone);
+                if (idx !== -1) listaDeConversasAtuais[idx].paused = novoEstadoPaused;
+                renderizarListaWhatsApp();
+            } else {
+                throw new Error(dados.error);
+            }
+        } catch (error) {
+            console.error("Erro ao alterar IA:", error);
+            showToast("Erro", "Falha ao enviar comando para a Worker.", "error");
+            btn.innerHTML = textoOriginal;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    // Função para ligar/desligar IA de TODOS (Global)
+    window.toggleGlobalIA = async () => {
+        const novoEstado = isGlobalPaused ? 0 : 1; // Se estava tudo pausado, liga(0). Se estava ligado, pausa(1).
+        const btnGlobal = document.getElementById('btn-toggle-global');
+        const textoOriginal = btnGlobal.innerHTML;
+        
+        const acaoTxt = novoEstado === 1 ? 'PAUSAR' : 'ATIVAR';
+        if(!confirm(`Atenção: Você tem certeza que deseja ${acaoTxt} a Inteligência Artificial para TODOS os clientes conectados agora?`)) {
+            return;
+        }
+
+        btnGlobal.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando Comando Global...';
+        btnGlobal.disabled = true;
+
+        try {
+            const resposta = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations/pause`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: 'ALL', paused: novoEstado })
+            });
+
+            if (!resposta.ok) throw new Error("Erro na rede");
+
+            const dados = await resposta.json();
+            if (dados.success) {
+                showToast("Controle Global", `A Inteligência Artificial foi ${novoEstado === 1 ? 'desativada' : 'ativada'} para todas as conexões.`, "success");
+                registrarLog("Controle IA WhatsApp", `Ação Global: IA configurada para ${novoEstado === 1 ? 'TODOS PAUSADOS' : 'TODOS ATIVOS'}`);
+                
+                // Recarrega a lista do servidor
+                carregarConversasWhatsApp();
+            } else {
+                throw new Error(dados.error);
+            }
+        } catch (error) {
+            console.error("Erro ao alterar IA globalmente:", error);
+            showToast("Erro", "Falha ao enviar comando global para a Worker.", "error");
+            btnGlobal.innerHTML = textoOriginal;
+        } finally {
+            btnGlobal.disabled = false;
+        }
+    }
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
             // Usuário está logado
