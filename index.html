@@ -1821,51 +1821,44 @@
             const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold); 
             const black = rgb(0, 0, 0); 
 
-            const margemEsquerdaDados = 200;  
-            let alturaAtual = 533;             
-            const espacoEntreLinhas = 18.5;
-            const maxWidth = 350;
+            const margemEsquerdaTextos = 23;  // Coluna esquerda dos rótulos (dentro da borda da caixa)
+            const margemEsquerdaDados = 200;  // Coluna direita dos valores (alinhada na mesma linha)
+            let alturaAtual = 543;            // Altura inicial centralizada dentro do quadro branco
+            const espacoEntreLinhas = 10;     // Espaçamento exato para caber as 8 linhas dentro da caixa
+            const maxWidthDados = 375;        // Largura máxima antes da borda direita
 
+            // Ajusta automaticamente o tamanho da fonte apenas se o valor for comprido demais
             const drawTextFit = (text, x, y, font, defaultSize, maxWidth) => {
+                const textoSeguro = String(text || "");
                 let size = defaultSize;
-                let textWidth = font.widthOfTextAtSize(text, size);
-                while (textWidth > maxWidth && size > 4) {
-                    size -= 0.5;
-                    textWidth = font.widthOfTextAtSize(text, size);
+                let textWidth = font.widthOfTextAtSize(textoSeguro, size);
+                while (textWidth > maxWidth && size > 6) {
+                    size -= 0.25;
+                    textWidth = font.widthOfTextAtSize(textoSeguro, size);
                 }
-                page.drawText(text, { x, y, size, font, color: black });
+                page.drawText(textoSeguro, { x, y, size, font, color: black });
             };
 
-            // NOME / RAZÃO SOCIAL
-            drawTextFit(nome, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
-            alturaAtual -= espacoEntreLinhas;
+            const labelDoc = (cnpj.replace(/\D/g, '').length === 11) ? 'CPF:' : 'CNPJ:';
 
-            // CNPJ/CPF
-            drawTextFit(cnpj, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
-            alturaAtual -= espacoEntreLinhas;
+            const linhas = [
+                { rotulo: 'NOME / RAZÃO SOCIAL:', valor: nome },
+                { rotulo: labelDoc, valor: cnpj },
+                { rotulo: 'DATA DE EMISSÃO:', valor: dataEmissao },
+                { rotulo: 'VÁLIDO ATÉ:', valor: dataValidade },
+                { rotulo: 'ENDEREÇO COMPLETO:', valor: endereco.toUpperCase() },
+                { rotulo: 'BAIRRO:', valor: bairro.toUpperCase() },
+                { rotulo: 'CEP:', valor: cep },
+                { rotulo: 'MUNICÍPIO / UF:', valor: municipioUF.toUpperCase() }
+            ];
 
-            // DATA DE EMISSÃO
-            drawTextFit(dataEmissao, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
-            alturaAtual -= espacoEntreLinhas;
-
-            // VÁLIDO ATÉ
-            drawTextFit(dataValidade, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
-            alturaAtual -= espacoEntreLinhas; 
-
-            // ENDEREÇO COMPLETO
-            drawTextFit(endereco.toUpperCase(), margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
-            alturaAtual -= espacoEntreLinhas;
-
-            // BAIRRO
-            drawTextFit(bairro.toUpperCase(), margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
-            alturaAtual -= espacoEntreLinhas;
-
-            // CEP
-            drawTextFit(cep, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
-            alturaAtual -= espacoEntreLinhas;
-
-            // MUNICÍPIO / UF
-            drawTextFit(municipioUF.toUpperCase(), margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
+            linhas.forEach(linha => {
+                // Rótulo / título do campo: tamanho 10 normal
+                page.drawText(linha.rotulo, { x: margemEsquerdaTextos, y: alturaAtual, size: 10, font: fontNormal, color: black });
+                // Valor / dado preenchido: tamanho 9 em negrito, na mesma linha (mesmo Y)
+                drawTextFit(linha.valor, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidthDados);
+                alturaAtual -= espacoEntreLinhas;
+            });
 
             const pdfBytes = await pdfDoc.save();
             download(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
