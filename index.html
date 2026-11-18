@@ -1821,42 +1821,51 @@
             const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold); 
             const black = rgb(0, 0, 0); 
 
-            const margemEsquerdaTextos = 22;  
             const margemEsquerdaDados = 200;  
-            let alturaAtual = 544;             
-            const espacoEntreLinhas = 10;   
+            let alturaAtual = 533;             
+            const espacoEntreLinhas = 18.5;
+            const maxWidth = 350;
 
-            page.drawText('NOME / RAZÃO SOCIAL:', { x: margemEsquerdaTextos, y: alturaAtual, size: 10, font: fontNormal, color: black });
-            page.drawText(nome, { x: margemEsquerdaDados, y: alturaAtual, size: 9, font: fontBold, color: black });
+            const drawTextFit = (text, x, y, font, defaultSize, maxWidth) => {
+                let size = defaultSize;
+                let textWidth = font.widthOfTextAtSize(text, size);
+                while (textWidth > maxWidth && size > 4) {
+                    size -= 0.5;
+                    textWidth = font.widthOfTextAtSize(text, size);
+                }
+                page.drawText(text, { x, y, size, font, color: black });
+            };
+
+            // NOME / RAZÃO SOCIAL
+            drawTextFit(nome, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
             alturaAtual -= espacoEntreLinhas;
 
-            const labelDoc = (cnpj.replace(/\D/g, '').length === 11) ? 'CPF:' : 'CNPJ:';
-            page.drawText(labelDoc, { x: margemEsquerdaTextos, y: alturaAtual, size: 10, font: fontNormal, color: black });
-            page.drawText(cnpj, { x: margemEsquerdaDados, y: alturaAtual, size: 9, font: fontBold, color: black });
+            // CNPJ/CPF
+            drawTextFit(cnpj, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
             alturaAtual -= espacoEntreLinhas;
 
-            page.drawText('DATA DE EMISSÃO:', { x: margemEsquerdaTextos, y: alturaAtual, size: 10, font: fontNormal, color: black });
-            page.drawText(dataEmissao, { x: margemEsquerdaDados, y: alturaAtual, size: 9, font: fontBold, color: black });
+            // DATA DE EMISSÃO
+            drawTextFit(dataEmissao, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
             alturaAtual -= espacoEntreLinhas;
 
-            page.drawText('VÁLIDO ATÉ:', { x: margemEsquerdaTextos, y: alturaAtual, size: 10, font: fontNormal, color: black });
-            page.drawText(dataValidade, { x: margemEsquerdaDados, y: alturaAtual, size: 9, font: fontBold, color: black });
+            // VÁLIDO ATÉ
+            drawTextFit(dataValidade, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
             alturaAtual -= espacoEntreLinhas; 
 
-            page.drawText('ENDEREÇO COMPLETO:', { x: margemEsquerdaTextos, y: alturaAtual, size: 10, font: fontNormal, color: black });
-            page.drawText(endereco.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: 9, font: fontBold, color: black });
+            // ENDEREÇO COMPLETO
+            drawTextFit(endereco.toUpperCase(), margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
             alturaAtual -= espacoEntreLinhas;
 
-            page.drawText('BAIRRO:', { x: margemEsquerdaTextos, y: alturaAtual, size: 10, font: fontNormal, color: black });
-            page.drawText(bairro.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: 9, font: fontBold, color: black });
+            // BAIRRO
+            drawTextFit(bairro.toUpperCase(), margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
             alturaAtual -= espacoEntreLinhas;
 
-            page.drawText('CEP:', { x: margemEsquerdaTextos, y: alturaAtual, size: 10, font: fontNormal, color: black });
-            page.drawText(cep, { x: margemEsquerdaDados, y: alturaAtual, size: 9, font: fontBold, color: black });
+            // CEP
+            drawTextFit(cep, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
             alturaAtual -= espacoEntreLinhas;
 
-            page.drawText('MUNICÍPIO / UF:', { x: margemEsquerdaTextos, y: alturaAtual, size: 10, font: fontNormal, color: black });
-            page.drawText(municipioUF.toUpperCase(), { x: margemEsquerdaDados, y: alturaAtual, size: 9, font: fontBold, color: black });
+            // MUNICÍPIO / UF
+            drawTextFit(municipioUF.toUpperCase(), margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidth);
 
             const pdfBytes = await pdfDoc.save();
             download(pdfBytes, `Licenca_Provisoria_${cnpj.replace(/\D/g,'')}.pdf`, "application/pdf");
