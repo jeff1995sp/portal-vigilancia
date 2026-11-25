@@ -1442,7 +1442,7 @@
     window.calcularRisco = function() {
       let divRisco = document.getElementById('risco-multa');
       divRisco.style.display = 'block';
-      let naoMarcados = document.querySelectorAll('.doc-check:not(:checked)').length;
+      let naoMarcados = document.querySelectorAll('.doc-check:not([data-opcional="true"]):not(:checked)').length;
       if(naoMarcados === 0) {
         divRisco.style.background = '#dcfce3'; divRisco.style.color = '#166534';
         divRisco.innerHTML = '<i class="fas fa-shield-alt"></i> Tudo OK! Regularize agora para manter a segurança do CPF/CNPJ.';
@@ -1459,13 +1459,16 @@
 
       document.getElementById("customAlertModal").style.display = "flex";
 
-      function criarDocItem(valor, icone, titulo) {
+      function criarDocItem(valor, icone, titulo, opcional = false, multiplo = false) {
+        const attrOpcional = opcional ? ' data-opcional="true"' : '';
+        const attrMultiplo = multiplo ? ' multiple' : '';
+        const textoAnexo = multiplo ? 'Anexar foto(s) ou PDF(s) adicionais:' : 'Anexar foto ou PDF:';
         return `
           <div class="doc-wrapper" style="display:flex; flex-direction:column; gap:8px;">
-            <label class="doc-item"><input type="checkbox" class="doc-check" value="${valor}" onchange="window.toggleUpload(this)"/><i class="fas ${icone}"></i><span>${titulo}</span></label>
+            <label class="doc-item"><input type="checkbox" class="doc-check" value="${valor}"${attrOpcional} onchange="window.toggleUpload(this)"/><i class="fas ${icone}"></i><span>${titulo}</span></label>
             <div class="file-upload" style="display:none;">
-              <p style="font-size:0.75rem; color:#666; margin-bottom:5px;">Anexar foto ou PDF:</p>
-              <input type="file" class="form-control file-input-check" style="padding: 6px; font-size: 0.75rem; border: 1px dashed var(--gov-blue); background: #f8fafc;" accept="application/pdf, image/*">
+              <p style="font-size:0.75rem; color:#666; margin-bottom:5px;">${textoAnexo}</p>
+              <input type="file" class="form-control file-input-check" style="padding: 6px; font-size: 0.75rem; border: 1px dashed var(--gov-blue); background: #f8fafc;" accept="application/pdf, image/*"${attrMultiplo}>
             </div>
           </div>
         `;
@@ -1498,7 +1501,9 @@
                           criarDocItem("Laudo de Ruído", "fa-volume-up", "Laudo Ruído");
       }
 
-      listaDocs.innerHTML = docsComuns + docsEspecificos;
+      const docOutros = criarDocItem("Outros Documentos", "fa-folder-plus", "Outros Documentos", true, true);
+
+      listaDocs.innerHTML = docsComuns + docsEspecificos + docOutros;
       document.getElementById('area-checklist').style.display = 'block';
       document.getElementById('btn-enviar-whatsapp').style.display = 'flex';
       window.calcularRisco();
@@ -1561,33 +1566,82 @@
       });
     };
 
+    const gerarBase64DentroDoLimite = (canvas, limiteCaracteres = 620000) => {
+      let qualidade = 0.82;
+      let resultado = canvas.toDataURL('image/jpeg', qualidade);
+
+      while (resultado.length > limiteCaracteres && qualidade > 0.45) {
+          qualidade = Number((qualidade - 0.12).toFixed(2));
+          resultado = canvas.toDataURL('image/jpeg', qualidade);
+      }
+
+      if (resultado.length > limiteCaracteres) {
+          const fator = Math.sqrt(limiteCaracteres / resultado.length) * 0.9;
+          const novoCanvas = document.createElement('canvas');
+          novoCanvas.width = Math.max(600, Math.round(canvas.width * fator));
+          novoCanvas.height = Math.max(600, Math.round(canvas.height * fator));
+          const nctx = novoCanvas.getContext('2d');
+          nctx.fillStyle = '#ffffff';
+          nctx.fillRect(0, 0, novoCanvas.width, novoCanvas.height);
+          nctx.drawImage(canvas, 0, 0, novoCanvas.width, novoCanvas.height);
+          resultado = novoCanvas.toDataURL('image/jpeg', 0.70);
+      }
+
+      return resultado;
+    };
+
     const comprimirEConverterFoto = async (file) => {
       return new Promise(async (resolve, reject) => {
-          const isPDF = file.type === "application/pdf";
+          const nomeArquivo = file && file.name ? file.name : "arquivo";
+          const isPDF = file.type === "application/pdf" || nomeArquivo.toLowerCase().endsWith(".pdf");
 
           if (isPDF) {
               try {
-                  const arrayBuffer = await file.arrayBuffer();
-                  const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-                  const page = await pdf.getPage(1); 
+                  if (typeof pdfjsLib === 'undefined') {
+                      const errLib = new Error("O leitor de PDF (pdf.js) não carregou na página. Recarregue o site e tente novamente.");
+                      errLib.origemErro = "PROCESSAMENTO_PDF";
+                      errLib.nomeArquivo = nomeArquivo;
+                      return reject(errLib);
+                  }
+                  if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+                      pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+                  }
 
-                  const viewport = page.getViewport({scale: 1.0}); 
+                  const arrayBuffer = await file.arrayBuffer();
+                  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                  const page = await pdf.getPage(1);
+
+                  const viewport = page.getViewport({ scale: 1.0 });
                   const canvas = document.createElement('canvas');
                   const ctx = canvas.getContext('2d');
 
-                  let scale = 1;
-                  if (viewport.width > 1500) scale = 1500 / viewport.width; else scale = 1.5; // Aumentar a resolução do PDF
-                  const scaledViewport = page.getViewport({scale: scale});
+                  const MAX_WIDTH = 1280;
+                  let scale = viewport.width > MAX_WIDTH ? (MAX_WIDTH / viewport.width) : Math.min(1.4, MAX_WIDTH / viewport.width);
+                  const scaledViewport = page.getViewport({ scale: scale });
 
-                  canvas.height = scaledViewport.height;
-                  canvas.width = scaledViewport.width;
+                  canvas.height = Math.round(scaledViewport.height);
+                  canvas.width = Math.round(scaledViewport.width);
 
-                  await page.render({canvasContext: ctx, viewport: scaledViewport}).promise;
+                  ctx.fillStyle = '#ffffff';
+                  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                  const base64Reduzido = canvas.toDataURL('image/jpeg', 0.95); 
+                  await page.render({ canvasContext: ctx, viewport: scaledViewport }).promise;
+
+                  const base64Reduzido = gerarBase64DentroDoLimite(canvas, 620000);
                   resolve(base64Reduzido);
               } catch (e) {
-                  reject(new Error("Falha ao converter o PDF. O arquivo pode estar corrompido ou protegido."));
+                  let detalhe = "O arquivo pode estar corrompido ou incompatível.";
+                  if (e && e.name === "PasswordException") {
+                      detalhe = "O PDF está protegido por senha.";
+                  } else if (e && e.name === "InvalidPDFException") {
+                      detalhe = "O arquivo não é um PDF válido ou está corrompido.";
+                  } else if (e && e.message) {
+                      detalhe = e.message;
+                  }
+                  const errPdf = new Error(`Falha ao converter o PDF "${nomeArquivo}": ${detalhe}`);
+                  errPdf.origemErro = "PROCESSAMENTO_PDF";
+                  errPdf.nomeArquivo = nomeArquivo;
+                  reject(errPdf);
               }
           } else {
               const reader = new FileReader();
@@ -1598,7 +1652,7 @@
                   img.src = event.target.result;
                   img.onload = () => {
                       const canvas = document.createElement('canvas');
-                      const MAX_WIDTH = 1500; 
+                      const MAX_WIDTH = 1280;
                       let width = img.width;
                       let height = img.height;
 
@@ -1609,14 +1663,26 @@
                       canvas.width = width;
                       canvas.height = height;
                       const ctx = canvas.getContext('2d');
+                      ctx.fillStyle = '#ffffff';
+                      ctx.fillRect(0, 0, width, height);
                       ctx.drawImage(img, 0, 0, width, height);
 
-                      const base64Reduzido = canvas.toDataURL('image/jpeg', 0.95);
+                      const base64Reduzido = gerarBase64DentroDoLimite(canvas, 620000);
                       resolve(base64Reduzido);
                   };
-                  img.onerror = () => reject(new Error("Falha ao carregar a imagem para compressão."));
+                  img.onerror = () => {
+                      const errImg = new Error(`Falha ao carregar a imagem "${nomeArquivo}". O arquivo pode estar corrompido ou em formato não suportado.`);
+                      errImg.origemErro = "PROCESSAMENTO_IMAGEM";
+                      errImg.nomeArquivo = nomeArquivo;
+                      reject(errImg);
+                  };
               };
-              reader.onerror = () => reject(new Error("Falha ao ler o arquivo selecionado."));
+              reader.onerror = () => {
+                  const errRead = new Error(`Falha ao ler o arquivo "${nomeArquivo}" no navegador.`);
+                  errRead.origemErro = "LEITURA_ARQUIVO";
+                  errRead.nomeArquivo = nomeArquivo;
+                  reject(errRead);
+              };
           }
       });
     };
@@ -2127,13 +2193,15 @@
           btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando evidências... (Aguarde)';
           btnSubmit.disabled = true;
 
+          let etapaAtual = "Validação dos documentos";
           try {
               const todasOpcoes = document.querySelectorAll('.doc-check');
               const marcados = []; const naoMarcados = [];
               let erroUpload = false; let nomeDocErro = "";
-              const listaEvidencias = [];
+              const arquivosParaProcessar = [];
 
               for (const el of todasOpcoes) {
+                  const ehOpcional = el.dataset.opcional === "true";
                   if(el.checked) {
                       marcados.push(el.value);
                       const fileInput = el.closest('.doc-wrapper').querySelector('.file-input-check');
@@ -2142,11 +2210,18 @@
                       if(fileInput && fileInput.files.length === 0) {
                           erroUpload = true; nomeDocErro = nomeDoc;
                       } else if (fileInput && fileInput.files.length > 0) {
-                          const arquivo = fileInput.files[0];
-                          const fotoTextoBase64 = await comprimirEConverterFoto(arquivo);
-                          listaEvidencias.push({ nome: nomeDoc, url: fotoTextoBase64 });
+                          const totalDesteCampo = fileInput.files.length;
+                          for (let i = 0; i < totalDesteCampo; i++) {
+                              const arquivo = fileInput.files[i];
+                              const tituloAnexo = totalDesteCampo > 1
+                                  ? `${nomeDoc} (${i + 1}/${totalDesteCampo}) - ${arquivo.name}`
+                                  : (ehOpcional ? `${nomeDoc} - ${arquivo.name}` : nomeDoc);
+                              arquivosParaProcessar.push({ nome: tituloAnexo, arquivo });
+                          }
                       }
-                  } else { naoMarcados.push(el.value); }
+                  } else if (!ehOpcional) {
+                      naoMarcados.push(el.value);
+                  }
               }
 
               if(erroUpload) {
@@ -2157,6 +2232,15 @@
               if (marcados.length === 0 && todasOpcoes.length > 0) {
                   alert("Selecione e comprove pelo menos um documento.");
                   btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return; 
+              }
+
+              const listaEvidencias = [];
+              for (let i = 0; i < arquivosParaProcessar.length; i++) {
+                  const item = arquivosParaProcessar[i];
+                  etapaAtual = `Processando arquivo ${i + 1} de ${arquivosParaProcessar.length} (${item.arquivo.name})`;
+                  btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processando documento ${i + 1} de ${arquivosParaProcessar.length}...`;
+                  const fotoTextoBase64 = await comprimirEConverterFoto(item.arquivo);
+                  listaEvidencias.push({ nome: item.nome, url: fotoTextoBase64 });
               }
 
               const nomePJ = document.getElementById('nome_empresa').value;
@@ -2178,12 +2262,49 @@
               const bairro = document.getElementById('end_bairro') ? document.getElementById('end_bairro').value : "";
               const cidadeUF = document.getElementById('end_cidade') ? document.getElementById('end_cidade').value : "";
 
-              await addDoc(collection(db, "pedidos"), {
+              const payloadBase = {
                   nome: nomeFinal, cnpj: cnpj, tipo: tipo, docs: docsTextAdmin,
-                  evidencias: listaEvidencias, valor: null, pago: false,
-                  cep: cep, rua: rua, num: num, bairro: bairro, cidadeUF: cidadeUF, 
+                  valor: null, pago: false,
+                  cep: cep, rua: rua, num: num, bairro: bairro, cidadeUF: cidadeUF,
                   data: new Date().toLocaleString()
-              });
+              };
+
+              const tamanhoTotalBytes = new Blob([JSON.stringify({ ...payloadBase, evidencias: listaEvidencias })]).size;
+
+              if (tamanhoTotalBytes <= 780000) {
+                  etapaAtual = "Salvando protocolo e anexos no banco de dados (Firestore)";
+                  btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando ao banco de dados...';
+                  await addDoc(collection(db, "pedidos"), {
+                      ...payloadBase,
+                      evidencias: listaEvidencias,
+                      evidencias_em_subcolecao: false,
+                      total_evidencias: listaEvidencias.length
+                  });
+              } else {
+                  etapaAtual = "Criando protocolo principal no banco de dados (Firestore)";
+                  btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando protocolo...';
+                  const pedidoRef = await addDoc(collection(db, "pedidos"), {
+                      ...payloadBase,
+                      evidencias: [],
+                      evidencias_em_subcolecao: true,
+                      total_evidencias: listaEvidencias.length
+                  });
+
+                  try {
+                      for (let i = 0; i < listaEvidencias.length; i++) {
+                          etapaAtual = `Enviando anexo ${i + 1} de ${listaEvidencias.length} (${listaEvidencias[i].nome}) para o banco de dados`;
+                          btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Enviando anexo ${i + 1} de ${listaEvidencias.length}...`;
+                          await addDoc(collection(db, "pedidos", pedidoRef.id, "anexos"), {
+                              nome: listaEvidencias[i].nome,
+                              url: listaEvidencias[i].url,
+                              ordem: i
+                          });
+                      }
+                  } catch (erroSubcolecao) {
+                      try { await deleteDoc(doc(db, "pedidos", pedidoRef.id)); } catch (_) {}
+                      throw erroSubcolecao;
+                  }
+              }
 
               const msgAnalise = `*COMPROVANTE DE PROTOCOLO GERADO*\n\n*Empresa/Pessoa:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n\nSeus documentos foram enviados para análise técnica. Guarde esta mensagem. O seu processo já está no sistema!`;
               const urlWhatsAnalise = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msgAnalise);
@@ -2204,8 +2325,26 @@
               document.getElementById('consulta_cnpj').value = cnpj;
 
           } catch (error) {
-              console.error(error);
-              alert("Erro ao enviar. O banco de dados pode estar sobrecarregado ou você tentou anexar um arquivo corrompido. Tente novamente.");
+              console.error("Erro detalhado no envio:", { etapaAtual, error });
+              const codigoErro = error && error.code ? error.code : "";
+              const msgErro = error && error.message ? error.message : String(error);
+              let mensagemUsuario = "";
+
+              if (error && (error.origemErro === "PROCESSAMENTO_PDF" || error.origemErro === "PROCESSAMENTO_IMAGEM" || error.origemErro === "LEITURA_ARQUIVO")) {
+                  mensagemUsuario = `Erro ao processar arquivo antes do envio:\n${msgErro}`;
+              } else if (codigoErro === "permission-denied") {
+                  mensagemUsuario = `Erro de permissão no banco de dados (Firebase Rules):\nO Firestore bloqueou a gravação na etapa "${etapaAtual}".\nCódigo: ${codigoErro}`;
+              } else if (codigoErro === "resource-exhausted") {
+                  mensagemUsuario = `Erro no banco de dados (Firebase):\nLimite/cota do Firestore atingido.\nCódigo: ${codigoErro}`;
+              } else if (codigoErro === "invalid-argument" || /longer than|maximum allowed size|1048576|1048487/i.test(msgErro)) {
+                  mensagemUsuario = `Erro de tamanho no banco de dados (Limite de 1 MB por registro do Firestore):\nEtapa: ${etapaAtual}\nDetalhe: ${msgErro}`;
+              } else if (codigoErro === "unavailable" || codigoErro === "deadline-exceeded" || !navigator.onLine) {
+                  mensagemUsuario = `Erro de conexão com o servidor/banco de dados:\nVerifique sua internet e tente novamente.\nEtapa: ${etapaAtual}\nCódigo: ${codigoErro || "offline"}`;
+              } else {
+                  mensagemUsuario = `Erro ao enviar o formulário:\nEtapa: ${etapaAtual}\nCódigo: ${codigoErro || "desconhecido"}\nDetalhe técnico: ${msgErro}`;
+              }
+
+              alert(mensagemUsuario);
           } finally {
               btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false;
           }

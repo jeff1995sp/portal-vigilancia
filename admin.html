@@ -2598,6 +2598,23 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
         
         if (documentoNoBanco.exists()) {
           const dadosDoCliente = documentoNoBanco.data(); 
+
+          const evidenciasPrincipais = Array.isArray(dadosDoCliente.evidencias) ? [...dadosDoCliente.evidencias] : [];
+          if (dadosDoCliente.evidencias_em_subcolecao || evidenciasPrincipais.length === 0) {
+              try {
+                  const snapAnexos = await getDocs(collection(db, "pedidos", idDoProtocolo, "anexos"));
+                  if (!snapAnexos.empty) {
+                      const anexosSub = snapAnexos.docs
+                          .map(d => d.data())
+                          .sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0))
+                          .map(a => ({ nome: a.nome || "Documento", url: a.url }));
+                      dadosDoCliente.evidencias = [...evidenciasPrincipais, ...anexosSub];
+                  }
+              } catch (erroAnexos) {
+                  console.error("Erro ao carregar anexos da subcoleção:", erroAnexos);
+              }
+          }
+
           dadosProcessoAtual = dadosDoCliente; 
           dadosProcessoAtual.id = idDoProtocolo; 
           
@@ -2638,6 +2655,7 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
               dadosDoCliente.evidencias.forEach(fotoObject => {
                   const caixaDaFoto = document.createElement('div'); 
                   caixaDaFoto.className = 'gallery-item'; 
+                  caixaDaFoto.title = fotoObject.nome || 'Documento';
                   caixaDaFoto.onclick = () => abrirLightbox(fotoObject.url, fotoObject.nome);
                   caixaDaFoto.innerHTML = `<img src="${fotoObject.url}"><div class="overlay"><i class="fas fa-search-plus"></i></div>`; 
                   galeriaHTML.appendChild(caixaDaFoto);
@@ -2928,9 +2946,19 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
       } 
     };
 
+    async function limparSubcolecaoAnexos(idPedido) {
+      try {
+        const snapAnexos = await getDocs(collection(db, "pedidos", idPedido, "anexos"));
+        for (const docAnexo of snapAnexos.docs) {
+          await deleteDoc(doc(db, "pedidos", idPedido, "anexos", docAnexo.id));
+        }
+      } catch (_) {}
+    }
+
     window.deletarProcessoAtual = async () => {
       if(!idProcessoAtual) return;
       if(confirm("COMANDO IRREVERSÍVEL DA JUSTIÇA:\nDeseja destruir as informações deste processo permanentemente da base governamental?")) {
+        await limparSubcolecaoAnexos(idProcessoAtual);
         await deleteDoc(doc(db, "pedidos", idProcessoAtual));
         showToast('Base Limpa', 'O dossiê foi erradicado do sistema.', 'success');
         registrarLog("Destruição de Dossiê", `O documento mestre do processo ID: ${idProcessoAtual.substring(0,8)} foi apagado.`, "ERRO");
@@ -2941,6 +2969,7 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
     // NOVA FUNÇÃO: Deleta imediatamente da tabela sem exibir o prompt de confirmação ("já aperta e apaga")
     window.deletarDiretoDaTabela = async (idDoProcesso) => {
       try {
+        await limparSubcolecaoAnexos(idDoProcesso);
         await deleteDoc(doc(db, "pedidos", idDoProcesso));
         showToast('Caso Apagado', 'O processo foi removido do painel.', 'success');
         registrarLog("Exclusão Rápida", `O processo ID: ${idDoProcesso.substring(0,8)} foi apagado diretamente pela tabela.`, "ERRO");
