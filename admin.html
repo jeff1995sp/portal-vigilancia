@@ -1784,7 +1784,7 @@
           <div class="page-title" style="margin-bottom: 16px;">
             <div>
               <h1><i class="fas fa-file-pdf" style="color: #f87171;"></i> Gerador de Documentos & Receituários Especiais (PDF)</h1>
-              <p>Gere Receitas A, B, B2 e Retinoides pré-preenchidas (prontas pro médico carimbar), Guias com PIX, Licenças, Certidões e Autos — todos com assinatura fixa da Diretoria.</p>
+              <p>Organize solicitações, modelos preparatórios e documentos clínicos. Consulte os formulários oficiais e os registros da autoridade responsável.</p>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <button type="button" class="btn btn-secondary" style="padding: 10px 15px; font-size: 0.85rem;" onclick="limparFormularioDocGen()">
@@ -1808,14 +1808,16 @@
                 <div class="docgen-box">
                   <div class="docgen-box-title">
                     <span><i class="fas fa-layer-group"></i> 1. Modelo de Documento / Receituário</span>
-                    <span id="docgen-template-tag" style="color:#38bdf8; font-size:0.71rem;">Molde Oficial + Assinatura Fixa</span>
+                    <span id="docgen-template-tag" style="color:#38bdf8; font-size:0.71rem;">Minuta interna • sem validade oficial</span>
                   </div>
 
                   <div class="docgen-cat-tabs">
-                    <button type="button" class="docgen-cat-btn active" onclick="filtrarCategoriaDocGen('todos', this)"><i class="fas fa-th-large"></i> Todos (14)</button>
+                    <button type="button" class="docgen-cat-btn active" onclick="filtrarCategoriaDocGen('todos', this)"><i class="fas fa-th-large"></i> Todos (25)</button>
                     <button type="button" class="docgen-cat-btn" onclick="filtrarCategoriaDocGen('receitas', this)"><i class="fas fa-prescription"></i> Receitas Especiais (5)</button>
                     <button type="button" class="docgen-cat-btn" onclick="filtrarCategoriaDocGen('licencas', this)"><i class="fas fa-qrcode"></i> Licenças & Guias (5)</button>
                     <button type="button" class="docgen-cat-btn" onclick="filtrarCategoriaDocGen('fiscal', this)"><i class="fas fa-gavel"></i> Fiscalização & Ofícios (4)</button>
+                    <button type="button" class="docgen-cat-btn" onclick="filtrarCategoriaDocGen('clinicos', this)"><i class="fas fa-notes-medical"></i> Clínicos (9)</button>
+                    <button type="button" class="docgen-cat-btn" onclick="filtrarCategoriaDocGen('consultas', this)"><i class="fas fa-book"></i> Consultas (2)</button>
                   </div>
 
                   <div class="docgen-types-grid" id="docgen-types-grid">
@@ -1843,46 +1845,46 @@
                     <button type="button" class="docgen-type-card theme-purple" data-cat="receitas" data-doctype="autorizacao_talonario" onclick="selecionarTipoDocumento('autorizacao_talonario', this)">
                       <i class="fas fa-list-ol"></i>
                       <strong>Autoriz. Talonário</strong>
-                      <span>Faixa numérica p/ gráfica</span>
+                      <span>Consulta de autorização oficial</span>
                     </button>
 
                     <!-- LICENÇAS, GUIAS & COMPROVANTES -->
                     <button type="button" class="docgen-type-card theme-green active" data-cat="licencas" data-doctype="licenca" onclick="selecionarTipoDocumento('licenca', this)">
                       <i class="fas fa-certificate"></i>
                       <strong>Licença Provisória</strong>
-                      <span>Molde oficial COVISA</span>
+                      <span>Modelo interno • sem validade</span>
                     </button>
                     <button type="button" class="docgen-type-card theme-green" data-cat="licencas" data-doctype="guia" onclick="selecionarTipoDocumento('guia', this)">
                       <i class="fas fa-qrcode"></i>
-                      <strong>Guia Pagamento + PIX</strong>
-                      <span>Taxa Vigilância + QR Code</span>
+                      <strong>Conferir guia de pagamento</strong>
+                      <span>Conferência de guia oficial</span>
                     </button>
                     <button type="button" class="docgen-type-card theme-green" data-cat="licencas" data-doctype="recibo_quitacao" onclick="selecionarTipoDocumento('recibo_quitacao', this)">
                       <i class="fas fa-receipt"></i>
                       <strong>Recibo de Quitação</strong>
-                      <span>Comprovante de pagamento</span>
+                      <span>Conferência de pagamento</span>
                     </button>
                     <button type="button" class="docgen-type-card" data-cat="licencas" data-doctype="declaracao" onclick="selecionarTipoDocumento('declaracao', this)">
                       <i class="fas fa-stamp"></i>
                       <strong>Declaração / Protocolo</strong>
-                      <span>Certidão de andamento</span>
+                      <span>Registro de andamento</span>
                     </button>
                     <button type="button" class="docgen-type-card theme-green" data-cat="licencas" data-doctype="dispensa" onclick="selecionarTipoDocumento('dispensa', this)">
                       <i class="fas fa-shield-alt"></i>
                       <strong>Certidão Baixo Risco</strong>
-                      <span>Dispensa de licença</span>
+                      <span>Consulta de enquadramento</span>
                     </button>
 
                     <!-- FISCALIZAÇÃO, INTIMAÇÕES & OFÍCIOS -->
                     <button type="button" class="docgen-type-card theme-yellow" data-cat="fiscal" data-doctype="notificacao" onclick="selecionarTipoDocumento('notificacao', this)">
                       <i class="fas fa-exclamation-triangle"></i>
                       <strong>Notificação / Pendência</strong>
-                      <span>Intimação com prazo legal</span>
+                      <span>Registro interno de pendências</span>
                     </button>
                     <button type="button" class="docgen-type-card theme-red" data-cat="fiscal" data-doctype="infracao" onclick="selecionarTipoDocumento('infracao', this)">
                       <i class="fas fa-gavel"></i>
                       <strong>Auto de Infração</strong>
-                      <span>Lei 10.083/98 + UFESP</span>
+                      <span>Consulta de ato oficial</span>
                     </button>
                     <button type="button" class="docgen-type-card theme-purple" data-cat="fiscal" data-doctype="termo_vistoria" onclick="selecionarTipoDocumento('termo_vistoria', this)">
                       <i class="fas fa-clipboard-check"></i>
@@ -1894,8 +1896,28 @@
                       <strong>Ofício / Livre (IA)</strong>
                       <span>Título e texto sob medida</span>
                     </button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="receita_comum" onclick="selecionarTipoDocumento('receita_comum', this)"><i class="fas fa-prescription"></i><strong>Receita comum</strong><span>Prescrição simples • revisão médica</span></button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="receita_domiciliar" onclick="selecionarTipoDocumento('receita_domiciliar', this)"><i class="fas fa-house-medical"></i><strong>Receita domiciliar</strong><span>Atendimento particular ou domiciliar</span></button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="receita_continua" onclick="selecionarTipoDocumento('receita_continua', this)"><i class="fas fa-notes-medical"></i><strong>Receita de uso contínuo</strong><span>Tratamento habitual • revisão médica</span></button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="relatorio_medico" onclick="selecionarTipoDocumento('relatorio_medico', this)"><i class="fas fa-file-medical"></i><strong>Relatório médico</strong><span>Rascunho para profissional</span></button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="atestado" onclick="selecionarTipoDocumento('atestado', this)"><i class="fas fa-file-medical"></i><strong>Atestado médico</strong><span>Preparação para revisão profissional</span></button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="exames" onclick="selecionarTipoDocumento('exames', this)"><i class="fas fa-vial"></i><strong>Solicitação de exames</strong><span>Preparação clínica</span></button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="encaminhamento" onclick="selecionarTipoDocumento('encaminhamento', this)"><i class="fas fa-user-doctor"></i><strong>Encaminhamento</strong><span>Referência a outro serviço</span></button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="comparecimento" onclick="selecionarTipoDocumento('comparecimento', this)"><i class="fas fa-calendar-check"></i><strong>Declaração de comparecimento</strong><span>Registro para conferência</span></button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="ceaf" onclick="selecionarTipoDocumento('ceaf', this)"><i class="fas fa-pills"></i><strong>Medicamentos de alto custo</strong><span>Checklist CEAF / LME</span></button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="consultas" data-doctype="licenca_oficial" onclick="selecionarTipoDocumento('licenca_oficial', this)"><i class="fas fa-building-shield"></i><strong>Licença sanitária / CLI</strong><span>Consulta oficial e checklist</span></button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="consultas" data-doctype="catalogo" onclick="selecionarTipoDocumento('catalogo', this)"><i class="fas fa-list"></i><strong>Catálogo completo</strong><span>109 tipos • fontes oficiais</span></button>
                   </div>
                 </div>
+
+                <div class="docgen-box" id="docgen-catalog-box" style="display:none;">
+                  <div class="docgen-box-title"><span><i class="fas fa-book-open"></i> Catálogo de referência • 109 registros</span></div>
+                  <div class="docgen-field"><label>Pesquisar documento ou órgão</label><input id="docgen-catalog-search" placeholder="Ex.: LME, licença, receita" oninput="filtrarCatalogoDocGen()"></div>
+                  <div class="docgen-field"><label>Documento</label><select id="docgen-catalog-select" onchange="atualizarCatalogoDocGen()"></select></div>
+                  <p id="docgen-catalog-info" style="color:#cbd5e1;line-height:1.5;font-size:.82rem;"></p>
+                  <a id="docgen-catalog-link" class="btn btn-secondary" target="_blank" rel="noopener noreferrer" style="padding:9px;font-size:.82rem;">Consultar fonte oficial</a>
+                </div>
+                <div class="docgen-box" id="docgen-source-box"><div class="docgen-box-title"><span><i class="fas fa-info-circle"></i> Referência e orientações</span></div><p id="docgen-source-text" style="color:#cbd5e1;font-size:.82rem;line-height:1.5;"></p><a id="docgen-source-link" class="btn btn-secondary" target="_blank" rel="noopener noreferrer" style="padding:9px;font-size:.82rem;">Consultar fonte oficial</a><a id="docgen-original-link" href="certificacao_provisoria.pdf" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;color:#93c5fd;">Consultar seu arquivo original (se disponível no repositório)</a></div>
 
                 <!-- 2. AUTO-PREENCHIMENTO PELO WHATSAPP (IA) OU FIREBASE / CNPJ -->
                 <div class="docgen-box highlight-wa">
@@ -1940,8 +1962,8 @@
                 <!-- 3. CONFIGURAÇÃO DO RECEITUÁRIO ESPECIAL (SÓ APARECE PARA RECEITAS A/B/B2/RETINOIDES/TALONÁRIO) -->
                 <div class="docgen-box highlight-rx" id="docgen-rx-box" style="display: none;">
                   <div class="docgen-box-title">
-                    <span style="color:#fde047;"><i class="fas fa-user-md"></i> 3. Dados do Médico / Prescritor & Numeração da Receita</span>
-                    <span style="font-size:0.71rem; color:#cbd5e1;">Pronta pro médico só colocar paciente e carimbo</span>
+                    <span style="color:#fde047;"><i class="fas fa-user-md"></i> 3. Dados do profissional e paciente</span>
+                    <span style="font-size:0.71rem; color:#cbd5e1;">Preenchimento e revisão pelo profissional habilitado</span>
                   </div>
 
                   <div class="docgen-row-3-eq">
@@ -1959,29 +1981,15 @@
                     </div>
                   </div>
 
-                  <div class="docgen-row-3-eq">
-                    <div class="docgen-field">
-                      <label>Prefixo / Série Numérica</label>
-                      <input type="text" id="docgen-rx-serie" value="SP-2026-" placeholder="Ex: SP-2026-" />
-                    </div>
-                    <div class="docgen-field">
-                      <label>Nº Inicial (Sequência)</label>
-                      <input type="number" id="docgen-rx-inicio" value="1001" min="1" />
-                    </div>
-                    <div class="docgen-field">
-                      <label id="docgen-rx-qtd-label">Qtd. Folhas no PDF (1-50)</label>
-                      <input type="number" id="docgen-rx-qtd" value="1" min="1" max="50" />
-                    </div>
-                  </div>
-
+                  <input type="hidden" id="docgen-rx-serie" value=""/><input type="hidden" id="docgen-rx-inicio" value=""/><input type="hidden" id="docgen-rx-qtd" value="1"/><span id="docgen-rx-qtd-label" hidden></span>
                   <div class="docgen-row-2" id="docgen-rx-opcional-row">
                     <div class="docgen-field">
                       <label>Paciente (Deixe vazio p/ médico preencher)</label>
                       <input type="text" id="docgen-rx-paciente" placeholder="(Em branco para o médico preencher à mão)" />
                     </div>
                     <div class="docgen-field">
-                      <label>Medicamento / Obs (Opcional — deixe vazio)</label>
-                      <input type="text" id="docgen-rx-med" placeholder="(Em branco para o médico prescrever)" />
+                      <label>Anotações clínicas (opcional)</label>
+                      <input type="text" id="docgen-rx-med" placeholder="A preencher pelo profissional" />
                     </div>
                   </div>
                 </div>
@@ -1990,7 +1998,7 @@
                 <div class="docgen-box">
                   <div class="docgen-box-title">
                     <span><i class="fas fa-building"></i> Dados do Estabelecimento / Profissional</span>
-                    <input type="text" id="docgen-protocolo" placeholder="COVISA-2026-000001" style="background:#040914; border:1px solid #26385a; color:#38bdf8; padding:4px 9px; border-radius:7px; font-size:0.75rem; font-family:var(--font-code); font-weight:800; width:175px;" title="Número do Protocolo" />
+                    <input type="text" id="docgen-protocolo" placeholder="Referência interna (opcional)" style="background:#040914; border:1px solid #26385a; color:#38bdf8; padding:4px 9px; border-radius:7px; font-size:0.75rem; font-family:var(--font-code); font-weight:800; width:175px;" title="Número do Protocolo" />
                   </div>
                   <div class="docgen-field">
                     <label id="docgen-nome-label">Razão Social / Nome Completo (ou Nome do Médico / Clínica)</label>
@@ -2100,33 +2108,7 @@
                   </div>
                 </div>
 
-                <!-- 6. ASSINATURA FIXA (DIRETORIA23.png) + MODO DE MOLDE PDF -->
-                <div class="docgen-box">
-                  <div class="docgen-box-title">
-                    <span><i class="fas fa-signature" style="color:#34d399;"></i> Assinatura Fixa & Modo de Geração</span>
-                  </div>
-                  <div class="docgen-sig-strip">
-                    <label style="display:flex; align-items:center; gap:9px; color:#e2e8f0; font-size:0.82rem; font-weight:800; cursor:pointer;">
-                      <input type="checkbox" id="docgen-usar-assinatura-fixa" checked style="width:16px; height:16px; accent-color:#10b981;" />
-                      <span>Assinatura Fixa Ativa (<code style="color:#6ee7b7;">imagens/DIRETORIA23.png</code>)</span>
-                    </label>
-                    <img src="imagens/DIRETORIA23.png" alt="Assinatura Fixa Diretoria" class="docgen-sig-thumb" onerror="this.style.display='none'" />
-                  </div>
-                  <div class="docgen-row-2">
-                    <div class="docgen-field">
-                      <label>Modo de Geração do PDF</label>
-                      <select id="docgen-render-mode">
-                        <option value="oficial">Layout Oficial Completo + Assinatura Fixa (Recomendado)</option>
-                        <option value="molde_repo">Usar PDF Molde do Repositório (Sobrepor Dados + Assinatura)</option>
-                      </select>
-                    </div>
-                    <div class="docgen-field">
-                      <label>Nome Fallback (se a imagem não carregar)</label>
-                      <input type="text" id="docgen-fiscal" value="Giliard De Oliveira Santiago" />
-                    </div>
-                  </div>
-                  <input type="hidden" id="docgen-cargo" value="Assessor Técnico CEVISA/COVIS/SMS — CRF/CE 04438914 - Mat. PMF 63.168" />
-                </div>
+                <div class="docgen-box"><div class="docgen-box-title"><span><i class="fas fa-signature"></i> Conferência e assinatura</span></div><p style="color:#cbd5e1;font-size:.82rem;line-height:1.55;">PDF preparatório sem assinatura automática, numeração oficial, brasão ou validação. O documento válido deve ser emitido pelo órgão ou pelo profissional habilitado, conforme o caso.</p></div>
 
               </div>
 
@@ -2139,7 +2121,7 @@
                     <i class="fas fa-sync-alt"></i> Gerar Prévia
                   </button>
                   <button type="button" class="btn btn-success" id="btn-docgen-download" style="padding: 10px 20px; font-size: 0.88rem;" onclick="gerarDocumentoOficialPDF(true)">
-                    <i class="fas fa-file-download"></i> Baixar PDF Oficial
+                    <i class="fas fa-file-download"></i> Baixar PDF preparatório
                   </button>
                 </div>
               </div>
@@ -2165,9 +2147,9 @@
               <div class="docgen-preview-stage">
                 <div class="docgen-preview-idle" id="docgen-preview-idle">
                   <i class="fas fa-file-contract" style="font-size: 3.8rem; color: #38bdf8; opacity: 0.4; margin-bottom: 14px; display: block;"></i>
-                  <h3 style="color:#ffffff; margin-bottom:8px;">Pronto para Emitir</h3>
+                  <h3 style="color:#ffffff; margin-bottom:8px;">Pronto para preparar</h3>
                   <p style="font-size:0.9rem; line-height:1.55;">
-                    Escolha uma <strong>Receita Especial (A, B, B2, Retinoides)</strong>, <strong>Guia com PIX</strong> ou qualquer documento ao lado, puxe os dados do WhatsApp/CNPJ e clique em <strong>Gerar Prévia</strong> ou <strong>Baixar PDF Oficial</strong>.
+                    Selecione um documento, confira as informações e gere uma prévia. Para emissão oficial, consulte o serviço responsável.
                   </p>
                 </div>
                 <iframe id="docgen-pdf-iframe" title="Prévia do Documento PDF"></iframe>
@@ -3213,7 +3195,7 @@
             carregarListaChatsLaboratorio(false);
         }
         if (viewId === 'view-docgen') {
-            inicializarDatasPadraoDocGen();
+            selecionarTipoDocumento(docGenTipoAtual);
             atualizarListaWaNoDocGen(false);
         }
         if (viewId === 'view-trafego' && window._spyLeafletMap) {
@@ -6035,18 +6017,37 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
     let docGenUltimoFilename = '';
     let docGenUltimoBytes = null;
     let docGenHistorico = [];
-    let docGenCacheAssets = {};
-
-    const DOCGEN_REPO_FILES = {
-        licenca: 'certificacao_provisoria.pdf',
-        receita_a: 'NOTIFICAÇÃO DE RECEITA A.pdf',
-        receita_b: 'NOTIFICAÇÃO DE RECEITA B.pdf',
-        receita_b2: 'NOTIFICAÇÃO DE RECEITA B2.pdf',
-        receita_retinoides: 'NOTIFICAÇÃO DE RECEITA RETINOIDES.pdf',
-        guia: 'TAXA VIGILANCIA.pdf'
+    const DOCGEN_CATALOGO = [{"title": "Autorização de Funcionamento de Empresa (AFE)", "description": "Anvisa — autoriza atividades empresariais sujeitas à autorização federal.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Autorização Especial (AE)", "description": "Anvisa — atividades com substâncias e produtos sujeitos a controle especial, quando exigida.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Autorização Especial Simplificada (AEP)", "description": "Anvisa — estabelecimentos de ensino e pesquisa, nos casos previstos.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Certificado de Boas Práticas de Fabricação (CBPF)", "description": "Anvisa — certificação das condições de fabricação.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Certificado de Boas Práticas de Distribuição e/ou Armazenagem (CBPDA)", "description": "Anvisa — certificação de distribuição e/ou armazenagem.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Registro sanitário de medicamentos", "description": "Anvisa — regularização de medicamentos sujeitos a registro.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Registro de produtos biológicos e radiofármacos", "description": "Anvisa — regularização nas categorias aplicáveis.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Registro / notificação de dispositivos médicos", "description": "Anvisa / empresa — regularização conforme classe de risco.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Registro / notificação de cosméticos e saneantes", "description": "Anvisa / empresa — modalidade conforme categoria do produto.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Registro / notificação de alimentos", "description": "Anvisa / empresa — conforme a categoria; algumas comunicações são feitas à vigilância local.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Certificado de Registro", "description": "Anvisa — comprovação do registro válido, quando disponível.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Certidões de exportação (modelos Anvisa e OMS)", "description": "Anvisa — documentos para exportação de medicamentos e produtos abrangidos.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Decisão de concessão, alteração, renovação ou cancelamento", "description": "Anvisa — ato administrativo conforme o processo; publicação oficial quando prevista.", "group": "Anvisa • Regularização federal", "url": "https://www.gov.br/anvisa/pt-br/setorregulado"}, {"title": "Autorização de Importação (AI)", "description": "Anvisa — operações com substâncias, plantas ou medicamentos controlados, conforme a norma.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Autorização de Exportação (AE de exportação)", "description": "Anvisa — exportação de substâncias, plantas e medicamentos controlados; distinta da AE de empresa.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Autorização de Embarque", "description": "Anvisa — operações sujeitas a controle especial, quando exigida.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Certificado de Não Objeção para Importação (CNI)", "description": "Anvisa — operações abrangidas pelo controle aplicável.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Certificado de Não Objeção para Exportação (CNE)", "description": "Anvisa — operações abrangidas pelo controle aplicável.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Anuência sanitária de importação (LI/LPCO/DUIMP)", "description": "Anvisa — manifestação no sistema de comércio exterior, conforme o fluxo.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Autorização sanitária em casos excepcionais", "description": "Anvisa — decisão excepcional em hipóteses previstas.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Autorização de Fabricação para Fins Exclusivos de Exportação (AFFEE)", "description": "Anvisa — fabricação de medicamentos em situações específicas de exportação.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Comprovante de cadastro para importação de derivados de Cannabis", "description": "Anvisa — autorização/cadastro para tratamento individual, mediante requisitos legais.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Certificado de Livre Prática (CLP)", "description": "Anvisa — autorização sanitária para operação de embarcação.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Certificado Internacional de Vacinação ou Profilaxia (CIVP)", "description": "Meu SUS Digital ou Anvisa, conforme o fluxo — comprovação internacional de vacinação contra febre amarela.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Autos, termos e decisões de fiscalização federal", "description": "Autoridade sanitária competente — registra infrações, medidas e decisões administrativas.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Protocolo de petição e comprovante de situação", "description": "Sistema oficial da Anvisa — registra tramitação; não substitui autorização ou certificado.", "group": "Anvisa • Importação e fiscalização", "url": "https://www.gov.br/anvisa/pt-br/servicos/monitoramento"}, {"title": "Licença de Funcionamento Sanitária (LFS)", "description": "Vigilância municipal competente / SIVISA — licença inicial ou atualizada para atividade sujeita a licenciamento.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Renovação da licença sanitária", "description": "Vigilância competente — renovação quando prevista para o CNAE.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Licença sanitária para pessoa física", "description": "Vigilância competente — atividades licenciáveis exercidas por pessoa física.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Licenciamento de fonte de radiação ionizante", "description": "Vigilância competente — fontes e equipamentos abrangidos pela norma municipal.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "CMVS — Cadastro Municipal de Vigilância em Saúde", "description": "Vigilância municipal — identificação/cadastro e histórico de regularização; não confundir número cadastral com licença vigente.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Certificado de Licenciamento Integrado (CLI)", "description": "Portal Integrador Estadual — equivalente à licença sanitária nas hipóteses previstas.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Despacho de alteração cadastral ou de atividade", "description": "Vigilância competente — análise de alteração de dados, endereço ou atividade, conforme procedimento.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Despacho de assunção ou baixa de responsável técnico", "description": "Vigilância competente — registro da alteração, quando exigido.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Despacho de cancelamento / baixa de licença", "description": "Vigilância competente — encerra ou cancela a regularização nos casos aplicáveis.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Relatório / registro de inspeção sanitária", "description": "Equipe de fiscalização — documenta achados e avaliação técnica.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Auto de Infração (AI)", "description": "Autoridade sanitária — formaliza a infração e inicia o procedimento.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Termo de Imposição de Penalidade (TIP)", "description": "Autoridade sanitária — formaliza penalidade, inclusive multa ou advertência, conforme decisão.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Termo de interdição / desinterdição", "description": "Autoridade sanitária — registra medida de interdição ou sua liberação.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Termo de apreensão, inutilização ou colheita de amostra", "description": "Autoridade sanitária — formaliza a medida fiscal aplicável.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Decisão administrativa sobre defesa ou recurso", "description": "Autoridade competente — julgamento no processo sanitário.", "group": "COVISA • Licenciamento e fiscalização", "url": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio"}, {"title": "Notificação de Receita A — amarela", "description": "Prescritor habilitado — medicamentos das listas A1, A2 e A3, conforme enquadramento.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Notificação de Receita A veterinária", "description": "Médico-veterinário habilitado — modelo específico veterinário.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Notificação de Receita B — azul", "description": "Prescritor habilitado — substâncias da lista B1, observadas as regras.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Notificação de Receita B veterinária", "description": "Médico-veterinário habilitado — modelo específico veterinário.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Notificação de Receita B2 — azul", "description": "Prescritor habilitado — substâncias da lista B2, conforme regras.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Notificação de Receita Especial de Retinoides", "description": "Prescritor habilitado — retinoides de uso sistêmico, lista C2.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Notificação de Receita de Talidomida", "description": "Prescritor habilitado/cadastrado — regime específico de controle.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Receita de Controle Especial (RCE) — branca", "description": "Prescritor habilitado — substâncias C1, C5 e outras hipóteses previstas.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Receita de antimicrobianos", "description": "Prescritor habilitado — sujeita à retenção, conforme a norma.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Receita de agonistas de GLP-1", "description": "Prescritor habilitado — sujeita à retenção, conforme substância abrangida.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Receituário de uso hospitalar de misoprostol", "description": "Equipe habilitada em estabelecimento autorizado — controle institucional específico; não é receita comum de varejo.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Termos de consentimento / responsabilidade", "description": "Prescritor e paciente/responsável — documentos complementares quando exigidos (ex.: retinoides, talidomida).", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Receituário eletrônico de controle especial / retenção", "description": "Prescritor por plataforma habilitada — modalidade digital, sujeita às regras e integração aplicáveis do SNCR.", "group": "Receituários controlados", "url": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes"}, {"title": "Cadastro de prescritor individual (pessoa física)", "description": "Prescritor solicita; vigilância cadastra/atualiza para o serviço de receituário.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Cadastro de instituição de saúde (pessoa jurídica)", "description": "Instituição solicita; vigilância cadastra/atualiza.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Requisição de notificação de receita", "description": "Prescritor/instituição — requer retirada de talonário ou atribuição de numeração.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Atribuição / fornecimento de numeração de notificação", "description": "Vigilância competente / SNCR — disponibiliza numeração oficial conforme modalidade.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Registro de retirada de talonário", "description": "Vigilância competente — registra fornecimento físico quando aplicável.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Cancelamento de talonário, numeração ou requisição", "description": "Vigilância competente — tratamento de cancelamentos conforme o serviço SP156.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Cadastro de prescritor de talidomida", "description": "Prescritor solicita; vigilância analisa o cadastramento específico.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Credenciamento de unidade pública dispensadora de talidomida", "description": "Unidade solicita; autoridade sanitária competente avalia o credenciamento.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Termo de abertura de livro de registro", "description": "Autoridade sanitária — abertura de livro, conforme a categoria e exigências.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Termo de encerramento de livro de registro", "description": "Autoridade sanitária — encerramento de livro, conforme exigências.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Pedido de informatização de livro e decisão", "description": "Estabelecimento solicita; vigilância analisa e publica a decisão conforme o procedimento.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Solicitação de inutilização de medicamentos controlados", "description": "Estabelecimento — apresenta pedido à vigilância.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Termo de Inutilização de medicamentos controlados", "description": "Autoridade sanitária — lavrado após conferência em inspeção.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Balanços e relações mensais (BSPO, BMPO, RMNRA, RMV e mapas)", "description": "Estabelecimento — escrituração, consolidação e entrega conforme a atividade e obrigação.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "Ficha de notificação de queixa técnica", "description": "Notificante — informa suspeita de problema de qualidade de produto.", "group": "COVISA • Talonários e escrituração", "url": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os"}, {"title": "LME — Laudo para Solicitação, Avaliação e Autorização de Medicamentos", "description": "Médico assistente preenche os campos clínicos; gestor estadual/DF avalia e autoriza.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Prescrição médica para o CEAF", "description": "Médico assistente — documento necessário para análise e dispensação.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Relatório médico circunstanciado", "description": "Médico — complementa a documentação clínica quando exigido pelo protocolo.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Termo de Esclarecimento e Responsabilidade (TER)", "description": "Paciente/responsável e profissional — quando previsto pelo protocolo clínico.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Exames e laudos comprobatórios", "description": "Laboratórios e profissionais habilitados — demonstram critérios clínicos exigidos.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Formulários específicos por medicamento/doença", "description": "Médico ou equipe assistencial — conforme PCDT e exigências estaduais.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Autorização / deferimento de fornecimento CEAF", "description": "Gestor da assistência farmacêutica estadual ou do DF — aprova a solicitação.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Registro de indeferimento / pendência", "description": "Gestor responsável — resultado da avaliação ou exigência complementar.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "LME e receita para renovação / adequação", "description": "Médico e gestor — continuidade ou mudança do tratamento, conforme critérios.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Comprovante / registro de dispensação", "description": "Farmácia pública — documenta entrega de medicamentos.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Cadastro de paciente e representante", "description": "Serviço de saúde — dados administrativos; documentos pessoais são apresentados pelo usuário.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Prescrição de insumos, fórmulas especiais e dietas", "description": "Profissional habilitado — conforme programa e critérios aplicáveis.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Solicitação de medicamento não padronizado", "description": "Médico/usuário e gestor competente — fluxo excepcional, quando existente; não é autorização automática.", "group": "SUS • Medicamentos especiais / CEAF", "url": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf"}, {"title": "Receita médica comum / de uso contínuo", "description": "Prescritor — orienta tratamento e uso de medicamentos.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Receita odontológica", "description": "Cirurgião-dentista — prescrição dentro de sua competência.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Prescrição de enfermagem", "description": "Enfermeiro — nos limites da legislação e dos protocolos aplicáveis.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Atestado médico / odontológico", "description": "Profissional habilitado — comprova condição, necessidade ou afastamento dentro de sua competência.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Declaração de comparecimento / acompanhante", "description": "Unidade ou profissional — registra presença no atendimento, conforme o caso.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Relatório médico e laudo médico", "description": "Médico — descreve avaliação clínica, diagnóstico ou condição de saúde.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Solicitação de exames e procedimentos", "description": "Profissional habilitado — requer exames ou intervenções.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Guia de referência e contrarreferência", "description": "Equipe assistencial — encaminha e comunica retorno entre serviços.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Prontuário e resumo de atendimento / alta", "description": "Unidade ou equipe assistencial — registra cuidados prestados.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Laudo para solicitação de AIH", "description": "Profissional habilitado — solicita autorização de internação hospitalar.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Autorização de Internação Hospitalar (AIH)", "description": "Gestor/serviço autorizado do SUS — autorização e registro hospitalar.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Laudo para solicitação de APAC", "description": "Profissional habilitado — solicita procedimento ambulatorial sujeito à autorização.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Autorização de Procedimentos Ambulatoriais (APAC)", "description": "Gestor/serviço autorizado — formaliza autorização de procedimentos aplicáveis.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Boletim de Produção Ambulatorial (BPA) / RAAS", "description": "Serviço de saúde — registros assistenciais e administrativos do SUS.", "group": "SUS • Documentos clínicos", "url": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/"}, {"title": "Cartão Nacional de Saúde (CNS) / Cartão SUS", "description": "Serviço de cadastramento do SUS — identificação do usuário.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Carteira / caderneta de vacinação e segunda via", "description": "Unidade vacinadora ou Meu SUS Digital — registro das doses.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Certificado digital de vacinação", "description": "Meu SUS Digital, quando disponível — documento com base nos registros oficiais.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Declaração de Nascido Vivo (DNV)", "description": "Profissional ou serviço competente — documento de nascimento; não é certidão de cartório.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Declaração de Óbito (DO)", "description": "Médico ou autoridade competente nas hipóteses legais — subsidia registro de mortalidade.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Ficha Individual de Notificação (FIN) / SINAN", "description": "Serviço/profissional notificante — registro de doença ou agravo de notificação compulsória.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Ficha de investigação epidemiológica", "description": "Equipe de vigilância — investigação de caso, contato ou surto.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Comprovante de vacinação antirrábica animal", "description": "Serviço vacinador / veterinário — registra aplicação em animal.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Declaração de Conformidade da Atividade (DCA)", "description": "Responsável pelo estabelecimento — declaração apresentada no licenciamento municipal quando exigida.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Declaração de Conformidade Físico Funcional (DCFF)", "description": "Responsáveis habilitados — declaração apresentada à vigilância; substituiu o LTA no fluxo municipal previsto.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Laudo Técnico de Avaliação (LTA) — histórico", "description": "Vigilância competente — documento anterior à substituição municipal pela DCFF; observar contexto e validade.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "ART, RRT, TRT e comprovação de responsabilidade técnica", "description": "Profissional/conselho competente — documentação de apoio, não emitida pela COVISA.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}, {"title": "Manual de boas práticas, POPs e PGRSS", "description": "Estabelecimento e responsáveis técnicos — documentos internos apresentados à fiscalização quando exigidos.", "group": "SUS e vigilância • Outros registros", "url": "https://www.gov.br/saude/pt-br/composicao/seidigi/meususdigital/perguntas-e-respostas/cidadao"}];
+    const DOCGEN_TITULOS = {"receita_a": "Notificação de Receita A", "receita_b": "Notificação de Receita B", "receita_b2": "Notificação de Receita B2", "receita_retinoides": "Notificação de Receita de Retinoides", "autorizacao_talonario": "Autorização de talonário", "licenca": "Licença provisória — modelo interno", "guia": "Conferência de guia de pagamento", "recibo_quitacao": "Conferência de comprovante de pagamento", "declaracao": "Declaração / protocolo interno", "dispensa": "Consulta de baixo risco", "notificacao": "Registro de pendências", "infracao": "Consulta de auto de infração", "termo_vistoria": "Registro preparatório de vistoria", "oficio": "Minuta de ofício", "receita_comum": "Receita comum", "receita_domiciliar": "Receita domiciliar", "receita_continua": "Receita de uso contínuo", "relatorio_medico": "Relatório médico", "atestado": "Atestado médico", "exames": "Solicitação de exames", "encaminhamento": "Encaminhamento", "comparecimento": "Declaração de comparecimento", "ceaf": "Medicamentos de alto custo", "licenca_oficial": "Licença sanitária / CLI", "catalogo": "Catálogo completo"};
+    const DOCGEN_RECEITA_TYPES = new Set(['receita_a','receita_b','receita_b2','receita_retinoides','autorizacao_talonario']);
+    const DOCGEN_CLINICOS = new Set(['receita_comum','receita_domiciliar','receita_continua','relatorio_medico','atestado','exames','encaminhamento','comparecimento']);
+    const DOCGEN_RECEITA_COMUM = new Set(['receita_comum','receita_domiciliar','receita_continua']);
+    const DOCGEN_FONTES = {"rx": "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/receituario-fisico/modelos-vigentes", "licenca": "https://prefeitura.sp.gov.br/web/saude/w/documentos-necess%C3%A1rios-para-o-licenciamento-sanit%C3%A1rio", "ceaf": "https://www.gov.br/saude/pt-br/composicao/sectics/daf/ceaf", "clinico": "https://sisaps.saude.gov.br/sistemas/esusaps/docs/manual/PEC/PEC_06_atendimentos/", "covisa": "https://prefeitura.sp.gov.br/web/saude/w/medicamento-de-controle-especial-cartas-de-servi%C3%A7os", "sp156": "https://sp156.prefeitura.sp.gov.br/"};
+    function fonteDocGen(tipo) {
+        if (tipo === 'autorizacao_talonario') return DOCGEN_FONTES.covisa;
+        if (DOCGEN_RECEITA_TYPES.has(tipo)) return DOCGEN_FONTES.rx;
+        if (DOCGEN_CLINICOS.has(tipo)) return DOCGEN_FONTES.clinico;
+        if (tipo === 'ceaf') return DOCGEN_FONTES.ceaf;
+        if (['licenca','licenca_oficial','dispensa'].includes(tipo)) return DOCGEN_FONTES.licenca;
+        return DOCGEN_FONTES.sp156;
+    }
+    function catalogoSelecionadoDocGen() {
+        const v=document.getElementById('docgen-catalog-select')?.value;
+        return v === undefined || v === '' ? null : DOCGEN_CATALOGO[Number(v)] || null;
+    }
+    window.atualizarCatalogoDocGen = () => {
+        const item=catalogoSelecionadoDocGen(), info=document.getElementById('docgen-catalog-info'), link=document.getElementById('docgen-catalog-link');
+        info.textContent=item ? `${item.group} — ${item.description}` : 'Nenhum resultado encontrado.';
+        link.hidden=!item; if(item) link.href=item.url; else link.removeAttribute('href');
     };
-
-    const DOCGEN_RECEITA_TYPES = new Set(['receita_a', 'receita_b', 'receita_b2', 'receita_retinoides', 'autorizacao_talonario']);
+    window.filtrarCatalogoDocGen = () => {
+        const normalize=v=>v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+        const q=normalize(document.getElementById('docgen-catalog-search').value), sel=document.getElementById('docgen-catalog-select'), current=sel.value;
+        sel.replaceChildren();
+        DOCGEN_CATALOGO.forEach((item,i)=>{if(!normalize(item.title+' '+item.description+' '+item.group).includes(q))return; const opt=document.createElement('option');opt.value=String(i);opt.textContent=item.title+' • '+item.group;sel.appendChild(opt);});
+        if([...sel.options].some(o=>o.value===current))sel.value=current;
+        atualizarCatalogoDocGen();
+    };
 
     function formatarDataBR(d) {
         return d.toLocaleDateString('pt-BR');
@@ -6107,27 +6108,9 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
         });
     };
 
-    window.inicializarDatasPadraoDocGen = (forcarValidade = false) => {
-        const hoje = new Date();
-        const emEl = document.getElementById('docgen-emissao');
-        const valEl = document.getElementById('docgen-validade');
-        const protEl = document.getElementById('docgen-protocolo');
-
-        if (emEl && !emEl.value) emEl.value = formatarDataBR(hoje);
-        if (protEl && !protEl.value) {
-            const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
-            protEl.value = `COVISA-2026-${rand}`;
-        }
-        if (valEl && (!valEl.value || forcarValidade)) {
-            const alvo = new Date(hoje);
-            if (docGenTipoAtual === 'licenca' || docGenTipoAtual === 'dispensa') alvo.setFullYear(alvo.getFullYear() + 1);
-            else if (docGenTipoAtual === 'guia') alvo.setDate(alvo.getDate() + 3);
-            else if (docGenTipoAtual === 'notificacao') alvo.setDate(alvo.getDate() + 5);
-            else if (docGenTipoAtual === 'infracao') alvo.setDate(alvo.getDate() + 10);
-            else if (DOCGEN_RECEITA_TYPES.has(docGenTipoAtual)) alvo.setDate(alvo.getDate() + 30);
-            else alvo.setDate(alvo.getDate() + 30);
-            valEl.value = formatarDataBR(alvo);
-        }
+    window.inicializarDatasPadraoDocGen = () => {
+        const emEl=document.getElementById('docgen-emissao');
+        if(emEl && !emEl.value) emEl.value=formatarDataBR(new Date());
     };
 
     window.mascararDocGenCnpj = (input) => {
@@ -6146,75 +6129,30 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
     };
 
     window.selecionarTipoDocumento = (tipo, btnEl) => {
-        docGenTipoAtual = tipo;
-        document.querySelectorAll('.docgen-type-card').forEach(c => c.classList.toggle('active', c.dataset.doctype === tipo));
-
-        const rxBox = document.getElementById('docgen-rx-box');
-        const rxOpcRow = document.getElementById('docgen-rx-opcional-row');
-        const rxQtdLbl = document.getElementById('docgen-rx-qtd-label');
-        const extraBox = document.getElementById('docgen-extra-box');
-        const grpTitulo = document.getElementById('docgen-group-titulo');
-        const grpVistoria = document.getElementById('docgen-group-vistoria');
-        const grpFin = document.getElementById('docgen-group-financeiro');
-        const grpPix = document.getElementById('docgen-group-pix');
-        const grpTxt = document.getElementById('docgen-group-texto');
-        const txtLabel = document.getElementById('docgen-texto-label');
-        const valLabel = document.getElementById('docgen-validade-label');
-        const nomeLabel = document.getElementById('docgen-nome-label');
-        const tagEl = document.getElementById('docgen-template-tag');
-        const renderMode = document.getElementById('docgen-render-mode');
-
-        const ehRx = DOCGEN_RECEITA_TYPES.has(tipo);
-        const ehReceitaFolha = ['receita_a', 'receita_b', 'receita_b2', 'receita_retinoides'].includes(tipo);
-        const temFin = ['guia', 'infracao', 'recibo_quitacao'].includes(tipo);
-        const temPix = ['guia', 'infracao'].includes(tipo);
-        const mostrarExtra = !ehReceitaFolha && tipo !== 'licenca';
-
-        if (rxBox) rxBox.style.display = ehRx ? 'flex' : 'none';
-        if (rxOpcRow) rxOpcRow.style.display = ehReceitaFolha ? 'grid' : 'none';
-        if (rxQtdLbl) rxQtdLbl.innerText = tipo === 'autorizacao_talonario' ? 'Qtd. de Folhas Autorizadas' : 'Qtd. Folhas no PDF (1-50)';
-
-        if (extraBox) extraBox.style.display = mostrarExtra ? 'flex' : 'none';
-        if (grpTitulo) grpTitulo.style.display = tipo === 'oficio' ? 'flex' : 'none';
-        if (grpVistoria) grpVistoria.style.display = tipo === 'termo_vistoria' ? 'flex' : 'none';
-        if (grpFin) grpFin.style.display = temFin ? 'block' : 'none';
-        if (grpPix) grpPix.style.display = temPix ? 'flex' : 'none';
-        if (grpTxt) grpTxt.style.display = mostrarExtra ? 'flex' : 'none';
-
-        // Para Licença Provisória, o molde oficial do repositório fica padrão; para os demais, layout completo A4 com assinatura fixa
-        if (renderMode) {
-            renderMode.value = (tipo === 'licenca') ? 'molde_repo' : 'oficial';
-        }
-
-        if (nomeLabel) {
-            nomeLabel.innerText = ehRx
-                ? 'Nome do Médico / Profissional ou Clínica Emitente'
-                : 'Razão Social / Nome Completo do Estabelecimento';
-        }
-
-        const mapaMeta = {
-            receita_a: { tag: 'Amarela • Portaria 344/98 + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
-            receita_b: { tag: 'Azul Lista B1 • Portaria 344/98 + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
-            receita_b2: { tag: 'Azul Anorexígenos B2 • RDC 50/14 + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
-            receita_retinoides: { tag: 'Retinoides C2 • Alerta Obrigatório + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
-            autorizacao_talonario: { tag: 'Ofício de Liberação de Faixa Numérica', val: 'Validade da Autorização', txt: 'Observações / Gráfica Autorizada / Tipo de Talonário' },
-            licenca: { tag: 'Molde certificacao_provisoria.pdf + Assinatura Fixa', val: 'Válido Até (1 ano)', txt: '' },
-            guia: { tag: 'Guia Oficial + QR Code PIX + Assinatura Fixa', val: 'Data de Vencimento', txt: 'Descrição da Taxa / Observações' },
-            recibo_quitacao: { tag: 'Comprovante de Quitação + Assinatura Fixa', val: 'Data do Pagamento', txt: 'Detalhamento da Quitação (Protocolo / PIX)' },
-            declaracao: { tag: 'Certidão de Andamento + QR Code + Assinatura Fixa', val: 'Validade da Declaração', txt: 'Observações / Situação Atual do Processo' },
-            dispensa: { tag: 'Certidão Baixo Risco (Lei 13.874/19) + Assinatura Fixa', val: 'Validade da Certidão (1 ano)', txt: 'CNAEs / Justificativa da Dispensa Sanitária' },
-            notificacao: { tag: 'Intimação Formal A4 + Assinatura Fixa', val: 'Prazo Final para Regularização', txt: 'Documentos Pendentes / Exigências Sanitárias' },
-            infracao: { tag: 'Auto de Infração — Lei 10.083/98 + Assinatura Fixa', val: 'Prazo para Defesa (10 dias)', txt: 'Relato Técnico da Infração Constatada' },
-            termo_vistoria: { tag: 'Termo de Inspeção Sanitária + Assinatura Fixa', val: 'Prazo p/ Adequação (se houver)', txt: 'Constatações da Vistoria / Exigências Técnicas' },
-            oficio: { tag: 'Documento Livre Personalizado + Assinatura Fixa', val: 'Prazo / Referência', txt: 'Corpo Completo do Ofício' }
-        };
-
-        const m = mapaMeta[tipo] || mapaMeta.licenca;
-        if (tagEl) tagEl.innerText = m.tag;
-        if (valLabel) valLabel.innerText = m.val;
-        if (txtLabel && m.txt) txtLabel.innerText = m.txt;
-
-        inicializarDatasPadraoDocGen(true);
+        if(!Object.prototype.hasOwnProperty.call(DOCGEN_TITULOS,tipo)) tipo='licenca';
+        docGenTipoAtual=tipo;
+        document.querySelectorAll('.docgen-type-card').forEach(c=>c.classList.toggle('active',c.dataset.doctype===tipo));
+        const by=id=>document.getElementById(id), visible=(id,yes,display='flex')=>{const el=by(id);if(el)el.style.display=yes?display:'none';};
+        const clinico=DOCGEN_CLINICOS.has(tipo);
+        visible('docgen-rx-box',clinico);
+        visible('docgen-rx-opcional-row',clinico,'grid');
+        visible('docgen-extra-box',true);
+        visible('docgen-group-titulo',tipo==='oficio');
+        visible('docgen-group-vistoria',tipo==='termo_vistoria');
+        visible('docgen-group-financeiro',false);
+        visible('docgen-group-pix',false);
+        visible('docgen-group-texto',true);
+        visible('docgen-catalog-box',tipo==='catalogo');
+        visible('docgen-source-box',tipo!=='catalogo');
+        visible('docgen-original-link',tipo==='licenca','inline');
+        if(tipo==='catalogo')filtrarCatalogoDocGen();
+        by('docgen-source-link').href=fonteDocGen(tipo);
+        by('docgen-source-text').textContent=DOCGEN_RECEITA_TYPES.has(tipo)?'Consulte os modelos vigentes da Anvisa e a numeração atribuída pela vigilância. Aqui é gerada somente uma lista de conferência.':tipo==='licenca_oficial'?'A licença válida é emitida pelo órgão competente; o CLI é equivalente nos casos previstos.':clinico?'Modelo particular preparatório, sem timbre SUS. O profissional deve conferir e emitir a prescrição ou o documento clínico.':tipo==='ceaf'?'Acesse o CEAF e o formulário LME oficial conforme o protocolo do medicamento.':'Registro preparatório, sem efeito de licença, cobrança, quitação ou autorização.';
+        by('docgen-template-tag').innerText=DOCGEN_TITULOS[tipo]+' • preparação';
+        by('docgen-nome-label').innerText=clinico?'Nome do profissional ou serviço':'Nome do interessado / estabelecimento';
+        by('docgen-validade-label').innerText='Prazo informado (opcional)';
+        by('docgen-texto-label').innerText=clinico?'Anotações para revisão do profissional':'Observações / documentos pendentes';
+        inicializarDatasPadraoDocGen();
     };
 
     window.limparFormularioDocGen = () => {
@@ -6229,7 +6167,7 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
         document.getElementById('docgen-validade').value = '';
         document.getElementById('docgen-rx-qtd').value = '1';
         inicializarDatasPadraoDocGen(true);
-        showToast("Campos Limpos", "Pronto para emitir um novo documento.", "success");
+        showToast("Campos Limpos", "Pronto para preparar um novo documento.", "success");
     };
 
     window.atualizarListaWaNoDocGen = async (mostrarToast = false) => {
@@ -6387,7 +6325,7 @@ Retorne APENAS JSON válido neste formato (use string vazia "" se não encontrar
         if (!p) return;
 
         document.getElementById('docgen-cnpj').value = p.cnpj || '';
-        document.getElementById('docgen-protocolo').value = `COVISA-2026-${p.id.substring(0, 6).toUpperCase()}`;
+        document.getElementById('docgen-protocolo').value = `PROCESSO-${String(p.id || '').substring(0, 12)}`;
         document.getElementById('docgen-nome').value = p.nome || '';
         document.getElementById('docgen-rua').value = p.rua || '';
         document.getElementById('docgen-num').value = p.num || '';
@@ -6499,55 +6437,13 @@ Retorne APENAS JSON válido neste formato (use string vazia "" se não encontrar
         } catch (_) {}
     };
 
-    window.gerarPixParaDocumento = async () => {
-        const btn = document.getElementById('btn-docgen-gerar-pix');
-        const valRaw = (document.getElementById('docgen-valor')?.value || '').replace(/R\$\s?/g, '').trim();
-        const valNum = parseFloat(valRaw.replace(/\./g, '').replace(',', '.'));
-        const nome = (document.getElementById('docgen-nome')?.value || 'Contribuinte').trim();
-        const docNum = (document.getElementById('docgen-cnpj')?.value || '').replace(/\D/g, '');
-        const prot = (document.getElementById('docgen-protocolo')?.value || 'DOC_' + Date.now()).trim();
-
-        if (isNaN(valNum) || valNum <= 0) {
-            return showToast("Informe o Valor", "Digite um valor válido (ex: 250,00) antes de gerar o PIX.", "warning");
-        }
-        if (docNum.length !== 11 && docNum.length !== 14) {
-            return showToast("CPF/CNPJ Obrigatório", "Informe um CPF ou CNPJ válido para gerar o PIX oficial.", "warning");
-        }
-
-        const orig = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
-
-        try {
-            const resp = await fetch('/api/pix', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    amount: valNum,
-                    description: `Taxa COVISA - ${prot}`,
-                    payerName: nome,
-                    payerDocument: docNum,
-                    externalReference: prot
-                })
-            });
-            const data = await resp.json();
-            if (!resp.ok || !data.success || !data.copyPaste) {
-                throw new Error(data.error || 'Gateway PIX indisponível no momento.');
-            }
-            document.getElementById('docgen-pix-code').value = data.copyPaste;
-            showToast("PIX Gerado!", "Código PIX e QR Code prontos para embutir na guia PDF.", "success");
-        } catch (err) {
-            showToast("Erro PIX", err.message, "error");
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = orig;
-        }
-    };
+    window.gerarPixParaDocumento = () => showToast('Consulta oficial','Obtenha a guia pelo órgão responsável. Este gerador não emite cobrança.','warning');
 
     window.redigirCorpoDocGenComIA = async () => {
         const btn = document.getElementById('btn-docgen-ia');
         const corpoEl = document.getElementById('docgen-corpo');
         const rascunho = (corpoEl?.value || '').trim();
+        if(DOCGEN_CLINICOS.has(docGenTipoAtual)) return showToast('Revisão profissional','Preencha as informações clínicas manualmente.','warning');
         const nome = (document.getElementById('docgen-nome')?.value || 'o estabelecimento').trim();
         const cnpj = (document.getElementById('docgen-cnpj')?.value || '').trim();
         const ramo = (document.getElementById('docgen-ramo')?.value || 'comercial').trim();
@@ -6558,20 +6454,7 @@ Retorne APENAS JSON válido neste formato (use string vazia "" se não encontrar
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redigindo...';
 
-        const prompt = `Você é o redator técnico oficial da COVISA (Vigilância Sanitária de São Paulo).
-Redija o corpo de texto formal, objetivo e pronto para constar em um documento PDF oficial do tipo "${docGenTipoAtual.toUpperCase()}".
-
-Dados:
-- Estabelecimento/Profissional: ${nome}
-- CPF/CNPJ: ${cnpj || 'Não informado'}
-- Ramo: ${ramo}
-- Artigo/Base Legal informada: ${artigo || 'Lei Municipal 13.725/2004, Lei Estadual 10.083/1998, Portaria SVS/MS 344/1998 e RDC 216/ANVISA'}
-- Prazo/Vencimento: ${validade || 'conforme legislação'}
-- Rascunho/instrução do fiscal: ${rascunho || '(Gerar texto técnico padrão bem redigido para este tipo de documento.)'}
-
-REGRAS:
-1. Escreva APENAS o texto puro do corpo do documento (sem HTML, sem markdown, sem asteriscos, sem cabeçalho nem assinatura).
-2. Seja claro, formal e conciso (entre 5 e 11 linhas, com quebras de linha simples entre parágrafos ou itens com hífen "- ").`;
+        const prompt = `Organize as seguintes anotações como minuta interna sem validade oficial. Não alegue aprovação, autorização, pagamento, infração, assinatura, representação de órgão público ou conclusão de processo. Não invente legislação, prazos ou valores. Escreva texto objetivo para conferência humana. Tipo: ${docGenTipoAtual}. Anotações: ${rascunho || 'Sem informações fornecidas.'}`;
 
         try {
             const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
@@ -6592,659 +6475,82 @@ REGRAS:
         }
     };
 
-    async function fetchBufferCacheado(url) {
-        if (docGenCacheAssets[url]) return docGenCacheAssets[url];
-        try {
-            const r = await fetch(url);
-            if (!r.ok) return null;
-            const buf = await r.arrayBuffer();
-            const ct = (r.headers.get('content-type') || '').toLowerCase();
-            docGenCacheAssets[url] = { buf, ct };
-            return docGenCacheAssets[url];
-        } catch (_) {
-            return null;
+    // PDF preparatório: paginação automática, cabeçalho e assinatura em zonas separadas.
+    async function construirPdfPreparacao(tipo,dados) {
+        const {PDFDocument,rgb,StandardFonts}=PDFLib;
+        const pdf=await PDFDocument.create(), regular=await pdf.embedFont(StandardFonts.Helvetica), bold=await pdf.embedFont(StandardFonts.HelveticaBold);
+        const width=595.28,height=841.89,margin=44,maxWidth=width-2*margin;
+        const ink=rgb(.11,.18,.27), muted=rgb(.34,.40,.48), blue=rgb(.12,.31,.49), light=rgb(.92,.95,.98);
+        const item=tipo==='catalogo'?catalogoSelecionadoDocGen():null;
+        if(tipo==='catalogo'&&!item)throw new Error('Selecione um item do catálogo.');
+        const title=item?.title||DOCGEN_TITULOS[tipo]||'Documento preparatório';
+        const clinico=DOCGEN_CLINICOS.has(tipo), receita=DOCGEN_RECEITA_COMUM.has(tipo);
+        let page,y;
+        const clean=t=>sanitizarTextoPDF(t).replace(/[\x7F-\x9F]/g,'');
+        function newPage(){
+            page=pdf.addPage([width,height]);
+            page.drawRectangle({x:0,y:height-8,width,height:8,color:blue});
+            page.drawText('MINUTA INTERNA - SEM VALIDADE OFICIAL',{x:margin,y:height-35,font:bold,size:10,color:blue});
+            page.drawLine({start:{x:margin,y:height-47},end:{x:width-margin,y:height-47},thickness:.8,color:blue});
+            page.drawText('Documento preparatório. Não comprova autorização, pagamento ou atendimento.',{x:margin,y:34,font:regular,size:8,color:muted});
+            page.drawText('Página '+pdf.getPageCount(),{x:width-margin-48,y:20,font:regular,size:8,color:muted});
+            y=height-68;
         }
-    }
-
-    async function carregarImagemEmbedPDF(pdfDoc, url) {
-        const asset = await fetchBufferCacheado(url);
-        if (!asset) return null;
-        try {
-            if (asset.ct.includes('png') || url.toLowerCase().endsWith('.png')) {
-                return await pdfDoc.embedPng(asset.buf);
-            }
-            return await pdfDoc.embedJpg(asset.buf);
-        } catch (_) {
-            try { return await pdfDoc.embedPng(asset.buf); } catch (__) { return null; }
-        }
-    }
-
-    async function carregarAssinaturaDiretoriaPDF(pdfDoc) {
-        let img = await carregarImagemEmbedPDF(pdfDoc, 'imagens/DIRETORIA23.png');
-        if (!img) img = await carregarImagemEmbedPDF(pdfDoc, 'DIRETORIA23.png');
-        return img;
-    }
-
-    function desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, centerX, bottomY, maxW = 225, maxH = 76) {
-        if (dados.usarAssinaturaFixa && sigImg) {
-            const dims = sigImg.scaleToFit(maxW, maxH);
-            page.drawImage(sigImg, {
-                x: centerX - dims.width / 2,
-                y: bottomY,
-                width: dims.width,
-                height: dims.height
-            });
-            return;
-        }
-        // Fallback textual caso desmarcado ou imagem indisponível
-        const halfLine = Math.min(130, maxW / 2);
-        page.drawLine({ start: { x: centerX - halfLine, y: bottomY + 26 }, end: { x: centerX + halfLine, y: bottomY + 26 }, thickness: 0.9, color: corCinza });
-        const fTxt = sanitizarTextoPDF(dados.fiscal || 'Giliard De Oliveira Santiago');
-        const cTxt = sanitizarTextoPDF(dados.cargo || 'Assessor Técnico CEVISA/COVIS/SMS');
-        const fw = fontBold.widthOfTextAtSize(fTxt, 9.5);
-        const cw = fontReg.widthOfTextAtSize(cTxt, 7.8);
-        page.drawText(fTxt, { x: centerX - fw / 2, y: bottomY + 13, size: 9.5, font: fontBold, color: corEscuro });
-        page.drawText(cTxt, { x: centerX - cw / 2, y: bottomY + 1, size: 7.8, font: fontReg, color: corCinza });
-    }
-
-    // -------------------------------------------------------------------------
-    // CONSTRUTOR 1: RECEITUÁRIOS ESPECIAIS (A Amarela, B Azul, B2 Azul, Retinoides C2)
-    // Pré-preenchido com Emitente + Numeração + Assinatura Fixa DIRETORIA23.png
-    // Pronto para o Médico só preencher paciente/medicamento e colocar carimbo!
-    // -------------------------------------------------------------------------
-    async function construirPdfReceitaEspecial(tipo, dados) {
-        const { PDFDocument, rgb, StandardFonts } = PDFLib;
-        const pdfDoc = await PDFDocument.create();
-
-        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
-        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-        const fontMono = await pdfDoc.embedFont(StandardFonts.CourierBold);
-
-        const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
-        const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
-
-        const temas = {
-            receita_a: {
-                bg: rgb(0.996, 0.978, 0.80),
-                accent: rgb(0.68, 0.44, 0.02),
-                headerBg: rgb(0.76, 0.50, 0.03),
-                titulo: 'NOTIFICAÇÃO DE RECEITA "A"',
-                sub: 'MEDICAMENTOS ENTORPECENTES — LISTAS A1, A2 E A3 (PORTARIA SVS/MS Nº 344/1998)',
-                aviso: 'Válida em todo o Território Nacional por 30 (trinta) dias a contar da data de emissão. Máximo de 5 ampolas ou tratamento para até 30 dias.',
-                alertaVermelho: ''
-            },
-            receita_b: {
-                bg: rgb(0.87, 0.94, 0.996),
-                accent: rgb(0.06, 0.27, 0.58),
-                headerBg: rgb(0.07, 0.30, 0.64),
-                titulo: 'NOTIFICAÇÃO DE RECEITA "B"',
-                sub: 'MEDICAMENTOS PSICOTRÓPICOS — LISTA B1 (PORTARIA SVS/MS Nº 344/1998)',
-                aviso: 'Válida na Unidade Federativa emissora por 30 (trinta) dias a contar da data de emissão. Quantidade máxima correspondente a 60 dias de tratamento.',
-                alertaVermelho: ''
-            },
-            receita_b2: {
-                bg: rgb(0.85, 0.92, 0.996),
-                accent: rgb(0.05, 0.22, 0.52),
-                headerBg: rgb(0.06, 0.24, 0.56),
-                titulo: 'NOTIFICAÇÃO DE RECEITA "B2"',
-                sub: 'PSICOTRÓPICOS ANOREXÍGENOS — LISTA B2 (RDC ANVISA Nº 50/2014 E PORTARIA 344/98)',
-                aviso: 'Válida por 30 (trinta) dias. Tratamento máximo de 30 dias. Obrigatório acompanhamento do Termo de Responsabilidade do Prescritor.',
-                alertaVermelho: 'ATENÇÃO: MEDICAMENTO SUJEITO A CONTROLE RIGOROSO (LISTA B2 — ANOREXÍGENOS). PROIBIDA DISPENSAÇÃO ACIMA DA DOSE DIÁRIA RECOMENDADA.'
-            },
-            receita_retinoides: {
-                bg: rgb(0.99, 0.99, 1.0),
-                accent: rgb(0.76, 0.11, 0.11),
-                headerBg: rgb(0.78, 0.12, 0.12),
-                titulo: 'NOTIFICAÇÃO DE RECEITA ESPECIAL — RETINOIDES',
-                sub: 'RETINOIDES DE USO SISTÊMICO — LISTA C2 (PORTARIA SVS/MS Nº 344/1998)',
-                aviso: 'Válida por 30 (trinta) dias. Obrigatória a apresentação conjunta do Termo de Consentimento Pós-Informação assinado pelo paciente e médico.',
-                alertaVermelho: 'RISCO DE GRAVES DEFEITOS NA FACE, NAS ORELHAS, NO CORAÇÃO OU NO SISTEMA NERVOSO DO FETO. PROIBIDO O USO POR MULHERES GRÁVIDAS OU COM CHANCE DE ENGRAVIDAR.'
-            }
-        };
-
-        const t = temas[tipo] || temas.receita_b;
-        const corEscuro = rgb(0.08, 0.11, 0.16);
-        const corCinza = rgb(0.32, 0.37, 0.45);
-        const corLinha = rgb(0.55, 0.60, 0.68);
-        const qtd = Math.max(1, Math.min(50, parseInt(dados.rxQtd, 10) || 1));
-        const numIni = Math.max(1, parseInt(dados.rxInicio, 10) || 1001);
-        const serie = sanitizarTextoPDF(dados.rxSerie || 'SP-2026-');
-
-        // QR de verificação único do lote/protocolo
-        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?receita=' + dados.protocolo)}`;
-        const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
-
-        for (let folha = 0; folha < qtd; folha++) {
-            const page = pdfDoc.addPage([595.28, 841.89]);
-            const { width, height } = page.getSize();
-            const numeroReceita = `${serie}${String(numIni + folha).padStart(6, '0')}`;
-
-            // Fundo oficial colorido (Amarelo A, Azul B/B2, Branco Especial Retinoides)
-            page.drawRectangle({ x: 18, y: 18, width: width - 36, height: height - 36, color: t.bg, borderColor: t.accent, borderWidth: 2 });
-            page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: t.accent, borderWidth: 0.6 });
-
-            // Cabeçalho Institucional
-            let yTop = height - 36;
-            page.drawRectangle({ x: 30, y: yTop - 64, width: width - 60, height: 64, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1 });
-            let hx = 42;
-            if (brasaoImg) {
-                const bd = brasaoImg.scaleToFit(46, 46);
-                page.drawImage(brasaoImg, { x: 38, y: yTop - 55 + (46 - bd.height) / 2, width: bd.width, height: bd.height });
-                hx = 94;
-            }
-            page.drawText(sanitizarTextoPDF('SECRETARIA MUNICIPAL DA SAÚDE — VIGILÂNCIA SANITÁRIA (COVISA)'), { x: hx, y: yTop - 22, size: 9.5, font: fontBold, color: corEscuro });
-            page.drawText(sanitizarTextoPDF('PREFEITURA DO MUNICÍPIO DE SÃO PAULO • AUTORIZAÇÃO SANITÁRIA DE RECEITUÁRIO'), { x: hx, y: yTop - 36, size: 7.8, font: fontReg, color: corCinza });
-            page.drawText(sanitizarTextoPDF(`Protocolo: ${dados.protocolo}   |   UF: SP   |   Autorizada em: ${dados.emissao}`), { x: hx, y: yTop - 50, size: 8, font: fontBold, color: t.accent });
-
-            // Caixa de Numeração Oficial no canto direito do topo
-            page.drawRectangle({ x: width - 178, y: yTop - 56, width: 140, height: 48, color: t.bg, borderColor: t.accent, borderWidth: 1.3 });
-            page.drawText(sanitizarTextoPDF('NÚMERO DA NOTIFICAÇÃO'), { x: width - 170, y: yTop - 21, size: 7, font: fontBold, color: corCinza });
-            const numSz = fontMono.widthOfTextAtSize(numeroReceita, 11) > 128 ? 9.2 : 11;
-            page.drawText(numeroReceita, { x: width - 170, y: yTop - 37, size: numSz, font: fontMono, color: t.accent });
-            page.drawText(sanitizarTextoPDF(qtd > 1 ? `Folha ${folha + 1} de ${qtd}` : '1ª Via — Retenção Farmácia'), { x: width - 170, y: yTop - 50, size: 6.8, font: fontReg, color: corCinza });
-
-            // Faixa de Título da Receita
-            let y = yTop - 74;
-            page.drawRectangle({ x: 30, y: y - 34, width: width - 60, height: 34, color: t.headerBg });
-            page.drawText(sanitizarTextoPDF(t.titulo), { x: 42, y: y - 15, size: 13, font: fontBold, color: rgb(1, 1, 1) });
-            page.drawText(sanitizarTextoPDF(t.sub), { x: 42, y: y - 28, size: 7.5, font: fontReg, color: rgb(0.96, 0.97, 1) });
-
-            y -= 44;
-
-            // Alerta obrigatório em destaque (Retinoides / B2)
-            if (t.alertaVermelho) {
-                const aLines = quebrarLinhasPDF(t.alertaVermelho, fontBold, 7.8, width - 84);
-                const aH = Math.max(28, aLines.length * 10.5 + 10);
-                page.drawRectangle({ x: 30, y: y - aH, width: width - 60, height: aH, color: rgb(1, 0.93, 0.93), borderColor: rgb(0.82, 0.12, 0.12), borderWidth: 1.2 });
-                let ay = y - 12;
-                aLines.forEach(ln => {
-                    page.drawText(ln, { x: 40, y: ay, size: 7.8, font: fontBold, color: rgb(0.76, 0.08, 0.08) });
-                    ay -= 10.5;
-                });
-                y = y - aH - 8;
-            }
-
-            // QUADRO 1: IDENTIFICAÇÃO DO EMITENTE (PRÉ-PREENCHIDO PELA COVISA)
-            const emitH = 92;
-            page.drawRectangle({ x: 30, y: y - emitH, width: width - 60, height: emitH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1 });
-            page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO EMITENTE (PRÉ-PREENCHIDO — AUTORIZADO PELA VIGILÂNCIA SANITÁRIA)'), { x: 40, y: y - 14, size: 7.6, font: fontBold, color: t.accent });
-
-            const endEmit = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ');
-            const drawEmitField = (lbl, val, fx, fy, maxW) => {
-                page.drawText(sanitizarTextoPDF(lbl), { x: fx, y: fy, size: 6.8, font: fontBold, color: corCinza });
-                let v = sanitizarTextoPDF(val || '—');
-                let sz = 9;
-                while (fontBold.widthOfTextAtSize(v, sz) > maxW && sz > 6.8) sz -= 0.3;
-                page.drawText(v, { x: fx, y: fy - 11, size: sz, font: fontBold, color: corEscuro });
-            };
-
-            drawEmitField('PROFISSIONAL / INSTITUIÇÃO EMITENTE', (dados.nome || 'NÃO INFORMADO').toUpperCase(), 40, y - 29, 325);
-            drawEmitField('CONSELHO (CRM / CRO / CRMV)', (dados.crm || 'CONFORME CARIMBO').toUpperCase(), 380, y - 29, 175);
-            drawEmitField('ENDEREÇO COMPLETO', (endEmit || 'NÃO INFORMADO').toUpperCase(), 40, y - 56, 260);
-            drawEmitField('MUNICÍPIO / UF / CEP', `${dados.cidade || 'São Paulo - SP'}${dados.cep ? ' • CEP ' + dados.cep : ''}`.toUpperCase(), 310, y - 56, 245);
-            drawEmitField('CPF / CNPJ', dados.cnpj || '—', 40, y - 79, 150);
-            drawEmitField('ESPECIALIDADE / RAMO', (dados.especialidade || dados.ramo || 'CLÍNICA MÉDICA').toUpperCase(), 205, y - 79, 200);
-            drawEmitField('TELEFONE', dados.telefone || '—', 420, y - 79, 135);
-
-            y = y - emitH - 10;
-
-            // QUADRO 2: PACIENTE & PRESCRIÇÃO (EM BRANCO COM LINHAS PARA O MÉDICO PREENCHER)
-            const prescH = t.alertaVermelho ? 222 : 254;
-            page.drawRectangle({ x: 30, y: y - prescH, width: width - 60, height: prescH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1 });
-            page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO PACIENTE E PRESCRIÇÃO MÉDICA (PREENCHIMENTO PELO PRESCRITOR)'), { x: 40, y: y - 14, size: 7.6, font: fontBold, color: t.accent });
-
-            let py = y - 32;
-            const drawBlankLine = (label, prefillVal, lx, ly, endX) => {
-                const lTxt = sanitizarTextoPDF(label);
-                page.drawText(lTxt, { x: lx, y: ly, size: 8.5, font: fontBold, color: corEscuro });
-                const startLineX = lx + fontBold.widthOfTextAtSize(lTxt, 8.5) + 6;
-                page.drawLine({ start: { x: startLineX, y: ly - 2 }, end: { x: endX, y: ly - 2 }, thickness: 0.7, color: corLinha });
-                if (prefillVal) {
-                    page.drawText(sanitizarTextoPDF(prefillVal), { x: startLineX + 4, y: ly + 1, size: 9, font: fontReg, color: corEscuro });
-                }
-            };
-
-            drawBlankLine('Paciente:', dados.rxPaciente || '', 40, py, width - 42);
-            py -= 22;
-            drawBlankLine('Endereço do Paciente:', '', 40, py, width - 42);
-            py -= 26;
-            drawBlankLine('Medicamento ou Substância:', dados.rxMed || '', 40, py, width - 42);
-            py -= 22;
-            drawBlankLine('Quantidade e Apresentação:', '', 40, py, 330);
-            drawBlankLine('Forma Farmacêutica:', '', 340, py, width - 42);
-            py -= 22;
-            drawBlankLine('Dose por Unidade Posológica:', '', 40, py, 330);
-            drawBlankLine('Posologia:', '', 340, py, width - 42);
-            py -= 20;
-            // Linhas livres extras para posologia / orientações
-            for (let k = 0; k < 2; k++) {
-                page.drawLine({ start: { x: 40, y: py - 2 }, end: { x: width - 42, y: py - 2 }, thickness: 0.6, color: corLinha });
-                py -= 19;
-            }
-
-            // Área reservada exclusivamente para DATA + CARIMBO E ASSINATURA DO MÉDICO
-            const stampBoxY = y - prescH + 10;
-            drawBlankLine('Data da Prescrição:', '____ / ____ / 202__', 40, stampBoxY + 28, 220);
-
-            page.drawRectangle({
-                x: 245, y: stampBoxY, width: width - 287, height: 54,
-                color: rgb(0.985, 0.99, 1), borderColor: corLinha, borderWidth: 0.9, borderDashArray: [4, 3]
-            });
-            page.drawText(sanitizarTextoPDF('ESPAÇO RESERVADO PARA CARIMBO E ASSINATURA DO MÉDICO / PRESCRITOR'), {
-                x: 256, y: stampBoxY + 41, size: 6.8, font: fontBold, color: corCinza
-            });
-            page.drawLine({ start: { x: 268, y: stampBoxY + 14 }, end: { x: width - 64, y: stampBoxY + 14 }, thickness: 0.7, color: corCinza });
-            page.drawText(sanitizarTextoPDF('Assinatura e Carimbo (CRM / CRO / CRMV)'), { x: 328, y: stampBoxY + 4, size: 7, font: fontReg, color: corCinza });
-
-            y = y - prescH - 10;
-
-            // QUADRO 3: IDENTIFICAÇÃO DO COMPRADOR & FORNECEDOR (EXIGIDO PORTARIA 344/98)
-            const cfH = 114;
-            const halfW = (width - 68) / 2;
-            // Comprador (Esquerda)
-            page.drawRectangle({ x: 30, y: y - cfH, width: halfW, height: cfH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 0.9 });
-            page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO COMPRADOR'), { x: 38, y: y - 13, size: 7.4, font: fontBold, color: t.accent });
-            drawBlankLine('Nome:', '', 38, y - 30, 30 + halfW - 10);
-            drawBlankLine('Ident. / RG:', '', 38, y - 50, 175);
-            drawBlankLine('Órg. Emissor:', '', 180, y - 50, 30 + halfW - 10);
-            drawBlankLine('End.:', '', 38, y - 70, 30 + halfW - 10);
-            drawBlankLine('Cidade/UF:', '', 38, y - 90, 185);
-            drawBlankLine('Tel:', '', 190, y - 90, 30 + halfW - 10);
-
-            // Fornecedor / Farmácia (Direita)
-            const fx0 = 38 + halfW;
-            page.drawRectangle({ x: fx0, y: y - cfH, width: halfW, height: cfH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 0.9 });
-            page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO FORNECEDOR (FARMÁCIA)'), { x: fx0 + 8, y: y - 13, size: 7.4, font: fontBold, color: t.accent });
-            page.drawText(sanitizarTextoPDF('Carimbo da Farmácia / Drogaria e Assinatura do Farmacêutico:'), { x: fx0 + 8, y: y - 28, size: 6.8, font: fontReg, color: corCinza });
-            drawBlankLine('Data Dispensação:', '___ / ___ / 202__', fx0 + 8, y - 95, fx0 + halfW - 10);
-
-            y = y - cfH - 12;
-
-            // QUADRO 4 (RODAPÉ FIXO): AUTORIZAÇÃO DA DIRETORIA + ASSINATURA FIXA (imagens/DIRETORIA23.png) + QR
-            const authH = 96;
-            const authY = 38;
-            page.drawRectangle({ x: 30, y: authY, width: width - 60, height: authH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1.1 });
-            page.drawText(sanitizarTextoPDF('AUTORIZAÇÃO SANITÁRIA — ASSINATURA FIXA DA DIRETORIA (COVISA / ANVISA)'), {
-                x: 40, y: authY + authH - 13, size: 7.4, font: fontBold, color: t.accent
-            });
-
-            // Aviso legal na esquerda
-            const avLines = quebrarLinhasPDF(t.aviso, fontReg, 7.2, 185);
-            let avy = authY + authH - 27;
-            avLines.slice(0, 5).forEach(ln => {
-                page.drawText(ln, { x: 40, y: avy, size: 7.2, font: fontReg, color: corCinza });
-                avy -= 9.5;
-            });
-            page.drawText(sanitizarTextoPDF(`Emissão: ${dados.emissao} | Validade: ${dados.validade}`), {
-                x: 40, y: authY + 9, size: 7, font: fontBold, color: corEscuro
-            });
-
-            // Assinatura Fixa DIRETORIA23.png no centro-direita
-            desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, 355, authY + 7, 215, 74);
-
-            // QR Code de validação no canto direito
-            if (qrImg) {
-                page.drawImage(qrImg, { x: width - 98, y: authY + 14, width: 58, height: 58 });
-                page.drawText(sanitizarTextoPDF('Validar'), { x: width - 81, y: authY + 5, size: 6.6, font: fontBold, color: corCinza });
+        function space(h){if(y-h<62)newPage();}
+        function para(t,{font=regular,size=11,color=ink,leading=16}={}){
+            for(const line of quebrarLinhasPDF(clean(t),font,size,maxWidth)){
+                space(leading);if(line)page.drawText(line,{x:margin,y,font,size,color});y-=leading;
             }
         }
-
-        return await pdfDoc.save();
-    }
-
-    // -------------------------------------------------------------------------
-    // CONSTRUTOR 2: LICENÇA PROVISÓRIA NO MOLDE certificacao_provisoria.pdf
-    // -------------------------------------------------------------------------
-    async function construirPdfLicencaMolde(dados) {
-        const { PDFDocument, rgb, StandardFonts } = PDFLib;
-        const resp = await fetch('certificacao_provisoria.pdf');
-        if (!resp.ok) throw new Error('molde_ausente');
-        const existingPdfBytes = await resp.arrayBuffer();
-        const pdfDoc = await PDFDocument.load(existingPdfBytes);
-        const page = pdfDoc.getPages()[0];
-        const { width } = page.getSize();
-
-        const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-        const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
-        const black = rgb(0, 0, 0);
-
-        const margemEsquerdaTextos = 23;
-        const margemEsquerdaDados = 200;
-        let alturaAtual = 534;
-        const espacoEntreLinhas = 10;
-        const maxWidthDados = 375;
-
-        const drawTextFit = (text, x, y, font, defaultSize, maxWidth) => {
-            const textoSeguro = sanitizarTextoPDF(text || '');
-            let size = defaultSize;
-            let textWidth = font.widthOfTextAtSize(textoSeguro, size);
-            while (textWidth > maxWidth && size > 6) {
-                size -= 0.25;
-                textWidth = font.widthOfTextAtSize(textoSeguro, size);
-            }
-            page.drawText(textoSeguro, { x, y, size, font, color: black });
-        };
-
-        const digits = (dados.cnpj || '').replace(/\D/g, '');
-        const labelDoc = digits.length === 11 ? 'CPF:' : 'CNPJ:';
-        const endereco = dados.num ? `${dados.rua}, ${dados.num}` : dados.rua;
-
-        const linhas = [
-            { rotulo: 'NOME / RAZÃO SOCIAL:', valor: (dados.nome || 'NÃO INFORMADO').toUpperCase() },
-            { rotulo: labelDoc, valor: dados.cnpj || 'NÃO INFORMADO' },
-            { rotulo: 'DATA DE EMISSÃO:', valor: dados.emissao },
-            { rotulo: 'VÁLIDO ATÉ:', valor: dados.validade },
-            { rotulo: 'ENDEREÇO COMPLETO:', valor: (endereco || 'NÃO INFORMADO').toUpperCase() },
-            { rotulo: 'BAIRRO:', valor: (dados.bairro || 'NÃO INFORMADO').toUpperCase() },
-            { rotulo: 'CEP:', valor: dados.cep || 'NÃO INFORMADO' },
-            { rotulo: 'MUNICÍPIO / UF:', valor: (dados.cidade || 'SÃO PAULO - SP').toUpperCase() }
-        ];
-
-        linhas.forEach(linha => {
-            page.drawText(sanitizarTextoPDF(linha.rotulo), { x: margemEsquerdaTextos, y: alturaAtual, size: 10, font: fontNormal, color: black });
-            drawTextFit(linha.valor, margemEsquerdaDados, alturaAtual, fontBold, 9, maxWidthDados);
-            alturaAtual -= espacoEntreLinhas;
-        });
-
-        if (dados.usarAssinaturaFixa) {
-            const sigImg = await carregarAssinaturaDiretoriaPDF(pdfDoc);
-            if (sigImg) {
-                const dims = sigImg.scaleToFit(200, 68);
-                page.drawRectangle({ x: (width - dims.width) / 2 - 6, y: 42, width: dims.width + 12, height: dims.height + 6, color: rgb(1, 1, 1) });
-                page.drawImage(sigImg, { x: (width - dims.width) / 2, y: 45, width: dims.width, height: dims.height });
-            }
+        function section(label){space(44);page.drawRectangle({x:margin,y:y-9,width:maxWidth,height:25,color:light});page.drawText(clean(label),{x:margin+8,y,font:bold,size:11,color:blue});y-=28;}
+        function field(label,value){para(label,{font:bold,size:9,color:muted,leading:13});para(value||'_______________________________________________________________',{size:11,leading:17});y-=5;}
+        function lines(n){for(let i=0;i<n;i++){space(26);page.drawLine({start:{x:margin,y:y-9},end:{x:width-margin,y:y-9},thickness:.55,color:muted});y-=27;}}
+        newPage();para(title,{font:bold,size:21,color:ink,leading:27});y-=8;
+        para(clinico?'Rascunho clínico para revisão e emissão pelo profissional habilitado. Não é formulário oficial do SUS nem prescrição válida.':'Ficha de conferência e preparação. Não substitui o documento emitido pelo órgão competente.',{size:10,color:muted,leading:15});y-=12;
+        section(clinico?'IDENTIFICAÇÃO DO PROFISSIONAL':'IDENTIFICAÇÃO DO INTERESSADO');
+        field(clinico?'Nome do profissional / serviço':'Nome / razão social',dados.nome);
+        if(clinico){field('Conselho / UF e número de registro',dados.crm);field('Especialidade / RQE (se aplicável)',dados.especialidade);field('Contato profissional',dados.telefone);}
+        else field('CPF / CNPJ (se necessário)',dados.cnpj);
+        field('Endereço informado',[dados.rua,dados.num,dados.bairro,dados.cidade,dados.cep].filter(Boolean).join(', '));
+        field('Data de preparação',dados.emissao);
+        if(clinico){
+            section('PACIENTE E ATENDIMENTO');field('Nome do paciente',dados.rxPaciente);field('Data de nascimento (a preencher)','');
+            field('Modalidade',tipo==='receita_domiciliar'?'Atendimento domiciliar / particular':'A informar pelo profissional');
+            section(receita?'ANOTAÇÕES PARA PRESCRIÇÃO':'ANOTAÇÕES PARA AVALIAÇÃO CLÍNICA');
+            if(receita){para('Medicamento, concentração, forma, quantidade, via, posologia e duração: preencher exclusivamente após avaliação clínica.');lines(5);}
+            else lines(4);
+            if(dados.rxMed)field('Anotações fornecidas para revisão',dados.rxMed);
+        }else{
+            section('REFERÊNCIA E CONFERÊNCIA');
+            if(item)field('Responsável e finalidade',item.description);
+            if(dados.protocolo)field('Referência informada (não verificada)',dados.protocolo);
+            if(dados.ramo)field('Atividade informada',dados.ramo);
+            if(dados.validade)field('Prazo informado (não validado)',dados.validade);
+            para('1. Confirmar o serviço e a competência do órgão emissor.');
+            para('2. Obter os formulários vigentes e conferir a documentação exigida.');
+            para('3. Acompanhar o pedido e anexar o documento emitido oficialmente, quando disponível.');
+            if(DOCGEN_RECEITA_TYPES.has(tipo))para('Não atribuir numeração de receita por conta própria. Utilize o procedimento e os modelos oficiais vigentes.');
+            if(tipo==='ceaf')para('Conferir protocolo clínico, LME, prescrição, exames e documentos pessoais exigidos pelo gestor.');
         }
-
-        return await pdfDoc.save();
-    }
-
-    // -------------------------------------------------------------------------
-    // CONSTRUTOR 3: SOBREPOR DADOS + ASSINATURA NO PDF MOLDE DO REPOSITÓRIO
-    // (Suporta AcroForm se o PDF tiver campos preenchíveis OU sobreposição limpa)
-    // -------------------------------------------------------------------------
-    async function construirPdfSobreMoldeRepo(tipo, dados) {
-        const filenameRepo = DOCGEN_REPO_FILES[tipo];
-        if (!filenameRepo) throw new Error('sem_molde_repo');
-        if (tipo === 'licenca') return await construirPdfLicencaMolde(dados);
-
-        const { PDFDocument, rgb, StandardFonts } = PDFLib;
-        const resp = await fetch(encodeURI(filenameRepo));
-        if (!resp.ok) throw new Error(`Molde ${filenameRepo} não encontrado no servidor`);
-
-        const buf = await resp.arrayBuffer();
-        const pdfDoc = await PDFDocument.load(buf);
-        const page = pdfDoc.getPages()[0];
-        const { width, height } = page.getSize();
-        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
-        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-        const black = rgb(0.08, 0.1, 0.14);
-        const blue = rgb(0.05, 0.23, 0.52);
-
-        // 1. Se o PDF tiver campos AcroForm interativos, preenche automaticamente por nome!
-        let preencheuForm = false;
-        try {
-            const form = pdfDoc.getForm();
-            const fields = form.getFields();
-            const endFull = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ');
-            fields.forEach(f => {
-                const n = (f.getName() || '').toLowerCase();
-                if (typeof f.setText !== 'function') return;
-                if (n.includes('nome') || n.includes('emitente') || n.includes('razao') || n.includes('medico')) { f.setText(sanitizarTextoPDF(dados.nome)); preencheuForm = true; }
-                else if (n.includes('cnpj') || n.includes('cpf') || n.includes('doc')) { f.setText(sanitizarTextoPDF(dados.cnpj)); preencheuForm = true; }
-                else if (n.includes('crm') || n.includes('conselho') || n.includes('registro')) { f.setText(sanitizarTextoPDF(dados.crm)); preencheuForm = true; }
-                else if (n.includes('end') || n.includes('rua') || n.includes('lograd')) { f.setText(sanitizarTextoPDF(endFull)); preencheuForm = true; }
-                else if (n.includes('bairro')) { f.setText(sanitizarTextoPDF(dados.bairro)); preencheuForm = true; }
-                else if (n.includes('cep')) { f.setText(sanitizarTextoPDF(dados.cep)); preencheuForm = true; }
-                else if (n.includes('cidade') || n.includes('municip')) { f.setText(sanitizarTextoPDF(dados.cidade)); preencheuForm = true; }
-                else if (n.includes('tel') || n.includes('fone')) { f.setText(sanitizarTextoPDF(dados.telefone)); preencheuForm = true; }
-                else if (n.includes('valor')) { f.setText(sanitizarTextoPDF(dados.valor)); preencheuForm = true; }
-                else if (n.includes('venc') || n.includes('valid')) { f.setText(sanitizarTextoPDF(dados.validade)); preencheuForm = true; }
-                else if (n.includes('data') || n.includes('emiss')) { f.setText(sanitizarTextoPDF(dados.emissao)); preencheuForm = true; }
-                else if (n.includes('num') || n.includes('prot') || n.includes('serie')) { f.setText(sanitizarTextoPDF(dados.protocolo)); preencheuForm = true; }
-            });
-        } catch (_) {}
-
-        // 2. Se o PDF for plano (sem campos AcroForm), carimba um quadro limpo no topo/rodapé com os dados + Assinatura Fixa
-        if (!preencheuForm) {
-            const endFull = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro, dados.cidade, dados.cep ? `CEP ${dados.cep}` : ''].filter(Boolean).join(' • ');
-            const numRx = `${dados.rxSerie || 'SP-2026-'}${String(parseInt(dados.rxInicio, 10) || 1001).padStart(6, '0')}`;
-            const boxH = 74;
-            const boxY = height - boxH - 16;
-            page.drawRectangle({ x: 22, y: boxY, width: width - 44, height: boxH, color: rgb(0.98, 0.99, 1), borderColor: blue, borderWidth: 1 });
-            page.drawText(sanitizarTextoPDF(`DADOS AUTORIZADOS COVISA • PROTOCOLO: ${dados.protocolo}${DOCGEN_RECEITA_TYPES.has(tipo) ? ' • Nº ' + numRx : ''}`), { x: 30, y: boxY + boxH - 13, size: 7.5, font: fontBold, color: blue });
-            page.drawText(sanitizarTextoPDF(`EMITENTE / CONTRIBUINTE: ${(dados.nome || '').toUpperCase()}${dados.crm ? '  |  ' + dados.crm.toUpperCase() : ''}`), { x: 30, y: boxY + boxH - 27, size: 8.5, font: fontBold, color: black });
-            page.drawText(sanitizarTextoPDF(`CPF/CNPJ: ${dados.cnpj || '—'}   |   TEL: ${dados.telefone || '—'}   |   EMISSÃO: ${dados.emissao}   |   VALIDADE/VENC.: ${dados.validade}${dados.valor ? '   |   VALOR: R$ ' + dados.valor : ''}`), { x: 30, y: boxY + boxH - 41, size: 7.8, font: fontReg, color: black });
-            page.drawText(sanitizarTextoPDF(`ENDEREÇO: ${endFull || '—'}`), { x: 30, y: boxY + boxH - 55, size: 7.8, font: fontReg, color: black });
-        }
-
-        // Assinatura Fixa DIRETORIA23.png no rodapé do molde
-        if (dados.usarAssinaturaFixa) {
-            const sigImg = await carregarAssinaturaDiretoriaPDF(pdfDoc);
-            if (sigImg) {
-                const dims = sigImg.scaleToFit(200, 68);
-                page.drawRectangle({ x: (width - dims.width) / 2 - 8, y: 18, width: dims.width + 16, height: dims.height + 8, color: rgb(1, 1, 1), borderColor: rgb(0.85, 0.88, 0.92), borderWidth: 0.6 });
-                page.drawImage(sigImg, { x: (width - dims.width) / 2, y: 22, width: dims.width, height: dims.height });
-            }
-        }
-
-        return await pdfDoc.save();
-    }
-
-    // -------------------------------------------------------------------------
-    // CONSTRUTOR 4: DOCUMENTOS INSTITUCIONAIS A4 COMPLETOS (Guia PIX, Recibo,
-    // Autorização Talonário, Dispensa, Vistoria, Notificação, Infração, Ofício)
-    // TODOS COM ASSINATURA FIXA imagens/DIRETORIA23.png
-    // -------------------------------------------------------------------------
-    async function construirPdfInstitucionalA4(tipo, dados) {
-        const { PDFDocument, rgb, StandardFonts } = PDFLib;
-        const pdfDoc = await PDFDocument.create();
-        const page = pdfDoc.addPage([595.28, 841.89]);
-        const { width, height } = page.getSize();
-
-        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
-        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-        const fontMono = await pdfDoc.embedFont(StandardFonts.Courier);
-
-        const corGovAzul = rgb(0.05, 0.23, 0.52);
-        const corVermelho = rgb(0.82, 0.14, 0.11);
-        const corVerde = rgb(0.06, 0.50, 0.33);
-        const corAmbar = rgb(0.76, 0.45, 0.04);
-        const corRoxo = rgb(0.42, 0.16, 0.68);
-        const corEscuro = rgb(0.11, 0.15, 0.22);
-        const corCinza = rgb(0.38, 0.44, 0.52);
-        const corBorda = rgb(0.82, 0.86, 0.91);
-        const corFundoBox = rgb(0.96, 0.97, 0.99);
-
-        const mapaTema = {
-            licenca: { titulo: 'CERTIFICADO DE LICENÇA SANITÁRIA PROVISÓRIA', cor: corVerde, sub: 'Documento Provisório de Regularidade Sanitária — COVISA' },
-            guia: { titulo: 'GUIA OFICIAL DE PAGAMENTO — TAXA DE VIGILÂNCIA SANITÁRIA', cor: corGovAzul, sub: 'Documento de Arrecadação Municipal Sanitária (DAMSP / PIX)' },
-            recibo_quitacao: { titulo: 'COMPROVANTE OFICIAL DE QUITAÇÃO DE TAXA SANITÁRIA', cor: corVerde, sub: 'Recibo Eletrônico de Pagamento Confirmado — COVISA Digital' },
-            autorizacao_talonario: { titulo: 'AUTORIZAÇÃO DE NUMERAÇÃO E CONFECÇÃO DE TALONÁRIO', cor: corRoxo, sub: 'Portaria SVS/MS nº 344/1998 — Liberação de Receituário de Controle Especial' },
-            declaracao: { titulo: 'DECLARAÇÃO DE REGULARIDADE E PROTOCOLO ATIVO', cor: corGovAzul, sub: 'Certidão de Andamento de Processo Sanitário Digital' },
-            dispensa: { titulo: 'CERTIDÃO DE DISPENSA DE LICENCIAMENTO — BAIXO RISCO', cor: corVerde, sub: 'Lei Federal nº 13.874/2019 (Liberdade Econômica) e Normas COVISA' },
-            notificacao: { titulo: 'NOTIFICAÇÃO DE PENDÊNCIA DOCUMENTAL', cor: corAmbar, sub: 'Intimação Administrativa para Regularização Sanitária' },
-            infracao: { titulo: 'AUTO DE INFRAÇÃO E IMPOSIÇÃO DE PENALIDADE', cor: corVermelho, sub: 'Lei Estadual nº 10.083/1998 — Código Sanitário do Estado de São Paulo' },
-            termo_vistoria: { titulo: 'TERMO DE INSPEÇÃO E VISTORIA SANITÁRIA', cor: corRoxo, sub: 'Relatório Oficial de Fiscalização Sanitária Municipal' },
-            oficio: { titulo: (dados.tituloCustom || 'OFÍCIO OFICIAL — VIGILÂNCIA SANITÁRIA').toUpperCase(), cor: corGovAzul, sub: 'Comunicação Oficial da Coordenação de Vigilância em Saúde' }
-        };
-        const tema = mapaTema[tipo] || mapaTema.oficio;
-
-        // Moldura externa
-        page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: corBorda, borderWidth: 1.2 });
-
-        // Faixa superior
-        page.drawRectangle({ x: 24, y: height - 104, width: width - 48, height: 80, color: rgb(0.97, 0.98, 1) });
-        page.drawRectangle({ x: 24, y: height - 107, width: width - 48, height: 3, color: tema.cor });
-
-        const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
-        let textStartX = 44;
-        if (brasaoImg) {
-            const dims = brasaoImg.scaleToFit(54, 54);
-            page.drawImage(brasaoImg, { x: 40, y: height - 92 + (54 - dims.height) / 2, width: dims.width, height: dims.height });
-            textStartX = 108;
-        }
-
-        page.drawText(sanitizarTextoPDF('PREFEITURA DO MUNICÍPIO DE SÃO PAULO'), { x: textStartX, y: height - 50, size: 12, font: fontBold, color: corEscuro });
-        page.drawText(sanitizarTextoPDF('SECRETARIA MUNICIPAL DA SAÚDE — COVISA'), { x: textStartX, y: height - 65, size: 9.5, font: fontBold, color: corVermelho });
-        page.drawText(sanitizarTextoPDF('Coordenação de Vigilância em Saúde | Portal COVISA Digital 2026'), { x: textStartX, y: height - 79, size: 8.5, font: fontReg, color: corCinza });
-        page.drawText(sanitizarTextoPDF(`Protocolo: ${dados.protocolo}`), { x: textStartX, y: height - 93, size: 8.5, font: fontBold, color: corGovAzul });
-
-        // Faixa título
-        let y = height - 142;
-        page.drawRectangle({ x: 38, y: y - 10, width: width - 76, height: 40, color: tema.cor });
-        const titSan = sanitizarTextoPDF(tema.titulo);
-        const titSize = fontBold.widthOfTextAtSize(titSan, 12) > (width - 96) ? 10 : 12;
-        page.drawText(titSan, { x: 50, y: y + 13, size: titSize, font: fontBold, color: rgb(1, 1, 1) });
-        page.drawText(sanitizarTextoPDF(tema.sub), { x: 50, y: y - 1, size: 8.2, font: fontReg, color: rgb(0.92, 0.95, 1) });
-
-        // Bloco identificação
-        y -= 28;
-        const boxH = 118;
-        page.drawRectangle({ x: 38, y: y - boxH, width: width - 76, height: boxH, color: corFundoBox, borderColor: corBorda, borderWidth: 1 });
-        page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO ESTABELECIMENTO / PROFISSIONAL'), { x: 50, y: y - 15, size: 8.2, font: fontBold, color: corGovAzul });
-
-        const digits = (dados.cnpj || '').replace(/\D/g, '');
-        const docRotulo = digits.length === 11 ? 'CPF' : 'CNPJ';
-        const endFull = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ');
-
-        const drawKv = (label, val, x, yPos, maxW = 240) => {
-            page.drawText(sanitizarTextoPDF(label), { x, y: yPos, size: 7.2, font: fontBold, color: corCinza });
-            let v = sanitizarTextoPDF(val || 'Não informado');
-            let sz = 9.2;
-            while (fontBold.widthOfTextAtSize(v, sz) > maxW && sz > 6.8) sz -= 0.4;
-            page.drawText(v, { x, y: yPos - 11.5, size: sz, font: fontBold, color: corEscuro });
-        };
-
-        drawKv('RAZÃO SOCIAL / NOME', (dados.nome || 'Não informado').toUpperCase(), 50, y - 32, 330);
-        drawKv(docRotulo, dados.cnpj || 'Não informado', 402, y - 32, 145);
-        drawKv('ENDEREÇO COMPLETO', endFull || 'Não informado', 50, y - 64, 330);
-        drawKv('CEP', dados.cep || 'Não informado', 402, y - 64, 145);
-        drawKv('MUNICÍPIO / UF', dados.cidade || 'São Paulo - SP', 50, y - 95, 175);
-        drawKv(dados.crm ? 'CONSELHO / RAMO' : 'RAMO DE ATIVIDADE', dados.crm ? `${dados.crm} • ${dados.ramo || 'Saúde'}` : (dados.ramo || 'Geral'), 235, y - 95, 158);
-        drawKv('EMISSÃO / PRAZO', `${dados.emissao} | ${dados.validade}`, 402, y - 95, 148);
-
-        y = y - boxH - 18;
-
-        // Bloco especial por tipo (Financeiro / Talonário / Vistoria)
-        if (tipo === 'guia' || tipo === 'infracao' || tipo === 'recibo_quitacao') {
-            const valorFmt = dados.valor
-                ? (dados.valor.trim().startsWith('R$') ? dados.valor.trim() : `R$ ${dados.valor.trim()}`)
-                : 'R$ 0,00';
-            const finH = 62;
-            const bgFin = tipo === 'recibo_quitacao' ? rgb(0.93, 0.99, 0.96) : rgb(1, 0.97, 0.97);
-            page.drawRectangle({ x: 38, y: y - finH, width: width - 76, height: finH, color: bgFin, borderColor: tema.cor, borderWidth: 1.2 });
-            drawKv(tipo === 'recibo_quitacao' ? 'VALOR QUITADO (PAGO)' : (tipo === 'infracao' ? 'VALOR DA MULTA (UFESP/R$)' : 'VALOR TOTAL DA GUIA'), valorFmt, 50, y - 18, 175);
-            drawKv(tipo === 'recibo_quitacao' ? 'STATUS / DATA QUITAÇÃO' : (tipo === 'infracao' ? 'PRAZO DE DEFESA' : 'DATA DE VENCIMENTO'), tipo === 'recibo_quitacao' ? `PAGO • ${dados.validade}` : dados.validade, 232, y - 18, 150);
-            drawKv('REFERÊNCIA / ENQUADRAMENTO', dados.artigo || dados.tipoTaxa || 'Lei Municipal 13.725/2004', 388, y - 18, 160);
-            y = y - finH - 16;
-        } else if (tipo === 'autorizacao_talonario') {
-            const numIni = Math.max(1, parseInt(dados.rxInicio, 10) || 1001);
-            const qtd = Math.max(1, parseInt(dados.rxQtd, 10) || 50);
-            const numFim = numIni + qtd - 1;
-            const ser = dados.rxSerie || 'SP-2026-';
-            const rxH = 58;
-            page.drawRectangle({ x: 38, y: y - rxH, width: width - 76, height: rxH, color: rgb(0.97, 0.95, 1), borderColor: corRoxo, borderWidth: 1.2 });
-            drawKv('FAIXA NUMÉRICA AUTORIZADA', `${ser}${String(numIni).padStart(6, '0')}  a  ${ser}${String(numFim).padStart(6, '0')}`, 50, y - 18, 255);
-            drawKv('QUANTIDADE TOTAL', `${qtd} folha(s)`, 318, y - 18, 95);
-            drawKv('CONSELHO / REGISTRO', dados.crm || 'Conforme cadastro', 425, y - 18, 125);
-            y = y - rxH - 16;
-        } else if (tipo === 'termo_vistoria') {
-            const vH = 44;
-            page.drawRectangle({ x: 38, y: y - vH, width: width - 76, height: vH, color: rgb(0.97, 0.95, 1), borderColor: corRoxo, borderWidth: 1.2 });
-            drawKv('RESULTADO DA INSPEÇÃO SANITÁRIA', dados.vistoriaStatus || 'SATISFATÓRIO — Apto para funcionamento', 50, y - 15, width - 104);
-            y = y - vH - 16;
-        }
-
-        // Corpo do documento
-        const corpoPadrao = {
-            licenca: 'Certificamos que o estabelecimento acima identificado cumpriu as etapas iniciais de regularização documental perante o Portal COVISA Digital 2026, estando autorizado a operar provisoriamente dentro das normas sanitárias vigentes até a data de validade indicada.',
-            guia: 'Guia oficial referente à Taxa de Análise e Regularização Sanitária (COVISA). Efetue o pagamento via PIX através do QR Code ou código Copia e Cola abaixo até a data de vencimento para liberação imediata do processo e emissão do documento definitivo.',
-            recibo_quitacao: 'Atestamos, para os devidos fins de comprovação fiscal e sanitária, que a taxa referente ao protocolo acima identificado foi devidamente quitada junto ao sistema de arrecadação do Portal COVISA Digital, dando plena quitação à obrigação correspondente.',
-            autorizacao_talonario: 'Fica o profissional/instituição acima identificado AUTORIZADO pela Vigilância Sanitária (COVISA) a confeccionar e utilizar a faixa numérica de Notificações de Receita de Controle Especial especificada neste documento, nos termos da Portaria SVS/MS nº 344/1998. Esta autorização deve ser apresentada à gráfica credenciada para impressão dos talonários.',
-            declaracao: 'Declaramos, para os devidos fins, que o estabelecimento acima identificado encontra-se regularmente protocolado e em acompanhamento perante a Coordenação de Vigilância em Saúde (COVISA), sob o protocolo especificado neste documento.',
-            dispensa: 'Certificamos que a atividade econômica informada pelo estabelecimento acima identificado enquadra-se como de Baixo Risco Sanitário, ficando dispensada de licenciamento sanitário prévio nos termos da Lei Federal nº 13.874/2019 (Lei da Liberdade Econômica) e das normas sanitárias vigentes, sujeita à fiscalização orientadora posterior.',
-            notificacao: 'Fica o estabelecimento acima identificado NOTIFICADO a apresentar a documentação pendente junto ao Portal COVISA Digital dentro do prazo estabelecido, sob pena de aplicação das medidas previstas na Lei Municipal 13.725/2004 e Lei Estadual 10.083/1998.',
-            infracao: 'Auto de Infração lavrado em decorrência de irregularidade sanitária constatada. Fica assegurado ao autuado o prazo legal de 10 (dez) dias para apresentação de defesa administrativa ou 30 (trinta) dias para quitação da penalidade.',
-            termo_vistoria: 'Aos cuidados do responsável legal: realizou-se inspeção sanitária nas dependências do estabelecimento acima qualificado, avaliando condições físico-estruturais, boas práticas de manipulação/atendimento, higienização, controle de pragas e documentação sanitária obrigatória, resultando no parecer registrado neste Termo.',
-            oficio: 'Comunicamos oficialmente a situação cadastral e sanitária referente ao processo em trâmite nesta Coordenação de Vigilância em Saúde.'
-        };
-
-        const textoCorpo = (dados.corpo && dados.corpo.trim()) ? dados.corpo.trim() : (corpoPadrao[tipo] || corpoPadrao.oficio);
-        const tituloSecao = tipo === 'notificacao'
-            ? 'EXIGÊNCIAS E PENDÊNCIAS CONSTATADAS'
-            : (tipo === 'infracao' ? 'DESCRIÇÃO DA INFRAÇÃO E FUNDAMENTAÇÃO' : (tipo === 'termo_vistoria' ? 'CONSTATAÇÕES E EXIGÊNCIAS DA VISTORIA' : 'DESCRIÇÃO / DISPOSIÇÕES OFICIAIS'));
-
-        page.drawText(sanitizarTextoPDF(tituloSecao), { x: 42, y, size: 8.8, font: fontBold, color: corGovAzul });
-        y -= 15;
-
-        const linhasCorpo = quebrarLinhasPDF(textoCorpo, fontReg, 9.6, width - 88);
-        const temBlocoPix = (tipo === 'guia' || tipo === 'infracao') && dados.pixCode && dados.pixCode.trim().length > 20;
-        const maxLinhas = temBlocoPix ? 10 : 20;
-        linhasCorpo.slice(0, maxLinhas).forEach((ln) => {
-            if (y < (temBlocoPix ? 255 : 155)) return;
-            if (ln) page.drawText(ln, { x: 42, y, size: 9.6, font: fontReg, color: corEscuro });
-            y -= 13.2;
-        });
-
-        // Bloco PIX com QR Code real
-        if (temBlocoPix) {
-            y -= 8;
-            const pixBoxH = 114;
-            const boxY = Math.max(138, y - pixBoxH);
-            page.drawRectangle({ x: 38, y: boxY, width: width - 76, height: pixBoxH, color: corFundoBox, borderColor: corGovAzul, borderWidth: 1.1 });
-            page.drawText(sanitizarTextoPDF('PAGAMENTO INSTANTÂNEO VIA PIX (QR CODE + COPIA E COLA)'), { x: 50, y: boxY + pixBoxH - 16, size: 8.2, font: fontBold, color: corGovAzul });
-
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&format=png&data=${encodeURIComponent(dados.pixCode.trim())}`;
-            const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
-            let pixTextX = 50;
-            let pixMaxW = width - 104;
-            if (qrImg) {
-                page.drawImage(qrImg, { x: 48, y: boxY + 9, width: 84, height: 84 });
-                pixTextX = 146;
-                pixMaxW = width - 198;
-            }
-
-            page.drawText(sanitizarTextoPDF('Aponte a câmera do aplicativo do seu banco para o QR Code ou utilize o código abaixo:'), { x: pixTextX, y: boxY + pixBoxH - 32, size: 8, font: fontReg, color: corCinza });
-            const pixLines = quebrarLinhasPDF(dados.pixCode.trim(), fontMono, 7.3, pixMaxW);
-            let py = boxY + pixBoxH - 47;
-            pixLines.slice(0, 5).forEach((pl) => {
-                page.drawText(pl, { x: pixTextX, y: py, size: 7.3, font: fontMono, color: corEscuro });
-                py -= 10;
-            });
-        }
-
-        // ASSINATURA FIXA DIRETORIA23.png (posicionada limpa e sem sobreposição no rodapé)
-        const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
-        desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, width / 2, 50, 235, 78);
-
-        // QR de validação no canto inferior direito
-        if (!temBlocoPix) {
-            const qrValUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?protocolo=' + dados.protocolo)}`;
-            const qrVal = await carregarImagemEmbedPDF(pdfDoc, qrValUrl);
-            if (qrVal) {
-                page.drawImage(qrVal, { x: width - 92, y: 48, width: 52, height: 52 });
-            }
-        }
-
-        page.drawText(sanitizarTextoPDF(`Documento emitido eletronicamente em ${new Date().toLocaleString('pt-BR')} • vigilanciadigital-sp.com.br`), {
-            x: 40, y: 34, size: 7.2, font: fontReg, color: corCinza
-        });
-
-        return await pdfDoc.save();
+        if(dados.corpo){section('OBSERVAÇÕES PARA CONFERÊNCIA');para(dados.corpo);}
+        section('FONTE PARA CONSULTA');para(item?.url||fonteDocGen(tipo),{size:9,color:blue,leading:13});
+        space(100);y-=18;page.drawLine({start:{x:margin,y},end:{x:width-margin,y},thickness:.8,color:muted});y-=17;
+        para(clinico?'Campo de revisão do profissional responsável (minuta)':'Responsável pela conferência interna (minuta)',{size:10,color:muted});
+        return pdf.save();
     }
 
     function coletarDadosDocGen() {
         inicializarDatasPadraoDocGen(false);
         return {
             tipo: docGenTipoAtual,
-            protocolo: (document.getElementById('docgen-protocolo')?.value || '').trim() || `COVISA-2026-${Date.now().toString().slice(-6)}`,
+            protocolo: (document.getElementById('docgen-protocolo')?.value || '').trim(),
             cnpj: (document.getElementById('docgen-cnpj')?.value || '').trim(),
             nome: (document.getElementById('docgen-nome')?.value || '').trim(),
             crm: (document.getElementById('docgen-crm')?.value || '').trim(),
             especialidade: (document.getElementById('docgen-especialidade')?.value || '').trim(),
             telefone: (document.getElementById('docgen-telefone')?.value || '').trim(),
-            rxSerie: (document.getElementById('docgen-rx-serie')?.value || 'SP-2026-').trim(),
-            rxInicio: (document.getElementById('docgen-rx-inicio')?.value || '1001').trim(),
+            rxSerie: '',
+            rxInicio: '',
             rxQtd: (document.getElementById('docgen-rx-qtd')?.value || '1').trim(),
             rxPaciente: (document.getElementById('docgen-rx-paciente')?.value || '').trim(),
             rxMed: (document.getElementById('docgen-rx-med')?.value || '').trim(),
@@ -7263,10 +6569,6 @@ REGRAS:
             corpo: (document.getElementById('docgen-corpo')?.value || '').trim(),
             tituloCustom: (document.getElementById('docgen-titulo-custom')?.value || '').trim(),
             vistoriaStatus: (document.getElementById('docgen-vistoria-status')?.value || '').trim(),
-            usarAssinaturaFixa: document.getElementById('docgen-usar-assinatura-fixa')?.checked !== false,
-            renderMode: document.getElementById('docgen-render-mode')?.value || 'oficial',
-            fiscal: (document.getElementById('docgen-fiscal')?.value || 'Giliard De Oliveira Santiago').trim(),
-            cargo: (document.getElementById('docgen-cargo')?.value || 'Assessor Técnico CEVISA/COVIS/SMS').trim()
         };
     }
 
@@ -7336,8 +6638,8 @@ REGRAS:
         }
 
         const dados = coletarDadosDocGen();
-        if (!dados.nome) {
-            return showToast("Falta o Nome", "Informe o Nome do Médico/Empresa ou puxe automaticamente do WhatsApp/CNPJ.", "warning");
+        if (!dados.nome && dados.tipo!=='catalogo' && !DOCGEN_CLINICOS.has(dados.tipo)) {
+            return showToast("Falta o Nome", "Informe o nome do interessado ou estabelecimento.", "warning");
         }
 
         const btnPrev = document.getElementById('btn-docgen-preview');
@@ -7348,47 +6650,8 @@ REGRAS:
         if (btnDl) { btnDl.disabled = true; btnDl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
 
         try {
-            let pdfBytes;
-            const ehReceitaFolha = ['receita_a', 'receita_b', 'receita_b2', 'receita_retinoides'].includes(dados.tipo);
-
-            if (dados.renderMode === 'molde_repo' && DOCGEN_REPO_FILES[dados.tipo]) {
-                try {
-                    pdfBytes = await construirPdfSobreMoldeRepo(dados.tipo, dados);
-                } catch (_) {
-                    pdfBytes = ehReceitaFolha
-                        ? await construirPdfReceitaEspecial(dados.tipo, dados)
-                        : await construirPdfInstitucionalA4(dados.tipo, dados);
-                }
-            } else if (ehReceitaFolha) {
-                pdfBytes = await construirPdfReceitaEspecial(dados.tipo, dados);
-            } else if (dados.tipo === 'licenca') {
-                try {
-                    pdfBytes = await construirPdfLicencaMolde(dados);
-                } catch (_) {
-                    pdfBytes = await construirPdfInstitucionalA4('licenca', dados);
-                }
-            } else {
-                pdfBytes = await construirPdfInstitucionalA4(dados.tipo, dados);
-            }
-
-            const docLimpo = (dados.cnpj || dados.crm || dados.protocolo).replace(/[^a-zA-Z0-9]/g, '') || 'COVISA';
-            const prefixos = {
-                receita_a: 'Notificacao_Receita_A',
-                receita_b: 'Notificacao_Receita_B',
-                receita_b2: 'Notificacao_Receita_B2',
-                receita_retinoides: 'Notificacao_Receita_Retinoides',
-                autorizacao_talonario: 'Autorizacao_Talonario_COVISA',
-                licenca: 'Licenca_Provisoria',
-                guia: 'Guia_Pagamento_COVISA',
-                recibo_quitacao: 'Recibo_Quitacao_COVISA',
-                declaracao: 'Declaracao_Regularidade',
-                dispensa: 'Certidao_Baixo_Risco',
-                notificacao: 'Notificacao_Pendencia',
-                infracao: 'Auto_Infracao',
-                termo_vistoria: 'Termo_Vistoria_Sanitaria',
-                oficio: 'Oficio_COVISA'
-            };
-            const filename = `${prefixos[dados.tipo] || 'Documento_COVISA'}_${docLimpo}.pdf`;
+            const pdfBytes=await construirPdfPreparacao(dados.tipo,dados);
+            const filename=`Minuta_${dados.tipo.replace(/[^a-z0-9_]/gi,'')}_${Date.now()}.pdf`;
 
             docGenHistorico.unshift({
                 filename,
@@ -7399,8 +6662,8 @@ REGRAS:
             renderizarHistoricoDocGen();
 
             exibirPdfNaPrevia(pdfBytes, filename, fazerDownload);
-            registrarLog("Gerador de Documentos", `Emitiu ${filename} para ${dados.nome}`);
-            showToast(fazerDownload ? "PDF Baixado!" : "Prévia Pronta!", `${filename} gerado com assinatura fixa.`, "success");
+            registrarLog("Gerador de Documentos", `Preparou ${filename}`);
+            showToast(fazerDownload ? "PDF Baixado!" : "Prévia Pronta!", `${filename} preparado para conferência.`, "success");
         } catch (err) {
             console.error("Erro ao gerar PDF no Gerador:", err);
             showToast("Erro ao Gerar PDF", err.message, "error");
@@ -7422,23 +6685,8 @@ REGRAS:
 
     window.copiarMensagemAcompanhamentoDocGen = async () => {
         const d = coletarDadosDocGen();
-        const titulos = {
-            receita_a: 'sua *Notificação de Receita A (Amarela)* já pré-preenchida e autorizada — basta inserir os dados do paciente/prescrição e colocar seu carimbo e assinatura',
-            receita_b: 'sua *Notificação de Receita B (Azul)* já pré-preenchida e autorizada — basta inserir os dados do paciente/prescrição e colocar seu carimbo e assinatura',
-            receita_b2: 'sua *Notificação de Receita B2 (Azul — Anorexígenos)* já pré-preenchida e autorizada — basta inserir os dados do paciente/prescrição e colocar seu carimbo e assinatura',
-            receita_retinoides: 'sua *Notificação de Receita Especial de Retinoides (Lista C2)* já pré-preenchida e autorizada — basta inserir os dados do paciente/prescrição e colocar seu carimbo e assinatura',
-            autorizacao_talonario: 'sua *Autorização Oficial de Numeração e Confecção de Talonário*',
-            licenca: 'sua *Licença Sanitária Provisória*',
-            guia: 'a *Guia Oficial de Pagamento (Taxa Vigilância com PIX)*',
-            recibo_quitacao: 'o *Comprovante Oficial de Quitação da Taxa Sanitária*',
-            declaracao: 'sua *Declaração de Regularidade / Protocolo*',
-            dispensa: 'sua *Certidão de Dispensa / Baixo Risco Sanitário*',
-            notificacao: 'a *Notificação Oficial de Pendência Documental*',
-            infracao: 'o *Auto de Infração Sanitária*',
-            termo_vistoria: 'o *Termo de Inspeção e Vistoria Sanitária*',
-            oficio: `o documento *${d.tituloCustom || 'Ofício Oficial COVISA'}*`
-        };
-        const msg = `*Giliard:*\nOlá! Segue em anexo ${titulos[d.tipo] || 'o documento oficial'} referente a *${d.nome || 'seu cadastro'}*${d.cnpj ? ` (${d.cnpj})` : ''}${d.crm ? ` • ${d.crm}` : ''}.\n\n*Protocolo:* ${d.protocolo}\n*Validade / Prazo:* ${d.validade}${d.valor ? `\n*Valor:* R$ ${d.valor}` : ''}\n\nQualquer dúvida, estou à disposição por aqui!`;
+        const item=d.tipo==='catalogo'?catalogoSelecionadoDocGen():null;
+        const msg=`Olá! Segue uma ficha preparatória de ${item?.title||DOCGEN_TITULOS[d.tipo]||'documentação'} para conferência. Não é autorização, licença, prescrição ou comprovante oficial. Consulte o serviço responsável: ${item?.url||fonteDocGen(d.tipo)}`;
         try {
             await navigator.clipboard.writeText(msg);
             showToast("Mensagem Copiada!", "Cole no WhatsApp junto com o PDF baixado.", "success");
