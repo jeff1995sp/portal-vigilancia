@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     :root {
@@ -401,6 +403,73 @@
     .action-type { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid var(--warning); }
     .action-click { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid var(--success); }
     .action-alert { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
+    .action-gps { background: rgba(16, 185, 129, 0.22); color: #34d399; border: 1px solid #10b981; }
+    .action-pix { background: rgba(192, 132, 252, 0.2); color: #d8b4fe; border: 1px solid var(--gemini-purple); }
+
+    .spy-funnel-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 20px 24px; margin-bottom: 24px;
+    }
+    .spy-funnel-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 14px;
+    }
+    .spy-funnel-step {
+      background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 12px; text-align: center; position: relative;
+    }
+    .spy-funnel-step span.step-label { display: block; font-size: 0.72rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .spy-funnel-step strong.step-num { display: block; font-size: 1.55rem; color: white; font-weight: 900; line-height: 1.1; }
+    .spy-funnel-step span.step-pct { display: inline-block; margin-top: 6px; font-size: 0.75rem; font-weight: 800; color: var(--accent); background: rgba(56, 189, 248, 0.12); padding: 2px 8px; border-radius: 50px; }
+
+    .spy-map-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 20px; margin-bottom: 24px; }
+    .spy-panel-box {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 20px; display: flex; flex-direction: column; gap: 14px;
+    }
+    .spy-panel-box h4 { margin: 0; color: white; font-size: 1rem; font-weight: 800; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    #spy-live-map { width: 100%; height: 340px; border-radius: 12px; border: 1px solid var(--border); background: #070d18; z-index: 1; }
+    .spy-rank-list { display: flex; flex-direction: column; gap: 8px; max-height: 145px; overflow-y: auto; }
+    .spy-rank-item {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: 0.86rem;
+    }
+    .spy-rank-item strong { color: white; font-weight: 800; }
+    .spy-rank-item span { color: var(--accent); font-weight: 800; font-family: var(--font-code); }
+
+    .spy-toolbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 14px 18px; margin-bottom: 14px;
+    }
+    .spy-session-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--primary);
+      border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; transition: 0.2s;
+    }
+    .spy-session-card.is-online { border-left-color: var(--success); }
+    .spy-session-card.is-gps { border-left-color: #10b981; background: rgba(16, 185, 129, 0.04); }
+    .spy-session-card.is-error { border-left-color: var(--danger); background: rgba(239, 68, 68, 0.05); }
+    .spy-session-head { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; cursor: pointer; }
+    .spy-session-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.84rem; color: var(--text-light); }
+    .spy-badge {
+      padding: 3px 10px; border-radius: 50px; font-size: 0.74rem; font-weight: 800; display: inline-flex; align-items: center; gap: 5px;
+    }
+    .spy-badge-gps { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.45); }
+    .spy-badge-cnpj { background: rgba(59, 130, 246, 0.18); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.45); }
+    .spy-badge-ip { background: rgba(245, 158, 11, 0.16); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .spy-badge-ads { background: rgba(192, 132, 252, 0.18); color: #e9d5ff; border: 1px solid rgba(192, 132, 252, 0.45); }
+    .spy-badge-err { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.5); }
+    .spy-session-timeline {
+      display: none; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border-light);
+      flex-direction: column; gap: 7px; font-family: var(--font-code); font-size: 0.85rem;
+    }
+    .spy-session-timeline.open { display: flex; }
+    .spy-tl-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--text-light); }
+    .spy-tl-count { background: rgba(255,255,255,0.1); color: white; font-size: 0.72rem; font-weight: 900; padding: 1px 7px; border-radius: 50px; }
+
+    @media (max-width: 1100px) {
+      .spy-funnel-grid { grid-template-columns: repeat(3, 1fr); }
+      .spy-map-grid { grid-template-columns: 1fr; }
+    }
 
     
     /* ======================================================== */
@@ -1019,36 +1088,117 @@
           <div class="page-title">
             <div>
               <h1>Monitor de Atividade (Console Espião)</h1>
-              <p>Rastreamento avançado de sessões online e registro de toques na tela pública.</p>
+              <p>Localização em 3 camadas (GPS Exato, CNPJ e IP + Operadora), mapa ao vivo, funil do dia e radar de travamentos.</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <button class="btn btn-secondary" id="btn-spy-ignore-me" style="padding: 10px 16px; font-size: 0.86rem;" onclick="alternarIgnorarMeuAparelho()" title="Não contabilizar seus próprios acessos de teste neste navegador">
+                <i class="fas fa-user-secret"></i> Ignorar meu aparelho: OFF
+              </button>
+              <button class="btn btn-secondary" id="btn-spy-pause" style="padding: 10px 16px; font-size: 0.86rem;" onclick="alternarPausaFeedEspiao()">
+                <i class="fas fa-pause"></i> Pausar Feed
+              </button>
+              <a href="https://clarity.microsoft.com/" target="_blank" class="btn btn-primary" style="padding: 10px 18px; font-size: 0.86rem;"><i class="fas fa-video"></i> Gravações (Clarity)</a>
             </div>
           </div>
-          
-          <div class="stats-grid" style="margin-bottom: 30px;">
+
+          <div class="stats-grid" style="margin-bottom: 24px;">
              <div class="stat-card c-success" style="border-color: var(--success); border-width: 2px; box-shadow: 0 0 20px rgba(16,185,129,0.2);">
                <div class="stat-icon" style="background: var(--success); color: #000;"><i class="fas fa-broadcast-tower"></i></div>
                <div class="stat-info">
                   <h3 style="color: var(--success); font-weight: 900; display:flex; align-items:center; gap:8px;">
                     <span class="pulse-online"></span> ONLINE AGORA
                   </h3>
-                  <p id="trafego-agora" style="font-size: 3.5rem; color: var(--success);">0</p>
+                  <p id="trafego-agora" style="font-size: 3rem; color: var(--success);">0</p>
+                  <span id="trafego-agora-sub" style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">0 ativos na tela • 0 em outra aba</span>
                </div>
              </div>
              <div class="stat-card c-primary">
                <div class="stat-icon"><i class="fas fa-users"></i></div>
-               <div class="stat-info"><h3>Visitantes (Total Hoje)</h3><p id="trafego-hoje">0</p></div>
+               <div class="stat-info"><h3>Visitantes (Hoje)</h3><p id="trafego-hoje">0</p></div>
              </div>
              <div class="stat-card c-warning">
                <div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
-               <div class="stat-info"><h3>Pico Máximo Simultâneo</h3><p id="trafego-pico">0</p></div>
+               <div class="stat-info"><h3>Pico Máximo (Salvo)</h3><p id="trafego-pico">0</p></div>
+             </div>
+             <div class="stat-card c-gemini">
+               <div class="stat-icon"><i class="fas fa-map-marker-alt"></i></div>
+               <div class="stat-info">
+                  <h3>GPS Exato / Alertas</h3>
+                  <p id="trafego-gps-count" style="font-size: 2.1rem;">0 / <span id="trafego-err-count" style="color: var(--danger);">0</span></p>
+               </div>
              </div>
           </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 15px;">
-              <h3 style="color: white; font-weight: 800;"><i class="fas fa-satellite-dish" style="color: var(--primary);"></i> Feed de Operações do Contribuinte</h3>
-              <a href="https://clarity.microsoft.com/" target="_blank" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;"><i class="fas fa-video"></i> Ver Gravações de Tela (Microsoft)</a>
+          <!-- FUNIL DE CONVERSÃO DO DIA -->
+          <div class="spy-funnel-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <h4 style="margin: 0; color: white; font-size: 1rem; font-weight: 800;"><i class="fas fa-filter" style="color: var(--accent);"></i> Funil de Conversão de Hoje (Onde o contribuinte avança ou desiste)</h4>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Atualizado em tempo real pelo portal</span>
+            </div>
+            <div class="spy-funnel-grid">
+              <div class="spy-funnel-step"><span class="step-label">1. Entrou</span><strong class="step-num" id="funil-entrou">0</strong><span class="step-pct">100%</span></div>
+              <div class="spy-funnel-step"><span class="step-label">2. Iniciou / Consultou</span><strong class="step-num" id="funil-consulta">0</strong><span class="step-pct" id="pct-consulta">0%</span></div>
+              <div class="spy-funnel-step"><span class="step-label">3. Digitou CPF/CNPJ</span><strong class="step-num" id="funil-cnpj">0</strong><span class="step-pct" id="pct-cnpj">0%</span></div>
+              <div class="spy-funnel-step"><span class="step-label">4. Anexou Doc</span><strong class="step-num" id="funil-anexo">0</strong><span class="step-pct" id="pct-anexo">0%</span></div>
+              <div class="spy-funnel-step"><span class="step-label">5. Enviou Form</span><strong class="step-num" id="funil-enviou" style="color: var(--primary);">0</strong><span class="step-pct" id="pct-enviou">0%</span></div>
+              <div class="spy-funnel-step"><span class="step-label">6. Gerou PIX</span><strong class="step-num" id="funil-pix" style="color: var(--warning);">0</strong><span class="step-pct" id="pct-pix">0%</span></div>
+              <div class="spy-funnel-step"><span class="step-label">7. Pagou PIX</span><strong class="step-num" id="funil-pagou" style="color: var(--success);">0</strong><span class="step-pct" id="pct-pagou">0%</span></div>
+            </div>
           </div>
-          <div class="live-feed-box" id="live-feed-container" style="height: 500px;">
-              <div style="text-align: center; color: var(--text-muted); margin-top: 50px;"><i class="fas fa-circle-notch fa-spin"></i> Monitorando toques e cliques na tela...</div>
+
+          <!-- MAPA AO VIVO + RANKINGS -->
+          <div class="spy-map-grid">
+            <div class="spy-panel-box">
+              <h4>
+                <span><i class="fas fa-map-marked-alt" style="color: var(--success);"></i> Mapa Ao Vivo de Acessos</span>
+                <span style="font-size: 0.78rem; font-weight: 700; display: flex; gap: 12px; color: var(--text-muted);">
+                  <span><i class="fas fa-circle" style="color: #10b981;"></i> GPS Exato</span>
+                  <span><i class="fas fa-circle" style="color: #38bdf8;"></i> IP Aprox.</span>
+                  <span><i class="fas fa-circle" style="color: #ef4444;"></i> Erro/Alerta</span>
+                </span>
+              </h4>
+              <div id="spy-live-map"></div>
+            </div>
+
+            <div class="spy-panel-box">
+              <h4>
+                <span><i class="fas fa-city" style="color: var(--primary);"></i> Top Cidades / Bairros</span>
+                <span id="spy-fora-sp-badge" class="spy-badge spy-badge-err" style="display: none;"><i class="fas fa-exclamation-triangle"></i> Fora de SP: 0</span>
+              </h4>
+              <div class="spy-rank-list" id="spy-top-locais">
+                <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 18px;">Aguardando acessos...</div>
+              </div>
+
+              <h4 style="margin-top: 4px;"><i class="fas fa-bullhorn" style="color: var(--gemini-purple);"></i> Origem do Tráfego (Ads / Orgânico)</h4>
+              <div class="spy-rank-list" id="spy-top-origens">
+                <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 18px;">Aguardando acessos...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BARRA DE FILTROS + MODO SESSÕES / FEED -->
+          <div class="spy-toolbar">
+            <div class="wa-filter-tabs">
+              <button class="wa-filter-btn active" id="spy-mode-sessoes" onclick="mudarModoEspiao('sessoes')"><i class="fas fa-users"></i> Sessões Agrupadas</button>
+              <button class="wa-filter-btn" id="spy-mode-feed" onclick="mudarModoEspiao('feed')"><i class="fas fa-stream"></i> Feed Cronológico</button>
+            </div>
+            <div class="wa-filter-tabs">
+              <button class="wa-filter-btn active" id="spy-flt-todos" onclick="definirFiltroEspiao('todos')">Todos</button>
+              <button class="wa-filter-btn" id="spy-flt-gps" onclick="definirFiltroEspiao('gps')">GPS Exato</button>
+              <button class="wa-filter-btn" id="spy-flt-cnpj" onclick="definirFiltroEspiao('cnpj')">CNPJ / Form</button>
+              <button class="wa-filter-btn" id="spy-flt-pix" onclick="definirFiltroEspiao('pix')">PIX</button>
+              <button class="wa-filter-btn" id="spy-flt-erro" onclick="definirFiltroEspiao('erro')">Erros / Alertas</button>
+              <button class="wa-filter-btn" id="spy-flt-ads" onclick="definirFiltroEspiao('ads')">Google Ads</button>
+            </div>
+            <select id="spy-periodo-select" onchange="trocarPeriodoEspiao()" style="background: var(--bg-sidebar); border: 1px solid var(--border); color: white; padding: 9px 14px; border-radius: 50px; font-size: 0.85rem; font-weight: 700;">
+              <option value="1h">Última hora</option>
+              <option value="hoje" selected>Hoje (desde 00h)</option>
+              <option value="7d">Últimos 7 dias</option>
+            </select>
+          </div>
+
+          <div class="live-feed-box" id="live-feed-container" style="height: 520px; font-family: var(--font-base);">
+              <div style="text-align: center; color: var(--text-muted); margin-top: 60px;"><i class="fas fa-circle-notch fa-spin"></i> Monitorando sessões e atividades em tempo real...</div>
           </div>
 
         </div>
@@ -1612,7 +1762,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, where, orderBy, getDoc, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc, setDoc, updateDoc, deleteDoc, query, where, orderBy, getDoc, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, multiFactor, TotpMultiFactorGenerator } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     // 🔴🔴🔴 COLE SUA CHAVE DA API DO GOOGLE AQUI EMBAIXO 🔴🔴🔴
@@ -2071,6 +2221,9 @@
         // SE CLICOU NA ABA DO WHATSAPP, CARREGA AS CONVERSAS NA HORA
         if (viewId === 'view-financeiro') {
             carregarConversasWhatsApp();
+        }
+        if (viewId === 'view-trafego' && window._spyLeafletMap) {
+            setTimeout(() => { window._spyLeafletMap.invalidateSize(); }, 200);
         }
     }
 
@@ -4302,25 +4455,506 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
     }
 
     // ----------------------------------------------------
-    // MONITOR DE PULSO REAL E FEED DE ATIVIDADES
+    // MONITOR DE PULSO REAL 2.0 (3 CAMADAS + MAPA + FUNIL + SESSÕES)
     // ----------------------------------------------------
     let sessoesAtivas = {};
     let picoMaximo = 0;
+    let spyLogsCache = [];
+    let spyModoAtual = 'sessoes';
+    let spyFiltroAtual = 'todos';
+    let spyFeedPausado = false;
+    let spyUnsubLogs = null;
+    let spyExpandedSessions = new Set();
+    let spyLeafletLayer = null;
+
+    function atualizarBotaoIgnorarAparelho() {
+        const btn = document.getElementById('btn-spy-ignore-me');
+        if (!btn) return;
+        const ignorando = localStorage.getItem('covisa_ignorar_monitor') === '1';
+        if (ignorando) {
+            btn.innerHTML = '<i class="fas fa-user-secret" style="color: var(--success);"></i> Ignorar meu aparelho: ON';
+            btn.style.borderColor = 'var(--success)';
+        } else {
+            btn.innerHTML = '<i class="fas fa-user-secret"></i> Ignorar meu aparelho: OFF';
+            btn.style.borderColor = 'var(--border-light)';
+        }
+    }
+
+    window.alternarIgnorarMeuAparelho = () => {
+        const atual = localStorage.getItem('covisa_ignorar_monitor') === '1';
+        if (atual) {
+            localStorage.removeItem('covisa_ignorar_monitor');
+            showToast("Monitoramento Ativo", "Seus acessos neste navegador voltarão a ser registrados.", "warning");
+        } else {
+            localStorage.setItem('covisa_ignorar_monitor', '1');
+            showToast("Aparelho Ignorado", "Seus próximos testes no site neste navegador não entram mais no Monitor Espião.", "success");
+        }
+        atualizarBotaoIgnorarAparelho();
+    };
+
+    window.alternarPausaFeedEspiao = () => {
+        spyFeedPausado = !spyFeedPausado;
+        const btn = document.getElementById('btn-spy-pause');
+        if (btn) {
+            btn.innerHTML = spyFeedPausado
+                ? '<i class="fas fa-play" style="color: var(--warning);"></i> Retomar Feed'
+                : '<i class="fas fa-pause"></i> Pausar Feed';
+            btn.style.borderColor = spyFeedPausado ? 'var(--warning)' : 'var(--border-light)';
+        }
+        if (!spyFeedPausado) renderizarMonitorEspiao();
+    };
+
+    window.mudarModoEspiao = (modo) => {
+        spyModoAtual = modo;
+        document.getElementById('spy-mode-sessoes')?.classList.toggle('active', modo === 'sessoes');
+        document.getElementById('spy-mode-feed')?.classList.toggle('active', modo === 'feed');
+        renderizarMonitorEspiao();
+    };
+
+    window.definirFiltroEspiao = (filtro) => {
+        spyFiltroAtual = filtro;
+        ['todos', 'gps', 'cnpj', 'pix', 'erro', 'ads'].forEach(f => {
+            document.getElementById('spy-flt-' + f)?.classList.toggle('active', f === filtro);
+        });
+        renderizarMonitorEspiao();
+    };
+
+    window.trocarPeriodoEspiao = () => {
+        assinarLogsEspiao();
+    };
+
+    window.alternarTimelineSessao = (sid) => {
+        if (spyExpandedSessions.has(sid)) spyExpandedSessions.delete(sid);
+        else spyExpandedSessions.add(sid);
+        const el = document.getElementById('spy-tl-' + sid);
+        if (el) el.classList.toggle('open');
+    };
+
+    window.focarNoMapaEspiao = (lat, lng) => {
+        if (window._spyLeafletMap && typeof lat === 'number' && typeof lng === 'number') {
+            window._spyLeafletMap.setView([lat, lng], 15, { animate: true });
+            document.getElementById('spy-live-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
+
+    function formatarLocalHonesto(d) {
+        const fonte = d.locFonte || (d.bairroGPS ? 'gps' : 'ip');
+        const rua = (d.ruaGPS || '').trim();
+        const bairro = (d.bairroGPS || '').trim();
+        const cidade = (d.municipioGPS || (d.localizacao ? d.localizacao.split(' - ')[0] : '') || '').trim();
+        const uf = (d.estadoGPS || (d.localizacao && d.localizacao.includes(' - ') ? d.localizacao.split(' - ')[1] : '') || '').trim();
+        const cep = (d.cepGPS || '').trim();
+
+        let texto = '';
+        if (fonte === 'gps' || fonte === 'cnpj') {
+            const partes = [rua, bairro, cidade && uf ? `${cidade} - ${uf}` : (cidade || uf)].filter(Boolean);
+            texto = partes.join(' • ') || d.localizacao || 'Localização obtida';
+            if (cep) texto += ` (CEP ${cep})`;
+        } else {
+            texto = cidade && uf ? `${cidade} - ${uf}` : (d.localizacao || 'Localização protegida');
+            if (d.operadora) texto += ` • ${d.operadora}`;
+        }
+
+        let badge = '<span class="spy-badge spy-badge-ip"><i class="fas fa-wifi"></i> IP Aprox.</span>';
+        if (fonte === 'gps') {
+            const precTxt = d.precisaoGPS ? ` ±${d.precisaoGPS}m` : '';
+            badge = `<span class="spy-badge spy-badge-gps"><i class="fas fa-crosshairs"></i> GPS Exato${precTxt}</span>`;
+        } else if (fonte === 'cnpj') {
+            badge = '<span class="spy-badge spy-badge-cnpj"><i class="fas fa-building"></i> Endereço CNPJ</span>';
+        }
+
+        return { fonte, texto, badge, cidade, bairro, uf };
+    }
+
+    function classificarAcaoEspiao(d) {
+        const acaoTexto = d.acao || "Acessou o portal";
+        const low = acaoTexto.toLowerCase();
+        const tipo = d.tipoEvento || '';
+
+        if (tipo === 'erro' || low.includes('erro') || low.includes('falha') || low.includes('rage click')) {
+            return { cls: 'action-alert', icon: 'fa-exclamation-triangle', isError: true };
+        }
+        if (tipo === 'gps' || low.includes('gps exato')) {
+            return { cls: 'action-gps', icon: 'fa-crosshairs', isError: false };
+        }
+        if (tipo === 'pix' || low.includes('pix')) {
+            return { cls: 'action-pix', icon: 'fa-qrcode', isError: false };
+        }
+        if (tipo === 'campo' || low.includes('preencheu') || low.includes('informou') || low.includes('cnpj')) {
+            return { cls: 'action-type', icon: 'fa-keyboard', isError: false };
+        }
+        if (tipo === 'clique' || low.includes('tocou') || low.includes('clicou')) {
+            return { cls: 'action-click', icon: 'fa-mouse-pointer', isError: false };
+        }
+        return { cls: 'action-read', icon: 'fa-eye', isError: false };
+    }
+
+    function inicializarMapaEspiao() {
+        const mapEl = document.getElementById('spy-live-map');
+        if (!mapEl || typeof L === 'undefined' || window._spyLeafletMap) return;
+        const map = L.map('spy-live-map', { zoomControl: true }).setView([-23.58, -46.63], 10);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            maxZoom: 19
+        }).addTo(map);
+        spyLeafletLayer = L.layerGroup().addTo(map);
+        window._spyLeafletMap = map;
+    }
+
+    function atualizarMapaERankings(sessoesAgrupadas) {
+        if (spyLeafletLayer) {
+            spyLeafletLayer.clearLayers();
+            sessoesAgrupadas.forEach(s => {
+                if (typeof s.lat === 'number' && typeof s.lng === 'number') {
+                    const cor = s.temErro ? '#ef4444' : (s.locFonte === 'gps' ? '#10b981' : '#38bdf8');
+                    const marker = L.circleMarker([s.lat, s.lng], {
+                        radius: s.locFonte === 'gps' ? 9 : 7,
+                        color: cor,
+                        fillColor: cor,
+                        fillOpacity: 0.75,
+                        weight: 2
+                    });
+                    const mapsLink = `https://www.google.com/maps?q=${s.lat},${s.lng}`;
+                    const popupHtml = `
+                        <div style="font-family: Inter, sans-serif; min-width: 180px; color: #0f172a;">
+                            <strong>${escaparHtmlWA(s.empresaDigitada || s.locInfo.texto)}</strong><br/>
+                            <span style="font-size:12px;">${escaparHtmlWA(s.modelo)} • ${escaparHtmlWA(s.origem)}</span><br/>
+                            <span style="font-size:12px;">Etapa: <b>${escaparHtmlWA(s.etapaAtual)}</b></span><br/>
+                            <a href="${mapsLink}" target="_blank" style="color:#2563eb; font-weight:700; font-size:12px;">Abrir no Google Maps ↗</a>
+                        </div>`;
+                    marker.bindPopup(popupHtml);
+                    marker.addTo(spyLeafletLayer);
+                }
+            });
+        }
+
+        // Rankings de Cidades/Bairros + Alerta Fora de SP + Origens
+        const mapaLocais = new Map();
+        const mapaOrigens = new Map();
+        let foraSP = 0;
+        let qtdGps = 0;
+        let qtdErros = 0;
+
+        sessoesAgrupadas.forEach(s => {
+            if (s.locFonte === 'gps') qtdGps++;
+            if (s.temErro) qtdErros++;
+            const ufNorm = (s.locInfo.uf || '').toUpperCase();
+            if (ufNorm && ufNorm !== 'SP' && ufNorm !== 'SÃO PAULO' && ufNorm !== 'SAO PAULO') {
+                foraSP++;
+            }
+            const chaveLocal = s.locInfo.bairro && s.locInfo.cidade
+                ? `${s.locInfo.bairro}, ${s.locInfo.cidade}`
+                : (s.locInfo.cidade ? `${s.locInfo.cidade}${s.locInfo.uf ? ' - ' + s.locInfo.uf : ''}` : 'Não identificado');
+            mapaLocais.set(chaveLocal, (mapaLocais.get(chaveLocal) || 0) + 1);
+
+            const orig = s.origem || 'Acesso Direto';
+            mapaOrigens.set(orig, (mapaOrigens.get(orig) || 0) + 1);
+        });
+
+        const elGps = document.getElementById('trafego-gps-count');
+        if (elGps) elGps.innerHTML = `${qtdGps} / <span id="trafego-err-count" style="color: var(--danger);">${qtdErros}</span>`;
+
+        const badgeFora = document.getElementById('spy-fora-sp-badge');
+        if (badgeFora) {
+            badgeFora.style.display = foraSP > 0 ? 'inline-flex' : 'none';
+            badgeFora.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Fora de SP: ${foraSP}`;
+        }
+
+        const topLocEl = document.getElementById('spy-top-locais');
+        if (topLocEl) {
+            const topLocs = [...mapaLocais.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+            topLocEl.innerHTML = topLocs.length === 0
+                ? '<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 14px;">Sem dados neste período</div>'
+                : topLocs.map(([nome, qtd]) => `<div class="spy-rank-item"><strong>${escaparHtmlWA(nome)}</strong><span>${qtd}</span></div>`).join('');
+        }
+
+        const topOrigEl = document.getElementById('spy-top-origens');
+        if (topOrigEl) {
+            const topOrigs = [...mapaOrigens.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+            topOrigEl.innerHTML = topOrigs.length === 0
+                ? '<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 14px;">Sem dados neste período</div>'
+                : topOrigs.map(([nome, qtd]) => `<div class="spy-rank-item"><strong>${escaparHtmlWA(nome)}</strong><span>${qtd}</span></div>`).join('');
+        }
+    }
+
+    function agruparSessoesEspiao(logs) {
+        const grupos = new Map();
+        const agora = Date.now();
+
+        logs.forEach(d => {
+            const sid = d.sessionId || `legado_${(d.localizacao || 'x')}_${(d.modelo || 'x')}_${Math.floor((d.dataHora || 0) / 1800000)}`;
+            if (!grupos.has(sid)) {
+                const live = sessoesAtivas[sid];
+                grupos.set(sid, {
+                    sid,
+                    online: Boolean(live && (agora - (live.ultima_acao || 0) <= 20000)),
+                    visivel: live ? live.visivel !== false : false,
+                    dispositivo: d.dispositivo || '💻',
+                    modelo: d.modelo || 'Desconhecido',
+                    tela: d.tela || '',
+                    conexao: d.conexao || '',
+                    origem: d.origem || 'Acesso Direto',
+                    recorrente: Boolean(d.recorrente),
+                    locFonte: d.locFonte || (d.bairroGPS ? 'gps' : 'ip'),
+                    lat: typeof d.lat === 'number' ? d.lat : null,
+                    lng: typeof d.lng === 'number' ? d.lng : null,
+                    locInfo: formatarLocalHonesto(d),
+                    cnpjDigitado: d.cnpjDigitado || '',
+                    empresaDigitada: d.empresaDigitada || '',
+                    etapaAtual: d.etapaAtual || d.acao || 'Navegando',
+                    ultimaHora: d.dataHora || 0,
+                    primeiraHora: d.dataHora || 0,
+                    temErro: false,
+                    temPix: false,
+                    temCnpj: false,
+                    eventos: []
+                });
+            }
+
+            const g = grupos.get(sid);
+            g.eventos.push(d);
+            if ((d.dataHora || 0) > g.ultimaHora) g.ultimaHora = d.dataHora;
+            if ((d.dataHora || 0) < g.primeiraHora) g.primeiraHora = d.dataHora;
+
+            // Prioriza localização mais precisa (gps > cnpj > ip)
+            const rank = { gps: 3, cnpj: 2, ip: 1, buscando: 0 };
+            const novaFonte = d.locFonte || (d.bairroGPS ? 'gps' : 'ip');
+            if ((rank[novaFonte] || 0) >= (rank[g.locFonte] || 0)) {
+                g.locFonte = novaFonte;
+                g.locInfo = formatarLocalHonesto(d);
+                if (typeof d.lat === 'number' && typeof d.lng === 'number') {
+                    g.lat = d.lat;
+                    g.lng = d.lng;
+                }
+            }
+
+            if (d.cnpjDigitado && !g.cnpjDigitado) g.cnpjDigitado = d.cnpjDigitado;
+            if (d.empresaDigitada && !g.empresaDigitada) g.empresaDigitada = d.empresaDigitada;
+            if (d.origem && g.origem === 'Acesso Direto' && d.origem !== 'Acesso Direto') g.origem = d.origem;
+
+            const clsInfo = classificarAcaoEspiao(d);
+            if (clsInfo.isError) g.temErro = true;
+            if (d.tipoEvento === 'pix' || (d.acao || '').toLowerCase().includes('pix')) g.temPix = true;
+            if (d.cnpjDigitado || (d.acao || '').toLowerCase().includes('cnpj') || (d.acao || '').toLowerCase().includes('protocolo')) g.temCnpj = true;
+        });
+
+        return [...grupos.values()].sort((a, b) => (b.online - a.online) || (b.ultimaHora - a.ultimaHora));
+    }
+
+    function passaFiltroEspiao(item, ehSessao) {
+        if (spyFiltroAtual === 'todos') return true;
+        if (ehSessao) {
+            if (spyFiltroAtual === 'gps') return item.locFonte === 'gps';
+            if (spyFiltroAtual === 'cnpj') return item.temCnpj || Boolean(item.cnpjDigitado);
+            if (spyFiltroAtual === 'pix') return item.temPix;
+            if (spyFiltroAtual === 'erro') return item.temErro;
+            if (spyFiltroAtual === 'ads') return (item.origem || '').toLowerCase().includes('ads');
+            return true;
+        }
+        const low = (item.acao || '').toLowerCase();
+        if (spyFiltroAtual === 'gps') return item.locFonte === 'gps' || item.tipoEvento === 'gps';
+        if (spyFiltroAtual === 'cnpj') return Boolean(item.cnpjDigitado) || low.includes('cnpj') || low.includes('cpf') || low.includes('protocolo') || low.includes('anexou');
+        if (spyFiltroAtual === 'pix') return item.tipoEvento === 'pix' || low.includes('pix');
+        if (spyFiltroAtual === 'erro') return classificarAcaoEspiao(item).isError;
+        if (spyFiltroAtual === 'ads') return (item.origem || '').toLowerCase().includes('ads');
+        return true;
+    }
+
+    function renderizarMonitorEspiao() {
+        const feedContainer = document.getElementById('live-feed-container');
+        if (!feedContainer) return;
+
+        const sessoes = agruparSessoesEspiao(spyLogsCache);
+        atualizarMapaERankings(sessoes);
+
+        if (spyModoAtual === 'sessoes') {
+            const filtradas = sessoes.filter(s => passaFiltroEspiao(s, true));
+            if (filtradas.length === 0) {
+                feedContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:70px;"><i class="fas fa-satellite" style="font-size:2.4rem; opacity:0.35; margin-bottom:12px;"></i><p>Nenhuma sessão encontrada para este filtro/período.</p></div>';
+                return;
+            }
+
+            feedContainer.innerHTML = filtradas.map(s => {
+                const durSeg = Math.max(1, Math.round((s.ultimaHora - s.primeiraHora) / 1000));
+                const durTxt = durSeg >= 60 ? `${Math.floor(durSeg / 60)}m ${durSeg % 60}s` : `${durSeg}s`;
+                const horaUlt = new Date(s.ultimaHora).toLocaleTimeString('pt-BR');
+                const cardCls = s.temErro ? 'is-error' : (s.locFonte === 'gps' ? 'is-gps' : (s.online ? 'is-online' : ''));
+                const openCls = spyExpandedSessions.has(s.sid) ? 'open' : '';
+
+                const statusOnline = s.online
+                    ? (s.visivel
+                        ? '<span class="spy-badge spy-badge-gps"><i class="fas fa-circle" style="font-size:0.5rem;"></i> Online na tela</span>'
+                        : '<span class="spy-badge spy-badge-ip"><i class="fas fa-window-minimize"></i> Em outra aba</span>')
+                    : `<span style="font-size:0.78rem; color:var(--text-muted); font-family:var(--font-code);">${horaUlt}</span>`;
+
+                const badgeAds = (s.origem || '').toLowerCase().includes('ads')
+                    ? `<span class="spy-badge spy-badge-ads"><i class="fas fa-bullhorn"></i> ${escaparHtmlWA(s.origem)}</span>`
+                    : `<span style="font-size:0.78rem; color:var(--text-muted);">${escaparHtmlWA(s.origem)}</span>`;
+
+                const btnMapa = (typeof s.lat === 'number' && typeof s.lng === 'number')
+                    ? `<button type="button" class="wa-btn-sm" style="padding:5px 10px; font-size:0.76rem;" onclick="event.stopPropagation(); focarNoMapaEspiao(${s.lat}, ${s.lng})"><i class="fas fa-map-pin" style="color:var(--success);"></i> Mapa</button>
+                       <a href="https://www.google.com/maps?q=${s.lat},${s.lng}" target="_blank" class="wa-btn-sm" style="padding:5px 10px; font-size:0.76rem;" onclick="event.stopPropagation();" title="Abrir ponto no Google Maps"><i class="fas fa-external-link-alt"></i></a>`
+                    : '';
+
+                // Colapsa cliques idênticos consecutivos na linha do tempo
+                const tlCompacta = [];
+                s.eventos.forEach(ev => {
+                    const prev = tlCompacta[tlCompacta.length - 1];
+                    if (prev && prev.ev.acao === ev.acao) {
+                        prev.qtd++;
+                    } else {
+                        tlCompacta.push({ ev, qtd: 1 });
+                    }
+                });
+
+                const tlHtml = tlCompacta.slice(0, 25).map(({ ev, qtd }) => {
+                    const c = classificarAcaoEspiao(ev);
+                    const h = new Date(ev.dataHora).toLocaleTimeString('pt-BR');
+                    return `
+                        <div class="spy-tl-row">
+                            <span style="color:var(--gemini-purple); font-weight:700;">[${h}]</span>
+                            <span class="action-box ${c.cls}"><i class="fas ${c.icon}"></i> ${escaparHtmlWA(ev.acao || '')}</span>
+                            ${qtd > 1 ? `<span class="spy-tl-count">x${qtd}</span>` : ''}
+                        </div>`;
+                }).join('');
+
+                return `
+                    <div class="spy-session-card ${cardCls}">
+                        <div class="spy-session-head" onclick="alternarTimelineSessao('${escaparHtmlWA(s.sid)}')">
+                            <div style="display:flex; flex-direction:column; gap:7px; flex:1; min-width:260px;">
+                                <div class="spy-session-meta">
+                                    <span style="font-size:1.2rem;" title="${escaparHtmlWA(s.modelo)}">${s.dispositivo}</span>
+                                    ${statusOnline}
+                                    ${s.locInfo.badge}
+                                    <strong style="color:white;">${escaparHtmlWA(s.locInfo.texto)}</strong>
+                                </div>
+                                <div class="spy-session-meta" style="font-size:0.8rem;">
+                                    <span><i class="fas fa-laptop"></i> ${escaparHtmlWA(s.modelo)}${s.tela ? ' (' + escaparHtmlWA(s.tela) + ')' : ''}${s.conexao ? ' • ' + escaparHtmlWA(s.conexao) : ''}</span>
+                                    <span>•</span>
+                                    ${badgeAds}
+                                    <span>•</span>
+                                    <span><i class="fas fa-stopwatch"></i> ${durTxt}</span>
+                                    <span>•</span>
+                                    <span><i class="fas fa-bolt"></i> ${s.eventos.length} ação(ões)</span>
+                                    ${s.cnpjDigitado ? `<span class="spy-badge spy-badge-cnpj"><i class="fas fa-id-card"></i> ${escaparHtmlWA(s.empresaDigitada || s.cnpjDigitado)}</span>` : ''}
+                                    ${s.temErro ? '<span class="spy-badge spy-badge-err"><i class="fas fa-bug"></i> Erro detectado</span>' : ''}
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                <span style="font-size:0.8rem; color:var(--accent); font-weight:800; background:rgba(56,189,248,0.1); padding:5px 11px; border-radius:8px;">${escaparHtmlWA(s.etapaAtual)}</span>
+                                ${btnMapa}
+                                <i class="fas fa-chevron-down" style="color:var(--text-muted); margin-left:4px;"></i>
+                            </div>
+                        </div>
+                        <div class="spy-session-timeline ${openCls}" id="spy-tl-${escaparHtmlWA(s.sid)}">
+                            ${tlHtml}
+                        </div>
+                    </div>`;
+            }).join('');
+        } else {
+            // Feed cronológico com colapso de ações repetidas consecutivas
+            const filtrados = spyLogsCache.filter(d => passaFiltroEspiao(d, false));
+            if (filtrados.length === 0) {
+                feedContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:70px;">Nenhum evento encontrado para este filtro.</div>';
+                return;
+            }
+            const compactados = [];
+            filtrados.forEach(d => {
+                const prev = compactados[compactados.length - 1];
+                if (prev && prev.d.acao === d.acao && (prev.d.sessionId || prev.d.localizacao) === (d.sessionId || d.localizacao)) {
+                    prev.qtd++;
+                } else {
+                    compactados.push({ d, qtd: 1 });
+                }
+            });
+
+            feedContainer.innerHTML = compactados.slice(0, 120).map(({ d, qtd }) => {
+                const hora = new Date(d.dataHora).toLocaleTimeString('pt-BR');
+                const loc = formatarLocalHonesto(d);
+                const c = classificarAcaoEspiao(d);
+                return `
+                    <div class="feed-item" style="font-family: var(--font-code);">
+                        <span class="time">[${hora}]</span>
+                        <span class="device" title="${escaparHtmlWA(d.modelo || '')}">${d.dispositivo || '💻'}</span>
+                        ${loc.badge}
+                        <span style="color: #e2e8f0; font-weight: 700; max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escaparHtmlWA(loc.texto)}">${escaparHtmlWA(loc.texto)}</span>
+                        <span class="action-box ${c.cls}"><i class="fas ${c.icon}"></i> ${escaparHtmlWA(d.acao || '')}</span>
+                        ${qtd > 1 ? `<span class="spy-tl-count">x${qtd}</span>` : ''}
+                    </div>`;
+            }).join('');
+        }
+    }
+
+    function assinarLogsEspiao() {
+        if (spyUnsubLogs) {
+            spyUnsubLogs();
+            spyUnsubLogs = null;
+        }
+        const periodo = document.getElementById('spy-periodo-select')?.value || 'hoje';
+        let desde = Date.now() - (60 * 60 * 1000);
+        if (periodo === 'hoje') {
+            const d0 = new Date();
+            d0.setHours(0, 0, 0, 0);
+            desde = d0.getTime();
+        } else if (periodo === '7d') {
+            desde = Date.now() - (7 * 24 * 60 * 60 * 1000);
+        }
+
+        const qLogs = query(collection(db, "logs_visitantes"), where("dataHora", ">", desde), orderBy("dataHora", "desc"));
+        spyUnsubLogs = onSnapshot(qLogs, (snapshot) => {
+            const lista = [];
+            snapshot.forEach((docSnap) => lista.push(docSnap.data()));
+            spyLogsCache = lista;
+            if (!spyFeedPausado) {
+                renderizarMonitorEspiao();
+            }
+        });
+    }
+
+    function atualizarFunilNaTela(dadosStats) {
+        const entrou = Number(dadosStats.total || 0);
+        const setStep = (idNum, idPct, val) => {
+            const n = Number(val || 0);
+            const elN = document.getElementById(idNum);
+            const elP = document.getElementById(idPct);
+            if (elN) elN.innerText = n.toLocaleString('pt-BR');
+            if (elP) elP.innerText = entrou > 0 ? `${Math.min(100, Math.round((n / entrou) * 100))}%` : '0%';
+        };
+        const elEntrou = document.getElementById('funil-entrou');
+        if (elEntrou) elEntrou.innerText = entrou.toLocaleString('pt-BR');
+        setStep('funil-consulta', 'pct-consulta', dadosStats.funil_consulta);
+        setStep('funil-cnpj', 'pct-cnpj', dadosStats.funil_cnpj);
+        setStep('funil-anexo', 'pct-anexo', dadosStats.funil_anexo);
+        setStep('funil-enviou', 'pct-enviou', dadosStats.funil_enviou);
+        setStep('funil-pix', 'pct-pix', dadosStats.funil_pix);
+        setStep('funil-pagou', 'pct-pagou', dadosStats.funil_pagou);
+    }
 
     function iniciarMonitorDeTrafegoReal() {
-        // 1. Pega o Total de Hoje
+        atualizarBotaoIgnorarAparelho();
+        inicializarMapaEspiao();
+
         const hojeIso = new Date().toISOString().split('T')[0];
-        onSnapshot(doc(db, "estatisticas", hojeIso), (docSnap) => {
+        const statsDocRef = doc(db, "estatisticas", hojeIso);
+
+        // 1. Estatísticas do dia (Total, Pico salvo no Firestore e Funil)
+        onSnapshot(statsDocRef, (docSnap) => {
             if (docSnap.exists()) {
-                document.getElementById('trafego-hoje').innerText = (docSnap.data().total || 0).toLocaleString('pt-BR');
+                const st = docSnap.data();
+                document.getElementById('trafego-hoje').innerText = (st.total || 0).toLocaleString('pt-BR');
+                if (typeof st.pico_online === 'number' && st.pico_online > picoMaximo) {
+                    picoMaximo = st.pico_online;
+                    document.getElementById('trafego-pico').innerText = picoMaximo;
+                }
+                atualizarFunilNaTela(st);
             }
         });
 
-        // 2. Ouve a coleção de "Acessos ao Vivo" para as sessões atuais
+        // 2. Coleção trafego_aovivo (sessões conectadas)
         onSnapshot(collection(db, "trafego_aovivo"), (snapshot) => {
             snapshot.docChanges().forEach((change) => {
                 if (change.type === "added" || change.type === "modified") {
-                    sessoesAtivas[change.doc.id] = change.doc.data().ultima_acao;
+                    sessoesAtivas[change.doc.id] = change.doc.data();
                 }
                 if (change.type === "removed") {
                     delete sessoesAtivas[change.doc.id];
@@ -4328,76 +4962,40 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
             });
         });
 
-        // 3. Ouve os eventos do "Modo Espião" (Cliques e preenchimentos)
-        const umaHoraAtras = new Date().getTime() - (60 * 60 * 1000);
-        const qLogs = query(collection(db, "logs_visitantes"), where("dataHora", ">", umaHoraAtras), orderBy("dataHora", "desc"));
-        const feedContainer = document.getElementById('live-feed-container');
+        // 3. Eventos do Monitor Espião
+        assinarLogsEspiao();
 
-        onSnapshot(qLogs, (snapshot) => {
-            if(snapshot.empty) return;
-            if(feedContainer) feedContainer.innerHTML = '';
-            
-            snapshot.forEach((docSnap) => {
-                let d = docSnap.data();
-                let dataFormata = new Date(d.dataHora).toLocaleTimeString('pt-BR');
-                let mod = d.modelo ? d.modelo : "Desconhecido";
-                
-                // NOVA LÓGICA DE GPS (Precisa que o site principal envie as variáveis abaixo)
-                let bairro = d.bairroGPS || "Centro"; 
-                let municipio = d.municipioGPS || d.localizacao?.split(' - ')[0] || "Diadema";
-                let estado = d.estadoGPS || "SP";
-                let localFormatado = `${bairro}, ${municipio} - ${estado}`;
-
-                let badgeRecorrente = d.recorrente ? 
-                    '<span style="color: #fbbf24; font-weight: 800; padding: 2px 8px; background: rgba(251, 191, 36, 0.1); border-radius: 4px; font-size: 0.8rem;"><i class="fas fa-sync"></i> Recorrente</span>' : 
-                    '<span style="color: #a78bfa; font-weight: 800; padding: 2px 8px; background: rgba(167, 139, 250, 0.1); border-radius: 4px; font-size: 0.8rem;"><i class="fas fa-sparkles"></i> Novo</span>';
-
-                // Lógica para deixar as ações mais bonitas visualmente
-                let acaoTexto = d.acao || "Acessou a página";
-                let acaoClass = "action-read";
-                let acaoIcon = "fa-eye";
-                
-                if(acaoTexto.toLowerCase().includes('digitou') || acaoTexto.toLowerCase().includes('preencheu')) {
-                    acaoClass = "action-type"; acaoIcon = "fa-keyboard";
-                } else if (acaoTexto.toLowerCase().includes('tocou') || acaoTexto.toLowerCase().includes('clicou')) {
-                    acaoClass = "action-click"; acaoIcon = "fa-mouse-pointer";
-                } else if (acaoTexto.toLowerCase().includes('erro') || acaoTexto.toLowerCase().includes('falha')) {
-                    acaoClass = "action-alert"; acaoIcon = "fa-exclamation-triangle";
-                }
-
-                if(feedContainer) {
-                    feedContainer.innerHTML += `
-                        <div class="feed-item">
-                            <span class="time">[${dataFormata}]</span>
-                            <span class="device" title="${mod}">${d.dispositivo || '💻'}</span>
-                            ${badgeRecorrente}
-                            <span style="color: #10b981; font-weight: 800; width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${localFormatado}"><i class="fas fa-crosshairs"></i> ${localFormatado}</span>
-                            <span class="action-box ${acaoClass}"><i class="fas ${acaoIcon}"></i> ${acaoTexto}</span>
-                        </div>
-                    `;
-                }
-            });
-        });
-
-        // 4. Loop de Pessoas Online
+        // 4. Loop de presença online + gravação do pico no Firestore
         setInterval(() => {
-            let agora = Date.now();
+            const agora = Date.now();
             let onlineAgora = 0;
+            let ativosTela = 0;
+            let outraAba = 0;
 
-            for (let id in sessoesAtivas) {
-                if (agora - sessoesAtivas[id] > 15000) {
+            for (const id in sessoesAtivas) {
+                const s = sessoesAtivas[id];
+                const ts = typeof s === 'number' ? s : (s?.ultima_acao || 0);
+                if (agora - ts > 20000) {
                     delete sessoesAtivas[id];
                 } else {
                     onlineAgora++;
+                    if (s && s.visivel === false) outraAba++;
+                    else ativosTela++;
                 }
             }
 
-            // Atualiza os cartões na tela
-            document.getElementById('trafego-agora').innerText = onlineAgora;
-            
-            if(onlineAgora > picoMaximo) picoMaximo = onlineAgora;
-            document.getElementById('trafego-pico').innerText = picoMaximo;
-        }, 2000);
+            const elAgora = document.getElementById('trafego-agora');
+            const elSub = document.getElementById('trafego-agora-sub');
+            if (elAgora) elAgora.innerText = onlineAgora;
+            if (elSub) elSub.innerText = `${ativosTela} ativos na tela • ${outraAba} em outra aba`;
+
+            if (onlineAgora > picoMaximo) {
+                picoMaximo = onlineAgora;
+                const elPico = document.getElementById('trafego-pico');
+                if (elPico) elPico.innerText = picoMaximo;
+                setDoc(statsDocRef, { pico_online: picoMaximo }, { merge: true }).catch(() => {});
+            }
+        }, 2500);
     }
 
     // Inicialização Geral dos Gráficos e Radar
