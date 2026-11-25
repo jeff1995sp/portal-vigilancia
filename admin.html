@@ -11,6 +11,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js"></script>
 
   <style>
     :root {
@@ -508,6 +510,69 @@
     .spy-tl-list { display: flex; flex-direction: column; gap: 7px; font-family: var(--font-code); font-size: 0.85rem; }
     .spy-tl-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: #f1f5f9; }
     .spy-tl-count { background: #3b82f6; color: white; font-size: 0.72rem; font-weight: 900; padding: 2px 8px; border-radius: 50px; }
+
+    /* ======================================================== */
+    /* MODAL DE TELA AO VIVO EM HD (rrweb + CLARITY)            */
+    /* ======================================================== */
+    .btn-live-screen {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #022c22; border: 1px solid #34d399; padding: 6px 13px;
+      border-radius: 9px; font-size: 0.78rem; font-weight: 900; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+    }
+    .btn-live-screen:hover { transform: translateY(-1px); color: #ffffff; box-shadow: 0 0 22px rgba(16, 185, 129, 0.6); }
+    .btn-clarity-sm {
+      background: rgba(59, 130, 246, 0.16); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.45);
+      padding: 6px 11px; border-radius: 9px; font-size: 0.77rem; font-weight: 800; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;
+    }
+    .btn-clarity-sm:hover { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+
+    .live-screen-modal-box {
+      max-width: 1320px !important; width: 96vw !important; height: 92vh !important; max-height: 94vh !important;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .live-screen-toolbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+      padding: 12px 24px; background: #0a1222; border-bottom: 1px solid #223252;
+    }
+    .live-screen-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.82rem; color: #e2e8f0; }
+    .live-screen-controls { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .live-screen-stage-wrap {
+      flex: 1; background: radial-gradient(circle at center, #111d36 0%, #050a14 100%);
+      overflow: auto; display: flex; align-items: center; justify-content: center;
+      padding: 20px; position: relative;
+    }
+    .live-screen-loader {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px; text-align: center;
+      background: rgba(5, 10, 20, 0.86); backdrop-filter: blur(4px); z-index: 20; padding: 24px;
+    }
+    .live-device-frame {
+      background: #0f172a; border: 2px solid #334155; border-radius: 14px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75); overflow: hidden;
+      display: flex; flex-direction: column; transition: border-radius 0.25s ease;
+    }
+    .live-device-frame.is-mobile-frame {
+      border: 8px solid #1e293b; border-radius: 30px;
+      box-shadow: 0 0 0 2px #475569, 0 25px 60px rgba(0, 0, 0, 0.85);
+    }
+    .live-device-topbar {
+      height: 28px; background: #1e293b; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px; font-size: 0.74rem; color: #cbd5e1; font-family: var(--font-code); flex-shrink: 0;
+    }
+    .live-device-dots { display: flex; gap: 6px; }
+    .live-device-dots span { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .live-viewport-scaler { position: relative; overflow: hidden; background: #ffffff; }
+    #live-replayer-root { transform-origin: top left; position: absolute; top: 0; left: 0; }
+    #live-replayer-root .replayer-wrapper { position: relative !important; }
+    #live-replayer-root iframe { border: none !important; background: #ffffff !important; }
+    .live-screen-footer {
+      padding: 10px 24px; background: #070e1c; border-top: 1px solid #223252;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+      font-size: 0.8rem; color: #cbd5e1; font-family: var(--font-code);
+    }
 
     @media (max-width: 1100px) {
       .spy-funnel-grid { grid-template-columns: repeat(3, 1fr); }
@@ -1806,6 +1871,64 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalTelaAoVivo">
+    <div class="modal-box live-screen-modal-box">
+      <div class="modal-header" style="padding: 18px 26px;">
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <h3 style="margin: 0; font-size: 1.25rem;"><i class="fas fa-desktop" style="color: #10b981;"></i> Transmissão de Tela Ao Vivo (HD)</h3>
+          <span id="live-screen-status-pill" class="spy-badge spy-badge-ip"><i class="fas fa-circle-notch fa-spin"></i> Conectando...</span>
+          <span id="live-screen-dims" class="spy-chip" style="font-family: var(--font-code);">-- x --</span>
+        </div>
+        <button class="btn-close" onclick="fecharTelaAoVivoEspiao()" title="Encerrar transmissão"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="live-screen-toolbar">
+        <div class="live-screen-meta" id="live-screen-visitor-meta">
+          Carregando informações do visitante...
+        </div>
+        <div class="live-screen-controls">
+          <button type="button" class="spy-map-btn active" id="live-zoom-fit" onclick="definirZoomTelaAoVivo('fit')"><i class="fas fa-compress-arrows-alt"></i> Ajustar</button>
+          <button type="button" class="spy-map-btn" id="live-zoom-100" onclick="definirZoomTelaAoVivo('100')">100%</button>
+          <button type="button" class="spy-map-btn" onclick="ajustarZoomManualTela(-0.12)" title="Diminuir zoom"><i class="fas fa-search-minus"></i></button>
+          <button type="button" class="spy-map-btn" onclick="ajustarZoomManualTela(0.12)" title="Aumentar zoom"><i class="fas fa-search-plus"></i></button>
+          <button type="button" class="spy-map-btn" onclick="forcarSincronizacaoTelaAoVivo()" style="border-color: #10b981; color: #6ee7b7;"><i class="fas fa-sync-alt"></i> Sincronizar</button>
+          <button type="button" class="spy-map-btn" id="live-btn-clarity" onclick="abrirClarityDaTelaAoVivo()" style="border-color: #3b82f6; color: #93c5fd;"><i class="fas fa-video"></i> Clarity</button>
+          <button type="button" class="spy-map-btn" onclick="alternarTelaCheiaAoVivo()" title="Tela Cheia"><i class="fas fa-expand"></i></button>
+        </div>
+      </div>
+
+      <div class="live-screen-stage-wrap" id="live-screen-stage-wrap">
+        <div class="live-screen-loader" id="live-screen-loader">
+          <i class="fas fa-satellite-dish fa-spin" style="font-size: 3rem; color: #10b981;"></i>
+          <h3 style="color: #ffffff; margin: 0;" id="live-loader-title">Solicitando quadro HD do dispositivo...</h3>
+          <p style="color: #94a3b8; max-width: 480px; margin: 0; line-height: 1.5;" id="live-loader-desc">
+            A transmissão sob demanda é ativada automaticamente na aba do visitante em 2 a 4 segundos sem travar a navegação dele.
+          </p>
+        </div>
+
+        <div class="live-device-frame" id="live-device-frame" style="display: none;">
+          <div class="live-device-topbar">
+            <div class="live-device-dots">
+              <span style="background: #ef4444;"></span>
+              <span style="background: #f59e0b;"></span>
+              <span style="background: #10b981;"></span>
+            </div>
+            <span id="live-device-url-bar">vigilanciadigital-sp.com.br</span>
+            <span id="live-device-zoom-label">100%</span>
+          </div>
+          <div class="live-viewport-scaler" id="live-viewport-scaler">
+            <div id="live-replayer-root"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="live-screen-footer">
+        <span id="live-footer-action"><i class="fas fa-bolt" style="color: #fbbf24;"></i> Aguardando eventos...</span>
+        <span id="live-footer-stats">Pacotes: 0 • Modo: DOM HD (rrweb)</span>
       </div>
     </div>
   </div>
@@ -4987,8 +5110,14 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
                     ? `<span class="spy-badge spy-badge-ads"><i class="fas fa-bullhorn"></i> ${escaparHtmlWA(s.origem)}</span>`
                     : `<span class="spy-chip"><i class="fas fa-compass"></i> ${escaparHtmlWA(s.origem)}</span>`;
 
+                const btnTelaAoVivo = s.online
+                    ? `<button type="button" class="btn-live-screen" onclick="event.stopPropagation(); abrirTelaAoVivoEspiao('${escaparHtmlWA(s.sid)}')" title="Assistir a tela deste visitante em tempo real em HD"><i class="fas fa-desktop"></i> Ver Tela Ao Vivo</button>`
+                    : '';
+
+                const btnClarity = `<button type="button" class="btn-clarity-sm" onclick="event.stopPropagation(); abrirClaritySessao('${escaparHtmlWA(s.sid)}')" title="Copiar ID da sessão e abrir gravação no Microsoft Clarity"><i class="fas fa-video"></i> Clarity</button>`;
+
                 const btnMapa = (typeof s.lat === 'number' && typeof s.lng === 'number')
-                    ? `<button type="button" class="wa-btn-sm" style="padding:6px 11px; font-size:0.78rem; border-color:#10b981;" onclick="event.stopPropagation(); focarNoMapaEspiao(${s.lat}, ${s.lng})"><i class="fas fa-map-pin" style="color:#10b981;"></i> Ver no Mapa</button>
+                    ? `<button type="button" class="wa-btn-sm" style="padding:6px 11px; font-size:0.78rem; border-color:#10b981;" onclick="event.stopPropagation(); focarNoMapaEspiao(${s.lat}, ${s.lng})"><i class="fas fa-map-pin" style="color:#10b981;"></i> Mapa</button>
                        <a href="https://www.google.com/maps?q=${s.lat},${s.lng}" target="_blank" class="wa-btn-sm" style="padding:6px 10px; font-size:0.78rem;" onclick="event.stopPropagation();" title="Abrir ponto no Google Maps"><i class="fas fa-external-link-alt"></i></a>`
                     : '';
 
@@ -5052,6 +5181,8 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
                             </div>
                             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                                 <span style="font-size:0.82rem; color:#ffffff; font-weight:800; background:rgba(59,130,246,0.22); border:1px solid rgba(59,130,246,0.45); padding:6px 12px; border-radius:8px;">${escaparHtmlWA(s.etapaAtual)}</span>
+                                ${btnTelaAoVivo}
+                                ${btnClarity}
                                 ${btnMapa}
                                 <span class="wa-btn-sm" style="padding:6px 10px; font-size:0.78rem;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Raio-X</span>
                             </div>
@@ -5207,6 +5338,414 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
             }
         }, 2500);
     }
+
+    // =========================================================================
+    // VISUALIZADOR DE TELA AO VIVO EM HD (rrweb) + CLARITY POR SESSÃO
+    // =========================================================================
+    const CLARITY_PROJECT_ID = "vumfbqba1l";
+    let liveWatchSid = null;
+    let liveWatchStreamId = null;
+    let liveWatchHeartbeat = null;
+    let liveWatchUnsubStream = null;
+    let liveWatchUnsubSession = null;
+    let liveReplayer = null;
+    let liveReplayerStarted = false;
+    let liveAppliedChunks = new Set();
+    let livePartBuffers = new Map();
+    let liveViewportW = 1280;
+    let liveViewportH = 720;
+    let liveZoomMode = 'fit';
+    let liveManualScale = 1;
+    let livePacketsCount = 0;
+
+    function garantirRRWebNoAdmin() {
+        if (window.rrweb && typeof window.rrweb.Replayer === 'function') {
+            return Promise.resolve(window.rrweb);
+        }
+        return new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = "https://unpkg.com/rrweb@1.1.3/dist/rrweb.min.js";
+            s.onload = () => (window.rrweb && window.rrweb.Replayer ? resolve(window.rrweb) : reject(new Error("rrweb indisponível")));
+            s.onerror = () => reject(new Error("Erro ao carregar player rrweb"));
+            document.head.appendChild(s);
+        });
+    }
+
+    window.abrirClaritySessao = async (sid) => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(sid);
+            }
+        } catch (_) {}
+        window.open(`https://clarity.microsoft.com/projects/view/${CLARITY_PROJECT_ID}/impressions`, '_blank', 'noopener');
+        showToast(
+            "ID da Sessão Copiado!",
+            `Sessão ${sid} copiada. No Clarity, clique em Filters → Custom tags → sessionId (ou Custom user ID) e cole para abrir o vídeo exato deste visitante.`,
+            "success"
+        );
+    };
+
+    window.abrirClarityDaTelaAoVivo = () => {
+        if (liveWatchSid) abrirClaritySessao(liveWatchSid);
+    };
+
+    function aplicarEscalaTelaAoVivo() {
+        const stage = document.getElementById('live-screen-stage-wrap');
+        const frame = document.getElementById('live-device-frame');
+        const scaler = document.getElementById('live-viewport-scaler');
+        const root = document.getElementById('live-replayer-root');
+        const dimsEl = document.getElementById('live-screen-dims');
+        const zoomLbl = document.getElementById('live-device-zoom-label');
+        if (!stage || !frame || !scaler || !root) return;
+
+        const w = Math.max(320, Number(liveViewportW) || 1280);
+        const h = Math.max(420, Number(liveViewportH) || 720);
+
+        if (dimsEl) dimsEl.innerText = `${w} × ${h}px`;
+        frame.classList.toggle('is-mobile-frame', w <= 560);
+
+        const availW = Math.max(300, stage.clientWidth - 52);
+        const availH = Math.max(300, stage.clientHeight - 76);
+
+        let scale = 1;
+        if (liveZoomMode === 'fit') {
+            scale = Math.min(availW / w, availH / h, 1);
+            liveManualScale = scale;
+        } else if (liveZoomMode === '100') {
+            scale = 1;
+            liveManualScale = 1;
+        } else {
+            scale = Math.max(0.25, Math.min(2.0, liveManualScale));
+        }
+
+        scaler.style.width = `${Math.round(w * scale)}px`;
+        scaler.style.height = `${Math.round(h * scale)}px`;
+        root.style.width = `${w}px`;
+        root.style.height = `${h}px`;
+        root.style.transform = `scale(${scale})`;
+
+        if (zoomLbl) zoomLbl.innerText = `${Math.round(scale * 100)}%`;
+    }
+
+    window.addEventListener('resize', () => {
+        if (liveWatchSid && document.getElementById('modalTelaAoVivo')?.style.display === 'flex') {
+            aplicarEscalaTelaAoVivo();
+        }
+    });
+
+    window.definirZoomTelaAoVivo = (modo) => {
+        liveZoomMode = modo;
+        document.getElementById('live-zoom-fit')?.classList.toggle('active', modo === 'fit');
+        document.getElementById('live-zoom-100')?.classList.toggle('active', modo === '100');
+        aplicarEscalaTelaAoVivo();
+    };
+
+    window.ajustarZoomManualTela = (delta) => {
+        liveZoomMode = 'manual';
+        document.getElementById('live-zoom-fit')?.classList.remove('active');
+        document.getElementById('live-zoom-100')?.classList.remove('active');
+        liveManualScale = Math.max(0.25, Math.min(2.0, liveManualScale + delta));
+        aplicarEscalaTelaAoVivo();
+    };
+
+    window.alternarTelaCheiaAoVivo = () => {
+        const box = document.querySelector('#modalTelaAoVivo .live-screen-modal-box');
+        if (!box) return;
+        if (!document.fullscreenElement) {
+            box.requestFullscreen?.().catch(() => {});
+        } else {
+            document.exitFullscreen?.().catch(() => {});
+        }
+        setTimeout(aplicarEscalaTelaAoVivo, 250);
+    };
+
+    function limparStreamLocalAoVivo() {
+        if (liveWatchUnsubStream) { liveWatchUnsubStream(); liveWatchUnsubStream = null; }
+        if (liveReplayer) {
+            try { liveReplayer.pause(); } catch (_) {}
+            liveReplayer = null;
+        }
+        liveReplayerStarted = false;
+        liveAppliedChunks.clear();
+        livePartBuffers.clear();
+        livePacketsCount = 0;
+        const root = document.getElementById('live-replayer-root');
+        if (root) root.innerHTML = '';
+    }
+
+    async function limparChunksAntigosFirestore(sid) {
+        try {
+            const snap = await getDocs(collection(db, "trafego_aovivo", sid, "screen_stream"));
+            const deletions = [];
+            snap.forEach((docSnap) => {
+                deletions.push(deleteDoc(doc(db, "trafego_aovivo", sid, "screen_stream", docSnap.id)).catch(() => {}));
+            });
+            await Promise.all(deletions);
+        } catch (_) {}
+    }
+
+    function processarEventosRRWebAoVivo(eventos, rr) {
+        if (!Array.isArray(eventos) || eventos.length === 0) return;
+
+        eventos.forEach((ev) => {
+            if (ev.type === 4 && ev.data && ev.data.width && ev.data.height) {
+                liveViewportW = ev.data.width;
+                liveViewportH = ev.data.height;
+                aplicarEscalaTelaAoVivo();
+            } else if (ev.type === 3 && ev.data && ev.data.source === 4 && ev.data.width && ev.data.height) {
+                liveViewportW = ev.data.width;
+                liveViewportH = ev.data.height;
+                aplicarEscalaTelaAoVivo();
+            }
+        });
+
+        const root = document.getElementById('live-replayer-root');
+        const loader = document.getElementById('live-screen-loader');
+        const frame = document.getElementById('live-device-frame');
+        const pill = document.getElementById('live-screen-status-pill');
+
+        if (!liveReplayer) {
+            const temFullSnapshot = eventos.some((ev) => ev.type === 2);
+            if (!temFullSnapshot) return;
+
+            if (root) root.innerHTML = '';
+            liveReplayer = new rr.Replayer([], {
+                root,
+                liveMode: true,
+                mouseTail: {
+                    duration: 450,
+                    lineCap: 'round',
+                    lineWidth: 3,
+                    strokeStyle: '#10b981'
+                },
+                UNSAFE_replayCanvas: false,
+                showWarning: false,
+                showDebug: false
+            });
+        }
+
+        let primeiroTs = null;
+        eventos.forEach((ev) => {
+            if (primeiroTs === null && typeof ev.timestamp === 'number') primeiroTs = ev.timestamp;
+            try {
+                liveReplayer.addEvent(ev);
+            } catch (_) {}
+        });
+
+        if (!liveReplayerStarted && liveReplayer) {
+            liveReplayerStarted = true;
+            try {
+                const baseline = primeiroTs ? (primeiroTs - 800) : (Date.now() - 800);
+                liveReplayer.startLive(baseline);
+            } catch (_) {
+                try { liveReplayer.startLive(); } catch (__) {}
+            }
+            if (loader) loader.style.display = 'none';
+            if (frame) frame.style.display = 'flex';
+            if (pill) {
+                pill.className = 'spy-badge spy-badge-gps';
+                pill.innerHTML = '<span class="pulse-online" style="width:7px;height:7px;"></span> AO VIVO EM HD';
+            }
+            aplicarEscalaTelaAoVivo();
+            setTimeout(aplicarEscalaTelaAoVivo, 350);
+        }
+
+        const statsEl = document.getElementById('live-footer-stats');
+        if (statsEl) {
+            statsEl.innerText = `Pacotes HD: ${livePacketsCount} • Último quadro: ${new Date().toLocaleTimeString('pt-BR')}`;
+        }
+    }
+
+    async function iniciarEscutaStreamAoVivo(sid, streamId) {
+        limparStreamLocalAoVivo();
+        liveWatchStreamId = streamId;
+
+        const loader = document.getElementById('live-screen-loader');
+        const frame = document.getElementById('live-device-frame');
+        const pill = document.getElementById('live-screen-status-pill');
+        if (loader) loader.style.display = 'flex';
+        if (frame) frame.style.display = 'none';
+        if (pill) {
+            pill.className = 'spy-badge spy-badge-ip';
+            pill.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sincronizando tela...';
+        }
+
+        let rr;
+        try {
+            rr = await garantirRRWebNoAdmin();
+        } catch (err) {
+            showToast("Erro no Player", "Não foi possível carregar o player HD (rrweb).", "error");
+            return;
+        }
+
+        // Envia comando sob demanda ao visitante
+        const sRef = doc(db, "trafego_aovivo", sid);
+        await setDoc(sRef, {
+            watchAdminActive: true,
+            watchRequestedAt: Date.now(),
+            watchStreamId: streamId
+        }, { merge: true }).catch(() => {});
+
+        // Ouve a subcoleção de pacotes sem precisar de índice composto no Firestore
+        const streamCol = collection(db, "trafego_aovivo", sid, "screen_stream");
+        liveWatchUnsubStream = onSnapshot(streamCol, (snapshot) => {
+            if (liveWatchStreamId !== streamId) return;
+            const docsDoStream = [];
+            snapshot.forEach((docSnap) => {
+                const d = docSnap.data();
+                if (d && d.streamId === streamId) {
+                    docsDoStream.push(d);
+                }
+            });
+
+            docsDoStream.sort((a, b) => (a.seq - b.seq) || (a.partIndex - b.partIndex));
+
+            docsDoStream.forEach((d) => {
+                const ck = d.chunkKey || `${d.streamId}_${d.seq}`;
+                if (liveAppliedChunks.has(ck)) return;
+
+                if (d.vw && d.vh && !liveReplayerStarted) {
+                    liveViewportW = d.vw;
+                    liveViewportH = d.vh;
+                }
+
+                const totalParts = Number(d.totalParts || 1);
+                if (totalParts === 1) {
+                    liveAppliedChunks.add(ck);
+                    livePacketsCount++;
+                    try {
+                        const eventos = JSON.parse(d.payload);
+                        processarEventosRRWebAoVivo(eventos, rr);
+                    } catch (_) {}
+                } else {
+                    if (!livePartBuffers.has(ck)) livePartBuffers.set(ck, new Map());
+                    const mapaPartes = livePartBuffers.get(ck);
+                    mapaPartes.set(Number(d.partIndex || 0), d.payload || '');
+                    if (mapaPartes.size === totalParts) {
+                        let fullJson = '';
+                        for (let i = 0; i < totalParts; i++) {
+                            fullJson += mapaPartes.get(i) || '';
+                        }
+                        livePartBuffers.delete(ck);
+                        liveAppliedChunks.add(ck);
+                        livePacketsCount++;
+                        try {
+                            const eventos = JSON.parse(fullJson);
+                            processarEventosRRWebAoVivo(eventos, rr);
+                        } catch (_) {}
+                    }
+                }
+            });
+        });
+    }
+
+    window.abrirTelaAoVivoEspiao = async (sid) => {
+        if (!sid) return;
+        await fecharTelaAoVivoEspiao(true);
+
+        liveWatchSid = sid;
+        liveZoomMode = 'fit';
+        document.getElementById('live-zoom-fit')?.classList.add('active');
+        document.getElementById('live-zoom-100')?.classList.remove('active');
+        document.getElementById('modalTelaAoVivo').style.display = 'flex';
+
+        const sRef = doc(db, "trafego_aovivo", sid);
+
+        // Ouve metadados ao vivo do visitante (local, etapa, bateria, scroll, se saiu da aba)
+        liveWatchUnsubSession = onSnapshot(sRef, (docSnap) => {
+            const metaEl = document.getElementById('live-screen-visitor-meta');
+            const footAction = document.getElementById('live-footer-action');
+            const pill = document.getElementById('live-screen-status-pill');
+
+            if (!docSnap.exists()) {
+                if (pill) {
+                    pill.className = 'spy-badge spy-badge-err';
+                    pill.innerHTML = '<i class="fas fa-plug"></i> Visitante saiu do site';
+                }
+                if (footAction) footAction.innerHTML = '<i class="fas fa-info-circle" style="color:#ef4444;"></i> O visitante fechou a aba. Você ainda pode rever a sessão no botão Clarity.';
+                return;
+            }
+
+            const d = docSnap.data() || {};
+            const loc = formatarLocalHonesto(d);
+            const offlineAgora = (Date.now() - Number(d.ultima_acao || 0)) > 25000;
+
+            if (d.viewport && d.viewport.includes('x') && !liveReplayerStarted) {
+                const [vw, vh] = d.viewport.split('x').map(Number);
+                if (vw > 200 && vh > 200) { liveViewportW = vw; liveViewportH = vh; }
+            }
+
+            if (metaEl) {
+                metaEl.innerHTML = `
+                    <span style="font-size:1.1rem;">${d.dispositivo || '💻'}</span>
+                    ${loc.badge}
+                    <strong style="color:#ffffff;">${escaparHtmlWA(loc.texto)}</strong>
+                    ${d.ipPublico ? `<span class="spy-chip chip-ip">IP: ${escaparHtmlWA(d.ipPublico)}</span>` : ''}
+                    <span class="spy-chip">${escaparHtmlWA(d.modelo || '')}</span>
+                    ${d.bateria ? `<span class="spy-chip chip-bat"><i class="fas fa-battery-three-quarters"></i> ${escaparHtmlWA(d.bateria)}</span>` : ''}
+                    ${d.visivel === false ? '<span class="spy-badge spy-badge-ip">Em outra aba</span>' : ''}
+                `;
+            }
+
+            if (footAction) {
+                footAction.innerHTML = `<i class="fas fa-bolt" style="color:#fbbf24;"></i> Etapa: <strong style="color:#fff;">${escaparHtmlWA(d.etapaAtual || 'Navegando')}</strong> • Scroll: ${Number(d.scrollMax || 0)}%${d.cnpjDigitado ? ' • CNPJ: ' + escaparHtmlWA(d.cnpjDigitado) : ''}`;
+            }
+
+            if (offlineAgora && pill) {
+                pill.className = 'spy-badge spy-badge-err';
+                pill.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Sinal fraco / Offline';
+            }
+        });
+
+        const novoStreamId = 'st_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+        await iniciarEscutaStreamAoVivo(sid, novoStreamId);
+
+        liveWatchHeartbeat = setInterval(() => {
+            if (!liveWatchSid || !liveWatchStreamId) return;
+            setDoc(doc(db, "trafego_aovivo", liveWatchSid), {
+                watchAdminActive: true,
+                watchRequestedAt: Date.now(),
+                watchStreamId: liveWatchStreamId
+            }, { merge: true }).catch(() => {});
+        }, 10000);
+    };
+
+    window.forcarSincronizacaoTelaAoVivo = async () => {
+        if (!liveWatchSid) return;
+        const novoStreamId = 'st_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+        await iniciarEscutaStreamAoVivo(liveWatchSid, novoStreamId);
+        showToast("Sincronizando", "Novo quadro completo solicitado ao navegador do visitante.", "success");
+    };
+
+    window.fecharTelaAoVivoEspiao = async (silencioso = false) => {
+        const sidAnterior = liveWatchSid;
+        liveWatchSid = null;
+        liveWatchStreamId = null;
+
+        clearInterval(liveWatchHeartbeat);
+        liveWatchHeartbeat = null;
+        if (liveWatchUnsubSession) { liveWatchUnsubSession(); liveWatchUnsubSession = null; }
+        limparStreamLocalAoVivo();
+
+        if (!silencioso) {
+            if (document.fullscreenElement) {
+                document.exitFullscreen?.().catch(() => {});
+            }
+            const modal = document.getElementById('modalTelaAoVivo');
+            if (modal) modal.style.display = 'none';
+        }
+
+        if (sidAnterior) {
+            try {
+                const sRef = doc(db, "trafego_aovivo", sidAnterior);
+                const snap = await getDoc(sRef);
+                if (snap.exists()) {
+                    await updateDoc(sRef, { watchAdminActive: false, watchRequestedAt: 0 }).catch(() => {});
+                }
+            } catch (_) {}
+            limparChunksAntigosFirestore(sidAnterior);
+        }
+    };
 
     // Inicialização Geral dos Gráficos e Radar
     function initCharts() {

