@@ -222,62 +222,94 @@
     .chat-input-row input:focus { border-color: var(--gemini-purple); }
 
     /* ======================================================== */
-    /* GERADOR DE DOCUMENTOS OFICIAIS (PDF STUDIO)              */
+    /* GERADOR DE DOCUMENTOS & RECEITUÁRIOS OFICIAIS (PDF 2.0)  */
     /* ======================================================== */
     .docgen-layout {
-      display: grid; grid-template-columns: 1.08fr 1fr; gap: 22px;
-      height: calc(100vh - 235px); min-height: 640px;
+      display: grid; grid-template-columns: 1.12fr 1fr; gap: 22px;
+      height: calc(100vh - 230px); min-height: 650px;
     }
     .docgen-form-panel {
       background: var(--bg-card); border: 1px solid #243554; border-radius: var(--radius-xl);
       display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-md);
     }
     .docgen-form-scroll {
-      flex: 1; overflow-y: auto; padding: 20px 22px; display: flex; flex-direction: column; gap: 16px;
+      flex: 1; overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;
     }
+    .docgen-cat-tabs {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 2px;
+    }
+    .docgen-cat-btn {
+      background: #060d1a; border: 1px solid #223456; color: #94a3b8;
+      padding: 6px 12px; border-radius: 50px; font-size: 0.74rem; font-weight: 800;
+      cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .docgen-cat-btn:hover { color: #ffffff; border-color: var(--primary); }
+    .docgen-cat-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+
     .docgen-types-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
     }
     .docgen-type-card {
-      background: #070e1c; border: 1px solid #223456; border-radius: 12px;
-      padding: 12px 10px; cursor: pointer; text-align: left; color: #cbd5e1;
-      display: flex; flex-direction: column; gap: 5px; transition: 0.2s;
+      background: #070e1c; border: 1px solid #223456; border-radius: 11px;
+      padding: 10px 9px; cursor: pointer; text-align: left; color: #cbd5e1;
+      display: flex; flex-direction: column; gap: 4px; transition: 0.2s; position: relative;
     }
     .docgen-type-card:hover { border-color: var(--primary); color: #ffffff; background: #0c172e; }
     .docgen-type-card.active {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(14, 165, 233, 0.12));
-      border-color: #38bdf8; color: #ffffff; box-shadow: 0 0 18px rgba(56, 189, 248, 0.2);
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.24), rgba(14, 165, 233, 0.12));
+      border-color: #38bdf8; color: #ffffff; box-shadow: 0 0 16px rgba(56, 189, 248, 0.22);
     }
-    .docgen-type-card i { font-size: 1.25rem; color: #60a5fa; }
-    .docgen-type-card.active i { color: #38bdf8; }
-    .docgen-type-card strong { font-size: 0.82rem; font-weight: 800; line-height: 1.2; }
-    .docgen-type-card span { font-size: 0.71rem; color: #94a3b8; line-height: 1.25; }
+    .docgen-type-card.theme-yellow { border-left: 3px solid #facc15; }
+    .docgen-type-card.theme-yellow i { color: #facc15; }
+    .docgen-type-card.theme-blue { border-left: 3px solid #38bdf8; }
+    .docgen-type-card.theme-blue i { color: #38bdf8; }
+    .docgen-type-card.theme-red { border-left: 3px solid #f87171; }
+    .docgen-type-card.theme-red i { color: #f87171; }
+    .docgen-type-card.theme-green { border-left: 3px solid #10b981; }
+    .docgen-type-card.theme-green i { color: #34d399; }
+    .docgen-type-card.theme-purple { border-left: 3px solid #c084fc; }
+    .docgen-type-card.theme-purple i { color: #d8b4fe; }
+    .docgen-type-card i { font-size: 1.15rem; color: #60a5fa; }
+    .docgen-type-card strong { font-size: 0.79rem; font-weight: 800; line-height: 1.2; }
+    .docgen-type-card span { font-size: 0.69rem; color: #94a3b8; line-height: 1.2; }
 
     .docgen-box {
       background: #081020; border: 1px solid #1e2f4f; border-radius: 12px;
-      padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+      padding: 13px 15px; display: flex; flex-direction: column; gap: 9px;
     }
+    .docgen-box.highlight-wa { border-color: rgba(37, 211, 102, 0.4); background: linear-gradient(135deg, rgba(16, 185, 129, 0.06), #081020 75%); }
+    .docgen-box.highlight-rx { border-color: rgba(250, 204, 21, 0.45); background: linear-gradient(135deg, rgba(250, 204, 21, 0.06), #081020 75%); }
     .docgen-box-title {
-      font-size: 0.78rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.7px;
-      color: #93c5fd; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      font-size: 0.76rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.65px;
+      color: #93c5fd; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
     }
-    .docgen-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .docgen-row-3 { display: grid; grid-template-columns: 1.3fr 0.6fr 1.1fr; gap: 10px; }
+    .docgen-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .docgen-row-3 { display: grid; grid-template-columns: 1.3fr 0.6fr 1.1fr; gap: 9px; }
+    .docgen-row-3-eq { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; }
     .docgen-field { display: flex; flex-direction: column; gap: 4px; }
-    .docgen-field label { font-size: 0.74rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
+    .docgen-field label { font-size: 0.72rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
     .docgen-field input, .docgen-field select, .docgen-field textarea {
       width: 100%; background: #040914; border: 1px solid #26385a; color: #ffffff;
-      padding: 10px 12px; border-radius: 9px; font-size: 0.88rem; font-family: inherit; transition: 0.2s;
+      padding: 9px 11px; border-radius: 9px; font-size: 0.86rem; font-family: inherit; transition: 0.2s;
     }
     .docgen-field input:focus, .docgen-field select:focus, .docgen-field textarea:focus {
       border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.16);
     }
-    .docgen-field textarea { min-height: 88px; resize: vertical; line-height: 1.5; }
+    .docgen-field textarea { min-height: 82px; resize: vertical; line-height: 1.48; }
     .docgen-inline-input { display: flex; gap: 7px; align-items: center; }
 
+    .docgen-sig-strip {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      background: #040914; border: 1px solid #24395e; border-radius: 10px; padding: 8px 12px;
+    }
+    .docgen-sig-thumb {
+      height: 38px; background: #ffffff; border-radius: 6px; padding: 3px 6px; object-fit: contain;
+      border: 1px solid #334155;
+    }
+
     .docgen-footer-actions {
-      padding: 14px 18px; background: #070e1c; border-top: 1px solid #1f2f4d;
-      display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      padding: 13px 16px; background: #070e1c; border-top: 1px solid #1f2f4d;
+      display: flex; gap: 9px; flex-wrap: wrap; align-items: center; justify-content: space-between;
     }
 
     .docgen-preview-panel {
@@ -315,7 +347,7 @@
       .docgen-types-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 600px) {
-      .docgen-row-2, .docgen-row-3 { grid-template-columns: 1fr; }
+      .docgen-row-2, .docgen-row-3, .docgen-row-3-eq { grid-template-columns: 1fr; }
     }
 
     .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
@@ -1749,61 +1781,115 @@
         </div>
 
         <div id="view-docgen" class="page-view">
-          <div class="page-title" style="margin-bottom: 18px;">
+          <div class="page-title" style="margin-bottom: 16px;">
             <div>
-              <h1><i class="fas fa-file-pdf" style="color: #f87171;"></i> Gerador de Documentos Oficiais (PDF)</h1>
-              <p>Emita Licenças Provisórias, Guias com PIX, Notificações, Autos de Infração, Declarações e Ofícios timbrados em segundos.</p>
+              <h1><i class="fas fa-file-pdf" style="color: #f87171;"></i> Gerador de Documentos & Receituários Especiais (PDF)</h1>
+              <p>Gere Receitas A, B, B2 e Retinoides pré-preenchidas (prontas pro médico carimbar), Guias com PIX, Licenças, Certidões e Autos — todos com assinatura fixa da Diretoria.</p>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <button type="button" class="btn btn-secondary" style="padding: 10px 16px; font-size: 0.86rem;" onclick="limparFormularioDocGen()">
-                <i class="fas fa-eraser"></i> Limpar Campos
+              <button type="button" class="btn btn-secondary" style="padding: 10px 15px; font-size: 0.85rem;" onclick="limparFormularioDocGen()">
+                <i class="fas fa-eraser"></i> Limpar
               </button>
-              <button type="button" class="btn btn-primary" style="padding: 10px 18px; font-size: 0.88rem;" onclick="gerarDocumentoOficialPDF(false)">
-                <i class="fas fa-eye"></i> Atualizar Prévia PDF
+              <button type="button" class="btn btn-primary" style="padding: 10px 17px; font-size: 0.87rem;" onclick="gerarDocumentoOficialPDF(false)">
+                <i class="fas fa-eye"></i> Atualizar Prévia
               </button>
-              <button type="button" class="btn btn-success" style="padding: 10px 18px; font-size: 0.88rem;" onclick="gerarDocumentoOficialPDF(true)">
+              <button type="button" class="btn btn-success" style="padding: 10px 17px; font-size: 0.87rem;" onclick="gerarDocumentoOficialPDF(true)">
                 <i class="fas fa-download"></i> Baixar PDF
               </button>
             </div>
           </div>
 
           <div class="docgen-layout">
-            <!-- COLUNA ESQUERDA: MODELO + DADOS -->
+            <!-- COLUNA ESQUERDA: MODELOS + AUTO-PREENCHIMENTO WHATSAPP/CNPJ + DADOS -->
             <div class="docgen-form-panel">
               <div class="docgen-form-scroll">
-                <!-- 1. TIPO DE DOCUMENTO -->
+
+                <!-- 1. MODELOS DE DOCUMENTOS (14 MODELOS EM CATEGORIAS) -->
                 <div class="docgen-box">
                   <div class="docgen-box-title">
-                    <span><i class="fas fa-layer-group"></i> 1. Escolha o Modelo de Documento</span>
-                    <span id="docgen-template-tag" style="color:#38bdf8; font-size:0.72rem;">Molde Oficial</span>
+                    <span><i class="fas fa-layer-group"></i> 1. Modelo de Documento / Receituário</span>
+                    <span id="docgen-template-tag" style="color:#38bdf8; font-size:0.71rem;">Molde Oficial + Assinatura Fixa</span>
                   </div>
-                  <div class="docgen-types-grid">
-                    <button type="button" class="docgen-type-card active" data-doctype="licenca" onclick="selecionarTipoDocumento('licenca', this)">
+
+                  <div class="docgen-cat-tabs">
+                    <button type="button" class="docgen-cat-btn active" onclick="filtrarCategoriaDocGen('todos', this)"><i class="fas fa-th-large"></i> Todos (14)</button>
+                    <button type="button" class="docgen-cat-btn" onclick="filtrarCategoriaDocGen('receitas', this)"><i class="fas fa-prescription"></i> Receitas Especiais (5)</button>
+                    <button type="button" class="docgen-cat-btn" onclick="filtrarCategoriaDocGen('licencas', this)"><i class="fas fa-qrcode"></i> Licenças & Guias (5)</button>
+                    <button type="button" class="docgen-cat-btn" onclick="filtrarCategoriaDocGen('fiscal', this)"><i class="fas fa-gavel"></i> Fiscalização & Ofícios (4)</button>
+                  </div>
+
+                  <div class="docgen-types-grid" id="docgen-types-grid">
+                    <!-- RECEITUÁRIOS ESPECIAIS -->
+                    <button type="button" class="docgen-type-card theme-yellow" data-cat="receitas" data-doctype="receita_a" onclick="selecionarTipoDocumento('receita_a', this)">
+                      <i class="fas fa-prescription-bottle-alt"></i>
+                      <strong>Receita A (Amarela)</strong>
+                      <span>Entorpecentes A1/A2/A3</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="receitas" data-doctype="receita_b" onclick="selecionarTipoDocumento('receita_b', this)">
+                      <i class="fas fa-capsules"></i>
+                      <strong>Receita B (Azul)</strong>
+                      <span>Psicotrópicos Lista B1</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="receitas" data-doctype="receita_b2" onclick="selecionarTipoDocumento('receita_b2', this)">
+                      <i class="fas fa-pills"></i>
+                      <strong>Receita B2 (Azul)</strong>
+                      <span>Anorexígenos Lista B2</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-red" data-cat="receitas" data-doctype="receita_retinoides" onclick="selecionarTipoDocumento('receita_retinoides', this)">
+                      <i class="fas fa-exclamation-circle"></i>
+                      <strong>Receita Retinoides</strong>
+                      <span>Uso Sistêmico (Lista C2)</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-purple" data-cat="receitas" data-doctype="autorizacao_talonario" onclick="selecionarTipoDocumento('autorizacao_talonario', this)">
+                      <i class="fas fa-list-ol"></i>
+                      <strong>Autoriz. Talonário</strong>
+                      <span>Faixa numérica p/ gráfica</span>
+                    </button>
+
+                    <!-- LICENÇAS, GUIAS & COMPROVANTES -->
+                    <button type="button" class="docgen-type-card theme-green active" data-cat="licencas" data-doctype="licenca" onclick="selecionarTipoDocumento('licenca', this)">
                       <i class="fas fa-certificate"></i>
                       <strong>Licença Provisória</strong>
                       <span>Molde oficial COVISA</span>
                     </button>
-                    <button type="button" class="docgen-type-card" data-doctype="guia" onclick="selecionarTipoDocumento('guia', this)">
+                    <button type="button" class="docgen-type-card theme-green" data-cat="licencas" data-doctype="guia" onclick="selecionarTipoDocumento('guia', this)">
                       <i class="fas fa-qrcode"></i>
-                      <strong>Guia Taxa + PIX</strong>
-                      <span>Com QR Code e Copia e Cola</span>
+                      <strong>Guia Pagamento + PIX</strong>
+                      <span>Taxa Vigilância + QR Code</span>
                     </button>
-                    <button type="button" class="docgen-type-card" data-doctype="notificacao" onclick="selecionarTipoDocumento('notificacao', this)">
+                    <button type="button" class="docgen-type-card theme-green" data-cat="licencas" data-doctype="recibo_quitacao" onclick="selecionarTipoDocumento('recibo_quitacao', this)">
+                      <i class="fas fa-receipt"></i>
+                      <strong>Recibo de Quitação</strong>
+                      <span>Comprovante de pagamento</span>
+                    </button>
+                    <button type="button" class="docgen-type-card" data-cat="licencas" data-doctype="declaracao" onclick="selecionarTipoDocumento('declaracao', this)">
+                      <i class="fas fa-stamp"></i>
+                      <strong>Declaração / Protocolo</strong>
+                      <span>Certidão de andamento</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-green" data-cat="licencas" data-doctype="dispensa" onclick="selecionarTipoDocumento('dispensa', this)">
+                      <i class="fas fa-shield-alt"></i>
+                      <strong>Certidão Baixo Risco</strong>
+                      <span>Dispensa de licença</span>
+                    </button>
+
+                    <!-- FISCALIZAÇÃO, INTIMAÇÕES & OFÍCIOS -->
+                    <button type="button" class="docgen-type-card theme-yellow" data-cat="fiscal" data-doctype="notificacao" onclick="selecionarTipoDocumento('notificacao', this)">
                       <i class="fas fa-exclamation-triangle"></i>
                       <strong>Notificação / Pendência</strong>
                       <span>Intimação com prazo legal</span>
                     </button>
-                    <button type="button" class="docgen-type-card" data-doctype="infracao" onclick="selecionarTipoDocumento('infracao', this)">
+                    <button type="button" class="docgen-type-card theme-red" data-cat="fiscal" data-doctype="infracao" onclick="selecionarTipoDocumento('infracao', this)">
                       <i class="fas fa-gavel"></i>
                       <strong>Auto de Infração</strong>
                       <span>Lei 10.083/98 + UFESP</span>
                     </button>
-                    <button type="button" class="docgen-type-card" data-doctype="declaracao" onclick="selecionarTipoDocumento('declaracao', this)">
-                      <i class="fas fa-stamp"></i>
-                      <strong>Declaração / Protocolo</strong>
-                      <span>Comprovante de regularidade</span>
+                    <button type="button" class="docgen-type-card theme-purple" data-cat="fiscal" data-doctype="termo_vistoria" onclick="selecionarTipoDocumento('termo_vistoria', this)">
+                      <i class="fas fa-clipboard-check"></i>
+                      <strong>Termo de Vistoria</strong>
+                      <span>Inspeção sanitária local</span>
                     </button>
-                    <button type="button" class="docgen-type-card" data-doctype="oficio" onclick="selecionarTipoDocumento('oficio', this)">
+                    <button type="button" class="docgen-type-card theme-purple" data-cat="fiscal" data-doctype="oficio" onclick="selecionarTipoDocumento('oficio', this)">
                       <i class="fas fa-file-signature"></i>
                       <strong>Ofício / Livre (IA)</strong>
                       <span>Título e texto sob medida</span>
@@ -1811,42 +1897,104 @@
                   </div>
                 </div>
 
-                <!-- 2. IMPORTAÇÃO RÁPIDA (FIREBASE OU CNPJ) -->
-                <div class="docgen-box">
+                <!-- 2. AUTO-PREENCHIMENTO PELO WHATSAPP (IA) OU FIREBASE / CNPJ -->
+                <div class="docgen-box highlight-wa">
                   <div class="docgen-box-title">
-                    <span><i class="fas fa-bolt" style="color:#fbbf24;"></i> 2. Preenchimento Automático (Processo ou CNPJ)</span>
+                    <span style="color:#6ee7b7;"><i class="fab fa-whatsapp"></i> 2. Auto-Preencher pelo WhatsApp (IA), Processo ou CNPJ</span>
+                    <button type="button" class="wa-btn-sm" style="padding:4px 9px; font-size:0.72rem;" onclick="atualizarListaWaNoDocGen(true)" title="Atualizar lista de conversas do WhatsApp">
+                      <i class="fas fa-sync-alt"></i> Chats
+                    </button>
                   </div>
+
                   <div class="docgen-field">
-                    <label>Importar de um Processo já cadastrado no Firebase</label>
-                    <select id="docgen-process-selector" onchange="importarProcessoNoDocGen(this.value)">
-                      <option value="">-- Selecionar processo para preencher automaticamente --</option>
-                    </select>
+                    <label>Puxar dados + fotos/PDFs direto de um Chat do WhatsApp (Preenche tudo sozinho)</label>
+                    <div class="docgen-inline-input">
+                      <select id="docgen-wa-selector" style="flex:1;">
+                        <option value="">-- Selecione um chat do WhatsApp para ler com IA --</option>
+                      </select>
+                      <button type="button" class="btn btn-gemini" id="btn-docgen-puxar-wa" style="padding: 9px 14px; font-size: 0.8rem; white-space: nowrap;" onclick="puxarDadosWhatsAppParaDocGen()">
+                        <i class="fas fa-magic"></i> Puxar com IA
+                      </button>
+                    </div>
                   </div>
+
                   <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Ou Importar Processo do Firebase</label>
+                      <select id="docgen-process-selector" onchange="importarProcessoNoDocGen(this.value)">
+                        <option value="">-- Selecionar processo --</option>
+                      </select>
+                    </div>
                     <div class="docgen-field">
                       <label>CPF ou CNPJ (Busca Receita Federal)</label>
                       <div class="docgen-inline-input">
                         <input type="text" id="docgen-cnpj" placeholder="00.000.000/0001-00" oninput="mascararDocGenCnpj(this)" maxlength="18" />
-                        <button type="button" class="wa-btn-sm btn-chat" id="btn-docgen-busca-cnpj" onclick="buscarCnpjNoDocGen()" title="Consultar dados da empresa na Receita Federal" style="padding:9px 12px; white-space:nowrap;">
-                          <i class="fas fa-search"></i> Buscar
+                        <button type="button" class="wa-btn-sm btn-chat" id="btn-docgen-busca-cnpj" onclick="buscarCnpjNoDocGen()" title="Consultar dados da empresa na Receita Federal" style="padding:9px 11px; white-space:nowrap;">
+                          <i class="fas fa-search"></i>
                         </button>
                       </div>
-                    </div>
-                    <div class="docgen-field">
-                      <label>Número do Protocolo</label>
-                      <input type="text" id="docgen-protocolo" placeholder="COVISA-2026-000001" />
                     </div>
                   </div>
                 </div>
 
-                <!-- 3. DADOS DO ESTABELECIMENTO / CONTRIBUINTE -->
+                <!-- 3. CONFIGURAÇÃO DO RECEITUÁRIO ESPECIAL (SÓ APARECE PARA RECEITAS A/B/B2/RETINOIDES/TALONÁRIO) -->
+                <div class="docgen-box highlight-rx" id="docgen-rx-box" style="display: none;">
+                  <div class="docgen-box-title">
+                    <span style="color:#fde047;"><i class="fas fa-user-md"></i> 3. Dados do Médico / Prescritor & Numeração da Receita</span>
+                    <span style="font-size:0.71rem; color:#cbd5e1;">Pronta pro médico só colocar paciente e carimbo</span>
+                  </div>
+
+                  <div class="docgen-row-3-eq">
+                    <div class="docgen-field">
+                      <label>Conselho (CRM / CRO / CRMV)</label>
+                      <input type="text" id="docgen-crm" placeholder="Ex: CRM-SP 123456" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Especialidade / RQE</label>
+                      <input type="text" id="docgen-especialidade" placeholder="Ex: Psiquiatria / Dermatologia" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Telefone do Consultório</label>
+                      <input type="text" id="docgen-telefone" placeholder="(11) 99999-9999" />
+                    </div>
+                  </div>
+
+                  <div class="docgen-row-3-eq">
+                    <div class="docgen-field">
+                      <label>Prefixo / Série Numérica</label>
+                      <input type="text" id="docgen-rx-serie" value="SP-2026-" placeholder="Ex: SP-2026-" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Nº Inicial (Sequência)</label>
+                      <input type="number" id="docgen-rx-inicio" value="1001" min="1" />
+                    </div>
+                    <div class="docgen-field">
+                      <label id="docgen-rx-qtd-label">Qtd. Folhas no PDF (1-50)</label>
+                      <input type="number" id="docgen-rx-qtd" value="1" min="1" max="50" />
+                    </div>
+                  </div>
+
+                  <div class="docgen-row-2" id="docgen-rx-opcional-row">
+                    <div class="docgen-field">
+                      <label>Paciente (Deixe vazio p/ médico preencher)</label>
+                      <input type="text" id="docgen-rx-paciente" placeholder="(Em branco para o médico preencher à mão)" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Medicamento / Obs (Opcional — deixe vazio)</label>
+                      <input type="text" id="docgen-rx-med" placeholder="(Em branco para o médico prescrever)" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4. DADOS DO ESTABELECIMENTO / CONTRIBUINTE / CLÍNICA -->
                 <div class="docgen-box">
                   <div class="docgen-box-title">
-                    <span><i class="fas fa-building"></i> 3. Dados do Estabelecimento / Contribuinte</span>
+                    <span><i class="fas fa-building"></i> Dados do Estabelecimento / Profissional</span>
+                    <input type="text" id="docgen-protocolo" placeholder="COVISA-2026-000001" style="background:#040914; border:1px solid #26385a; color:#38bdf8; padding:4px 9px; border-radius:7px; font-size:0.75rem; font-family:var(--font-code); font-weight:800; width:175px;" title="Número do Protocolo" />
                   </div>
                   <div class="docgen-field">
-                    <label>Razão Social / Nome Completo</label>
-                    <input type="text" id="docgen-nome" placeholder="Ex: CONDOMÍNIO EDIFÍCIO / RESTAURANTE EXEMPLO LTDA" />
+                    <label id="docgen-nome-label">Razão Social / Nome Completo (ou Nome do Médico / Clínica)</label>
+                    <input type="text" id="docgen-nome" placeholder="Ex: DR. JOÃO DA SILVA / CLÍNICA MÉDICA EXEMPLO LTDA" />
                   </div>
                   <div class="docgen-row-3">
                     <div class="docgen-field">
@@ -1864,7 +2012,7 @@
                   </div>
                   <div class="docgen-row-3">
                     <div class="docgen-field">
-                      <label>CEP (Busca ViaCEP)</label>
+                      <label>CEP (ViaCEP)</label>
                       <div class="docgen-inline-input">
                         <input type="text" id="docgen-cep" placeholder="09980-000" maxlength="9" onblur="buscarCepNoDocGen()" />
                         <button type="button" class="wa-btn-sm" onclick="buscarCepNoDocGen()" style="padding:9px 10px;" title="Buscar CEP"><i class="fas fa-map-pin"></i></button>
@@ -1872,11 +2020,11 @@
                     </div>
                     <div class="docgen-field">
                       <label>Município / UF</label>
-                      <input type="text" id="docgen-cidade" placeholder="Diadema - SP" />
+                      <input type="text" id="docgen-cidade" placeholder="São Paulo - SP" />
                     </div>
                     <div class="docgen-field">
-                      <label>Ramo de Atividade</label>
-                      <input type="text" id="docgen-ramo" placeholder="Alimentos / Saúde / Beleza" />
+                      <label>Ramo / Atividade</label>
+                      <input type="text" id="docgen-ramo" placeholder="Clínica / Alimentos / Saúde" />
                     </div>
                   </div>
                   <div class="docgen-row-2">
@@ -1891,11 +2039,11 @@
                   </div>
                 </div>
 
-                <!-- 4. CAMPOS ESPECÍFICOS DO MODELO SELECIONADO -->
+                <!-- 5. DETALHES FINANCEIROS / TEXTO / CORPO -->
                 <div class="docgen-box" id="docgen-extra-box" style="display: none;">
                   <div class="docgen-box-title">
-                    <span id="docgen-extra-title"><i class="fas fa-sliders-h"></i> 4. Detalhes do Documento</span>
-                    <button type="button" class="wa-btn-sm" id="btn-docgen-ia" style="background: rgba(192,132,252,0.16); border-color: var(--gemini-purple); color: #e9d5ff; padding: 5px 11px; font-size: 0.76rem;" onclick="redigirCorpoDocGenComIA()">
+                    <span id="docgen-extra-title"><i class="fas fa-sliders-h"></i> Detalhes do Documento</span>
+                    <button type="button" class="wa-btn-sm" id="btn-docgen-ia" style="background: rgba(192,132,252,0.16); border-color: var(--gemini-purple); color: #e9d5ff; padding: 5px 11px; font-size: 0.75rem;" onclick="redigirCorpoDocGenComIA()">
                       <i class="fas fa-magic"></i> Redigir Texto com IA
                     </button>
                   </div>
@@ -1905,19 +2053,38 @@
                     <input type="text" id="docgen-titulo-custom" placeholder="Ex: OFÍCIO DE REGULARIZAÇÃO SANITÁRIA" />
                   </div>
 
+                  <div id="docgen-group-vistoria" class="docgen-field" style="display: none;">
+                    <label>Resultado da Inspeção Sanitária</label>
+                    <select id="docgen-vistoria-status">
+                      <option value="SATISFATÓRIO — Apto para funcionamento">SATISFATÓRIO — Apto para funcionamento</option>
+                      <option value="SATISFATÓRIO COM EXIGÊNCIAS — Cumprir prazo">SATISFATÓRIO COM EXIGÊNCIAS — Cumprir prazo</option>
+                      <option value="INSATISFATÓRIO — Sujeito a autuação/interdição">INSATISFATÓRIO — Sujeito a autuação/interdição</option>
+                    </select>
+                  </div>
+
                   <div id="docgen-group-financeiro" style="display: none;">
-                    <div class="docgen-row-2" style="margin-bottom: 10px;">
+                    <div class="docgen-row-3-eq" style="margin-bottom: 9px;">
                       <div class="docgen-field">
                         <label>Valor (R$)</label>
                         <input type="text" id="docgen-valor" placeholder="Ex: 250,00" />
                       </div>
                       <div class="docgen-field">
-                        <label>Enquadramento / Artigo Legal</label>
-                        <input type="text" id="docgen-artigo" placeholder="Ex: Art. 122, I — Lei Estadual 10.083/1998" />
+                        <label>Tipo de Taxa / Referência</label>
+                        <select id="docgen-tipo-taxa" onchange="document.getElementById('docgen-artigo').value = this.value">
+                          <option value="Taxa de Licença Sanitária Inicial — Lei 13.725/04">Licença Inicial</option>
+                          <option value="Taxa de Renovação Anual de Alvará Sanitário">Renovação Anual</option>
+                          <option value="Taxa de Autorização de Talonário / Receituário Especial">Talonário / Receita Especial</option>
+                          <option value="Taxa de Alteração Cadastral / Responsável Técnico">Alteração Cadastral / RT</option>
+                          <option value="Multa Sanitária (UFESP) — Art. 122, Lei 10.083/98">Multa Sanitária (UFESP)</option>
+                        </select>
+                      </div>
+                      <div class="docgen-field">
+                        <label>Enquadramento / Artigo</label>
+                        <input type="text" id="docgen-artigo" placeholder="Ex: Lei Municipal 13.725/2004" />
                       </div>
                     </div>
                     <div class="docgen-field" id="docgen-group-pix">
-                      <label>Código PIX Copia e Cola (Opcional — gera QR Code automático no PDF)</label>
+                      <label>Código PIX Copia e Cola (Gera QR Code automático no PDF)</label>
                       <div class="docgen-inline-input">
                         <input type="text" id="docgen-pix-code" placeholder="Cole o código PIX ou clique em Gerar PIX..." />
                         <button type="button" class="wa-btn-sm" id="btn-docgen-gerar-pix" style="border-color: var(--success); color: #6ee7b7; padding: 9px 12px; white-space: nowrap;" onclick="gerarPixParaDocumento()">
@@ -1929,20 +2096,38 @@
 
                   <div id="docgen-group-texto" class="docgen-field" style="display: none;">
                     <label id="docgen-texto-label">Descrição / Motivo / Pendências / Corpo do Documento</label>
-                    <textarea id="docgen-corpo" placeholder="Descreva os itens pendentes, a infração ou o texto oficial... (ou digite um resumo curto e clique em 'Redigir Texto com IA')"></textarea>
-                  </div>
-
-                  <div class="docgen-row-2">
-                    <div class="docgen-field">
-                      <label>Responsável / Fiscal Assinante</label>
-                      <input type="text" id="docgen-fiscal" value="Giliard de Oliveira Santiago" />
-                    </div>
-                    <div class="docgen-field">
-                      <label>Cargo / Setor</label>
-                      <input type="text" id="docgen-cargo" value="Coordenação de Vigilância em Saúde — COVISA" />
-                    </div>
+                    <textarea id="docgen-corpo" placeholder="Descreva os detalhes... (ou escreva 1 frase curta e clique em 'Redigir Texto com IA')"></textarea>
                   </div>
                 </div>
+
+                <!-- 6. ASSINATURA FIXA (DIRETORIA23.png) + MODO DE MOLDE PDF -->
+                <div class="docgen-box">
+                  <div class="docgen-box-title">
+                    <span><i class="fas fa-signature" style="color:#34d399;"></i> Assinatura Fixa & Modo de Geração</span>
+                  </div>
+                  <div class="docgen-sig-strip">
+                    <label style="display:flex; align-items:center; gap:9px; color:#e2e8f0; font-size:0.82rem; font-weight:800; cursor:pointer;">
+                      <input type="checkbox" id="docgen-usar-assinatura-fixa" checked style="width:16px; height:16px; accent-color:#10b981;" />
+                      <span>Assinatura Fixa Ativa (<code style="color:#6ee7b7;">imagens/DIRETORIA23.png</code>)</span>
+                    </label>
+                    <img src="imagens/DIRETORIA23.png" alt="Assinatura Fixa Diretoria" class="docgen-sig-thumb" onerror="this.style.display='none'" />
+                  </div>
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Modo de Geração do PDF</label>
+                      <select id="docgen-render-mode">
+                        <option value="oficial">Layout Oficial Completo + Assinatura Fixa (Recomendado)</option>
+                        <option value="molde_repo">Usar PDF Molde do Repositório (Sobrepor Dados + Assinatura)</option>
+                      </select>
+                    </div>
+                    <div class="docgen-field">
+                      <label>Nome Fallback (se a imagem não carregar)</label>
+                      <input type="text" id="docgen-fiscal" value="Giliard De Oliveira Santiago" />
+                    </div>
+                  </div>
+                  <input type="hidden" id="docgen-cargo" value="Assessor Técnico CEVISA/COVIS/SMS — CRF/CE 04438914 - Mat. PMF 63.168" />
+                </div>
+
               </div>
 
               <div class="docgen-footer-actions">
@@ -1950,10 +2135,10 @@
                   <i class="fab fa-whatsapp" style="color:#25D366;"></i> Copiar Msg WhatsApp
                 </button>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                  <button type="button" class="btn btn-primary" id="btn-docgen-preview" style="padding: 11px 20px; font-size: 0.9rem;" onclick="gerarDocumentoOficialPDF(false)">
+                  <button type="button" class="btn btn-primary" id="btn-docgen-preview" style="padding: 10px 18px; font-size: 0.88rem;" onclick="gerarDocumentoOficialPDF(false)">
                     <i class="fas fa-sync-alt"></i> Gerar Prévia
                   </button>
-                  <button type="button" class="btn btn-success" id="btn-docgen-download" style="padding: 11px 22px; font-size: 0.9rem;" onclick="gerarDocumentoOficialPDF(true)">
+                  <button type="button" class="btn btn-success" id="btn-docgen-download" style="padding: 10px 20px; font-size: 0.88rem;" onclick="gerarDocumentoOficialPDF(true)">
                     <i class="fas fa-file-download"></i> Baixar PDF Oficial
                   </button>
                 </div>
@@ -1982,7 +2167,7 @@
                   <i class="fas fa-file-contract" style="font-size: 3.8rem; color: #38bdf8; opacity: 0.4; margin-bottom: 14px; display: block;"></i>
                   <h3 style="color:#ffffff; margin-bottom:8px;">Pronto para Emitir</h3>
                   <p style="font-size:0.9rem; line-height:1.55;">
-                    Escolha o modelo à esquerda, importe um processo ou busque um CNPJ e clique em <strong>Gerar Prévia</strong> ou <strong>Baixar PDF Oficial</strong>.
+                    Escolha uma <strong>Receita Especial (A, B, B2, Retinoides)</strong>, <strong>Guia com PIX</strong> ou qualquer documento ao lado, puxe os dados do WhatsApp/CNPJ e clique em <strong>Gerar Prévia</strong> ou <strong>Baixar PDF Oficial</strong>.
                   </p>
                 </div>
                 <iframe id="docgen-pdf-iframe" title="Prévia do Documento PDF"></iframe>
@@ -3029,6 +3214,7 @@
         }
         if (viewId === 'view-docgen') {
             inicializarDatasPadraoDocGen();
+            atualizarListaWaNoDocGen(false);
         }
         if (viewId === 'view-trafego' && window._spyLeafletMap) {
             setTimeout(() => { window._spyLeafletMap.invalidateSize(); }, 200);
@@ -5841,13 +6027,26 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
     }
 
     // =========================================================================
-    // GERADOR DE DOCUMENTOS OFICIAIS (PDF-LIB + MOLDE OFICIAL + PIX + IA)
+    // GERADOR DE DOCUMENTOS & RECEITUÁRIOS OFICIAIS 2.0
+    // (Receitas A/B/B2/Retinoides + Guias PIX + Licenças + Assinatura Fixa DIRETORIA23.png + IA WhatsApp)
     // =========================================================================
     let docGenTipoAtual = 'licenca';
     let docGenUltimoBlobUrl = null;
     let docGenUltimoFilename = '';
     let docGenUltimoBytes = null;
     let docGenHistorico = [];
+    let docGenCacheAssets = {};
+
+    const DOCGEN_REPO_FILES = {
+        licenca: 'certificacao_provisoria.pdf',
+        receita_a: 'NOTIFICAÇÃO DE RECEITA A.pdf',
+        receita_b: 'NOTIFICAÇÃO DE RECEITA B.pdf',
+        receita_b2: 'NOTIFICAÇÃO DE RECEITA B2.pdf',
+        receita_retinoides: 'NOTIFICAÇÃO DE RECEITA RETINOIDES.pdf',
+        guia: 'TAXA VIGILANCIA.pdf'
+    };
+
+    const DOCGEN_RECEITA_TYPES = new Set(['receita_a', 'receita_b', 'receita_b2', 'receita_retinoides', 'autorizacao_talonario']);
 
     function formatarDataBR(d) {
         return d.toLocaleDateString('pt-BR');
@@ -5870,10 +6069,7 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
 
         paragrafos.forEach((par) => {
             const p = par.trimEnd();
-            if (!p) {
-                linhas.push('');
-                return;
-            }
+            if (!p) { linhas.push(''); return; }
             const palavras = p.split(/\s+/);
             let linhaAtual = '';
             palavras.forEach((pal) => {
@@ -5882,7 +6078,6 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
                     linhaAtual = teste;
                 } else {
                     if (linhaAtual) linhas.push(linhaAtual);
-                    // Se uma única palavra (ex: código PIX) passar da largura, fatia por caractere
                     if (font.widthOfTextAtSize(pal, fontSize) > maxWidth) {
                         let pedaco = '';
                         for (const ch of pal) {
@@ -5904,6 +6099,14 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
         return linhas;
     }
 
+    window.filtrarCategoriaDocGen = (cat, btnEl) => {
+        document.querySelectorAll('.docgen-cat-btn').forEach(b => b.classList.remove('active'));
+        if (btnEl) btnEl.classList.add('active');
+        document.querySelectorAll('#docgen-types-grid .docgen-type-card').forEach(card => {
+            card.style.display = (cat === 'todos' || card.dataset.cat === cat) ? 'flex' : 'none';
+        });
+    };
+
     window.inicializarDatasPadraoDocGen = (forcarValidade = false) => {
         const hoje = new Date();
         const emEl = document.getElementById('docgen-emissao');
@@ -5917,10 +6120,11 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
         }
         if (valEl && (!valEl.value || forcarValidade)) {
             const alvo = new Date(hoje);
-            if (docGenTipoAtual === 'licenca') alvo.setFullYear(alvo.getFullYear() + 1);
+            if (docGenTipoAtual === 'licenca' || docGenTipoAtual === 'dispensa') alvo.setFullYear(alvo.getFullYear() + 1);
             else if (docGenTipoAtual === 'guia') alvo.setDate(alvo.getDate() + 3);
             else if (docGenTipoAtual === 'notificacao') alvo.setDate(alvo.getDate() + 5);
             else if (docGenTipoAtual === 'infracao') alvo.setDate(alvo.getDate() + 10);
+            else if (DOCGEN_RECEITA_TYPES.has(docGenTipoAtual)) alvo.setDate(alvo.getDate() + 30);
             else alvo.setDate(alvo.getDate() + 30);
             valEl.value = formatarDataBR(alvo);
         }
@@ -5945,29 +6149,64 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
         docGenTipoAtual = tipo;
         document.querySelectorAll('.docgen-type-card').forEach(c => c.classList.toggle('active', c.dataset.doctype === tipo));
 
+        const rxBox = document.getElementById('docgen-rx-box');
+        const rxOpcRow = document.getElementById('docgen-rx-opcional-row');
+        const rxQtdLbl = document.getElementById('docgen-rx-qtd-label');
         const extraBox = document.getElementById('docgen-extra-box');
         const grpTitulo = document.getElementById('docgen-group-titulo');
+        const grpVistoria = document.getElementById('docgen-group-vistoria');
         const grpFin = document.getElementById('docgen-group-financeiro');
         const grpPix = document.getElementById('docgen-group-pix');
         const grpTxt = document.getElementById('docgen-group-texto');
         const txtLabel = document.getElementById('docgen-texto-label');
         const valLabel = document.getElementById('docgen-validade-label');
+        const nomeLabel = document.getElementById('docgen-nome-label');
         const tagEl = document.getElementById('docgen-template-tag');
+        const renderMode = document.getElementById('docgen-render-mode');
 
-        const mostrarExtra = tipo !== 'licenca';
+        const ehRx = DOCGEN_RECEITA_TYPES.has(tipo);
+        const ehReceitaFolha = ['receita_a', 'receita_b', 'receita_b2', 'receita_retinoides'].includes(tipo);
+        const temFin = ['guia', 'infracao', 'recibo_quitacao'].includes(tipo);
+        const temPix = ['guia', 'infracao'].includes(tipo);
+        const mostrarExtra = !ehReceitaFolha && tipo !== 'licenca';
+
+        if (rxBox) rxBox.style.display = ehRx ? 'flex' : 'none';
+        if (rxOpcRow) rxOpcRow.style.display = ehReceitaFolha ? 'grid' : 'none';
+        if (rxQtdLbl) rxQtdLbl.innerText = tipo === 'autorizacao_talonario' ? 'Qtd. de Folhas Autorizadas' : 'Qtd. Folhas no PDF (1-50)';
+
         if (extraBox) extraBox.style.display = mostrarExtra ? 'flex' : 'none';
         if (grpTitulo) grpTitulo.style.display = tipo === 'oficio' ? 'flex' : 'none';
-        if (grpFin) grpFin.style.display = (tipo === 'guia' || tipo === 'infracao') ? 'block' : 'none';
-        if (grpPix) grpPix.style.display = (tipo === 'guia' || tipo === 'infracao') ? 'flex' : 'none';
-        if (grpTxt) grpTxt.style.display = (tipo !== 'licenca') ? 'flex' : 'none';
+        if (grpVistoria) grpVistoria.style.display = tipo === 'termo_vistoria' ? 'flex' : 'none';
+        if (grpFin) grpFin.style.display = temFin ? 'block' : 'none';
+        if (grpPix) grpPix.style.display = temPix ? 'flex' : 'none';
+        if (grpTxt) grpTxt.style.display = mostrarExtra ? 'flex' : 'none';
+
+        // Para Licença Provisória, o molde oficial do repositório fica padrão; para os demais, layout completo A4 com assinatura fixa
+        if (renderMode) {
+            renderMode.value = (tipo === 'licenca') ? 'molde_repo' : 'oficial';
+        }
+
+        if (nomeLabel) {
+            nomeLabel.innerText = ehRx
+                ? 'Nome do Médico / Profissional ou Clínica Emitente'
+                : 'Razão Social / Nome Completo do Estabelecimento';
+        }
 
         const mapaMeta = {
-            licenca: { tag: 'Molde certificacao_provisoria.pdf', val: 'Válido Até (1 ano)', txt: '' },
-            guia: { tag: 'Guia A4 com QR Code PIX', val: 'Data de Vencimento', txt: 'Enquadramento / Descrição da Cobrança' },
-            notificacao: { tag: 'Intimação Formal A4', val: 'Prazo Final para Regularização', txt: 'Documentos Pendentes / Exigências Sanitárias' },
-            infracao: { tag: 'Auto de Infração — Lei 10.083/98', val: 'Prazo para Defesa (10 dias)', txt: 'Relato Técnico da Infração Constatada' },
-            declaracao: { tag: 'Comprovante Timbrado A4', val: 'Validade da Declaração', txt: 'Observações / Situação do Processo' },
-            oficio: { tag: 'Documento Livre Personalizado A4', val: 'Prazo / Referência', txt: 'Corpo Completo do Ofício' }
+            receita_a: { tag: 'Amarela • Portaria 344/98 + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
+            receita_b: { tag: 'Azul Lista B1 • Portaria 344/98 + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
+            receita_b2: { tag: 'Azul Anorexígenos B2 • RDC 50/14 + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
+            receita_retinoides: { tag: 'Retinoides C2 • Alerta Obrigatório + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
+            autorizacao_talonario: { tag: 'Ofício de Liberação de Faixa Numérica', val: 'Validade da Autorização', txt: 'Observações / Gráfica Autorizada / Tipo de Talonário' },
+            licenca: { tag: 'Molde certificacao_provisoria.pdf + Assinatura Fixa', val: 'Válido Até (1 ano)', txt: '' },
+            guia: { tag: 'Guia Oficial + QR Code PIX + Assinatura Fixa', val: 'Data de Vencimento', txt: 'Descrição da Taxa / Observações' },
+            recibo_quitacao: { tag: 'Comprovante de Quitação + Assinatura Fixa', val: 'Data do Pagamento', txt: 'Detalhamento da Quitação (Protocolo / PIX)' },
+            declaracao: { tag: 'Certidão de Andamento + QR Code + Assinatura Fixa', val: 'Validade da Declaração', txt: 'Observações / Situação Atual do Processo' },
+            dispensa: { tag: 'Certidão Baixo Risco (Lei 13.874/19) + Assinatura Fixa', val: 'Validade da Certidão (1 ano)', txt: 'CNAEs / Justificativa da Dispensa Sanitária' },
+            notificacao: { tag: 'Intimação Formal A4 + Assinatura Fixa', val: 'Prazo Final para Regularização', txt: 'Documentos Pendentes / Exigências Sanitárias' },
+            infracao: { tag: 'Auto de Infração — Lei 10.083/98 + Assinatura Fixa', val: 'Prazo para Defesa (10 dias)', txt: 'Relato Técnico da Infração Constatada' },
+            termo_vistoria: { tag: 'Termo de Inspeção Sanitária + Assinatura Fixa', val: 'Prazo p/ Adequação (se houver)', txt: 'Constatações da Vistoria / Exigências Técnicas' },
+            oficio: { tag: 'Documento Livre Personalizado + Assinatura Fixa', val: 'Prazo / Referência', txt: 'Corpo Completo do Ofício' }
         };
 
         const m = mapaMeta[tipo] || mapaMeta.licenca;
@@ -5979,16 +6218,167 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
     };
 
     window.limparFormularioDocGen = () => {
-        ['docgen-process-selector', 'docgen-cnpj', 'docgen-protocolo', 'docgen-nome', 'docgen-rua', 'docgen-num',
-         'docgen-bairro', 'docgen-cep', 'docgen-cidade', 'docgen-ramo', 'docgen-valor', 'docgen-artigo',
-         'docgen-pix-code', 'docgen-corpo', 'docgen-titulo-custom'].forEach(id => {
+        ['docgen-process-selector', 'docgen-wa-selector', 'docgen-cnpj', 'docgen-protocolo', 'docgen-nome',
+         'docgen-rua', 'docgen-num', 'docgen-bairro', 'docgen-cep', 'docgen-cidade', 'docgen-ramo',
+         'docgen-valor', 'docgen-artigo', 'docgen-pix-code', 'docgen-corpo', 'docgen-titulo-custom',
+         'docgen-crm', 'docgen-especialidade', 'docgen-telefone', 'docgen-rx-paciente', 'docgen-rx-med'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
         });
         document.getElementById('docgen-emissao').value = '';
         document.getElementById('docgen-validade').value = '';
+        document.getElementById('docgen-rx-qtd').value = '1';
         inicializarDatasPadraoDocGen(true);
         showToast("Campos Limpos", "Pronto para emitir um novo documento.", "success");
+    };
+
+    window.atualizarListaWaNoDocGen = async (mostrarToast = false) => {
+        try {
+            const resp = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations?t=${Date.now()}`);
+            if (resp.ok) {
+                const dados = await resp.json();
+                if (dados.success && Array.isArray(dados.conversations)) {
+                    listaDeConversasAtuais = dados.conversations;
+                }
+            }
+        } catch (_) {}
+
+        const sel = document.getElementById('docgen-wa-selector');
+        if (!sel) return;
+        const atual = sel.value;
+        sel.innerHTML = '<option value="">-- Selecione um chat do WhatsApp para ler com IA --</option>' +
+            (listaDeConversasAtuais || []).map(c => {
+                const prev = (c.last_message || '').replace(/\s+/g, ' ').slice(0, 36);
+                return `<option value="${escaparHtmlWA(c.phone)}">${formatarTelefoneWA(c.phone)} (${c.message_count || 0} msgs) — ${escaparHtmlWA(prev)}</option>`;
+            }).join('');
+        if (atual) sel.value = atual;
+        if (mostrarToast) showToast("WhatsApp Sincronizado", `${(listaDeConversasAtuais || []).length} conversa(s) disponíveis para auto-preenchimento.`, "success");
+    };
+
+    window.puxarDadosWhatsAppParaDocGen = async () => {
+        const phone = document.getElementById('docgen-wa-selector')?.value;
+        if (!phone) {
+            return showToast("Selecione o Chat", "Escolha uma conversa do WhatsApp na lista acima.", "warning");
+        }
+        const btn = document.getElementById('btn-docgen-puxar-wa');
+        const orig = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lendo chat & anexos...';
+
+        try {
+            const resp = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations/history?phone=${encodeURIComponent(phone)}&t=${Date.now()}`);
+            const dados = await resp.json();
+            if (!resp.ok || !dados.success) throw new Error(dados.error || 'Erro ao buscar conversa');
+            const hist = Array.isArray(dados.conversation?.history) ? dados.conversation.history : [];
+            if (hist.length === 0) throw new Error('Esta conversa não possui mensagens ainda.');
+
+            // Baixa até 6 anexos recentes (CRM, CNPJ, comprovante de endereço em imagem ou PDF)
+            const midias = hist.filter(m => m.media && m.media.id).slice(-6);
+            const anexos = [];
+            let totalB64 = 0;
+
+            for (let i = 0; i < midias.length; i++) {
+                const m = midias[i].media;
+                const fn = m.filename || `${m.type || 'anexo'}_${i + 1}`;
+                const mime = limparMimeParaGemini(m.mime_type, fn, m.type);
+                if (mime !== 'application/pdf' && !mime.startsWith('image/')) continue;
+                try {
+                    const r = await fetch(`${CLOUDFLARE_WORKER_URL}/api/media?id=${encodeURIComponent(m.id)}&filename=${encodeURIComponent(fn)}`);
+                    if (!r.ok) continue;
+                    const blob = await r.blob();
+                    if (blob.size > 8 * 1024 * 1024) continue;
+                    let inl = (mime.startsWith('image/') && blob.size > 650000)
+                        ? await comprimirImagemBlobParaGemini(blob)
+                        : { mime_type: mime, data: await blobParaBase64Puro(blob) };
+                    if (totalB64 + inl.data.length > 12 * 1024 * 1024) continue;
+                    totalB64 += inl.data.length;
+                    anexos.push({ nome: fn, inline_data: inl });
+                } catch (_) {}
+            }
+
+            const transcricao = hist.map((m, idx) => {
+                const quem = m.role === 'user' ? 'CLIENTE' : 'ATENDIMENTO';
+                return `${idx + 1}. ${quem}: ${m.content || ''}`;
+            }).join('\n');
+
+            const promptExtract = `Você é o extrator de dados do Gerador de Documentos da COVISA.
+Analise a conversa do WhatsApp (${formatarTelefoneWA(phone)}) e TODOS os documentos/fotos anexados (CRM, CRO, Cartão CNPJ, Comprovante de Endereço, RG/CPF) e extraia os dados exatos para preencher o documento do cliente.
+
+CONVERSA:
+${transcricao}
+
+Retorne APENAS JSON válido neste formato (use string vazia "" se não encontrar algum campo):
+{
+  "tipo_documento": "receita_a" | "receita_b" | "receita_b2" | "receita_retinoides" | "autorizacao_talonario" | "licenca" | "guia" | "recibo_quitacao" | "declaracao" | "dispensa" | "notificacao" | "infracao" | "termo_vistoria" | "oficio",
+  "nome": "Nome completo do médico/profissional ou Razão Social",
+  "cnpj_cpf": "CPF ou CNPJ formatado",
+  "crm": "Ex: CRM-SP 123456 ou CRO-SP 99999 (se médico/dentista/vet)",
+  "especialidade": "Especialidade médica se houver",
+  "telefone": "Telefone de contato ou o próprio número ${formatarTelefoneWA(phone)}",
+  "rua": "Logradouro sem o número",
+  "num": "Número do imóvel",
+  "bairro": "Bairro",
+  "cep": "00000-000",
+  "cidade": "Cidade - UF",
+  "ramo": "Ramo de atividade",
+  "valor": "Valor em reais se houver taxa/guia (ex: 250,00)",
+  "qtd_folhas": 1,
+  "observacoes": "Resumo/texto útil caso seja ofício, notificação ou guia"
+}`;
+
+            const parts = [{ text: promptExtract }];
+            anexos.forEach((a, i) => {
+                parts.push({ text: `[ANEXO #${i + 1}: ${a.nome}]` });
+                parts.push({ inline_data: a.inline_data });
+            });
+
+            const rIA = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts }],
+                    generationConfig: { responseMimeType: 'application/json' }
+                })
+            });
+            if (!rIA.ok) throw new Error(`Erro HTTP ${rIA.status} na IA`);
+            const jIA = await rIA.json();
+            const raw = jIA.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            const ext = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || raw);
+
+            if (ext.tipo_documento) {
+                const card = document.querySelector(`.docgen-type-card[data-doctype="${ext.tipo_documento}"]`);
+                if (card) selecionarTipoDocumento(ext.tipo_documento, card);
+            }
+            const setVal = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = String(v).trim(); };
+            setVal('docgen-nome', ext.nome);
+            setVal('docgen-cnpj', ext.cnpj_cpf);
+            setVal('docgen-crm', ext.crm);
+            setVal('docgen-especialidade', ext.especialidade);
+            setVal('docgen-telefone', ext.telefone || formatarTelefoneWA(phone));
+            setVal('docgen-rua', ext.rua);
+            setVal('docgen-num', ext.num);
+            setVal('docgen-bairro', ext.bairro);
+            setVal('docgen-cep', ext.cep);
+            setVal('docgen-cidade', ext.cidade);
+            setVal('docgen-ramo', ext.ramo);
+            setVal('docgen-valor', ext.valor);
+            setVal('docgen-corpo', ext.observacoes);
+            if (ext.qtd_folhas && Number(ext.qtd_folhas) > 0 && Number(ext.qtd_folhas) <= 50) {
+                document.getElementById('docgen-rx-qtd').value = String(Number(ext.qtd_folhas));
+            }
+            inicializarDatasPadraoDocGen(false);
+
+            showToast("Auto-Preenchido!", `IA leu a conversa e ${anexos.length} arquivo(s) do WhatsApp e preencheu os campos!`, "success");
+            if (ext.nome) {
+                await gerarDocumentoOficialPDF(false);
+            }
+        } catch (err) {
+            console.error("Erro ao puxar WhatsApp p/ DocGen:", err);
+            showToast("Falha na Leitura", err.message, "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = orig;
+        }
     };
 
     window.importarProcessoNoDocGen = (procId) => {
@@ -6006,11 +6396,9 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
         document.getElementById('docgen-cidade').value = p.cidadeUF || '';
         document.getElementById('docgen-ramo').value = p.tipo || '';
         document.getElementById('docgen-valor').value = p.valor || '';
-        if (p.motivo_cliente) {
-            document.getElementById('docgen-corpo').value = p.motivo_cliente;
-        } else if (p.docs) {
-            document.getElementById('docgen-corpo').value = p.docs;
-        }
+        if (p.telefone) document.getElementById('docgen-telefone').value = p.telefone;
+        if (p.motivo_cliente) document.getElementById('docgen-corpo').value = p.motivo_cliente;
+        else if (p.docs) document.getElementById('docgen-corpo').value = p.docs;
         inicializarDatasPadraoDocGen(false);
         showToast("Dados Importados", `Processo de ${p.nome || 'cliente'} carregado no gerador.`, "success");
     };
@@ -6051,7 +6439,8 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
                         bairro: j.bairro || '',
                         cep: j.cep || '',
                         cidade: j.municipio ? `${j.municipio} - ${j.uf || 'SP'}` : '',
-                        ramo: j.cnae_fiscal_descricao || ''
+                        ramo: j.cnae_fiscal_descricao || '',
+                        telefone: j.ddd_telefone_1 || ''
                     };
                 }
             } catch (_) {}
@@ -6068,7 +6457,8 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
                         bairro: e.bairro || '',
                         cep: e.cep || '',
                         cidade: e.cidade?.nome ? `${e.cidade.nome} - ${e.estado?.sigla || 'SP'}` : '',
-                        ramo: e.atividade_principal?.descricao || ''
+                        ramo: e.atividade_principal?.descricao || '',
+                        telefone: e.ddd1 && e.telefone1 ? `(${e.ddd1}) ${e.telefone1}` : ''
                     };
                 }
             }
@@ -6082,6 +6472,7 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
             document.getElementById('docgen-cep').value = dados.cep ? dados.cep.replace(/^(\d{5})(\d{3})$/, '$1-$2') : '';
             document.getElementById('docgen-cidade').value = dados.cidade;
             if (dados.ramo) document.getElementById('docgen-ramo').value = dados.ramo.slice(0, 65);
+            if (dados.telefone) document.getElementById('docgen-telefone').value = dados.telefone;
             inicializarDatasPadraoDocGen(false);
             showToast("CNPJ Localizado!", `${dados.nome} preenchido automaticamente.`, "success");
         } catch (err) {
@@ -6144,7 +6535,7 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
                 throw new Error(data.error || 'Gateway PIX indisponível no momento.');
             }
             document.getElementById('docgen-pix-code').value = data.copyPaste;
-            showToast("PIX Gerado!", "Código PIX e QR Code prontos para embutir no PDF.", "success");
+            showToast("PIX Gerado!", "Código PIX e QR Code prontos para embutir na guia PDF.", "success");
         } catch (err) {
             showToast("Erro PIX", err.message, "error");
         } finally {
@@ -6171,10 +6562,10 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
 Redija o corpo de texto formal, objetivo e pronto para constar em um documento PDF oficial do tipo "${docGenTipoAtual.toUpperCase()}".
 
 Dados:
-- Estabelecimento/Contribuinte: ${nome}
+- Estabelecimento/Profissional: ${nome}
 - CPF/CNPJ: ${cnpj || 'Não informado'}
 - Ramo: ${ramo}
-- Artigo/Base Legal informada: ${artigo || 'Lei Municipal 13.725/2004, Lei Estadual 10.083/1998 e RDC 216/ANVISA'}
+- Artigo/Base Legal informada: ${artigo || 'Lei Municipal 13.725/2004, Lei Estadual 10.083/1998, Portaria SVS/MS 344/1998 e RDC 216/ANVISA'}
 - Prazo/Vencimento: ${validade || 'conforme legislação'}
 - Rascunho/instrução do fiscal: ${rascunho || '(Gerar texto técnico padrão bem redigido para este tipo de documento.)'}
 
@@ -6201,21 +6592,309 @@ REGRAS:
         }
     };
 
-    async function carregarImagemEmbedPDF(pdfDoc, url) {
+    async function fetchBufferCacheado(url) {
+        if (docGenCacheAssets[url]) return docGenCacheAssets[url];
         try {
             const r = await fetch(url);
             if (!r.ok) return null;
             const buf = await r.arrayBuffer();
             const ct = (r.headers.get('content-type') || '').toLowerCase();
-            if (ct.includes('png') || url.toLowerCase().endsWith('.png')) {
-                return await pdfDoc.embedPng(buf);
-            }
-            return await pdfDoc.embedJpg(buf);
+            docGenCacheAssets[url] = { buf, ct };
+            return docGenCacheAssets[url];
         } catch (_) {
             return null;
         }
     }
 
+    async function carregarImagemEmbedPDF(pdfDoc, url) {
+        const asset = await fetchBufferCacheado(url);
+        if (!asset) return null;
+        try {
+            if (asset.ct.includes('png') || url.toLowerCase().endsWith('.png')) {
+                return await pdfDoc.embedPng(asset.buf);
+            }
+            return await pdfDoc.embedJpg(asset.buf);
+        } catch (_) {
+            try { return await pdfDoc.embedPng(asset.buf); } catch (__) { return null; }
+        }
+    }
+
+    async function carregarAssinaturaDiretoriaPDF(pdfDoc) {
+        let img = await carregarImagemEmbedPDF(pdfDoc, 'imagens/DIRETORIA23.png');
+        if (!img) img = await carregarImagemEmbedPDF(pdfDoc, 'DIRETORIA23.png');
+        return img;
+    }
+
+    function desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, centerX, bottomY, maxW = 225, maxH = 76) {
+        if (dados.usarAssinaturaFixa && sigImg) {
+            const dims = sigImg.scaleToFit(maxW, maxH);
+            page.drawImage(sigImg, {
+                x: centerX - dims.width / 2,
+                y: bottomY,
+                width: dims.width,
+                height: dims.height
+            });
+            return;
+        }
+        // Fallback textual caso desmarcado ou imagem indisponível
+        const halfLine = Math.min(130, maxW / 2);
+        page.drawLine({ start: { x: centerX - halfLine, y: bottomY + 26 }, end: { x: centerX + halfLine, y: bottomY + 26 }, thickness: 0.9, color: corCinza });
+        const fTxt = sanitizarTextoPDF(dados.fiscal || 'Giliard De Oliveira Santiago');
+        const cTxt = sanitizarTextoPDF(dados.cargo || 'Assessor Técnico CEVISA/COVIS/SMS');
+        const fw = fontBold.widthOfTextAtSize(fTxt, 9.5);
+        const cw = fontReg.widthOfTextAtSize(cTxt, 7.8);
+        page.drawText(fTxt, { x: centerX - fw / 2, y: bottomY + 13, size: 9.5, font: fontBold, color: corEscuro });
+        page.drawText(cTxt, { x: centerX - cw / 2, y: bottomY + 1, size: 7.8, font: fontReg, color: corCinza });
+    }
+
+    // -------------------------------------------------------------------------
+    // CONSTRUTOR 1: RECEITUÁRIOS ESPECIAIS (A Amarela, B Azul, B2 Azul, Retinoides C2)
+    // Pré-preenchido com Emitente + Numeração + Assinatura Fixa DIRETORIA23.png
+    // Pronto para o Médico só preencher paciente/medicamento e colocar carimbo!
+    // -------------------------------------------------------------------------
+    async function construirPdfReceitaEspecial(tipo, dados) {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+
+        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const fontMono = await pdfDoc.embedFont(StandardFonts.CourierBold);
+
+        const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
+        const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
+
+        const temas = {
+            receita_a: {
+                bg: rgb(0.996, 0.978, 0.80),
+                accent: rgb(0.68, 0.44, 0.02),
+                headerBg: rgb(0.76, 0.50, 0.03),
+                titulo: 'NOTIFICAÇÃO DE RECEITA "A"',
+                sub: 'MEDICAMENTOS ENTORPECENTES — LISTAS A1, A2 E A3 (PORTARIA SVS/MS Nº 344/1998)',
+                aviso: 'Válida em todo o Território Nacional por 30 (trinta) dias a contar da data de emissão. Máximo de 5 ampolas ou tratamento para até 30 dias.',
+                alertaVermelho: ''
+            },
+            receita_b: {
+                bg: rgb(0.87, 0.94, 0.996),
+                accent: rgb(0.06, 0.27, 0.58),
+                headerBg: rgb(0.07, 0.30, 0.64),
+                titulo: 'NOTIFICAÇÃO DE RECEITA "B"',
+                sub: 'MEDICAMENTOS PSICOTRÓPICOS — LISTA B1 (PORTARIA SVS/MS Nº 344/1998)',
+                aviso: 'Válida na Unidade Federativa emissora por 30 (trinta) dias a contar da data de emissão. Quantidade máxima correspondente a 60 dias de tratamento.',
+                alertaVermelho: ''
+            },
+            receita_b2: {
+                bg: rgb(0.85, 0.92, 0.996),
+                accent: rgb(0.05, 0.22, 0.52),
+                headerBg: rgb(0.06, 0.24, 0.56),
+                titulo: 'NOTIFICAÇÃO DE RECEITA "B2"',
+                sub: 'PSICOTRÓPICOS ANOREXÍGENOS — LISTA B2 (RDC ANVISA Nº 50/2014 E PORTARIA 344/98)',
+                aviso: 'Válida por 30 (trinta) dias. Tratamento máximo de 30 dias. Obrigatório acompanhamento do Termo de Responsabilidade do Prescritor.',
+                alertaVermelho: 'ATENÇÃO: MEDICAMENTO SUJEITO A CONTROLE RIGOROSO (LISTA B2 — ANOREXÍGENOS). PROIBIDA DISPENSAÇÃO ACIMA DA DOSE DIÁRIA RECOMENDADA.'
+            },
+            receita_retinoides: {
+                bg: rgb(0.99, 0.99, 1.0),
+                accent: rgb(0.76, 0.11, 0.11),
+                headerBg: rgb(0.78, 0.12, 0.12),
+                titulo: 'NOTIFICAÇÃO DE RECEITA ESPECIAL — RETINOIDES',
+                sub: 'RETINOIDES DE USO SISTÊMICO — LISTA C2 (PORTARIA SVS/MS Nº 344/1998)',
+                aviso: 'Válida por 30 (trinta) dias. Obrigatória a apresentação conjunta do Termo de Consentimento Pós-Informação assinado pelo paciente e médico.',
+                alertaVermelho: 'RISCO DE GRAVES DEFEITOS NA FACE, NAS ORELHAS, NO CORAÇÃO OU NO SISTEMA NERVOSO DO FETO. PROIBIDO O USO POR MULHERES GRÁVIDAS OU COM CHANCE DE ENGRAVIDAR.'
+            }
+        };
+
+        const t = temas[tipo] || temas.receita_b;
+        const corEscuro = rgb(0.08, 0.11, 0.16);
+        const corCinza = rgb(0.32, 0.37, 0.45);
+        const corLinha = rgb(0.55, 0.60, 0.68);
+        const qtd = Math.max(1, Math.min(50, parseInt(dados.rxQtd, 10) || 1));
+        const numIni = Math.max(1, parseInt(dados.rxInicio, 10) || 1001);
+        const serie = sanitizarTextoPDF(dados.rxSerie || 'SP-2026-');
+
+        // QR de verificação único do lote/protocolo
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?receita=' + dados.protocolo)}`;
+        const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
+
+        for (let folha = 0; folha < qtd; folha++) {
+            const page = pdfDoc.addPage([595.28, 841.89]);
+            const { width, height } = page.getSize();
+            const numeroReceita = `${serie}${String(numIni + folha).padStart(6, '0')}`;
+
+            // Fundo oficial colorido (Amarelo A, Azul B/B2, Branco Especial Retinoides)
+            page.drawRectangle({ x: 18, y: 18, width: width - 36, height: height - 36, color: t.bg, borderColor: t.accent, borderWidth: 2 });
+            page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: t.accent, borderWidth: 0.6 });
+
+            // Cabeçalho Institucional
+            let yTop = height - 36;
+            page.drawRectangle({ x: 30, y: yTop - 64, width: width - 60, height: 64, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1 });
+            let hx = 42;
+            if (brasaoImg) {
+                const bd = brasaoImg.scaleToFit(46, 46);
+                page.drawImage(brasaoImg, { x: 38, y: yTop - 55 + (46 - bd.height) / 2, width: bd.width, height: bd.height });
+                hx = 94;
+            }
+            page.drawText(sanitizarTextoPDF('SECRETARIA MUNICIPAL DA SAÚDE — VIGILÂNCIA SANITÁRIA (COVISA)'), { x: hx, y: yTop - 22, size: 9.5, font: fontBold, color: corEscuro });
+            page.drawText(sanitizarTextoPDF('PREFEITURA DO MUNICÍPIO DE SÃO PAULO • AUTORIZAÇÃO SANITÁRIA DE RECEITUÁRIO'), { x: hx, y: yTop - 36, size: 7.8, font: fontReg, color: corCinza });
+            page.drawText(sanitizarTextoPDF(`Protocolo: ${dados.protocolo}   |   UF: SP   |   Autorizada em: ${dados.emissao}`), { x: hx, y: yTop - 50, size: 8, font: fontBold, color: t.accent });
+
+            // Caixa de Numeração Oficial no canto direito do topo
+            page.drawRectangle({ x: width - 178, y: yTop - 56, width: 140, height: 48, color: t.bg, borderColor: t.accent, borderWidth: 1.3 });
+            page.drawText(sanitizarTextoPDF('NÚMERO DA NOTIFICAÇÃO'), { x: width - 170, y: yTop - 21, size: 7, font: fontBold, color: corCinza });
+            const numSz = fontMono.widthOfTextAtSize(numeroReceita, 11) > 128 ? 9.2 : 11;
+            page.drawText(numeroReceita, { x: width - 170, y: yTop - 37, size: numSz, font: fontMono, color: t.accent });
+            page.drawText(sanitizarTextoPDF(qtd > 1 ? `Folha ${folha + 1} de ${qtd}` : '1ª Via — Retenção Farmácia'), { x: width - 170, y: yTop - 50, size: 6.8, font: fontReg, color: corCinza });
+
+            // Faixa de Título da Receita
+            let y = yTop - 74;
+            page.drawRectangle({ x: 30, y: y - 34, width: width - 60, height: 34, color: t.headerBg });
+            page.drawText(sanitizarTextoPDF(t.titulo), { x: 42, y: y - 15, size: 13, font: fontBold, color: rgb(1, 1, 1) });
+            page.drawText(sanitizarTextoPDF(t.sub), { x: 42, y: y - 28, size: 7.5, font: fontReg, color: rgb(0.96, 0.97, 1) });
+
+            y -= 44;
+
+            // Alerta obrigatório em destaque (Retinoides / B2)
+            if (t.alertaVermelho) {
+                const aLines = quebrarLinhasPDF(t.alertaVermelho, fontBold, 7.8, width - 84);
+                const aH = Math.max(28, aLines.length * 10.5 + 10);
+                page.drawRectangle({ x: 30, y: y - aH, width: width - 60, height: aH, color: rgb(1, 0.93, 0.93), borderColor: rgb(0.82, 0.12, 0.12), borderWidth: 1.2 });
+                let ay = y - 12;
+                aLines.forEach(ln => {
+                    page.drawText(ln, { x: 40, y: ay, size: 7.8, font: fontBold, color: rgb(0.76, 0.08, 0.08) });
+                    ay -= 10.5;
+                });
+                y = y - aH - 8;
+            }
+
+            // QUADRO 1: IDENTIFICAÇÃO DO EMITENTE (PRÉ-PREENCHIDO PELA COVISA)
+            const emitH = 92;
+            page.drawRectangle({ x: 30, y: y - emitH, width: width - 60, height: emitH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1 });
+            page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO EMITENTE (PRÉ-PREENCHIDO — AUTORIZADO PELA VIGILÂNCIA SANITÁRIA)'), { x: 40, y: y - 14, size: 7.6, font: fontBold, color: t.accent });
+
+            const endEmit = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ');
+            const drawEmitField = (lbl, val, fx, fy, maxW) => {
+                page.drawText(sanitizarTextoPDF(lbl), { x: fx, y: fy, size: 6.8, font: fontBold, color: corCinza });
+                let v = sanitizarTextoPDF(val || '—');
+                let sz = 9;
+                while (fontBold.widthOfTextAtSize(v, sz) > maxW && sz > 6.8) sz -= 0.3;
+                page.drawText(v, { x: fx, y: fy - 11, size: sz, font: fontBold, color: corEscuro });
+            };
+
+            drawEmitField('PROFISSIONAL / INSTITUIÇÃO EMITENTE', (dados.nome || 'NÃO INFORMADO').toUpperCase(), 40, y - 29, 325);
+            drawEmitField('CONSELHO (CRM / CRO / CRMV)', (dados.crm || 'CONFORME CARIMBO').toUpperCase(), 380, y - 29, 175);
+            drawEmitField('ENDEREÇO COMPLETO', (endEmit || 'NÃO INFORMADO').toUpperCase(), 40, y - 56, 260);
+            drawEmitField('MUNICÍPIO / UF / CEP', `${dados.cidade || 'São Paulo - SP'}${dados.cep ? ' • CEP ' + dados.cep : ''}`.toUpperCase(), 310, y - 56, 245);
+            drawEmitField('CPF / CNPJ', dados.cnpj || '—', 40, y - 79, 150);
+            drawEmitField('ESPECIALIDADE / RAMO', (dados.especialidade || dados.ramo || 'CLÍNICA MÉDICA').toUpperCase(), 205, y - 79, 200);
+            drawEmitField('TELEFONE', dados.telefone || '—', 420, y - 79, 135);
+
+            y = y - emitH - 10;
+
+            // QUADRO 2: PACIENTE & PRESCRIÇÃO (EM BRANCO COM LINHAS PARA O MÉDICO PREENCHER)
+            const prescH = t.alertaVermelho ? 222 : 254;
+            page.drawRectangle({ x: 30, y: y - prescH, width: width - 60, height: prescH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1 });
+            page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO PACIENTE E PRESCRIÇÃO MÉDICA (PREENCHIMENTO PELO PRESCRITOR)'), { x: 40, y: y - 14, size: 7.6, font: fontBold, color: t.accent });
+
+            let py = y - 32;
+            const drawBlankLine = (label, prefillVal, lx, ly, endX) => {
+                const lTxt = sanitizarTextoPDF(label);
+                page.drawText(lTxt, { x: lx, y: ly, size: 8.5, font: fontBold, color: corEscuro });
+                const startLineX = lx + fontBold.widthOfTextAtSize(lTxt, 8.5) + 6;
+                page.drawLine({ start: { x: startLineX, y: ly - 2 }, end: { x: endX, y: ly - 2 }, thickness: 0.7, color: corLinha });
+                if (prefillVal) {
+                    page.drawText(sanitizarTextoPDF(prefillVal), { x: startLineX + 4, y: ly + 1, size: 9, font: fontReg, color: corEscuro });
+                }
+            };
+
+            drawBlankLine('Paciente:', dados.rxPaciente || '', 40, py, width - 42);
+            py -= 22;
+            drawBlankLine('Endereço do Paciente:', '', 40, py, width - 42);
+            py -= 26;
+            drawBlankLine('Medicamento ou Substância:', dados.rxMed || '', 40, py, width - 42);
+            py -= 22;
+            drawBlankLine('Quantidade e Apresentação:', '', 40, py, 330);
+            drawBlankLine('Forma Farmacêutica:', '', 340, py, width - 42);
+            py -= 22;
+            drawBlankLine('Dose por Unidade Posológica:', '', 40, py, 330);
+            drawBlankLine('Posologia:', '', 340, py, width - 42);
+            py -= 20;
+            // Linhas livres extras para posologia / orientações
+            for (let k = 0; k < 2; k++) {
+                page.drawLine({ start: { x: 40, y: py - 2 }, end: { x: width - 42, y: py - 2 }, thickness: 0.6, color: corLinha });
+                py -= 19;
+            }
+
+            // Área reservada exclusivamente para DATA + CARIMBO E ASSINATURA DO MÉDICO
+            const stampBoxY = y - prescH + 10;
+            drawBlankLine('Data da Prescrição:', '____ / ____ / 202__', 40, stampBoxY + 28, 220);
+
+            page.drawRectangle({
+                x: 245, y: stampBoxY, width: width - 287, height: 54,
+                color: rgb(0.985, 0.99, 1), borderColor: corLinha, borderWidth: 0.9, borderDashArray: [4, 3]
+            });
+            page.drawText(sanitizarTextoPDF('ESPAÇO RESERVADO PARA CARIMBO E ASSINATURA DO MÉDICO / PRESCRITOR'), {
+                x: 256, y: stampBoxY + 41, size: 6.8, font: fontBold, color: corCinza
+            });
+            page.drawLine({ start: { x: 268, y: stampBoxY + 14 }, end: { x: width - 64, y: stampBoxY + 14 }, thickness: 0.7, color: corCinza });
+            page.drawText(sanitizarTextoPDF('Assinatura e Carimbo (CRM / CRO / CRMV)'), { x: 328, y: stampBoxY + 4, size: 7, font: fontReg, color: corCinza });
+
+            y = y - prescH - 10;
+
+            // QUADRO 3: IDENTIFICAÇÃO DO COMPRADOR & FORNECEDOR (EXIGIDO PORTARIA 344/98)
+            const cfH = 114;
+            const halfW = (width - 68) / 2;
+            // Comprador (Esquerda)
+            page.drawRectangle({ x: 30, y: y - cfH, width: halfW, height: cfH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 0.9 });
+            page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO COMPRADOR'), { x: 38, y: y - 13, size: 7.4, font: fontBold, color: t.accent });
+            drawBlankLine('Nome:', '', 38, y - 30, 30 + halfW - 10);
+            drawBlankLine('Ident. / RG:', '', 38, y - 50, 175);
+            drawBlankLine('Órg. Emissor:', '', 180, y - 50, 30 + halfW - 10);
+            drawBlankLine('End.:', '', 38, y - 70, 30 + halfW - 10);
+            drawBlankLine('Cidade/UF:', '', 38, y - 90, 185);
+            drawBlankLine('Tel:', '', 190, y - 90, 30 + halfW - 10);
+
+            // Fornecedor / Farmácia (Direita)
+            const fx0 = 38 + halfW;
+            page.drawRectangle({ x: fx0, y: y - cfH, width: halfW, height: cfH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 0.9 });
+            page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO FORNECEDOR (FARMÁCIA)'), { x: fx0 + 8, y: y - 13, size: 7.4, font: fontBold, color: t.accent });
+            page.drawText(sanitizarTextoPDF('Carimbo da Farmácia / Drogaria e Assinatura do Farmacêutico:'), { x: fx0 + 8, y: y - 28, size: 6.8, font: fontReg, color: corCinza });
+            drawBlankLine('Data Dispensação:', '___ / ___ / 202__', fx0 + 8, y - 95, fx0 + halfW - 10);
+
+            y = y - cfH - 12;
+
+            // QUADRO 4 (RODAPÉ FIXO): AUTORIZAÇÃO DA DIRETORIA + ASSINATURA FIXA (imagens/DIRETORIA23.png) + QR
+            const authH = 96;
+            const authY = 38;
+            page.drawRectangle({ x: 30, y: authY, width: width - 60, height: authH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1.1 });
+            page.drawText(sanitizarTextoPDF('AUTORIZAÇÃO SANITÁRIA — ASSINATURA FIXA DA DIRETORIA (COVISA / ANVISA)'), {
+                x: 40, y: authY + authH - 13, size: 7.4, font: fontBold, color: t.accent
+            });
+
+            // Aviso legal na esquerda
+            const avLines = quebrarLinhasPDF(t.aviso, fontReg, 7.2, 185);
+            let avy = authY + authH - 27;
+            avLines.slice(0, 5).forEach(ln => {
+                page.drawText(ln, { x: 40, y: avy, size: 7.2, font: fontReg, color: corCinza });
+                avy -= 9.5;
+            });
+            page.drawText(sanitizarTextoPDF(`Emissão: ${dados.emissao} | Validade: ${dados.validade}`), {
+                x: 40, y: authY + 9, size: 7, font: fontBold, color: corEscuro
+            });
+
+            // Assinatura Fixa DIRETORIA23.png no centro-direita
+            desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, 355, authY + 7, 215, 74);
+
+            // QR Code de validação no canto direito
+            if (qrImg) {
+                page.drawImage(qrImg, { x: width - 98, y: authY + 14, width: 58, height: 58 });
+                page.drawText(sanitizarTextoPDF('Validar'), { x: width - 81, y: authY + 5, size: 6.6, font: fontBold, color: corCinza });
+            }
+        }
+
+        return await pdfDoc.save();
+    }
+
+    // -------------------------------------------------------------------------
+    // CONSTRUTOR 2: LICENÇA PROVISÓRIA NO MOLDE certificacao_provisoria.pdf
+    // -------------------------------------------------------------------------
     async function construirPdfLicencaMolde(dados) {
         const { PDFDocument, rgb, StandardFonts } = PDFLib;
         const resp = await fetch('certificacao_provisoria.pdf');
@@ -6223,6 +6902,7 @@ REGRAS:
         const existingPdfBytes = await resp.arrayBuffer();
         const pdfDoc = await PDFDocument.load(existingPdfBytes);
         const page = pdfDoc.getPages()[0];
+        const { width } = page.getSize();
 
         const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);
         const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
@@ -6266,13 +6946,99 @@ REGRAS:
             alturaAtual -= espacoEntreLinhas;
         });
 
+        if (dados.usarAssinaturaFixa) {
+            const sigImg = await carregarAssinaturaDiretoriaPDF(pdfDoc);
+            if (sigImg) {
+                const dims = sigImg.scaleToFit(200, 68);
+                page.drawRectangle({ x: (width - dims.width) / 2 - 6, y: 42, width: dims.width + 12, height: dims.height + 6, color: rgb(1, 1, 1) });
+                page.drawImage(sigImg, { x: (width - dims.width) / 2, y: 45, width: dims.width, height: dims.height });
+            }
+        }
+
         return await pdfDoc.save();
     }
 
+    // -------------------------------------------------------------------------
+    // CONSTRUTOR 3: SOBREPOR DADOS + ASSINATURA NO PDF MOLDE DO REPOSITÓRIO
+    // (Suporta AcroForm se o PDF tiver campos preenchíveis OU sobreposição limpa)
+    // -------------------------------------------------------------------------
+    async function construirPdfSobreMoldeRepo(tipo, dados) {
+        const filenameRepo = DOCGEN_REPO_FILES[tipo];
+        if (!filenameRepo) throw new Error('sem_molde_repo');
+        if (tipo === 'licenca') return await construirPdfLicencaMolde(dados);
+
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const resp = await fetch(encodeURI(filenameRepo));
+        if (!resp.ok) throw new Error(`Molde ${filenameRepo} não encontrado no servidor`);
+
+        const buf = await resp.arrayBuffer();
+        const pdfDoc = await PDFDocument.load(buf);
+        const page = pdfDoc.getPages()[0];
+        const { width, height } = page.getSize();
+        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const black = rgb(0.08, 0.1, 0.14);
+        const blue = rgb(0.05, 0.23, 0.52);
+
+        // 1. Se o PDF tiver campos AcroForm interativos, preenche automaticamente por nome!
+        let preencheuForm = false;
+        try {
+            const form = pdfDoc.getForm();
+            const fields = form.getFields();
+            const endFull = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ');
+            fields.forEach(f => {
+                const n = (f.getName() || '').toLowerCase();
+                if (typeof f.setText !== 'function') return;
+                if (n.includes('nome') || n.includes('emitente') || n.includes('razao') || n.includes('medico')) { f.setText(sanitizarTextoPDF(dados.nome)); preencheuForm = true; }
+                else if (n.includes('cnpj') || n.includes('cpf') || n.includes('doc')) { f.setText(sanitizarTextoPDF(dados.cnpj)); preencheuForm = true; }
+                else if (n.includes('crm') || n.includes('conselho') || n.includes('registro')) { f.setText(sanitizarTextoPDF(dados.crm)); preencheuForm = true; }
+                else if (n.includes('end') || n.includes('rua') || n.includes('lograd')) { f.setText(sanitizarTextoPDF(endFull)); preencheuForm = true; }
+                else if (n.includes('bairro')) { f.setText(sanitizarTextoPDF(dados.bairro)); preencheuForm = true; }
+                else if (n.includes('cep')) { f.setText(sanitizarTextoPDF(dados.cep)); preencheuForm = true; }
+                else if (n.includes('cidade') || n.includes('municip')) { f.setText(sanitizarTextoPDF(dados.cidade)); preencheuForm = true; }
+                else if (n.includes('tel') || n.includes('fone')) { f.setText(sanitizarTextoPDF(dados.telefone)); preencheuForm = true; }
+                else if (n.includes('valor')) { f.setText(sanitizarTextoPDF(dados.valor)); preencheuForm = true; }
+                else if (n.includes('venc') || n.includes('valid')) { f.setText(sanitizarTextoPDF(dados.validade)); preencheuForm = true; }
+                else if (n.includes('data') || n.includes('emiss')) { f.setText(sanitizarTextoPDF(dados.emissao)); preencheuForm = true; }
+                else if (n.includes('num') || n.includes('prot') || n.includes('serie')) { f.setText(sanitizarTextoPDF(dados.protocolo)); preencheuForm = true; }
+            });
+        } catch (_) {}
+
+        // 2. Se o PDF for plano (sem campos AcroForm), carimba um quadro limpo no topo/rodapé com os dados + Assinatura Fixa
+        if (!preencheuForm) {
+            const endFull = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro, dados.cidade, dados.cep ? `CEP ${dados.cep}` : ''].filter(Boolean).join(' • ');
+            const numRx = `${dados.rxSerie || 'SP-2026-'}${String(parseInt(dados.rxInicio, 10) || 1001).padStart(6, '0')}`;
+            const boxH = 74;
+            const boxY = height - boxH - 16;
+            page.drawRectangle({ x: 22, y: boxY, width: width - 44, height: boxH, color: rgb(0.98, 0.99, 1), borderColor: blue, borderWidth: 1 });
+            page.drawText(sanitizarTextoPDF(`DADOS AUTORIZADOS COVISA • PROTOCOLO: ${dados.protocolo}${DOCGEN_RECEITA_TYPES.has(tipo) ? ' • Nº ' + numRx : ''}`), { x: 30, y: boxY + boxH - 13, size: 7.5, font: fontBold, color: blue });
+            page.drawText(sanitizarTextoPDF(`EMITENTE / CONTRIBUINTE: ${(dados.nome || '').toUpperCase()}${dados.crm ? '  |  ' + dados.crm.toUpperCase() : ''}`), { x: 30, y: boxY + boxH - 27, size: 8.5, font: fontBold, color: black });
+            page.drawText(sanitizarTextoPDF(`CPF/CNPJ: ${dados.cnpj || '—'}   |   TEL: ${dados.telefone || '—'}   |   EMISSÃO: ${dados.emissao}   |   VALIDADE/VENC.: ${dados.validade}${dados.valor ? '   |   VALOR: R$ ' + dados.valor : ''}`), { x: 30, y: boxY + boxH - 41, size: 7.8, font: fontReg, color: black });
+            page.drawText(sanitizarTextoPDF(`ENDEREÇO: ${endFull || '—'}`), { x: 30, y: boxY + boxH - 55, size: 7.8, font: fontReg, color: black });
+        }
+
+        // Assinatura Fixa DIRETORIA23.png no rodapé do molde
+        if (dados.usarAssinaturaFixa) {
+            const sigImg = await carregarAssinaturaDiretoriaPDF(pdfDoc);
+            if (sigImg) {
+                const dims = sigImg.scaleToFit(200, 68);
+                page.drawRectangle({ x: (width - dims.width) / 2 - 8, y: 18, width: dims.width + 16, height: dims.height + 8, color: rgb(1, 1, 1), borderColor: rgb(0.85, 0.88, 0.92), borderWidth: 0.6 });
+                page.drawImage(sigImg, { x: (width - dims.width) / 2, y: 22, width: dims.width, height: dims.height });
+            }
+        }
+
+        return await pdfDoc.save();
+    }
+
+    // -------------------------------------------------------------------------
+    // CONSTRUTOR 4: DOCUMENTOS INSTITUCIONAIS A4 COMPLETOS (Guia PIX, Recibo,
+    // Autorização Talonário, Dispensa, Vistoria, Notificação, Infração, Ofício)
+    // TODOS COM ASSINATURA FIXA imagens/DIRETORIA23.png
+    // -------------------------------------------------------------------------
     async function construirPdfInstitucionalA4(tipo, dados) {
         const { PDFDocument, rgb, StandardFonts } = PDFLib;
         const pdfDoc = await PDFDocument.create();
-        const page = pdfDoc.addPage([595.28, 841.89]); // A4 exato
+        const page = pdfDoc.addPage([595.28, 841.89]);
         const { width, height } = page.getSize();
 
         const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -6281,167 +7047,187 @@ REGRAS:
 
         const corGovAzul = rgb(0.05, 0.23, 0.52);
         const corVermelho = rgb(0.82, 0.14, 0.11);
-        const corVerde = rgb(0.06, 0.52, 0.34);
+        const corVerde = rgb(0.06, 0.50, 0.33);
+        const corAmbar = rgb(0.76, 0.45, 0.04);
+        const corRoxo = rgb(0.42, 0.16, 0.68);
         const corEscuro = rgb(0.11, 0.15, 0.22);
         const corCinza = rgb(0.38, 0.44, 0.52);
         const corBorda = rgb(0.82, 0.86, 0.91);
         const corFundoBox = rgb(0.96, 0.97, 0.99);
 
         const mapaTema = {
-            licenca: { titulo: 'CERTIFICADO DE LICENÇA SANITÁRIA PROVISÓRIA', cor: corVerde, sub: 'Documento Provisório de Regularidade Sanitária' },
-            guia: { titulo: 'GUIA OFICIAL DE ARRECADAÇÃO — TAXA SANITÁRIA', cor: corGovAzul, sub: 'Recolhimento de Taxa de Análise / Regularização Documental' },
-            notificacao: { titulo: 'NOTIFICAÇÃO DE PENDÊNCIA DOCUMENTAL', cor: rgb(0.76, 0.45, 0.04), sub: 'Intimação Administrativa para Regularização Sanitária' },
+            licenca: { titulo: 'CERTIFICADO DE LICENÇA SANITÁRIA PROVISÓRIA', cor: corVerde, sub: 'Documento Provisório de Regularidade Sanitária — COVISA' },
+            guia: { titulo: 'GUIA OFICIAL DE PAGAMENTO — TAXA DE VIGILÂNCIA SANITÁRIA', cor: corGovAzul, sub: 'Documento de Arrecadação Municipal Sanitária (DAMSP / PIX)' },
+            recibo_quitacao: { titulo: 'COMPROVANTE OFICIAL DE QUITAÇÃO DE TAXA SANITÁRIA', cor: corVerde, sub: 'Recibo Eletrônico de Pagamento Confirmado — COVISA Digital' },
+            autorizacao_talonario: { titulo: 'AUTORIZAÇÃO DE NUMERAÇÃO E CONFECÇÃO DE TALONÁRIO', cor: corRoxo, sub: 'Portaria SVS/MS nº 344/1998 — Liberação de Receituário de Controle Especial' },
+            declaracao: { titulo: 'DECLARAÇÃO DE REGULARIDADE E PROTOCOLO ATIVO', cor: corGovAzul, sub: 'Certidão de Andamento de Processo Sanitário Digital' },
+            dispensa: { titulo: 'CERTIDÃO DE DISPENSA DE LICENCIAMENTO — BAIXO RISCO', cor: corVerde, sub: 'Lei Federal nº 13.874/2019 (Liberdade Econômica) e Normas COVISA' },
+            notificacao: { titulo: 'NOTIFICAÇÃO DE PENDÊNCIA DOCUMENTAL', cor: corAmbar, sub: 'Intimação Administrativa para Regularização Sanitária' },
             infracao: { titulo: 'AUTO DE INFRAÇÃO E IMPOSIÇÃO DE PENALIDADE', cor: corVermelho, sub: 'Lei Estadual nº 10.083/1998 — Código Sanitário do Estado de São Paulo' },
-            declaracao: { titulo: 'DECLARAÇÃO DE REGULARIDADE E PROTOCOLO', cor: corGovAzul, sub: 'Certidão de Andamento de Processo Sanitário Digital' },
+            termo_vistoria: { titulo: 'TERMO DE INSPEÇÃO E VISTORIA SANITÁRIA', cor: corRoxo, sub: 'Relatório Oficial de Fiscalização Sanitária Municipal' },
             oficio: { titulo: (dados.tituloCustom || 'OFÍCIO OFICIAL — VIGILÂNCIA SANITÁRIA').toUpperCase(), cor: corGovAzul, sub: 'Comunicação Oficial da Coordenação de Vigilância em Saúde' }
         };
         const tema = mapaTema[tipo] || mapaTema.oficio;
 
-        // Moldura externa institucional
+        // Moldura externa
         page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: corBorda, borderWidth: 1.2 });
 
         // Faixa superior
-        page.drawRectangle({ x: 24, y: height - 108, width: width - 48, height: 84, color: rgb(0.97, 0.98, 1) });
-        page.drawRectangle({ x: 24, y: height - 111, width: width - 48, height: 3, color: tema.cor });
+        page.drawRectangle({ x: 24, y: height - 104, width: width - 48, height: 80, color: rgb(0.97, 0.98, 1) });
+        page.drawRectangle({ x: 24, y: height - 107, width: width - 48, height: 3, color: tema.cor });
 
-        // Brasão
         const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
         let textStartX = 44;
         if (brasaoImg) {
-            const dims = brasaoImg.scaleToFit(56, 56);
-            page.drawImage(brasaoImg, { x: 40, y: height - 94 + (56 - dims.height) / 2, width: dims.width, height: dims.height });
-            textStartX = 110;
+            const dims = brasaoImg.scaleToFit(54, 54);
+            page.drawImage(brasaoImg, { x: 40, y: height - 92 + (54 - dims.height) / 2, width: dims.width, height: dims.height });
+            textStartX = 108;
         }
 
-        page.drawText(sanitizarTextoPDF('PREFEITURA DO MUNICÍPIO DE SÃO PAULO'), { x: textStartX, y: height - 52, size: 12, font: fontBold, color: corEscuro });
-        page.drawText(sanitizarTextoPDF('SECRETARIA MUNICIPAL DA SAÚDE — COVISA'), { x: textStartX, y: height - 67, size: 9.5, font: fontBold, color: corVermelho });
-        page.drawText(sanitizarTextoPDF('Coordenação de Vigilância em Saúde | Portal COVISA Digital 2026'), { x: textStartX, y: height - 81, size: 8.5, font: fontReg, color: corCinza });
-        page.drawText(sanitizarTextoPDF(`Protocolo: ${dados.protocolo}`), { x: textStartX, y: height - 95, size: 8.5, font: fontBold, color: corGovAzul });
+        page.drawText(sanitizarTextoPDF('PREFEITURA DO MUNICÍPIO DE SÃO PAULO'), { x: textStartX, y: height - 50, size: 12, font: fontBold, color: corEscuro });
+        page.drawText(sanitizarTextoPDF('SECRETARIA MUNICIPAL DA SAÚDE — COVISA'), { x: textStartX, y: height - 65, size: 9.5, font: fontBold, color: corVermelho });
+        page.drawText(sanitizarTextoPDF('Coordenação de Vigilância em Saúde | Portal COVISA Digital 2026'), { x: textStartX, y: height - 79, size: 8.5, font: fontReg, color: corCinza });
+        page.drawText(sanitizarTextoPDF(`Protocolo: ${dados.protocolo}`), { x: textStartX, y: height - 93, size: 8.5, font: fontBold, color: corGovAzul });
 
-        // Faixa do título do documento
-        let y = height - 146;
-        page.drawRectangle({ x: 38, y: y - 10, width: width - 76, height: 42, color: tema.cor });
+        // Faixa título
+        let y = height - 142;
+        page.drawRectangle({ x: 38, y: y - 10, width: width - 76, height: 40, color: tema.cor });
         const titSan = sanitizarTextoPDF(tema.titulo);
-        const titSize = fontBold.widthOfTextAtSize(titSan, 12.5) > (width - 96) ? 10.5 : 12.5;
-        page.drawText(titSan, { x: 50, y: y + 14, size: titSize, font: fontBold, color: rgb(1, 1, 1) });
-        page.drawText(sanitizarTextoPDF(tema.sub), { x: 50, y: y - 1, size: 8.5, font: fontReg, color: rgb(0.92, 0.95, 1) });
+        const titSize = fontBold.widthOfTextAtSize(titSan, 12) > (width - 96) ? 10 : 12;
+        page.drawText(titSan, { x: 50, y: y + 13, size: titSize, font: fontBold, color: rgb(1, 1, 1) });
+        page.drawText(sanitizarTextoPDF(tema.sub), { x: 50, y: y - 1, size: 8.2, font: fontReg, color: rgb(0.92, 0.95, 1) });
 
-        // Bloco de identificação do contribuinte
-        y -= 32;
-        const boxH = 124;
+        // Bloco identificação
+        y -= 28;
+        const boxH = 118;
         page.drawRectangle({ x: 38, y: y - boxH, width: width - 76, height: boxH, color: corFundoBox, borderColor: corBorda, borderWidth: 1 });
-        page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO ESTABELECIMENTO / CONTRIBUINTE'), { x: 50, y: y - 16, size: 8.5, font: fontBold, color: corGovAzul });
+        page.drawText(sanitizarTextoPDF('IDENTIFICAÇÃO DO ESTABELECIMENTO / PROFISSIONAL'), { x: 50, y: y - 15, size: 8.2, font: fontBold, color: corGovAzul });
 
         const digits = (dados.cnpj || '').replace(/\D/g, '');
         const docRotulo = digits.length === 11 ? 'CPF' : 'CNPJ';
         const endFull = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ');
 
         const drawKv = (label, val, x, yPos, maxW = 240) => {
-            page.drawText(sanitizarTextoPDF(label), { x, y: yPos, size: 7.5, font: fontBold, color: corCinza });
+            page.drawText(sanitizarTextoPDF(label), { x, y: yPos, size: 7.2, font: fontBold, color: corCinza });
             let v = sanitizarTextoPDF(val || 'Não informado');
-            let sz = 9.5;
-            while (fontBold.widthOfTextAtSize(v, sz) > maxW && sz > 7) sz -= 0.4;
-            page.drawText(v, { x, y: yPos - 12, size: sz, font: fontBold, color: corEscuro });
+            let sz = 9.2;
+            while (fontBold.widthOfTextAtSize(v, sz) > maxW && sz > 6.8) sz -= 0.4;
+            page.drawText(v, { x, y: yPos - 11.5, size: sz, font: fontBold, color: corEscuro });
         };
 
-        drawKv('RAZÃO SOCIAL / NOME', (dados.nome || 'Não informado').toUpperCase(), 50, y - 34, 330);
-        drawKv(docRotulo, dados.cnpj || 'Não informado', 405, y - 34, 140);
-        drawKv('ENDEREÇO COMPLETO', endFull || 'Não informado', 50, y - 68, 330);
-        drawKv('CEP', dados.cep || 'Não informado', 405, y - 68, 140);
-        drawKv('MUNICÍPIO / UF', dados.cidade || 'São Paulo - SP', 50, y - 100, 175);
-        drawKv('RAMO DE ATIVIDADE', dados.ramo || 'Geral', 235, y - 100, 160);
-        drawKv('EMISSÃO / PRAZO', `${dados.emissao} | ${dados.validade}`, 405, y - 100, 145);
+        drawKv('RAZÃO SOCIAL / NOME', (dados.nome || 'Não informado').toUpperCase(), 50, y - 32, 330);
+        drawKv(docRotulo, dados.cnpj || 'Não informado', 402, y - 32, 145);
+        drawKv('ENDEREÇO COMPLETO', endFull || 'Não informado', 50, y - 64, 330);
+        drawKv('CEP', dados.cep || 'Não informado', 402, y - 64, 145);
+        drawKv('MUNICÍPIO / UF', dados.cidade || 'São Paulo - SP', 50, y - 95, 175);
+        drawKv(dados.crm ? 'CONSELHO / RAMO' : 'RAMO DE ATIVIDADE', dados.crm ? `${dados.crm} • ${dados.ramo || 'Saúde'}` : (dados.ramo || 'Geral'), 235, y - 95, 158);
+        drawKv('EMISSÃO / PRAZO', `${dados.emissao} | ${dados.validade}`, 402, y - 95, 148);
 
-        y = y - boxH - 22;
+        y = y - boxH - 18;
 
-        // Bloco financeiro / penalidade (para Guia ou Infração)
-        if (tipo === 'guia' || tipo === 'infracao') {
+        // Bloco especial por tipo (Financeiro / Talonário / Vistoria)
+        if (tipo === 'guia' || tipo === 'infracao' || tipo === 'recibo_quitacao') {
             const valorFmt = dados.valor
                 ? (dados.valor.trim().startsWith('R$') ? dados.valor.trim() : `R$ ${dados.valor.trim()}`)
                 : 'R$ 0,00';
-            const finH = 68;
-            page.drawRectangle({ x: 38, y: y - finH, width: width - 76, height: finH, color: rgb(1, 0.97, 0.97), borderColor: tema.cor, borderWidth: 1.2 });
-            drawKv(tipo === 'infracao' ? 'VALOR DA MULTA (UFESP/R$)' : 'VALOR TOTAL DA GUIA', valorFmt, 50, y - 20, 180);
-            drawKv(tipo === 'infracao' ? 'PRAZO DE DEFESA / VENCIMENTO' : 'DATA DE VENCIMENTO', dados.validade, 235, y - 20, 145);
-            drawKv('ENQUADRAMENTO LEGAL', dados.artigo || (tipo === 'infracao' ? 'Art. 122 — Lei 10.083/1998' : 'Lei Municipal 13.725/2004'), 390, y - 20, 155);
-            y = y - finH - 20;
+            const finH = 62;
+            const bgFin = tipo === 'recibo_quitacao' ? rgb(0.93, 0.99, 0.96) : rgb(1, 0.97, 0.97);
+            page.drawRectangle({ x: 38, y: y - finH, width: width - 76, height: finH, color: bgFin, borderColor: tema.cor, borderWidth: 1.2 });
+            drawKv(tipo === 'recibo_quitacao' ? 'VALOR QUITADO (PAGO)' : (tipo === 'infracao' ? 'VALOR DA MULTA (UFESP/R$)' : 'VALOR TOTAL DA GUIA'), valorFmt, 50, y - 18, 175);
+            drawKv(tipo === 'recibo_quitacao' ? 'STATUS / DATA QUITAÇÃO' : (tipo === 'infracao' ? 'PRAZO DE DEFESA' : 'DATA DE VENCIMENTO'), tipo === 'recibo_quitacao' ? `PAGO • ${dados.validade}` : dados.validade, 232, y - 18, 150);
+            drawKv('REFERÊNCIA / ENQUADRAMENTO', dados.artigo || dados.tipoTaxa || 'Lei Municipal 13.725/2004', 388, y - 18, 160);
+            y = y - finH - 16;
+        } else if (tipo === 'autorizacao_talonario') {
+            const numIni = Math.max(1, parseInt(dados.rxInicio, 10) || 1001);
+            const qtd = Math.max(1, parseInt(dados.rxQtd, 10) || 50);
+            const numFim = numIni + qtd - 1;
+            const ser = dados.rxSerie || 'SP-2026-';
+            const rxH = 58;
+            page.drawRectangle({ x: 38, y: y - rxH, width: width - 76, height: rxH, color: rgb(0.97, 0.95, 1), borderColor: corRoxo, borderWidth: 1.2 });
+            drawKv('FAIXA NUMÉRICA AUTORIZADA', `${ser}${String(numIni).padStart(6, '0')}  a  ${ser}${String(numFim).padStart(6, '0')}`, 50, y - 18, 255);
+            drawKv('QUANTIDADE TOTAL', `${qtd} folha(s)`, 318, y - 18, 95);
+            drawKv('CONSELHO / REGISTRO', dados.crm || 'Conforme cadastro', 425, y - 18, 125);
+            y = y - rxH - 16;
+        } else if (tipo === 'termo_vistoria') {
+            const vH = 44;
+            page.drawRectangle({ x: 38, y: y - vH, width: width - 76, height: vH, color: rgb(0.97, 0.95, 1), borderColor: corRoxo, borderWidth: 1.2 });
+            drawKv('RESULTADO DA INSPEÇÃO SANITÁRIA', dados.vistoriaStatus || 'SATISFATÓRIO — Apto para funcionamento', 50, y - 15, width - 104);
+            y = y - vH - 16;
         }
 
-        // Corpo / Detalhamento técnico
+        // Corpo do documento
         const corpoPadrao = {
             licenca: 'Certificamos que o estabelecimento acima identificado cumpriu as etapas iniciais de regularização documental perante o Portal COVISA Digital 2026, estando autorizado a operar provisoriamente dentro das normas sanitárias vigentes até a data de validade indicada.',
-            guia: 'Guia oficial referente à Taxa de Análise e Regularização Sanitária. O pagamento via PIX libera automaticamente a continuidade do processo e suspende preventivamente medidas administrativas relacionadas à pendência documental.',
+            guia: 'Guia oficial referente à Taxa de Análise e Regularização Sanitária (COVISA). Efetue o pagamento via PIX através do QR Code ou código Copia e Cola abaixo até a data de vencimento para liberação imediata do processo e emissão do documento definitivo.',
+            recibo_quitacao: 'Atestamos, para os devidos fins de comprovação fiscal e sanitária, que a taxa referente ao protocolo acima identificado foi devidamente quitada junto ao sistema de arrecadação do Portal COVISA Digital, dando plena quitação à obrigação correspondente.',
+            autorizacao_talonario: 'Fica o profissional/instituição acima identificado AUTORIZADO pela Vigilância Sanitária (COVISA) a confeccionar e utilizar a faixa numérica de Notificações de Receita de Controle Especial especificada neste documento, nos termos da Portaria SVS/MS nº 344/1998. Esta autorização deve ser apresentada à gráfica credenciada para impressão dos talonários.',
+            declaracao: 'Declaramos, para os devidos fins, que o estabelecimento acima identificado encontra-se regularmente protocolado e em acompanhamento perante a Coordenação de Vigilância em Saúde (COVISA), sob o protocolo especificado neste documento.',
+            dispensa: 'Certificamos que a atividade econômica informada pelo estabelecimento acima identificado enquadra-se como de Baixo Risco Sanitário, ficando dispensada de licenciamento sanitário prévio nos termos da Lei Federal nº 13.874/2019 (Lei da Liberdade Econômica) e das normas sanitárias vigentes, sujeita à fiscalização orientadora posterior.',
             notificacao: 'Fica o estabelecimento acima identificado NOTIFICADO a apresentar a documentação pendente junto ao Portal COVISA Digital dentro do prazo estabelecido, sob pena de aplicação das medidas previstas na Lei Municipal 13.725/2004 e Lei Estadual 10.083/1998.',
             infracao: 'Auto de Infração lavrado em decorrência de irregularidade sanitária constatada. Fica assegurado ao autuado o prazo legal de 10 (dez) dias para apresentação de defesa administrativa ou 30 (trinta) dias para quitação da penalidade.',
-            declaracao: 'Declaramos, para os devidos fins, que o estabelecimento acima identificado encontra-se regularmente protocolado e em acompanhamento perante a Coordenação de Vigilância em Saúde (COVISA), sob o protocolo especificado neste documento.',
+            termo_vistoria: 'Aos cuidados do responsável legal: realizou-se inspeção sanitária nas dependências do estabelecimento acima qualificado, avaliando condições físico-estruturais, boas práticas de manipulação/atendimento, higienização, controle de pragas e documentação sanitária obrigatória, resultando no parecer registrado neste Termo.',
             oficio: 'Comunicamos oficialmente a situação cadastral e sanitária referente ao processo em trâmite nesta Coordenação de Vigilância em Saúde.'
         };
 
         const textoCorpo = (dados.corpo && dados.corpo.trim()) ? dados.corpo.trim() : (corpoPadrao[tipo] || corpoPadrao.oficio);
         const tituloSecao = tipo === 'notificacao'
             ? 'EXIGÊNCIAS E PENDÊNCIAS CONSTATADAS'
-            : (tipo === 'infracao' ? 'DESCRIÇÃO DA INFRAÇÃO E FUNDAMENTAÇÃO' : 'DESCRIÇÃO / DISPOSIÇÕES OFICIAIS');
+            : (tipo === 'infracao' ? 'DESCRIÇÃO DA INFRAÇÃO E FUNDAMENTAÇÃO' : (tipo === 'termo_vistoria' ? 'CONSTATAÇÕES E EXIGÊNCIAS DA VISTORIA' : 'DESCRIÇÃO / DISPOSIÇÕES OFICIAIS'));
 
-        page.drawText(sanitizarTextoPDF(tituloSecao), { x: 42, y, size: 9, font: fontBold, color: corGovAzul });
-        y -= 16;
+        page.drawText(sanitizarTextoPDF(tituloSecao), { x: 42, y, size: 8.8, font: fontBold, color: corGovAzul });
+        y -= 15;
 
-        const linhasCorpo = quebrarLinhasPDF(textoCorpo, fontReg, 9.8, width - 88);
-        const maxLinhas = (tipo === 'guia' || tipo === 'infracao') && dados.pixCode ? 12 : 24;
+        const linhasCorpo = quebrarLinhasPDF(textoCorpo, fontReg, 9.6, width - 88);
+        const temBlocoPix = (tipo === 'guia' || tipo === 'infracao') && dados.pixCode && dados.pixCode.trim().length > 20;
+        const maxLinhas = temBlocoPix ? 10 : 20;
         linhasCorpo.slice(0, maxLinhas).forEach((ln) => {
-            if (y < 145) return;
-            if (ln) page.drawText(ln, { x: 42, y, size: 9.8, font: fontReg, color: corEscuro });
-            y -= 13.5;
+            if (y < (temBlocoPix ? 255 : 155)) return;
+            if (ln) page.drawText(ln, { x: 42, y, size: 9.6, font: fontReg, color: corEscuro });
+            y -= 13.2;
         });
 
-        // Bloco PIX com QR Code real se houver código PIX (Guia ou Infração)
-        if ((tipo === 'guia' || tipo === 'infracao') && dados.pixCode && dados.pixCode.trim().length > 20) {
-            y -= 12;
-            const pixBoxH = 122;
-            const boxY = Math.max(120, y - pixBoxH);
-            page.drawRectangle({ x: 38, y: boxY, width: width - 76, height: pixBoxH, color: corFundoBox, borderColor: corGovAzul, borderWidth: 1 });
-            page.drawText(sanitizarTextoPDF('PAGAMENTO INSTANTÂNEO VIA PIX (QR CODE + COPIA E COLA)'), { x: 50, y: boxY + pixBoxH - 17, size: 8.5, font: fontBold, color: corGovAzul });
+        // Bloco PIX com QR Code real
+        if (temBlocoPix) {
+            y -= 8;
+            const pixBoxH = 114;
+            const boxY = Math.max(138, y - pixBoxH);
+            page.drawRectangle({ x: 38, y: boxY, width: width - 76, height: pixBoxH, color: corFundoBox, borderColor: corGovAzul, borderWidth: 1.1 });
+            page.drawText(sanitizarTextoPDF('PAGAMENTO INSTANTÂNEO VIA PIX (QR CODE + COPIA E COLA)'), { x: 50, y: boxY + pixBoxH - 16, size: 8.2, font: fontBold, color: corGovAzul });
 
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&format=png&data=${encodeURIComponent(dados.pixCode.trim())}`;
             const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
             let pixTextX = 50;
             let pixMaxW = width - 104;
             if (qrImg) {
-                page.drawImage(qrImg, { x: 48, y: boxY + 10, width: 90, height: 90 });
-                pixTextX = 152;
-                pixMaxW = width - 204;
+                page.drawImage(qrImg, { x: 48, y: boxY + 9, width: 84, height: 84 });
+                pixTextX = 146;
+                pixMaxW = width - 198;
             }
 
-            page.drawText(sanitizarTextoPDF('Aponte a câmera do aplicativo do seu banco para o QR Code ou utilize o código abaixo:'), { x: pixTextX, y: boxY + pixBoxH - 34, size: 8.2, font: fontReg, color: corCinza });
-            const pixLines = quebrarLinhasPDF(dados.pixCode.trim(), fontMono, 7.5, pixMaxW);
-            let py = boxY + pixBoxH - 50;
+            page.drawText(sanitizarTextoPDF('Aponte a câmera do aplicativo do seu banco para o QR Code ou utilize o código abaixo:'), { x: pixTextX, y: boxY + pixBoxH - 32, size: 8, font: fontReg, color: corCinza });
+            const pixLines = quebrarLinhasPDF(dados.pixCode.trim(), fontMono, 7.3, pixMaxW);
+            let py = boxY + pixBoxH - 47;
             pixLines.slice(0, 5).forEach((pl) => {
-                page.drawText(pl, { x: pixTextX, y: py, size: 7.5, font: fontMono, color: corEscuro });
-                py -= 10.5;
+                page.drawText(pl, { x: pixTextX, y: py, size: 7.3, font: fontMono, color: corEscuro });
+                py -= 10;
             });
-            y = boxY - 14;
         }
 
-        // Assinatura e Rodapé fixo
-        const sigY = 86;
-        page.drawLine({ start: { x: 165, y: sigY + 18 }, end: { x: width - 165, y: sigY + 18 }, thickness: 0.9, color: corCinza });
-        const fiscalTxt = sanitizarTextoPDF(dados.fiscal || 'Giliard de Oliveira Santiago');
-        const cargoTxt = sanitizarTextoPDF(dados.cargo || 'Coordenação de Vigilância em Saúde — COVISA');
-        const fw = fontBold.widthOfTextAtSize(fiscalTxt, 9.5);
-        const cw = fontReg.widthOfTextAtSize(cargoTxt, 8);
-        page.drawText(fiscalTxt, { x: (width - fw) / 2, y: sigY + 5, size: 9.5, font: fontBold, color: corEscuro });
-        page.drawText(cargoTxt, { x: (width - cw) / 2, y: sigY - 8, size: 8, font: fontReg, color: corCinza });
+        // ASSINATURA FIXA DIRETORIA23.png (posicionada limpa e sem sobreposição no rodapé)
+        const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
+        desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, width / 2, 50, 235, 78);
 
-        // QR de validação no canto inferior direito (para Licença / Declaração / Notificação / Ofício)
-        if (!(tipo === 'guia' || tipo === 'infracao') || !dados.pixCode) {
+        // QR de validação no canto inferior direito
+        if (!temBlocoPix) {
             const qrValUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?protocolo=' + dados.protocolo)}`;
             const qrVal = await carregarImagemEmbedPDF(pdfDoc, qrValUrl);
             if (qrVal) {
-                page.drawImage(qrVal, { x: width - 92, y: 44, width: 52, height: 52 });
+                page.drawImage(qrVal, { x: width - 92, y: 48, width: 52, height: 52 });
             }
         }
 
         page.drawText(sanitizarTextoPDF(`Documento emitido eletronicamente em ${new Date().toLocaleString('pt-BR')} • vigilanciadigital-sp.com.br`), {
-            x: 40, y: 36, size: 7.2, font: fontReg, color: corCinza
+            x: 40, y: 34, size: 7.2, font: fontReg, color: corCinza
         });
 
         return await pdfDoc.save();
@@ -6454,6 +7240,14 @@ REGRAS:
             protocolo: (document.getElementById('docgen-protocolo')?.value || '').trim() || `COVISA-2026-${Date.now().toString().slice(-6)}`,
             cnpj: (document.getElementById('docgen-cnpj')?.value || '').trim(),
             nome: (document.getElementById('docgen-nome')?.value || '').trim(),
+            crm: (document.getElementById('docgen-crm')?.value || '').trim(),
+            especialidade: (document.getElementById('docgen-especialidade')?.value || '').trim(),
+            telefone: (document.getElementById('docgen-telefone')?.value || '').trim(),
+            rxSerie: (document.getElementById('docgen-rx-serie')?.value || 'SP-2026-').trim(),
+            rxInicio: (document.getElementById('docgen-rx-inicio')?.value || '1001').trim(),
+            rxQtd: (document.getElementById('docgen-rx-qtd')?.value || '1').trim(),
+            rxPaciente: (document.getElementById('docgen-rx-paciente')?.value || '').trim(),
+            rxMed: (document.getElementById('docgen-rx-med')?.value || '').trim(),
             rua: (document.getElementById('docgen-rua')?.value || '').trim(),
             num: (document.getElementById('docgen-num')?.value || '').trim(),
             bairro: (document.getElementById('docgen-bairro')?.value || '').trim(),
@@ -6463,12 +7257,16 @@ REGRAS:
             emissao: (document.getElementById('docgen-emissao')?.value || '').trim(),
             validade: (document.getElementById('docgen-validade')?.value || '').trim(),
             valor: (document.getElementById('docgen-valor')?.value || '').trim(),
+            tipoTaxa: (document.getElementById('docgen-tipo-taxa')?.value || '').trim(),
             artigo: (document.getElementById('docgen-artigo')?.value || '').trim(),
             pixCode: (document.getElementById('docgen-pix-code')?.value || '').trim(),
             corpo: (document.getElementById('docgen-corpo')?.value || '').trim(),
             tituloCustom: (document.getElementById('docgen-titulo-custom')?.value || '').trim(),
-            fiscal: (document.getElementById('docgen-fiscal')?.value || '').trim(),
-            cargo: (document.getElementById('docgen-cargo')?.value || '').trim()
+            vistoriaStatus: (document.getElementById('docgen-vistoria-status')?.value || '').trim(),
+            usarAssinaturaFixa: document.getElementById('docgen-usar-assinatura-fixa')?.checked !== false,
+            renderMode: document.getElementById('docgen-render-mode')?.value || 'oficial',
+            fiscal: (document.getElementById('docgen-fiscal')?.value || 'Giliard De Oliveira Santiago').trim(),
+            cargo: (document.getElementById('docgen-cargo')?.value || 'Assessor Técnico CEVISA/COVIS/SMS').trim()
         };
     }
 
@@ -6539,7 +7337,7 @@ REGRAS:
 
         const dados = coletarDadosDocGen();
         if (!dados.nome) {
-            return showToast("Falta o Nome", "Informe a Razão Social / Nome Completo (ou importe um processo / busque um CNPJ).", "warning");
+            return showToast("Falta o Nome", "Informe o Nome do Médico/Empresa ou puxe automaticamente do WhatsApp/CNPJ.", "warning");
         }
 
         const btnPrev = document.getElementById('btn-docgen-preview');
@@ -6551,24 +7349,43 @@ REGRAS:
 
         try {
             let pdfBytes;
-            if (dados.tipo === 'licenca') {
+            const ehReceitaFolha = ['receita_a', 'receita_b', 'receita_b2', 'receita_retinoides'].includes(dados.tipo);
+
+            if (dados.renderMode === 'molde_repo' && DOCGEN_REPO_FILES[dados.tipo]) {
+                try {
+                    pdfBytes = await construirPdfSobreMoldeRepo(dados.tipo, dados);
+                } catch (_) {
+                    pdfBytes = ehReceitaFolha
+                        ? await construirPdfReceitaEspecial(dados.tipo, dados)
+                        : await construirPdfInstitucionalA4(dados.tipo, dados);
+                }
+            } else if (ehReceitaFolha) {
+                pdfBytes = await construirPdfReceitaEspecial(dados.tipo, dados);
+            } else if (dados.tipo === 'licenca') {
                 try {
                     pdfBytes = await construirPdfLicencaMolde(dados);
                 } catch (_) {
-                    // Fallback se o arquivo molde não estiver acessível
                     pdfBytes = await construirPdfInstitucionalA4('licenca', dados);
                 }
             } else {
                 pdfBytes = await construirPdfInstitucionalA4(dados.tipo, dados);
             }
 
-            const docLimpo = (dados.cnpj || dados.protocolo).replace(/\D/g, '') || 'COVISA';
+            const docLimpo = (dados.cnpj || dados.crm || dados.protocolo).replace(/[^a-zA-Z0-9]/g, '') || 'COVISA';
             const prefixos = {
+                receita_a: 'Notificacao_Receita_A',
+                receita_b: 'Notificacao_Receita_B',
+                receita_b2: 'Notificacao_Receita_B2',
+                receita_retinoides: 'Notificacao_Receita_Retinoides',
+                autorizacao_talonario: 'Autorizacao_Talonario_COVISA',
                 licenca: 'Licenca_Provisoria',
-                guia: 'Guia_Taxa_COVISA',
+                guia: 'Guia_Pagamento_COVISA',
+                recibo_quitacao: 'Recibo_Quitacao_COVISA',
+                declaracao: 'Declaracao_Regularidade',
+                dispensa: 'Certidao_Baixo_Risco',
                 notificacao: 'Notificacao_Pendencia',
                 infracao: 'Auto_Infracao',
-                declaracao: 'Declaracao_Regularidade',
+                termo_vistoria: 'Termo_Vistoria_Sanitaria',
                 oficio: 'Oficio_COVISA'
             };
             const filename = `${prefixos[dados.tipo] || 'Documento_COVISA'}_${docLimpo}.pdf`;
@@ -6583,7 +7400,7 @@ REGRAS:
 
             exibirPdfNaPrevia(pdfBytes, filename, fazerDownload);
             registrarLog("Gerador de Documentos", `Emitiu ${filename} para ${dados.nome}`);
-            showToast(fazerDownload ? "PDF Baixado!" : "Prévia Pronta!", `${filename} gerado com sucesso.`, "success");
+            showToast(fazerDownload ? "PDF Baixado!" : "Prévia Pronta!", `${filename} gerado com assinatura fixa.`, "success");
         } catch (err) {
             console.error("Erro ao gerar PDF no Gerador:", err);
             showToast("Erro ao Gerar PDF", err.message, "error");
@@ -6606,14 +7423,22 @@ REGRAS:
     window.copiarMensagemAcompanhamentoDocGen = async () => {
         const d = coletarDadosDocGen();
         const titulos = {
+            receita_a: 'sua *Notificação de Receita A (Amarela)* já pré-preenchida e autorizada — basta inserir os dados do paciente/prescrição e colocar seu carimbo e assinatura',
+            receita_b: 'sua *Notificação de Receita B (Azul)* já pré-preenchida e autorizada — basta inserir os dados do paciente/prescrição e colocar seu carimbo e assinatura',
+            receita_b2: 'sua *Notificação de Receita B2 (Azul — Anorexígenos)* já pré-preenchida e autorizada — basta inserir os dados do paciente/prescrição e colocar seu carimbo e assinatura',
+            receita_retinoides: 'sua *Notificação de Receita Especial de Retinoides (Lista C2)* já pré-preenchida e autorizada — basta inserir os dados do paciente/prescrição e colocar seu carimbo e assinatura',
+            autorizacao_talonario: 'sua *Autorização Oficial de Numeração e Confecção de Talonário*',
             licenca: 'sua *Licença Sanitária Provisória*',
-            guia: 'a *Guia Oficial de Arrecadação (com PIX)*',
+            guia: 'a *Guia Oficial de Pagamento (Taxa Vigilância com PIX)*',
+            recibo_quitacao: 'o *Comprovante Oficial de Quitação da Taxa Sanitária*',
+            declaracao: 'sua *Declaração de Regularidade / Protocolo*',
+            dispensa: 'sua *Certidão de Dispensa / Baixo Risco Sanitário*',
             notificacao: 'a *Notificação Oficial de Pendência Documental*',
             infracao: 'o *Auto de Infração Sanitária*',
-            declaracao: 'sua *Declaração de Regularidade / Protocolo*',
+            termo_vistoria: 'o *Termo de Inspeção e Vistoria Sanitária*',
             oficio: `o documento *${d.tituloCustom || 'Ofício Oficial COVISA'}*`
         };
-        const msg = `*${d.fiscal || 'Giliard'}:*\nOlá! Segue em anexo ${titulos[d.tipo] || 'o documento oficial'} referente a *${d.nome || 'seu estabelecimento'}*${d.cnpj ? ` (${d.cnpj})` : ''}.\n\n*Protocolo:* ${d.protocolo}\n*Validade / Prazo:* ${d.validade}${d.valor ? `\n*Valor:* R$ ${d.valor}` : ''}\n\nQualquer dúvida, estou à disposição por aqui!`;
+        const msg = `*Giliard:*\nOlá! Segue em anexo ${titulos[d.tipo] || 'o documento oficial'} referente a *${d.nome || 'seu cadastro'}*${d.cnpj ? ` (${d.cnpj})` : ''}${d.crm ? ` • ${d.crm}` : ''}.\n\n*Protocolo:* ${d.protocolo}\n*Validade / Prazo:* ${d.validade}${d.valor ? `\n*Valor:* R$ ${d.valor}` : ''}\n\nQualquer dúvida, estou à disposição por aqui!`;
         try {
             await navigator.clipboard.writeText(msg);
             showToast("Mensagem Copiada!", "Cole no WhatsApp junto com o PDF baixado.", "success");
