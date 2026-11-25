@@ -406,6 +406,28 @@
     /* ======================================================== */
     /* CSS DO PAINEL DE CONTROLE TOTAL DO WHATSAPP               */
     /* ======================================================== */
+    .wa-nav-badge {
+      margin-left: auto;
+      background: var(--danger);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 900;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 7px;
+      border-radius: 50px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.7);
+      animation: waBadgePulse 1.6s infinite;
+    }
+    @keyframes waBadgePulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
     .wa-dashboard { display: flex; flex-direction: column; gap: 22px; }
 
     .wa-master-card {
@@ -654,7 +676,7 @@
       
       <nav class="nav-menu">
         <a class="nav-item active" onclick="switchView('view-processos', this)"><i class="fas fa-satellite-dish"></i> Centro de Comando</a>
-        <a class="nav-item" onclick="switchView('view-financeiro', this)"><i class="fas fa-comment-dots"></i> Assistente WhatsApp</a>
+        <a class="nav-item" id="nav-item-whatsapp" onclick="switchView('view-financeiro', this)"><i class="fas fa-comment-dots"></i> Assistente WhatsApp <span id="wa-nav-badge" class="wa-nav-badge" style="display: none;">0</span></a>
         <a class="nav-item" onclick="switchView('view-trafego', this)"><i class="fas fa-eye"></i> Monitor Espião</a>
         <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot"></i> IA Jurídica</a>
         <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
@@ -691,6 +713,18 @@
       </header>
 
       <div class="view-container">
+        <div id="wa-global-alert-banner" style="display: none; background: linear-gradient(90deg, rgba(239, 68, 68, 0.22), rgba(245, 158, 11, 0.14)); border: 1px solid var(--danger); border-left: 5px solid var(--danger); border-radius: var(--radius-md); padding: 14px 22px; margin-bottom: 22px; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <i class="fas fa-bell fa-shake" style="color: var(--danger); font-size: 1.5rem;"></i>
+            <div>
+              <strong style="color: white; font-size: 1rem; display: block;" id="wa-alert-banner-title">Novo atendimento humano aguardando no WhatsApp!</strong>
+              <span style="color: var(--text-light); font-size: 0.88rem;" id="wa-alert-banner-desc">Clique para abrir a conversa e responder.</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem; background: var(--danger);" onclick="irParaAtendimentoPendenteWA()">
+            <i class="fab fa-whatsapp"></i> Atender Agora
+          </button>
+        </div>
         
         <div id="view-processos" class="page-view active">
           <div class="page-title">
@@ -832,6 +866,12 @@
             </div>
             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
               <span id="wa-connection-badge" class="wa-pill-status wa-pill-on"><i class="fas fa-circle" style="font-size:0.55rem;"></i> Conectando...</span>
+              <button class="btn btn-secondary" id="btn-wa-sound" style="padding: 11px 16px; font-size: 0.88rem;" onclick="alternarSomWhatsApp()" title="Ativar/Desativar alerta sonoro">
+                <i class="fas fa-volume-up" style="color: var(--success);"></i> Som: Ligado
+              </button>
+              <button class="btn btn-secondary" id="btn-wa-notify" style="padding: 11px 16px; font-size: 0.88rem;" onclick="ativarNotificacoesPC()" title="Receber aviso no Windows/Chrome mesmo em outra aba">
+                <i class="fas fa-bell" style="color: var(--warning);"></i> Alertas no PC
+              </button>
               <button class="btn btn-secondary" style="padding: 11px 20px; font-size: 0.9rem;" onclick="carregarConversasWhatsApp(true)">
                 <i class="fas fa-sync-alt"></i> Atualizar
               </button>
@@ -1507,11 +1547,25 @@
           <div style="text-align: center; color: var(--text-muted); margin: auto;">Carregando histórico...</div>
         </div>
 
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <input type="text" id="wa-modal-input" class="form-input" style="padding: 14px 18px; font-size: 0.98rem;" placeholder="Digite sua mensagem para enviar ao cliente pelo WhatsApp..." onkeypress="if(event.key === 'Enter') enviarMensagemDiretaWhatsApp()" />
-          <button class="btn btn-success" id="wa-modal-btn-send" style="padding: 14px 24px; white-space: nowrap;" onclick="enviarMensagemDiretaWhatsApp()">
-            <i class="fas fa-paper-plane"></i> Enviar
-          </button>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 10px 14px; border-radius: 10px;">
+          <label style="display: flex; align-items: center; gap: 8px; color: var(--text-light); font-size: 0.88rem; font-weight: 700; cursor: pointer;">
+            <input type="checkbox" id="wa-modal-sign-toggle" checked style="width: 16px; height: 16px; accent-color: var(--success);" />
+            Assinar mensagem como:
+          </label>
+          <input type="text" id="wa-modal-sign-name" value="Giliard" placeholder="Seu nome..." style="background: var(--bg-sidebar); border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; width: 170px;" />
+          <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: auto;">Formato no WhatsApp: <strong style="color: white;">*Giliard:*</strong> + texto</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <textarea id="wa-modal-input" class="form-input" rows="3" style="padding: 14px 18px; font-size: 0.96rem; resize: vertical; min-height: 76px;" placeholder="Digite sua resposta (ou um rascunho curto e clique em Gerar Texto com IA)..." onkeydown="if(event.key === 'Enter' && !event.shiftKey){ event.preventDefault(); enviarMensagemDiretaWhatsApp(); }"></textarea>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-gemini" id="wa-modal-btn-ai" style="padding: 12px 20px; font-size: 0.92rem;" onclick="gerarTextoIAAtendimentoWA()">
+              <i class="fas fa-magic"></i> Gerar Texto com IA
+            </button>
+            <button class="btn btn-success" id="wa-modal-btn-send" style="padding: 12px 26px; font-size: 0.95rem; white-space: nowrap;" onclick="enviarMensagemDiretaWhatsApp()">
+              <i class="fas fa-paper-plane"></i> Enviar no WhatsApp
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -2043,6 +2097,186 @@
     let autoRefreshWhatsApp = null;
     let waModalPhoneAtual = null;
     let waModalPausedAtual = 0;
+    let waSomAtivo = localStorage.getItem('wa_som_ativo') !== '0';
+    let waPrimeiraCarga = true;
+    let waMapaAnterior = new Map();
+    const waTituloOriginal = document.title;
+
+    function tocarSomNotificacaoWA() {
+        if (!waSomAtivo) return;
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            const agora = ctx.currentTime;
+            [880, 1174.66].forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, agora + idx * 0.16);
+                gain.gain.setValueAtTime(0.001, agora + idx * 0.16);
+                gain.gain.exponentialRampToValueAtTime(0.18, agora + idx * 0.16 + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, agora + idx * 0.16 + 0.22);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(agora + idx * 0.16);
+                osc.stop(agora + idx * 0.16 + 0.24);
+            });
+            setTimeout(() => ctx.close().catch(() => {}), 700);
+        } catch (_) {}
+    }
+
+    function atualizarBotoesNotificacaoWA() {
+        const btnSom = document.getElementById('btn-wa-sound');
+        if (btnSom) {
+            btnSom.innerHTML = waSomAtivo
+                ? '<i class="fas fa-volume-up" style="color: var(--success);"></i> Som: Ligado'
+                : '<i class="fas fa-volume-mute" style="color: var(--text-muted);"></i> Som: Mudo';
+        }
+        const btnNotify = document.getElementById('btn-wa-notify');
+        if (btnNotify && 'Notification' in window) {
+            if (Notification.permission === 'granted') {
+                btnNotify.innerHTML = '<i class="fas fa-bell" style="color: var(--success);"></i> Alertas no PC: ON';
+                btnNotify.style.borderColor = 'var(--success)';
+            } else if (Notification.permission === 'denied') {
+                btnNotify.innerHTML = '<i class="fas fa-bell-slash" style="color: var(--danger);"></i> Bloqueado no Navegador';
+            }
+        }
+    }
+
+    window.alternarSomWhatsApp = () => {
+        waSomAtivo = !waSomAtivo;
+        localStorage.setItem('wa_som_ativo', waSomAtivo ? '1' : '0');
+        atualizarBotoesNotificacaoWA();
+        if (waSomAtivo) {
+            tocarSomNotificacaoWA();
+            showToast("Alerta Sonoro", "Som de notificação de atendimento ativado.", "success");
+        } else {
+            showToast("Alerta Sonoro", "Som de notificação silenciado.", "warning");
+        }
+    };
+
+    window.ativarNotificacoesPC = async () => {
+        if (!('Notification' in window)) {
+            return showToast("Indisponível", "Este navegador não suporta notificações na área de trabalho.", "warning");
+        }
+        if (Notification.permission === 'granted') {
+            tocarSomNotificacaoWA();
+            new Notification("COVISA - Alertas Ativos", { body: "Você receberá avisos aqui sempre que houver novo atendimento no WhatsApp." });
+            return showToast("Alertas Ativos", "As notificações do Windows/Chrome já estão ativadas.", "success");
+        }
+        const perm = await Notification.requestPermission();
+        atualizarBotoesNotificacaoWA();
+        if (perm === 'granted') {
+            tocarSomNotificacaoWA();
+            new Notification("COVISA - Alertas Ativados!", { body: "Você será avisado sempre que um cliente chamar no WhatsApp." });
+            showToast("Notificações Ativadas", "Alertas na área de trabalho habilitados com sucesso.", "success");
+        } else {
+            showToast("Permissão Negada", "Libere as notificações no cadeado ao lado do endereço do site no Chrome.", "warning");
+        }
+    };
+
+    let waUltimoTelefonePendente = null;
+
+    function atualizarIndicadoresPendentesWA(conversas) {
+        const listaPausadas = conversas.filter(c => c.paused === 1);
+        const pausadas = listaPausadas.length;
+        waUltimoTelefonePendente = pausadas > 0 ? listaPausadas[0].phone : null;
+
+        const badge = document.getElementById('wa-nav-badge');
+        if (badge) {
+            if (pausadas > 0) {
+                badge.innerText = pausadas > 99 ? '99+' : String(pausadas);
+                badge.style.display = 'inline-flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        const banner = document.getElementById('wa-global-alert-banner');
+        const bannerTitle = document.getElementById('wa-alert-banner-title');
+        const bannerDesc = document.getElementById('wa-alert-banner-desc');
+        if (banner) {
+            if (pausadas > 0) {
+                banner.style.display = 'flex';
+                if (bannerTitle) {
+                    bannerTitle.innerText = pausadas === 1
+                        ? '1 cliente aguardando atendimento humano no WhatsApp!'
+                        : `${pausadas} clientes aguardando atendimento humano no WhatsApp!`;
+                }
+                if (bannerDesc) {
+                    const primeiro = listaPausadas[0];
+                    const previa = (primeiro.last_message || 'Aguardando resposta').slice(0, 80);
+                    bannerDesc.innerText = `${formatarTelefoneWA(primeiro.phone)} — "${previa}"`;
+                }
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        document.title = pausadas > 0 ? `(${pausadas}) 🔔 Atendimento WhatsApp - COVISA` : waTituloOriginal;
+    }
+
+    window.irParaAtendimentoPendenteWA = () => {
+        const navItem = document.getElementById('nav-item-whatsapp');
+        if (navItem) switchView('view-financeiro', navItem);
+        if (waUltimoTelefonePendente) {
+            abrirModalChatWhatsApp(waUltimoTelefonePendente);
+        }
+    };
+
+    function dispararNotificacaoAtendimento(conv, titulo, detalhe) {
+        tocarSomNotificacaoWA();
+        showToast(titulo, `${formatarTelefoneWA(conv.phone)} — ${detalhe}`, "warning");
+
+        if ('Notification' in window && Notification.permission === 'granted') {
+            try {
+                const n = new Notification(titulo, {
+                    body: `${formatarTelefoneWA(conv.phone)}: ${detalhe}`,
+                    tag: `wa-${conv.phone}`,
+                    renotify: true
+                });
+                n.onclick = () => {
+                    window.focus();
+                    const navItem = document.getElementById('nav-item-whatsapp');
+                    if (navItem) switchView('view-financeiro', navItem);
+                    abrirModalChatWhatsApp(conv.phone);
+                    n.close();
+                };
+            } catch (_) {}
+        }
+    }
+
+    function verificarNovosAtendimentosWA(conversas) {
+        atualizarIndicadoresPendentesWA(conversas);
+
+        if (waPrimeiraCarga) {
+            waPrimeiraCarga = false;
+            waMapaAnterior.clear();
+            conversas.forEach(c => waMapaAnterior.set(c.phone, { paused: c.paused, updated_at: c.updated_at, message_count: c.message_count || 0 }));
+            return;
+        }
+
+        for (const c of conversas) {
+            const prev = waMapaAnterior.get(c.phone);
+            const trecho = (c.last_message || 'Nova interação no WhatsApp').slice(0, 90);
+
+            if (!prev) {
+                if (c.paused === 1) {
+                    dispararNotificacaoAtendimento(c, "🔔 Novo Atendimento Humano!", trecho);
+                } else {
+                    dispararNotificacaoAtendimento(c, "💬 Nova Conversa no WhatsApp", trecho);
+                }
+            } else if (prev.paused !== 1 && c.paused === 1) {
+                dispararNotificacaoAtendimento(c, "🔔 Cliente Pediu Atendente!", trecho);
+            } else if (c.paused === 1 && (c.updated_at > prev.updated_at) && c.last_role === 'user') {
+                dispararNotificacaoAtendimento(c, "📩 Nova Mensagem do Cliente", trecho);
+            }
+        }
+
+        waMapaAnterior.clear();
+        conversas.forEach(c => waMapaAnterior.set(c.phone, { paused: c.paused, updated_at: c.updated_at, message_count: c.message_count || 0 }));
+    }
 
     function escaparHtmlWA(str) {
         return String(str || '')
@@ -2139,7 +2373,9 @@
                 badgeConn.innerHTML = '<i class="fas fa-circle" style="font-size:0.55rem;"></i> Worker Online';
             }
 
+            atualizarBotoesNotificacaoWA();
             atualizarInterfaceGlobalWA();
+            verificarNovosAtendimentosWA(listaDeConversasAtuais);
             renderizarListaWhatsApp();
 
             if (waModalPhoneAtual && document.getElementById('modalChatWhatsApp').style.display === 'flex') {
@@ -2168,10 +2404,7 @@
 
         if (!autoRefreshWhatsApp) {
             autoRefreshWhatsApp = setInterval(() => {
-                const viewWa = document.getElementById('view-financeiro');
-                if (viewWa && viewWa.classList.contains('active')) {
-                    carregarConversasWhatsApp(false);
-                }
+                carregarConversasWhatsApp(false);
             }, 10000);
         }
     };
@@ -2505,6 +2738,7 @@
             }
 
             const hist = Array.isArray(conv.history) ? conv.history : [];
+            window._waModalHistoryAtual = hist;
             if (hist.length === 0) {
                 box.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin:auto;">Nenhuma mensagem registrada nesta conversa ainda.<br>Você pode enviar uma mensagem abaixo para iniciar ou responder.</div>';
                 return;
@@ -2538,12 +2772,74 @@
         await resetarConversaWhatsApp(waModalPhoneAtual);
     };
 
+    window.gerarTextoIAAtendimentoWA = async () => {
+        const input = document.getElementById('wa-modal-input');
+        const btn = document.getElementById('wa-modal-btn-ai');
+        const nomeAtendente = (document.getElementById('wa-modal-sign-name')?.value || 'Giliard').trim() || 'Giliard';
+        const rascunho = input.value.trim();
+
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+        btn.disabled = true;
+
+        const hist = Array.isArray(window._waModalHistoryAtual) ? window._waModalHistoryAtual.slice(-6) : [];
+        const resumoHist = hist.length > 0
+            ? hist.map(m => `${m.role === 'user' ? 'Cliente' : 'Atendimento'}: ${m.content}`).join('\n')
+            : 'Sem mensagens anteriores.';
+
+        const prompt = `Você é o assistente de redação do atendente ${nomeAtendente}, da Vigilância Sanitária (Portal COVISA Digital - https://vigilanciadigital-sp.com.br).
+Histórico recente da conversa no WhatsApp:
+${resumoHist}
+
+Rascunho / instrução do atendente:
+${rascunho || '(O atendente não digitou rascunho — crie uma saudação educada assumindo o atendimento humano e perguntando como pode ajudar com base no histórico.)'}
+
+REGRAS OBRIGATÓRIAS:
+1. Escreva APENAS a mensagem pronta para enviar ao cliente no WhatsApp, em português do Brasil, educada, clara e objetiva.
+2. NÃO coloque o nome "${nomeAtendente}:" no início (o sistema já adiciona automaticamente).
+3. Use no máximo 1 asterisco para negrito (*palavra*), nunca duplo asterisco (**).
+4. Não adicione aspas nem explicações extras.`;
+
+        try {
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            const data = await resp.json();
+            if (!resp.ok || !data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                throw new Error(data.error?.message || 'Falha na resposta da IA');
+            }
+            let textoGerado = data.candidates[0].content.parts[0].text.trim();
+            textoGerado = textoGerado.replace(/\*\*([^*\n]+)\*\*/g, '*$1*');
+            input.value = textoGerado;
+            input.focus();
+            showToast("Texto Pronto", "Revise se quiser e clique em Enviar no WhatsApp.", "success");
+        } catch (e) {
+            showToast("Erro IA", `Não foi possível gerar o texto: ${e.message}`, "error");
+        } finally {
+            btn.innerHTML = original;
+            btn.disabled = false;
+        }
+    };
+
     window.enviarMensagemDiretaWhatsApp = async () => {
         if (!waModalPhoneAtual) return;
         const input = document.getElementById('wa-modal-input');
         const btn = document.getElementById('wa-modal-btn-send');
-        const text = input.value.trim();
-        if (!text) return;
+        const rawText = input.value.trim();
+        if (!rawText) return;
+
+        const usarAssinatura = document.getElementById('wa-modal-sign-toggle')?.checked !== false;
+        const nomeAssinatura = (document.getElementById('wa-modal-sign-name')?.value || 'Giliard').trim();
+        let textoFinal = rawText;
+
+        if (usarAssinatura && nomeAssinatura) {
+            const prefixo = `*${nomeAssinatura}:*`;
+            if (!textoFinal.startsWith(prefixo)) {
+                textoFinal = `${prefixo}\n${textoFinal}`;
+            }
+        }
 
         const original = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
@@ -2553,13 +2849,13 @@
             const resp = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations/send`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: waModalPhoneAtual, text, pause_ai: true })
+                body: JSON.stringify({ phone: waModalPhoneAtual, text: textoFinal, pause_ai: true })
             });
             const dados = await resp.json();
             if (!resp.ok || !dados.success) throw new Error(dados.error || 'Falha ao enviar');
 
             input.value = '';
-            showToast("Enviado", "Mensagem enviada no WhatsApp e IA pausada para este cliente.", "success");
+            showToast("Enviado", "Mensagem enviada no WhatsApp com sua assinatura.", "success");
             registrarLog("Mensagem WhatsApp Admin", `Enviou resposta direta para ${waModalPhoneAtual}`);
             await atualizarHistoricoModalWhatsApp(true);
             await carregarConversasWhatsApp(false);
@@ -2580,7 +2876,9 @@
                 document.getElementById('lock-screen').style.display = 'none';
                 document.getElementById('app-container').style.display = 'flex'; 
                 initCharts(); 
-                gerarInsightRapido(); 
+                gerarInsightRapido();
+                atualizarBotoesNotificacaoWA();
+                carregarConversasWhatsApp(false); 
             }, 500);
         } else {
             // Usuário não está logado, mostra a tela de login
