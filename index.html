@@ -1244,20 +1244,66 @@
     const db = getFirestore(app);
 
     // =========================================================================
-    // TELEMETRIA AVANÇADA (3 CAMADAS DE LOCALIZAÇÃO + FUNIL + ERROS + SESSÃO)
+    // TELEMETRIA AVANÇADA 3.0 (GPS AUTOMÁTICO + RAIO-X COMPLETO + ANTI-BOT)
     // =========================================================================
     window.registrarEtapaFunil = () => {};
     window.atualizarLocalizacaoCNPJ = () => {};
     window.registrarEventoMonitor = () => {};
+    window.atualizarDadosNegocioMonitor = () => {};
 
     try {
         const ignorarMonitor = localStorage.getItem('covisa_ignorar_monitor') === '1';
 
-        if (!ignorarMonitor) {
-            const ua = navigator.userAgent.toLowerCase();
+        const UF_MAP = {
+            "acre": "AC", "alagoas": "AL", "amapa": "AP", "amazonas": "AM", "bahia": "BA",
+            "ceara": "CE", "distrito federal": "DF", "espirito santo": "ES", "goias": "GO",
+            "maranhao": "MA", "mato grosso": "MT", "mato grosso do sul": "MS", "minas gerais": "MG",
+            "para": "PA", "paraiba": "PB", "parana": "PR", "pernambuco": "PE", "piaui": "PI",
+            "rio de janeiro": "RJ", "rio grande do norte": "RN", "rio grande do sul": "RS",
+            "rondonia": "RO", "roraima": "RR", "santa catarina": "SC", "sao paulo": "SP",
+            "sergipe": "SE", "tocantins": "TO"
+        };
+
+        function normalizarUF(raw) {
+            const v = String(raw || "").trim();
+            if (!v) return "";
+            if (/^[A-Za-z]{2}$/.test(v)) return v.toUpperCase();
+            if (v.includes('-')) {
+                const p = v.split('-').pop().trim();
+                if (/^[A-Za-z]{2}$/.test(p)) return p.toUpperCase();
+            }
+            const limpo = v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            return UF_MAP[limpo] || v.toUpperCase().slice(0, 2);
+        }
+
+        function detectarGPU() {
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) return "";
+                const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                if (!dbg) return "";
+                const raw = String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || "");
+                return raw.replace(/^ANGLE \((.*)\)$/i, "$1").slice(0, 65);
+            } catch (_) { return ""; }
+        }
+
+        const uaRaw = navigator.userAgent || "";
+        const ua = uaRaw.toLowerCase();
+        const telaW = window.screen?.width || 0;
+        const telaH = window.screen?.height || 0;
+        const ehBot = Boolean(
+            navigator.webdriver ||
+            /headless|bot|crawler|spider|lighthouse|pagespeed|vercel|puppeteer|playwright|phantomjs/i.test(uaRaw) ||
+            (ua.includes("linux") && telaW === 800 && telaH === 600 && !navigator.maxTouchPoints)
+        );
+
+        if (!ignorarMonitor && !ehBot) {
             let osInfo = "Desktop";
             if (ua.includes("android")) osInfo = "Android";
-            else if (ua.includes("iphone") || ua.includes("ipad")) osInfo = "iPhone/iOS";
+            else if (ua.includes("iphone")) osInfo = "iPhone (iOS)";
+            else if (ua.includes("ipad")) osInfo = "iPad (iOS)";
+            else if (ua.includes("windows nt 10") || ua.includes("windows nt 11")) osInfo = "Windows 10/11";
             else if (ua.includes("windows")) osInfo = "Windows PC";
             else if (ua.includes("mac")) osInfo = "MacBook";
             else if (ua.includes("linux")) osInfo = "Linux";
@@ -1265,25 +1311,47 @@
             let browserInfo = "Navegador";
             if (ua.includes("edg/")) browserInfo = "Edge";
             else if (ua.includes("opr/") || ua.includes("opera")) browserInfo = "Opera";
+            else if (ua.includes("samsungbrowser")) browserInfo = "Samsung Internet";
             else if (ua.includes("chrome") && !ua.includes("edg")) browserInfo = "Chrome";
             else if (ua.includes("safari") && !ua.includes("chrome")) browserInfo = "Safari";
             else if (ua.includes("firefox")) browserInfo = "Firefox";
 
             const isMobile = /iphone|ipad|ipod|android/i.test(ua);
             const deviceIcon = isMobile ? '📱' : '💻';
-            const modeloDetalhado = `${osInfo} • ${browserInfo}`;
-            const telaInfo = `${window.screen?.width || 0}x${window.screen?.height || 0}`;
-            const conexaoInfo = navigator.connection?.effectiveType ? navigator.connection.effectiveType.toUpperCase() : "";
+            let modeloDetalhado = `${osInfo} • ${browserInfo}`;
+            const telaInfo = `${telaW}x${telaH}`;
+            const viewportInfo = `${window.innerWidth || 0}x${window.innerHeight || 0}`;
+            const orientacaoInfo = (window.innerHeight > window.innerWidth) ? "Retrato" : "Paisagem";
+            const ramGB = navigator.deviceMemory ? `${navigator.deviceMemory}GB RAM` : "";
+            const cpuNucleos = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} núcleos` : "";
+            const gpuInfo = detectarGPU();
+            const idiomaInfo = navigator.language || "pt-BR";
+            let fusoInfo = "";
+            try { fusoInfo = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (_) {}
 
-            // Origem de tráfego (Google Ads, UTM, Referrer)
+            const connObj = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            let conexaoInfo = "";
+            if (connObj) {
+                const tipoC = connObj.effectiveType ? connObj.effectiveType.toUpperCase() : "";
+                const velC = connObj.downlink ? `${connObj.downlink}Mbps` : "";
+                conexaoInfo = [tipoC, velC].filter(Boolean).join(" • ");
+            }
+
+            // Origem de tráfego e parâmetros completos de campanha
             const urlParams = new URLSearchParams(window.location.search);
             const utmSource = urlParams.get('utm_source') || "";
+            const utmMedium = urlParams.get('utm_medium') || "";
             const utmCampaign = urlParams.get('utm_campaign') || "";
+            const utmTerm = urlParams.get('utm_term') || "";
             const gclid = urlParams.get('gclid') || "";
-            const ref = (document.referrer || "").toLowerCase();
+            const fbclid = urlParams.get('fbclid') || "";
+            const refRaw = document.referrer || "";
+            const ref = refRaw.toLowerCase();
             let origemTrafego = "Acesso Direto";
-            if (gclid || (utmSource.toLowerCase().includes('google') && utmSource.toLowerCase().includes('ads'))) {
+            if (gclid || (utmSource.toLowerCase().includes('google') && (utmMedium.toLowerCase().includes('cpc') || utmSource.toLowerCase().includes('ads')))) {
                 origemTrafego = utmCampaign ? `Google Ads (${utmCampaign})` : "Google Ads";
+            } else if (fbclid || utmSource.toLowerCase().includes('facebook') || utmSource.toLowerCase().includes('ig')) {
+                origemTrafego = utmCampaign ? `Meta Ads (${utmCampaign})` : "Meta / Social";
             } else if (utmSource) {
                 origemTrafego = utmCampaign ? `${utmSource} (${utmCampaign})` : utmSource;
             } else if (ref.includes('google.')) {
@@ -1295,17 +1363,23 @@
             } else if (ref.includes('whatsapp')) {
                 origemTrafego = "WhatsApp";
             } else if (ref && !ref.includes(window.location.hostname)) {
-                try { origemTrafego = new URL(document.referrer).hostname; } catch (_) {}
+                try { origemTrafego = new URL(refRaw).hostname; } catch (_) {}
             }
 
-            let isRecorrente = false;
-            let tagRetorno = "👤 Novo";
-            if (localStorage.getItem('ja_visitou')) {
-                isRecorrente = true;
-                tagRetorno = "🔄 Recorrente";
-            } else {
-                localStorage.setItem('ja_visitou', 'sim');
+            // Contador real de visitas deste aparelho
+            let visitaNumero = Number(localStorage.getItem('covisa_visitas_count') || '0');
+            if (!sessionStorage.getItem('covisa_visita_inc')) {
+                visitaNumero += 1;
+                localStorage.setItem('covisa_visitas_count', String(visitaNumero));
+                sessionStorage.setItem('covisa_visita_inc', '1');
             }
+            if (!localStorage.getItem('covisa_primeira_visita')) {
+                localStorage.setItem('covisa_primeira_visita', new Date().toLocaleDateString('pt-BR'));
+            }
+            const primeiraVisitaEm = localStorage.getItem('covisa_primeira_visita') || "";
+            const isRecorrente = visitaNumero > 1 || Boolean(localStorage.getItem('ja_visitou'));
+            localStorage.setItem('ja_visitou', 'sim');
+            const tagRetorno = isRecorrente ? `🔄 Visita #${visitaNumero}` : "👤 1ª Visita";
 
             const sessionId = sessionStorage.getItem('covisa_sid') || ("sessao_" + Math.random().toString(36).substring(2, 11) + "_" + Date.now().toString(36));
             sessionStorage.setItem('covisa_sid', sessionId);
@@ -1314,7 +1388,9 @@
 
             const locState = {
                 locFonte: "buscando",
-                localizacao: "Localizando...",
+                gpsStatus: "pendente", // 'permitido' | 'bloqueado' | 'pendente' | 'indisponivel'
+                ipPublico: "",
+                localizacao: "Aguardando rede...",
                 regiao: "BR",
                 ruaGPS: "",
                 bairroGPS: "",
@@ -1325,8 +1401,13 @@
                 lat: null,
                 lng: null,
                 precisaoGPS: null,
+                modeloAparelho: "",
+                bateria: "",
+                scrollMax: 0,
                 cnpjDigitado: "",
                 empresaDigitada: "",
+                ramoEscolhido: "",
+                telefoneDigitado: "",
                 etapaAtual: "Entrou no portal"
             };
 
@@ -1344,24 +1425,41 @@
             const dataIso = new Date().toISOString().split('T')[0];
             const statsRef = doc(db, "estatisticas", dataIso);
             const sessionRef = doc(db, "trafego_aovivo", sessionId);
+            let primeiroLogRef = null;
 
             if (!sessionStorage.getItem('covisa_counted_' + dataIso)) {
                 sessionStorage.setItem('covisa_counted_' + dataIso, '1');
                 setDoc(statsRef, { total: increment(1) }, { merge: true }).catch(() => {});
             }
 
-            function avisarEstouOnline() {
-                setDoc(sessionRef, {
+            function montarSnapshotDados() {
+                return {
                     sessionId,
-                    ultima_acao: Date.now(),
-                    inicio_sessao: inicioSessao,
-                    visivel: !document.hidden,
                     dispositivo: deviceIcon,
-                    modelo: modeloDetalhado,
+                    modelo: locState.modeloAparelho ? `${locState.modeloAparelho} • ${browserInfo}` : modeloDetalhado,
+                    modeloAparelho: locState.modeloAparelho,
+                    gpu: gpuInfo,
+                    ramGB,
+                    cpuNucleos,
+                    bateria: locState.bateria,
                     tela: telaInfo,
+                    viewport: viewportInfo,
+                    orientacao: orientacaoInfo,
                     conexao: conexaoInfo,
+                    idioma: idiomaInfo,
+                    fusoHorario: fusoInfo,
+                    scrollMax: locState.scrollMax,
                     origem: origemTrafego,
+                    utmCampaign,
+                    utmTerm,
+                    referrerUrl: refRaw.slice(0, 140),
+                    urlEntrada: window.location.href.slice(0, 180),
+                    visitaNumero,
+                    primeiraVisitaEm,
                     recorrente: isRecorrente,
+                    tipoVisitante: tagRetorno,
+                    ipPublico: locState.ipPublico,
+                    gpsStatus: locState.gpsStatus,
                     locFonte: locState.locFonte,
                     localizacao: locState.localizacao,
                     ruaGPS: locState.ruaGPS,
@@ -1375,77 +1473,164 @@
                     precisaoGPS: locState.precisaoGPS,
                     cnpjDigitado: locState.cnpjDigitado,
                     empresaDigitada: locState.empresaDigitada,
-                    etapaAtual: locState.etapaAtual
+                    ramoEscolhido: locState.ramoEscolhido,
+                    telefoneDigitado: locState.telefoneDigitado,
+                    etapaAtual: locState.etapaAtual,
+                    regiao: locState.regiao
+                };
+            }
+
+            function avisarEstouOnline() {
+                setDoc(sessionRef, {
+                    ...montarSnapshotDados(),
+                    ultima_acao: Date.now(),
+                    inicio_sessao: inicioSessao,
+                    visivel: !document.hidden
                 }, { merge: true }).catch(() => {});
             }
 
-            // CAMADA 1: IP + Operadora (automático e silencioso)
+            function sincronizarPrimeiroLog() {
+                if (primeiroLogRef) {
+                    updateDoc(primeiroLogRef, montarSnapshotDados()).catch(() => {});
+                }
+            }
+
+            // Captura modelo real do celular/Windows via Client Hints (Chrome/Edge/Android)
+            if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+                navigator.userAgentData.getHighEntropyValues(['model', 'platform', 'platformVersion']).then((hi) => {
+                    if (hi.model) {
+                        locState.modeloAparelho = hi.model;
+                        salvarCacheLoc();
+                        avisarEstouOnline();
+                        sincronizarPrimeiroLog();
+                    }
+                }).catch(() => {});
+            }
+
+            // Captura nível de bateria (quando suportado)
+            if (navigator.getBattery) {
+                navigator.getBattery().then((bat) => {
+                    const atualizarBat = () => {
+                        const pct = Math.round((bat.level || 0) * 100);
+                        locState.bateria = `${pct}%${bat.charging ? ' ⚡' : ''}`;
+                        avisarEstouOnline();
+                        sincronizarPrimeiroLog();
+                    };
+                    atualizarBat();
+                    bat.addEventListener('levelchange', atualizarBat);
+                    bat.addEventListener('chargingchange', atualizarBat);
+                }).catch(() => {});
+            }
+
+            // Monitora profundidade de leitura (Scroll %)
+            let scrollTimer = null;
+            window.addEventListener('scroll', () => {
+                const docH = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+                const pct = Math.min(100, Math.max(0, Math.round((window.scrollY / docH) * 100)));
+                if (pct > locState.scrollMax) {
+                    locState.scrollMax = pct;
+                    clearTimeout(scrollTimer);
+                    scrollTimer = setTimeout(() => {
+                        avisarEstouOnline();
+                        sincronizarPrimeiroLog();
+                    }, 1500);
+                }
+            }, { passive: true });
+
+            // CAMADA 1: IP Público + Cidade/UF normalizada + Operadora (automático)
             async function buscarLocalizacaoIP() {
-                if (locState.locFonte === 'gps' || locState.locFonte === 'ip') return;
-                try {
-                    const req = await fetch('https://ipwho.is/');
-                    const data = await req.json();
-                    if (data && data.success && data.city && locState.locFonte !== 'gps') {
+                if (locState.locFonte === 'gps' || (locState.locFonte === 'ip' && locState.ipPublico)) return;
+                const tentarFonte = async (url, parser) => {
+                    const ctrl = new AbortController();
+                    const t = setTimeout(() => ctrl.abort(), 3500);
+                    try {
+                        const r = await fetch(url, { signal: ctrl.signal });
+                        clearTimeout(t);
+                        if (!r.ok) return false;
+                        const j = await r.json();
+                        return parser(j);
+                    } catch (_) {
+                        clearTimeout(t);
+                        return false;
+                    }
+                };
+
+                let ok = await tentarFonte('https://ipwho.is/', (data) => {
+                    if (!data || !data.success || !data.city) return false;
+                    locState.ipPublico = data.ip || locState.ipPublico;
+                    locState.operadora = data.connection?.isp || data.connection?.org || locState.operadora;
+                    if (locState.locFonte !== 'gps') {
+                        const uf = normalizarUF(data.region_code || data.region);
                         locState.locFonte = locState.locFonte === 'cnpj' ? 'cnpj' : 'ip';
                         if (locState.locFonte === 'ip') {
                             locState.municipioGPS = data.city || "";
-                            locState.estadoGPS = data.region_code || data.region || "";
+                            locState.estadoGPS = uf;
                             locState.cepGPS = data.postal || "";
-                            locState.localizacao = `${locState.municipioGPS}${locState.estadoGPS ? ' - ' + locState.estadoGPS : ''}`;
+                            locState.localizacao = uf ? `${data.city} - ${uf}` : data.city;
                         }
-                        locState.regiao = `BR-${data.region_code || 'SP'}`;
-                        locState.operadora = data.connection?.isp || data.connection?.org || "";
+                        locState.regiao = `BR-${uf || 'SP'}`;
                         if (locState.lat === null && typeof data.latitude === 'number') {
                             locState.lat = data.latitude;
                             locState.lng = data.longitude;
                         }
-                        salvarCacheLoc();
-                        avisarEstouOnline();
-                        return;
                     }
-                } catch (_) {}
+                    return true;
+                });
 
-                try {
-                    const req2 = await fetch('https://ipapi.co/json/');
-                    const data2 = await req2.json();
-                    if (data2 && data2.city && locState.locFonte !== 'gps') {
-                        locState.locFonte = locState.locFonte === 'cnpj' ? 'cnpj' : 'ip';
-                        if (locState.locFonte === 'ip') {
-                            locState.municipioGPS = data2.city || "";
-                            locState.estadoGPS = data2.region_code || data2.region || "";
-                            locState.cepGPS = data2.postal || "";
-                            locState.localizacao = `${locState.municipioGPS}${locState.estadoGPS ? ' - ' + locState.estadoGPS : ''}`;
+                if (!ok) {
+                    ok = await tentarFonte('https://ipapi.co/json/', (data2) => {
+                        if (!data2 || !data2.city) return false;
+                        locState.ipPublico = data2.ip || locState.ipPublico;
+                        locState.operadora = data2.org || locState.operadora;
+                        if (locState.locFonte !== 'gps') {
+                            const uf = normalizarUF(data2.region_code || data2.region);
+                            locState.locFonte = locState.locFonte === 'cnpj' ? 'cnpj' : 'ip';
+                            if (locState.locFonte === 'ip') {
+                                locState.municipioGPS = data2.city || "";
+                                locState.estadoGPS = uf;
+                                locState.cepGPS = data2.postal || "";
+                                locState.localizacao = uf ? `${data2.city} - ${uf}` : data2.city;
+                            }
+                            locState.regiao = `BR-${uf || 'SP'}`;
+                            if (locState.lat === null && typeof data2.latitude === 'number') {
+                                locState.lat = data2.latitude;
+                                locState.lng = data2.longitude;
+                            }
                         }
-                        locState.regiao = `BR-${data2.region_code || 'SP'}`;
-                        locState.operadora = data2.org || "";
-                        if (locState.lat === null && typeof data2.latitude === 'number') {
-                            locState.lat = data2.latitude;
-                            locState.lng = data2.longitude;
-                        }
-                        salvarCacheLoc();
-                        avisarEstouOnline();
-                    }
-                } catch (_) {
-                    if (locState.locFonte === 'buscando') {
-                        locState.localizacao = "IP Protegido";
-                    }
+                        return true;
+                    });
                 }
-            }
-            buscarLocalizacaoIP();
 
-            // CAMADA 2: GPS Exato do Navegador (apenas a caixinha padrão Permitir/Bloquear no 1º toque útil)
-            let gpsJaSolicitado = false;
-            async function solicitarGPSNativo() {
-                if (gpsJaSolicitado || locState.locFonte === 'gps' || !navigator.geolocation) return;
-                gpsJaSolicitado = true;
+                if (!ok && locState.locFonte === 'buscando') {
+                    locState.localizacao = "IP Protegido";
+                }
+                salvarCacheLoc();
+                avisarEstouOnline();
+                sincronizarPrimeiroLog();
+            }
+
+            // CAMADA 2: GPS Exato — pede permissão nativa do navegador automaticamente ao entrar (+ fallback no 1º toque para iPhone/Safari)
+            let gpsEmAndamento = false;
+            let gpsResolvido = false;
+
+            function solicitarGPSNativo() {
+                if (gpsResolvido || gpsEmAndamento) return;
+                if (!navigator.geolocation) {
+                    locState.gpsStatus = 'indisponivel';
+                    return;
+                }
+                gpsEmAndamento = true;
 
                 navigator.geolocation.getCurrentPosition(
                     async (pos) => {
+                        gpsEmAndamento = false;
+                        gpsResolvido = true;
                         const lat = Number(pos.coords.latitude.toFixed(6));
                         const lng = Number(pos.coords.longitude.toFixed(6));
                         const precisao = Math.round(pos.coords.accuracy || 0);
 
                         locState.locFonte = 'gps';
+                        locState.gpsStatus = 'permitido';
                         locState.lat = lat;
                         locState.lng = lng;
                         locState.precisaoGPS = precisao;
@@ -1460,8 +1645,8 @@
                                 locState.ruaGPS = num ? `${rua}, ${num}` : rua;
                                 locState.bairroGPS = a.suburb || a.neighbourhood || a.city_district || a.quarter || "";
                                 locState.municipioGPS = a.city || a.town || a.municipality || a.village || locState.municipioGPS || "";
-                                const ufRaw = a['ISO3166-2-lvl4'] || "";
-                                locState.estadoGPS = ufRaw.includes('-') ? ufRaw.split('-')[1] : (a.state_code || a.state || locState.estadoGPS || "");
+                                const ufRaw = a['ISO3166-2-lvl4'] || a.state_code || a.state || locState.estadoGPS || "";
+                                locState.estadoGPS = normalizarUF(ufRaw);
                                 locState.cepGPS = a.postcode || locState.cepGPS || "";
                                 locState.localizacao = [locState.bairroGPS, locState.municipioGPS, locState.estadoGPS].filter(Boolean).join(', ');
                             }
@@ -1469,52 +1654,69 @@
 
                         salvarCacheLoc();
                         avisarEstouOnline();
+                        sincronizarPrimeiroLog();
                         registrarAcaoUsuario(
-                            `GPS Exato confirmado (±${precisao}m): ${locState.ruaGPS ? locState.ruaGPS + ' - ' : ''}${locState.bairroGPS || locState.municipioGPS}`,
+                            `GPS Exato permitido (±${precisao}m): ${locState.ruaGPS ? locState.ruaGPS + ' - ' : ''}${locState.bairroGPS || locState.municipioGPS}`,
                             'gps'
                         );
                     },
-                    () => {
-                        // Se bloquear ou fechar, segue normalmente em silêncio com IP + CNPJ
+                    (err) => {
+                        gpsEmAndamento = false;
+                        if (err && err.code === 1) {
+                            // Usuário clicou em Bloquear
+                            gpsResolvido = true;
+                            locState.gpsStatus = 'bloqueado';
+                            salvarCacheLoc();
+                            avisarEstouOnline();
+                            sincronizarPrimeiroLog();
+                        }
                     },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+                    { enableHighAccuracy: true, timeout: 12000, maximumAge: 300000 }
                 );
             }
 
-            if (navigator.permissions && navigator.permissions.query) {
-                navigator.permissions.query({ name: 'geolocation' }).then((st) => {
-                    if (st.state === 'granted') solicitarGPSNativo();
-                }).catch(() => {});
-            }
+            // Dispara a caixinha padrão do navegador logo ao abrir o site
+            setTimeout(() => solicitarGPSNativo(), 600);
 
-            function gatilhoPrimeiroToqueUtil(e) {
-                if (gpsJaSolicitado) return;
-                if (e.target && e.target.closest && e.target.closest('button, a, .form-tab, .doc-item, input, select, textarea')) {
+            // Se o Safari/iOS exigir toque antes de abrir o prompt, tenta novamente no 1º clique
+            function fallbackGpsToque() {
+                if (!gpsResolvido && locState.gpsStatus === 'pendente') {
                     solicitarGPSNativo();
-                    document.removeEventListener('click', gatilhoPrimeiroToqueUtil, true);
-                    document.removeEventListener('focusin', gatilhoPrimeiroToqueUtil, true);
                 }
+                document.removeEventListener('click', fallbackGpsToque, true);
+                document.removeEventListener('touchstart', fallbackGpsToque, true);
             }
-            document.addEventListener('click', gatilhoPrimeiroToqueUtil, true);
-            document.addEventListener('focusin', gatilhoPrimeiroToqueUtil, true);
+            document.addEventListener('click', fallbackGpsToque, true);
+            document.addEventListener('touchstart', fallbackGpsToque, true);
 
             // CAMADA 3: Enriquecimento por CNPJ (endereço oficial da empresa)
             window.atualizarLocalizacaoCNPJ = function(info) {
                 if (!info) return;
                 if (info.cnpj) locState.cnpjDigitado = info.cnpj;
                 if (info.nome) locState.empresaDigitada = info.nome;
+                const ufNorm = normalizarUF(info.uf);
                 if (locState.locFonte !== 'gps' && (info.municipio || info.bairro)) {
                     locState.locFonte = 'cnpj';
                     locState.ruaGPS = info.logradouro ? `${info.logradouro}${info.numero ? ', ' + info.numero : ''}` : "";
                     locState.bairroGPS = info.bairro || "";
                     locState.municipioGPS = info.municipio || "";
-                    locState.estadoGPS = info.uf || "";
+                    locState.estadoGPS = ufNorm;
                     locState.cepGPS = info.cep || "";
-                    locState.localizacao = [locState.bairroGPS, locState.municipioGPS, locState.estadoGPS].filter(Boolean).join(', ');
+                    locState.localizacao = [locState.bairroGPS, locState.municipioGPS, ufNorm].filter(Boolean).join(', ');
                 }
                 salvarCacheLoc();
                 avisarEstouOnline();
+                sincronizarPrimeiroLog();
                 window.registrarEtapaFunil('cnpj', `CNPJ identificado: ${info.nome || info.cnpj}`);
+            };
+
+            window.atualizarDadosNegocioMonitor = function(campos) {
+                if (!campos) return;
+                if (campos.ramoEscolhido) locState.ramoEscolhido = campos.ramoEscolhido;
+                if (campos.telefoneDigitado) locState.telefoneDigitado = campos.telefoneDigitado;
+                salvarCacheLoc();
+                avisarEstouOnline();
+                sincronizarPrimeiroLog();
             };
 
             const etapasRegistradas = new Set();
@@ -1530,6 +1732,7 @@
                 if (etapaNomes[etapa]) {
                     locState.etapaAtual = etapaNomes[etapa];
                     avisarEstouOnline();
+                    sincronizarPrimeiroLog();
                 }
                 if (etapa && !etapasRegistradas.has(etapa)) {
                     etapasRegistradas.add(etapa);
@@ -1550,51 +1753,37 @@
             async function registrarAcaoUsuario(acaoStr, tipoEvento = "acao") {
                 const agora = Date.now();
                 if (tipoEvento === "clique" && acaoStr === ultimaAcaoTexto && (agora - ultimaAcaoHora) < 3000) {
-                    return;
+                    return null;
                 }
                 ultimaAcaoTexto = acaoStr;
                 ultimaAcaoHora = agora;
 
                 try {
-                    await addDoc(collection(db, "logs_visitantes"), {
-                        sessionId,
+                    const docRef = await addDoc(collection(db, "logs_visitantes"), {
+                        ...montarSnapshotDados(),
                         acao: acaoStr,
                         tipoEvento,
-                        dispositivo: deviceIcon,
-                        modelo: modeloDetalhado,
-                        tela: telaInfo,
-                        conexao: conexaoInfo,
-                        origem: origemTrafego,
-                        locFonte: locState.locFonte,
-                        localizacao: locState.localizacao,
-                        ruaGPS: locState.ruaGPS,
-                        bairroGPS: locState.bairroGPS,
-                        municipioGPS: locState.municipioGPS,
-                        estadoGPS: locState.estadoGPS,
-                        cepGPS: locState.cepGPS,
-                        operadora: locState.operadora,
-                        lat: locState.lat,
-                        lng: locState.lng,
-                        precisaoGPS: locState.precisaoGPS,
-                        cnpjDigitado: locState.cnpjDigitado,
-                        empresaDigitada: locState.empresaDigitada,
-                        etapaAtual: locState.etapaAtual,
-                        regiao: locState.regiao,
-                        recorrente: isRecorrente,
-                        tipoVisitante: tagRetorno,
                         dataHora: agora
                     });
-                } catch (_) {}
+                    return docRef;
+                } catch (_) { return null; }
             }
 
             window.registrarEventoMonitor = registrarAcaoUsuario;
 
-            avisarEstouOnline();
+            // Aguarda IP resolver (até 2.2s) ANTES de gravar o log de entrada para nunca aparecer "Localizando..."
+            (async () => {
+                await Promise.race([
+                    buscarLocalizacaoIP(),
+                    new Promise((res) => setTimeout(res, 2200))
+                ]);
+                avisarEstouOnline();
+                primeiroLogRef = await registrarAcaoUsuario(`Acessou o portal (${origemTrafego})`, 'entrada');
+            })();
+
             setInterval(avisarEstouOnline, 10000);
             document.addEventListener('visibilitychange', () => avisarEstouOnline());
             window.addEventListener('beforeunload', () => { deleteDoc(sessionRef).catch(() => {}); });
-
-            registrarAcaoUsuario(`Acessou o portal (${origemTrafego})`, 'entrada');
 
             document.addEventListener('click', (e) => {
                 let target = e.target.closest('button, a, .doc-item, .form-tab');
@@ -1618,11 +1807,21 @@
                 if (target.id === 'tab-envio' || target.id === 'tab-pagamento' || target.id === 'tab-multas' || target.id === 'main-search-btn') {
                     window.registrarEtapaFunil('consulta');
                 }
+                if (target.href && target.href.includes('whatsapp.com')) {
+                    registrarAcaoUsuario(`Clicou no WhatsApp / Suporte`, 'pix');
+                    return;
+                }
                 registrarAcaoUsuario(`Tocou em: [${label}]`, 'clique');
             });
 
             document.addEventListener('change', (e) => {
-                if (e.target && e.target.type === 'file' && e.target.files && e.target.files.length > 0) {
+                if (!e.target) return;
+                if (e.target.id === 'tipo_estab' && e.target.value) {
+                    window.atualizarDadosNegocioMonitor({ ramoEscolhido: e.target.value });
+                    registrarAcaoUsuario(`Selecionou ramo: [${e.target.value}]`, 'campo');
+                    return;
+                }
+                if (e.target.type === 'file' && e.target.files && e.target.files.length > 0) {
                     window.registrarEtapaFunil('anexo', `Anexou ${e.target.files.length} arquivo(s) (${e.target.files[0].name.substring(0, 30)})`);
                 }
             });
@@ -1632,11 +1831,15 @@
                     let label = e.target.placeholder || e.target.id || 'campo';
                     let val = (e.target.value || '').trim();
                     if (val.length > 0) {
-                        if (e.target.id === 'cnpj_empresa' || e.target.id === 'main-search-input' || e.target.id === 'cnpj_consulta') {
+                        if (e.target.id === 'whatsapp_estabelecimento') {
+                            window.atualizarDadosNegocioMonitor({ telefoneDigitado: val });
+                        }
+                        if (e.target.id === 'cnpj_empresa' || e.target.id === 'main-search-input' || e.target.id === 'consulta_cnpj' || e.target.id === 'consulta_cnpj_multa') {
                             const digits = val.replace(/\D/g, '');
                             if (digits.length === 11 || digits.length === 14) {
                                 locState.cnpjDigitado = val;
                                 avisarEstouOnline();
+                                sincronizarPrimeiroLog();
                                 window.registrarEtapaFunil('cnpj', `Informou CPF/CNPJ: ${val}`);
                                 return;
                             }
@@ -1850,6 +2053,9 @@
       const pixInput = document.getElementById('pix-copia-cola');
       pixInput.select(); pixInput.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(pixInput.value);
+      if (typeof window.registrarEventoMonitor === 'function') {
+          window.registrarEventoMonitor('Copiou o código PIX Copia e Cola!', 'pix');
+      }
       alert("Código Pix copiado com sucesso!");
     };
 
@@ -2921,7 +3127,7 @@
 
                           if (dadosPix.success) {
                               if (typeof window.registrarEtapaFunil === 'function') {
-                                  window.registrarEtapaFunil('pix', `Gerou PIX de cobrança (R$ ${dados.valor || ''})`);
+                                  window.registrarEtapaFunil('pix', `Gerou PIX de cobrança (R$ ${pedido.valor || ''})`);
                               }
                               document.getElementById('pix-copia-cola').value = dadosPix.copyPaste;
 
@@ -3282,6 +3488,9 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
         pixInput.select(); 
         pixInput.setSelectionRange(0, 99999);
         navigator.clipboard.writeText(pixInput.value);
+        if (typeof window.registrarEventoMonitor === 'function') {
+            window.registrarEventoMonitor('Copiou o código PIX da Multa!', 'pix');
+        }
         alert("Código Pix da multa copiado com sucesso!");
     };
   </script>
