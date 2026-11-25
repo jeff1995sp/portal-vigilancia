@@ -300,7 +300,19 @@
     @keyframes toastSlideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes toastFadeOut { to { opacity: 0; transform: translateX(120%); } }
 
-    .lab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: calc(100vh - 250px); }
+    .lab-mode-tabs { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .lab-mode-btn {
+      background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-muted);
+      padding: 10px 18px; border-radius: 12px; font-size: 0.88rem; font-weight: 800; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px; transition: 0.2s;
+    }
+    .lab-mode-btn:hover { color: #ffffff; border-color: var(--gemini-purple); }
+    .lab-mode-btn.active {
+      background: var(--gemini-gradient); color: #ffffff; border-color: transparent;
+      box-shadow: 0 4px 18px rgba(192, 132, 252, 0.35);
+    }
+
+    .lab-container { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; height: calc(100vh - 235px); min-height: 620px; }
     .lab-upload-box { background: var(--bg-card); border: 2px dashed var(--border-light); border-radius: var(--radius-xl); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; transition: 0.3s; position: relative; cursor: pointer; }
     .lab-upload-box:hover { border-color: var(--gemini-purple); background: rgba(192, 132, 252, 0.05); }
     .lab-upload-box i.icon-big { font-size: 4rem; color: var(--text-muted); margin-bottom: 20px; transition: 0.3s; }
@@ -309,9 +321,106 @@
     .lab-preview-area img, .lab-preview-area video { width: 100%; height: 100%; object-fit: contain; }
     .lab-btn-close-preview { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
     
-    .lab-result-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 40px; overflow-y: auto; box-shadow: var(--shadow-md); }
-    .lab-result-content { font-size: 1.1rem; line-height: 1.7; color: var(--text-light); }
-    .lab-loader { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 20px; }
+    .lab-result-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 26px; overflow-y: auto; box-shadow: var(--shadow-md); display: flex; flex-direction: column; }
+    .lab-result-content { font-size: 1rem; line-height: 1.65; color: var(--text-light); }
+    .lab-loader { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; gap: 16px; padding: 30px; }
+
+    /* Painel de Análise de Chat WhatsApp dentro do Laboratório */
+    .lab-wa-panel {
+      background: var(--bg-card); border: 1px solid #243554; border-radius: var(--radius-xl);
+      display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-md); min-height: 0;
+    }
+    .lab-wa-top {
+      padding: 16px 18px; background: #0a1222; border-bottom: 1px solid #1f2f4d;
+      display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;
+    }
+    .lab-wa-selector-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .lab-wa-selector-row select, .lab-wa-selector-row input {
+      background: #060c18; border: 1px solid #2a3d61; color: #ffffff;
+      padding: 9px 13px; border-radius: 10px; font-size: 0.88rem; font-weight: 700;
+    }
+    .lab-wa-selector-row select:focus, .lab-wa-selector-row input:focus { border-color: var(--gemini-purple); }
+    .lab-wa-pills-strip {
+      display: flex; gap: 7px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin;
+    }
+    .lab-chat-pill {
+      background: #070e1c; border: 1px solid #243554; color: #cbd5e1;
+      padding: 6px 12px; border-radius: 50px; font-size: 0.78rem; font-weight: 800;
+      cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; flex-shrink: 0;
+    }
+    .lab-chat-pill:hover { border-color: var(--gemini-purple); color: #ffffff; }
+    .lab-chat-pill.active { background: rgba(192, 132, 252, 0.22); border-color: var(--gemini-purple); color: #ffffff; }
+    .lab-chat-pill.is-paused { border-color: rgba(239, 68, 68, 0.55); }
+
+    .lab-wa-media-bar {
+      padding: 9px 16px; background: #081020; border-bottom: 1px solid #1e2d4a;
+      display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+      font-size: 0.79rem; color: #cbd5e1; flex-shrink: 0;
+    }
+    .lab-wa-media-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .lab-media-pill {
+      background: #0f1c33; border: 1px solid #293e66; color: #e2e8f0;
+      padding: 3px 9px; border-radius: 50px; font-size: 0.74rem; font-weight: 800;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .lab-media-pill.pdf { border-color: rgba(248, 113, 113, 0.45); color: #fecaca; }
+    .lab-media-pill.img { border-color: rgba(56, 189, 248, 0.45); color: #bae6fd; }
+    .lab-media-pill.aud { border-color: rgba(16, 185, 129, 0.45); color: #a7f3d0; }
+
+    .lab-wa-messages {
+      flex: 1; overflow-y: auto; padding: 18px; background: #060b16;
+      display: flex; flex-direction: column; gap: 11px; min-height: 0;
+    }
+    .lab-wa-action-bar {
+      padding: 14px 16px; background: #0a1222; border-top: 1px solid #1f2f4d;
+      display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;
+    }
+    .lab-wa-action-bar input {
+      width: 100%; background: #060c18; border: 1px solid #283a5e; color: #ffffff;
+      padding: 10px 14px; border-radius: 10px; font-size: 0.86rem;
+    }
+    .lab-wa-action-bar input:focus { border-color: var(--gemini-purple); }
+
+    /* Cards do Relatório Pericial da IA */
+    .lab-report-wrap { display: flex; flex-direction: column; gap: 16px; }
+    .lab-report-card {
+      background: #081020; border: 1px solid #223456; border-radius: 14px; padding: 16px 18px;
+    }
+    .lab-report-card.highlight-purple { border-left: 4px solid var(--gemini-purple); }
+    .lab-report-card.highlight-warn { border-left: 4px solid var(--warning); background: rgba(245, 158, 11, 0.06); }
+    .lab-report-card.highlight-danger { border-left: 4px solid var(--danger); background: rgba(239, 68, 68, 0.07); }
+    .lab-report-card.highlight-success { border-left: 4px solid var(--success); background: rgba(16, 185, 129, 0.06); }
+    .lab-report-card h4 {
+      margin: 0 0 10px 0; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.6px;
+      color: #ffffff; font-weight: 900; display: flex; align-items: center; gap: 8px;
+    }
+    .lab-doc-item-card {
+      background: #0e1930; border: 1px solid #24375a; border-radius: 10px; padding: 12px 14px;
+      margin-bottom: 9px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .lab-doc-item-card:last-child { margin-bottom: 0; }
+    .lab-doc-item-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .lab-doc-status {
+      padding: 3px 10px; border-radius: 50px; font-size: 0.72rem; font-weight: 900; text-transform: uppercase;
+    }
+    .lab-doc-status.ok { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid #10b981; }
+    .lab-doc-status.warn { background: rgba(245, 158, 11, 0.2); color: #fde68a; border: 1px solid #f59e0b; }
+    .lab-doc-status.err { background: rgba(239, 68, 68, 0.22); color: #fecaca; border: 1px solid #ef4444; }
+    .lab-bullet-list { margin: 0; padding-left: 18px; color: #e2e8f0; font-size: 0.9rem; line-height: 1.55; }
+    .lab-bullet-list li { margin-bottom: 5px; }
+
+    .lab-reply-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), #081020 70%);
+      border: 1px solid rgba(16, 185, 129, 0.55); border-radius: 14px; padding: 16px 18px;
+      display: flex; flex-direction: column; gap: 11px;
+    }
+    .lab-reply-box textarea {
+      width: 100%; min-height: 135px; background: #040914; border: 1px solid #243a5e;
+      color: #ffffff; border-radius: 10px; padding: 13px 15px; font-size: 0.93rem;
+      line-height: 1.55; resize: vertical; font-family: inherit;
+    }
+    .lab-reply-box textarea:focus { border-color: var(--success); }
+    .lab-reply-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
 
     .triagem-box { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); padding: 20px; border-radius: var(--radius-md); margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
     .triagem-box.risk { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
@@ -972,7 +1081,7 @@
         <a class="nav-item" id="nav-item-whatsapp" onclick="switchView('view-financeiro', this)"><i class="fas fa-comment-dots"></i> Assistente WhatsApp <span id="wa-nav-badge" class="wa-nav-badge" style="display: none;">0</span></a>
         <a class="nav-item" onclick="switchView('view-trafego', this)"><i class="fas fa-eye"></i> Monitor Espião</a>
         <a class="nav-item" onclick="switchView('view-chat', this)"><i class="fas fa-robot"></i> IA Jurídica</a>
-        <a class="nav-item" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório de Mídia</a>
+        <a class="nav-item" id="nav-item-laboratorio" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório IA (WhatsApp)</a>
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
         <a class="nav-item" onclick="switchView('view-ufesp', this)"><i class="fas fa-balance-scale"></i> Tabela UFESP 2026</a>
       </nav>
@@ -1417,21 +1526,105 @@
         </div>
 
         <div id="view-laboratorio" class="page-view">
-          <div class="page-title">
+          <div class="page-title" style="margin-bottom: 18px;">
             <div>
-              <h1><i class="fas fa-microscope" style="color: var(--gemini-purple);"></i> Laboratório Forense de Mídia</h1>
-              <p>Envie fotos ou vídeos para a IA caçar infrações, analisar Photoshop e mapear riscos.</p>
+              <h1><i class="fas fa-microscope" style="color: var(--gemini-purple);"></i> Laboratório IA — Conversas, PDFs & Imagens</h1>
+              <p>Selecione um chat do WhatsApp para ver toda a conversa, analisar todos os PDFs, fotos e áudios recebidos e gerar o relatório com a resposta pronta.</p>
+            </div>
+            <div class="lab-mode-tabs">
+              <button type="button" class="lab-mode-btn active" id="lab-mode-btn-wa" onclick="mudarModoLaboratorio('wa')">
+                <i class="fab fa-whatsapp"></i> Analisar Chat WhatsApp
+              </button>
+              <button type="button" class="lab-mode-btn" id="lab-mode-btn-manual" onclick="mudarModoLaboratorio('manual')">
+                <i class="fas fa-cloud-upload-alt"></i> Upload Manual (PDF/Foto)
+              </button>
+              <button type="button" class="btn btn-secondary" style="padding: 10px 15px; font-size: 0.85rem;" onclick="carregarListaChatsLaboratorio(true)">
+                <i class="fas fa-sync-alt"></i> Atualizar Chats
+              </button>
             </div>
           </div>
-          
-          <div class="lab-container">
+
+          <!-- MODO 1: ANALISADOR COMPLETO DE CONVERSAS DO WHATSAPP -->
+          <div id="lab-section-wa" class="lab-container">
+            <!-- COLUNA ESQUERDA: SELETOR + CONVERSA COMPLETA DO WHATSAPP -->
+            <div class="lab-wa-panel">
+              <div class="lab-wa-top">
+                <div class="lab-wa-selector-row">
+                  <input type="text" id="lab-wa-search" placeholder="Filtrar número ou texto..." style="width: 190px;" onkeyup="renderizarSeletorChatsLaboratorio()" />
+                  <select id="lab-wa-select" style="flex: 1; min-width: 210px;" onchange="selecionarChatLaboratorio(this.value)">
+                    <option value="">Selecione uma conversa do WhatsApp...</option>
+                  </select>
+                  <button type="button" class="wa-btn-sm" onclick="recarregarChatSelecionadoLab()" title="Recarregar mensagens desta conversa">
+                    <i class="fas fa-redo"></i>
+                  </button>
+                </div>
+                <div class="lab-wa-pills-strip" id="lab-wa-pills">
+                  <span style="color: var(--text-muted); font-size: 0.8rem;">Carregando conversas...</span>
+                </div>
+              </div>
+
+              <div class="lab-wa-media-bar" id="lab-wa-media-bar">
+                <div class="lab-wa-media-badges" id="lab-wa-media-badges">
+                  <span>Nenhuma conversa selecionada</span>
+                </div>
+                <span id="lab-wa-phone-status"></span>
+              </div>
+
+              <div class="lab-wa-messages" id="lab-wa-messages">
+                <div style="text-align: center; color: var(--text-muted); margin: auto; max-width: 340px;">
+                  <i class="fab fa-whatsapp" style="font-size: 3rem; color: #25D366; opacity: 0.5; margin-bottom: 12px; display: block;"></i>
+                  <strong style="color: white; font-size: 1.05rem; display: block; margin-bottom: 6px;">Escolha uma conversa acima</strong>
+                  <span>Todas as mensagens, PDFs, imagens e áudios enviados pelo cliente vão aparecer aqui para você ver e mandar a IA analisar tudo de uma vez.</span>
+                </div>
+              </div>
+
+              <div class="lab-wa-action-bar">
+                <input type="text" id="lab-wa-extra-prompt" placeholder="Instrução extra opcional (ex: 'Verificar se falta alvará ou RT', 'Orientar sobre taxa de R$ 200')..." />
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                  <button type="button" class="btn btn-gemini" id="btn-lab-analisar-wa" style="flex: 1; padding: 13px 20px; font-size: 0.96rem;" onclick="analisarChatWhatsAppNoLaboratorio()">
+                    <i class="fas fa-magic"></i> Analisar Todos PDFs, Imagens & Conversa (Gerar Relatório)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLUNA DIREITA: RELATÓRIO COMPLETO + RESPOSTA PRONTA PARA ENVIAR -->
+            <div class="lab-result-box" id="lab-wa-report-box">
+              <div id="lab-wa-idle" style="text-align: center; color: var(--text-muted); margin: auto; max-width: 420px; padding: 20px;">
+                <i class="fas fa-file-medical-alt" style="font-size: 3.8rem; color: var(--gemini-purple); opacity: 0.4; margin-bottom: 16px; display: block;"></i>
+                <h2 style="color: white; margin-bottom: 10px;">Relatório Inteligente & Resposta</h2>
+                <p style="line-height: 1.6; font-size: 0.94rem;">
+                  Quando você clicar em <strong>Analisar</strong>, a IA vai ler o histórico completo da conversa e abrir <strong>cada PDF, imagem e áudio</strong> recebido no WhatsApp para te entregar:
+                </p>
+                <div style="text-align: left; background: #081020; border: 1px solid #1e2d4a; border-radius: 12px; padding: 14px 16px; margin-top: 14px; font-size: 0.86rem; line-height: 1.65; color: #cbd5e1;">
+                  <div><i class="fas fa-check" style="color:#10b981;"></i> Resumo completo do cliente, empresa e pedido</div>
+                  <div><i class="fas fa-check" style="color:#10b981;"></i> Conferência individual de cada PDF e imagem enviada</div>
+                  <div><i class="fas fa-check" style="color:#10b981;"></i> Lista do que está faltando, vencido ou irregular</div>
+                  <div><i class="fas fa-check" style="color:#10b981;"></i> Mensagem pronta para revisar e enviar direto no WhatsApp</div>
+                </div>
+              </div>
+
+              <div id="lab-wa-loading" class="lab-loader">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 3.6rem; color: var(--gemini-purple);"></i>
+                <h3 style="color: white; margin: 0;" id="lab-wa-loading-title">Analisando conversa e arquivos...</h3>
+                <p style="color: var(--text-muted); max-width: 420px; margin: 0; line-height: 1.5;" id="lab-wa-loading-sub">Baixando PDFs e imagens recebidas no WhatsApp para leitura completa pela IA.</p>
+              </div>
+
+              <div id="lab-wa-result" style="display: none;">
+                <div id="lab-wa-report-content" class="lab-report-wrap"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MODO 2: UPLOAD MANUAL (FOTO / PDF / VÍDEO) -->
+          <div id="lab-section-manual" class="lab-container" style="display: none;">
             <div class="lab-upload-box" id="lab-drop-area" onclick="document.getElementById('lab-file-input').click()">
               <i class="fas fa-cloud-upload-alt icon-big"></i>
-              <h3 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">Solte a Foto ou Vídeo Aqui</h3>
-              <p style="color: var(--text-muted); margin-bottom: 20px;">Ou clique para procurar no seu computador (Máx 15MB)</p>
-              <button class="btn btn-gemini"><i class="fas fa-search"></i> Selecionar Arquivo</button>
+              <h3 style="color: white; font-size: 1.45rem; margin-bottom: 10px;">Solte a Foto, PDF ou Vídeo Aqui</h3>
+              <p style="color: var(--text-muted); margin-bottom: 20px;">Ou clique para procurar no computador — ou cole um print com Ctrl+V (Máx 15MB)</p>
+              <button type="button" class="btn btn-gemini"><i class="fas fa-search"></i> Selecionar Arquivo</button>
               
-              <input type="file" id="lab-file-input" style="display: none;" accept="image/*,video/*">
+              <input type="file" id="lab-file-input" style="display: none;" accept="image/*,video/*,application/pdf">
               
               <div class="lab-preview-area" id="lab-preview"></div>
             </div>
@@ -1445,12 +1638,12 @@
 
               <div id="lab-loading-state" class="lab-loader">
                 <i class="fas fa-circle-notch fa-spin" style="font-size: 4rem; color: var(--gemini-purple);"></i>
-                <h3 style="color: white;">Dissecando frames e metadados...</h3>
-                <p style="color: var(--text-muted);">A IA está a processar a visão computacional.</p>
+                <h3 style="color: white;">Dissecando documento e imagem...</h3>
+                <p style="color: var(--text-muted);">A IA está processando a leitura completa do arquivo.</p>
               </div>
 
               <div id="lab-final-result" style="display: none;">
-                <h3 style="color: var(--gemini-purple); font-size: 1.5rem; margin-bottom: 20px; font-weight: 900;"><i class="fas fa-file-contract"></i> Laudo Técnico Multimídia</h3>
+                <h3 style="color: var(--gemini-purple); font-size: 1.4rem; margin-bottom: 18px; font-weight: 900;"><i class="fas fa-file-contract"></i> Laudo Técnico Multimídia</h3>
                 <div id="lab-result-content" class="lab-result-content"></div>
               </div>
             </div>
@@ -1922,6 +2115,9 @@
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button class="btn-ia-toggle active-ia" id="wa-modal-btn-pause" onclick="alternarPausaNoModal()">
               <i class="fas fa-pause"></i> Pausar IA
+            </button>
+            <button class="wa-btn-sm" style="background: rgba(192, 132, 252, 0.16); border-color: var(--gemini-purple); color: #e9d5ff;" onclick="abrirChatAtualNoLaboratorio()">
+              <i class="fas fa-microscope"></i> Analisar PDFs/Imagens (IA)
             </button>
             <button class="wa-btn-sm btn-reset" onclick="resetarConversaNoModal()">
               <i class="fas fa-redo"></i> Resetar Conversa
@@ -2526,6 +2722,9 @@
         if (viewId === 'view-financeiro') {
             carregarConversasWhatsApp();
         }
+        if (viewId === 'view-laboratorio') {
+            carregarListaChatsLaboratorio(false);
+        }
         if (viewId === 'view-trafego' && window._spyLeafletMap) {
             setTimeout(() => { window._spyLeafletMap.invalidateSize(); }, 200);
         }
@@ -3030,6 +3229,9 @@
                     <div class="wa-actions">
                         <button class="wa-btn-sm btn-chat" onclick="abrirModalChatWhatsApp('${conv.phone}')">
                             <i class="fas fa-comments"></i> Chat / Responder
+                        </button>
+                        <button class="wa-btn-sm" style="background: rgba(192, 132, 252, 0.16); border-color: var(--gemini-purple); color: #e9d5ff;" onclick="abrirChatNoLaboratorio('${conv.phone}', true)" title="Abrir conversa no Laboratório e analisar todos os PDFs e imagens com IA">
+                            <i class="fas fa-microscope"></i> Analisar IA
                         </button>
                         <button class="btn-ia-toggle ${classeBtn}" onclick="alterarEstadoIA('${conv.phone}', ${novaAcao})" id="btn-ia-${conv.phone}">
                             <i class="fas ${iconeBtn}"></i> ${textoBtn}
@@ -4521,11 +4723,679 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
       }
     };
 
+    // =========================================================================
+    // LABORATÓRIO IA: ANÁLISE COMPLETA DE CHAT WHATSAPP (PDFs + IMAGENS + ÁUDIOS)
+    // =========================================================================
+    let labModoAtual = 'wa';
+    let labWaPhoneSelecionado = null;
+    let labWaConvAtual = null;
+    let labWaAnalisando = false;
+    let labWaUltimoRelatorio = null;
+
+    window.mudarModoLaboratorio = (modo) => {
+        labModoAtual = modo;
+        document.getElementById('lab-mode-btn-wa')?.classList.toggle('active', modo === 'wa');
+        document.getElementById('lab-mode-btn-manual')?.classList.toggle('active', modo === 'manual');
+        const secWa = document.getElementById('lab-section-wa');
+        const secMan = document.getElementById('lab-section-manual');
+        if (secWa) secWa.style.display = modo === 'wa' ? 'grid' : 'none';
+        if (secMan) secMan.style.display = modo === 'manual' ? 'grid' : 'none';
+        if (modo === 'wa') carregarListaChatsLaboratorio(false);
+    };
+
+    window.abrirChatNoLaboratorio = async (phone, iniciarAnaliseAutomatica = false) => {
+        const navLab = document.getElementById('nav-item-laboratorio');
+        switchView('view-laboratorio', navLab);
+        mudarModoLaboratorio('wa');
+        await carregarListaChatsLaboratorio(false);
+        if (phone) {
+            await selecionarChatLaboratorio(phone);
+            if (iniciarAnaliseAutomatica) {
+                analisarChatWhatsAppNoLaboratorio();
+            }
+        }
+    };
+
+    window.abrirChatAtualNoLaboratorio = () => {
+        if (!waModalPhoneAtual) return;
+        const tel = waModalPhoneAtual;
+        fecharModalChatWhatsApp();
+        abrirChatNoLaboratorio(tel, true);
+    };
+
+    window.carregarListaChatsLaboratorio = async (mostrarToast = false) => {
+        try {
+            const resp = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations?t=${Date.now()}`);
+            if (resp.ok) {
+                const dados = await resp.json();
+                if (dados.success && Array.isArray(dados.conversations)) {
+                    listaDeConversasAtuais = dados.conversations;
+                }
+            }
+        } catch (_) {}
+
+        renderizarSeletorChatsLaboratorio();
+
+        if (!labWaPhoneSelecionado && listaDeConversasAtuais.length > 0) {
+            await selecionarChatLaboratorio(listaDeConversasAtuais[0].phone);
+        } else if (labWaPhoneSelecionado) {
+            const sel = document.getElementById('lab-wa-select');
+            if (sel) sel.value = labWaPhoneSelecionado;
+        }
+
+        if (mostrarToast) {
+            showToast("Chats Atualizados", `${listaDeConversasAtuais.length} conversa(s) carregadas no Laboratório.`, "success");
+        }
+    };
+
+    window.renderizarSeletorChatsLaboratorio = () => {
+        const sel = document.getElementById('lab-wa-select');
+        const pills = document.getElementById('lab-wa-pills');
+        const termo = (document.getElementById('lab-wa-search')?.value || '').toLowerCase().trim();
+        const termoDigits = termo.replace(/\D/g, '');
+        if (!sel || !pills) return;
+
+        let filtradas = listaDeConversasAtuais || [];
+        if (termo) {
+            filtradas = filtradas.filter(c =>
+                c.phone.includes(termo) ||
+                (termoDigits && c.phone.includes(termoDigits)) ||
+                (c.last_message || '').toLowerCase().includes(termo)
+            );
+        }
+
+        sel.innerHTML = '<option value="">Selecione uma conversa do WhatsApp...</option>' +
+            filtradas.map(c => {
+                const st = c.paused === 1 ? '🔴 Pausada' : '🟢 IA';
+                const prev = (c.last_message || '').replace(/\s+/g, ' ').slice(0, 38);
+                return `<option value="${escaparHtmlWA(c.phone)}">${formatarTelefoneWA(c.phone)} (${c.message_count || 0} msgs • ${st}) — ${escaparHtmlWA(prev)}</option>`;
+            }).join('');
+
+        if (labWaPhoneSelecionado) sel.value = labWaPhoneSelecionado;
+
+        if (filtradas.length === 0) {
+            pills.innerHTML = '<span style="color: var(--text-muted); font-size: 0.8rem;">Nenhuma conversa encontrada no WhatsApp.</span>';
+            return;
+        }
+
+        pills.innerHTML = filtradas.slice(0, 15).map(c => {
+            const act = c.phone === labWaPhoneSelecionado ? 'active' : '';
+            const paus = c.paused === 1 ? 'is-paused' : '';
+            const dot = c.paused === 1 ? '<span style="color:#f87171;">●</span>' : '<span style="color:#10b981;">●</span>';
+            return `<button type="button" class="lab-chat-pill ${act} ${paus}" onclick="selecionarChatLaboratorio('${escaparHtmlWA(c.phone)}')">${dot} ${formatarTelefoneWA(c.phone)} <span style="opacity:0.7;">(${c.message_count || 0})</span></button>`;
+        }).join('');
+    };
+
+    window.recarregarChatSelecionadoLab = () => {
+        if (labWaPhoneSelecionado) selecionarChatLaboratorio(labWaPhoneSelecionado);
+        else carregarListaChatsLaboratorio(true);
+    };
+
+    window.selecionarChatLaboratorio = async (phone) => {
+        if (!phone) return;
+        labWaPhoneSelecionado = phone;
+        renderizarSeletorChatsLaboratorio();
+
+        const msgBox = document.getElementById('lab-wa-messages');
+        const badgesEl = document.getElementById('lab-wa-media-badges');
+        const statusEl = document.getElementById('lab-wa-phone-status');
+        if (msgBox) {
+            msgBox.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin:auto;"><i class="fas fa-circle-notch fa-spin" style="font-size:1.8rem; color:var(--gemini-purple);"></i><p style="margin-top:10px;">Carregando conversa, PDFs e imagens...</p></div>';
+        }
+
+        try {
+            const resp = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations/history?phone=${encodeURIComponent(phone)}&t=${Date.now()}`);
+            const dados = await resp.json();
+            if (!resp.ok || !dados.success) throw new Error(dados.error || 'Erro ao carregar histórico');
+
+            const conv = dados.conversation || { phone, paused: 0, history: [] };
+            labWaConvAtual = conv;
+            const hist = Array.isArray(conv.history) ? conv.history : [];
+
+            let qtdPdf = 0, qtdImg = 0, qtdAud = 0, qtdVid = 0, qtdOutros = 0;
+            hist.forEach(m => {
+                if (!m.media || !m.media.id) return;
+                const t = m.media.type || '';
+                const mime = (m.media.mime_type || '').toLowerCase();
+                const fn = (m.media.filename || '').toLowerCase();
+                if (t === 'image' || t === 'sticker' || mime.startsWith('image/')) qtdImg++;
+                else if (mime.includes('pdf') || fn.endsWith('.pdf')) qtdPdf++;
+                else if (t === 'audio' || mime.startsWith('audio/')) qtdAud++;
+                else if (t === 'video' || mime.startsWith('video/')) qtdVid++;
+                else qtdOutros++;
+            });
+
+            if (badgesEl) {
+                const pillsArr = [`<span class="lab-media-pill"><i class="fas fa-comments"></i> ${hist.length} msg(s)</span>`];
+                if (qtdPdf > 0) pillsArr.push(`<span class="lab-media-pill pdf"><i class="fas fa-file-pdf"></i> ${qtdPdf} PDF(s)</span>`);
+                if (qtdImg > 0) pillsArr.push(`<span class="lab-media-pill img"><i class="fas fa-image"></i> ${qtdImg} Imagem(ns)</span>`);
+                if (qtdAud > 0) pillsArr.push(`<span class="lab-media-pill aud"><i class="fas fa-microphone"></i> ${qtdAud} Áudio(s)</span>`);
+                if (qtdVid > 0) pillsArr.push(`<span class="lab-media-pill"><i class="fas fa-video"></i> ${qtdVid} Vídeo(s)</span>`);
+                if (qtdOutros > 0) pillsArr.push(`<span class="lab-media-pill"><i class="fas fa-paperclip"></i> ${qtdOutros} Arquivo(s)</span>`);
+                badgesEl.innerHTML = pillsArr.join('');
+            }
+
+            if (statusEl) {
+                statusEl.innerHTML = conv.paused === 1
+                    ? '<span class="wa-pill-status wa-pill-off" style="font-size:0.7rem; padding:3px 9px;">Pausada (Humano)</span>'
+                    : '<span class="wa-pill-status wa-pill-on" style="font-size:0.7rem; padding:3px 9px;">IA Ativa</span>';
+            }
+
+            if (hist.length === 0) {
+                msgBox.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin:auto;">Nenhuma mensagem registrada nesta conversa ainda.</div>';
+            } else {
+                msgBox.innerHTML = hist.map(m => {
+                    const ehHumano = m.role === 'assistant' && (m.content || '').startsWith('[Atendente]');
+                    const textoLimpo = ehHumano ? m.content.replace(/^\[Atendente\]\s*/, '') : (m.content || '');
+                    const cls = m.role === 'user' ? 'from-client' : (ehHumano ? 'from-human' : 'from-ai');
+                    const tag = m.role === 'user' ? 'Cliente' : (ehHumano ? 'Você (Atendente)' : 'Ana (IA)');
+                    const hora = m.ts ? new Date(m.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+                    const corpoHtml = renderizarConteudoMensagemWA(m, textoLimpo);
+                    return `<div class="wa-bubble ${cls}"><span class="wa-bubble-tag"><span>${tag}</span>${hora ? `<span class="wa-bubble-time">${hora}</span>` : ''}</span>${corpoHtml}</div>`;
+                }).join('');
+                msgBox.scrollTop = msgBox.scrollHeight;
+            }
+        } catch (err) {
+            if (msgBox) {
+                msgBox.innerHTML = `<div style="text-align:center; color:var(--danger); margin:auto;">Erro ao carregar conversa: ${escaparHtmlWA(err.message)}</div>`;
+            }
+        }
+    };
+
+    function blobParaBase64Puro(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const res = String(reader.result || '');
+                const idx = res.indexOf(',');
+                resolve(idx >= 0 ? res.slice(idx + 1) : res);
+            };
+            reader.onerror = () => reject(new Error('Falha ao converter arquivo para base64'));
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    function comprimirImagemBlobParaGemini(blob) {
+        return new Promise((resolve, reject) => {
+            const urlObj = URL.createObjectURL(blob);
+            const img = new Image();
+            img.onload = () => {
+                URL.revokeObjectURL(urlObj);
+                const maxSide = 1400;
+                let w = img.width, h = img.height;
+                if (w > maxSide || h > maxSide) {
+                    if (w >= h) { h = Math.round((h * maxSide) / w); w = maxSide; }
+                    else { w = Math.round((w * maxSide) / h); h = maxSide; }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, w, h);
+                ctx.drawImage(img, 0, 0, w, h);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                resolve({ mime_type: 'image/jpeg', data: dataUrl.split(',')[1] });
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(urlObj);
+                reject(new Error('Falha ao decodificar imagem'));
+            };
+            img.src = urlObj;
+        });
+    }
+
+    function limparMimeParaGemini(rawMime, filename, mediaType) {
+        const base = String(rawMime || '').split(';')[0].trim().toLowerCase();
+        const fn = String(filename || '').toLowerCase();
+        if (base === 'application/pdf' || fn.endsWith('.pdf')) return 'application/pdf';
+        if (base.startsWith('image/')) return base === 'image/jpg' ? 'image/jpeg' : base;
+        if (mediaType === 'image' || mediaType === 'sticker') return 'image/jpeg';
+        if (base.startsWith('audio/')) return base;
+        if (mediaType === 'audio') return 'audio/ogg';
+        if (base.startsWith('video/')) return base;
+        if (mediaType === 'video') return 'video/mp4';
+        return base || 'application/octet-stream';
+    }
+
+    window.analisarChatWhatsAppNoLaboratorio = async () => {
+        if (labWaAnalisando) return;
+        if (!labWaPhoneSelecionado || !labWaConvAtual) {
+            return showToast("Selecione um Chat", "Escolha primeiro uma conversa do WhatsApp na coluna esquerda.", "warning");
+        }
+
+        const hist = Array.isArray(labWaConvAtual.history) ? labWaConvAtual.history : [];
+        if (hist.length === 0) {
+            return showToast("Conversa Vazia", "Não há mensagens nem arquivos nesta conversa para analisar.", "warning");
+        }
+
+        labWaAnalisando = true;
+        const btn = document.getElementById('btn-lab-analisar-wa');
+        const btnOrig = btn ? btn.innerHTML : '';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analisando tudo...';
+        }
+
+        const idleEl = document.getElementById('lab-wa-idle');
+        const loadEl = document.getElementById('lab-wa-loading');
+        const resEl = document.getElementById('lab-wa-result');
+        const loadTitle = document.getElementById('lab-wa-loading-title');
+        const loadSub = document.getElementById('lab-wa-loading-sub');
+        if (idleEl) idleEl.style.display = 'none';
+        if (resEl) resEl.style.display = 'none';
+        if (loadEl) loadEl.style.display = 'flex';
+
+        try {
+            // Coleta todas as mídias suportadas pelo Gemini (PDF, imagem, áudio, vídeo pequeno)
+            const midiasCandidatas = [];
+            hist.forEach((m, idx) => {
+                if (m.media && m.media.id) {
+                    midiasCandidatas.push({
+                        ordem: idx + 1,
+                        role: m.role,
+                        ts: m.ts,
+                        media: m.media
+                    });
+                }
+            });
+
+            // Pega até os 12 anexos mais recentes para respeitar limite de payload da API
+            const midiasSelecionadas = midiasCandidatas.slice(-12);
+            const anexosCarregados = [];
+            const anexosFalhos = [];
+            let totalBase64Bytes = 0;
+            const LIMITE_TOTAL_B64 = 16 * 1024 * 1024; // ~16MB seguro para Gemini
+
+            for (let i = 0; i < midiasSelecionadas.length; i++) {
+                const item = midiasSelecionadas[i];
+                const m = item.media;
+                const nomeArq = m.filename || `${m.type || 'arquivo'}_${i + 1}`;
+                const mimeLimpo = limparMimeParaGemini(m.mime_type, nomeArq, m.type);
+
+                if (loadTitle) loadTitle.innerText = `Baixando anexo ${i + 1} de ${midiasSelecionadas.length}...`;
+                if (loadSub) loadSub.innerText = `Lendo ${nomeArq} (${mimeLimpo}) direto do WhatsApp...`;
+
+                const suportado =
+                    mimeLimpo === 'application/pdf' ||
+                    mimeLimpo.startsWith('image/') ||
+                    mimeLimpo.startsWith('audio/') ||
+                    mimeLimpo.startsWith('video/');
+
+                if (!suportado) {
+                    anexosFalhos.push(`${nomeArq} (formato não suportado para leitura visual: ${mimeLimpo})`);
+                    continue;
+                }
+
+                try {
+                    const mediaUrl = `${CLOUDFLARE_WORKER_URL}/api/media?id=${encodeURIComponent(m.id)}&filename=${encodeURIComponent(nomeArq)}`;
+                    const r = await fetch(mediaUrl);
+                    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                    const blob = await r.blob();
+
+                    if (mimeLimpo.startsWith('video/') && blob.size > 6 * 1024 * 1024) {
+                        anexosFalhos.push(`${nomeArq} (vídeo muito grande: ${(blob.size / 1048576).toFixed(1)} MB)`);
+                        continue;
+                    }
+                    if (blob.size > 10 * 1024 * 1024) {
+                        anexosFalhos.push(`${nomeArq} (arquivo acima de 10 MB)`);
+                        continue;
+                    }
+
+                    let inlineObj;
+                    if (mimeLimpo.startsWith('image/') && blob.size > 700000) {
+                        inlineObj = await comprimirImagemBlobParaGemini(blob);
+                    } else {
+                        const b64 = await blobParaBase64Puro(blob);
+                        inlineObj = { mime_type: mimeLimpo, data: b64 };
+                    }
+
+                    if (totalBase64Bytes + inlineObj.data.length > LIMITE_TOTAL_B64) {
+                        anexosFalhos.push(`${nomeArq} (limite total de tamanho por análise atingido)`);
+                        continue;
+                    }
+
+                    totalBase64Bytes += inlineObj.data.length;
+                    anexosCarregados.push({
+                        nome: nomeArq,
+                        tipo: m.type || 'document',
+                        mime: inlineObj.mime_type,
+                        legenda: m.caption || '',
+                        inline_data: inlineObj
+                    });
+                } catch (errMidia) {
+                    anexosFalhos.push(`${nomeArq} (indisponível/expirado na Meta: ${errMidia.message})`);
+                }
+            }
+
+            if (loadTitle) loadTitle.innerText = 'IA analisando conversa, PDFs e imagens...';
+            if (loadSub) loadSub.innerText = `Processando ${hist.length} mensagem(ns) e ${anexosCarregados.length} arquivo(s) no Gemini 2.5 Flash...`;
+
+            const transcricao = hist.map((m, i) => {
+                const quem = m.role === 'user' ? 'CLIENTE' : ((m.content || '').startsWith('[Atendente]') ? 'ATENDENTE HUMANO' : 'ANA (IA)');
+                const hora = m.ts ? new Date(m.ts).toLocaleString('pt-BR') : '';
+                const extraMidia = m.media && m.media.id
+                    ? ` [ANEXO: ${m.media.filename || m.media.type} | tipo=${m.media.type}${m.media.caption ? ' | legenda="' + m.media.caption + '"' : ''}]`
+                    : '';
+                return `${i + 1}. [${hora}] ${quem}: ${m.content || ''}${extraMidia}`;
+            }).join('\n');
+
+            const instrucaoExtra = (document.getElementById('lab-wa-extra-prompt')?.value || '').trim();
+            const nomeAtendente = (document.getElementById('wa-modal-sign-name')?.value || 'Giliard').trim() || 'Giliard';
+
+            const promptMaster = `Você é o Perito Auditor Sênior da Vigilância Sanitária (COVISA Digital - Prefeitura de São Paulo, portal https://vigilanciadigital-sp.com.br).
+Você recebeu uma conversa completa de WhatsApp do número ${formatarTelefoneWA(labWaPhoneSelecionado)} junto com TODOS os arquivos enviados (PDFs, imagens, documentos e áudios anexados abaixo na ordem exata).
+
+HISTÓRICO COMPLETO DA CONVERSA:
+${transcricao}
+
+ARQUIVOS ENVIADOS PARA SUA LEITURA ANEXADOS NESTA REQUISIÇÃO (${anexosCarregados.length}):
+${anexosCarregados.length > 0 ? anexosCarregados.map((a, idx) => `Arquivo #${idx + 1}: "${a.nome}" (${a.mime})${a.legenda ? ' - Legenda: ' + a.legenda : ''}`).join('\n') : 'Nenhum arquivo de mídia carregado (analisar apenas o texto da conversa).'}
+${anexosFalhos.length > 0 ? '\nARQUIVOS QUE NÃO PUDERAM SER BAIXADOS:\n' + anexosFalhos.join('\n') : ''}
+${instrucaoExtra ? '\nINSTRUÇÃO EXTRA DO FISCAL:\n' + instrucaoExtra : ''}
+
+SUA MISSÃO:
+1. Leia ATENTAMENTE cada PDF (extraindo CNPJ, razão social, nome, datas de validade, tipo de formulário/alvará, assinaturas, carimbos, valores ou pendências), cada imagem (conferindo documentos, fotos de estabelecimento, comprovantes PIX, legibilidade ou sinais de adulteração) e cada áudio.
+2. Cruze tudo que está nos arquivos com o que o cliente disse na conversa.
+3. Aponte claramente o que está CERTO, o que está FALTANDO, VENCIDO, ILEGÍVEL ou IRREGULAR.
+4. Dê uma orientação objetiva ao fiscal sobre o que fazer agora.
+5. Escreva uma MENSAGEM PRONTA, educada, clara e objetiva para o fiscal ${nomeAtendente} mandar para o cliente no WhatsApp explicando o retorno da análise e o próximo passo (NÃO coloque "*${nomeAtendente}:*" no início da mensagem, use apenas asterisco simples *negrito* do WhatsApp, nunca **duplo**).
+
+Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
+{
+  "status_geral": "DOCUMENTACAO_OK" | "PENDENCIAS" | "IRREGULARIDADE" | "ATENDIMENTO",
+  "titulo_status": "Resumo curto do status (ex: Faltam 2 documentos / Tudo regular / Comprovante confirmado)",
+  "cliente_identificado": "Nome completo ou Razão Social encontrada na conversa ou nos PDFs (ou 'Não informado')",
+  "documento_identificado": "CPF ou CNPJ encontrado na conversa ou nos PDFs (ou 'Não informado')",
+  "resumo_caso": "Resumo claro em 2 a 4 frases do que o cliente precisa e do cenário atual.",
+  "arquivos_analisados": [
+    {
+      "arquivo": "Nome do arquivo ou 'Anexo 1'",
+      "tipo_documento": "Ex: Cartão CNPJ / Alvará / Formulário XIII / Comprovante PIX / Foto do Local / Áudio",
+      "situacao": "OK" | "ATENCAO" | "PROBLEMA",
+      "analise": "O que você leu dentro deste PDF/imagem/áudio, dados extraídos (datas, CNPJ, valores) e se está válido ou tem problema."
+    }
+  ],
+  "pendencias": ["Item pendente ou problema 1", "Item 2 (ou lista vazia se não houver pendências)"],
+  "orientacao_fiscal": "Recomendação direta ao fiscal sobre qual ação tomar no painel/sistema agora.",
+  "mensagem_whatsapp": "Texto completo e pronto para enviar ao cliente no WhatsApp."
+}`;
+
+            const partsPayload = [{ text: promptMaster }];
+            anexosCarregados.forEach((a, idx) => {
+                partsPayload.push({ text: `[INÍCIO DO ARQUIVO #${idx + 1}: ${a.nome}]` });
+                partsPayload.push({ inline_data: a.inline_data });
+            });
+
+            const urlGemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const respIA = await fetch(urlGemini, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: partsPayload }],
+                    generationConfig: { responseMimeType: 'application/json' }
+                })
+            });
+
+            if (!respIA.ok) {
+                const errJson = await respIA.json().catch(() => ({}));
+                throw new Error(errJson.error?.message || `Erro HTTP ${respIA.status} na IA`);
+            }
+
+            const dataIA = await respIA.json();
+            const rawText = dataIA.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!rawText) throw new Error('A IA não retornou resposta (conteúdo vazio ou bloqueado).');
+
+            let relatorio;
+            try {
+                relatorio = JSON.parse(rawText);
+            } catch (_) {
+                const match = rawText.match(/\{[\s\S]*\}/);
+                if (!match) throw new Error('Resposta fora do formato JSON esperado.');
+                relatorio = JSON.parse(match[0]);
+            }
+
+            labWaUltimoRelatorio = {
+                phone: labWaPhoneSelecionado,
+                geradoEm: new Date().toLocaleString('pt-BR'),
+                qtdAnexos: anexosCarregados.length,
+                anexosFalhos,
+                dados: relatorio
+            };
+
+            renderizarRelatorioChatLaboratorio(labWaUltimoRelatorio);
+            if (loadEl) loadEl.style.display = 'none';
+            if (resEl) resEl.style.display = 'block';
+            registrarLog("Laboratório IA WhatsApp", `Analisou conversa ${labWaPhoneSelecionado} (${anexosCarregados.length} anexo(s)).`);
+            showToast("Relatório Pronto!", `IA analisou a conversa e ${anexosCarregados.length} arquivo(s) com sucesso.`, "success");
+        } catch (err) {
+            console.error("Erro na análise do chat no Laboratório:", err);
+            if (loadEl) loadEl.style.display = 'none';
+            if (resEl) resEl.style.display = 'block';
+            const contentEl = document.getElementById('lab-wa-report-content');
+            if (contentEl) {
+                contentEl.innerHTML = `
+                    <div class="lab-report-card highlight-danger">
+                        <h4><i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> Falha ao Gerar Relatório</h4>
+                        <p style="color:#fecaca; margin:0; line-height:1.6;">${escaparHtmlWA(err.message)}</p>
+                        <button type="button" class="btn btn-secondary" style="margin-top:14px; padding:10px 18px; font-size:0.86rem;" onclick="analisarChatWhatsAppNoLaboratorio()"><i class="fas fa-redo"></i> Tentar Novamente</button>
+                    </div>`;
+            }
+        } finally {
+            labWaAnalisando = false;
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = btnOrig;
+            }
+        }
+    };
+
+    function renderizarRelatorioChatLaboratorio(pacote) {
+        const container = document.getElementById('lab-wa-report-content');
+        if (!container || !pacote) return;
+        const r = pacote.dados || {};
+
+        let statusCardCls = 'highlight-purple';
+        let statusPillCls = 'ok';
+        if (r.status_geral === 'DOCUMENTACAO_OK') { statusCardCls = 'highlight-success'; statusPillCls = 'ok'; }
+        else if (r.status_geral === 'PENDENCIAS') { statusCardCls = 'highlight-warn'; statusPillCls = 'warn'; }
+        else if (r.status_geral === 'IRREGULARIDADE') { statusCardCls = 'highlight-danger'; statusPillCls = 'err'; }
+
+        const arquivosArr = Array.isArray(r.arquivos_analisados) ? r.arquivos_analisados : [];
+        const pendenciasArr = Array.isArray(r.pendencias) ? r.pendencias.filter(Boolean) : [];
+        const msgLimpa = String(r.mensagem_whatsapp || '').replace(/\*\*([^*\n]+)\*\*/g, '*$1*').trim();
+        const nomePadrao = (document.getElementById('wa-modal-sign-name')?.value || 'Giliard').trim() || 'Giliard';
+
+        const arquivosHtml = arquivosArr.length > 0
+            ? arquivosArr.map(a => {
+                const sit = String(a.situacao || 'OK').toUpperCase();
+                const sCls = sit === 'PROBLEMA' ? 'err' : (sit === 'ATENCAO' ? 'warn' : 'ok');
+                const sTxt = sit === 'PROBLEMA' ? 'Problema' : (sit === 'ATENCAO' ? 'Atenção' : 'Válido / OK');
+                return `
+                    <div class="lab-doc-item-card">
+                        <div class="lab-doc-item-head">
+                            <div>
+                                <strong style="color:#ffffff; font-size:0.92rem;">${escaparHtmlWA(a.arquivo || 'Arquivo')}</strong>
+                                <span style="color:#93c5fd; font-size:0.78rem; margin-left:8px; font-weight:700;">${escaparHtmlWA(a.tipo_documento || '')}</span>
+                            </div>
+                            <span class="lab-doc-status ${sCls}">${sTxt}</span>
+                        </div>
+                        <div style="color:#cbd5e1; font-size:0.86rem; line-height:1.5;">${escaparHtmlWA(a.analise || '')}</div>
+                    </div>`;
+            }).join('')
+            : '<div style="color:#94a3b8; font-size:0.86rem;">Nenhum PDF ou imagem anexada nesta conversa (análise feita sobre as mensagens de texto).</div>';
+
+        const falhosHtml = (pacote.anexosFalhos && pacote.anexosFalhos.length > 0)
+            ? `<div style="margin-top:10px; padding:10px 12px; border-radius:8px; background:rgba(245,158,11,0.12); border:1px dashed rgba(245,158,11,0.45); color:#fde68a; font-size:0.8rem;">
+                 <strong><i class="fas fa-info-circle"></i> Arquivos não lidos:</strong> ${escaparHtmlWA(pacote.anexosFalhos.join(' • '))}
+               </div>`
+            : '';
+
+        const pendenciasHtml = pendenciasArr.length > 0
+            ? `<div class="lab-report-card highlight-warn">
+                 <h4><i class="fas fa-exclamation-triangle" style="color:var(--warning);"></i> Pendências / Pontos de Atenção (${pendenciasArr.length})</h4>
+                 <ul class="lab-bullet-list">${pendenciasArr.map(p => `<li>${escaparHtmlWA(p)}</li>`).join('')}</ul>
+               </div>`
+            : `<div class="lab-report-card highlight-success">
+                 <h4><i class="fas fa-check-circle" style="color:var(--success);"></i> Nenhuma Pendência Grave Encontrada</h4>
+                 <p style="margin:0; color:#d1fae5; font-size:0.88rem;">Tudo parece regular com base nos documentos e mensagens analisados.</p>
+               </div>`;
+
+        container.innerHTML = `
+            <div class="lab-report-card ${statusCardCls}">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                    <h4 style="margin:0;"><i class="fas fa-clipboard-check" style="color:var(--gemini-purple);"></i> Relatório da Conversa</h4>
+                    <span class="lab-doc-status ${statusPillCls}">${escaparHtmlWA(r.titulo_status || r.status_geral || 'Analisado')}</span>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                    <span class="spy-chip"><i class="fab fa-whatsapp" style="color:#25D366;"></i> ${formatarTelefoneWA(pacote.phone)}</span>
+                    <span class="spy-chip"><i class="fas fa-user"></i> ${escaparHtmlWA(r.cliente_identificado || 'Não informado')}</span>
+                    <span class="spy-chip chip-cnpj"><i class="fas fa-id-card"></i> ${escaparHtmlWA(r.documento_identificado || 'Não informado')}</span>
+                    <span class="spy-chip"><i class="fas fa-paperclip"></i> ${pacote.qtdAnexos} arquivo(s) lido(s)</span>
+                </div>
+                <p style="margin:0; color:#e2e8f0; font-size:0.93rem; line-height:1.6;">${escaparHtmlWA(r.resumo_caso || '')}</p>
+            </div>
+
+            <div class="lab-report-card">
+                <h4><i class="fas fa-folder-open" style="color:#38bdf8;"></i> Conferência dos PDFs, Imagens & Áudios (${arquivosArr.length})</h4>
+                ${arquivosHtml}
+                ${falhosHtml}
+            </div>
+
+            ${pendenciasHtml}
+
+            <div class="lab-report-card highlight-purple">
+                <h4><i class="fas fa-compass" style="color:var(--gemini-purple);"></i> O que Fazer Agora (Orientação ao Fiscal)</h4>
+                <p style="margin:0; color:#f1f5f9; font-size:0.92rem; line-height:1.58;">${escaparHtmlWA(r.orientacao_fiscal || '')}</p>
+            </div>
+
+            <div class="lab-reply-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <strong style="color:#6ee7b7; font-size:0.92rem;"><i class="fab fa-whatsapp"></i> Mensagem Pronta para Mandar para Eles (Editável)</strong>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.8rem; color:#e2e8f0; font-weight:700; cursor:pointer;">
+                            <input type="checkbox" id="lab-wa-sign-toggle" checked style="accent-color:#10b981;" /> Assinar como:
+                        </label>
+                        <input type="text" id="lab-wa-sign-name" value="${escaparHtmlWA(nomePadrao)}" style="background:#050a14; border:1px solid #283a5e; color:#fff; padding:4px 9px; border-radius:7px; font-size:0.8rem; font-weight:800; width:115px;" />
+                    </div>
+                </div>
+                <textarea id="lab-wa-reply-text">${escaparHtmlWA(msgLimpa)}</textarea>
+                <div class="lab-reply-actions">
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button type="button" class="wa-btn-sm" onclick="copiarRespostaLabWhatsApp()"><i class="fas fa-copy"></i> Copiar</button>
+                        <button type="button" class="wa-btn-sm" onclick="imprimirRelatorioLabWhatsApp()"><i class="fas fa-print"></i> Imprimir / PDF</button>
+                        <button type="button" class="wa-btn-sm" onclick="analisarChatWhatsAppNoLaboratorio()"><i class="fas fa-sync-alt"></i> Reanalisar</button>
+                    </div>
+                    <button type="button" class="btn btn-success" id="btn-lab-enviar-wa" style="padding:11px 22px; font-size:0.9rem;" onclick="enviarRespostaDoLaboratorioWhatsApp()">
+                        <i class="fas fa-paper-plane"></i> Enviar Direto no WhatsApp
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function montarTextoFinalRespostaLab() {
+        const raw = (document.getElementById('lab-wa-reply-text')?.value || '').trim();
+        if (!raw) return '';
+        const assinar = document.getElementById('lab-wa-sign-toggle')?.checked !== false;
+        const nome = (document.getElementById('lab-wa-sign-name')?.value || 'Giliard').trim();
+        if (assinar && nome) {
+            const pref = `*${nome}:*`;
+            if (!raw.startsWith(pref)) return `${pref}\n${raw}`;
+        }
+        return raw;
+    }
+
+    window.copiarRespostaLabWhatsApp = async () => {
+        const txt = montarTextoFinalRespostaLab();
+        if (!txt) return showToast("Vazio", "Escreva ou gere uma mensagem antes de copiar.", "warning");
+        try {
+            await navigator.clipboard.writeText(txt);
+            showToast("Copiado!", "Mensagem pronta copiada para a área de transferência.", "success");
+        } catch (_) {
+            showToast("Aviso", "Selecione o texto manualmente para copiar.", "warning");
+        }
+    };
+
+    window.enviarRespostaDoLaboratorioWhatsApp = async () => {
+        if (!labWaPhoneSelecionado) return;
+        const txt = montarTextoFinalRespostaLab();
+        if (!txt) return showToast("Vazio", "A mensagem está vazia.", "warning");
+
+        const btn = document.getElementById('btn-lab-enviar-wa');
+        const orig = btn ? btn.innerHTML : '';
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...'; }
+
+        try {
+            const resp = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: labWaPhoneSelecionado, text: txt, pause_ai: true })
+            });
+            const dados = await resp.json();
+            if (!resp.ok || !dados.success) throw new Error(dados.error || 'Falha ao enviar');
+
+            showToast("Enviado no WhatsApp!", `Mensagem enviada para ${formatarTelefoneWA(labWaPhoneSelecionado)} e IA pausada nesta conversa.`, "success");
+            registrarLog("Resposta via Laboratório IA", `Enviou relatório/retorno no WhatsApp para ${labWaPhoneSelecionado}`);
+            marcarConversaComoVistaWA(labWaPhoneSelecionado, Date.now() + 2000);
+            await selecionarChatLaboratorio(labWaPhoneSelecionado);
+            carregarConversasWhatsApp(false);
+        } catch (e) {
+            showToast("Erro no Envio", `Não foi possível enviar no WhatsApp: ${e.message}`, "error");
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+        }
+    };
+
+    window.imprimirRelatorioLabWhatsApp = () => {
+        if (!labWaUltimoRelatorio) return;
+        const r = labWaUltimoRelatorio.dados || {};
+        const arqs = (r.arquivos_analisados || []).map(a =>
+            `<li><strong>${escaparHtmlWA(a.arquivo)} (${escaparHtmlWA(a.tipo_documento)}) — ${escaparHtmlWA(a.situacao)}:</strong> ${escaparHtmlWA(a.analise)}</li>`
+        ).join('');
+        const pends = (r.pendencias || []).map(p => `<li>${escaparHtmlWA(p)}</li>`).join('');
+        const msg = montarTextoFinalRespostaLab() || r.mensagem_whatsapp || '';
+
+        const w = window.open('', '', 'width=860,height=700');
+        w.document.write(`
+            <html><head><title>Relatório WhatsApp - ${formatarTelefoneWA(labWaUltimoRelatorio.phone)}</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 36px; color: #1e293b; line-height: 1.55; }
+                h1 { color: #0d3c85; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; font-size: 20px; }
+                h2 { color: #334155; font-size: 15px; margin-top: 22px; text-transform: uppercase; }
+                .box { background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #1351b4; padding: 14px; border-radius: 6px; white-space: pre-wrap; }
+            </style></head><body>
+            <h1>Relatório de Análise de Atendimento WhatsApp — COVISA</h1>
+            <p><strong>Telefone:</strong> ${formatarTelefoneWA(labWaUltimoRelatorio.phone)} | <strong>Data:</strong> ${labWaUltimoRelatorio.geradoEm}</p>
+            <p><strong>Cliente / Empresa:</strong> ${escaparHtmlWA(r.cliente_identificado || 'Não informado')} | <strong>CPF/CNPJ:</strong> ${escaparHtmlWA(r.documento_identificado || 'Não informado')}</p>
+            <p><strong>Status:</strong> ${escaparHtmlWA(r.titulo_status || r.status_geral || '')}</p>
+            <h2>Resumo do Caso</h2><p>${escaparHtmlWA(r.resumo_caso || '')}</p>
+            <h2>Documentos e Mídias Analisados</h2><ul>${arqs || '<li>Sem anexos</li>'}</ul>
+            <h2>Pendências / Pontos de Atenção</h2><ul>${pends || '<li>Nenhuma pendência registrada</li>'}</ul>
+            <h2>Orientação ao Fiscal</h2><p>${escaparHtmlWA(r.orientacao_fiscal || '')}</p>
+            <h2>Mensagem Sugerida para o WhatsApp</h2><div class="box">${escaparHtmlWA(msg)}</div>
+            <script>window.onload = function(){ window.print(); }<\/script>
+            </body></html>
+        `);
+        w.document.close();
+    };
+
+    // MODO MANUAL (UPLOAD DE FOTO / PDF / VÍDEO)
     window.iniciarAnaliseLaboratorioForense = async () => {
         if (!arquivoLaboratorio) return;
 
+        mudarModoLaboratorio('manual');
         const previewArea = document.getElementById('lab-preview');
-        previewArea.innerHTML = `<img src="${URL.createObjectURL(arquivoLaboratorio)}"><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+        const ehPdf = arquivoLaboratorio.type === 'application/pdf' || arquivoLaboratorio.name.toLowerCase().endsWith('.pdf');
+        const ehVid = arquivoLaboratorio.type.startsWith('video/');
+
+        if (ehPdf) {
+            previewArea.innerHTML = `<iframe src="${URL.createObjectURL(arquivoLaboratorio)}" style="width:100%; height:100%; border:none; background:#fff;"></iframe><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+        } else if (ehVid) {
+            previewArea.innerHTML = `<video src="${URL.createObjectURL(arquivoLaboratorio)}" controls></video><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+        } else {
+            previewArea.innerHTML = `<img src="${URL.createObjectURL(arquivoLaboratorio)}"><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+        }
         
         document.getElementById('lab-drop-area').style.display = 'block';
         previewArea.style.display = 'block';
@@ -4534,11 +5404,12 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
         document.getElementById('lab-final-result').style.display = 'none';
         document.getElementById('lab-loading-state').style.display = 'flex';
 
-        let promptFinal = `Você é um Perito Forense da Vigilância Sanitária. Analise a mídia anexada e retorne um Laudo Técnico Oficial.
+        let promptFinal = `Você é um Perito Forense da Vigilância Sanitária (COVISA). Analise o arquivo anexado (PDF, imagem ou vídeo) e retorne um Laudo Técnico Oficial completo.
         Procure por:
-        1. Problemas de Higiene e Estrutura (RDC 216).
-        2. Indícios de manipulação ou fraude digital (Photoshop).
-        3. Análise do ambiente para verificar se condiz com local comercial.
+        1. Identificação do documento ou ambiente (extraia CNPJ, razão social, datas de validade, assinaturas ou valores se for PDF/documento).
+        2. Problemas de Higiene, Estrutura (RDC 216) ou irregularidades documentais.
+        3. Indícios de manipulação ou fraude digital (Photoshop).
+        4. Sugestão de mensagem curta e educada para mandar ao contribuinte no WhatsApp.
         Formate a resposta em HTML (use <b> para negrito e <br> para quebras). Não use asteriscos markdown.`;
 
         let pacoteDeEnvio = [{ text: promptFinal }];
