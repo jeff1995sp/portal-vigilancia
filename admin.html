@@ -512,7 +512,7 @@
     .spy-tl-count { background: #3b82f6; color: white; font-size: 0.72rem; font-weight: 900; padding: 2px 8px; border-radius: 50px; }
 
     /* ======================================================== */
-    /* MODAL DE TELA AO VIVO EM HD (rrweb + CLARITY)            */
+    /* MODAL DE TELA AO VIVO EM HD (rrweb + CLARITY + ERROS)    */
     /* ======================================================== */
     .btn-live-screen {
       background: linear-gradient(135deg, #10b981, #059669);
@@ -529,30 +529,36 @@
     }
     .btn-clarity-sm:hover { background: var(--primary); color: #ffffff; border-color: var(--primary); }
 
+    #modalTelaAoVivo { padding: 8px !important; }
     .live-screen-modal-box {
-      max-width: 1320px !important; width: 96vw !important; height: 92vh !important; max-height: 94vh !important;
-      display: flex; flex-direction: column; overflow: hidden;
+      max-width: 99vw !important; width: 99vw !important; height: 97vh !important; max-height: 97vh !important;
+      display: flex; flex-direction: column; overflow: hidden; border-radius: 16px !important;
     }
     .live-screen-toolbar {
-      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
-      padding: 12px 24px; background: #0a1222; border-bottom: 1px solid #223252;
+      display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 10px 18px; background: #0a1222; border-bottom: 1px solid #223252; flex-shrink: 0;
     }
-    .live-screen-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.82rem; color: #e2e8f0; }
-    .live-screen-controls { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .live-screen-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; font-size: 0.8rem; color: #e2e8f0; }
+    .live-screen-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+    .live-workspace {
+      flex: 1; display: flex; min-height: 0; overflow: hidden; background: #050a14;
+    }
     .live-screen-stage-wrap {
       flex: 1; background: radial-gradient(circle at center, #111d36 0%, #050a14 100%);
-      overflow: auto; display: flex; align-items: center; justify-content: center;
-      padding: 20px; position: relative;
+      overflow: auto; display: flex; align-items: flex-start; justify-content: center;
+      padding: 14px; position: relative; min-width: 0;
     }
+    .live-screen-stage-wrap.mode-center { align-items: center; }
     .live-screen-loader {
       position: absolute; inset: 0; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 14px; text-align: center;
-      background: rgba(5, 10, 20, 0.86); backdrop-filter: blur(4px); z-index: 20; padding: 24px;
+      background: rgba(5, 10, 20, 0.88); backdrop-filter: blur(4px); z-index: 20; padding: 24px;
     }
     .live-device-frame {
-      background: #0f172a; border: 2px solid #334155; border-radius: 14px;
+      background: #0f172a; border: 2px solid #334155; border-radius: 12px;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75); overflow: hidden;
-      display: flex; flex-direction: column; transition: border-radius 0.25s ease;
+      display: flex; flex-direction: column; flex-shrink: 0; transition: border-radius 0.25s ease;
     }
     .live-device-frame.is-mobile-frame {
       border: 8px solid #1e293b; border-radius: 30px;
@@ -566,12 +572,65 @@
     .live-device-dots span { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
     .live-viewport-scaler { position: relative; overflow: hidden; background: #ffffff; }
     #live-replayer-root { transform-origin: top left; position: absolute; top: 0; left: 0; }
-    #live-replayer-root .replayer-wrapper { position: relative !important; }
-    #live-replayer-root iframe { border: none !important; background: #ffffff !important; }
+    #live-replayer-root .replayer-wrapper { position: relative !important; width: 100% !important; height: 100% !important; }
+    #live-replayer-root iframe { border: none !important; background: #ffffff !important; display: block !important; }
+
+    /* Painel Lateral Ao Vivo de Erros, Problemas & Ações */
+    .live-side-panel {
+      width: 375px; max-width: 42vw; background: #080f1e; border-left: 1px solid #223252;
+      display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;
+    }
+    .live-side-panel.hidden { display: none; }
+    .live-side-header {
+      padding: 12px 14px; background: #0d1629; border-bottom: 1px solid #223252;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .live-side-tabs { display: flex; gap: 6px; }
+    .live-side-tab {
+      flex: 1; background: #070e1c; border: 1px solid #243554; color: #cbd5e1;
+      padding: 7px 8px; border-radius: 8px; font-size: 0.76rem; font-weight: 800; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 5px; transition: 0.2s;
+    }
+    .live-side-tab:hover { color: #ffffff; border-color: var(--primary); }
+    .live-side-tab.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+    .live-side-tab.tab-err.active { background: var(--danger); border-color: var(--danger); }
+    .live-err-banner {
+      display: none; padding: 10px 12px; border-radius: 9px;
+      background: rgba(239, 68, 68, 0.18); border: 1px solid #ef4444; color: #fecaca;
+      font-size: 0.8rem; line-height: 1.4; font-weight: 700;
+    }
+    .live-side-body {
+      flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .live-log-card {
+      background: #0f192f; border: 1px solid #233455; border-left: 4px solid #3b82f6;
+      border-radius: 9px; padding: 10px 12px; font-size: 0.81rem; line-height: 1.45; color: #f1f5f9;
+      word-break: break-word;
+    }
+    .live-log-card.is-err {
+      background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.45); border-left-color: #ef4444; color: #fee2e2;
+    }
+    .live-log-card.is-pix {
+      background: rgba(192, 132, 252, 0.12); border-color: rgba(192, 132, 252, 0.4); border-left-color: #c084fc;
+    }
+    .live-log-card.is-campo {
+      border-left-color: #f59e0b;
+    }
+    .live-log-card.is-gps {
+      border-left-color: #10b981;
+    }
+    .live-log-time {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.72rem; color: #94a3b8; font-family: var(--font-code); margin-bottom: 4px; font-weight: 700;
+    }
     .live-screen-footer {
-      padding: 10px 24px; background: #070e1c; border-top: 1px solid #223252;
+      padding: 9px 18px; background: #070e1c; border-top: 1px solid #223252;
       display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
-      font-size: 0.8rem; color: #cbd5e1; font-family: var(--font-code);
+      font-size: 0.78rem; color: #cbd5e1; font-family: var(--font-code); flex-shrink: 0;
+    }
+    @media (max-width: 960px) {
+      .live-workspace { flex-direction: column; }
+      .live-side-panel { width: 100%; max-width: 100%; height: 240px; border-left: none; border-top: 1px solid #223252; }
     }
 
     @media (max-width: 1100px) {
@@ -1877,13 +1936,14 @@
 
   <div class="modal-overlay" id="modalTelaAoVivo">
     <div class="modal-box live-screen-modal-box">
-      <div class="modal-header" style="padding: 18px 26px;">
-        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-          <h3 style="margin: 0; font-size: 1.25rem;"><i class="fas fa-desktop" style="color: #10b981;"></i> Transmissão de Tela Ao Vivo (HD)</h3>
+      <div class="modal-header" style="padding: 12px 20px;">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <h3 style="margin: 0; font-size: 1.12rem;"><i class="fas fa-desktop" style="color: #10b981;"></i> Tela Ao Vivo (HD)</h3>
           <span id="live-screen-status-pill" class="spy-badge spy-badge-ip"><i class="fas fa-circle-notch fa-spin"></i> Conectando...</span>
           <span id="live-screen-dims" class="spy-chip" style="font-family: var(--font-code);">-- x --</span>
+          <span id="live-header-err-badge" class="spy-badge spy-badge-err" style="display: none;"><i class="fas fa-bug"></i> 0 erro(s)</span>
         </div>
-        <button class="btn-close" onclick="fecharTelaAoVivoEspiao()" title="Encerrar transmissão"><i class="fas fa-times"></i></button>
+        <button class="btn-close" style="width:36px; height:36px; font-size:1.4rem;" onclick="fecharTelaAoVivoEspiao()" title="Encerrar transmissão"><i class="fas fa-times"></i></button>
       </div>
 
       <div class="live-screen-toolbar">
@@ -1891,44 +1951,69 @@
           Carregando informações do visitante...
         </div>
         <div class="live-screen-controls">
-          <button type="button" class="spy-map-btn active" id="live-zoom-fit" onclick="definirZoomTelaAoVivo('fit')"><i class="fas fa-compress-arrows-alt"></i> Ajustar</button>
+          <button type="button" class="spy-map-btn active" id="live-view-full" onclick="definirModoVisaoTela('full')" title="Mostra a página inteira sem cortar nada — role livremente para ver formulário, botões e erros"><i class="fas fa-arrows-alt-v"></i> Página Inteira</button>
+          <button type="button" class="spy-map-btn" id="live-view-client" onclick="definirModoVisaoTela('client')" title="Mostra exatamente o recorte da tela que o cliente está vendo agora"><i class="fas fa-eye"></i> Tela do Cliente</button>
+          <button type="button" class="spy-map-btn active" id="live-zoom-width" onclick="definirZoomTelaAoVivo('width')" title="Preenche a largura disponível para leitura bem nítida">Largura</button>
+          <button type="button" class="spy-map-btn" id="live-zoom-fit" onclick="definirZoomTelaAoVivo('fit')">Ajustar</button>
           <button type="button" class="spy-map-btn" id="live-zoom-100" onclick="definirZoomTelaAoVivo('100')">100%</button>
-          <button type="button" class="spy-map-btn" onclick="ajustarZoomManualTela(-0.12)" title="Diminuir zoom"><i class="fas fa-search-minus"></i></button>
-          <button type="button" class="spy-map-btn" onclick="ajustarZoomManualTela(0.12)" title="Aumentar zoom"><i class="fas fa-search-plus"></i></button>
+          <button type="button" class="spy-map-btn" onclick="ajustarZoomManualTela(-0.1)" title="Diminuir zoom"><i class="fas fa-search-minus"></i></button>
+          <button type="button" class="spy-map-btn" onclick="ajustarZoomManualTela(0.1)" title="Aumentar zoom"><i class="fas fa-search-plus"></i></button>
           <button type="button" class="spy-map-btn" onclick="forcarSincronizacaoTelaAoVivo()" style="border-color: #10b981; color: #6ee7b7;"><i class="fas fa-sync-alt"></i> Sincronizar</button>
+          <button type="button" class="spy-map-btn active" id="live-btn-side-toggle" onclick="alternarPainelLateralAoVivo()" style="border-color: #f59e0b;"><i class="fas fa-bug"></i> Erros & Ações</button>
           <button type="button" class="spy-map-btn" id="live-btn-clarity" onclick="abrirClarityDaTelaAoVivo()" style="border-color: #3b82f6; color: #93c5fd;"><i class="fas fa-video"></i> Clarity</button>
           <button type="button" class="spy-map-btn" onclick="alternarTelaCheiaAoVivo()" title="Tela Cheia"><i class="fas fa-expand"></i></button>
         </div>
       </div>
 
-      <div class="live-screen-stage-wrap" id="live-screen-stage-wrap">
-        <div class="live-screen-loader" id="live-screen-loader">
-          <i class="fas fa-satellite-dish fa-spin" style="font-size: 3rem; color: #10b981;"></i>
-          <h3 style="color: #ffffff; margin: 0;" id="live-loader-title">Solicitando quadro HD do dispositivo...</h3>
-          <p style="color: #94a3b8; max-width: 480px; margin: 0; line-height: 1.5;" id="live-loader-desc">
-            A transmissão sob demanda é ativada automaticamente na aba do visitante em 2 a 4 segundos sem travar a navegação dele.
-          </p>
+      <div class="live-workspace">
+        <div class="live-screen-stage-wrap" id="live-screen-stage-wrap">
+          <div class="live-screen-loader" id="live-screen-loader">
+            <i class="fas fa-satellite-dish fa-spin" style="font-size: 3rem; color: #10b981;"></i>
+            <h3 style="color: #ffffff; margin: 0;" id="live-loader-title">Solicitando quadro HD do dispositivo...</h3>
+            <p style="color: #94a3b8; max-width: 480px; margin: 0; line-height: 1.5;" id="live-loader-desc">
+              A transmissão sob demanda é ativada automaticamente na aba do visitante em 2 a 4 segundos sem travar a navegação dele.
+            </p>
+          </div>
+
+          <div class="live-device-frame" id="live-device-frame" style="display: none;">
+            <div class="live-device-topbar">
+              <div class="live-device-dots">
+                <span style="background: #ef4444;"></span>
+                <span style="background: #f59e0b;"></span>
+                <span style="background: #10b981;"></span>
+              </div>
+              <span id="live-device-url-bar">vigilanciadigital-sp.com.br</span>
+              <span id="live-device-zoom-label">100%</span>
+            </div>
+            <div class="live-viewport-scaler" id="live-viewport-scaler">
+              <div id="live-replayer-root"></div>
+            </div>
+          </div>
         </div>
 
-        <div class="live-device-frame" id="live-device-frame" style="display: none;">
-          <div class="live-device-topbar">
-            <div class="live-device-dots">
-              <span style="background: #ef4444;"></span>
-              <span style="background: #f59e0b;"></span>
-              <span style="background: #10b981;"></span>
+        <!-- PAINEL LATERAL DE DIAGNÓSTICO EM TEMPO REAL -->
+        <aside class="live-side-panel" id="live-side-panel">
+          <div class="live-side-header">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong style="color:#ffffff; font-size:0.9rem;"><i class="fas fa-radar" style="color:#ef4444;"></i> Radar de Problemas & Ações</strong>
+              <span id="live-side-counter" style="font-size:0.74rem; color:#94a3b8; font-family:var(--font-code);">0 eventos</span>
             </div>
-            <span id="live-device-url-bar">vigilanciadigital-sp.com.br</span>
-            <span id="live-device-zoom-label">100%</span>
+            <div class="live-side-tabs">
+              <button type="button" class="live-side-tab active" id="live-tab-tudo" onclick="mudarAbaLateralAoVivo('tudo')"><i class="fas fa-stream"></i> Tudo (<span id="live-cnt-tudo">0</span>)</button>
+              <button type="button" class="live-side-tab tab-err" id="live-tab-erros" onclick="mudarAbaLateralAoVivo('erros')"><i class="fas fa-bug"></i> Erros (<span id="live-cnt-erros">0</span>)</button>
+              <button type="button" class="live-side-tab" id="live-tab-xray" onclick="mudarAbaLateralAoVivo('xray')"><i class="fas fa-microscope"></i> Raio-X</button>
+            </div>
+            <div class="live-err-banner" id="live-err-banner"></div>
           </div>
-          <div class="live-viewport-scaler" id="live-viewport-scaler">
-            <div id="live-replayer-root"></div>
+          <div class="live-side-body" id="live-side-body">
+            <div style="text-align:center; color:#94a3b8; padding:30px 10px; font-size:0.84rem;">Aguardando ações e eventos deste visitante...</div>
           </div>
-        </div>
+        </aside>
       </div>
 
       <div class="live-screen-footer">
         <span id="live-footer-action"><i class="fas fa-bolt" style="color: #fbbf24;"></i> Aguardando eventos...</span>
-        <span id="live-footer-stats">Pacotes: 0 • Modo: DOM HD (rrweb)</span>
+        <span id="live-footer-stats">Pacotes: 0 • Modo: Página Inteira HD (rrweb)</span>
       </div>
     </div>
   </div>
@@ -5340,7 +5425,7 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
     }
 
     // =========================================================================
-    // VISUALIZADOR DE TELA AO VIVO EM HD (rrweb) + CLARITY POR SESSÃO
+    // VISUALIZADOR DE TELA AO VIVO EM HD 2.0 (PÁGINA INTEIRA + RADAR DE ERROS)
     // =========================================================================
     const CLARITY_PROJECT_ID = "vumfbqba1l";
     let liveWatchSid = null;
@@ -5348,15 +5433,23 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
     let liveWatchHeartbeat = null;
     let liveWatchUnsubStream = null;
     let liveWatchUnsubSession = null;
+    let liveWatchUnsubLogs = null;
     let liveReplayer = null;
     let liveReplayerStarted = false;
     let liveAppliedChunks = new Set();
     let livePartBuffers = new Map();
     let liveViewportW = 1280;
     let liveViewportH = 720;
-    let liveZoomMode = 'fit';
+    let liveFullPageH = 2600;
+    let liveViewMode = 'full';     // 'full' (página inteira sem cortar) | 'client' (recorte do cliente)
+    let liveZoomMode = 'width';    // 'width' | 'fit' | '100' | 'manual'
     let liveManualScale = 1;
     let livePacketsCount = 0;
+    let liveSideTab = 'tudo';      // 'tudo' | 'erros' | 'xray'
+    let liveSessionLogs = [];
+    let liveSessionDataAtual = null;
+    let liveLastClientScrollY = 0;
+    let liveSizeObserverTimer = null;
 
     function garantirRRWebNoAdmin() {
         if (window.rrweb && typeof window.rrweb.Replayer === 'function') {
@@ -5389,6 +5482,44 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
         if (liveWatchSid) abrirClaritySessao(liveWatchSid);
     };
 
+    // Injeta correções no iframe do rrweb para NUNCA esconder formulários com animation/opacity:0 nem cortar conteúdo
+    function injetarEstilosCorrecaoIframe() {
+        try {
+            const iframe = document.querySelector('#live-replayer-root iframe');
+            const docIf = iframe && iframe.contentDocument;
+            if (!docIf || !docIf.head) return;
+
+            let styleEl = docIf.getElementById('covisa-live-fix-style');
+            if (!styleEl) {
+                styleEl = docIf.createElement('style');
+                styleEl.id = 'covisa-live-fix-style';
+                docIf.head.appendChild(styleEl);
+            }
+            const extraFull = liveViewMode === 'full'
+                ? 'header { position: relative !important; top: auto !important; } html, body { overflow: visible !important; height: auto !important; }'
+                : '';
+
+            styleEl.textContent = `
+                #area-envio, #area-pagamento, #area-multas, .custom-alert-box, .page-view, .tab-content,
+                #dados-pf, #dados-pj, #endereco-automatico, #area-checklist, #resultado-pix, #mensagem-status, #resultado-multa {
+                    animation: none !important;
+                    opacity: 1 !important;
+                    transform: none !important;
+                }
+                ${extraFull}
+            `;
+
+            const medidaH = Math.max(
+                docIf.documentElement?.scrollHeight || 0,
+                docIf.body?.scrollHeight || 0,
+                liveViewportH || 720
+            );
+            if (medidaH > 400) {
+                liveFullPageH = medidaH;
+            }
+        } catch (_) {}
+    }
+
     function aplicarEscalaTelaAoVivo() {
         const stage = document.getElementById('live-screen-stage-wrap');
         const frame = document.getElementById('live-device-frame');
@@ -5396,20 +5527,46 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
         const root = document.getElementById('live-replayer-root');
         const dimsEl = document.getElementById('live-screen-dims');
         const zoomLbl = document.getElementById('live-device-zoom-label');
+        const iframe = document.querySelector('#live-replayer-root iframe');
         if (!stage || !frame || !scaler || !root) return;
 
+        injetarEstilosCorrecaoIframe();
+
         const w = Math.max(320, Number(liveViewportW) || 1280);
-        const h = Math.max(420, Number(liveViewportH) || 720);
+        const hClient = Math.max(420, Number(liveViewportH) || 720);
+        const hAlvo = (liveViewMode === 'full') ? Math.max(hClient, liveFullPageH) : hClient;
 
-        if (dimsEl) dimsEl.innerText = `${w} × ${h}px`;
+        if (iframe) {
+            iframe.style.width = `${w}px`;
+            iframe.style.height = `${hAlvo}px`;
+            iframe.setAttribute('width', String(w));
+            iframe.setAttribute('height', String(hAlvo));
+            try {
+                if (liveViewMode === 'full') {
+                    iframe.contentWindow?.scrollTo(0, 0);
+                } else if (liveLastClientScrollY > 0) {
+                    iframe.contentWindow?.scrollTo(0, liveLastClientScrollY);
+                }
+            } catch (_) {}
+        }
+
+        if (dimsEl) {
+            dimsEl.innerText = liveViewMode === 'full'
+                ? `${w} × ${hAlvo}px (Página Inteira)`
+                : `${w} × ${hClient}px (Tela Cliente)`;
+        }
         frame.classList.toggle('is-mobile-frame', w <= 560);
+        stage.classList.toggle('mode-center', liveViewMode === 'client' && liveZoomMode === 'fit');
 
-        const availW = Math.max(300, stage.clientWidth - 52);
-        const availH = Math.max(300, stage.clientHeight - 76);
+        const availW = Math.max(280, stage.clientWidth - 36);
+        const availH = Math.max(280, stage.clientHeight - 54);
 
         let scale = 1;
-        if (liveZoomMode === 'fit') {
-            scale = Math.min(availW / w, availH / h, 1);
+        if (liveZoomMode === 'width') {
+            scale = Math.min(availW / w, 1.15);
+            liveManualScale = scale;
+        } else if (liveZoomMode === 'fit') {
+            scale = Math.min(availW / w, availH / hClient, 1);
             liveManualScale = scale;
         } else if (liveZoomMode === '100') {
             scale = 1;
@@ -5419,9 +5576,9 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
         }
 
         scaler.style.width = `${Math.round(w * scale)}px`;
-        scaler.style.height = `${Math.round(h * scale)}px`;
+        scaler.style.height = `${Math.round(hAlvo * scale)}px`;
         root.style.width = `${w}px`;
-        root.style.height = `${h}px`;
+        root.style.height = `${hAlvo}px`;
         root.style.transform = `scale(${scale})`;
 
         if (zoomLbl) zoomLbl.innerText = `${Math.round(scale * 100)}%`;
@@ -5433,8 +5590,20 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
         }
     });
 
+    window.definirModoVisaoTela = (modo) => {
+        liveViewMode = modo;
+        document.getElementById('live-view-full')?.classList.toggle('active', modo === 'full');
+        document.getElementById('live-view-client')?.classList.toggle('active', modo === 'client');
+        if (modo === 'full' && liveZoomMode === 'fit') {
+            definirZoomTelaAoVivo('width');
+        } else {
+            aplicarEscalaTelaAoVivo();
+        }
+    };
+
     window.definirZoomTelaAoVivo = (modo) => {
         liveZoomMode = modo;
+        document.getElementById('live-zoom-width')?.classList.toggle('active', modo === 'width');
         document.getElementById('live-zoom-fit')?.classList.toggle('active', modo === 'fit');
         document.getElementById('live-zoom-100')?.classList.toggle('active', modo === '100');
         aplicarEscalaTelaAoVivo();
@@ -5442,11 +5611,109 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
 
     window.ajustarZoomManualTela = (delta) => {
         liveZoomMode = 'manual';
+        document.getElementById('live-zoom-width')?.classList.remove('active');
         document.getElementById('live-zoom-fit')?.classList.remove('active');
         document.getElementById('live-zoom-100')?.classList.remove('active');
         liveManualScale = Math.max(0.25, Math.min(2.0, liveManualScale + delta));
         aplicarEscalaTelaAoVivo();
     };
+
+    window.alternarPainelLateralAoVivo = () => {
+        const panel = document.getElementById('live-side-panel');
+        const btn = document.getElementById('live-btn-side-toggle');
+        if (!panel) return;
+        const oculto = panel.classList.toggle('hidden');
+        btn?.classList.toggle('active', !oculto);
+        setTimeout(aplicarEscalaTelaAoVivo, 80);
+    };
+
+    window.mudarAbaLateralAoVivo = (aba) => {
+        liveSideTab = aba;
+        ['tudo', 'erros', 'xray'].forEach(t => {
+            document.getElementById('live-tab-' + t)?.classList.toggle('active', t === aba);
+        });
+        renderizarPainelLateralAoVivo();
+    };
+
+    function renderizarPainelLateralAoVivo() {
+        const body = document.getElementById('live-side-body');
+        const cntTudo = document.getElementById('live-cnt-tudo');
+        const cntErros = document.getElementById('live-cnt-erros');
+        const sideCounter = document.getElementById('live-side-counter');
+        const errBanner = document.getElementById('live-err-banner');
+        const headerErrBadge = document.getElementById('live-header-err-badge');
+        if (!body) return;
+
+        const erros = liveSessionLogs.filter(ev => classificarAcaoEspiao(ev).isError);
+        if (cntTudo) cntTudo.innerText = liveSessionLogs.length;
+        if (cntErros) cntErros.innerText = erros.length;
+        if (sideCounter) sideCounter.innerText = `${liveSessionLogs.length} evento(s) • ${erros.length} erro(s)`;
+
+        if (headerErrBadge) {
+            if (erros.length > 0) {
+                headerErrBadge.style.display = 'inline-flex';
+                headerErrBadge.innerHTML = `<i class="fas fa-bug"></i> ${erros.length} problema(s)`;
+            } else {
+                headerErrBadge.style.display = 'none';
+            }
+        }
+
+        if (errBanner) {
+            if (erros.length > 0) {
+                const ult = erros[0];
+                const h = new Date(ult.dataHora || Date.now()).toLocaleTimeString('pt-BR');
+                errBanner.style.display = 'block';
+                errBanner.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>Último problema [${h}]:</strong><br/>${escaparHtmlWA(ult.acao || '')}`;
+            } else {
+                errBanner.style.display = 'none';
+            }
+        }
+
+        if (liveSideTab === 'xray') {
+            const d = liveSessionDataAtual || liveSessionLogs[0] || {};
+            const loc = formatarLocalHonesto(d);
+            body.innerHTML = `
+                <div class="spy-xray-grid" style="grid-template-columns: 1fr;">
+                    <div class="spy-xray-item"><span>Endereço / Local (${escaparHtmlWA(loc.fonte.toUpperCase())})</span><strong>${escaparHtmlWA(loc.texto)}</strong></div>
+                    <div class="spy-xray-item"><span>Status GPS</span><strong>${escaparHtmlWA(d.gpsStatus || 'pendente')}${d.lat !== null && d.lat !== undefined ? ` (${d.lat}, ${d.lng})` : ''}</strong></div>
+                    <div class="spy-xray-item"><span>IP Público & Operadora</span><strong>${escaparHtmlWA(d.ipPublico || 'N/D')}${d.operadora ? ' • ' + escaparHtmlWA(d.operadora) : ''}</strong></div>
+                    <div class="spy-xray-item"><span>Dispositivo & Tela</span><strong>${escaparHtmlWA(d.modelo || 'N/D')} • Tela ${escaparHtmlWA(d.tela || 'N/D')} • Janela ${escaparHtmlWA(d.viewport || 'N/D')}</strong></div>
+                    <div class="spy-xray-item"><span>Hardware (GPU / RAM / CPU)</span><strong>${escaparHtmlWA([d.gpu, d.ramGB, d.cpuNucleos, d.bateria].filter(Boolean).join(' • ') || 'N/D')}</strong></div>
+                    <div class="spy-xray-item"><span>Conexão & Origem</span><strong>${escaparHtmlWA([d.conexao, d.origem, d.utmTerm].filter(Boolean).join(' • ') || 'Direto')}</strong></div>
+                    <div class="spy-xray-item"><span>Dados Preenchidos</span><strong>CNPJ: ${escaparHtmlWA(d.cnpjDigitado || '—')} | Empresa: ${escaparHtmlWA(d.empresaDigitada || '—')} | Ramo: ${escaparHtmlWA(d.ramoEscolhido || '—')}</strong></div>
+                    <div class="spy-xray-item"><span>URL Atual</span><strong>${escaparHtmlWA(d.urlEntrada || 'vigilanciadigital-sp.com.br')}</strong></div>
+                </div>`;
+            return;
+        }
+
+        const lista = liveSideTab === 'erros' ? erros : liveSessionLogs;
+        if (lista.length === 0) {
+            body.innerHTML = liveSideTab === 'erros'
+                ? '<div style="text-align:center; color:#6ee7b7; padding:34px 14px; font-size:0.86rem;"><i class="fas fa-check-circle" style="font-size:2rem; margin-bottom:8px; display:block;"></i>Nenhum erro, pop-up de falha ou travamento registrado nesta sessão até agora.</div>'
+                : '<div style="text-align:center; color:#94a3b8; padding:34px 14px; font-size:0.86rem;">Nenhuma ação registrada ainda.</div>';
+            return;
+        }
+
+        body.innerHTML = lista.slice(0, 80).map(ev => {
+            const c = classificarAcaoEspiao(ev);
+            const h = new Date(ev.dataHora || Date.now()).toLocaleTimeString('pt-BR');
+            let cardTipo = '';
+            let tagLabel = 'AÇÃO';
+            if (c.isError) { cardTipo = 'is-err'; tagLabel = 'ERRO / PROBLEMA'; }
+            else if (ev.tipoEvento === 'pix') { cardTipo = 'is-pix'; tagLabel = 'PIX / WHATS'; }
+            else if (ev.tipoEvento === 'campo') { cardTipo = 'is-campo'; tagLabel = 'CAMPO'; }
+            else if (ev.tipoEvento === 'gps') { cardTipo = 'is-gps'; tagLabel = 'GPS'; }
+
+            return `
+                <div class="live-log-card ${cardTipo}">
+                    <div class="live-log-time">
+                        <span><i class="fas ${c.icon}"></i> ${tagLabel}</span>
+                        <span>${h}</span>
+                    </div>
+                    <div>${escaparHtmlWA(ev.acao || '')}</div>
+                </div>`;
+        }).join('');
+    }
 
     window.alternarTelaCheiaAoVivo = () => {
         const box = document.querySelector('#modalTelaAoVivo .live-screen-modal-box');
@@ -5461,6 +5728,8 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
 
     function limparStreamLocalAoVivo() {
         if (liveWatchUnsubStream) { liveWatchUnsubStream(); liveWatchUnsubStream = null; }
+        clearInterval(liveSizeObserverTimer);
+        liveSizeObserverTimer = null;
         if (liveReplayer) {
             try { liveReplayer.pause(); } catch (_) {}
             liveReplayer = null;
@@ -5469,6 +5738,7 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
         liveAppliedChunks.clear();
         livePartBuffers.clear();
         livePacketsCount = 0;
+        liveLastClientScrollY = 0;
         const root = document.getElementById('live-replayer-root');
         if (root) root.innerHTML = '';
     }
@@ -5491,11 +5761,11 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
             if (ev.type === 4 && ev.data && ev.data.width && ev.data.height) {
                 liveViewportW = ev.data.width;
                 liveViewportH = ev.data.height;
-                aplicarEscalaTelaAoVivo();
             } else if (ev.type === 3 && ev.data && ev.data.source === 4 && ev.data.width && ev.data.height) {
                 liveViewportW = ev.data.width;
                 liveViewportH = ev.data.height;
-                aplicarEscalaTelaAoVivo();
+            } else if (ev.type === 3 && ev.data && ev.data.source === 3 && typeof ev.data.y === 'number') {
+                liveLastClientScrollY = ev.data.y;
             }
         });
 
@@ -5512,6 +5782,9 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
             liveReplayer = new rr.Replayer([], {
                 root,
                 liveMode: true,
+                insertStyleRules: [
+                    '#area-envio, #area-pagamento, #area-multas, .custom-alert-box, .page-view, .tab-content { animation: none !important; opacity: 1 !important; transform: none !important; }'
+                ],
                 mouseTail: {
                     duration: 450,
                     lineCap: 'round',
@@ -5546,13 +5819,24 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
                 pill.className = 'spy-badge spy-badge-gps';
                 pill.innerHTML = '<span class="pulse-online" style="width:7px;height:7px;"></span> AO VIVO EM HD';
             }
-            aplicarEscalaTelaAoVivo();
-            setTimeout(aplicarEscalaTelaAoVivo, 350);
+
+            // Reaplica escala e mede altura completa após o DOM do iframe renderizar
+            setTimeout(aplicarEscalaTelaAoVivo, 150);
+            setTimeout(aplicarEscalaTelaAoVivo, 600);
+            setTimeout(aplicarEscalaTelaAoVivo, 1500);
+            liveSizeObserverTimer = setInterval(() => {
+                if (liveWatchSid && liveReplayerStarted) {
+                    aplicarEscalaTelaAoVivo();
+                }
+            }, 2500);
+        } else {
+            setTimeout(aplicarEscalaTelaAoVivo, 200);
         }
 
         const statsEl = document.getElementById('live-footer-stats');
         if (statsEl) {
-            statsEl.innerText = `Pacotes HD: ${livePacketsCount} • Último quadro: ${new Date().toLocaleTimeString('pt-BR')}`;
+            const modoTxt = liveViewMode === 'full' ? 'Página Inteira' : 'Tela Cliente';
+            statsEl.innerText = `Pacotes HD: ${livePacketsCount} • ${modoTxt} • Atualizado: ${new Date().toLocaleTimeString('pt-BR')}`;
         }
     }
 
@@ -5578,7 +5862,6 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
             return;
         }
 
-        // Envia comando sob demanda ao visitante
         const sRef = doc(db, "trafego_aovivo", sid);
         await setDoc(sRef, {
             watchAdminActive: true,
@@ -5586,7 +5869,6 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
             watchStreamId: streamId
         }, { merge: true }).catch(() => {});
 
-        // Ouve a subcoleção de pacotes sem precisar de índice composto no Firestore
         const streamCol = collection(db, "trafego_aovivo", sid, "screen_stream");
         liveWatchUnsubStream = onSnapshot(streamCol, (snapshot) => {
             if (liveWatchStreamId !== streamId) return;
@@ -5644,14 +5926,36 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
         await fecharTelaAoVivoEspiao(true);
 
         liveWatchSid = sid;
-        liveZoomMode = 'fit';
-        document.getElementById('live-zoom-fit')?.classList.add('active');
+        liveViewMode = 'full';
+        liveZoomMode = 'width';
+        liveSideTab = 'tudo';
+        liveSessionLogs = [];
+        liveSessionDataAtual = null;
+
+        document.getElementById('live-view-full')?.classList.add('active');
+        document.getElementById('live-view-client')?.classList.remove('active');
+        document.getElementById('live-zoom-width')?.classList.add('active');
+        document.getElementById('live-zoom-fit')?.classList.remove('active');
         document.getElementById('live-zoom-100')?.classList.remove('active');
+        document.getElementById('live-side-panel')?.classList.remove('hidden');
+        document.getElementById('live-btn-side-toggle')?.classList.add('active');
+        ['tudo', 'erros', 'xray'].forEach(t => document.getElementById('live-tab-' + t)?.classList.toggle('active', t === 'tudo'));
+
         document.getElementById('modalTelaAoVivo').style.display = 'flex';
+        renderizarPainelLateralAoVivo();
 
         const sRef = doc(db, "trafego_aovivo", sid);
 
-        // Ouve metadados ao vivo do visitante (local, etapa, bateria, scroll, se saiu da aba)
+        // Ouve logs em tempo real DESTA sessão específica (sem índice composto)
+        const qSidLogs = query(collection(db, "logs_visitantes"), where("sessionId", "==", sid));
+        liveWatchUnsubLogs = onSnapshot(qSidLogs, (snap) => {
+            const arr = [];
+            snap.forEach((d) => arr.push(d.data()));
+            arr.sort((a, b) => (b.dataHora || 0) - (a.dataHora || 0));
+            liveSessionLogs = arr;
+            renderizarPainelLateralAoVivo();
+        });
+
         liveWatchUnsubSession = onSnapshot(sRef, (docSnap) => {
             const metaEl = document.getElementById('live-screen-visitor-meta');
             const footAction = document.getElementById('live-footer-action');
@@ -5667,6 +5971,7 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
             }
 
             const d = docSnap.data() || {};
+            liveSessionDataAtual = d;
             const loc = formatarLocalHonesto(d);
             const offlineAgora = (Date.now() - Number(d.ultima_acao || 0)) > 25000;
 
@@ -5677,7 +5982,7 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
 
             if (metaEl) {
                 metaEl.innerHTML = `
-                    <span style="font-size:1.1rem;">${d.dispositivo || '💻'}</span>
+                    <span style="font-size:1.05rem;">${d.dispositivo || '💻'}</span>
                     ${loc.badge}
                     <strong style="color:#ffffff;">${escaparHtmlWA(loc.texto)}</strong>
                     ${d.ipPublico ? `<span class="spy-chip chip-ip">IP: ${escaparHtmlWA(d.ipPublico)}</span>` : ''}
@@ -5688,7 +5993,12 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
             }
 
             if (footAction) {
-                footAction.innerHTML = `<i class="fas fa-bolt" style="color:#fbbf24;"></i> Etapa: <strong style="color:#fff;">${escaparHtmlWA(d.etapaAtual || 'Navegando')}</strong> • Scroll: ${Number(d.scrollMax || 0)}%${d.cnpjDigitado ? ' • CNPJ: ' + escaparHtmlWA(d.cnpjDigitado) : ''}`;
+                const errTxt = d.ultimoErro ? ` • <span style="color:#fca5a5;">Último erro: ${escaparHtmlWA(d.ultimoErro.slice(0, 60))}</span>` : '';
+                footAction.innerHTML = `<i class="fas fa-bolt" style="color:#fbbf24;"></i> Etapa: <strong style="color:#fff;">${escaparHtmlWA(d.etapaAtual || 'Navegando')}</strong> • Scroll: ${Number(d.scrollMax || 0)}%${d.cnpjDigitado ? ' • CNPJ: ' + escaparHtmlWA(d.cnpjDigitado) : ''}${errTxt}`;
+            }
+
+            if (liveSideTab === 'xray') {
+                renderizarPainelLateralAoVivo();
             }
 
             if (offlineAgora && pill) {
@@ -5725,6 +6035,7 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
         clearInterval(liveWatchHeartbeat);
         liveWatchHeartbeat = null;
         if (liveWatchUnsubSession) { liveWatchUnsubSession(); liveWatchUnsubSession = null; }
+        if (liveWatchUnsubLogs) { liveWatchUnsubLogs(); liveWatchUnsubLogs = null; }
         limparStreamLocalAoVivo();
 
         if (!silencioso) {
