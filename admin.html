@@ -2299,12 +2299,8 @@
         const textoOriginal = btnGlobal.innerHTML;
 
         const msgConfirm = novoEstado === 1
-            ? 'Desligar TODA a IA do WhatsApp agora?
-
-Nenhuma mensagem automática será enviada (nem para novos números), igual a desligar o webhook na Meta.'
-            : 'Religar a IA do WhatsApp agora?
-
-A assistente Ana voltará a responder automaticamente (respeitando as conversas que estiverem pausadas individualmente).';
+            ? 'Desligar TODA a IA do WhatsApp agora?\n\nNenhuma mensagem automática será enviada (nem para novos números), igual a desligar o webhook na Meta.'
+            : 'Religar a IA do WhatsApp agora?\n\nA assistente Ana voltará a responder automaticamente (respeitando as conversas que estiverem pausadas individualmente).';
 
         if (!confirm(msgConfirm)) return;
 
@@ -2450,9 +2446,7 @@ A assistente Ana voltará a responder automaticamente (respeitando as conversas 
     };
 
     window.resetarConversaWhatsApp = async (telefone) => {
-        if (!confirm(`Resetar a conversa de ${formatarTelefoneWA(telefone)}?
-
-O histórico será limpo e a assistente Ana voltará ao estado inicial para este número.`)) return;
+        if (!confirm(`Resetar a conversa de ${formatarTelefoneWA(telefone)}?\n\nO histórico será limpo e a assistente Ana voltará ao estado inicial para este número.`)) return;
         try {
             const resp = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations/reset`, {
                 method: 'POST',
