@@ -1326,6 +1326,91 @@
     }
     .docgen-sec-toggle-lbl input { width: 15px; height: 15px; accent-color: #eab308; cursor: pointer; }
 
+
+    /* PAINEL INTEGRADO DE ANÁLISE COMPLETA (PDF / IMAGEM / ÁUDIO) NO WHATSAPP */
+    #modalChatWhatsApp .modal-box.wa-split-open {
+      max-width: 1240px !important;
+      width: 96vw !important;
+    }
+    .wa-modal-split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      min-height: 0;
+    }
+    .wa-modal-split.has-analysis {
+      grid-template-columns: 1.05fr 1fr;
+    }
+    .wa-analysis-pane {
+      display: none;
+      background: #060c18;
+      border: 1px solid rgba(192, 132, 252, 0.45);
+      border-radius: 14px;
+      padding: 16px;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 610px;
+      overflow-y: auto;
+    }
+    .wa-modal-split.has-analysis .wa-analysis-pane {
+      display: flex;
+    }
+    .wa-an-card {
+      background: #0b1426;
+      border: 1px solid #1e3254;
+      border-radius: 11px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .wa-an-card.purple { border-left: 4px solid #c084fc; }
+    .wa-an-card.green { border-left: 4px solid #10b981; background: rgba(16, 185, 129, 0.06); }
+    .wa-an-card.amber { border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.06); }
+    .wa-an-card.blue { border-left: 4px solid #38bdf8; }
+    .wa-an-card h5 {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .wa-an-media-item {
+      background: #070e1c;
+      border: 1px solid #223557;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      color: #e2e8f0;
+      line-height: 1.45;
+    }
+    .wa-an-doc-btn {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      border: 1px solid #60a5fa;
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-size: 0.79rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      text-align: left;
+      transition: 0.2s;
+    }
+    .wa-an-doc-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(59,130,246,0.35); }
+    @media (max-width: 980px) {
+      .wa-modal-split.has-analysis { grid-template-columns: 1fr; }
+      .wa-analysis-pane { max-height: none; }
+    }
+
   </style>
 </head>
 <body>
@@ -3355,11 +3440,11 @@
   </div>
 
   <div class="modal-overlay" id="modalChatWhatsApp">
-    <div class="modal-box" style="max-width: 860px;">
+    <div class="modal-box" id="wa-modal-box" style="max-width: 880px;">
       <div class="modal-header">
         <div>
           <h3 style="margin: 0;"><i class="fab fa-whatsapp" style="color: #25D366;"></i> Conversa: <span id="wa-modal-phone-label">...</span></h3>
-          <div style="margin-top: 6px; display: flex; align-items: center; gap: 10px;">
+          <div style="margin-top: 6px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
             <span id="wa-modal-status-pill" class="wa-pill-status wa-pill-on">IA Ativa</span>
             <span style="font-size: 0.82rem; color: var(--text-muted);">Ao responder por aqui, a IA é pausada automaticamente para este cliente.</span>
           </div>
@@ -3367,14 +3452,14 @@
         <button class="btn-close" onclick="fecharModalChatWhatsApp()"><i class="fas fa-times"></i></button>
       </div>
 
-      <div class="modal-body" style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <div class="modal-body" style="padding: 20px 24px; display: flex; flex-direction: column; gap: 14px;">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button class="btn-ia-toggle active-ia" id="wa-modal-btn-pause" onclick="alternarPausaNoModal()">
               <i class="fas fa-pause"></i> Pausar IA
             </button>
-            <button class="wa-btn-sm" style="background: rgba(192, 132, 252, 0.16); border-color: var(--gemini-purple); color: #e9d5ff;" onclick="abrirChatAtualNoLaboratorio()">
-              <i class="fas fa-microscope"></i> Analisar PDFs/Imagens (IA)
+            <button class="btn btn-gemini" id="wa-modal-btn-analyze-all" style="padding: 9px 16px; font-size: 0.86rem;" onclick="analisarConversaAtualWhatsApp()">
+              <i class="fas fa-wand-magic-sparkles"></i> Analisar Conversa (PDF/Img/Áudio)
             </button>
             <button class="wa-btn-sm btn-reset" onclick="resetarConversaNoModal()">
               <i class="fas fa-redo"></i> Resetar Conversa
@@ -3390,28 +3475,42 @@
           </div>
         </div>
 
-        <div class="wa-modal-chat-body" id="wa-modal-messages">
-          <div style="text-align: center; color: var(--text-muted); margin: auto;">Carregando histórico...</div>
-        </div>
+        <div class="wa-modal-split" id="wa-modal-split">
+          <!-- COLUNA ESQUERDA: CHAT + RESPOSTA -->
+          <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+            <div class="wa-modal-chat-body" id="wa-modal-messages">
+              <div style="text-align: center; color: var(--text-muted); margin: auto;">Carregando histórico...</div>
+            </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 10px 14px; border-radius: 10px;">
-          <label style="display: flex; align-items: center; gap: 8px; color: var(--text-light); font-size: 0.88rem; font-weight: 700; cursor: pointer;">
-            <input type="checkbox" id="wa-modal-sign-toggle" checked style="width: 16px; height: 16px; accent-color: var(--success);" />
-            Assinar mensagem como:
-          </label>
-          <input type="text" id="wa-modal-sign-name" value="Giliard" placeholder="Seu nome..." style="background: var(--bg-sidebar); border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; width: 170px;" />
-          <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: auto;">Formato no WhatsApp: <strong style="color: white;">*Giliard:*</strong> + texto</span>
-        </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 10px 14px; border-radius: 10px;">
+              <label style="display: flex; align-items: center; gap: 8px; color: var(--text-light); font-size: 0.86rem; font-weight: 700; cursor: pointer;">
+                <input type="checkbox" id="wa-modal-sign-toggle" checked style="width: 16px; height: 16px; accent-color: var(--success);" />
+                Assinar como:
+              </label>
+              <input type="text" id="wa-modal-sign-name" value="Giliard" placeholder="Seu nome..." style="background: var(--bg-sidebar); border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.88rem; font-weight: 800; width: 150px;" />
+              <span style="font-size: 0.78rem; color: var(--text-muted); margin-left: auto;"><strong style="color: white;">*Giliard:*</strong> + texto</span>
+            </div>
 
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <textarea id="wa-modal-input" class="form-input" rows="3" style="padding: 14px 18px; font-size: 0.96rem; resize: vertical; min-height: 76px;" placeholder="Digite sua resposta (ou um rascunho curto e clique em Gerar Texto com IA)..." onkeydown="if(event.key === 'Enter' && !event.shiftKey){ event.preventDefault(); enviarMensagemDiretaWhatsApp(); }"></textarea>
-          <div style="display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
-            <button class="btn btn-gemini" id="wa-modal-btn-ai" style="padding: 12px 20px; font-size: 0.92rem;" onclick="gerarTextoIAAtendimentoWA()">
-              <i class="fas fa-magic"></i> Gerar Texto com IA
-            </button>
-            <button class="btn btn-success" id="wa-modal-btn-send" style="padding: 12px 26px; font-size: 0.95rem; white-space: nowrap;" onclick="enviarMensagemDiretaWhatsApp()">
-              <i class="fas fa-paper-plane"></i> Enviar no WhatsApp
-            </button>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <textarea id="wa-modal-input" class="form-input" rows="3" style="padding: 13px 16px; font-size: 0.94rem; resize: vertical; min-height: 74px;" placeholder="Digite sua resposta (ou clique em Analisar Conversa / Gerar Texto com IA)..." onkeydown="if(event.key === 'Enter' && !event.shiftKey){ event.preventDefault(); enviarMensagemDiretaWhatsApp(); }"></textarea>
+              <div style="display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-gemini" id="wa-modal-btn-ai" style="padding: 11px 18px; font-size: 0.9rem;" onclick="gerarTextoIAAtendimentoWA()">
+                  <i class="fas fa-magic"></i> Gerar Texto com IA
+                </button>
+                <button class="btn btn-success" id="wa-modal-btn-send" style="padding: 11px 24px; font-size: 0.93rem; white-space: nowrap;" onclick="enviarMensagemDiretaWhatsApp()">
+                  <i class="fas fa-paper-plane"></i> Enviar no WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- COLUNA DIREITA: ANÁLISE COMPLETA IA (RESUMO + PDF/IMG/ÁUDIO + O QUE FAZER/EMITIR + ENVIAR) -->
+          <div class="wa-analysis-pane" id="wa-analysis-pane">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; border-bottom:1px solid #1e3254; padding-bottom:10px;">
+              <strong style="color:#e9d5ff; font-size:0.92rem;"><i class="fas fa-brain" style="color:#c084fc;"></i> Análise Completa da Conversa (IA)</strong>
+              <button type="button" class="wa-btn-sm" style="padding:4px 9px; font-size:0.74rem;" onclick="fecharPainelAnaliseWA()"><i class="fas fa-times"></i> Fechar</button>
+            </div>
+            <div id="wa-analysis-content" style="display:flex; flex-direction:column; gap:11px;"></div>
           </div>
         </div>
       </div>
@@ -4421,8 +4520,8 @@
                         <button class="wa-btn-sm btn-chat" onclick="abrirModalChatWhatsApp('${conv.phone}')">
                             <i class="fas fa-comments"></i> Chat / Responder
                         </button>
-                        <button class="wa-btn-sm" style="background: rgba(192, 132, 252, 0.16); border-color: var(--gemini-purple); color: #e9d5ff;" onclick="abrirChatNoLaboratorio('${conv.phone}', true)" title="Abrir conversa no Laboratório e analisar todos os PDFs e imagens com IA">
-                            <i class="fas fa-microscope"></i> Analisar IA
+                        <button class="wa-btn-sm" style="background: rgba(192, 132, 252, 0.18); border-color: var(--gemini-purple); color: #e9d5ff;" onclick="abrirAnaliseDiretaConversaWA('${conv.phone}')" title="Analisar toda a conversa, PDFs, imagens e áudios e mostrar o que fazer/emitir">
+                            <i class="fas fa-wand-magic-sparkles"></i> Analisar Conversa
                         </button>
                         <button class="btn-ia-toggle ${classeBtn}" onclick="alterarEstadoIA('${conv.phone}', ${novaAcao})" id="btn-ia-${conv.phone}">
                             <i class="fas ${iconeBtn}"></i> ${textoBtn}
@@ -4734,8 +4833,14 @@
         await atualizarHistoricoModalWhatsApp(false);
     };
 
+    window.fecharPainelAnaliseWA = () => {
+        document.getElementById('wa-modal-split')?.classList.remove('has-analysis');
+        document.getElementById('wa-modal-box')?.classList.remove('wa-split-open');
+    };
+
     window.fecharModalChatWhatsApp = () => {
         document.getElementById('modalChatWhatsApp').style.display = 'none';
+        fecharPainelAnaliseWA();
         waModalPhoneAtual = null;
         window._waModalHistoryHash = null;
     };
@@ -13213,6 +13318,311 @@ Responda APENAS JSON válido:
         pdfDoc.setTitle(`${meta.title} - ${dados.nome || 'COVISA'}`);
         return await pdfDoc.save();
     }
+
+    // =========================================================================
+    // ANALISADOR COMPLETO DE CONVERSA WHATSAPP (PDF + IMAGEM + ÁUDIO — ZERO ERRO)
+    // =========================================================================
+    window._waUltimaAnaliseDados = null;
+
+    window.abrirAnaliseDiretaConversaWA = async (phone) => {
+        await abrirModalChatWhatsApp(phone);
+        setTimeout(() => { analisarConversaAtualWhatsApp(); }, 180);
+    };
+
+    function normalizarMimeMidiaWA(mimeRaw, mType, filename) {
+        let mime = String(mimeRaw || '').split(';')[0].trim().toLowerCase();
+        const fn = String(filename || '').toLowerCase();
+        if (mType === 'audio' || mime.startsWith('audio/')) {
+            if (!mime || mime === 'application/octet-stream') return 'audio/ogg';
+            if (mime === 'audio/opus') return 'audio/ogg';
+            return mime;
+        }
+        if (mType === 'image' || mType === 'sticker' || mime.startsWith('image/')) {
+            if (!mime || mime === 'application/octet-stream') return fn.endsWith('.png') ? 'image/png' : 'image/jpeg';
+            return mime;
+        }
+        if (mime.includes('pdf') || fn.endsWith('.pdf')) return 'application/pdf';
+        return mime || 'application/octet-stream';
+    }
+
+    function blobParaBase64Puro(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const res = String(reader.result || '');
+                const idx = res.indexOf(',');
+                resolve(idx >= 0 ? res.slice(idx + 1) : res);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    window.emitirDocDaAnaliseWA = (docId) => {
+        const ext = window._waUltimaAnaliseDados || {};
+        fecharModalChatWhatsApp();
+        const navDoc = document.getElementById('nav-item-docgen');
+        if (navDoc) switchView('view-docgen', navDoc);
+        setTimeout(() => {
+            const setV = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+            setV('docgen-nome', ext.nome);
+            setV('docgen-cnpj', ext.cnpj);
+            setV('docgen-crm', ext.crm);
+            setV('docgen-rua', ext.rua);
+            setV('docgen-num', ext.num);
+            setV('docgen-bairro', ext.bairro);
+            setV('docgen-cep', ext.cep);
+            setV('docgen-cidade', ext.cidade);
+            setV('docgen-ramo', ext.ramo);
+            setV('docgen-telefone', ext.telefone || (waModalPhoneAtual ? formatarTelefoneWA(waModalPhoneAtual) : ''));
+            const card = document.querySelector(`.docgen-type-card[data-doctype="${docId}"]`);
+            if (card) {
+                filtrarCategoriaDocGen('todos', document.querySelector('.docgen-cat-btn[data-cat-btn="todos"]'));
+                selecionarTipoDocumento(docId, card);
+                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            if (ext.nome) gerarDocumentoOficialPDF(false);
+            showToast("Pronto para Emitir!", "Dados do cliente preenchidos e documento selecionado.", "success");
+        }, 160);
+    };
+
+    window.enviarRespostaDaAnaliseWA = async () => {
+        const txtEl = document.getElementById('wa-an-reply-text');
+        const mainInput = document.getElementById('wa-modal-input');
+        if (!txtEl || !txtEl.value.trim()) return;
+        if (mainInput) mainInput.value = txtEl.value.trim();
+        await enviarMensagemDiretaWhatsApp();
+    };
+
+    window.analisarConversaAtualWhatsApp = async () => {
+        if (!waModalPhoneAtual) return;
+        const split = document.getElementById('wa-modal-split');
+        const box = document.getElementById('wa-modal-box');
+        const content = document.getElementById('wa-analysis-content');
+        const btn = document.getElementById('wa-modal-btn-analyze-all');
+
+        split?.classList.add('has-analysis');
+        box?.classList.add('wa-split-open');
+
+        const origBtn = btn ? btn.innerHTML : '';
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analisando tudo...'; }
+
+        if (content) {
+            content.innerHTML = `
+                <div style="text-align:center; padding:40px 16px; color:#cbd5e1;">
+                    <i class="fas fa-circle-notch fa-spin" style="font-size:2.4rem; color:#c084fc; margin-bottom:12px;"></i>
+                    <strong style="display:block; color:#ffffff; font-size:0.96rem;">Lendo conversa, PDFs, imagens e áudios...</strong>
+                    <span id="wa-an-progress" style="font-size:0.8rem; color:#94a3b8; display:block; margin-top:6px;">Coletando arquivos enviados no WhatsApp...</span>
+                </div>`;
+        }
+
+        try {
+            // 1. Garante histórico atualizado
+            let hist = Array.isArray(window._waModalHistoryAtual) ? window._waModalHistoryAtual : [];
+            if (hist.length === 0) {
+                const r = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations/history?phone=${encodeURIComponent(waModalPhoneAtual)}&t=${Date.now()}`);
+                const d = await r.json();
+                if (d.success && d.conversation?.history) hist = d.conversation.history;
+            }
+
+            if (hist.length === 0) {
+                throw new Error('Esta conversa ainda não possui mensagens para analisar.');
+            }
+
+            // 2. Monta transcrição completa da conversa
+            const linhasTexto = hist.map((m, idx) => {
+                const quem = m.role === 'user' ? 'CLIENTE' : ((m.content || '').startsWith('[Atendente]') ? 'ATENDENTE' : 'ANA_IA');
+                const mTag = m.media && m.media.id ? ` [ANEXO #${idx + 1}: ${m.media.type || 'arquivo'} - ${m.media.filename || m.media.id}]` : '';
+                return `[${idx + 1}] ${quem}: ${(m.content || '').trim()}${mTag}`;
+            }).join('\n');
+
+            // 3. Baixa TODOS os PDFs, imagens e áudios com segurança (até 8 arquivos mais recentes, máx 12MB cada)
+            const midiasMsgs = hist.filter(m => m.media && m.media.id).slice(-8);
+            const partesGemini = [];
+            const logMidiasFalha = [];
+            let qtdOk = 0;
+
+            for (let i = 0; i < midiasMsgs.length; i++) {
+                const m = midiasMsgs[i];
+                const mType = (m.media.type || 'document').toLowerCase();
+                const fn = m.media.filename || `${mType}_${m.media.id}`;
+                const progEl = document.getElementById('wa-an-progress');
+                if (progEl) progEl.innerText = `Baixando anexo ${i + 1}/${midiasMsgs.length}: ${fn}...`;
+
+                // Aceita PDF, imagem, sticker e áudio (pula vídeo pesado para não estourar limite)
+                const mimeNorm = normalizarMimeMidiaWA(m.media.mime_type, mType, fn);
+                const suportado = mimeNorm === 'application/pdf' || mimeNorm.startsWith('image/') || mimeNorm.startsWith('audio/');
+                if (!suportado) {
+                    logMidiasFalha.push(`${fn} (${mimeNorm} — formato não suportado para leitura direta)`);
+                    continue;
+                }
+
+                try {
+                    const urlMedia = `${CLOUDFLARE_WORKER_URL}/api/media?id=${encodeURIComponent(m.media.id)}&filename=${encodeURIComponent(fn)}`;
+                    const respMedia = await fetch(urlMedia);
+                    if (!respMedia.ok) {
+                        logMidiasFalha.push(`${fn} (expirado ou indisponível na Meta — HTTP ${respMedia.status})`);
+                        continue;
+                    }
+                    const blob = await respMedia.blob();
+                    if (blob.size === 0) {
+                        logMidiasFalha.push(`${fn} (arquivo vazio)`);
+                        continue;
+                    }
+                    if (blob.size > 12 * 1024 * 1024) {
+                        logMidiasFalha.push(`${fn} (maior que 12MB — abra manualmente no chat)`);
+                        continue;
+                    }
+                    const b64 = await blobParaBase64Puro(blob);
+                    const finalMime = (blob.type && blob.type !== 'application/octet-stream')
+                        ? normalizarMimeMidiaWA(blob.type, mType, fn)
+                        : mimeNorm;
+                    partesGemini.push({ text: `--- ANEXO ENVIADO PELO CLIENTE: "${fn}" (Tipo: ${mType}, MIME: ${finalMime}) ---` });
+                    partesGemini.push({ inline_data: { mime_type: finalMime, data: b64 } });
+                    qtdOk++;
+                } catch (eMed) {
+                    logMidiasFalha.push(`${fn} (falha de leitura: ${eMed.message})`);
+                }
+            }
+
+            const progEl = document.getElementById('wa-an-progress');
+            if (progEl) progEl.innerText = `IA analisando texto + ${qtdOk} arquivo(s) (PDF/Imagem/Áudio)...`;
+
+            const promptSistema = `Você é o Analista Sênior da COVISA Digital (Vigilância Sanitária SP — portal https://vigilancia-sp-gov.netlify.app).
+Analise COMPLETAMENTE a conversa de WhatsApp abaixo e TODOS os anexos (PDFs, imagens e áudios enviados).
+Se houver ÁUDIO, ouça e transcreva o ponto principal no resumo.
+Se houver PDF ou IMAGEM, leia todos os dados (Nome, Razão Social, CPF/CNPJ, CRM/CRO, endereço, validade, vencimento, o que é o documento).
+
+CONVERSA (Telefone: ${waModalPhoneAtual}):
+${linhasTexto}
+${logMidiasFalha.length ? '\nANEXOS QUE NÃO PUDERAM SER BAIXADOS:\n' + logMidiasFalha.join('\n') : ''}
+
+IDs VÁLIDOS DE DOCUMENTOS QUE PODEMOS EMITIR NO GERADOR:
+alvara_oficial, licenca, licenca_pf_home, renovacao_licenca, cmvs_rt, assuncao_rt, dispensa, dca_dcff, declaracao, guia, recibo_quitacao, notificacao, infracao, termo_vistoria, oficio, procuracao_sanitaria, receita_sus, receita_odonto, receita_branca, receita_antimicrobiano, receita_glp1, receita_a, receita_b, receita_b2, receita_retinoides, receita_veterinaria, receita_manipulacao, receita_fitoterapico, receita_oftalmo, atestado_medico, atestado_upa, atestado_aptidao, laudo_medico, declaracao_comparecimento, solicitacao_exames, carrocinha_rua, fast_food, adega_tabacaria, studio_nails, salao_barbearia, mercado_padaria, pet_shop, academia_fitness, alvara_clinica_estetica, alvara_farmacia, dedetizacao_caixa, plano_pgrss, autorizacao_talonario, manual_mbp, doc_pop, planilha_temperatura, registro_esterilizacao, defesa_auto_infracao.
+
+Retorne EXCLUSIVAMENTE um JSON válido neste formato exato:
+{
+  "resumo_cliente": "Resumo direto de quem é o cliente, qual empresa/profissão e exatamente o que ele quer.",
+  "midias_analisadas": [
+    { "arquivo": "nome do arquivo ou Áudio", "tipo": "PDF | Imagem | Áudio", "status": "OK | Atenção | Vencido/Irregular", "resumo": "O que foi lido/ouvido nele" }
+  ],
+  "o_que_fazer": ["Passo 1 prático para o atendente", "Passo 2..."],
+  "pendencias": ["O que ainda falta o cliente enviar (ou vazio se estiver completo)"],
+  "documentos_emitir": [
+    { "doc_id": "id_exato_da_lista_acima", "titulo": "Nome amigável do documento", "motivo": "Por que emitir este documento" }
+  ],
+  "dados_extraidos": {
+    "nome": "", "cnpj": "", "crm": "", "rua": "", "num": "", "bairro": "", "cep": "", "cidade": "", "ramo": "", "telefone": ""
+  },
+  "mensagem_cliente": "Mensagem pronta, educada e objetiva para enviar no WhatsApp do cliente (use *negrito* simples, nunca **duplo**, não coloque nome do atendente no início)."
+}`;
+
+            partesGemini.unshift({ text: promptSistema });
+
+            const respIA = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: partesGemini }],
+                    generationConfig: { responseMimeType: "application/json", temperature: 0.2 }
+                })
+            });
+
+            const dataIA = await respIA.json();
+            if (!respIA.ok) {
+                throw new Error(dataIA.error?.message || `Erro Gemini HTTP ${respIA.status}`);
+            }
+
+            const rawText = dataIA.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            let rel;
+            try {
+                rel = JSON.parse(rawText);
+            } catch (_) {
+                const mJson = rawText.match(/\{[\s\S]*\}/);
+                if (!mJson) throw new Error('Resposta da IA fora do padrão JSON.');
+                rel = JSON.parse(mJson[0]);
+            }
+
+            window._waUltimaAnaliseDados = rel.dados_extraidos || {};
+
+            const midiasArr = Array.isArray(rel.midias_analisadas) ? rel.midias_analisadas : [];
+            const fazerArr = Array.isArray(rel.o_que_fazer) ? rel.o_que_fazer : [];
+            const pendArr = Array.isArray(rel.pendencias) ? rel.pendencias : [];
+            const docsArr = Array.isArray(rel.documentos_emitir) ? rel.documentos_emitir : [];
+            const msgPronta = String(rel.mensagem_cliente || '').replace(/\*\*([^*\n]+)\*\*/g, '*$1*').trim();
+
+            content.innerHTML = `
+                <div class="wa-an-card purple">
+                    <h5><i class="fas fa-user-check" style="color:#c084fc;"></i> Resumo do Pedido</h5>
+                    <div style="font-size:0.84rem; color:#e2e8f0; line-height:1.5;">${escaparHtmlWA(rel.resumo_cliente || 'Sem resumo.')}</div>
+                </div>
+
+                ${midiasArr.length > 0 ? `
+                <div class="wa-an-card blue">
+                    <h5><i class="fas fa-paperclip" style="color:#38bdf8;"></i> PDFs, Imagens & Áudios Analisados (${midiasArr.length})</h5>
+                    ${midiasArr.map(md => `
+                        <div class="wa-an-media-item">
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:3px;">
+                                <strong style="color:#ffffff;">${escaparHtmlWA(md.arquivo || md.tipo || 'Anexo')}</strong>
+                                <span style="font-size:0.68rem; font-weight:900; padding:2px 7px; border-radius:999px; background:rgba(56,189,248,0.16); color:#bae6fd;">${escaparHtmlWA(md.tipo || '')} • ${escaparHtmlWA(md.status || 'Lido')}</span>
+                            </div>
+                            <div style="color:#cbd5e1;">${escaparHtmlWA(md.resumo || '')}</div>
+                        </div>
+                    `).join('')}
+                </div>` : ''}
+
+                <div class="wa-an-card amber">
+                    <h5><i class="fas fa-list-check" style="color:#fbbf24;"></i> O que você deve fazer</h5>
+                    <ul style="margin:0; padding-left:17px; font-size:0.82rem; color:#f1f5f9; line-height:1.55;">
+                        ${fazerArr.map(it => `<li>${escaparHtmlWA(it)}</li>`).join('') || '<li>Responder o cliente com a orientação abaixo.</li>'}
+                    </ul>
+                    ${pendArr.length > 0 ? `
+                        <div style="margin-top:6px; padding-top:6px; border-top:1px dashed rgba(245,158,11,0.35); font-size:0.79rem; color:#fde68a;">
+                            <strong>Faltando do cliente:</strong> ${pendArr.map(p => escaparHtmlWA(p)).join(' • ')}
+                        </div>` : ''}
+                </div>
+
+                ${docsArr.length > 0 ? `
+                <div class="wa-an-card blue">
+                    <h5><i class="fas fa-file-pdf" style="color:#f87171;"></i> Documento(s) para Emitir (1 Clique)</h5>
+                    ${docsArr.map(dc => `
+                        <button type="button" class="wa-an-doc-btn" onclick="emitirDocDaAnaliseWA('${escaparHtmlWA(dc.doc_id || 'alvara_oficial')}')">
+                            <span><strong>${escaparHtmlWA(dc.titulo || dc.doc_id)}</strong><br><small style="opacity:0.85; font-weight:500;">${escaparHtmlWA(dc.motivo || 'Abrir já preenchido no Gerador')}</small></span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    `).join('')}
+                </div>` : ''}
+
+                <div class="wa-an-card green">
+                    <h5><i class="fab fa-whatsapp" style="color:#25D366;"></i> Resposta Pronta para Enviar ao Cliente</h5>
+                    <textarea id="wa-an-reply-text" style="width:100%; min-height:105px; background:#040914; border:1px solid #243a5e; color:#ffffff; border-radius:9px; padding:10px 12px; font-size:0.84rem; line-height:1.48; resize:vertical; font-family:inherit;">${escaparHtmlWA(msgPronta)}</textarea>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+                        <button type="button" class="btn btn-success" style="flex:1; padding:9px 14px; font-size:0.83rem;" onclick="enviarRespostaDaAnaliseWA()">
+                            <i class="fas fa-paper-plane"></i> Enviar Agora no WhatsApp
+                        </button>
+                        <button type="button" class="wa-btn-sm" style="padding:8px 12px; font-size:0.8rem;" onclick="navigator.clipboard.writeText(document.getElementById('wa-an-reply-text').value); showToast('Copiado!', 'Mensagem copiada.', 'success');">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            showToast("Análise Concluída!", `Conversa e ${qtdOk} anexo(s) analisados com sucesso.`, "success");
+        } catch (err) {
+            console.error("Erro na análise WhatsApp:", err);
+            if (content) {
+                content.innerHTML = `
+                    <div class="wa-an-card" style="border-left:4px solid #ef4444; background:rgba(239,68,68,0.08);">
+                        <h5 style="color:#fca5a5;"><i class="fas fa-exclamation-triangle"></i> Não foi possível concluir a análise</h5>
+                        <p style="font-size:0.83rem; color:#fecaca; margin:0; line-height:1.5;">${escaparHtmlWA(err.message)}</p>
+                        <button type="button" class="wa-btn-sm" style="margin-top:8px; align-self:flex-start;" onclick="analisarConversaAtualWhatsApp()"><i class="fas fa-redo"></i> Tentar Novamente</button>
+                    </div>`;
+            }
+            showToast("Aviso na Análise", err.message, "warning");
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerHTML = origBtn; }
+        }
+    };
   </script>
 </body>
 </html>
