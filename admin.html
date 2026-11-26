@@ -13345,19 +13345,6 @@ Responda APENAS JSON válido:
         return mime || 'application/octet-stream';
     }
 
-    function blobParaBase64Puro(blob) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const res = String(reader.result || '');
-                const idx = res.indexOf(',');
-                resolve(idx >= 0 ? res.slice(idx + 1) : res);
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    }
-
     window.emitirDocDaAnaliseWA = (docId) => {
         const ext = window._waUltimaAnaliseDados || {};
         fecharModalChatWhatsApp();
