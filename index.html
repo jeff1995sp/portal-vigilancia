@@ -791,12 +791,12 @@
 
       <nav>
         <ul>
-          <li><a href="#inicio" class="active"><i class="fas fa-search"></i> Raio-X CNPJ</a></li>
-          <li><a href="#regularize">Regularize-se</a></li>
-          <li><a href="#regularize" class="nav-multas" onclick="window.alternarAba('multas'); window.updateVisualSteps(3);">Multas</a></li>
-          <li><a href="#guia-ramos">Por Ramo</a></li>
-          <li><a href="#legislacao">Legislação</a></li>
-          <li><a href="#contato">Denúncia</a></li>
+          <li><a href="#inicio" class="active"><i class="fas fa-search"></i> Consulta CNPJ</a></li>
+          <li><a href="#regularize" onclick="window.alternarAba('envio'); window.updateVisualSteps(1);"><i class="fas fa-file-signature"></i> Regularize-se</a></li>
+          <li><a href="#regularize" class="nav-multas" onclick="window.alternarAba('multas'); window.updateVisualSteps(3);"><i class="fas fa-gavel"></i> Multas</a></li>
+          <li><a href="#guia-ramos"><i class="fas fa-folder-open"></i> Documentos</a></li>
+          <li><a href="#legislacao"><i class="fas fa-scale-balanced"></i> Normas</a></li>
+          <li><a href="#contato" style="color: var(--sp-red);"><i class="fas fa-camera"></i> Denúncia</a></li>
         </ul>
       </nav>
 
@@ -1151,24 +1151,21 @@
     </div>
   </section>
 
-  <!-- DESTAQUES OPERACIONAIS -->
+  <!-- DESTAQUES OPERACIONAIS (ATUALIZAÇÃO AUTOMÁTICA CONTÍNUA) -->
   <section id="noticias" class="news-section">
     <div class="container">
-      <div class="section-header"><h2>Destaques Operacionais</h2></div>
-      <div class="news-grid">
-        <div class="news-card">
-          <div class="news-img"><img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=600&auto=format&fit=crop" alt="Dengue" loading="lazy" /></div>
-          <div class="news-body"><span class="news-tag">Urgente</span><h3>Operação Dengue Zero: Ações em toda a capital</h3><p>Equipes realizam vistorias e nebulização para eliminar focos do mosquito Aedes aegypti.</p><a href="#contato" class="read-more">Denunciar foco <i class="fas fa-arrow-right"></i></a></div>
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <h2 style="margin-bottom:0;">Destaques Operacionais</h2>
+          <span id="news-live-badge" style="display:inline-flex; align-items:center; gap:6px; background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; padding:4px 10px; border-radius:999px; font-size:0.74rem; font-weight:800;">
+            <i class="fas fa-circle" style="font-size:0.45rem; color:#10b981;"></i> Atualizado hoje
+          </span>
         </div>
-        <div class="news-card">
-          <div class="news-img"><img src="imagens/3.jpeg" alt="Operação de fiscalização" loading="lazy" /></div>
-          <div class="news-body"><span class="news-tag">Fiscalização</span><h3>Blitz fiscaliza estabelecimentos sem licença no centro</h3><p>Locais operando sem alvará sanitário e com produtos vencidos passaram por autuação.</p><a href="#regularize" class="read-more">Regularizar agora <i class="fas fa-arrow-right"></i></a></div>
-        </div>
-        <div class="news-card">
-          <div class="news-img"><img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=600&auto=format&fit=crop" alt="Vacina" loading="lazy" /></div>
-          <div class="news-body"><span class="news-tag">Saúde</span><h3>Campanha de Multivacinação Prorrogada</h3><p>Atualize a caderneta de vacinação nas unidades básicas de saúde da capital.</p><a href="#legislacao" class="read-more">Ver normas <i class="fas fa-arrow-right"></i></a></div>
-        </div>
+        <button type="button" onclick="window.avancarDestaquesOperacionais()" style="background:#f8fafc; border:1px solid #cbd5e1; color:#0f172a; padding:7px 13px; border-radius:999px; font-size:0.78rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          <i class="fas fa-sync-alt"></i> Próximos alertas
+        </button>
       </div>
+      <div class="news-grid" id="destaques-operacionais-grid" style="transition: opacity 0.28s ease;"></div>
     </div>
   </section>
 
@@ -4644,6 +4641,116 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
             }
         } catch (_) {}
     })();
+
+    // =========================================================================
+    // DESTAQUES OPERACIONAIS DINÂMICOS (ATUALIZAÇÃO AUTOMÁTICA COM DATA DE HOJE)
+    // =========================================================================
+    const DESTAQUES_POOL = [
+        {
+            tag: 'Urgente',
+            img: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=600&auto=format&fit=crop',
+            titulo: 'Operação Dengue Zero: Ações em toda a capital',
+            texto: 'Equipes realizam vistorias e nebulização para eliminar focos do mosquito Aedes aegypti em imóveis e comércios.',
+            cta: 'Denunciar foco', href: '#contato'
+        },
+        {
+            tag: 'Fiscalização',
+            img: 'imagens/3.jpeg',
+            titulo: 'Blitz fiscaliza estabelecimentos sem licença sanitária',
+            texto: 'Locais operando sem alvará sanitário (LFS/CMVS) e com produtos vencidos passaram por autuação imediata.',
+            cta: 'Regularizar agora', href: '#regularize'
+        },
+        {
+            tag: 'Saúde',
+            img: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=600&auto=format&fit=crop',
+            titulo: 'Campanha de Multivacinação Prorrogada em SP',
+            texto: 'Unidades básicas de saúde seguem com atendimento ampliado para atualização da caderneta vacinal.',
+            cta: 'Ver normas', href: '#legislacao'
+        },
+        {
+            tag: 'Alimentos',
+            img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=600&auto=format&fit=crop',
+            titulo: 'Vistorias intensificadas em restaurantes e mercados',
+            texto: 'Fiscais verificam controle de temperatura, validade de insumos, dedetização e Manual de Boas Práticas (RDC 216).',
+            cta: 'Checar documentos', href: '#guia-ramos'
+        },
+        {
+            tag: 'Licenciamento',
+            img: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=600&auto=format&fit=crop',
+            titulo: 'Emissão Digital de Protocolo e Raio-X por CNPJ',
+            texto: 'Empresas e autônomos já podem consultar o risco do CNAE e baixar o diagnóstico sanitário em PDF gratuitamente.',
+            cta: 'Fazer Raio-X', href: '#inicio'
+        },
+        {
+            tag: 'Estética & Saúde',
+            img: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=600&auto=format&fit=crop',
+            titulo: 'Fiscalização em clínicas, salões e estúdios de estética',
+            texto: 'Atenção redobrada para autoclave, descarte de perfurocortantes, registro ANVISA de produtos e Responsável Técnico.',
+            cta: 'Iniciar processo', href: '#regularize'
+        },
+        {
+            tag: 'Alerta',
+            img: 'https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?q=80&w=600&auto=format&fit=crop',
+            titulo: 'Canal de Denúncias com Foto e GPS 24 horas',
+            texto: 'Cidadãos podem enviar até 5 fotos direto da câmera do celular com anonimato total garantido pela Lei 12.527.',
+            cta: 'Enviar denúncia', href: '#contato'
+        },
+        {
+            tag: 'UFESP 2026',
+            img: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop',
+            titulo: 'Regularização evita multas do Art. 122 (Lei 10.083/98)',
+            texto: 'Estabelecimentos com protocolo ativo e pendências sanadas têm proteção contra autuações preventivas.',
+            cta: 'Consultar situação', href: '#regularize'
+        },
+        {
+            tag: 'Qualidade',
+            img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=600&auto=format&fit=crop',
+            titulo: 'Selo COVISA de Qualidade com QR Code liberado',
+            texto: 'Empresas aprovadas no portal recebem selo oficial com QR Code de verificação para exibir aos clientes.',
+            cta: 'Acompanhar licença', href: '#regularize'
+        }
+    ];
+
+    let _destaquesOffset = (new Date().getDate() + new Date().getHours()) % DESTAQUES_POOL.length;
+    function renderizarDestaquesOperacionais() {
+        const grid = document.getElementById('destaques-operacionais-grid');
+        const badge = document.getElementById('news-live-badge');
+        if (!grid) return;
+        const agora = new Date();
+        const dataStr = agora.toLocaleDateString('pt-BR');
+        const horaStr = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        if (badge) {
+            badge.innerHTML = `<i class="fas fa-circle" style="font-size:0.45rem; color:#10b981;"></i> Atualizado hoje • ${dataStr} às ${horaStr}`;
+        }
+        grid.style.opacity = '0.35';
+        setTimeout(() => {
+            const itens = [];
+            for (let i = 0; i < 3; i++) {
+                itens.push(DESTAQUES_POOL[(_destaquesOffset + i) % DESTAQUES_POOL.length]);
+            }
+            grid.innerHTML = itens.map((item, idx) => `
+                <div class="news-card">
+                  <div class="news-img"><img src="${item.img}" alt="${item.titulo}" loading="lazy" /></div>
+                  <div class="news-body">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                      <span class="news-tag" style="margin-bottom:0;">${item.tag}</span>
+                      <span style="font-size:0.72rem; color:#94a3b8; font-weight:600;">${idx === 0 ? 'Agora' : dataStr}</span>
+                    </div>
+                    <h3>${item.titulo}</h3>
+                    <p>${item.texto}</p>
+                    <a href="${item.href}" class="read-more">${item.cta} <i class="fas fa-arrow-right"></i></a>
+                  </div>
+                </div>
+            `).join('');
+            grid.style.opacity = '1';
+        }, 160);
+    }
+    window.avancarDestaquesOperacionais = function() {
+        _destaquesOffset = (_destaquesOffset + 3) % DESTAQUES_POOL.length;
+        renderizarDestaquesOperacionais();
+    };
+    renderizarDestaquesOperacionais();
+    setInterval(window.avancarDestaquesOperacionais, 12000);
   </script>
 </body>
 </html>
