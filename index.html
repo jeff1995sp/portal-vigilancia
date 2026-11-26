@@ -686,6 +686,52 @@
       .footer-grid { grid-template-columns: 1fr; gap: 22px; }
     }
 
+
+    /* SELO HOLOGRÁFICO AUTENTICADO (BRILHO NA TELA + IMPRESSÃO OFICIAL) */
+    .selo-holo-card {
+      position: relative;
+      overflow: hidden;
+      margin-top: 24px;
+      text-align: center;
+      background: linear-gradient(135deg, #064e3b 0%, #047857 40%, #0f766e 75%, #064e3b 100%);
+      padding: 28px 22px;
+      border-radius: 18px;
+      color: #fff;
+      border: 3px double #fde047;
+      box-shadow: 0 18px 40px rgba(6, 78, 59, 0.35), inset 0 0 28px rgba(253, 224, 71, 0.16);
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .selo-holo-card::before {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.22) 45%, rgba(56,189,248,0.28) 50%, rgba(253,224,71,0.28) 55%, transparent 65%);
+      transform: translateX(-100%);
+      animation: holoShimmer 4.5s infinite linear;
+      pointer-events: none;
+    }
+    @keyframes holoShimmer {
+      0% { transform: translateX(-60%) rotate(8deg); }
+      100% { transform: translateX(60%) rotate(8deg); }
+    }
+    .selo-holo-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: linear-gradient(90deg, #facc15, #fef08a, #eab308);
+      color: #422006; font-weight: 900; font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: 1px; padding: 5px 14px; border-radius: 999px; margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(250, 204, 21, 0.35);
+    }
+    .selo-holo-qr-wrap {
+      background: #fff; padding: 14px; border-radius: 14px; display: inline-block;
+      margin: 10px 0 14px; border: 2px solid #fde047; box-shadow: 0 8px 22px rgba(0,0,0,0.22);
+    }
+    .selo-holo-meta {
+      background: rgba(0,0,0,0.24); border: 1px solid rgba(253,224,71,0.35);
+      border-radius: 10px; padding: 10px 14px; margin: 10px auto 16px; max-width: 380px;
+      font-size: 0.78rem; font-family: ui-monospace, monospace; color: #ecfdf5; line-height: 1.5;
+    }
+
     @media print {
       body * { visibility: hidden; }
       body { background-color: #fff !important; margin: 0; padding: 0; }
@@ -983,14 +1029,19 @@
             </form>
           </div>
 
-          <div id="selo-qualidade-container" style="display: none; margin-top: 24px; text-align: center; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 26px; border-radius: 16px; color: #fff;">
-            <i class="fas fa-certificate" style="font-size: 3rem; color: #fde047; margin-bottom: 10px;"></i>
-            <h3 style="font-size: 1.4rem; margin-bottom: 8px; text-transform: uppercase;">Selo COVISA de Qualidade</h3>
-            <p style="font-size: 0.94rem; opacity: 0.92; margin-bottom: 18px;">Estabelecimento certificado! Imprima o QR Code oficial para fixar na vitrine ou balcão.</p>
-            <div style="background: #fff; padding: 14px; border-radius: 12px; display: inline-block; margin-bottom: 14px;">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://vigilancia-sp-gov.netlify.app/" alt="QR Code Selo" />
-            </div><br>
-            <button onclick="window.print()" style="background: #fff; color: #059669; border: none; padding: 11px 24px; font-size: 0.95rem; font-weight: 800; border-radius: 999px; cursor: pointer;"><i class="fas fa-print"></i> Imprimir Selo Oficial</button>
+          <div id="selo-qualidade-container" class="selo-holo-card" style="display: none;">
+            <div class="selo-holo-badge"><i class="fas fa-shield-check"></i> SELO AUTENTICADO • HOLOGRÁFICO 2026</div>
+            <h3 style="font-size: 1.45rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Selo COVISA de Qualidade</h3>
+            <p id="selo-holo-empresa" style="font-size: 0.92rem; font-weight: 800; color: #fde047; margin-bottom: 6px;">ESTABELECIMENTO REGULARIZADO</p>
+            <p style="font-size: 0.84rem; opacity: 0.92; margin-bottom: 10px;">Imprima e fixe na vitrine ou balcão. Autenticidade verificável via QR Code oficial.</p>
+            <div class="selo-holo-qr-wrap">
+              <img id="selo-holo-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://vigilancia-sp-gov.netlify.app/" alt="QR Code Selo Autenticado" style="width:150px; height:150px; display:block;" />
+            </div>
+            <div class="selo-holo-meta" id="selo-holo-meta">
+              PROTOCOLO: COVISA-2026-ATIVO<br>
+              SITUAÇÃO: REGULAR / AUTENTICADO • VÁLIDO 2026/2027
+            </div>
+            <button type="button" onclick="window.print()" style="background: linear-gradient(90deg, #facc15, #eab308); color: #422006; border: none; padding: 12px 26px; font-size: 0.92rem; font-weight: 900; border-radius: 999px; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.25);"><i class="fas fa-print"></i> Imprimir Selo Autenticado</button>
           </div>
 
           <div id="area-pagamento" style="display: none;">
@@ -3260,6 +3311,9 @@
 
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
             const pdfDoc = await PDFDocument.load(existingPdfBytes);
+            pdfDoc.setTitle(`Licença Sanitária COVISA - ${nome}`);
+            pdfDoc.setAuthor('COVISA Digital - Prefeitura de São Paulo');
+            pdfDoc.setSubject('Certificação Sanitária Oficial');
             const page = pdfDoc.getPages()[0]; 
 
             const fontNormal = await pdfDoc.embedFont(StandardFonts.TimesRoman);     
@@ -3989,37 +4043,74 @@
 
                   if (pedido.pago === true || pedido.pago === "true") {
                       window.dadosPedidoAtual = pedido; 
+                      window._docsLiberadosMap = {};
+
+                      // Busca documentos específicos liberados pelo Admin para este cliente
+                      let docsLiberados = [];
+                      try {
+                          const snapDocs = await getDocs(collection(db, "pedidos", idPedidoValido, "documentos_liberados"));
+                          docsLiberados = snapDocs.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.criado_em || 0) - (a.criado_em || 0));
+                      } catch (_) {}
+
+                      let botoesDownloadHtml = '';
+                      let exigirAssinatura = false;
+
+                      if (docsLiberados.length > 0) {
+                          botoesDownloadHtml = docsLiberados.map(docItem => {
+                              window._docsLiberadosMap[docItem.id] = docItem;
+                              if (docItem.precisa_assinar === true) exigirAssinatura = true;
+                              return `
+                                <button type="button" class="btn-primary" style="margin-bottom: 10px;" onclick="window.baixarDocLiberadoAdmin('${docItem.id}')">
+                                    <i class="fas fa-file-pdf"></i> Baixar ${docItem.titulo || 'Documento Oficial'}
+                                </button>`;
+                          }).join('');
+                      } else {
+                          exigirAssinatura = true;
+                          botoesDownloadHtml = `
+                            <button id="btn-baixar-pdf" class="btn-primary" style="margin-bottom: 14px;" onclick="window.gerarPDF()">
+                                <i class="fas fa-file-pdf"></i> Baixar Licença Definitiva
+                            </button>`;
+                      }
+
+                      const blocoAssinaturaHtml = exigirAssinatura ? `
+                          <p style="font-size:0.84rem; color:#64748b; font-weight:800; margin-bottom:8px; border-top: 1px solid #eee; padding-top: 14px; margin-top: 6px;">PASSO FINAL OBRIGATÓRIO (LICENÇA DEFINITIVA):</p>
+                          <p style="font-size:0.88rem; margin-bottom:12px; color:#333;">Imprima, assine o documento e envie a foto ou PDF assinado clicando abaixo.</p>
+                          <label for="upload-assinado" id="label-upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 0.96rem; padding: 14px; background: #1a73e8; border-radius: 10px; color: white; justify-content: center; gap: 10px;">
+                              <i class="fas fa-file-upload"></i> Enviar Arquivo Assinado
+                          </label>
+                          <input type="file" id="upload-assinado" style="display:none;" accept="application/pdf, image/*" onchange="window.enviarAssinatura(this)">
+                      ` : `
+                          <p style="font-size:0.84rem; color:#166534; font-weight:700; margin-top:8px; margin-bottom:0;"><i class="fas fa-check-double"></i> Documento(s) prontos para uso — não é necessário reenviar assinatura.</p>
+                      `;
 
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
 
                       textMsg.innerHTML = badgeProtocolo + `
                           <i class="fas fa-check-circle" style="font-size:1.5rem; margin-bottom: 10px;"></i><br>
-                          <strong style="font-size:1.3rem;">Licença Emitida!</strong><br><br>
-                          Seu processo foi concluído e as pendências baixadas.
-                          <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;">
-                          <button id="btn-baixar-pdf" class="btn-primary" style="margin-bottom: 20px;" onclick="window.gerarPDF()">
-                              <i class="fas fa-file-pdf"></i> Baixar Licença Definitiva
-                          </button>
-                          <p style="font-size:0.85rem; color:#64748b; font-weight:800; margin-bottom:10px; border-top: 1px solid #eee; padding-top: 15px;">PASSO FINAL OBRIGATÓRIO:</p>
-                          <p style="font-size:0.9rem; margin-bottom:15px; color:#333;">Imprima, assine o documento e tire uma foto ou escaneie em PDF clicando no botão abaixo.</p>
-
-                          <label for="upload-assinado" id="label-upload-assinado" class="btn-success" style="cursor:pointer; display:flex; font-size: 1rem; padding: 16px; background: #1a73e8; border-radius: 8px; color: white; justify-content: center; gap: 10px; transition: 0.3s;">
-                              <i class="fas fa-file-upload"></i> Enviar Arquivo Assinado
-                          </label>
-                          <input type="file" id="upload-assinado" style="display:none;" accept="application/pdf, image/*" onchange="window.enviarAssinatura(this)">
+                          <strong style="font-size:1.3rem;">Documento(s) Liberado(s)!</strong><br><br>
+                          Seu processo foi concluído e os documentos oficiais estão disponíveis abaixo.
+                          <div style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 16px;">
+                              ${botoesDownloadHtml}
+                              ${blocoAssinaturaHtml}
                           </div>
                       `;
                       atualizarBarraProgresso(4); window.updateVisualSteps(3);
                       
-                      // MOSTRA O SELO DE QUALIDADE
+                      // MOSTRA O SELO HOLOGRÁFICO AUTENTICADO COM OS DADOS REAIS DO ESTABELECIMENTO
                       setTimeout(() => {
                           const seloBox = document.getElementById('selo-qualidade-container');
                           if(seloBox) {
+                              const empEl = document.getElementById('selo-holo-empresa');
+                              const metaEl = document.getElementById('selo-holo-meta');
+                              const qrEl = document.getElementById('selo-holo-qr');
+                              if (empEl) empEl.innerText = (pedido.nome || 'ESTABELECIMENTO REGULARIZADO').toUpperCase();
+                              if (metaEl) metaEl.innerHTML = `CNPJ/CPF: ${pedido.cnpj || ''}<br>PROTOCOLO: COVISA-2026-${numProtocolo}<br>AUTENTICADO • VÁLIDO 2026/2027`;
+                              if (qrEl) qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent('https://vigilancia-sp-gov.netlify.app/?cnpj=' + (pedido.cnpj || ''))}`;
                               seloBox.style.display = 'block';
                               document.getElementById('area-pagamento').appendChild(seloBox);
                           }
-                      }, 500);
+                      }, 400);
                   } else if (pedido.aguardando_alvara === true || pedido.aguardando_alvara === "true") {
                       divPix.style.display = 'none'; divMsg.style.display = 'block';
                       divMsg.style.background = '#dcfce3'; divMsg.style.color = '#166534'; divMsg.style.borderColor = '#10b981';
@@ -4751,6 +4842,17 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
     };
     renderizarDestaquesOperacionais();
     setInterval(window.avancarDestaquesOperacionais, 12000);
+
+    window.baixarDocLiberadoAdmin = function(docId) {
+        const item = window._docsLiberadosMap && window._docsLiberadosMap[docId];
+        if (!item || !item.pdf_base64) return alert("Documento indisponível.");
+        const a = document.createElement('a');
+        a.href = item.pdf_base64;
+        a.download = item.filename || 'Documento_COVISA.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    };
   </script>
 </body>
 </html>

