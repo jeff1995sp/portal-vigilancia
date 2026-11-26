@@ -1232,6 +1232,64 @@
       .expanded-inner { grid-template-columns: 1fr; }
       .table-wrapper { overflow-x: auto; }
     }
+
+    /* ORGANIZAÇÃO DA SIDEBAR COM GRUPOS E EXPLICATIVO POR FUNÇÃO */
+    .nav-group-label {
+      font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.4px;
+      color: #64748b; padding: 12px 14px 4px; margin-top: 4px;
+    }
+    .nav-item { padding: 11px 14px !important; gap: 12px !important; }
+    .nav-item-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+    .nav-item-title { font-size: 0.92rem; font-weight: 800; line-height: 1.15; }
+    .nav-item-sub { font-size: 0.7rem; color: #64748b; font-weight: 500; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .nav-item.active .nav-item-sub { color: #cbd5e1; }
+
+    /* PÍLULA DE EXPLICAÇÃO AO LADO DE CADA FUNÇÃO */
+    .fn-help-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.28);
+      color: #bae6fd; padding: 4px 11px; border-radius: 999px;
+      font-size: 0.73rem; font-weight: 700; letter-spacing: 0.1px;
+    }
+    .fn-help-pill i { color: #38bdf8; font-size: 0.72rem; }
+
+    /* MALHA FINA PRO: RESUMO FINANCEIRO + PÍLULAS RÁPIDAS + AÇÕES SEMPRE VISÍVEIS */
+    .malha-kpi-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+      padding: 18px 28px; background: #070e1c; border-bottom: 1px solid var(--border);
+    }
+    .malha-kpi-item {
+      background: #0d1629; border: 1px solid #1e2d4a; border-radius: 12px; padding: 13px 16px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .malha-kpi-item span { font-size: 0.72rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+    .malha-kpi-item strong { font-size: 1.35rem; font-weight: 900; color: #ffffff; }
+    .malha-pills-bar {
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      padding: 14px 28px; background: rgba(255,255,255,0.015); border-bottom: 1px solid var(--border);
+    }
+    .malha-pill-btn {
+      background: #070e1c; border: 1px solid #26385a; color: #cbd5e1;
+      padding: 7px 14px; border-radius: 999px; font-size: 0.79rem; font-weight: 800;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;
+    }
+    .malha-pill-btn:hover { color: #ffffff; border-color: var(--primary); }
+    .malha-pill-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+    .malha-meta-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .malha-tag {
+      background: #070e1c; border: 1px solid #243554; color: #94a3b8;
+      padding: 2px 7px; border-radius: 6px; font-size: 0.7rem; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-code);
+    }
+    .malha-tag.proto { color: #38bdf8; border-color: rgba(56,189,248,0.35); }
+    .malha-tag.attach { color: #fde68a; border-color: rgba(245,158,11,0.35); }
+    .malha-tag.wa { color: #6ee7b7; border-color: rgba(16,185,129,0.4); cursor: pointer; text-decoration: none; }
+    .quick-actions { opacity: 1 !important; }
+    @media (max-width: 960px) {
+      .malha-kpi-strip { grid-template-columns: repeat(2, 1fr); padding: 14px; }
+      .malha-pills-bar { padding: 12px 14px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1275,14 +1333,45 @@
       </div>
       
       <nav class="nav-menu">
-        <a class="nav-item active" onclick="switchView('view-processos', this)"><i class="fas fa-satellite-dish"></i> Centro de Comando</a>
-        <a class="nav-item" id="nav-item-whatsapp" onclick="switchView('view-financeiro', this)"><i class="fas fa-comment-dots"></i> Assistente WhatsApp <span id="wa-nav-badge" class="wa-nav-badge" style="display: none;">0</span></a>
-        <a class="nav-item" onclick="switchView('view-trafego', this)"><i class="fas fa-eye"></i> Monitor Espião</a>
-        <a class="nav-item" id="nav-item-docgen" onclick="switchView('view-docgen', this)"><i class="fas fa-file-pdf" style="color: #f87171;"></i> Gerador de Documentos</a>
-        <a class="nav-item" id="nav-item-multas-ia" onclick="switchView('view-multas-ia', this)" style="color: #fca5a5;"><i class="fas fa-gavel" style="color: #ef4444;"></i> Multas & Notificações IA <span id="mia-denuncia-badge" class="wa-nav-badge" style="display: none; background: #f59e0b; color: #000;">0</span></a>
-        <a class="nav-item" id="nav-item-laboratorio" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório IA (WhatsApp)</a>
-        <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
-        <a class="nav-item" onclick="switchView('view-ufesp', this)"><i class="fas fa-balance-scale"></i> Tabela UFESP 2026</a>
+        <div class="nav-group-label">Operação & Atendimento</div>
+        <a class="nav-item active" onclick="switchView('view-processos', this)">
+          <i class="fas fa-satellite-dish"></i>
+          <div class="nav-item-text"><span class="nav-item-title">Centro de Comando</span><span class="nav-item-sub">Malha Fina, processos e radar</span></div>
+        </a>
+        <a class="nav-item" id="nav-item-whatsapp" onclick="switchView('view-financeiro', this)">
+          <i class="fas fa-comment-dots" style="color:#25D366;"></i>
+          <div class="nav-item-text"><span class="nav-item-title">Assistente WhatsApp</span><span class="nav-item-sub">Controlar IA Ana e responder</span></div>
+          <span id="wa-nav-badge" class="wa-nav-badge" style="display: none;">0</span>
+        </a>
+        <a class="nav-item" onclick="switchView('view-trafego', this)">
+          <i class="fas fa-eye" style="color:#38bdf8;"></i>
+          <div class="nav-item-text"><span class="nav-item-title">Monitor Espião</span><span class="nav-item-sub">Acessos ao vivo, GPS e Tela HD</span></div>
+        </a>
+
+        <div class="nav-group-label">Documentos & Fiscalização</div>
+        <a class="nav-item" id="nav-item-docgen" onclick="switchView('view-docgen', this)">
+          <i class="fas fa-file-pdf" style="color: #f87171;"></i>
+          <div class="nav-item-text"><span class="nav-item-title">Gerador de Documentos</span><span class="nav-item-sub">50 PDFs, receitas e renovador</span></div>
+        </a>
+        <a class="nav-item" id="nav-item-multas-ia" onclick="switchView('view-multas-ia', this)" style="color: #fca5a5;">
+          <i class="fas fa-gavel" style="color: #ef4444;"></i>
+          <div class="nav-item-text"><span class="nav-item-title">Multas & Notificações IA</span><span class="nav-item-sub">Autos UFESP, fotos e intimações</span></div>
+          <span id="mia-denuncia-badge" class="wa-nav-badge" style="display: none; background: #f59e0b; color: #000;">0</span>
+        </a>
+        <a class="nav-item" id="nav-item-laboratorio" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;">
+          <i class="fas fa-microscope" style="color:var(--gemini-purple);"></i>
+          <div class="nav-item-text"><span class="nav-item-title">Laboratório IA</span><span class="nav-item-sub">Ler PDFs, fotos e áudios do WA</span></div>
+        </a>
+
+        <div class="nav-group-label">Normas & Auditoria</div>
+        <a class="nav-item" onclick="switchView('view-ufesp', this)">
+          <i class="fas fa-balance-scale" style="color:#fbbf24;"></i>
+          <div class="nav-item-text"><span class="nav-item-title">Tabela UFESP 2026</span><span class="nav-item-sub">Valores e artigos Lei 10.083/98</span></div>
+        </a>
+        <a class="nav-item" onclick="switchView('view-logs', this)">
+          <i class="fas fa-history" style="color:#94a3b8;"></i>
+          <div class="nav-item-text"><span class="nav-item-title">Logs do Sistema</span><span class="nav-item-sub">Auditoria e relatório tático IA</span></div>
+        </a>
       </nav>
       
       <div class="sidebar-footer">
@@ -1371,7 +1460,13 @@
             </div>
           </div>
           
-          <div class="radar-container" style="grid-template-columns: 350px 1fr; margin-bottom: 50px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <h3 style="color:#ffffff; font-size:1.15rem; margin:0;"><i class="fas fa-radar" style="color:#ef4444;"></i> Radar OSINT (Caçador de Alvos no Google Maps)</h3>
+              <span class="fn-help-pill"><i class="fas fa-info-circle"></i> Busca estabelecimentos com reclamações de higiene na cidade escolhida</span>
+            </div>
+          </div>
+          <div class="radar-container" style="grid-template-columns: 350px 1fr; margin-bottom: 36px;">
             
             <div class="target-console">
                 <div class="console-step">
@@ -1412,25 +1507,60 @@
           </div>
           
           <section class="data-section">
-            <div class="data-header" style="flex-wrap: wrap;">
-              <h2><i class="fas fa-table" style="color: var(--primary);"></i> Banco de Dados (Malha Fina)</h2>
-              <span style="font-size: 0.95rem; background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 10px 20px; border-radius: 50px; font-weight: 800; border: 1px solid var(--success);"><i class="fas fa-sync fa-spin"></i> Firebase Sync ON</span>
+            <div class="data-header" style="flex-wrap: wrap; gap: 12px;">
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <h2><i class="fas fa-table" style="color: var(--primary);"></i> Banco de Dados (Malha Fina)</h2>
+                <span class="fn-help-pill"><i class="fas fa-info-circle"></i> Todos os protocolos e denúncias do site — clique na linha para ver notas ou nos botões para agir</span>
+              </div>
+              <span style="font-size: 0.85rem; background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 8px 16px; border-radius: 50px; font-weight: 800; border: 1px solid var(--success);"><i class="fas fa-sync fa-spin"></i> Firebase Sync ON</span>
             </div>
-            
-            <div class="filters-row">
-              <select id="filtro-status" class="form-input" style="width: 250px; background: var(--bg-card);" onchange="aplicarFiltros()">
-                <option value="todos">Todos os Status</option>
-                <option value="pendente">🟠 Análise Pendente</option>
-                <option value="aguardando">🔵 Aguardando Pagamento</option>
-                <option value="pago">🟢 Licença Aprovada</option>
-                <option value="denuncia">🚨 Apenas Denúncias</option>
+
+            <!-- RESUMO FINANCEIRO & OPERACIONAL DA MALHA FINA -->
+            <div class="malha-kpi-strip">
+              <div class="malha-kpi-item">
+                <span><i class="fas fa-hourglass-half" style="color:#fbbf24;"></i> Taxas em Aberto (PIX)</span>
+                <strong id="malha-kpi-aberto" style="color:#fde68a;">R$ 0,00</strong>
+              </div>
+              <div class="malha-kpi-item">
+                <span><i class="fas fa-check-circle" style="color:#10b981;"></i> Total Aprovado / Recebido</span>
+                <strong id="malha-kpi-recebido" style="color:#34d399;">R$ 0,00</strong>
+              </div>
+              <div class="malha-kpi-item">
+                <span><i class="fas fa-chart-line" style="color:#38bdf8;"></i> Taxa de Aprovação</span>
+                <strong id="malha-kpi-conv" style="color:#38bdf8;">0%</strong>
+              </div>
+              <div class="malha-kpi-item">
+                <span><i class="fas fa-bullhorn" style="color:#f87171;"></i> Denúncias Recebidas</span>
+                <strong id="malha-kpi-denuncias" style="color:#fca5a5;">0</strong>
+              </div>
+            </div>
+
+            <!-- FILTROS RÁPIDOS (PÍLULAS) + RAMO + ORDENAÇÃO -->
+            <div class="malha-pills-bar">
+              <button type="button" class="malha-pill-btn active" data-malha-st="todos" onclick="setFiltroStatusMalha('todos', this)">Todos</button>
+              <button type="button" class="malha-pill-btn" data-malha-st="pendente" onclick="setFiltroStatusMalha('pendente', this)">🟠 Pendentes</button>
+              <button type="button" class="malha-pill-btn" data-malha-st="aguardando" onclick="setFiltroStatusMalha('aguardando', this)">🔵 Aguard. PIX</button>
+              <button type="button" class="malha-pill-btn" data-malha-st="pago" onclick="setFiltroStatusMalha('pago', this)">🟢 Aprovados</button>
+              <button type="button" class="malha-pill-btn" data-malha-st="denuncia" onclick="setFiltroStatusMalha('denuncia', this)">🚨 Denúncias</button>
+              <div style="flex:1;"></div>
+              <select id="filtro-status" style="display:none;" onchange="aplicarFiltros()">
+                <option value="todos">Todos</option>
+                <option value="pendente">Pendente</option>
+                <option value="aguardando">Aguardando</option>
+                <option value="pago">Pago</option>
+                <option value="denuncia">Denúncia</option>
               </select>
-              <select id="filtro-ramo" class="form-input" style="width: 250px; background: var(--bg-card);" onchange="aplicarFiltros()">
+              <select id="filtro-ramo" class="form-input" style="width: 190px; padding: 8px 12px; font-size: 0.84rem; background: var(--bg-card);" onchange="aplicarFiltros()">
                 <option value="todos">Todos os Ramos</option>
                 <option value="Alimentos">Alimentos (Crítico)</option>
                 <option value="Saúde">Saúde (Crítico)</option>
                 <option value="Beleza">Beleza & Estética</option>
                 <option value="Outros">Outros / Indústria</option>
+              </select>
+              <select id="filtro-ordem-malha" class="form-input" style="width: 185px; padding: 8px 12px; font-size: 0.84rem; background: var(--bg-card);" onchange="aplicarFiltros()">
+                <option value="recentes">Ordenar: Mais Recentes</option>
+                <option value="valor">Ordenar: Maior Valor</option>
+                <option value="pendentes">Ordenar: Pendentes 1º</option>
               </select>
             </div>
 
@@ -1438,12 +1568,12 @@
               <table>
                 <thead>
                   <tr>
-                    <th width="32%">Identificação da Empresa</th>
-                    <th width="15%">Ramo / Risco</th>
-                    <th width="18%">Data e Horário</th>
-                    <th width="15%">Status Atual</th>
+                    <th width="34%">Identificação, Protocolo & Local</th>
+                    <th width="13%">Ramo / Risco</th>
+                    <th width="14%">Entrada / Tempo</th>
+                    <th width="13%">Status Atual</th>
                     <th width="10%">Taxa Base</th>
-                    <th width="10%" style="text-align: right;">Ações</th>
+                    <th width="16%" style="text-align: right;">Ações Rápidas</th>
                   </tr>
                 </thead>
                 <tbody id="tabela-corpo-full"></tbody>
@@ -1856,6 +1986,13 @@
             </div>
           </div>
 
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:14px;">
+            <div style="background:#0a1426; border:1px solid #1e3a5f; border-radius:10px; padding:10px 12px; font-size:0.77rem; color:#cbd5e1;"><strong style="color:#38bdf8; display:block; margin-bottom:2px;">1. Escolha ou Envie PDF</strong>Selecione 1 dos 50 modelos (cada ramo tem seu estilo) ou envie um PDF antigo no Renovador.</div>
+            <div style="background:#0a1426; border:1px solid #1e3a5f; border-radius:10px; padding:10px 12px; font-size:0.77rem; color:#cbd5e1;"><strong style="color:#6ee7b7; display:block; margin-bottom:2px;">2. Puxe os Dados</strong>Importe do WhatsApp com IA, do processo no Firebase ou digite o CNPJ para preencher sozinho.</div>
+            <div style="background:#0a1426; border:1px solid #1e3a5f; border-radius:10px; padding:10px 12px; font-size:0.77rem; color:#cbd5e1;"><strong style="color:#fde68a; display:block; margin-bottom:2px;">3. Confira a Prévia</strong>Clique em Gerar Prévia (ou Renovar no PDF Original) para conferir tudo com a assinatura fixa.</div>
+            <div style="background:#0a1426; border:1px solid #1e3a5f; border-radius:10px; padding:10px 12px; font-size:0.77rem; color:#cbd5e1;"><strong style="color:#c084fc; display:block; margin-bottom:2px;">4. Baixe ou Libere</strong>Baixe o PDF ou clique em Liberar p/ Cliente para aparecer na consulta do site na hora.</div>
+          </div>
+
           <div class="docgen-layout">
             <!-- COLUNA ESQUERDA: MODELOS + AUTO-PREENCHIMENTO WHATSAPP/CNPJ + DADOS -->
             <div class="docgen-form-panel">
@@ -2153,10 +2290,13 @@
                     <span style="font-size:0.7rem; color:#cbd5e1;">Lê foto velha, preenche tudo e mostra o que falta</span>
                   </div>
                   <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                    <label class="btn btn-gemini" style="padding: 9px 14px; font-size: 0.82rem; cursor: pointer; flex: 1;">
-                      <i class="fas fa-cloud-upload-alt"></i> Enviar Foto ou PDF de Documento Antigo (IA Lê Tudo)
+                    <label class="btn btn-gemini" style="padding: 9px 14px; font-size: 0.82rem; cursor: pointer; flex: 1; min-width: 210px;">
+                      <i class="fas fa-cloud-upload-alt"></i> 1. Enviar PDF ou Foto Antiga (IA Lê Tudo)
                       <input type="file" id="docgen-renovador-file" accept="image/*,application/pdf" style="display:none;" onchange="executarRenovadorPorFotoIA(this)" />
                     </label>
+                    <button type="button" class="btn btn-success" id="btn-renovar-sobre-pdf" style="display:none; padding: 9px 14px; font-size: 0.8rem;" onclick="renovarSobrePdfOriginal()">
+                      <i class="fas fa-stamp"></i> 2. Renovar NO PDF Original (Carimbo 2026)
+                    </button>
                   </div>
                   <div id="docgen-renovador-status" style="display:none; font-size:0.8rem; color:#fde68a;"></div>
                   <div id="docgen-faltantes-box" style="display:none; background:#1e1b4b; border:1px solid #818cf8; border-radius:10px; padding:11px 13px; margin-top:4px;">
@@ -2549,6 +2689,12 @@
                 <i class="fas fa-eraser"></i> Limpar
               </button>
             </div>
+          </div>
+
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:14px;">
+            <div style="background:#160b12; border:1px solid rgba(239,68,68,0.35); border-radius:10px; padding:10px 12px; font-size:0.78rem; color:#cbd5e1;"><strong style="color:#fca5a5; display:block; margin-bottom:2px;">1. Escolha o Modo</strong><strong>Auto de Infração IA</strong> (para denúncias com fotos + multa UFESP) ou <strong>Notificação Sanitária IA</strong> (prazo de adequação).</div>
+            <div style="background:#160b12; border:1px solid rgba(245,158,11,0.35); border-radius:10px; padding:10px 12px; font-size:0.78rem; color:#cbd5e1;"><strong style="color:#fde68a; display:block; margin-bottom:2px;">2. Deixe a IA Redigir</strong>Selecione a denúncia/processo ou digite o motivo e clique no botão roxo da IA para gerar relato, exigências e msg do WhatsApp.</div>
+            <div style="background:#160b12; border:1px solid rgba(16,185,129,0.35); border-radius:10px; padding:10px 12px; font-size:0.78rem; color:#cbd5e1;"><strong style="color:#6ee7b7; display:block; margin-bottom:2px;">3. Assine, Salve e Envie</strong>Gere o PDF assinado com Página 2 de Fotos + PIX, salve na aba Multas do site e envie direto no WhatsApp.</div>
           </div>
 
           <div class="mia-layout">
@@ -5062,8 +5208,45 @@ REGRAS OBRIGATÓRIAS:
           return; 
       }
 
-      // Ordena rigorosamente os dados da data mais recente para a mais antiga
-      arrayDeDados.sort((a, b) => parseDateBR(b.data) - parseDateBR(a.data));
+      // Atualiza KPIs financeiros e operacionais da Malha Fina com base em todosProcessos
+      try {
+          let sumAberto = 0, sumRecebido = 0, qtdDen = 0, qtdProc = 0, qtdAprov = 0;
+          const parseVal = (v) => {
+              if (!v) return 0;
+              const n = parseFloat(String(v).replace(/[^0-9,.-]/g, '').replace(/\./g, '').replace(',', '.'));
+              return isNaN(n) ? 0 : n;
+          };
+          todosProcessos.forEach(p => {
+              if (p.tipo === '🚨 DENÚNCIA') { qtdDen++; return; }
+              qtdProc++;
+              const v = parseVal(p.valor);
+              if (p.pago === true || p.pago === 'true') { qtdAprov++; sumRecebido += v; }
+              else if (v > 0) { sumAberto += v; }
+          });
+          const elAb = document.getElementById('malha-kpi-aberto');
+          const elRec = document.getElementById('malha-kpi-recebido');
+          const elConv = document.getElementById('malha-kpi-conv');
+          const elDen = document.getElementById('malha-kpi-denuncias');
+          if (elAb) elAb.innerText = sumAberto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          if (elRec) elRec.innerText = sumRecebido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          if (elConv) elConv.innerText = qtdProc > 0 ? `${Math.round((qtdAprov / qtdProc) * 100)}%` : '0%';
+          if (elDen) elDen.innerText = String(qtdDen);
+      } catch (_) {}
+
+      const ordemSel = document.getElementById('filtro-ordem-malha')?.value || 'recentes';
+      const parseValSort = (v) => {
+          if (!v) return 0;
+          const n = parseFloat(String(v).replace(/[^0-9,.-]/g, '').replace(/\./g, '').replace(',', '.'));
+          return isNaN(n) ? 0 : n;
+      };
+      if (ordemSel === 'valor') {
+          arrayDeDados.sort((a, b) => parseValSort(b.valor) - parseValSort(a.valor));
+      } else if (ordemSel === 'pendentes') {
+          const rankSt = (p) => (p.tipo === '🚨 DENÚNCIA' ? 0 : (!p.valor && p.pago !== true && p.pago !== 'true' ? 1 : (p.pago === true || p.pago === 'true' ? 3 : 2)));
+          arrayDeDados.sort((a, b) => rankSt(a) - rankSt(b) || (parseDateBR(b.data) - parseDateBR(a.data)));
+      } else {
+          arrayDeDados.sort((a, b) => parseDateBR(b.data) - parseDateBR(a.data));
+      }
 
       let currentDateGroup = "";
       let today = new Date();
@@ -5122,18 +5305,33 @@ REGRAS OBRIGATÓRIAS:
         };
 
         // O BOTÃO DE EXCLUIR O CASO NA TABELA AGORA DELETA IMEDIATAMENTE (SEM CONFIRM)
+        const protoCod = `COVISA-2026-${processo.id.substring(0, 6).toUpperCase()}`;
+        const qtdAnexos = processo.total_evidencias || (Array.isArray(processo.evidencias) ? processo.evidencias.length : 0);
+        const localCurto = [processo.bairro, processo.cidadeUF].filter(Boolean).join(' • ');
+        const telLimpo = String(processo.telefone || '').replace(/\D/g, '');
+        const telHref = telLimpo.length >= 10 ? `https://api.whatsapp.com/send?phone=${telLimpo.startsWith('55') ? telLimpo : '55' + telLimpo}` : '';
+        const diffMin = Math.max(0, Math.floor((Date.now() - procDate.getTime()) / 60000));
+        const tempoRel = diffMin < 60 ? `há ${diffMin}min` : (diffMin < 1440 ? `há ${Math.floor(diffMin/60)}h` : `há ${Math.floor(diffMin/1440)}d`);
+
         trMain.innerHTML = `
           <td>
             <div class="td-empresa">
               <div class="td-empresa-icon" style="${isDenuncia ? 'background: var(--danger); color: white;' : ''}">${letraInicial}</div>
               <div class="td-empresa-info">
                 <strong style="${isDenuncia ? 'color: #fca5a5;' : 'color: white;'}">${processo.nome}</strong>
-                <span>${processo.cnpj}</span>
+                <span>${processo.cnpj || 'Sem documento'}</span>
+                <div class="malha-meta-tags">
+                  <span class="malha-tag proto">${protoCod}</span>
+                  ${localCurto ? `<span class="malha-tag"><i class="fas fa-map-marker-alt"></i> ${escaparHtmlWA(localCurto.slice(0, 28))}</span>` : ''}
+                  ${qtdAnexos > 0 ? `<span class="malha-tag attach"><i class="fas fa-paperclip"></i> ${qtdAnexos} anexo(s)</span>` : ''}
+                  ${processo.tem_documentos_liberados ? `<span class="malha-tag" style="color:#34d399; border-color:rgba(16,185,129,0.4);"><i class="fas fa-file-pdf"></i> PDF Liberado</span>` : ''}
+                  ${telHref ? `<a href="${telHref}" target="_blank" class="malha-tag wa" onclick="event.stopPropagation()" title="Abrir WhatsApp do cliente"><i class="fab fa-whatsapp"></i> ${escaparHtmlWA(processo.telefone)}</a>` : ''}
+                </div>
               </div>
             </div>
           </td>
           <td>
-             <span style="font-size:0.85rem; font-weight: 800; color: ${riskColor}; text-transform: uppercase;">${processo.tipo}</span>
+             <span style="font-size:0.84rem; font-weight: 800; color: ${riskColor}; text-transform: uppercase;">${processo.tipo}</span>
              <div class="risk-bar-bg" title="Risco ${riskText}">
                 <div class="risk-bar-fill" style="width: ${riskWidth}; background: ${riskColor};"></div>
              </div>
@@ -5141,15 +5339,15 @@ REGRAS OBRIGATÓRIAS:
           <td>
              <div class="date-block">
                 <span class="date">${fDate.toUpperCase()}</span>
-                <span class="time">${fTime}</span>
+                <span class="time">${fTime} • ${tempoRel}</span>
              </div>
           </td>
           <td><span class="status-badge ${classBadge}"><i class="fas ${iconeBadge}"></i> ${txtBadge}</span></td>
-          <td><strong style="color:var(--primary); font-size: 1.15rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
+          <td><strong style="color:var(--primary); font-size: 1.1rem;">${processo.valor ? 'R$ ' + processo.valor : '--'}</strong></td>
           <td>
              <div class="quick-actions">
-                <button class="btn-quick q-danger" title="Solicitar Parecer IA Jurídica" onclick="abrirModal('${processo.id}')"><i class="fas fa-brain"></i></button>
-                <button class="btn-quick" title="Abrir Dossiê Completo" onclick="abrirModal('${processo.id}')"><i class="fas fa-folder-open"></i></button>
+                <button class="btn-quick q-danger" title="Auditoria IA & Dossiê" onclick="event.stopPropagation(); abrirModal('${processo.id}')"><i class="fas fa-brain"></i></button>
+                <button class="btn-quick" style="color:#f87171; border-color:rgba(248,113,113,0.45);" title="Abrir direto no Gerador de Documentos PDF" onclick="event.stopPropagation(); abrirProcessoDiretoNoDocGen('${processo.id}')"><i class="fas fa-file-pdf"></i></button>
                 ${isDenuncia ? `<button class="btn-quick" style="color: #fbbf24; border-color: #f59e0b; background: rgba(245, 158, 11, 0.12);" title="Gerar Multa IA com Fotos desta Denúncia" onclick="event.stopPropagation(); abrirDenunciaNoMultasIA('${processo.id}');"><i class="fas fa-gavel"></i></button>` : ''}
                 <button class="btn-quick" style="color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1);" title="Excluir Imediatamente" onclick="event.stopPropagation(); deletarDiretoDaTabela('${processo.id}');"><i class="fas fa-times"></i></button>
              </div>
@@ -6913,6 +7111,12 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
             receita_b: { tag: 'Azul Lista B1 • Portaria 344/98 + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
             receita_b2: { tag: 'Azul Anorexígenos B2 • RDC 50/14 + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
             receita_retinoides: { tag: 'Retinoides C2 • Alerta Obrigatório + Assinatura Fixa', val: 'Validade da Notificação (30 dias)', txt: '' },
+            atestado_upa: {
+                titulo: 'ATESTADO MÉDICO — UPA 24H (PRONTO ATENDIMENTO)',
+                sub: 'Unidade de Pronto Atendimento 24h • SUS / Secretaria Municipal da Saúde • Atendimento de Urgência',
+                cor: rgb(0.75, 0.12, 0.15),
+                corpoPadrao: 'Atesto para os devidos fins que o(a) paciente acima identificado(a) foi atendido(a) nesta Unidade de Pronto Atendimento (UPA 24h) na data de hoje, necessitando de afastamento de suas atividades laborais/escolares por _____ dia(s) para repouso e recuperação clínica.'
+            },
             atestado_medico: { tag: 'Atestado Médico Exclusivo (Afastamento / Repouso)', val: 'Data de Referência', txt: '' },
             laudo_medico: { tag: 'Laudo / Relatório Médico Circunstanciado Exclusivo', val: 'Data do Laudo', txt: '' },
             declaracao_comparecimento: { tag: 'Declaração de Comparecimento (Paciente / Acompanhante)', val: 'Data do Atendimento', txt: '' },
@@ -6936,6 +7140,24 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
             infracao: { tag: 'Auto de Infração — Lei 10.083/98 + Assinatura Fixa', val: 'Prazo para Defesa (10 dias)', txt: 'Relato Técnico da Infração Constatada' },
             termo_vistoria: { tag: 'Termo de Inspeção Sanitária + Assinatura Fixa', val: 'Prazo p/ Adequação (se houver)', txt: 'Constatações da Vistoria / Exigências Técnicas' },
             termo_interdicao: { tag: 'Termo de Interdição / Desinterdição Sanitária', val: 'Data / Prazo', txt: 'Motivo da Interdição Cautelar ou Liberação' },
+            dedetizacao_caixa: {
+                titulo: 'CERTIFICADO DE CONTROLE DE PRAGAS E HIGIENIZAÇÃO DE RESERVATÓRIO',
+                sub: 'RDC ANVISA nº 622/2022 • Portaria SMS nº 2619/2011 • Saneamento e Potabilidade da Água',
+                cor: rgb(0.05, 0.45, 0.35),
+                padrao: 'Certificamos que o estabelecimento acima identificado cumpriu as exigências sanitárias referentes ao Controle Integrado de Vetores e Pragas Urbanas (desinsetização e desratização) e Higienização/Desinfecção de Reservatório de Água Potável, com validade semestral conforme normas vigentes da COVISA.'
+            },
+            plano_pgrss: {
+                titulo: 'DECLARAÇÃO DE CONFORMIDADE — PGRSS & MANUAL DE BOAS PRÁTICAS (BPF)',
+                sub: 'RDC ANVISA nº 222/2018 (PGRSS) • RDC nº 216/2004 (Boas Práticas) • Lei Municipal nº 13.725/2004',
+                cor: rgb(0.32, 0.18, 0.56),
+                padrao: 'Declaramos para fins de licenciamento e fiscalização sanitária que o estabelecimento possui Plano de Gerenciamento de Resíduos de Serviços de Saúde (PGRSS) e/ou Manual de Boas Práticas e POPs devidamente implantados, mantendo os registros disponíveis à autoridade sanitária.'
+            },
+            procuracao_sanitaria: {
+                titulo: 'PROCURAÇÃO PARTICULAR PARA REPRESENTAÇÃO SANITÁRIA (COVISA)',
+                sub: 'Instrumento de Mandato Administrativo • Protocolos, Licenciamento, Defesas e Retirada de Documentos',
+                cor: rgb(0.12, 0.22, 0.42),
+                padrao: 'Pelo presente instrumento particular de procuração, o(a) outorgante acima qualificado(a) nomeia e constitui seu bastante procurador para representá-lo(a) perante a Coordenação de Vigilância em Saúde (COVISA), SIVISA e demais órgãos sanitários, com poderes para protocolar documentos, acompanhar processos, assinar termos, apresentar defesas e retirar alvarás e licenças.'
+            },
             oficio: { tag: 'Documento Livre Personalizado + Assinatura Fixa', val: 'Prazo / Referência', txt: 'Corpo Completo do Ofício' },
             autorizacao_talonario: { tag: 'Ofício de Liberação de Faixa Numérica / SNCR', val: 'Validade da Autorização', txt: 'Observações / Gráfica Autorizada / Tipo de Talonário' },
             termo_livro: { tag: 'Termo de Abertura / Encerramento Livro Controlados', val: 'Data do Termo', txt: 'Detalhes do Livro (Nº Páginas, Listas, Responsável Técnico)' },
@@ -8482,7 +8704,151 @@ REGRAS:
 
         const ehHomePF = tipo === 'licenca_pf_home';
         const ehRenov = tipo === 'renovacao_licenca';
-        const corPrim = ehHomePF ? rgb(0.05, 0.27, 0.56) : rgb(0.04, 0.44, 0.28);
+        const nomeEstabTxt = (dados.nome || 'o estabelecimento identificado').toUpperCase();
+        const ALVARA_THEMES = {
+            alvara_oficial: {
+                cor: rgb(0.04, 0.44, 0.28), badge: 'REGULAR / ATIVO',
+                titulo: 'ALVARÁ / LICENÇA DE FUNCIONAMENTO SANITÁRIA (LFS 2026)',
+                sub: 'Portaria SMS nº 266/2025 (Consolidada) • Lei Municipal nº 13.725/2004 • Lei Estadual nº 10.083/1998',
+                baseCurta: 'Port. SMS 266/25 • Lei 13.725/04',
+                texto: `A Coordenação de Vigilância em Saúde (COVISA) CONCEDE o presente Alvará / Licença de Funcionamento Sanitária (LFS) a ${nomeEstabTxt}, atestando que o estabelecimento encontra-se em condições sanitárias aprovadas para o exercício de suas atividades até a data de validade especificada.`,
+                condicoes: [
+                    'Documentação sanitária e cadastro CMVS regulares perante a COVISA',
+                    'Ambiente aprovado conforme exigências da Lei Municipal nº 13.725/2004',
+                    'Manter este Alvará visível ao público e à fiscalização sanitária'
+                ]
+            },
+            licenca_pf_home: {
+                cor: rgb(0.05, 0.27, 0.56), badge: 'PF / TELEMEDICINA',
+                titulo: 'LICENÇA SANITÁRIA PESSOA FÍSICA - HOME OFFICE / TELEMEDICINA',
+                sub: 'Portaria SMS nº 266/2025 • Resolução CFM nº 2.314/2022 • Profissional Autônomo de Saúde',
+                baseCurta: 'Port. SMS 266/25 • Res. CFM 2.314/22',
+                texto: `A Coordenação de Vigilância em Saúde (COVISA) certifica que ${nomeEstabTxt} encontra-se regularmente licenciado(a) como Profissional Pessoa Física (Home Office / Telemedicina), autorizado(a) ao exercício profissional remoto e emissão de receituários conforme sua habilitação legal no respectivo Conselho de Classe.`,
+                condicoes: [
+                    'Autorizado para teleconsultas e emissão de receituários digitais/especiais',
+                    'Conformidade com a Resolução CFM nº 2.314/2022 e Portaria SVS/MS nº 344/1998',
+                    'Validação digital permanente via QR Code oficial COVISA'
+                ]
+            },
+            renovacao_licenca: {
+                cor: rgb(0.04, 0.44, 0.28), badge: 'RENOVADO / ATIVO',
+                titulo: 'RENOVAÇÃO DE LICENÇA DE FUNCIONAMENTO SANITÁRIA (LFS 2026)',
+                sub: 'Renovação Anual Regular • Portaria SMS nº 266/2025 • Sistema SIVISA / CMVS 2026',
+                baseCurta: 'Renovação LFS • Port. SMS 266/25',
+                texto: `A Coordenação de Vigilância em Saúde (COVISA) DEFERE A RENOVAÇÃO da Licença de Funcionamento Sanitária (LFS) de ${nomeEstabTxt}, comprovando a manutenção das condições higiênico-sanitárias aprovadas e autorizando a continuidade regular do funcionamento pelo novo período de vigência.`,
+                condicoes: [
+                    'Renovação anual homologada sem pendências impeditivas no SIVISA',
+                    'Continuidade regular das atividades autorizadas no CNAE principal',
+                    'Próxima renovação deve ser protocolada com 60 dias de antecedência'
+                ]
+            },
+            studio_nails: {
+                cor: rgb(0.72, 0.14, 0.42), badge: 'BIOSSEGURANÇA OK',
+                titulo: 'LICENÇA SANITÁRIA — STUDIO NAILS, MANICURE & PODOLOGIA',
+                sub: 'Portaria CVS nº 01/2024 • Esterilização em Autoclave, Perfurocortantes & Produtos ANVISA',
+                baseCurta: 'Port. CVS 01/24 • Biossegurança',
+                texto: `Esta Licença Sanitária AUTORIZA o espaço ${nomeEstabTxt} a exercer atividades de Manicure, Pedicure, Nail Design, Alongamento de Unhas e Estética de Mãos e Pés, atestando que o estúdio encontra-se nas condições sanitárias e de biossegurança APROVADAS pela Vigilância Sanitária.`,
+                condicoes: [
+                    'Esterilização de alicates e instrumentais em autoclave com envelope grau cirúrgico',
+                    'Descarte correto de materiais descartáveis (lixas, palitos) e perfurocortantes',
+                    'Uso exclusivo de géis, esmaltes e cosméticos regularizados na ANVISA',
+                    'Higienização das bancadas entre atendimentos e uso de EPIs pela equipe'
+                ]
+            },
+            salao_barbearia: {
+                cor: rgb(0.24, 0.20, 0.62), badge: 'ESTÉTICA REGULAR',
+                titulo: 'LICENÇA SANITÁRIA — SALÃO DE BELEZA, ESTÉTICA & BARBEARIA',
+                sub: 'Lei Municipal nº 13.725/2004 • Normas de Biossegurança, Higienização e Cosmetovigilância',
+                baseCurta: 'Lei 13.725/04 • Cosmetovigilância',
+                texto: `Esta Licença Sanitária AUTORIZA o estabelecimento ${nomeEstabTxt} a funcionar com serviços de Salão de Beleza, Barbearia, Cabeleireiro e Estética, atestando que o local atende às condições higiênico-sanitárias e de esterilização APROVADAS para atendimento ao público.`,
+                condicoes: [
+                    'Lâminas descartáveis de uso único com descarte em coletor rígido (Descarpack)',
+                    'Higienização de pentes, escovas, tesouras, toalhas e capas a cada cliente',
+                    'Produtos capilares, químicas e cosméticos com registro ativo na ANVISA',
+                    'Controle de pragas e higienização de reservatório de água em dia'
+                ]
+            },
+            adega_tabacaria: {
+                cor: rgb(0.38, 0.14, 0.56), badge: 'ADEGA REGULAR',
+                titulo: 'LICENÇA SANITÁRIA — ADEGA, BEBIDAS & TABACARIA',
+                sub: 'Lei Municipal nº 13.725/2004 • Procedência de Bebidas, Armazenamento & Normas Sanitárias',
+                baseCurta: 'Lei 13.725/04 • Bebidas/Varejo',
+                texto: `Esta Licença Sanitária AUTORIZA o estabelecimento ${nomeEstabTxt} a operar no comércio varejista de Bebidas, Adega, Conveniência e Tabacaria, confirmando que o local está APROVADO quanto às condições de armazenamento, refrigeração, higiene e controle de procedência dos produtos.`,
+                condicoes: [
+                    'Bebidas e insumos armazenados sobre paletes/prateleiras, livres de umidade',
+                    'Controle rigoroso de procedência, nota fiscal, lote e prazo de validade',
+                    'Refrigeração adequada para bebidas geladas e gelo de origem potável',
+                    'Controle de pragas urbanas e limpeza de caixa d agua regularizados'
+                ]
+            },
+            fast_food: {
+                cor: rgb(0.78, 0.24, 0.08), badge: 'ALIMENTOS ATIVO',
+                titulo: 'ALVARÁ SANITÁRIO — FAST FOOD, LANCHONETE & PASTELARIA',
+                sub: 'RDC ANVISA nº 216/2004 • Portaria SMS nº 2619/2011 • Boas Práticas em Serviços de Alimentação',
+                baseCurta: 'RDC 216/04 • Port. 2619/11',
+                texto: `Este Alvará Sanitário AUTORIZA o estabelecimento ${nomeEstabTxt} a preparar e comercializar refeições rápidas, lanches, hambúrgueres, pastéis e porções, comprovando que a cozinha e o atendimento encontram-se em condições higiênico-sanitárias APROVADAS conforme a RDC 216/2004.`,
+                condicoes: [
+                    'Manipulação de alimentos seguindo Manual de Boas Práticas (MBP) e POPs',
+                    'Controle diário de temperatura de carnes, molhos, frituras e refrigeradores',
+                    'Manipuladores uniformizados com ASO atualizado e higiene das mãos',
+                    'Controle integrado de pragas, óleo de fritura e limpeza de coifa/caixa d agua'
+                ]
+            },
+            carrocinha_rua: {
+                cor: rgb(0.75, 0.42, 0.04), badge: 'AMBULANTE ATIVO',
+                titulo: 'AUTORIZAÇÃO SANITÁRIA — COMIDA DE RUA, CARROCINHA & FOOD TRUCK',
+                sub: 'Decreto Municipal nº 55.085/2014 • RDC ANVISA nº 216/2004 • Comércio Ambulante de Alimentos',
+                baseCurta: 'Dec. 55.085/14 • RDC 216/04',
+                texto: `Esta Autorização Sanitária PERMITE a ${nomeEstabTxt} atuar na comercialização de alimentos em Carrocinha, Barraca, Trailer ou Food Truck (Comida de Rua), certificando que o equipamento e o preparo encontram-se APROVADOS para atendimento seguro ao consumidor.`,
+                condicoes: [
+                    'Acondicionamento térmico adequado para insumos frios e alimentos quentes',
+                    'Uso exclusivo de água potável, álcool 70% e descartáveis para o público',
+                    'Insumos identificados com data de preparo/validade e origem comprovada',
+                    'Estrutura limpa, protegida contra insetos e recolhimento correto de resíduos'
+                ]
+            },
+            mercado_padaria: {
+                cor: rgb(0.05, 0.46, 0.42), badge: 'VAREJO REGULAR',
+                titulo: 'LICENÇA SANITÁRIA — MERCADO, PADARIA, AÇOUGUE & HORTIFRÚTI',
+                sub: 'RDC ANVISA nº 216/2004 • Controle de Cadeia de Frio, Validade e Boas Práticas',
+                baseCurta: 'RDC 216/04 • Varejo Alimentar',
+                texto: `Esta Licença Sanitária AUTORIZA o estabelecimento ${nomeEstabTxt} a comercializar gêneros alimentícios, panificação, frios, carnes e hortifrúti, atestando que as câmaras frias, gôndolas e áreas de manipulação encontram-se em condições sanitárias APROVADAS.`,
+                condicoes: [
+                    'Cadeia de frio mantida em açougue, laticínios, congelados e confeitaria',
+                    'Rotulagem clara, controle rigoroso de validade e segregação de avarias',
+                    'Higienização diária de balcões, fatiadores, pisos e áreas de estoque',
+                    'Certificados de dedetização e higienização de reservatório atualizados'
+                ]
+            },
+            pet_shop: {
+                cor: rgb(0.06, 0.44, 0.56), badge: 'PET / VET ATIVO',
+                titulo: 'LICENÇA SANITÁRIA — PET SHOP, BANHO & TOSA / VETERINÁRIA',
+                sub: 'Lei Municipal nº 13.725/2004 • Controle de Zoonoses, Higienização e PGRSS Veterinário',
+                baseCurta: 'Lei 13.725/04 • Zoonoses/Pet',
+                texto: `Esta Licença Sanitária AUTORIZA o estabelecimento ${nomeEstabTxt} a operar com serviços de Pet Shop, Banho & Tosa e/ou Clínica Veterinária, comprovando que as instalações, higienização e controle ambiental encontram-se APROVADOS pela Vigilância Sanitária.`,
+                condicoes: [
+                    'Desinfecção de banheiras, mesas, canis e toalhas após cada animal',
+                    'Controle de zoonoses, ectoparasitas e ventilação adequada dos ambientes',
+                    'Produtos de higiene pet e medicamentos dentro da validade e registrados',
+                    'Descarte correto de pelos e resíduos biológicos conforme PGRSS'
+                ]
+            },
+            academia_fitness: {
+                cor: rgb(0.08, 0.28, 0.58), badge: 'FITNESS REGULAR',
+                titulo: 'CERTIFICADO SANITÁRIO — ACADEMIA, PILATES & ESTÚDIO FITNESS',
+                sub: 'Lei Municipal nº 13.725/2004 • Qualidade do Ar, Higienização de Equipamentos e Bebedouros',
+                baseCurta: 'Lei 13.725/04 • Ambiente Fitness',
+                texto: `Este Certificado Sanitário AUTORIZA o estabelecimento ${nomeEstabTxt} a operar como Academia, Estúdio de Pilates ou Centro de Treinamento, atestando condições sanitárias APROVADAS quanto à higiene de equipamentos, vestiários, climatização e água potável.`,
+                condicoes: [
+                    'Disponibilização de álcool 70% e higienização contínua de aparelhos/colchonetes',
+                    'Manutenção periódica de filtros de bebedouros e limpeza de reservatório',
+                    'Ventilação e climatização (PMOC) em conformidade com normas de qualidade do ar',
+                    'Sanitários, vestiários e controle de pragas mantidos em padrão aprovado'
+                ]
+            }
+        };
+        const temaAlv = ALVARA_THEMES[tipo] || ALVARA_THEMES.alvara_oficial;
+        const corPrim = temaAlv.cor;
         const corSec = rgb(0.05, 0.22, 0.48);
         const corEscuro = rgb(0.09, 0.12, 0.18);
         const corCinza = rgb(0.36, 0.41, 0.49);
@@ -8520,22 +8886,13 @@ REGRAS:
 
         page.drawRectangle({ x: seloX, y: height - 96, width: seloW, height: 54, color: rgb(0.92, 0.99, 0.95), borderColor: corPrim, borderWidth: 1.4 });
         drawTextFitPDF(page, 'SITUAÇÃO SANITÁRIA', seloX + 10, height - 56, fontBold, 7.0, seloW - 20, corCinza);
-        drawTextFitPDF(page, ehRenov ? 'RENOVADO / ATIVO' : 'REGULAR / ATIVO', seloX + 10, height - 73, fontBold, 10.2, seloW - 20, corPrim);
+        drawTextFitPDF(page, temaAlv.badge, seloX + 10, height - 73, fontBold, 9.6, seloW - 20, corPrim);
         drawTextFitPDF(page, `Válido até ${dados.validade}`, seloX + 10, height - 88, fontBold, 7.4, seloW - 20, corEscuro);
 
         let y = height - 128;
         page.drawRectangle({ x: 36, y: y - 42, width: width - 72, height: 42, color: corPrim });
-        const titAlv = ehHomePF
-            ? 'LICENÇA SANITÁRIA PESSOA FÍSICA - HOME OFFICE / TELEMEDICINA'
-            : (ehRenov ? 'RENOVAÇÃO DE LICENÇA DE FUNCIONAMENTO SANITÁRIA (LFS 2026)' : 'ALVARÁ / LICENÇA DE FUNCIONAMENTO SANITÁRIA (LFS 2026)');
-        drawTextFitPDF(page, titAlv, 48, y - 18, fontBold, 12.0, width - 96, rgb(1, 1, 1));
-        drawTextFitPDF(
-            page,
-            ehHomePF
-                ? 'Portaria SMS nº 266/2025 • Resolução CFM nº 2.314/2022 • Profissional Autônomo de Saúde'
-                : 'Portaria SMS nº 266/2025 (Consolidada) • Lei Municipal nº 13.725/2004 • Lei Estadual nº 10.083/1998',
-            48, y - 33, fontReg, 7.8, width - 96, rgb(0.92, 0.98, 0.95)
-        );
+        drawTextFitPDF(page, temaAlv.titulo, 48, y - 18, fontBold, 11.4, width - 96, rgb(1, 1, 1));
+        drawTextFitPDF(page, temaAlv.sub, 48, y - 33, fontReg, 7.8, width - 96, rgb(0.92, 0.98, 0.95));
 
         y -= 54;
 
@@ -8574,25 +8931,35 @@ REGRAS:
         page.drawRectangle({ x: 36, y: y - vigH, width: width - 72, height: vigH, color: rgb(0.93, 0.99, 0.96), borderColor: corPrim, borderWidth: 1.2 });
         drawKv('LOCAL E DATA DE EMISSÃO', `${cidadeAuto}, ${dataAuto}`, 48, y - 14, 175);
         drawKv('VÁLIDO ATÉ (VIGÊNCIA)', dados.validade, 235, y - 14, 130);
-        drawKv('BASE NORMATIVA', ehHomePF ? 'Port. SMS 266/25 • Res. CFM 2.314/22' : 'Port. SMS 266/25 • Lei 13.725/04', 375, y - 14, 175);
+        drawKv('BASE NORMATIVA', temaAlv.baseCurta || 'Port. SMS 266/25 • Lei 13.725/04', 375, y - 14, 175);
 
-        y = y - vigH - 18;
+        y = y - vigH - 16;
 
-        drawTextFitPDF(page, 'DISPOSIÇÕES LEGAIS E CONDIÇÕES DE VALIDADE', 40, y, fontBold, 8.6, width - 80, corSec);
-        y -= 15;
+        drawTextFitPDF(page, 'AUTORIZAÇÃO E DISPOSIÇÕES ESPECÍFICAS DA ATIVIDADE', 40, y, fontBold, 8.6, width - 80, corPrim);
+        y -= 14;
 
-        const textoLegal = ehHomePF
-            ? 'A Coordenação de Vigilância em Saúde (COVISA) certifica que o(a) profissional de saúde acima qualificado(a) encontra-se regularmente cadastrado(a) na modalidade Pessoa Física — Atendimento Home Office / Telemedicina, autorizado(a) ao exercício de suas atividades profissionais e emissão de receituários conforme sua habilitação legal no respectivo Conselho de Classe, observadas as normas da Resolução CFM nº 2.314/2022, Portaria SVS/MS nº 344/1998 e Portaria SMS nº 266/2025.\n\nEste documento deverá ser mantido disponível para consulta pela fiscalização sanitária e possui autenticidade verificável pelo QR Code abaixo.'
-            : (ehRenov
-                ? 'A Coordenação de Vigilância em Saúde (COVISA), no uso de suas atribuições legais conferidas pela Lei Municipal nº 13.725/2004, Lei Estadual nº 10.083/1998 e Portaria SMS nº 266/2025, DEFERE A RENOVAÇÃO da Licença de Funcionamento Sanitária (LFS) ao estabelecimento acima identificado, atestando a continuidade de sua regularidade sanitária para o exercício da atividade licenciada até a nova data de validade.\n\nO presente documento deve ser mantido em local visível ao público e à autoridade sanitária.'
-                : 'A Coordenação de Vigilância em Saúde (COVISA), no uso de suas atribuições legais conferidas pela Lei Municipal nº 13.725/2004, Lei Estadual nº 10.083/1998 e Portaria SMS nº 266/2025, CONCEDE o presente Alvará / Licença de Funcionamento Sanitária (LFS) ao estabelecimento acima identificado, atestando sua regularidade cadastral e sanitária para o exercício da atividade licenciada até a data de validade especificada.\n\nO presente documento deve ser mantido em local visível ao público e à autoridade sanitária. Quaisquer alterações de endereço, razão social, atividade (CNAE) ou responsabilidade técnica deverão ser comunicadas previamente à Vigilância Sanitária.');
-
-        const linhasLegal = quebrarLinhasPDF(textoLegal, fontReg, 9.2, width - 84);
+        const textoLegal = temaAlv.texto || ALVARA_THEMES.alvara_oficial.texto;
+        const linhasLegal = quebrarLinhasPDF(textoLegal, fontReg, 9.0, width - 84);
         linhasLegal.forEach(ln => {
-            if (y < 148) return;
-            if (ln) page.drawText(ln, { x: 40, y, size: 9.2, font: fontReg, color: corEscuro });
-            y -= 13;
+            if (y < 230) return;
+            if (ln) page.drawText(ln, { x: 40, y, size: 9.0, font: fontReg, color: corEscuro });
+            y -= 12.5;
         });
+
+        // Quadro visual com as condições sanitárias específicas aprovadas para este ramo
+        const conds = Array.isArray(temaAlv.condicoes) ? temaAlv.condicoes : [];
+        if (conds.length > 0 && y > 190) {
+            y -= 6;
+            const boxCondH = 22 + conds.length * 14.5;
+            page.drawRectangle({ x: 36, y: y - boxCondH, width: width - 72, height: boxCondH, color: rgb(0.97, 0.985, 0.995), borderColor: corPrim, borderWidth: 1.0 });
+            drawTextFitPDF(page, 'CONDIÇÕES SANITÁRIAS APROVADAS PARA ESTE ESTABELECIMENTO:', 46, y - 13, fontBold, 7.8, width - 92, corPrim);
+            let cy = y - 27;
+            conds.forEach(cItem => {
+                drawTextFitPDF(page, `[APROVADO] ${cItem}`, 48, cy, fontReg, 8.2, width - 96, corEscuro);
+                cy -= 14;
+            });
+            y = y - boxCondH - 10;
+        }
 
         desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, width / 2, 48, 235, 76);
 
@@ -11831,9 +12198,75 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
     // =========================================================================
     window._ultimosFaltantesDocGen = [];
 
+    window._renovadorPdfOriginalBytes = null;
+    window._renovadorPdfOriginalName = '';
+
+    window.renovarSobrePdfOriginal = async () => {
+        if (!window._renovadorPdfOriginalBytes) {
+            return showToast("Envie um PDF", "Envie primeiro um arquivo PDF antigo no Renovador para editar sobre ele.", "warning");
+        }
+        try {
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const dados = coletarDadosDocGen();
+            const pdfDoc = await PDFDocument.load(window._renovadorPdfOriginalBytes.slice(0));
+            const pages = pdfDoc.getPages();
+            const page = pages[0];
+            const { width, height } = page.getSize();
+            const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            const safe = (s) => String(s || '').replace(/[^\x20-\x7E\xA0-\xFF]/g, '');
+
+            // Carimbo oficial de Renovação 2026 no topo direito da página 1
+            const boxW = 198, boxH = 56;
+            const bx = width - boxW - 18, by = height - boxH - 16;
+            page.drawRectangle({ x: bx, y: by, width: boxW, height: boxH, color: rgb(0.94, 0.99, 0.96), borderColor: rgb(0.04, 0.48, 0.28), borderWidth: 1.8 });
+            page.drawRectangle({ x: bx, y: by + boxH - 15, width: boxW, height: 15, color: rgb(0.04, 0.48, 0.28) });
+            page.drawText(safe('DOCUMENTO RENOVADO / ATUALIZADO 2026'), { x: bx + 8, y: by + boxH - 11, size: 7.2, font: fontBold, color: rgb(1, 1, 1) });
+            page.drawText(safe(`Protocolo: ${dados.protocolo || 'COVISA-2026-REN'}`), { x: bx + 8, y: by + 27, size: 7.5, font: fontBold, color: rgb(0.08, 0.14, 0.22) });
+            page.drawText(safe(`Emissao: ${dados.emissao || formatarDataBR(new Date())} | Validade: ${dados.validade || '12 meses'}`), { x: bx + 8, y: by + 16, size: 7.0, font: fontReg, color: rgb(0.15, 0.2, 0.28) });
+            page.drawText(safe('SITUACAO: REGULAR / AUTENTICADO'), { x: bx + 8, y: by + 5, size: 7.2, font: fontBold, color: rgb(0.04, 0.48, 0.28) });
+
+            // Quadro de Averbação / Dados Atualizados + Assinatura Fixa no rodapé da página 1
+            const footH = 74;
+            page.drawRectangle({ x: 18, y: 14, width: width - 36, height: footH, color: rgb(0.97, 0.98, 1), borderColor: rgb(0.08, 0.25, 0.55), borderWidth: 1.3 });
+            page.drawText(safe('AVERBACAO DE RENOVACAO CADASTRAL - COVISA DIGITAL 2026'), { x: 26, y: 74, size: 7.8, font: fontBold, color: rgb(0.08, 0.25, 0.55) });
+            page.drawText(safe(`Razao Social / Nome: ${(dados.nome || 'Conforme documento').toUpperCase()}`).slice(0, 76), { x: 26, y: 61, size: 7.6, font: fontBold, color: rgb(0.1, 0.14, 0.2) });
+            page.drawText(safe(`CPF/CNPJ: ${dados.cnpj || '--'}  |  CMVS: ${dados.cmvs || 'Ativo'}  |  Cidade: ${dados.cidade || 'Sao Paulo - SP'}`).slice(0, 82), { x: 26, y: 49, size: 7.2, font: fontReg, color: rgb(0.2, 0.25, 0.32) });
+            const endFull = [dados.rua, dados.num, dados.bairro, dados.cep].filter(Boolean).join(', ');
+            page.drawText(safe(`Endereco Atualizado: ${endFull || 'Conforme cadastro oficial'}`).slice(0, 82), { x: 26, y: 37, size: 7.2, font: fontReg, color: rgb(0.2, 0.25, 0.32) });
+            page.drawText(safe('Validacao digital oficial: vigilancia-sp-gov.netlify.app | Renovacao automatica registrada no sistema'), { x: 26, y: 22, size: 6.8, font: fontReg, color: rgb(0.35, 0.4, 0.48) });
+
+            const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
+            if (sigImg) {
+                const sd = sigImg.scaleToFit(120, 44);
+                page.drawImage(sigImg, { x: width - 146, y: 26, width: sd.width, height: sd.height });
+            }
+
+            pdfDoc.setTitle(`Documento Renovado 2026 - ${dados.nome || 'COVISA'}`);
+            const pdfBytes = await pdfDoc.save();
+            const nomeLimpo = (dados.cnpj || dados.nome || 'Renovado').replace(/[^a-zA-Z0-9]/g, '').slice(0, 28);
+            const filename = `Renovado_2026_${nomeLimpo}.pdf`;
+            exibirPdfPreviewDocGen(pdfBytes, filename);
+            showToast("PDF Renovado!", "O seu PDF original foi atualizado com o Carimbo de Renovação 2026 + Assinatura!", "success");
+        } catch (err) {
+            console.error(err);
+            showToast("Erro", "Falha ao editar o PDF original: " + err.message, "error");
+        }
+    };
+
     window.executarRenovadorPorFotoIA = async (input) => {
         const file = input.files?.[0];
         if (!file) return;
+        const ehPdfUpload = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+        const btnSobrePdf = document.getElementById('btn-renovar-sobre-pdf');
+        if (ehPdfUpload) {
+            window._renovadorPdfOriginalBytes = new Uint8Array(await file.arrayBuffer());
+            window._renovadorPdfOriginalName = file.name;
+            if (btnSobrePdf) btnSobrePdf.style.display = 'inline-flex';
+        } else {
+            window._renovadorPdfOriginalBytes = null;
+            if (btnSobrePdf) btnSobrePdf.style.display = 'none';
+        }
         const st = document.getElementById('docgen-renovador-status');
         const boxFalt = document.getElementById('docgen-faltantes-box');
         const listFalt = document.getElementById('docgen-faltantes-list');
@@ -12038,6 +12471,27 @@ Responda APENAS JSON válido:
     document.getElementById('docgen-process-selector')?.addEventListener('change', (e) => {
         carregarListaLiberadosCliente(e.target.value);
     });
+
+    window.setFiltroStatusMalha = (st, btnEl) => {
+        document.querySelectorAll('.malha-pill-btn').forEach(b => b.classList.remove('active'));
+        if (btnEl) btnEl.classList.add('active');
+        const sel = document.getElementById('filtro-status');
+        if (sel) sel.value = st;
+        aplicarFiltros();
+    };
+
+    window.abrirProcessoDiretoNoDocGen = (idPedido) => {
+        const navDoc = document.getElementById('nav-item-docgen');
+        switchView('view-docgen', navDoc);
+        setTimeout(() => {
+            const sel = document.getElementById('docgen-process-selector');
+            if (sel) {
+                sel.value = idPedido;
+                importarProcessoNoDocGen(idPedido);
+                carregarListaLiberadosCliente(idPedido);
+            }
+        }, 120);
+    };
   </script>
 </body>
 </html>
