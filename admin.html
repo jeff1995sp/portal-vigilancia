@@ -1290,6 +1290,42 @@
       .malha-pills-bar { padding: 12px 14px; }
     }
 
+
+    /* POLIMENTO NÍTIDO DO GERADOR DE DOCUMENTOS (100 MODELOS) */
+    .docgen-cat-tabs {
+      display: flex; gap: 5px; flex-wrap: wrap; padding: 6px;
+      background: #040914; border: 1px solid #1e2f4f; border-radius: 10px;
+    }
+    .docgen-cat-btn {
+      padding: 5px 10px !important; font-size: 0.72rem !important; border-radius: 8px !important;
+    }
+    .docgen-types-grid {
+      max-height: 330px !important; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      padding: 4px 6px 4px 2px;
+    }
+    .docgen-type-card {
+      padding: 10px 10px !important; border-radius: 10px !important;
+      background: #060d1b !important; border: 1px solid #24385c !important;
+    }
+    .docgen-type-card strong { color: #f8fafc; font-size: 0.8rem !important; }
+    .docgen-type-card span { color: #94a3b8; font-size: 0.7rem !important; }
+    .docgen-num-badge {
+      position: absolute; top: 6px; right: 7px; font-family: var(--font-code);
+      font-size: 0.64rem; font-weight: 900; color: #64748b; background: rgba(15,23,42,0.85);
+      padding: 1px 5px; border-radius: 4px; border: 1px solid #1e293b;
+    }
+    .docgen-type-card.active .docgen-num-badge { color: #38bdf8; border-color: #38bdf8; }
+    .docgen-sec-toggles {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      background: linear-gradient(90deg, rgba(250,204,21,0.08), rgba(56,189,248,0.06));
+      border: 1px solid rgba(250,204,21,0.35); border-radius: 10px; padding: 8px 12px;
+    }
+    .docgen-sec-toggle-lbl {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem;
+      font-weight: 800; color: #fef08a; cursor: pointer; white-space: nowrap;
+    }
+    .docgen-sec-toggle-lbl input { width: 15px; height: 15px; accent-color: #eab308; cursor: pointer; }
+
   </style>
 </head>
 <body>
@@ -1351,7 +1387,7 @@
         <div class="nav-group-label">Documentos & Fiscalização</div>
         <a class="nav-item" id="nav-item-docgen" onclick="switchView('view-docgen', this)">
           <i class="fas fa-file-pdf" style="color: #f87171;"></i>
-          <div class="nav-item-text"><span class="nav-item-title">Gerador de Documentos</span><span class="nav-item-sub">60 PDFs, receitas e IA</span></div>
+          <div class="nav-item-text"><span class="nav-item-title">Gerador de Documentos</span><span class="nav-item-sub">100 PDFs, selo e IA</span></div>
         </a>
         <a class="nav-item" id="nav-item-multas-ia" onclick="switchView('view-multas-ia', this)" style="color: #fca5a5;">
           <i class="fas fa-gavel" style="color: #ef4444;"></i>
@@ -1991,7 +2027,7 @@
           <div class="page-title" style="margin-bottom: 16px;">
             <div>
               <h1><i class="fas fa-file-pdf" style="color: #f87171;"></i> Gerador Completo de Documentos, Alvarás & Receituários (PDF)</h1>
-              <p>60 modelos oficiais organizados em 6 categorias: Comércios em Geral (Adega, Nails, Fast Food, Carrocinha, Barbearia, Pet Shop, Mercado, Academia), Receitas, Clínicos & UPA, Alvarás COVISA, Guias PIX e ANVISA + Renovador por Foto IA.</p>
+              <p>100 modelos oficiais organizados em 11 categorias (COVISA • ANVISA • SUS): Comércios em Geral (Adega, Nails, Fast Food, Carrocinha, Barbearia, Pet Shop, Mercado, Academia), Receitas, Clínicos & UPA, Alvarás COVISA, Guias PIX e ANVISA + Renovador por Foto IA.</p>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <button type="button" class="btn btn-secondary" style="padding: 10px 15px; font-size: 0.85rem;" onclick="limparFormularioDocGen()">
@@ -2007,7 +2043,7 @@
           </div>
 
                     <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:14px;">
-            <div style="background:#0a1426; border:1px solid #1e3a5f; border-radius:10px; padding:10px 12px; font-size:0.77rem; color:#cbd5e1;"><strong style="color:#38bdf8; display:block; margin-bottom:2px;">1. Escolha ou Envie PDF</strong>Selecione 1 dos 50 modelos (cada ramo tem seu estilo) ou envie um PDF antigo no Renovador.</div>
+            <div style="background:#0a1426; border:1px solid #1e3a5f; border-radius:10px; padding:10px 12px; font-size:0.77rem; color:#cbd5e1;"><strong style="color:#38bdf8; display:block; margin-bottom:2px;">1. Escolha ou Envie PDF</strong>Selecione 1 dos 100 modelos (cada documento tem layout próprio) ou envie um PDF antigo no Renovador.</div>
             <div style="background:#0a1426; border:1px solid #1e3a5f; border-radius:10px; padding:10px 12px; font-size:0.77rem; color:#cbd5e1;"><strong style="color:#6ee7b7; display:block; margin-bottom:2px;">2. Puxe os Dados</strong>Importe do WhatsApp com IA, do processo no Firebase ou digite o CNPJ para preencher sozinho.</div>
             <div style="background:#0a1426; border:1px solid #1e3a5f; border-radius:10px; padding:10px 12px; font-size:0.77rem; color:#cbd5e1;"><strong style="color:#fde68a; display:block; margin-bottom:2px;">3. Confira a Prévia</strong>Clique em Gerar Prévia (ou Renovar no PDF Original) para conferir tudo com a assinatura fixa.</div>
             <div style="background:#0a1426; border:1px solid #1e3a5f; border-radius:10px; padding:10px 12px; font-size:0.77rem; color:#cbd5e1;"><strong style="color:#c084fc; display:block; margin-bottom:2px;">4. Baixe ou Libere</strong>Baixe o PDF ou clique em Liberar p/ Cliente para aparecer na consulta do site na hora.</div>
@@ -2021,7 +2057,7 @@
                 <!-- 1. MODELOS DE DOCUMENTOS (38 MODELOS EM 5 CATEGORIAS + BUSCA RÁPIDA) -->
                 <div class="docgen-box">
                   <div class="docgen-box-title">
-                    <span><i class="fas fa-layer-group"></i> 1. Catálogo de Documentos & Receituários (60 Modelos)</span>
+                    <span><i class="fas fa-layer-group"></i> 1. Catálogo Oficial de Documentos & Receituários (100 Modelos)</span>
                     <span id="docgen-template-tag" style="color:#38bdf8; font-size:0.71rem;">Alvará Oficial LFS 2026 + Assinatura Fixa</span>
                   </div>
 
@@ -2029,329 +2065,22 @@
                     <input type="text" id="docgen-model-search" placeholder="Buscar modelo rápido (ex: atestado, laudo, sus, alvará, pix, glp, anvisa)..." oninput="filtrarModelosDocGen()" style="flex:1; background:#040914; border:1px solid #26385a; color:#fff; padding:8px 12px; border-radius:9px; font-size:0.82rem;" />
                   </div>
 
-                  <div class="docgen-cat-tabs">
-                    <button type="button" class="docgen-cat-btn active" data-cat-btn="todos" onclick="filtrarCategoriaDocGen('todos', this)"><i class="fas fa-th-large"></i> Todos (60)</button>
-                    <button type="button" class="docgen-cat-btn" data-cat-btn="comercios" onclick="filtrarCategoriaDocGen('comercios', this)"><i class="fas fa-store"></i> Comércios (12)</button>
-                    <button type="button" class="docgen-cat-btn" data-cat-btn="receitas" onclick="filtrarCategoriaDocGen('receitas', this)"><i class="fas fa-prescription"></i> Receitas (15)</button>
-                    <button type="button" class="docgen-cat-btn" data-cat-btn="clinicos" onclick="filtrarCategoriaDocGen('clinicos', this)"><i class="fas fa-stethoscope"></i> Clínicos & UPA (11)</button>
-                    <button type="button" class="docgen-cat-btn" data-cat-btn="licencas" onclick="filtrarCategoriaDocGen('licencas', this)"><i class="fas fa-certificate"></i> Alvarás COVISA (9)</button>
-                    <button type="button" class="docgen-cat-btn" data-cat-btn="fiscal" onclick="filtrarCategoriaDocGen('fiscal', this)"><i class="fas fa-gavel"></i> Guias & Fiscal (8)</button>
-                    <button type="button" class="docgen-cat-btn" data-cat-btn="anvisa" onclick="filtrarCategoriaDocGen('anvisa', this)"><i class="fas fa-shield-virus"></i> ANVISA & Control. (5)</button>
+                  <div class="docgen-cat-tabs" id="docgen-cat-tabs">
+                    <button type="button" class="docgen-cat-btn active" data-cat-btn="todos" onclick="filtrarCategoriaDocGen('todos', this)"><i class="fas fa-th-large"></i> Todos (100)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="receitas" onclick="filtrarCategoriaDocGen('receitas', this)"><i class="fas fa-prescription"></i> 1. Receitas (15)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="clinicos" onclick="filtrarCategoriaDocGen('clinicos', this)"><i class="fas fa-stethoscope"></i> 2. Clínicos & UPA (11)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="comercios" onclick="filtrarCategoriaDocGen('comercios', this)"><i class="fas fa-store"></i> 3. Comércios (12)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="licencas" onclick="filtrarCategoriaDocGen('licencas', this)"><i class="fas fa-certificate"></i> 4. Alvarás COVISA (9)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="fiscal" onclick="filtrarCategoriaDocGen('fiscal', this)"><i class="fas fa-gavel"></i> 5. Guias & Fiscal (8)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="anvisa" onclick="filtrarCategoriaDocGen('anvisa', this)"><i class="fas fa-shield-virus"></i> 6. ANVISA (5)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="especiais" onclick="filtrarCategoriaDocGen('especiais', this)"><i class="fas fa-pills"></i> 7. Especiais (8)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="hospitalar" onclick="filtrarCategoriaDocGen('hospitalar', this)"><i class="fas fa-hospital"></i> 8. Hospitalar (8)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="solicitacoes" onclick="filtrarCategoriaDocGen('solicitacoes', this)"><i class="fas fa-file-alt"></i> 9. Solicitações (8)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="boaspraticas" onclick="filtrarCategoriaDocGen('boaspraticas', this)"><i class="fas fa-clipboard-check"></i> 10. Boas Práticas (8)</button>
+                    <button type="button" class="docgen-cat-btn" data-cat-btn="defesa" onclick="filtrarCategoriaDocGen('defesa', this)"><i class="fas fa-balance-scale"></i> 11. Defesa & Seg. (8)</button>
                   </div>
 
-                  <div class="docgen-types-grid" id="docgen-types-grid" style="max-height: 265px; overflow-y: auto; padding-right: 4px;">
-                    <!-- CATEGORIA 1: RECEITAS (9) -->
-                    <button type="button" class="docgen-type-card theme-green" data-cat="receitas" data-doctype="receita_sus" onclick="selecionarTipoDocumento('receita_sus', this)">
-                      <i class="fas fa-file-medical"></i>
-                      <strong>Receita Comum (SUS)</strong>
-                      <span>Simples / Uso contínuo</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="receitas" data-doctype="receita_odonto" onclick="selecionarTipoDocumento('receita_odonto', this)">
-                      <i class="fas fa-tooth"></i>
-                      <strong>Receita Odontológica</strong>
-                      <span>Cirurgião-Dentista (CRO)</span>
-                    </button>
-                    <button type="button" class="docgen-type-card" data-cat="receitas" data-doctype="receita_branca" onclick="selecionarTipoDocumento('receita_branca', this)">
-                      <i class="fas fa-notes-medical"></i>
-                      <strong>Receita Branca (C1/C5)</strong>
-                      <span>Controle Especial 2 Vias</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="receitas" data-doctype="receita_antimicrobiano" onclick="selecionarTipoDocumento('receita_antimicrobiano', this)">
-                      <i class="fas fa-tablets"></i>
-                      <strong>Receita Antimicrobiano</strong>
-                      <span>Retenção RDC 471 (2 Vias)</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="receitas" data-doctype="receita_glp1" onclick="selecionarTipoDocumento('receita_glp1', this)">
-                      <i class="fas fa-syringe"></i>
-                      <strong>Receita GLP-1 (Retenção)</strong>
-                      <span>Agonistas GLP-1 (2 Vias)</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-yellow" data-cat="receitas" data-doctype="receita_a" onclick="selecionarTipoDocumento('receita_a', this)">
-                      <i class="fas fa-prescription-bottle-alt"></i>
-                      <strong>Receita A (Amarela)</strong>
-                      <span>Entorpecentes A1/A2/A3</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="receitas" data-doctype="receita_b" onclick="selecionarTipoDocumento('receita_b', this)">
-                      <i class="fas fa-capsules"></i>
-                      <strong>Receita B (Azul)</strong>
-                      <span>Psicotrópicos Lista B1</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="receitas" data-doctype="receita_b2" onclick="selecionarTipoDocumento('receita_b2', this)">
-                      <i class="fas fa-pills"></i>
-                      <strong>Receita B2 (Azul)</strong>
-                      <span>Anorexígenos Lista B2</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-red" data-cat="receitas" data-doctype="receita_retinoides" onclick="selecionarTipoDocumento('receita_retinoides', this)">
-                      <i class="fas fa-exclamation-circle"></i>
-                      <strong>Receita Retinoides</strong>
-                      <span>Uso Sistêmico (Lista C2)</span>
-                    </button>
-
-                    <!-- CATEGORIA 2: CLÍNICOS & SUS (8) -->
-                    <button type="button" class="docgen-type-card theme-green" data-cat="clinicos" data-doctype="atestado_medico" onclick="selecionarTipoDocumento('atestado_medico', this)">
-                      <i class="fas fa-file-signature"></i>
-                      <strong>Atestado Médico</strong>
-                      <span>Afastamento / Repouso</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="laudo_medico" onclick="selecionarTipoDocumento('laudo_medico', this)">
-                      <i class="fas fa-stethoscope"></i>
-                      <strong>Laudo / Relatório Médico</strong>
-                      <span>Avaliação Clínica / CID</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="clinicos" data-doctype="declaracao_comparecimento" onclick="selecionarTipoDocumento('declaracao_comparecimento', this)">
-                      <i class="fas fa-user-check"></i>
-                      <strong>Decl. Comparecimento</strong>
-                      <span>Paciente ou Acompanhante</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="solicitacao_exames" onclick="selecionarTipoDocumento('solicitacao_exames', this)">
-                      <i class="fas fa-vials"></i>
-                      <strong>Solicitação de Exames</strong>
-                      <span>Pedido Laboratorial / Img</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="guia_referencia" onclick="selecionarTipoDocumento('guia_referencia', this)">
-                      <i class="fas fa-exchange-alt"></i>
-                      <strong>Guia Encaminhamento</strong>
-                      <span>Referência Especialista SUS</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-purple" data-cat="clinicos" data-doctype="lme_sus" onclick="selecionarTipoDocumento('lme_sus', this)">
-                      <i class="fas fa-hand-holding-medical"></i>
-                      <strong>LME Alto Custo (SUS)</strong>
-                      <span>Solicitação CEAF / Medicam.</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-yellow" data-cat="clinicos" data-doctype="ter_consentimento" onclick="selecionarTipoDocumento('ter_consentimento', this)">
-                      <i class="fas fa-handshake"></i>
-                      <strong>Termo Consentimento (TER)</strong>
-                      <span>Retinoides / B2 / CEAF</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="clinicos" data-doctype="civp_vacina" onclick="selecionarTipoDocumento('civp_vacina', this)">
-                      <i class="fas fa-shield-alt"></i>
-                      <strong>Comprov. Vacina / CIVP</strong>
-                      <span>Registro Vacinal / SUS</span>
-                    </button>
-
-                    <!-- CATEGORIA 3: ALVARÁS & LICENCIAMENTO COVISA (9) -->
-                    <button type="button" class="docgen-type-card theme-green active" data-cat="licencas" data-doctype="alvara_oficial" onclick="selecionarTipoDocumento('alvara_oficial', this)">
-                      <i class="fas fa-award"></i>
-                      <strong>Alvará Oficial (LFS 2026)</strong>
-                      <span>Atualizado Port. SMS 266/25</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="licencas" data-doctype="licenca" onclick="selecionarTipoDocumento('licenca', this)">
-                      <i class="fas fa-certificate"></i>
-                      <strong>Licença Provisória</strong>
-                      <span>Seu molde COVISA corrigido</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="licencas" data-doctype="licenca_pf_home" onclick="selecionarTipoDocumento('licenca_pf_home', this)">
-                      <i class="fas fa-laptop-medical"></i>
-                      <strong>Licença PF / Home Office</strong>
-                      <span>Médico em casa / Telemedicina</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="licencas" data-doctype="renovacao_licenca" onclick="selecionarTipoDocumento('renovacao_licenca', this)">
-                      <i class="fas fa-sync"></i>
-                      <strong>Renovação Licença (LFS)</strong>
-                      <span>Renovação Anual Sanitária</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="licencas" data-doctype="cmvs_rt" onclick="selecionarTipoDocumento('cmvs_rt', this)">
-                      <i class="fas fa-id-badge"></i>
-                      <strong>Cadastro CMVS</strong>
-                      <span>Cadastro Mun. Vigilância</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="licencas" data-doctype="assuncao_rt" onclick="selecionarTipoDocumento('assuncao_rt', this)">
-                      <i class="fas fa-user-md"></i>
-                      <strong>Assunção / Baixa de RT</strong>
-                      <span>Despacho Resp. Técnico</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="licencas" data-doctype="dispensa" onclick="selecionarTipoDocumento('dispensa', this)">
-                      <i class="fas fa-check-circle"></i>
-                      <strong>Certidão Baixo Risco</strong>
-                      <span>Dispensa Lei 13.874/19</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-purple" data-cat="licencas" data-doctype="dca_dcff" onclick="selecionarTipoDocumento('dca_dcff', this)">
-                      <i class="fas fa-clipboard-list"></i>
-                      <strong>Declaração DCA / DCFF</strong>
-                      <span>Conformidade Port. 404/24</span>
-                    </button>
-                    <button type="button" class="docgen-type-card" data-cat="licencas" data-doctype="declaracao" onclick="selecionarTipoDocumento('declaracao', this)">
-                      <i class="fas fa-stamp"></i>
-                      <strong>Declaração / Protocolo</strong>
-                      <span>Certidão de andamento</span>
-                    </button>
-
-                    <!-- CATEGORIA 4: GUIAS & FISCALIZAÇÃO (7) -->
-                    <button type="button" class="docgen-type-card theme-green" data-cat="fiscal" data-doctype="guia" onclick="selecionarTipoDocumento('guia', this)">
-                      <i class="fas fa-qrcode"></i>
-                      <strong>Guia Pagamento + PIX</strong>
-                      <span>Taxa Vigilância + QR Code</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="fiscal" data-doctype="recibo_quitacao" onclick="selecionarTipoDocumento('recibo_quitacao', this)">
-                      <i class="fas fa-receipt"></i>
-                      <strong>Recibo de Quitação</strong>
-                      <span>Comprovante de pagamento</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-yellow" data-cat="fiscal" data-doctype="notificacao" onclick="selecionarTipoDocumento('notificacao', this)">
-                      <i class="fas fa-exclamation-triangle"></i>
-                      <strong>Notificação / Pendência</strong>
-                      <span>Intimação com prazo legal</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-red" data-cat="fiscal" data-doctype="infracao" onclick="selecionarTipoDocumento('infracao', this)">
-                      <i class="fas fa-gavel"></i>
-                      <strong>Auto de Infração (AI)</strong>
-                      <span>Lei 10.083/98 + UFESP</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-purple" data-cat="fiscal" data-doctype="termo_vistoria" onclick="selecionarTipoDocumento('termo_vistoria', this)">
-                      <i class="fas fa-clipboard-check"></i>
-                      <strong>Termo de Vistoria</strong>
-                      <span>Inspeção sanitária local</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-red" data-cat="fiscal" data-doctype="termo_interdicao" onclick="selecionarTipoDocumento('termo_interdicao', this)">
-                      <i class="fas fa-ban"></i>
-                      <strong>Interdição / Desinterd.</strong>
-                      <span>Termo Cautelar / Liberação</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-purple" data-cat="fiscal" data-doctype="oficio" onclick="selecionarTipoDocumento('oficio', this)">
-                      <i class="fas fa-file-alt"></i>
-                      <strong>Ofício / Livre (IA)</strong>
-                      <span>Título e texto sob medida</span>
-                    </button>
-
-                    <!-- CATEGORIA 5: ANVISA & CONTROLADOS (5) -->
-                    <button type="button" class="docgen-type-card theme-purple" data-cat="anvisa" data-doctype="autorizacao_talonario" onclick="selecionarTipoDocumento('autorizacao_talonario', this)">
-                      <i class="fas fa-list-ol"></i>
-                      <strong>Autoriz. Talonário / SNCR</strong>
-                      <span>Faixa numérica p/ gráfica</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-purple" data-cat="anvisa" data-doctype="termo_livro" onclick="selecionarTipoDocumento('termo_livro', this)">
-                      <i class="fas fa-book-medical"></i>
-                      <strong>Termo Livro Controlados</strong>
-                      <span>Abertura / Encerr. Port. 344</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-yellow" data-cat="anvisa" data-doctype="termo_inutilizacao" onclick="selecionarTipoDocumento('termo_inutilizacao', this)">
-                      <i class="fas fa-trash-restore-alt"></i>
-                      <strong>Termo Inutilização</strong>
-                      <span>Descarte Controlados</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="anvisa" data-doctype="afe_anvisa" onclick="selecionarTipoDocumento('afe_anvisa', this)">
-                      <i class="fas fa-landmark"></i>
-                      <strong>Autorização AFE / AE</strong>
-                      <span>Regularização Federal ANVISA</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="anvisa" data-doctype="cbpf_anvisa" onclick="selecionarTipoDocumento('cbpf_anvisa', this)">
-                      <i class="fas fa-medal"></i>
-                      <strong>Cert. Boas Práticas (CBPF)</strong>
-                      <span>Fabricação / Distrib. ANVISA</span>
-                    </button>
-                    <!-- CATEGORIA 6: COMÉRCIOS EM GERAL & SERVIÇOS (10) + UPA + PROCURAÇÃO (2) = +12 (TOTAL 50) -->
-                    <button type="button" class="docgen-type-card theme-green" data-cat="clinicos" data-doctype="atestado_upa" onclick="selecionarTipoDocumento('atestado_upa', this)">
-                      <i class="fas fa-hospital-alt"></i>
-                      <strong>Atestado UPA 24h</strong>
-                      <span>Pronto Atendimento / SUS</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-yellow" data-cat="comercios" data-doctype="carrocinha_rua" onclick="selecionarTipoDocumento('carrocinha_rua', this)">
-                      <i class="fas fa-hotdog"></i>
-                      <strong>Carrocinha / Ambulante</strong>
-                      <span>Comida de Rua / Food Truck</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-yellow" data-cat="comercios" data-doctype="fast_food" onclick="selecionarTipoDocumento('fast_food', this)">
-                      <i class="fas fa-hamburger"></i>
-                      <strong>Fast Food / Lanchonete</strong>
-                      <span>Hamburgueria / Pastelaria</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-purple" data-cat="comercios" data-doctype="adega_tabacaria" onclick="selecionarTipoDocumento('adega_tabacaria', this)">
-                      <i class="fas fa-wine-bottle"></i>
-                      <strong>Adega & Tabacaria</strong>
-                      <span>Bebidas / Conveniência</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="comercios" data-doctype="studio_nails" onclick="selecionarTipoDocumento('studio_nails', this)">
-                      <i class="fas fa-hand-sparkles"></i>
-                      <strong>Studio Nails / Manicure</strong>
-                      <span>Esterilização & Biosseg.</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="comercios" data-doctype="salao_barbearia" onclick="selecionarTipoDocumento('salao_barbearia', this)">
-                      <i class="fas fa-cut"></i>
-                      <strong>Salão & Barbearia</strong>
-                      <span>Estética / Cabeleireiro</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="comercios" data-doctype="mercado_padaria" onclick="selecionarTipoDocumento('mercado_padaria', this)">
-                      <i class="fas fa-shopping-basket"></i>
-                      <strong>Mercado / Padaria</strong>
-                      <span>Açougue / Hortifrúti</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="comercios" data-doctype="pet_shop" onclick="selecionarTipoDocumento('pet_shop', this)">
-                      <i class="fas fa-paw"></i>
-                      <strong>Pet Shop / Banho & Tosa</strong>
-                      <span>Clínica Vet / Animais</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="comercios" data-doctype="academia_fitness" onclick="selecionarTipoDocumento('academia_fitness', this)">
-                      <i class="fas fa-dumbbell"></i>
-                      <strong>Academia / Pilates</strong>
-                      <span>Estúdio Fitness / Cross</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="comercios" data-doctype="dedetizacao_caixa" onclick="selecionarTipoDocumento('dedetizacao_caixa', this)">
-                      <i class="fas fa-spray-can"></i>
-                      <strong>Cert. Pragas & Caixa</strong>
-                      <span>Dedetização / Reservatório</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-purple" data-cat="comercios" data-doctype="plano_pgrss" onclick="selecionarTipoDocumento('plano_pgrss', this)">
-                      <i class="fas fa-recycle"></i>
-                      <strong>Declaração PGRSS / BPF</strong>
-                      <span>Resíduos & Boas Práticas</span>
-                    </button>
-                    <button type="button" class="docgen-type-card" data-cat="fiscal" data-doctype="procuracao_sanitaria" onclick="selecionarTipoDocumento('procuracao_sanitaria', this)">
-                      <i class="fas fa-file-signature"></i>
-                      <strong>Procuração Sanitária</strong>
-                      <span>Representação / Advogado</span>
-                    </button>
-                    <!-- +10 NOVOS MODELOS DE RECEITAS, CLÍNICOS E COMÉRCIOS (TOTAL 60) -->
-                    <button type="button" class="docgen-type-card theme-green" data-cat="receitas" data-doctype="receita_veterinaria" onclick="selecionarTipoDocumento('receita_veterinaria', this)">
-                      <i class="fas fa-paw"></i>
-                      <strong>Receita Veterinária</strong>
-                      <span>Médico Veterinário (CRMV)</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-purple" data-cat="receitas" data-doctype="receita_manipulacao" onclick="selecionarTipoDocumento('receita_manipulacao', this)">
-                      <i class="fas fa-mortar-pestle"></i>
-                      <strong>Receita Manipulação</strong>
-                      <span>Fórmula Magistral / Farmácia</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="receitas" data-doctype="receita_fitoterapico" onclick="selecionarTipoDocumento('receita_fitoterapico', this)">
-                      <i class="fas fa-leaf"></i>
-                      <strong>Receita Fitoterápica / Nutro</strong>
-                      <span>Nutricionista (CRN) / Suplem.</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="receitas" data-doctype="receita_oftalmo" onclick="selecionarTipoDocumento('receita_oftalmo', this)">
-                      <i class="fas fa-glasses"></i>
-                      <strong>Receita Oftalmológica</strong>
-                      <span>Prescrição de Óculos / Grau</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-red" data-cat="receitas" data-doctype="receita_especial_c2" onclick="selecionarTipoDocumento('receita_especial_c2', this)">
-                      <i class="fas fa-file-prescription"></i>
-                      <strong>Receita Especial C2</strong>
-                      <span>Retinoides / Controle Rigoroso</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="receitas" data-doctype="receita_homeopatia" onclick="selecionarTipoDocumento('receita_homeopatia', this)">
-                      <i class="fas fa-seedling"></i>
-                      <strong>Receita Homeopática</strong>
-                      <span>Dinamizações / Gotas / Glób.</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="clinicos" data-doctype="atestado_aptidao" onclick="selecionarTipoDocumento('atestado_aptidao', this)">
-                      <i class="fas fa-running"></i>
-                      <strong>Atestado Aptidão Física</strong>
-                      <span>Academia / Piscina / Esporte</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-green" data-cat="clinicos" data-doctype="declaracao_acompanhante" onclick="selecionarTipoDocumento('declaracao_acompanhante', this)">
-                      <i class="fas fa-users"></i>
-                      <strong>Decl. Acompanhante</strong>
-                      <span>Justificativa Trabalho/Escola</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-purple" data-cat="comercios" data-doctype="alvara_clinica_estetica" onclick="selecionarTipoDocumento('alvara_clinica_estetica', this)">
-                      <i class="fas fa-syringe"></i>
-                      <strong>Clínica Estética Avançada</strong>
-                      <span>Harmonização / Injetáveis</span>
-                    </button>
-                    <button type="button" class="docgen-type-card theme-blue" data-cat="comercios" data-doctype="alvara_farmacia" onclick="selecionarTipoDocumento('alvara_farmacia', this)">
-                      <i class="fas fa-prescription-bottle"></i>
-                      <strong>Farmácia / Drogaria</strong>
-                      <span>SNGPC / Dispensação / RT</span>
-                    </button>
-                  </div>
+                  <div class="docgen-types-grid" id="docgen-types-grid"></div>
                 </div>
 
                 <!-- 1B. RENOVADOR POR FOTO (DOCUMENTO VELHO -> PDF NOVO + O QUE FALTA PERGUNTAR) -->
@@ -2719,7 +2448,7 @@
                   <i class="fas fa-file-contract" style="font-size: 3.8rem; color: #38bdf8; opacity: 0.4; margin-bottom: 14px; display: block;"></i>
                   <h3 style="color:#ffffff; margin-bottom:8px;">Pronto para Emitir</h3>
                   <p style="font-size:0.9rem; line-height:1.55;">
-                    Escolha entre os <strong>38 modelos oficiais</strong> ao lado (Alvará LFS, Licença Provisória, Receitas SUS/Controladas, Atestado, Laudo, Exames, Guias PIX, ANVISA) e clique em <strong>Gerar Prévia</strong>.
+                    Escolha entre os <strong>100 modelos oficiais</strong> ao lado (Receitas, Atestados, Clínicos, Comércios, Alvarás COVISA, Planilhas POP/MBP, Defesas e ANVISA) e clique em <strong>Gerar Prévia</strong>.
                   </p>
                 </div>
                 <iframe id="docgen-pdf-iframe" title="Prévia do Documento PDF"></iframe>
@@ -2727,12 +2456,27 @@
 
               <!-- LIBERAR DOCUMENTO PARA O CLIENTE BAIXAR NO SITE (2. CONSULTAR ANDAMENTO) -->
               <div style="padding: 12px 14px; background: #0a1426; border-top: 1px solid #1f2f4d; display: flex; flex-direction: column; gap: 8px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                  <strong style="color:#34d399; font-size:0.82rem;"><i class="fas fa-cloud-upload-alt"></i> Liberar este PDF para Download do Cliente no Site</strong>
-                  <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; color:#fde68a; font-weight:700; cursor:pointer;" title="Marque APENAS se o cliente precisar imprimir, assinar e reenviar (ex: Licença Definitiva)">
+                <div class="docgen-sec-toggles">
+                  <label class="docgen-sec-toggle-lbl" title="Adiciona marca d'água diagonal anti-fraude em todas as páginas do PDF">
+                    <input type="checkbox" id="docgen-marca-agua" onchange="sincronizarSegurancaPdfDocGen(true)" />
+                    <i class="fas fa-tint" style="color:#38bdf8;"></i> Marca d'Água PDF
+                  </label>
+                  <label class="docgen-sec-toggle-lbl" title="Adiciona selo dourado oficial de autenticidade COVISA/ANVISA no PDF">
+                    <input type="checkbox" id="docgen-selo-dourado" onchange="sincronizarSegurancaPdfDocGen(true)" />
+                    <i class="fas fa-award" style="color:#facc15;"></i> Selo Dourado Segurança
+                  </label>
+                  <select id="docgen-orgao-selo" onchange="sincronizarSegurancaPdfDocGen(true)" style="background:#040914; border:1px solid #eab308; color:#fef08a; padding:4px 8px; border-radius:7px; font-size:0.74rem; font-weight:800;">
+                    <option value="COVISA">COVISA SP</option>
+                    <option value="ANVISA">ANVISA</option>
+                    <option value="COVISA / ANVISA">COVISA + ANVISA</option>
+                  </select>
+                  <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; color:#e2e8f0; font-weight:700; cursor:pointer; margin-left:auto;" title="Marque APENAS se o cliente precisar imprimir, assinar e reenviar (ex: Licença Definitiva)">
                     <input type="checkbox" id="docgen-liberar-assinatura" style="width:14px; height:14px; accent-color:#f59e0b;" />
                     Exigir assinatura do cliente?
                   </label>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                  <strong style="color:#34d399; font-size:0.8rem;"><i class="fas fa-cloud-upload-alt"></i> Liberar este PDF para Download do Cliente no Site</strong>
                 </div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
                   <input type="text" id="docgen-liberar-titulo" placeholder="Nome do botão no site (ex: Alvará Sanitário 2026)" style="flex:1; min-width:180px; background:#040914; border:1px solid #26385a; color:#fff; padding:8px 11px; border-radius:8px; font-size:0.82rem;" />
@@ -7059,12 +6803,18 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
 
     const DOCGEN_RECEITA_CONTROLADA_TYPES = new Set([
         'receita_a', 'receita_b', 'receita_b2', 'receita_retinoides',
-        'receita_branca', 'receita_antimicrobiano', 'receita_glp1'
+        'receita_branca', 'receita_antimicrobiano', 'receita_glp1',
+        'receita_talidomida', 'receita_a_vet', 'receita_b_vet'
     ]);
     const DOCGEN_CLINICO_SUS_TYPES = new Set([
-        'receita_sus', 'receita_odonto', 'atestado_medico', 'laudo_medico',
-        'declaracao_comparecimento', 'solicitacao_exames', 'guia_referencia',
-        'lme_sus', 'ter_consentimento', 'civp_vacina'
+        'receita_sus', 'receita_odonto', 'receita_veterinaria', 'receita_manipulacao',
+        'receita_fitoterapico', 'receita_oftalmo', 'laudo_apac', 'receita_homeopatia',
+        'atestado_medico', 'atestado_upa', 'atestado_aptidao', 'laudo_medico',
+        'declaracao_comparecimento', 'declaracao_acompanhante', 'solicitacao_exames',
+        'guia_referencia', 'lme_sus', 'ter_consentimento', 'civp_vacina',
+        'termo_talidomida', 'importacao_excepcional', 'transporte_medicamentos',
+        'ficha_anamnese', 'prontuario_atendimento', 'relatorio_alta', 'termo_cirurgico',
+        'termo_estetico', 'termo_recusa', 'copia_prontuario', 'ficha_sinan'
     ]);
     const DOCGEN_MEDICO_TYPES = new Set([
         ...DOCGEN_RECEITA_CONTROLADA_TYPES,
@@ -7074,7 +6824,10 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
     ]);
     const DOCGEN_ALVARA_META_TYPES = new Set([
         'alvara_oficial', 'licenca_pf_home', 'renovacao_licenca',
-        'cmvs_rt', 'assuncao_rt', 'dca_dcff', 'afe_anvisa', 'cbpf_anvisa'
+        'cmvs_rt', 'assuncao_rt', 'dca_dcff', 'afe_anvisa', 'cbpf_anvisa',
+        'carrocinha_rua', 'fast_food', 'adega_tabacaria', 'studio_nails',
+        'salao_barbearia', 'mercado_padaria', 'pet_shop', 'academia_fitness',
+        'alvara_clinica_estetica', 'alvara_farmacia', 'certificado_cli', 'ficha_cnes'
     ]);
 
     function formatarDataBR(d) {
@@ -9617,6 +9370,9 @@ REGRAS:
             tituloCustom: (document.getElementById('docgen-titulo-custom')?.value || '').trim(),
             vistoriaStatus: (document.getElementById('docgen-vistoria-status')?.value || '').trim(),
             usarAssinaturaFixa: document.getElementById('docgen-usar-assinatura-fixa')?.checked !== false,
+            marcaAgua: document.getElementById('docgen-marca-agua')?.checked === true,
+            seloDourado: document.getElementById('docgen-selo-dourado')?.checked === true,
+            orgaoSelo: (document.getElementById('docgen-orgao-selo')?.value || 'COVISA').trim(),
             renderMode: document.getElementById('docgen-render-mode')?.value || 'oficial',
             fiscal: (document.getElementById('docgen-fiscal')?.value || 'Giliard De Oliveira Santiago').trim(),
             cargo: (document.getElementById('docgen-cargo')?.value || 'Assessor Técnico CEVISA/COVIS/SMS').trim()
@@ -9706,6 +9462,10 @@ REGRAS:
             const ehClinicoSus = DOCGEN_CLINICO_SUS_TYPES.has(dados.tipo);
             const ehAlvaraOficial = ['alvara_oficial', 'licenca_pf_home', 'renovacao_licenca', 'carrocinha_rua', 'fast_food', 'adega_tabacaria', 'studio_nails', 'salao_barbearia', 'mercado_padaria', 'pet_shop', 'academia_fitness', 'alvara_clinica_estetica', 'alvara_farmacia'].includes(dados.tipo);
 
+            const meta100 = (window.DOCGEN_CATALOG_100_MAP && window.DOCGEN_CATALOG_100_MAP[dados.tipo]) || null;
+            const nativosClinicos = new Set(['receita_sus', 'receita_odonto', 'atestado_medico', 'laudo_medico', 'solicitacao_exames', 'civp_vacina', 'lme_sus', 'declaracao_comparecimento', 'guia_referencia']);
+            const nativosCtrl = new Set(['receita_a', 'receita_b', 'receita_b2', 'receita_retinoides', 'receita_branca', 'receita_antimicrobiano', 'receita_glp1']);
+
             if (dados.renderMode === 'molde_repo' && DOCGEN_REPO_FILES[dados.tipo]) {
                 try {
                     pdfBytes = await construirPdfSobreMoldeRepo(dados.tipo, dados);
@@ -9714,14 +9474,23 @@ REGRAS:
                         ? await construirPdfReceitaEspecial(dados.tipo, dados)
                         : await construirPdfInstitucionalA4(dados.tipo, dados);
                 }
-            } else if (ehControlada) {
+            } else if (nativosCtrl.has(dados.tipo)) {
                 pdfBytes = await construirPdfReceitaEspecial(dados.tipo, dados);
-            } else if (ehClinicoSus) {
+            } else if (nativosClinicos.has(dados.tipo)) {
                 pdfBytes = await construirPdfClinicoSUS(dados.tipo, dados);
             } else if (ehAlvaraOficial) {
                 pdfBytes = await construirPdfAlvaraOficial(dados.tipo, dados);
+            } else if (meta100 && meta100.engine === 'clinico_pro') {
+                pdfBytes = await construirPdfClinicoAvancado100(meta100, dados);
+            } else if (meta100 && (meta100.engine === 'planilha' || meta100.engine === 'requerimento' || meta100.engine === 'defesa' || meta100.engine === 'receita_esp_extra')) {
+                pdfBytes = await construirPdfEspecializado100(meta100, dados);
             } else {
                 pdfBytes = await construirPdfInstitucionalA4(dados.tipo, dados);
+            }
+
+            // Aplica Marca d'Água Anti-Fraude e/ou Selo Dourado de Segurança (COVISA / ANVISA) se marcados
+            if (dados.marcaAgua || dados.seloDourado) {
+                pdfBytes = await aplicarSegurancaAntiFraudePDF(pdfBytes, dados);
             }
 
             const docLimpo = (dados.cnpj || dados.crm || dados.protocolo).replace(/[^a-zA-Z0-9]/g, '') || 'COVISA';
@@ -10803,7 +10572,10 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
                 drawTextFitPDF(page2, `Página 2/2 — Anexo Fotográfico Oficial • Protocolo ${protocolo} • ${cidadeAuto}, ${dataAuto}`, 32, 26, fontReg, 7.0, width - 64, corCinza);
             }
 
-            const pdfBytes = await pdfDoc.save();
+            let pdfBytes = await pdfDoc.save();
+            if (dados.marcaAgua || dados.seloDourado) {
+                pdfBytes = await aplicarSegurancaAntiFraudePDF(pdfBytes, dados);
+            }
             const docLimpo = (cnpj || protocolo).replace(/[^a-zA-Z0-9]/g, '') || 'COVISA';
             const filename = ehMulta
                 ? `Auto_Infracao_IA_${docLimpo}.pdf`
@@ -12948,6 +12720,455 @@ Responda APENAS JSON válido:
             if (s4) s4.innerText = `${gpsCnt} GPS • ${ipCnt} IP`;
         } catch (_) {}
     }, 4000);
+
+    // =========================================================================
+    // CATÁLOGO OFICIAL COMPLETO — 100 MODELOS (COVISA • ANVISA • SUS)
+    // =========================================================================
+    const DOCGEN_CATALOG_100 = [
+        // 1. RECEITUÁRIOS E PRESCRIÇÕES (1-15)
+        { num: 1, id: 'receita_sus', cat: 'receitas', engine: 'clinico', theme: 'theme-green', icon: 'fa-file-medical', title: 'Receita Comum (SUS)', sub: 'Simples / Uso contínuo' },
+        { num: 2, id: 'receita_odonto', cat: 'receitas', engine: 'clinico', theme: 'theme-green', icon: 'fa-tooth', title: 'Receita Odontológica', sub: 'Cirurgião-Dentista (CRO)' },
+        { num: 3, id: 'receita_branca', cat: 'receitas', engine: 'ctrl', theme: '', icon: 'fa-notes-medical', title: 'Receita Controle Especial (C1/C5)', sub: 'Branca 2 Vias Port. 344' },
+        { num: 4, id: 'receita_antimicrobiano', cat: 'receitas', engine: 'ctrl', theme: 'theme-blue', icon: 'fa-tablets', title: 'Receita Antimicrobianos', sub: 'Retenção RDC 471 (2 Vias)' },
+        { num: 5, id: 'receita_glp1', cat: 'receitas', engine: 'ctrl', theme: 'theme-blue', icon: 'fa-syringe', title: 'Receita Agonistas GLP-1', sub: 'Retenção Obrigatória 2 Vias' },
+        { num: 6, id: 'receita_a', cat: 'receitas', engine: 'ctrl', theme: 'theme-yellow', icon: 'fa-prescription-bottle-alt', title: 'Notif. Receita A (Amarela)', sub: 'Entorpecentes A1/A2/A3' },
+        { num: 7, id: 'receita_b', cat: 'receitas', engine: 'ctrl', theme: 'theme-blue', icon: 'fa-capsules', title: 'Notif. Receita B (Azul)', sub: 'Psicotrópicos Lista B1' },
+        { num: 8, id: 'receita_b2', cat: 'receitas', engine: 'ctrl', theme: 'theme-blue', icon: 'fa-pills', title: 'Notif. Receita B2 (Azul)', sub: 'Anorexígenos Lista B2' },
+        { num: 9, id: 'receita_retinoides', cat: 'receitas', engine: 'ctrl', theme: 'theme-red', icon: 'fa-exclamation-circle', title: 'Notif. Receita Retinoides (C2)', sub: 'Uso Sistêmico Lista C2' },
+        { num: 10, id: 'receita_veterinaria', cat: 'receitas', engine: 'clinico_pro', theme: 'theme-green', icon: 'fa-paw', title: 'Receita Veterinária Comum', sub: 'Médico-Veterinário (CRMV)', pdfTitle: 'RECEITUÁRIO MÉDICO-VETERINÁRIO (CRMV)', pdfSub: 'Prescrição de Uso Veterinário • MAPA / Vigilância Sanitária', cor: [0.05, 0.45, 0.32], labelProf: 'MÉDICO-VETERINÁRIO (CRMV)', campos: ['Espécie / Raça / Nome do Animal', 'Tutor / Responsável', 'Peso / Idade'], corpo: 'USO VETERINÁRIO — Prescrição e Posologia:\n\n1. __________________________________________________________________________\n\n2. __________________________________________________________________________' },
+        { num: 11, id: 'receita_manipulacao', cat: 'receitas', engine: 'clinico_pro', theme: 'theme-purple', icon: 'fa-mortar-pestle', title: 'Receita Manipulação (Magistral)', sub: 'Fórmula Individualizada', pdfTitle: 'RECEITUÁRIO DE MANIPULAÇÃO / FÓRMULA MAGISTRAL', pdfSub: 'Prescrição Individualizada para Farmácia de Manipulação • RDC ANVISA 67/2007', cor: [0.38, 0.16, 0.58], labelProf: 'PRESCRITOR HABILITADO', campos: ['Paciente', 'CPF / Data Nasc.', 'Via de Administração'], corpo: 'FÓRMULA MANIPULADA (USO INTERNO / EXTERNO):\n\nAtivos e Concentrações (q.s.p.):\n1. __________________________________________________________________________\n2. __________________________________________________________________________\nPosologia / Modo de Usar:' },
+        { num: 12, id: 'receita_fitoterapico', cat: 'receitas', engine: 'clinico_pro', theme: 'theme-green', icon: 'fa-leaf', title: 'Prescrição Fitoterápica / Supl.', sub: 'Nutricionista (CRN) / Supl.', pdfTitle: 'PRESCRIÇÃO FITOTERÁPICA & SUPLEMENTAÇÃO', pdfSub: 'Fitoterápicos e Suplementos Alimentares • RDC ANVISA nº 26/2014', cor: [0.08, 0.48, 0.24], labelProf: 'PROFISSIONAL PRESCRITOR (CRN/CRM)', campos: ['Paciente', 'Objetivo Nutricional / Clínico', 'Duração'], corpo: 'PRESCRIÇÃO DE FITOTERÁPICOS / SUPLEMENTOS:\n\n1. __________________________________________________________________________\n\n2. __________________________________________________________________________\nOrientações de uso e horários:' },
+        { num: 13, id: 'receita_oftalmo', cat: 'receitas', engine: 'clinico_pro', theme: 'theme-blue', icon: 'fa-glasses', title: 'Prescrição Oftalmológica', sub: 'Grau de Óculos / Lentes', pdfTitle: 'PRESCRIÇÃO OFTALMOLÓGICA — ÓCULOS E LENTES', pdfSub: 'Exame de Refração Ocular • Grau Longe / Perto • DNP e Adição', cor: [0.06, 0.30, 0.58], labelProf: 'OFTALMOLOGISTA / PROFISSIONAL', campos: ['Paciente', 'CPF / RG', 'Tipo de Lente Recomendada'], corpo: 'PARA LONGE:\nOlho Direito (OD):  Esf: ________   Cil: ________   Eixo: ________   DNP: ________\nOlho Esquerdo (OE): Esf: ________   Cil: ________   Eixo: ________   DNP: ________\n\nPARA PERTO / ADIÇÃO:\nOlho Direito (OD):  Esf: ________   Cil: ________   Eixo: ________   Adição: _____\nOlho Esquerdo (OE): Esf: ________   Cil: ________   Eixo: ________   Observações:' },
+        { num: 14, id: 'laudo_apac', cat: 'receitas', engine: 'clinico_pro', theme: 'theme-blue', icon: 'fa-file-medical-alt', title: 'Laudo Solicitação APAC (SUS)', sub: 'Procedimentos Ambulatoriais', pdfTitle: 'LAUDO PARA SOLICITAÇÃO DE PROCEDIMENTO AMBULATORIAL (APAC - SUS)', pdfSub: 'Sistema Único de Saúde • Autorização de Procedimentos de Alta Complexidade', cor: [0.05, 0.28, 0.56], labelProf: 'MÉDICO SOLICITANTE (CRM / CNS)', campos: ['Nome do Paciente', 'Cartão Nacional de Saúde (CNS)', 'CID-10 Principal / Procedimento'], corpo: 'JUSTIFICATIVA CLÍNICA E PROCEDIMENTO SOLICITADO:\nSolicito autorização via APAC para realização do procedimento ambulatorial especificado, conforme quadro clínico, exames complementares e protocolo clínico do SUS.\n\nDescrição dos achados clínicos:' },
+        { num: 15, id: 'receita_homeopatia', cat: 'receitas', engine: 'clinico_pro', theme: 'theme-green', icon: 'fa-seedling', title: 'Receita Homeopática', sub: 'Dinamizações / Gotas / Glób.', pdfTitle: 'RECEITUÁRIO HOMEOPÁTICO OFICIAL', pdfSub: 'Prescrição de Preparações Homeopáticas • Farmacopeia Homeopática Brasileira', cor: [0.06, 0.44, 0.36], labelProf: 'PRESCRITOR HOMEOPATA', campos: ['Paciente', 'Apresentação (Gotas/Glóbulos)', 'Validade'], corpo: 'USO HOMEOPÁTICO:\n\n1. __________________________________________________________________________\n\nDinamização / Escala / Frequência de Tomada:' },
+
+        // 2. DOCUMENTOS CLÍNICOS E UPA (16-26)
+        { num: 16, id: 'atestado_medico', cat: 'clinicos', engine: 'clinico', theme: 'theme-green', icon: 'fa-file-signature', title: 'Atestado Médico', sub: 'Afastamento / Repouso' },
+        { num: 17, id: 'atestado_upa', cat: 'clinicos', engine: 'clinico_pro', theme: 'theme-red', icon: 'fa-hospital-alt', title: 'Atestado de UPA 24h', sub: 'Pronto Atendimento Urgência', pdfTitle: 'ATESTADO MÉDICO — UPA 24H (PRONTO ATENDIMENTO)', pdfSub: 'Unidade de Pronto Atendimento 24h • SUS / Urgência e Emergência', cor: [0.76, 0.12, 0.14], labelProf: 'MÉDICO PLANTONISTA UPA 24H', campos: ['Paciente Atendido', 'CPF / Cartão SUS', 'Entrada / Saída (Horário)'], corpo: 'Atesto para os devidos fins que o(a) paciente acima identificado(a) foi atendido(a) nesta Unidade de Pronto Atendimento (UPA 24h) na data de hoje, necessitando de afastamento de suas atividades laborais/escolares por _____ (__________) dia(s) para repouso e recuperação clínica.\n\n[  ] Autorizo divulgação do CID-10: __________   Assinatura do Paciente: ___________________' },
+        { num: 18, id: 'atestado_aptidao', cat: 'clinicos', engine: 'clinico_pro', theme: 'theme-blue', icon: 'fa-swimmer', title: 'Atestado Aptidão Física (Piscina)', sub: 'Academia / Piscina / Esporte', pdfTitle: 'ATESTADO MÉDICO DE APTIDÃO FÍSICA (PISCINA / ACADEMIA / ESPORTE)', pdfSub: 'Avaliação Clínica e Dermatológica para Atividades Físicas e Aquáticas', cor: [0.05, 0.34, 0.64], labelProf: 'MÉDICO AVALIADOR (CRM)', campos: ['Nome Completo do Paciente', 'CPF / RG', 'Modalidade (Piscina / Academia / Esporte)'], corpo: 'Atesto para os devidos fins que o(a) paciente acima identificado(a) foi submetido(a) a avaliação clínica e dermatológica na data de hoje, encontrando-se APTO(A) para a prática de atividades físicas, musculação, natação/uso de piscina e esportes em geral, não apresentando contraindicações clínicas, cardiorrespiratórias ou dermatológicas (micoses/lesões contagiosas) no momento do exame.\n\nValidade sugerida deste atestado: 180 dias a partir da data de emissão.' },
+        { num: 19, id: 'laudo_medico', cat: 'clinicos', engine: 'clinico', theme: 'theme-blue', icon: 'fa-stethoscope', title: 'Laudo / Relatório Médico', sub: 'Avaliação Clínica / CID' },
+        { num: 20, id: 'declaracao_comparecimento', cat: 'clinicos', engine: 'clinico', theme: 'theme-green', icon: 'fa-user-check', title: 'Declaração de Comparecimento', sub: 'Presença em Atendimento' },
+        { num: 21, id: 'declaracao_acompanhante', cat: 'clinicos', engine: 'clinico_pro', theme: 'theme-green', icon: 'fa-users', title: 'Declaração de Acompanhante', sub: 'Justificativa Trabalho/Escola', pdfTitle: 'DECLARAÇÃO DE COMPARECIMENTO — ACOMPANHANTE', pdfSub: 'Comprovante Oficial de Presença como Acompanhante em Serviço de Saúde', cor: [0.05, 0.46, 0.34], labelProf: 'UNIDADE DE SAÚDE / RESPONSÁVEL', campos: ['Nome do Acompanhante', 'CPF / RG do Acompanhante', 'Paciente Acompanhado / Horário'], corpo: 'Declaramos para os devidos fins trabalhistas e escolares que o(a) cidadão(ã) acima identificado(a) compareceu a esta unidade de saúde na data de hoje, no período das ____:____ às ____:____ horas, na condição de ACOMPANHANTE de paciente em atendimento/procedimento assistencial.' },
+        { num: 22, id: 'solicitacao_exames', cat: 'clinicos', engine: 'clinico', theme: 'theme-blue', icon: 'fa-vials', title: 'Solicitação de Exames', sub: 'Laboratorial / Imagem' },
+        { num: 23, id: 'guia_referencia', cat: 'clinicos', engine: 'clinico', theme: 'theme-blue', icon: 'fa-exchange-alt', title: 'Guia de Encaminhamento', sub: 'Referência Especialista SUS' },
+        { num: 24, id: 'lme_sus', cat: 'clinicos', engine: 'clinico', theme: 'theme-purple', icon: 'fa-hand-holding-medical', title: 'LME — Medicamentos CEAF', sub: 'Alto Custo SUS' },
+        { num: 25, id: 'ter_consentimento', cat: 'clinicos', engine: 'clinico_pro', theme: 'theme-yellow', icon: 'fa-handshake', title: 'Termo de Consentimento (TER)', sub: 'Riscos e Responsabilidades', pdfTitle: 'TERMO DE ESCLARECIMENTO E RESPONSABILIDADE (TER)', pdfSub: 'Registro de Ciência de Riscos, Benefícios e Condições do Tratamento', cor: [0.68, 0.38, 0.04], labelProf: 'MÉDICO RESPONSÁVEL (CRM)', campos: ['Nome do Paciente / Responsável', 'CPF / RG', 'Medicamento / Tratamento'], corpo: 'Declaro ter sido devidamente esclarecido(a) pelo(a) profissional prescritor(a) sobre os benefícios, riscos, possíveis efeitos adversos, contraindicações e cuidados necessários relacionados ao tratamento proposto, concordando livremente com sua realização.\n\nAssinatura do Paciente ou Responsável Legal: ______________________________________' },
+        { num: 26, id: 'civp_vacina', cat: 'clinicos', engine: 'clinico', theme: 'theme-green', icon: 'fa-shield-alt', title: 'Comprovante Vacinal / CIVP', sub: 'Vacinas / Viagem Internac.' },
+
+        // 3. ESTABELECIMENTOS COMERCIAIS E SERVIÇOS (27-38)
+        { num: 27, id: 'carrocinha_rua', cat: 'comercios', engine: 'alvara', theme: 'theme-yellow', icon: 'fa-hotdog', title: 'Roteiro / Lic. Ambulante', sub: 'Carrocinha / Food Truck' },
+        { num: 28, id: 'fast_food', cat: 'comercios', engine: 'alvara', theme: 'theme-yellow', icon: 'fa-hamburger', title: 'Roteiro / Lic. Fast Food', sub: 'Lanchonete / Pastelaria' },
+        { num: 29, id: 'adega_tabacaria', cat: 'comercios', engine: 'alvara', theme: 'theme-purple', icon: 'fa-wine-bottle', title: 'Roteiro / Lic. Adega', sub: 'Bebidas / Tabacaria' },
+        { num: 30, id: 'studio_nails', cat: 'comercios', engine: 'alvara', theme: 'theme-blue', icon: 'fa-hand-sparkles', title: 'Roteiro / Lic. Studio Nails', sub: 'Manicure / Biossegurança' },
+        { num: 31, id: 'salao_barbearia', cat: 'comercios', engine: 'alvara', theme: 'theme-blue', icon: 'fa-cut', title: 'Roteiro / Lic. Salão/Barb.', sub: 'Estética / Cabeleireiro' },
+        { num: 32, id: 'mercado_padaria', cat: 'comercios', engine: 'alvara', theme: 'theme-green', icon: 'fa-shopping-basket', title: 'Roteiro / Lic. Mercado', sub: 'Padaria / Açougue' },
+        { num: 33, id: 'pet_shop', cat: 'comercios', engine: 'alvara', theme: 'theme-green', icon: 'fa-paw', title: 'Roteiro / Lic. Pet Shop', sub: 'Banho & Tosa / Vet' },
+        { num: 34, id: 'academia_fitness', cat: 'comercios', engine: 'alvara', theme: 'theme-blue', icon: 'fa-dumbbell', title: 'Roteiro / Lic. Academia', sub: 'Pilates / Estúdio Fitness' },
+        { num: 35, id: 'alvara_clinica_estetica', cat: 'comercios', engine: 'alvara', theme: 'theme-purple', icon: 'fa-syringe', title: 'Clínica Estética Avançada', sub: 'Harmonização / Injetáveis' },
+        { num: 36, id: 'alvara_farmacia', cat: 'comercios', engine: 'alvara', theme: 'theme-blue', icon: 'fa-prescription-bottle', title: 'Farmácia e Drogaria', sub: 'SNGPC / Dispensação / RT' },
+        { num: 37, id: 'dedetizacao_caixa', cat: 'comercios', engine: 'institucional', theme: 'theme-green', icon: 'fa-spray-can', title: 'Cert. Pragas & Caixa d\'Água', sub: 'Dedetização / Reservatório' },
+        { num: 38, id: 'plano_pgrss', cat: 'comercios', engine: 'institucional', theme: 'theme-purple', icon: 'fa-recycle', title: 'Decl. Boas Práticas / PGRSS', sub: 'Resíduos & Rotinas BPF' },
+
+        // 4. LICENÇAS E CADASTROS COVISA (39-47)
+        { num: 39, id: 'alvara_oficial', cat: 'licencas', engine: 'alvara', theme: 'theme-green', icon: 'fa-award', title: 'Licença Sanitária (LFS 2026)', sub: 'Alvará Oficial Port. 266/25' },
+        { num: 40, id: 'licenca', cat: 'licencas', engine: 'institucional', theme: 'theme-green', icon: 'fa-certificate', title: 'Licença Provisória', sub: 'Molde COVISA Regularização' },
+        { num: 41, id: 'licenca_pf_home', cat: 'licencas', engine: 'alvara', theme: 'theme-blue', icon: 'fa-laptop-medical', title: 'Licença PF / Residência', sub: 'Home Office / Telemedicina' },
+        { num: 42, id: 'renovacao_licenca', cat: 'licencas', engine: 'alvara', theme: 'theme-green', icon: 'fa-sync', title: 'Renovação de Licença (LFS)', sub: 'Renovação Anual Sanitária' },
+        { num: 43, id: 'cmvs_rt', cat: 'licencas', engine: 'institucional', theme: 'theme-blue', icon: 'fa-id-badge', title: 'Cadastro CMVS', sub: 'Cadastro Municipal Saúde' },
+        { num: 44, id: 'assuncao_rt', cat: 'licencas', engine: 'institucional', theme: 'theme-blue', icon: 'fa-user-md', title: 'Assunção / Baixa de RT', sub: 'Responsabilidade Técnica' },
+        { num: 45, id: 'dispensa', cat: 'licencas', engine: 'institucional', theme: 'theme-green', icon: 'fa-check-circle', title: 'Dispensa (Baixo Risco)', sub: 'Lei 13.874/19 Liberdade Econ.' },
+        { num: 46, id: 'dca_dcff', cat: 'licencas', engine: 'institucional', theme: 'theme-purple', icon: 'fa-clipboard-list', title: 'Declarações DCA / DCFF', sub: 'Conformidade Físico-Funcional' },
+        { num: 47, id: 'declaracao', cat: 'licencas', engine: 'institucional', theme: '', icon: 'fa-stamp', title: 'Declaração / Protocolo', sub: 'Andamento Administrativo' },
+
+        // 5. GUIAS, FISCALIZAÇÃO E REPRESENTAÇÃO (48-55)
+        { num: 48, id: 'guia', cat: 'fiscal', engine: 'institucional', theme: 'theme-green', icon: 'fa-qrcode', title: 'Guia de Taxa + PIX', sub: 'Arrecadação + QR Code' },
+        { num: 49, id: 'recibo_quitacao', cat: 'fiscal', engine: 'institucional', theme: 'theme-green', icon: 'fa-receipt', title: 'Recibo de Quitação', sub: 'Comprovante de Pagamento' },
+        { num: 50, id: 'notificacao', cat: 'fiscal', engine: 'institucional', theme: 'theme-yellow', icon: 'fa-exclamation-triangle', title: 'Notificação / Intimação', sub: 'Exigências e Prazo Legal' },
+        { num: 51, id: 'infracao', cat: 'fiscal', engine: 'institucional', theme: 'theme-red', icon: 'fa-gavel', title: 'Auto de Infração (AI)', sub: 'Lei 10.083/98 + UFESP' },
+        { num: 52, id: 'termo_vistoria', cat: 'fiscal', engine: 'institucional', theme: 'theme-purple', icon: 'fa-clipboard-check', title: 'Termo / Relat. Vistoria', sub: 'Inspeção Sanitária Local' },
+        { num: 53, id: 'termo_interdicao', cat: 'fiscal', engine: 'institucional', theme: 'theme-red', icon: 'fa-ban', title: 'Interdição / Desinterdição', sub: 'Restrição ou Liberação' },
+        { num: 54, id: 'oficio', cat: 'fiscal', engine: 'institucional', theme: 'theme-purple', icon: 'fa-file-alt', title: 'Ofício Administrativo', sub: 'Comunicação Oficial (IA)' },
+        { num: 55, id: 'procuracao_sanitaria', cat: 'fiscal', engine: 'institucional', theme: '', icon: 'fa-file-signature', title: 'Procuração Sanitária', sub: 'Representação em Processos' },
+
+        // 6. ANVISA E CONTROLE DE MEDICAMENTOS (56-60)
+        { num: 56, id: 'autorizacao_talonario', cat: 'anvisa', engine: 'institucional', theme: 'theme-purple', icon: 'fa-list-ol', title: 'Numeração Receituário SNCR', sub: 'Faixa Numérica p/ Gráfica' },
+        { num: 57, id: 'termo_livro', cat: 'anvisa', engine: 'institucional', theme: 'theme-purple', icon: 'fa-book-medical', title: 'Termo Livro Controlados', sub: 'Abertura/Encerr. Port. 344' },
+        { num: 58, id: 'termo_inutilizacao', cat: 'anvisa', engine: 'institucional', theme: 'theme-yellow', icon: 'fa-trash-restore-alt', title: 'Termo Inutiliz. Controlados', sub: 'Descarte e Baixa SNGPC' },
+        { num: 59, id: 'afe_anvisa', cat: 'anvisa', engine: 'institucional', theme: 'theme-blue', icon: 'fa-landmark', title: 'Autorização AFE / AE', sub: 'Regularização Federal ANVISA' },
+        { num: 60, id: 'cbpf_anvisa', cat: 'anvisa', engine: 'institucional', theme: 'theme-green', icon: 'fa-medal', title: 'Certificação CBPF / CBPDA', sub: 'Boas Práticas ANVISA' },
+
+        // 7. RECEITUÁRIOS ESPECIAIS E REGISTROS (61-68)
+        { num: 61, id: 'receita_talidomida', cat: 'especiais', engine: 'receita_esp_extra', theme: 'theme-red', icon: 'fa-radiation-alt', title: 'Notif. Receita Talidomida', sub: 'Lista C3 — RDC 11/2011', pdfTitle: 'NOTIFICAÇÃO DE RECEITA DE TALIDOMIDA (LISTA C3)', pdfSub: 'RDC ANVISA nº 11/2011 • Controle Rigoroso — Proibida para Gestantes', cor: [0.76, 0.10, 0.14], itens: ['Número da Notificação / Série Oficial SNCR', 'Identificação do Médico Cadastrado (CRM/UF)', 'Dados do Paciente, CPF/RG e Faixa Etária', 'Quantidade de Comprimidos e Posologia', 'Identificação do Comprador e Farmacêutico Dispensador'] },
+        { num: 62, id: 'receita_a_vet', cat: 'especiais', engine: 'receita_esp_extra', theme: 'theme-yellow', icon: 'fa-paw', title: 'Notif. Receita A Veterinária', sub: 'Entorpecentes Uso Animal', pdfTitle: 'NOTIFICAÇÃO DE RECEITA "A" — USO VETERINÁRIO (CRMV)', pdfSub: 'Portaria SVS/MS nº 344/1998 • Substâncias Listas A1/A2/A3 — Uso Exclusivo Animal', cor: [0.76, 0.52, 0.04], itens: ['Série / Numeração Oficial Autorizada', 'Médico-Veterinário (CRMV/UF) e Endereço Clínico', 'Identificação do Animal (Espécie, Raça, Nome) e Tutor (CPF)', 'Medicamento Entorpecente, Dosagem e Quantidade', 'Assinatura/Carimbo CRMV e Retenção pela Farmácia'] },
+        { num: 63, id: 'receita_b_vet', cat: 'especiais', engine: 'receita_esp_extra', theme: 'theme-blue', icon: 'fa-capsules', title: 'Notif. Receita B Veterinária', sub: 'Psicotrópicos Uso Animal', pdfTitle: 'NOTIFICAÇÃO DE RECEITA "B" — USO VETERINÁRIO (CRMV)', pdfSub: 'Portaria SVS/MS nº 344/1998 • Psicotrópicos Lista B1 — Uso Exclusivo Animal', cor: [0.06, 0.36, 0.68], itens: ['Série / Numeração Oficial Autorizada', 'Médico-Veterinário (CRMV/UF) e Contato', 'Identificação do Animal e Dados do Tutor', 'Medicamento Psicotrópico, Forma Farmacêutica e Posologia', 'Retenção Obrigatória no Estabelecimento Dispensador'] },
+        { num: 64, id: 'termo_talidomida', cat: 'especiais', engine: 'clinico_pro', theme: 'theme-red', icon: 'fa-file-contract', title: 'Termo Esclarec. Talidomida', sub: 'Responsabilidade Lista C3', pdfTitle: 'TERMO DE RESPONSABILIDADE E ESCLARECIMENTO — TALIDOMIDA', pdfSub: 'RDC ANVISA nº 11/2011 • Ciência de Riscos Teratogênicos e Uso Seguro', cor: [0.76, 0.12, 0.14], labelProf: 'MÉDICO PRESCRITOR CADASTRADO', campos: ['Paciente', 'CPF / RG / Idade', 'Indicação Clínica (CID-10)'], corpo: 'Declaro que fui amplamente informado(a) sobre os riscos graves da Talidomida (teratogenicidade — malformação fetal), comprometendo-me a NÃO compartilhar o medicamento com terceiros, utilizar métodos contraceptivos eficazes quando aplicável e devolver eventuais sobras à unidade dispensadora.\n\nAssinatura do Paciente: ___________________________  Data: ____/____/2026' },
+        { num: 65, id: 'importacao_excepcional', cat: 'especiais', engine: 'clinico_pro', theme: 'theme-purple', icon: 'fa-plane-arrival', title: 'Importação Excepcional Med.', sub: 'Solicitação ANVISA Pessoa Física', pdfTitle: 'SOLICITAÇÃO DE IMPORTAÇÃO EXCEPCIONAL DE MEDICAMENTO', pdfSub: 'RDC ANVISA nº 28/2011 / RDC nº 660/2022 • Uso Próprio sob Prescrição', cor: [0.38, 0.14, 0.56], labelProf: 'MÉDICO PRESCRITOR (CRM)', campos: ['Paciente / Importador', 'CPF / Passaporte', 'Medicamento / Princípio Ativo / Quantidade'], corpo: 'Atesto a necessidade clínica do medicamento importado acima descrito para tratamento continuado do(a) paciente, inexistindo substituto terapêutico equivalente com a mesma resposta clínica disponível no mercado nacional.\n\nJustificativa Médica e Posologia:' },
+        { num: 66, id: 'transporte_medicamentos', cat: 'especiais', engine: 'clinico_pro', theme: 'theme-blue', icon: 'fa-suitcase-rolling', title: 'Decl. Transporte Pessoal Med.', sub: 'Viagem Aérea / Alfândega', pdfTitle: 'DECLARAÇÃO MÉDICA PARA TRANSPORTE PESSOAL DE MEDICAMENTOS', pdfSub: 'Comprovação Clínica de Porte de Medicamentos em Viagens Nacionais/Internacionais', cor: [0.06, 0.30, 0.58], labelProf: 'MÉDICO ASSISTENTE (CRM)', campos: ['Nome do Viajante / Paciente', 'CPF / Passaporte', 'Destino e Período da Viagem'], corpo: 'Declaro para fins de apresentação às autoridades aeroportuárias e alfandegárias que o(a) paciente acima identificado(a) encontra-se sob meus cuidados médicos e necessita portar, para uso estritamente pessoal durante a viagem, os medicamentos listados abaixo:\n\n1. __________________________________________________________________________' },
+        { num: 67, id: 'balanco_bmpo', cat: 'especiais', engine: 'planilha', theme: 'theme-purple', icon: 'fa-table', title: 'Balanço BMPO (Controlados)', sub: 'Movimentação Trimestral/Anual', pdfTitle: 'BALANÇO DE MEDICAMENTOS PSICOATIVOS E OUTROS (BMPO)', pdfSub: 'Portaria SVS/MS nº 344/1998 • Consolidação de Estoque e Movimentação', cor: [0.36, 0.16, 0.56], colunas: ['Substância / Medicamento', 'Est. Inicial', 'Entradas', 'Saídas/Disp.', 'Est. Final'], corpo: 'Consolidado oficial de movimentação de medicamentos sujeitos a controle especial sob responsabilidade do Farmacêutico Responsável Técnico.' },
+        { num: 68, id: 'registro_dispensacao', cat: 'especiais', engine: 'planilha', theme: 'theme-blue', icon: 'fa-clipboard-list', title: 'Registro Dispens. Controlados', sub: 'Rastreabilidade Farmácia', pdfTitle: 'REGISTRO DE DISPENSAÇÃO DE MEDICAMENTOS CONTROLADOS', pdfSub: 'Escrituração e Rastreabilidade Farmacêutica • Portaria SVS/MS nº 344/1998', cor: [0.06, 0.34, 0.62], colunas: ['Data', 'Paciente / Comprador', 'Medicamento / Lote', 'Nº Receita', 'Qtd / CRF'], corpo: 'Registro diário de dispensação de medicamentos controlados conferido e assinado pelo Farmacêutico Responsável.' },
+
+        // 8. DOCUMENTAÇÃO CLÍNICA E HOSPITALAR (69-76)
+        { num: 69, id: 'ficha_anamnese', cat: 'hospitalar', engine: 'clinico_pro', theme: 'theme-blue', icon: 'fa-notes-medical', title: 'Ficha de Anamnese', sub: 'Histórico, Queixas e Alergias', pdfTitle: 'FICHA DE ANAMNESE CLÍNICA DO PACIENTE', pdfSub: 'Registro de Histórico de Saúde, Alergias, Comorbidades e Medicamentos em Uso', cor: [0.06, 0.32, 0.58], labelProf: 'PROFISSIONAL RESPONSÁVEL', campos: ['Nome do Paciente', 'CPF / Data Nasc. / Telefone', 'Alergias Conhecidas (Medicamentos/Alimentos)'], corpo: 'QUEIXA PRINCIPAL / MOTIVO DA CONSULTA:\n_____________________________________________________________________________\n\nHISTÓRICO CLÍNICO / DOENÇAS PRÉVIAS / CIRURGIAS:\n[  ] Hipertensão  [  ] Diabetes  [  ] Cardiopatia  [  ] Gestante  [  ] Uso contínuo de remédios\nObservações:' },
+        { num: 70, id: 'prontuario_atendimento', cat: 'hospitalar', engine: 'clinico_pro', theme: 'theme-blue', icon: 'fa-folder-plus', title: 'Prontuário de Atendimento', sub: 'Evolução e Condutas', pdfTitle: 'PRONTUÁRIO DE ATENDIMENTO E EVOLUÇÃO CLÍNICA', pdfSub: 'Registro Assistencial Confidencial • Resolução CFM nº 1.638/2002', cor: [0.08, 0.28, 0.52], labelProf: 'PROFISSIONAL DE SAÚDE', campos: ['Paciente', 'CPF / Prontuário Nº', 'Sinais Vitais (PA / FC / Temp)'], corpo: 'EXAME FÍSICO / EVOLUÇÃO CLÍNICA:\n_____________________________________________________________________________\n\nHIPÓTESE DIAGNÓSTICA (CID-10) E CONDUTA TERAPÊUTICA:\n_____________________________________________________________________________' },
+        { num: 71, id: 'relatorio_alta', cat: 'hospitalar', engine: 'clinico_pro', theme: 'theme-green', icon: 'fa-hospital-user', title: 'Relatório de Alta Hospitalar', sub: 'Resumo Internação e Cuidados', pdfTitle: 'RELATÓRIO DE ALTA HOSPITALAR', pdfSub: 'Resumo de Internação, Procedimentos Realizados e Orientações Pós-Alta', cor: [0.05, 0.44, 0.32], labelProf: 'MÉDICO RESPONSÁVEL PELA ALTA', campos: ['Paciente', 'Data Internação / Data Alta', 'Diagnóstico Principal (CID-10)'], corpo: 'RESUMO DA INTERNAÇÃO E PROCEDIMENTOS REALIZADOS:\n_____________________________________________________________________________\n\nORIENTAÇÕES PÓS-ALTA, MEDICAÇÕES E SINAIS DE ALERTA PARA RETORNO:\n_____________________________________________________________________________' },
+        { num: 72, id: 'termo_cirurgico', cat: 'hospitalar', engine: 'clinico_pro', theme: 'theme-red', icon: 'fa-procedures', title: 'Termo Consent. Cirúrgico', sub: 'Riscos e Autorização Cirurgia', pdfTitle: 'TERMO DE CONSENTIMENTO LIVRE E ESCLARECIDO — CIRURGIA', pdfSub: 'Autorização Cirúrgica, Anestesia, Riscos e Alternativas Terapêuticas', cor: [0.72, 0.14, 0.16], labelProf: 'CIRURGIÃO RESPONSÁVEL (CRM)', campos: ['Paciente', 'CPF / RG', 'Procedimento Cirúrgico Proposto'], corpo: 'Declaro que recebi explicações claras sobre o procedimento cirúrgico proposto, benefícios esperados, alternativas terapêuticas e possíveis riscos/complicações inerentes ao ato cirúrgico e anestésico, autorizando livremente sua realização.\n\nAssinatura do Paciente / Responsável: ________________________________________' },
+        { num: 73, id: 'termo_estetico', cat: 'hospitalar', engine: 'clinico_pro', theme: 'theme-purple', icon: 'fa-spa', title: 'Termo Procedimento Estético', sub: 'Consentimento Harmoniz./Estét.', pdfTitle: 'TERMO DE CONSENTIMENTO PARA PROCEDIMENTO ESTÉTICO', pdfSub: 'Esclarecimentos Pré e Pós-Procedimento • Biossegurança e Produtos ANVISA', cor: [0.56, 0.16, 0.52], labelProf: 'PROFISSIONAL ESTETA / RT', campos: ['Cliente / Paciente', 'CPF / RG', 'Procedimento / Produto / Lote ANVISA'], corpo: 'Declaro que fui devidamente orientado(a) quanto à técnica, produtos regularizados na ANVISA, cuidados pós-procedimento, contraindicações e possíveis reações transitórias (edema, eritema, sensibilidade), autorizando a execução do procedimento estético.\n\nAssinatura do(a) Cliente: ___________________________________________________' },
+        { num: 74, id: 'termo_recusa', cat: 'hospitalar', engine: 'clinico_pro', theme: 'theme-yellow', icon: 'fa-hand-paper', title: 'Termo Recusa de Tratamento', sub: 'Decisão Esclarecida Paciente', pdfTitle: 'TERMO DE RECUSA ESCLARECIDA DE TRATAMENTO / INTERNAÇÃO', pdfSub: 'Registro de Autonomia do Paciente e Ciência dos Riscos da Recusa', cor: [0.74, 0.42, 0.04], labelProf: 'MÉDICO ASSISTENTE (CRM)', campos: ['Paciente', 'CPF / RG', 'Tratamento / Conduta Recusada'], corpo: 'Declaro, em pleno gozo de minhas faculdades mentais, que fui devidamente informado(a) pela equipe de saúde sobre a necessidade do tratamento proposto e os riscos de sua não realização, optando de forma livre e consciente por RECUSÁ-LO neste momento.\n\nAssinatura do Paciente: _______________________  Testemunha: ___________________' },
+        { num: 75, id: 'copia_prontuario', cat: 'hospitalar', engine: 'clinico_pro', theme: 'theme-blue', icon: 'fa-copy', title: 'Solicitação Cópia Prontuário', sub: 'Acesso a Registros Clínicos', pdfTitle: 'REQUERIMENTO DE CÓPIA DE PRONTUÁRIO MÉDICO', pdfSub: 'Lei Geral de Proteção de Dados (LGPD) • Resolução CFM nº 1.821/2007', cor: [0.06, 0.30, 0.58], labelProf: 'UNIDADE DE SAÚDE / ARQUIVO MÉDICO', campos: ['Nome do Paciente', 'CPF / RG do Solicitante', 'Período de Atendimento Solicitado'], corpo: 'Venho por meio deste requerer cópia integral (ou parcial) do prontuário médico e exames referentes ao período informado acima, na qualidade de [  ] Próprio Paciente  [  ] Representante Legal autorizado.\n\nAssinatura do Solicitante: ___________________________________________________' },
+        { num: 76, id: 'ficha_sinan', cat: 'hospitalar', engine: 'clinico_pro', theme: 'theme-red', icon: 'fa-biohazard', title: 'Ficha Notif. Compulsória SINAN', sub: 'Agravos e Doenças Notificáveis', pdfTitle: 'FICHA DE NOTIFICAÇÃO COMPULSÓRIA DE AGRAVOS (SINAN)', pdfSub: 'Sistema de Informação de Agravos de Notificação • Vigilância Epidemiológica', cor: [0.74, 0.14, 0.14], labelProf: 'NOTIFICADOR / UNIDADE (CNES)', campos: ['Agravo / Doença Suspeita (CID-10)', 'Paciente / CPF / CNS', 'Data dos Primeiros Sintomas'], corpo: 'NOTIFICAÇÃO EPIDEMIOLÓGICA:\nEndereço do Paciente / Local Provável de Infecção e Dados Clínicos Iniciais para investigação pela Vigilância Epidemiológica Municipal (COVISA / SINAN):' },
+
+        // 9. SOLICITAÇÕES DE REGULARIZAÇÃO (77-84)
+        { num: 77, id: 'req_licenca_inicial', cat: 'solicitacoes', engine: 'requerimento', theme: 'theme-green', icon: 'fa-file-signature', title: 'Requerimento Licença Inicial', sub: 'Pedido 1ª Licença Sanitária', pdfTitle: 'REQUERIMENTO DE LICENÇA DE FUNCIONAMENTO SANITÁRIA INICIAL', pdfSub: 'Protocolo Administrativo COVISA • Lei Municipal nº 13.725/2004', cor: [0.04, 0.46, 0.30], itens: ['Solicitação formal de Licenciamento Sanitário Inicial (LFS / CMVS)', 'Declaração de veracidade dos dados cadastrais e CNAE informado', 'Compromisso de cumprimento das Boas Práticas e normas sanitárias vigentes'] },
+        { num: 78, id: 'sol_cancelamento', cat: 'solicitacoes', engine: 'requerimento', theme: 'theme-red', icon: 'fa-times-circle', title: 'Solicitação Cancelamento Lic.', sub: 'Baixa / Encerramento Ativ.', pdfTitle: 'SOLICITAÇÃO DE CANCELAMENTO / BAIXA DE LICENÇA SANITÁRIA', pdfSub: 'Encerramento de Atividades ou Baixa de Cadastro CMVS — COVISA', cor: [0.74, 0.14, 0.14], itens: ['Pedido formal de baixa/cancelamento da Licença Sanitária e cadastro CMVS', 'Declaração de encerramento definitivo das atividades sujeitas à vigilância no local', 'Ciência de que eventual reabertura exigirá novo processo de licenciamento'] },
+        { num: 79, id: 'sol_alt_endereco', cat: 'solicitacoes', engine: 'requerimento', theme: 'theme-blue', icon: 'fa-map-marked-alt', title: 'Alteração de Endereço', sub: 'Atualização Cadastral Local', pdfTitle: 'SOLICITAÇÃO DE ALTERAÇÃO DE ENDEREÇO SANITÁRIO', pdfSub: 'Atualização Cadastral SIVISA / CMVS • Portaria SMS nº 266/2025', cor: [0.06, 0.32, 0.62], itens: ['Comunicação formal de mudança de endereço do estabelecimento licenciado', 'Novo endereço compatível com o zoneamento e estrutura físico-funcional exigida', 'Requerimento de atualização da Licença Sanitária (LFS) vigente'] },
+        { num: 80, id: 'sol_alt_razao', cat: 'solicitacoes', engine: 'requerimento', theme: 'theme-blue', icon: 'fa-building', title: 'Alteração de Razão Social', sub: 'Atualização Nome Empresarial', pdfTitle: 'SOLICITAÇÃO DE ALTERAÇÃO DE RAZÃO SOCIAL / NOME FANTASIA', pdfSub: 'Averbação Cadastral no Sistema SIVISA / CMVS — COVISA', cor: [0.06, 0.32, 0.62], itens: ['Averbação da nova Razão Social / Nome Fantasia mantido o mesmo CNPJ', 'Apresentação da alteração contratual registrada na Junta Comercial (JUCESP)', 'Manutenção das atividades sanitárias e condições estruturais aprovadas'] },
+        { num: 81, id: 'sol_alt_resp_legal', cat: 'solicitacoes', engine: 'requerimento', theme: 'theme-purple', icon: 'fa-user-tie', title: 'Alteração Responsável Legal', sub: 'Mudança de Sócio/Titular', pdfTitle: 'COMUNICAÇÃO DE ALTERAÇÃO DE RESPONSÁVEL LEGAL', pdfSub: 'Atualização de Representação Legal no Cadastro CMVS — COVISA', cor: [0.36, 0.16, 0.56], itens: ['Atualização do titular/sócio administrador responsável perante a COVISA', 'Ciência das obrigações sanitárias legais previstas na Lei nº 13.725/2004', 'Vinculação do novo documento de identidade/CPF ao processo ativo'] },
+        { num: 82, id: 'sol_alt_atividades', cat: 'solicitacoes', engine: 'requerimento', theme: 'theme-yellow', icon: 'fa-tasks', title: 'Alteração de Atividades (CNAE)', sub: 'Inclusão ou Exclusão CNAE', pdfTitle: 'SOLICITAÇÃO DE ALTERAÇÃO DE ATIVIDADES ECONÔMICAS (CNAE)', pdfSub: 'Inclusão / Exclusão de Atividades Sujeitas ao Controle Sanitário', cor: [0.74, 0.42, 0.04], itens: ['Requerimento de inclusão/exclusão de CNAE no Cadastro Municipal (CMVS)', 'Verificação de nova classificação de risco sanitário (Baixo, Médio ou Alto)', 'Adequação documental e técnica conforme as novas atividades declaradas'] },
+        { num: 83, id: 'certificado_cli', cat: 'solicitacoes', engine: 'requerimento', theme: 'theme-green', icon: 'fa-certificate', title: 'Certificado Integrado (CLI)', sub: 'Via Rápida Empresa / SP', pdfTitle: 'CERTIFICADO DE LICENCIAMENTO INTEGRADO (CLI)', pdfSub: 'Integração Municipal / Estadual — Vigilância Sanitária, Prefeitura e Bombeiros', cor: [0.05, 0.46, 0.34], itens: ['Regularidade integrada para funcionamento da atividade econômica', 'Compatibilidade com licenciamento sanitário COVISA / SIVISA', 'Documento sujeito a verificação eletrônica de autenticidade'] },
+        { num: 84, id: 'ficha_cnes', cat: 'solicitacoes', engine: 'requerimento', theme: 'theme-blue', icon: 'fa-hospital-symbol', title: 'Ficha de Cadastro CNES', sub: 'Unidades e Equipes de Saúde', pdfTitle: 'FICHA DE CADASTRO NACIONAL DE ESTABELECIMENTOS DE SAÚDE (CNES)', pdfSub: 'Ministério da Saúde / SMS • Registro de Estabelecimento, Equipe e Serviços', cor: [0.05, 0.28, 0.58], itens: ['Identificação completa do estabelecimento de saúde, CNPJ/CPF e endereço', 'Registro dos profissionais habilitados (CRM/CRO/COREN/CRF) e carga horária', 'Relação de salas, equipamentos assistenciais e serviços ofertados'] },
+
+        // 10. BOAS PRÁTICAS E BIOSSEGURANÇA (85-92)
+        { num: 85, id: 'manual_mbp', cat: 'boaspraticas', engine: 'planilha', theme: 'theme-green', icon: 'fa-book', title: 'Manual de Boas Práticas (MBP)', sub: 'Higiene e Controle Qualidade', pdfTitle: 'MANUAL DE BOAS PRÁTICAS SANITÁRIAS (MBP)', pdfSub: 'RDC ANVISA nº 216/2004 • Portaria SMS nº 2619/2011 • Rotinas Operacionais', cor: [0.04, 0.46, 0.30], colunas: ['Área / Etapa', 'Procedimento Padrão', 'Frequência', 'Responsável', 'Registro'], corpo: 'Manual resumido de boas práticas higiênico-sanitárias aplicável às áreas de recebimento, armazenamento, manipulação, exposição e controle de pragas.' },
+        { num: 86, id: 'doc_pop', cat: 'boaspraticas', engine: 'planilha', theme: 'theme-blue', icon: 'fa-list-check', title: 'Procedimento Operac. (POP)', sub: 'Etapas, Frequência e Execução', pdfTitle: 'PROCEDIMENTO OPERACIONAL PADRONIZADO (POP)', pdfSub: 'Padronização de Higienização, Controle de Pragas, Água e Saúde dos Manipuladores', cor: [0.06, 0.32, 0.62], colunas: ['Etapa', 'Descrição da Ação', 'Produto / Diluição', 'Periodicidade', 'Verificação'], corpo: 'Documento normativo interno obrigatório (POP) descrevendo passo a passo a rotina sanitária padronizada no estabelecimento.' },
+        { num: 87, id: 'planilha_temperatura', cat: 'boaspraticas', engine: 'planilha', theme: 'theme-blue', icon: 'fa-thermometer-half', title: 'Planilha Controle Temperatura', sub: 'Geladeiras, Freezers e Alim.', pdfTitle: 'PLANILHA DE CONTROLE DIÁRIO DE TEMPERATURA', pdfSub: 'Monitoramento de Geladeiras, Freezers, Balcões Térmicos e Medicamentos', cor: [0.06, 0.38, 0.68], colunas: ['Data', 'Equipamento / Alimento', 'Manhã (°C)', 'Tarde (°C)', 'Ação Corretiva / Visto'], corpo: 'Parâmetros de referência: Refrigerados (0°C a 4°C ou conforme fabricante) • Congelados (abaixo de -12°C/-18°C) • Quentes (acima de 60°C).' },
+        { num: 88, id: 'registro_higienizacao', cat: 'boaspraticas', engine: 'planilha', theme: 'theme-green', icon: 'fa-broom', title: 'Registro Higienização Amb.', sub: 'Limpeza e Desinfecção Diária', pdfTitle: 'REGISTRO DE HIGIENIZAÇÃO E DESINFECÇÃO DE AMBIENTES', pdfSub: 'Controle Diário de Limpeza de Pisos, Bancadas, Sanitários e Equipamentos', cor: [0.05, 0.46, 0.36], colunas: ['Data', 'Setor / Superfície', 'Saneante (ANVISA)', 'Horário', 'Executor / Conferente'], corpo: 'Planilha de rastreabilidade de limpeza e desinfecção ambiental com saneantes regularizados na ANVISA.' },
+        { num: 89, id: 'registro_esterilizacao', cat: 'boaspraticas', engine: 'planilha', theme: 'theme-purple', icon: 'fa-pump-medical', title: 'Registro Esterilização Instr.', sub: 'Ciclos Autoclave / Teste Biol.', pdfTitle: 'REGISTRO DE PROCESSAMENTO E ESTERILIZAÇÃO DE INSTRUMENTAIS', pdfSub: 'Controle de Ciclos de Autoclave, Indicador Químico e Teste Biológico Semanal', cor: [0.42, 0.16, 0.58], colunas: ['Data / Ciclo', 'Lote / Materiais', 'Temp / Pressão', 'Ind. Quím./Biol.', 'Responsável'], corpo: 'Controle obrigatório para clínicas, odontologia, estúdios nails, podologia e tatuagem com registro de ciclos de autoclave.' },
+        { num: 90, id: 'doc_pgrss_completo', cat: 'boaspraticas', engine: 'planilha', theme: 'theme-green', icon: 'fa-trash-alt', title: 'Plano de Resíduos (PGRSS)', sub: 'Segregação, Coleta e Destino', pdfTitle: 'PLANO DE GERENCIAMENTO DE RESÍDUOS DE SERVIÇOS DE SAÚDE (PGRSS)', pdfSub: 'RDC ANVISA nº 222/2018 • Segregação Grupos A, B, D e E (Perfurocortantes)', cor: [0.05, 0.44, 0.28], colunas: ['Grupo Resíduo', 'Tipo de Material', 'Acondicionamento', 'Coleta / Empresa', 'Destinação'], corpo: 'Plano de gerenciamento descrevendo segregação na origem, armazenamento temporário e destinação final licenciada dos resíduos.' },
+        { num: 91, id: 'cert_capacitacao', cat: 'boaspraticas', engine: 'requerimento', theme: 'theme-yellow', icon: 'fa-user-graduate', title: 'Cert. Capacitação Manipulad.', sub: 'Treinamento Boas Práticas', pdfTitle: 'CERTIFICADO DE CAPACITAÇÃO EM BOAS PRÁTICAS DE MANIPULAÇÃO', pdfSub: 'RDC ANVISA nº 216/2004 • Formação em Higiene Pessoal e Segurança Alimentar', cor: [0.74, 0.44, 0.04], itens: ['Conteúdo programático: Contaminantes alimentares, DTA, Higiene Pessoal e Boas Práticas', 'Aproveitamento satisfatório comprovado para atuação na manipulação de alimentos', 'Manter cópia deste certificado arquivada no estabelecimento para fiscalização'] },
+        { num: 92, id: 'laudo_potabilidade', cat: 'boaspraticas', engine: 'planilha', theme: 'theme-blue', icon: 'fa-tint', title: 'Laudo Potabilidade da Água', sub: 'Análise Microbiológica/Fís-Quím', pdfTitle: 'LAUDO TÉCNICO DE POTABILIDADE DA ÁGUA', pdfSub: 'Portaria GM/MS nº 888/2021 • Controle Microbiológico e Físico-Químico', cor: [0.05, 0.36, 0.66], colunas: ['Parâmetro Analisado', 'Método', 'Resultado', 'Valor Permitido', 'Conclusão'], corpo: 'Registro de análise de potabilidade da água de consumo humano e higienização de reservatório semestral.' },
+
+        // 11. FISCALIZAÇÃO, DEFESA E SEGURANÇA (93-100)
+        { num: 93, id: 'defesa_auto_infracao', cat: 'defesa', engine: 'defesa', theme: 'theme-blue', icon: 'fa-shield-alt', title: 'Defesa Auto de Infração', sub: 'Impugnação Administrativa', pdfTitle: 'DEFESA ADMINISTRATIVA DE AUTO DE INFRAÇÃO SANITÁRIA', pdfSub: 'Lei Estadual nº 10.083/1998 (Prazo 10 dias) • Contraditório e Ampla Defesa', cor: [0.08, 0.26, 0.56], corpo: 'O(A) autuado(a) acima qualificado(a), tempestivamente no prazo legal, apresenta DEFESA ADMINISTRATIVA em face do Auto de Infração lavrado, expondo os fatos, juntando provas de regularização imediata e requerendo a anulação ou redução da penalidade aplicada.' },
+        { num: 94, id: 'recurso_penalidade', cat: 'defesa', engine: 'defesa', theme: 'theme-purple', icon: 'fa-balance-scale', title: 'Recurso de Penalidade', sub: 'Revisão de Decisão Sanitária', pdfTitle: 'RECURSO ADMINISTRATIVO DE PENALIDADE SANITÁRIA', pdfSub: 'Instância Superior COVISA • Pedido de Reconsideração / Revisão', cor: [0.38, 0.16, 0.56], corpo: 'Inconformado(a) com a decisão proferida em primeira instância administrativa, o(a) recorrente interpõe o presente RECURSO ADMINISTRATIVO requerendo a reforma da penalidade com base na primariedade, ausência de dolo e adequação integral do estabelecimento.' },
+        { num: 95, id: 'sol_prorrogacao_prazo', cat: 'defesa', engine: 'defesa', theme: 'theme-yellow', icon: 'fa-clock', title: 'Prorrogação de Prazo', sub: 'Pedido Justificado de Prazo', pdfTitle: 'SOLICITAÇÃO DE PRORROGAÇÃO DE PRAZO SANITÁRIO', pdfSub: 'Requerimento Justificado para Cumprimento de Exigências / Notificação', cor: [0.74, 0.42, 0.04], corpo: 'Solicitamos respeitosamente a prorrogação do prazo concedido na notificação/termo de vistoria por mais _____ dias, considerando que as adequações estruturais e documentais já se encontram em execução comprovada.' },
+        { num: 96, id: 'termo_apreensao', cat: 'defesa', engine: 'planilha', theme: 'theme-red', icon: 'fa-box-open', title: 'Termo Apreensão Produtos', sub: 'Retenção Oficial de Lotes', pdfTitle: 'TERMO DE APREENSÃO / RETENÇÃO CAUTELAR DE PRODUTOS', pdfSub: 'Lei Estadual nº 10.083/1998 • Apreensão Cautelar pela Autoridade Sanitária', cor: [0.76, 0.12, 0.14], colunas: ['Produto / Marca', 'Lote / Validade', 'Quantidade', 'Motivo Irregularidade', 'Lacre / Destino'], corpo: 'Produtos apreendidos cautelarmente por apresentarem irregularidades sanitárias (prazo de validade expirado, ausência de registro ou condições impróprias).' },
+        { num: 97, id: 'termo_inutilizacao_alim', cat: 'defesa', engine: 'planilha', theme: 'theme-red', icon: 'fa-trash', title: 'Termo Inutiliz. Alimentos', sub: 'Descarte Produtos Impróprios', pdfTitle: 'TERMO DE INUTILIZAÇÃO DE ALIMENTOS E PRODUTOS IMPRÓPRIOS', pdfSub: 'Inutilização e Descarte Seguro de Mercadorias Impróprias ao Consumo', cor: [0.74, 0.18, 0.12], colunas: ['Alimento / Produto', 'Peso / Qtd', 'Validade / Estado', 'Método Inutilização', 'Testemunha'], corpo: 'Registro oficial de inutilização de alimentos e insumos impróprios para consumo humano, garantindo a retirada definitiva de circulação.' },
+        { num: 98, id: 'plano_acao_corretiva', cat: 'defesa', engine: 'planilha', theme: 'theme-green', icon: 'fa-tools', title: 'Plano de Ação Corretiva', sub: 'Medidas, Prazos e Evidências', pdfTitle: 'PLANO DE AÇÃO CORRETIVA SANITÁRIA (CAPA)', pdfSub: 'Cronograma de Adequação de Não Conformidades e Evidências Fotográficas', cor: [0.05, 0.46, 0.32], colunas: ['Não Conformidade', 'Ação Corretiva', 'Prazo', 'Responsável', 'Status / Evidência'], corpo: 'Cronograma formal de correção das pendências apontadas em vistoria ou auto de inspeção, com metas verificáveis.' },
+        { num: 99, id: 'plano_seguranca_paciente', cat: 'defesa', engine: 'planilha', theme: 'theme-blue', icon: 'fa-heartbeat', title: 'Plano Seg. Paciente (PSP)', sub: 'RDC 36/2013 Prevenção Riscos', pdfTitle: 'PLANO DE SEGURANÇA DO PACIENTE (PSP)', pdfSub: 'RDC ANVISA nº 36/2013 • Núcleo de Segurança do Paciente (NSP)', cor: [0.06, 0.30, 0.58], colunas: ['Meta Internacional', 'Protocolo Implantado', 'Indicador', 'Monitoramento', 'Responsável'], corpo: 'Plano institucional de prevenção de eventos adversos assistenciais (identificação segura, higienização das mãos, medicação segura e prevenção de quedas).' },
+        { num: 100, id: 'ficha_eventos_adversos', cat: 'defesa', engine: 'clinico_pro', theme: 'theme-red', icon: 'fa-exclamation-circle', title: 'Notif. Eventos Adversos', sub: 'NOTIVISA / Incidentes Saúde', pdfTitle: 'FICHA DE NOTIFICAÇÃO DE INCIDENTES E EVENTOS ADVERSOS', pdfSub: 'Sistema NOTIVISA / ANVISA • Segurança do Paciente e Tecnovigilância', cor: [0.76, 0.14, 0.14], labelProf: 'NOTIFICADOR / NÚCLEO DE SEGURANÇA', campos: ['Tipo de Evento / Produto Envolvido', 'Data da Ocorrência / Setor', 'Grau de Dano (Leve / Moderado / Grave)'], corpo: 'DESCRIÇÃO DETALHADA DO INCIDENTE / EVENTO ADVERSO E CONDUTA IMEDIATA ADOTADA:\n_____________________________________________________________________________\n\nAções preventivas para evitar recorrência:' }
+    ];
+
+    window.DOCGEN_CATALOG_100_MAP = {};
+    DOCGEN_CATALOG_100.forEach(item => { window.DOCGEN_CATALOG_100_MAP[item.id] = item; });
+
+    window.renderizarCatalogo100DocGen = () => {
+        const grid = document.getElementById('docgen-types-grid');
+        if (!grid) return;
+        grid.innerHTML = DOCGEN_CATALOG_100.map(m => `
+            <button type="button" class="docgen-type-card ${m.theme} ${m.id === docGenTipoAtual ? 'active' : ''}" data-cat="${m.cat}" data-doctype="${m.id}" onclick="selecionarTipoDocumento('${m.id}', this)">
+              <span class="docgen-num-badge">#${String(m.num).padStart(2, '0')}</span>
+              <i class="fas ${m.icon}"></i>
+              <strong>${m.title}</strong>
+              <span>${m.sub}</span>
+            </button>
+        `).join('');
+    };
+    renderizarCatalogo100DocGen();
+
+    window.sincronizarSegurancaPdfDocGen = (atualizarPrevia = false) => {
+        if (atualizarPrevia && docGenUltimoPdfBytes && typeof gerarDocumentoOficialPDF === 'function') {
+            gerarDocumentoOficialPDF(false);
+        }
+    };
+
+    // =========================================================================
+    // MOTOR ANTI-FRAUDE UNIVERSAL: MARCA D'ÁGUA DIAGONAL + SELO DOURADO VETORIAL
+    // =========================================================================
+    async function aplicarSegurancaAntiFraudePDF(pdfBytes, dados) {
+        try {
+            const { PDFDocument, rgb, StandardFonts, degrees } = PDFLib;
+            const pdfDoc = await PDFDocument.load(pdfBytes);
+            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+            const orgao = (dados.orgaoSelo || 'COVISA').toUpperCase();
+            const hashCod = (dados.protocolo || '2026').replace(/[^A-Z0-9]/gi, '').slice(-8).toUpperCase();
+            const pages = pdfDoc.getPages();
+
+            pages.forEach((page) => {
+                const { width, height } = page.getSize();
+
+                // 1) MARCA D'ÁGUA DIAGONAL ANTI-FRAUDE
+                if (dados.marcaAgua) {
+                    const wmMain = sanitizarTextoPDF(`${orgao} • DOCUMENTO AUTENTICADO 2026`);
+                    const wmSub = sanitizarTextoPDF(`ORIGINAL VERIFICAVEL • PROT. ${dados.protocolo || 'COVISA-2026'}`);
+                    const wmColor = rgb(0.76, 0.62, 0.22);
+                    const positions = [
+                        { x: width * 0.10, y: height * 0.25 },
+                        { x: width * 0.08, y: height * 0.52 },
+                        { x: width * 0.12, y: height * 0.78 }
+                    ];
+                    positions.forEach((p) => {
+                        page.drawText(wmMain, { x: p.x, y: p.y, size: 22, font: fontBold, color: wmColor, opacity: 0.13, rotate: degrees(32) });
+                        page.drawText(wmSub, { x: p.x + 28, y: p.y - 18, size: 10, font: fontReg, color: wmColor, opacity: 0.13, rotate: degrees(32) });
+                    });
+                }
+
+                // 2) SELO DOURADO DE SEGURANÇA (VETORIAL METÁLICO DE ALTO PADRÃO)
+                if (dados.seloDourado) {
+                    const cx = width - 82;
+                    const cy = height > 600 ? 128 : 62;
+                    const goldDark = rgb(0.58, 0.42, 0.06);
+                    const goldMid = rgb(0.82, 0.64, 0.14);
+                    const goldLight = rgb(0.99, 0.95, 0.78);
+                    const goldRibbon = rgb(0.72, 0.54, 0.08);
+
+                    // Fitas inferiores do selo
+                    page.drawRectangle({ x: cx - 18, y: cy - 42, width: 12, height: 24, color: goldRibbon, borderColor: goldDark, borderWidth: 0.8 });
+                    page.drawRectangle({ x: cx + 6, y: cy - 42, width: 12, height: 24, color: goldRibbon, borderColor: goldDark, borderWidth: 0.8 });
+
+                    // Anéis concêntricos dourados
+                    page.drawCircle({ x: cx, y: cy, size: 34, color: goldLight, borderColor: goldDark, borderWidth: 2.2 });
+                    page.drawCircle({ x: cx, y: cy, size: 29, borderColor: goldMid, borderWidth: 1.4 });
+                    page.drawCircle({ x: cx, y: cy, size: 24, borderColor: goldDark, borderWidth: 0.7 });
+
+                    // Textos internos do selo dourado
+                    const t1 = sanitizarTextoPDF('SELO DE SEGURANCA');
+                    const t2 = sanitizarTextoPDF(orgao.slice(0, 14));
+                    const t3 = sanitizarTextoPDF('AUTENTICADO');
+                    const t4 = sanitizarTextoPDF(`#${hashCod}`);
+
+                    page.drawText(t1, { x: cx - fontBold.widthOfTextAtSize(t1, 4.9) / 2, y: cy + 13, size: 4.9, font: fontBold, color: goldDark });
+                    page.drawText(t2, { x: cx - fontBold.widthOfTextAtSize(t2, 7.6) / 2, y: cy + 2, size: 7.6, font: fontBold, color: goldDark });
+                    page.drawText(t3, { x: cx - fontBold.widthOfTextAtSize(t3, 5.4) / 2, y: cy - 8, size: 5.4, font: fontBold, color: goldMid });
+                    page.drawText(t4, { x: cx - fontReg.widthOfTextAtSize(t4, 4.8) / 2, y: cy - 17, size: 4.8, font: fontReg, color: goldDark });
+                }
+            });
+
+            return await pdfDoc.save();
+        } catch (err) {
+            console.error("Erro ao aplicar segurança anti-fraude:", err);
+            return pdfBytes;
+        }
+    }
+
+    // =========================================================================
+    // MOTOR CLÍNICO / PACIENTE DEDICADO (ATESTADO PISCINA, UPA, ANAMNESE, TERMOS, ETC.)
+    // =========================================================================
+    async function construirPdfClinicoAvancado100(meta, dados) {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage([595.28, 841.89]);
+        const { width, height } = page.getSize();
+        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const fontSerifBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+
+        const cArr = meta.cor || [0.05, 0.34, 0.64];
+        const corTema = rgb(cArr[0], cArr[1], cArr[2]);
+        const corEscuro = rgb(0.09, 0.12, 0.18);
+        const corCinza = rgb(0.36, 0.41, 0.49);
+        const corLinha = rgb(0.65, 0.72, 0.80);
+        const dataAuto = dados.emissao || formatarDataBR(new Date());
+        const cidadeAuto = (dados.cidade || 'São Paulo - SP').trim();
+        const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
+        const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilancia-sp-gov.netlify.app/?doc=' + dados.protocolo)}`;
+        const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
+
+        // Cabeçalho clínico limpo e profissional (SEM cara de ofício empresarial!)
+        page.drawRectangle({ x: 0, y: height - 10, width, height: 10, color: corTema });
+        let hx = 40;
+        if (brasaoImg) {
+            const bd = brasaoImg.scaleToFit(46, 46);
+            page.drawImage(brasaoImg, { x: 36, y: height - 72, width: bd.width, height: bd.height });
+            hx = 92;
+        }
+        drawTextFitPDF(page, dados.unidadeSus ? dados.unidadeSus.toUpperCase() : 'SISTEMA DE SAÚDE • ATENDIMENTO CLÍNICO OFICIAL', hx, height - 38, fontBold, 10.0, 380, corTema);
+        drawTextFitPDF(page, meta.pdfSub || meta.sub, hx, height - 53, fontReg, 8.2, 420, corCinza);
+        drawTextFitPDF(page, `${cidadeAuto}, ${dataAuto}  •  Protocolo ${dados.protocolo}`, hx, height - 67, fontBold, 7.8, 420, corEscuro);
+        page.drawLine({ start: { x: 36, y: height - 82 }, end: { x: width - 36, y: height - 82 }, thickness: 1.4, color: corTema });
+
+        // Faixa título do documento clínico
+        let y = height - 96;
+        page.drawRectangle({ x: 36, y: y - 32, width: width - 72, height: 32, color: corTema });
+        drawTextFitPDF(page, meta.pdfTitle || meta.title.toUpperCase(), 48, y - 20, fontBold, 11.2, width - 96, rgb(1, 1, 1));
+        y -= 48;
+
+        // Quadro de Identificação do Paciente (limpo e próprio para área clínica)
+        const campos = meta.campos || ['Nome do Paciente', 'CPF / RG', 'Data / Observação'];
+        const boxH = 26 + campos.length * 26;
+        page.drawRectangle({ x: 36, y: y - boxH, width: width - 72, height: boxH, color: rgb(0.97, 0.985, 0.996), borderColor: corLinha, borderWidth: 0.9 });
+        drawTextFitPDF(page, 'IDENTIFICAÇÃO DO PACIENTE / ATENDIMENTO', 46, y - 14, fontBold, 7.8, width - 92, corTema);
+        let fy = y - 34;
+        campos.forEach((lbl, idx) => {
+            const valPrefill = idx === 0 ? (dados.rxPaciente || '') : (idx === 1 ? (dados.rxMed && dados.rxMed.length < 25 ? '' : '') : '');
+            const lTxt = sanitizarTextoPDF(lbl + ':');
+            page.drawText(lTxt, { x: 46, y: fy, size: 8.3, font: fontBold, color: corEscuro });
+            const sx = 46 + fontBold.widthOfTextAtSize(lTxt, 8.3) + 6;
+            page.drawLine({ start: { x: sx, y: fy - 2 }, end: { x: width - 48, y: fy - 2 }, thickness: 0.7, color: corLinha });
+            if (valPrefill) drawTextFitPDF(page, valPrefill, sx + 4, fy + 1, fontReg, 8.8, width - 54 - sx, corEscuro);
+            fy -= 26;
+        });
+        y = y - boxH - 22;
+
+        // Corpo específico do documento (editável pelo campo corpo ou padrão do modelo)
+        const textoFinal = (dados.corpo && dados.corpo.trim().length > 8) ? dados.corpo : (meta.corpo || '');
+        const linhas = quebrarLinhasPDF(textoFinal, fontReg, 10.2, width - 84);
+        linhas.forEach(ln => {
+            if (y < 235) return;
+            if (ln) page.drawText(ln, { x: 42, y, size: 10.2, font: fontReg, color: corEscuro });
+            y -= 16;
+        });
+
+        // Linhas extras pautadas se sobrou espaço para preenchimento manual
+        y -= 10;
+        while (y > 238) {
+            page.drawLine({ start: { x: 42, y }, end: { x: width - 42, y }, thickness: 0.45, color: rgb(0.84, 0.87, 0.91) });
+            y -= 22;
+        }
+
+        // Bloco do Médico / Profissional Assinante
+        const profY = 112;
+        page.drawRectangle({ x: 36, y: profY, width: width - 72, height: 84, color: rgb(0.97, 0.985, 0.996), borderColor: corTema, borderWidth: 1.0 });
+        drawTextFitPDF(page, `${meta.labelProf || 'PROFISSIONAL HABILITADO'} — IDENTIFICAÇÃO E CARIMBO`, 46, profY + 70, fontBold, 7.2, width - 96, corTema);
+        drawTextFitPDF(page, (dados.nome || 'PROFISSIONAL HABILITADO').toUpperCase(), 46, profY + 54, fontBold, 9.4, 265, corEscuro);
+        drawTextFitPDF(page, `Conselho: ${(dados.crm || 'Conforme Carimbo').toUpperCase()}  |  Doc: ${dados.cnpj || '-'}`, 46, profY + 40, fontReg, 7.6, 265, corEscuro);
+        drawTextFitPDF(page, `${[dados.rua, dados.num, dados.bairro].filter(Boolean).join(', ') || cidadeAuto}`, 46, profY + 27, fontReg, 7.2, 265, corCinza);
+        drawTextFitPDF(page, `Local e Data: ${cidadeAuto}, ${dataAuto}`, 46, profY + 12, fontBold, 7.6, 265, corTema);
+
+        page.drawLine({ start: { x: 325, y: profY + 28 }, end: { x: width - 48, y: profY + 28 }, thickness: 0.8, color: corEscuro });
+        drawTextFitPDF(page, 'Assinatura e Carimbo do Profissional', 352, profY + 15, fontBold, 7.2, 180, corCinza);
+
+        // Assinatura Fixa + QR Code
+        if (dados.usarAssinaturaFixa && sigImg) {
+            desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, 175, 32, 175, 56);
+        }
+        if (qrImg) {
+            page.drawImage(qrImg, { x: width - 88, y: 32, width: 50, height: 50 });
+            page.drawText('Validar', { x: width - 76, y: 23, size: 6.4, font: fontBold, color: corCinza });
+        }
+        drawTextFitPDF(page, `Documento Clínico Oficial • ${dados.protocolo} • Emitido em ${cidadeAuto}, ${dataAuto}`, 36, 16, fontReg, 7.0, 390, corCinza);
+
+        pdfDoc.setTitle(`${meta.title} - ${dados.nome || 'COVISA'}`);
+        return await pdfDoc.save();
+    }
+
+    // =========================================================================
+    // MOTOR ESPECIALIZADO (PLANILHAS POP/MBP/TEMP, REQUERIMENTOS, DEFESAS, ETC.)
+    // =========================================================================
+    async function construirPdfEspecializado100(meta, dados) {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage([595.28, 841.89]);
+        const { width, height } = page.getSize();
+        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+        const cArr = meta.cor || [0.05, 0.28, 0.56];
+        const corPrim = rgb(cArr[0], cArr[1], cArr[2]);
+        const corEscuro = rgb(0.09, 0.12, 0.18);
+        const corCinza = rgb(0.36, 0.41, 0.49);
+        const corBorda = rgb(0.76, 0.81, 0.88);
+        const dataAuto = dados.emissao || formatarDataBR(new Date());
+        const cidadeAuto = (dados.cidade || 'São Paulo - SP').trim();
+        const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
+        const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilancia-sp-gov.netlify.app/?doc=' + dados.protocolo)}`;
+        const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
+
+        page.drawRectangle({ x: 20, y: 20, width: width - 40, height: height - 40, borderColor: corPrim, borderWidth: 1.8 });
+        page.drawRectangle({ x: 24, y: height - 96, width: width - 48, height: 72, color: rgb(0.96, 0.98, 0.995) });
+        let hx = 38;
+        if (brasaoImg) {
+            const bd = brasaoImg.scaleToFit(48, 48);
+            page.drawImage(brasaoImg, { x: 34, y: height - 84, width: bd.width, height: bd.height });
+            hx = 92;
+        }
+        drawTextFitPDF(page, 'PREFEITURA DO MUNICÍPIO DE SÃO PAULO • COVISA DIGITAL 2026', hx, height - 44, fontBold, 10.5, 450, corEscuro);
+        drawTextFitPDF(page, 'Secretaria Municipal da Saúde • Vigilância Sanitária / ANVISA', hx, height - 59, fontBold, 8.6, 450, corPrim);
+        drawTextFitPDF(page, `Protocolo: ${dados.protocolo}  |  Emissão: ${cidadeAuto}, ${dataAuto}`, hx, height - 74, fontReg, 8.0, 450, corCinza);
+
+        let y = height - 108;
+        page.drawRectangle({ x: 34, y: y - 38, width: width - 68, height: 38, color: corPrim });
+        drawTextFitPDF(page, meta.pdfTitle || meta.title.toUpperCase(), 44, y - 16, fontBold, 10.8, width - 88, rgb(1, 1, 1));
+        drawTextFitPDF(page, meta.pdfSub || meta.sub, 44, y - 30, fontReg, 7.6, width - 88, rgb(0.92, 0.96, 0.99));
+        y -= 50;
+
+        // Identificação do Estabelecimento
+        const endFull = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro, cidadeAuto].filter(Boolean).join(', ');
+        page.drawRectangle({ x: 34, y: y - 78, width: width - 68, height: 78, color: rgb(0.97, 0.985, 0.995), borderColor: corBorda, borderWidth: 1.0 });
+        drawTextFitPDF(page, 'ESTABELECIMENTO / INTERESSADO', 44, y - 14, fontBold, 7.6, 250, corPrim);
+        drawTextFitPDF(page, (dados.nome || 'NÃO INFORMADO').toUpperCase(), 44, y - 28, fontBold, 9.5, 340, corEscuro);
+        drawTextFitPDF(page, `CPF/CNPJ: ${dados.cnpj || 'Não informado'}`, 395, y - 28, fontBold, 8.8, 155, corEscuro);
+        drawTextFitPDF(page, `Endereço: ${endFull || 'Conforme cadastro'}`, 44, y - 46, fontReg, 8.2, 500, corEscuro);
+        drawTextFitPDF(page, `Atividade / RT: ${(dados.ramo || dados.cnae || 'Geral')}  |  RT: ${dados.rt || dados.crm || 'Conforme cadastro'}`, 44, y - 62, fontReg, 8.0, 500, corCinza);
+        y -= 94;
+
+        // Conteúdo específico por tipo de motor
+        if (meta.engine === 'planilha' && Array.isArray(meta.colunas)) {
+            const desc = (dados.corpo && dados.corpo.trim().length > 5) ? dados.corpo : (meta.corpo || '');
+            const lns = quebrarLinhasPDF(desc, fontReg, 8.8, width - 76);
+            lns.forEach(ln => {
+                if (ln) page.drawText(ln, { x: 38, y, size: 8.8, font: fontReg, color: corEscuro });
+                y -= 13;
+            });
+            y -= 8;
+
+            // Desenha tabela estruturada real com cabeçalho colorido + 12 linhas limpas
+            const tblX = 34, tblW = width - 68;
+            const cols = meta.colunas;
+            const colW = tblW / cols.length;
+            const hdrH = 22, rowH = 24;
+            page.drawRectangle({ x: tblX, y: y - hdrH, width: tblW, height: hdrH, color: corPrim });
+            cols.forEach((cName, ci) => {
+                drawTextFitPDF(page, cName.toUpperCase(), tblX + ci * colW + 4, y - 15, fontBold, 7.2, colW - 8, rgb(1, 1, 1));
+            });
+            y -= hdrH;
+            const maxRows = Math.min(13, Math.floor((y - 145) / rowH));
+            for (let r = 0; r < maxRows; r++) {
+                page.drawRectangle({
+                    x: tblX, y: y - rowH, width: tblW, height: rowH,
+                    color: r % 2 === 0 ? rgb(1, 1, 1) : rgb(0.97, 0.98, 0.995),
+                    borderColor: corBorda, borderWidth: 0.6
+                });
+                for (let ci = 1; ci < cols.length; ci++) {
+                    page.drawLine({ start: { x: tblX + ci * colW, y }, end: { x: tblX + ci * colW, y: y - rowH }, thickness: 0.5, color: corBorda });
+                }
+                y -= rowH;
+            }
+        } else if (Array.isArray(meta.itens)) {
+            const intro = (dados.corpo && dados.corpo.trim().length > 5)
+                ? dados.corpo
+                : `Pelo presente documento oficial (${meta.title}), ficam registrados e formalizados os requisitos abaixo junto à Vigilância Sanitária (COVISA / ANVISA):`;
+            quebrarLinhasPDF(intro, fontReg, 9.5, width - 76).forEach(ln => {
+                if (ln) page.drawText(ln, { x: 38, y, size: 9.5, font: fontReg, color: corEscuro });
+                y -= 14;
+            });
+            y -= 10;
+            const boxItensH = 26 + meta.itens.length * 22;
+            page.drawRectangle({ x: 34, y: y - boxItensH, width: width - 68, height: boxItensH, color: rgb(0.97, 0.985, 0.995), borderColor: corPrim, borderWidth: 1.0 });
+            drawTextFitPDF(page, 'ITENS E CONDIÇÕES REGISTRADAS:', 44, y - 15, fontBold, 8.2, width - 88, corPrim);
+            let iy = y - 34;
+            meta.itens.forEach((it, idx) => {
+                drawTextFitPDF(page, `${idx + 1}. [OK] ${it}`, 46, iy, fontReg, 8.8, width - 92, corEscuro);
+                iy -= 21;
+            });
+            y = y - boxItensH - 18;
+        } else {
+            const corpoTxt = (dados.corpo && dados.corpo.trim().length > 5) ? dados.corpo : (meta.corpo || '');
+            quebrarLinhasPDF(corpoTxt, fontReg, 9.8, width - 76).forEach(ln => {
+                if (y < 155) return;
+                if (ln) page.drawText(ln, { x: 38, y, size: 9.8, font: fontReg, color: corEscuro });
+                y -= 15;
+            });
+            y -= 12;
+            while (y > 165) {
+                page.drawLine({ start: { x: 38, y }, end: { x: width - 38, y }, thickness: 0.45, color: rgb(0.84, 0.87, 0.91) });
+                y -= 22;
+            }
+        }
+
+        // Assinatura Fixa + QR Code
+        desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, width / 2, 46, 220, 72);
+        if (qrImg) {
+            page.drawImage(qrImg, { x: width - 92, y: 44, width: 54, height: 54 });
+            page.drawText('Autenticidade', { x: width - 90, y: 35, size: 6.2, font: fontBold, color: corCinza });
+        }
+        drawTextFitPDF(page, `COVISA Digital 2026 • ${dados.protocolo} • vigilancia-sp-gov.netlify.app`, 36, 30, fontReg, 7.2, width - 140, corCinza);
+
+        pdfDoc.setTitle(`${meta.title} - ${dados.nome || 'COVISA'}`);
+        return await pdfDoc.save();
+    }
   </script>
 </body>
 </html>
