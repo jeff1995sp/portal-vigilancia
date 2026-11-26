@@ -350,6 +350,78 @@
       .docgen-row-2, .docgen-row-3, .docgen-row-3-eq { grid-template-columns: 1fr; }
     }
 
+    /* ======================================================== */
+    /* CENTRAL DE MULTAS & NOTIFICAÇÕES IA (PDF ASSINADO + PIX) */
+    /* ======================================================== */
+    .mia-mode-bar {
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    }
+    .mia-mode-btn {
+      background: #081020; border: 1px solid #26385a; color: #cbd5e1;
+      padding: 10px 18px; border-radius: 12px; font-size: 0.88rem; font-weight: 800;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s;
+    }
+    .mia-mode-btn:hover { color: #ffffff; border-color: #ef4444; }
+    .mia-mode-btn.active-multa {
+      background: linear-gradient(135deg, #dc2626, #991b1b); color: #ffffff; border-color: #f87171;
+      box-shadow: 0 4px 18px rgba(239, 68, 68, 0.35);
+    }
+    .mia-mode-btn.active-notif {
+      background: linear-gradient(135deg, #d97706, #b45309); color: #ffffff; border-color: #fbbf24;
+      box-shadow: 0 4px 18px rgba(245, 158, 11, 0.35);
+    }
+    .mia-layout {
+      display: grid; grid-template-columns: 1.15fr 1fr; gap: 22px;
+      height: calc(100vh - 230px); min-height: 670px;
+    }
+    .mia-photo-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(125px, 1fr)); gap: 9px; margin-top: 4px;
+    }
+    .mia-photo-card {
+      background: #040914; border: 1px solid #26385a; border-radius: 10px;
+      overflow: hidden; display: flex; flex-direction: column; position: relative;
+    }
+    .mia-photo-card.selected { border-color: #10b981; box-shadow: 0 0 12px rgba(16, 185, 129, 0.22); }
+    .mia-photo-card img {
+      width: 100%; height: 86px; object-fit: cover; cursor: zoom-in; display: block;
+    }
+    .mia-photo-meta {
+      padding: 6px 7px; font-size: 0.69rem; color: #cbd5e1; display: flex; flex-direction: column; gap: 4px;
+    }
+    .mia-photo-meta input[type="text"] {
+      background: #0a1428; border: 1px solid #24385c; color: #f8fafc;
+      padding: 4px 6px; border-radius: 6px; font-size: 0.69rem; width: 100%;
+    }
+    .mia-photo-remove {
+      position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.72); color: #fca5a5;
+      border: 1px solid rgba(239,68,68,0.5); width: 22px; height: 22px; border-radius: 50%;
+      cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center;
+    }
+    .mia-presets-wrap {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .mia-preset-chip {
+      background: #060d1c; border: 1px solid #2b3e63; color: #e2e8f0;
+      padding: 6px 11px; border-radius: 50px; font-size: 0.74rem; font-weight: 700;
+      cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px;
+    }
+    .mia-preset-chip:hover { border-color: #fbbf24; color: #fef3c7; }
+    .mia-preset-chip.active {
+      background: rgba(245, 158, 11, 0.22); border-color: #f59e0b; color: #fde68a;
+    }
+    .mia-wa-box {
+      padding: 12px 14px; background: #070e1c; border-top: 1px solid #1f2f4d;
+      display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
+    }
+    .mia-wa-box textarea {
+      width: 100%; min-height: 78px; max-height: 120px; background: #040914;
+      border: 1px solid #24395e; color: #f8fafc; border-radius: 9px;
+      padding: 8px 11px; font-size: 0.81rem; line-height: 1.42; resize: vertical; font-family: inherit;
+    }
+    @media (max-width: 1050px) {
+      .mia-layout { grid-template-columns: 1fr; height: auto; }
+    }
+
     .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 30px; }
     .modal-box { background: var(--bg-body); width: 100%; max-width: 1100px; border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; max-height: 95vh; border: 1px solid var(--border); animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes modalIn { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
@@ -1207,6 +1279,7 @@
         <a class="nav-item" id="nav-item-whatsapp" onclick="switchView('view-financeiro', this)"><i class="fas fa-comment-dots"></i> Assistente WhatsApp <span id="wa-nav-badge" class="wa-nav-badge" style="display: none;">0</span></a>
         <a class="nav-item" onclick="switchView('view-trafego', this)"><i class="fas fa-eye"></i> Monitor Espião</a>
         <a class="nav-item" id="nav-item-docgen" onclick="switchView('view-docgen', this)"><i class="fas fa-file-pdf" style="color: #f87171;"></i> Gerador de Documentos</a>
+        <a class="nav-item" id="nav-item-multas-ia" onclick="switchView('view-multas-ia', this)" style="color: #fca5a5;"><i class="fas fa-gavel" style="color: #ef4444;"></i> Multas & Notificações IA <span id="mia-denuncia-badge" class="wa-nav-badge" style="display: none; background: #f59e0b; color: #000;">0</span></a>
         <a class="nav-item" id="nav-item-laboratorio" onclick="switchView('view-laboratorio', this)" style="color: #d8b4fe;"><i class="fas fa-microscope" style="color:var(--gemini-purple);"></i> Laboratório IA (WhatsApp)</a>
         <a class="nav-item" onclick="switchView('view-logs', this)"><i class="fas fa-history"></i> Logs do Sistema</a>
         <a class="nav-item" onclick="switchView('view-ufesp', this)"><i class="fas fa-balance-scale"></i> Tabela UFESP 2026</a>
@@ -2355,6 +2428,351 @@
           </div>
         </div>
 
+        <div id="view-multas-ia" class="page-view">
+          <div class="page-title" style="margin-bottom: 16px;">
+            <div>
+              <h1><i class="fas fa-gavel" style="color: #ef4444;"></i> Central de Multas & Notificações IA (PDF Assinado)</h1>
+              <p>Analise fotos de denúncias com IA para montar o Auto de Infração + PIX + Anexo Fotográfico, ou gere Notificações Sanitárias assinadas em PDF a partir do que você digitar.</p>
+            </div>
+            <div class="mia-mode-bar">
+              <button type="button" class="mia-mode-btn active-multa" id="mia-tab-multa" onclick="alternarModoMultasIA('multa')">
+                <i class="fas fa-gavel"></i> 1. Auto de Infração IA (Denúncias)
+              </button>
+              <button type="button" class="mia-mode-btn" id="mia-tab-notificacao" onclick="alternarModoMultasIA('notificacao')">
+                <i class="fas fa-file-signature"></i> 2. Notificação Sanitária IA (Sem Normas)
+              </button>
+              <button type="button" class="btn btn-secondary" style="padding: 9px 14px; font-size: 0.84rem;" onclick="limparFormularioMultasIA()">
+                <i class="fas fa-eraser"></i> Limpar
+              </button>
+            </div>
+          </div>
+
+          <div class="mia-layout">
+            <!-- COLUNA ESQUERDA: FORMULÁRIO INTELIGENTE -->
+            <div class="docgen-form-panel">
+              <div class="docgen-form-scroll">
+
+                <!-- 1. ORIGEM DOS DADOS (DENÚNCIA / PROCESSO / WHATSAPP / CNPJ) -->
+                <div class="docgen-box" id="mia-source-box" style="border-color: rgba(239, 68, 68, 0.45); background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), #081020 75%);">
+                  <div class="docgen-box-title">
+                    <span id="mia-source-title" style="color:#fca5a5;"><i class="fas fa-bullhorn"></i> 1. Selecionar Denúncia do Sistema (com Fotos) ou Processo</span>
+                    <button type="button" class="wa-btn-sm" style="padding:4px 9px; font-size:0.72rem;" onclick="atualizarFontesMultasIA(true)">
+                      <i class="fas fa-sync-alt"></i> Atualizar Listas
+                    </button>
+                  </div>
+
+                  <div class="docgen-field" id="mia-denuncia-selector-wrap">
+                    <label>Denúncias Recebidas no Portal (Carrega relato + fotos automaticamente)</label>
+                    <div class="docgen-inline-input">
+                      <select id="mia-denuncia-select" style="flex:1;" onchange="carregarDenunciaNoMultasIA(this.value)">
+                        <option value="">-- Selecione uma denúncia recebida --</option>
+                      </select>
+                      <button type="button" class="btn btn-gemini" id="btn-mia-analisar-denuncia" style="padding: 9px 14px; font-size: 0.8rem; white-space: nowrap;" onclick="analisarDenunciaComIA()">
+                        <i class="fas fa-brain"></i> Analisar Fotos c/ IA
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Ou Importar Processo / Cliente do Firebase</label>
+                      <select id="mia-process-select" onchange="carregarProcessoNoMultasIA(this.value)">
+                        <option value="">-- Selecionar processo --</option>
+                      </select>
+                    </div>
+                    <div class="docgen-field">
+                      <label>Ou Puxar de Chat do WhatsApp (IA)</label>
+                      <div class="docgen-inline-input">
+                        <select id="mia-wa-select" style="flex:1;">
+                          <option value="">-- Chat WhatsApp --</option>
+                        </select>
+                        <button type="button" class="wa-btn-sm" style="border-color: #25D366; color: #6ee7b7; padding: 9px 10px;" onclick="puxarChatWaNoMultasIA()" title="Ler conversa do WhatsApp com IA">
+                          <i class="fab fa-whatsapp"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. BLOCO EXCLUSIVO MODO NOTIFICAÇÃO (SEM NORMAS — IA GERA O TEXTO COM BASE NO QUE VOCÊ COLOCAR) -->
+                <div class="docgen-box" id="mia-notif-prompt-box" style="display: none; border-color: rgba(245, 158, 11, 0.55); background: linear-gradient(135deg, rgba(245, 158, 11, 0.09), #081020 75%);">
+                  <div class="docgen-box-title">
+                    <span style="color:#fde68a;"><i class="fas fa-magic"></i> 2. Base para a IA Gerar a Notificação Sanitária</span>
+                    <span style="font-size:0.71rem; color:#cbd5e1;">Clique nos motivos ou escreva do seu jeito</span>
+                  </div>
+
+                  <div class="mia-presets-wrap" id="mia-notif-presets">
+                    <button type="button" class="mia-preset-chip active" data-motivo="Estabelecimento funcionando sem Alvará / Licença de Funcionamento Sanitária (LFS)" onclick="togglePresetNotifMIA(this)"><i class="fas fa-ban"></i> Sem Alvará / Licença</button>
+                    <button type="button" class="mia-preset-chip active" data-motivo="Trabalhando em desacordo com as normas sanitárias vigentes (Lei 13.725/04 e RDC 216)" onclick="togglePresetNotifMIA(this)"><i class="fas fa-exclamation-triangle"></i> Fora das Normas</button>
+                    <button type="button" class="mia-preset-chip" data-motivo="Ausência de Responsável Técnico (RT) legalmente habilitado" onclick="togglePresetNotifMIA(this)"><i class="fas fa-user-md"></i> Sem Resp. Técnico</button>
+                    <button type="button" class="mia-preset-chip" data-motivo="Falta de Manual de Boas Práticas (MBP), POPs obrigatórios e PGRSS" onclick="togglePresetNotifMIA(this)"><i class="fas fa-clipboard-list"></i> Sem POPs / BPF / PGRSS</button>
+                    <button type="button" class="mia-preset-chip" data-motivo="Condições precárias de higiene, falta de dedetização ou presença de pragas" onclick="togglePresetNotifMIA(this)"><i class="fas fa-bug"></i> Higiene / Pragas</button>
+                    <button type="button" class="mia-preset-chip" data-motivo="Produtos vencidos, sem rotulagem ou sem procedência sanitária" onclick="togglePresetNotifMIA(this)"><i class="fas fa-box-open"></i> Produtos Vencidos</button>
+                    <button type="button" class="mia-preset-chip" data-motivo="Falta de limpeza de caixa d'água e controle de temperatura" onclick="togglePresetNotifMIA(this)"><i class="fas fa-tint"></i> Caixa d'Água / Temp.</button>
+                    <button type="button" class="mia-preset-chip" data-motivo="Atendimento domiciliar / clínica sem regularização sanitária" onclick="togglePresetNotifMIA(this)"><i class="fas fa-clinic-medical"></i> Clínica / Estética Irregular</button>
+                  </div>
+
+                  <div class="docgen-field">
+                    <label>O que você quer notificar? (Escreva livremente — a IA transforma em notificação oficial)</label>
+                    <textarea id="mia-notif-base-input" placeholder="Ex: Estabelecimento está funcionando atendendo clientes sem alvará sanitário, sem esterilização adequada e sem seguir as normas da vigilância. Dar prazo de 5 dias úteis para regularizar sob pena de multa e interdição." style="min-height: 76px;"></textarea>
+                  </div>
+
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Nível / Gravidade da Notificação</label>
+                      <select id="mia-notif-nivel">
+                        <option value="NOTIFICAÇÃO SANITÁRIA COM PRAZO PARA ADEQUAÇÃO">Notificação Formal com Prazo</option>
+                        <option value="INTIMAÇÃO URGENTE — RISCO DE MULTA E INTERDIÇÃO CAUTELAR">Intimação Urgente (Risco Interdição)</option>
+                        <option value="NOTIFICAÇÃO ORIENTADORA / ADVERTÊNCIA PRÉVIA">Advertência / Orientadora</option>
+                      </select>
+                    </div>
+                    <div class="docgen-field">
+                      <label>Prazo de Regularização</label>
+                      <select id="mia-notif-prazo" onchange="atualizarDataPrazoMIA()">
+                        <option value="2">48 horas (Urgente)</option>
+                        <option value="5" selected>5 dias (Padrão)</option>
+                        <option value="10">10 dias</option>
+                        <option value="15">15 dias</option>
+                        <option value="30">30 dias</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button type="button" class="btn btn-gemini" id="btn-mia-gerar-notif-ia" style="padding: 11px 18px; font-size: 0.9rem; width: 100%;" onclick="gerarTextoNotificacaoComIA()">
+                    <i class="fas fa-wand-magic-sparkles"></i> Gerar Texto Formal + Exigências + Msg WhatsApp com IA
+                  </button>
+                </div>
+
+                <!-- 3. DADOS DO AUTUADO / NOTIFICADO -->
+                <div class="docgen-box">
+                  <div class="docgen-box-title">
+                    <span><i class="fas fa-building"></i> Dados do Estabelecimento / Cliente</span>
+                    <input type="text" id="mia-protocolo" placeholder="AI-COVISA-2026-0001" style="background:#040914; border:1px solid #26385a; color:#fca5a5; padding:4px 9px; border-radius:7px; font-size:0.74rem; font-family:var(--font-code); font-weight:800; width:175px;" />
+                  </div>
+
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Razão Social / Nome do Estabelecimento</label>
+                      <input type="text" id="mia-nome" placeholder="Ex: RESTAURANTE EXEMPLO LTDA" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>CPF / CNPJ (Busca Receita Federal)</label>
+                      <div class="docgen-inline-input">
+                        <input type="text" id="mia-cnpj" placeholder="00.000.000/0001-00" oninput="mascararDocGenCnpj(this)" maxlength="18" />
+                        <button type="button" class="wa-btn-sm btn-chat" id="btn-mia-busca-cnpj" onclick="buscarCnpjNoMultasIA()" style="padding:9px 10px;" title="Buscar dados na Receita Federal"><i class="fas fa-search"></i></button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Endereço Completo / Local da Ocorrência</label>
+                      <input type="text" id="mia-endereco" placeholder="Rua, nº, bairro, CEP..." />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Município / UF</label>
+                      <input type="text" id="mia-cidade" value="São Paulo - SP" placeholder="São Paulo - SP" />
+                    </div>
+                  </div>
+
+                  <div class="docgen-row-3-eq">
+                    <div class="docgen-field">
+                      <label>Ramo / Atividade</label>
+                      <input type="text" id="mia-ramo" placeholder="Ex: Alimentos / Estética / Saúde" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>WhatsApp do Cliente (p/ envio)</label>
+                      <input type="text" id="mia-telefone" placeholder="(11) 99999-9999" />
+                    </div>
+                    <div class="docgen-field">
+                      <label id="mia-prazo-data-label">Prazo Defesa / Regularização</label>
+                      <input type="text" id="mia-prazo-data" placeholder="DD/MM/AAAA" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4. ENQUADRAMENTO LEGAL, UFESP E PIX -->
+                <div class="docgen-box" id="mia-multa-fin-box" style="border-color: rgba(239, 68, 68, 0.4);">
+                  <div class="docgen-box-title">
+                    <span id="mia-fin-title" style="color:#f87171;"><i class="fas fa-balance-scale"></i> Enquadramento Legal, Multa (UFESP) & QR Code PIX</span>
+                    <span style="font-size:0.7rem; color:#94a3b8;">1 UFESP = R$ 38,42</span>
+                  </div>
+
+                  <div class="docgen-row-2" id="mia-artigo-row">
+                    <div class="docgen-field">
+                      <label>Artigo / Inciso (Lei Estadual 10.083/1998)</label>
+                      <select id="mia-artigo">
+                        <option value="122, I">Art. 122, I — Funcionamento sem licença sanitária ou contrariando normas</option>
+                        <option value="122, II">Art. 122, II — Sem responsável técnico legalmente habilitado</option>
+                        <option value="122, III">Art. 122, III — Saneamento ambiental com risco à saúde</option>
+                        <option value="122, IV">Art. 122, IV — Produtos perigosos/tóxicos irregulares</option>
+                        <option value="122, V">Art. 122, V — Criação/presença irregular de animais</option>
+                        <option value="122, VI">Art. 122, VI — Descarte irregular de resíduos de saúde (PGRSS)</option>
+                        <option value="122, VII">Art. 122, VII — Risco à saúde do trabalhador</option>
+                        <option value="122, VIII">Art. 122, VIII — Dificultar ou impedir fiscalização</option>
+                        <option value="122, IX">Art. 122, IX — Omitir riscos conhecidos à saúde</option>
+                        <option value="122, XI">Art. 122, XI — Produtos sem padrão de qualidade/segurança</option>
+                        <option value="122, XIII">Art. 122, XIII — Produtos vencidos ou sem validade</option>
+                        <option value="122, XIV">Art. 122, XIV — Rotulagem irregular</option>
+                        <option value="122, XVII">Art. 122, XVII — Equipamentos inadequados em saúde</option>
+                        <option value="122, XIX">Art. 122, XIX — Descumprimento de normas federais/estaduais</option>
+                        <option value="122, XX">Art. 122, XX — Descumprimento de determinações da autoridade</option>
+                      </select>
+                    </div>
+                    <div class="docgen-field">
+                      <label>Gravidade / Classificação</label>
+                      <select id="mia-gravidade">
+                        <option value="LEVE">LEVE (10 a 50 UFESP)</option>
+                        <option value="GRAVE" selected>GRAVE (50 a 500 UFESP)</option>
+                        <option value="GRAVÍSSIMA">GRAVÍSSIMA (500 a 10.000 UFESP)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="docgen-row-3-eq" id="mia-valor-row">
+                    <div class="docgen-field">
+                      <label>Qtd. UFESP (Auto-calcula R$)</label>
+                      <input type="number" id="mia-ufesp" value="50" min="0" oninput="recalcularValorUfespMIA()" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Valor Final (R$)</label>
+                      <input type="text" id="mia-valor" value="1.921,00" placeholder="Ex: 1.921,00" style="color:#fca5a5; font-weight:800;" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Incluir Bloco PIX no PDF?</label>
+                      <select id="mia-incluir-pix">
+                        <option value="1" selected>Sim — Com QR Code PIX</option>
+                        <option value="0">Não — Apenas QR do Portal</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="docgen-field" id="mia-pix-row">
+                    <label>Código PIX Copia e Cola (Gera QR Code real no PDF)</label>
+                    <div class="docgen-inline-input">
+                      <input type="text" id="mia-pix-code" placeholder="Clique em Gerar PIX ou cole um código PIX..." />
+                      <button type="button" class="wa-btn-sm" id="btn-mia-gerar-pix" style="border-color: var(--success); color: #6ee7b7; padding: 9px 12px; white-space: nowrap;" onclick="gerarPixParaMultasIA()">
+                        <i class="fas fa-qrcode"></i> Gerar PIX
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 5. EVIDÊNCIAS FOTOGRÁFICAS (VÃO NA PÁGINA 2 DO PDF COM LEGENDAS DA IA!) -->
+                <div class="docgen-box">
+                  <div class="docgen-box-title">
+                    <span><i class="fas fa-images" style="color:#38bdf8;"></i> Provas Fotográficas (Página 2 — Anexo Fotográfico)</span>
+                    <label class="wa-btn-sm" style="padding: 4px 10px; font-size: 0.72rem; cursor: pointer;">
+                      <i class="fas fa-plus"></i> Adicionar Fotos
+                      <input type="file" id="mia-extra-photos" accept="image/*" multiple style="display: none;" onchange="adicionarFotosExtrasMIA(this)" />
+                    </label>
+                  </div>
+                  <div class="mia-photo-grid" id="mia-photo-grid">
+                    <div style="grid-column: 1 / -1; color: #94a3b8; font-size: 0.78rem; text-align: center; padding: 10px;">
+                      Nenhuma foto carregada ainda. Selecione uma denúncia acima ou clique em "Adicionar Fotos".
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 6. TEXTO FORMAL DO DOCUMENTO + EXIGÊNCIAS + ASSINATURA FIXA -->
+                <div class="docgen-box">
+                  <div class="docgen-box-title">
+                    <span id="mia-texto-box-title"><i class="fas fa-file-alt"></i> Texto Oficial do Documento (Editável)</span>
+                    <span style="font-size:0.7rem; color:#6ee7b7;"><i class="fas fa-signature"></i> Assinado c/ DIRETORIA23.png</span>
+                  </div>
+
+                  <div class="docgen-field">
+                    <label id="mia-titulo-doc-label">Título da Notificação / Auto (Opcional)</label>
+                    <input type="text" id="mia-titulo-custom" placeholder="Deixe vazio para usar o título padrão oficial" />
+                  </div>
+
+                  <div class="docgen-field">
+                    <label id="mia-relato-label">Relato Técnico da Infração / Fundamentação Formal</label>
+                    <textarea id="mia-relato" style="min-height: 98px;" placeholder="Clique em 'Analisar Fotos c/ IA' ou 'Gerar Texto com IA' para redigir automaticamente..."></textarea>
+                  </div>
+
+                  <div class="docgen-field">
+                    <label>Exigências / Medidas Corretivas (1 item por linha)</label>
+                    <textarea id="mia-exigencias" style="min-height: 76px;" placeholder="Ex:&#10;Regularizar o Alvará / Licença Sanitária junto à COVISA&#10;Apresentar comprovante de dedetização e limpeza de caixa d'água&#10;Adequar manipulação de alimentos conforme RDC 216/2004"></textarea>
+                  </div>
+
+                  <div class="docgen-sig-strip">
+                    <label style="display:flex; align-items:center; gap:9px; color:#e2e8f0; font-size:0.81rem; font-weight:800; cursor:pointer;">
+                      <input type="checkbox" id="mia-usar-assinatura" checked style="width:16px; height:16px; accent-color:#10b981;" />
+                      <span>Assinatura Fixa (<code style="color:#6ee7b7;">DIRETORIA23.png</code>)</span>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; color:#bae6fd; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                      <input type="checkbox" id="mia-incluir-anexo-fotos" checked style="width:15px; height:15px; accent-color:#38bdf8;" />
+                      <span>Página 2 c/ Fotos</span>
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- RODAPÉ DE AÇÕES -->
+              <div class="docgen-footer-actions">
+                <button type="button" class="wa-btn-sm" id="btn-mia-salvar-firebase" style="border-color: #ef4444; color: #fecaca; background: rgba(239, 68, 68, 0.14);" onclick="salvarMultaNoFirebaseMIA()" title="Grava na coleção multas do Firebase para aparecer na aba Multas do site">
+                  <i class="fas fa-database"></i> Salvar na Aba Multas
+                </button>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-primary" id="btn-mia-preview" style="padding: 10px 16px; font-size: 0.86rem;" onclick="gerarPdfMultasIA(false)">
+                    <i class="fas fa-eye"></i> Gerar Prévia
+                  </button>
+                  <button type="button" class="btn btn-success" id="btn-mia-download" style="padding: 10px 18px; font-size: 0.86rem;" onclick="gerarPdfMultasIA(true)">
+                    <i class="fas fa-file-download"></i> Baixar PDF Assinado
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLUNA DIREITA: PRÉVIA DO PDF + DISPARO WHATSAPP -->
+            <div class="docgen-preview-panel">
+              <div class="docgen-preview-bar">
+                <div style="display:flex; align-items:center; gap:9px; flex-wrap:wrap;">
+                  <strong style="color:#ffffff; font-size:0.94rem;"><i class="fas fa-file-pdf" style="color:#ef4444;"></i> Prévia Oficial (PDF Assinado)</strong>
+                  <span id="mia-preview-filename" class="spy-chip" style="font-family: var(--font-code); font-size:0.74rem;">Nenhum PDF gerado</span>
+                </div>
+                <div style="display:flex; gap:7px; flex-wrap:wrap;">
+                  <button type="button" class="wa-btn-sm" id="btn-mia-open-tab" disabled onclick="abrirPdfMIANovaAba()" style="padding:6px 11px; font-size:0.78rem;">
+                    <i class="fas fa-external-link-alt"></i> Nova Aba
+                  </button>
+                  <button type="button" class="wa-btn-sm btn-chat" id="btn-mia-dl-top" disabled onclick="baixarUltimoPdfMIA()" style="padding:6px 11px; font-size:0.78rem;">
+                    <i class="fas fa-download"></i> Baixar
+                  </button>
+                </div>
+              </div>
+
+              <div class="docgen-preview-stage">
+                <div class="docgen-preview-idle" id="mia-preview-idle">
+                  <i class="fas fa-gavel" style="font-size: 3.6rem; color: #ef4444; opacity: 0.45; margin-bottom: 14px; display: block;"></i>
+                  <h3 style="color:#ffffff; margin-bottom:8px;">Pronto para Autuar ou Notificar</h3>
+                  <p style="font-size:0.88rem; line-height:1.55;">
+                    No modo <strong>Auto de Infração IA</strong>, escolha uma denúncia e clique em <strong>Analisar Fotos c/ IA</strong>. No modo <strong>Notificação Sanitária IA</strong>, digite o motivo e clique em <strong>Gerar Texto com IA</strong> — o PDF já sai assinado!
+                  </p>
+                </div>
+                <iframe id="mia-pdf-iframe" title="Prévia do Auto de Infração / Notificação PDF" style="width:100%; height:100%; border:none; background:#1e293b; display:none;"></iframe>
+              </div>
+
+              <!-- MENSAGEM PRONTA PARA ENVIAR NO WHATSAPP -->
+              <div class="mia-wa-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+                  <strong style="color:#6ee7b7; font-size:0.8rem;"><i class="fab fa-whatsapp"></i> Mensagem Pronta para Enviar no WhatsApp (com o PDF)</strong>
+                  <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <button type="button" class="wa-btn-sm" style="padding:5px 10px; font-size:0.74rem;" onclick="copiarMsgWhatsAppMIA()">
+                      <i class="fas fa-copy"></i> Copiar Msg
+                    </button>
+                    <button type="button" class="wa-btn-sm" id="btn-mia-send-wa" style="padding:5px 11px; font-size:0.74rem; border-color: #25D366; color: #6ee7b7; background: rgba(37, 211, 102, 0.14);" onclick="enviarMsgWhatsAppDiretoMIA()">
+                      <i class="fas fa-paper-plane"></i> Enviar no WhatsApp
+                    </button>
+                  </div>
+                </div>
+                <textarea id="mia-wa-msg" placeholder="A mensagem formal de acompanhamento será gerada automaticamente pela IA aqui..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div id="view-ufesp" class="page-view">
           <div class="page-title">
             <div>
@@ -2752,6 +3170,7 @@
         <button class="btn btn-secondary" onclick="deletarProcessoAtual()" style="color: var(--danger); border-color: var(--danger); background: transparent;"><i class="fas fa-trash-alt"></i> Excluir Definitivamente</button>
         <div style="flex:1"></div>
         <button class="btn btn-secondary" style="border-color: #f87171; color: #fca5a5;" onclick="abrirProcessoAtualNoDocGen()"><i class="fas fa-file-pdf"></i> Gerar Documento PDF</button>
+        <button class="btn btn-secondary" style="border-color: #f59e0b; color: #fde68a;" onclick="abrirProcessoAtualNoMultasIA()"><i class="fas fa-gavel"></i> Multa / Notificação IA</button>
         <button class="btn btn-secondary" onclick="fecharModal()">Cancelar Operação</button>
         <button class="btn btn-primary" id="btn-salvar-modal" onclick="salvarEdicaoModal()" style="padding: 20px 50px; font-size: 1.3rem;"><i class="fas fa-save"></i> Executar e Gravar no Servidor</button>
       </div>
@@ -3315,6 +3734,10 @@
         if (viewId === 'view-docgen') {
             inicializarDatasPadraoDocGen();
             atualizarListaWaNoDocGen(false);
+        }
+        if (viewId === 'view-multas-ia') {
+            atualizarFontesMultasIA(false);
+            atualizarDataPrazoMIA();
         }
         if (viewId === 'view-trafego' && window._spyLeafletMap) {
             setTimeout(() => { window._spyLeafletMap.invalidateSize(); }, 200);
@@ -4522,6 +4945,7 @@ REGRAS OBRIGATÓRIAS:
       document.getElementById("count-total").innerText = snapshot.size;
       
       aplicarFiltros(); // Já filtra e renderiza ordenado
+      if (typeof window.atualizarListasFirebaseMIA === 'function') window.atualizarListasFirebaseMIA();
     });
 
     window.renderizarTabelas = (arrayDeDados) => {
@@ -4622,6 +5046,7 @@ REGRAS OBRIGATÓRIAS:
              <div class="quick-actions">
                 <button class="btn-quick q-danger" title="Solicitar Parecer IA Jurídica" onclick="abrirModal('${processo.id}')"><i class="fas fa-brain"></i></button>
                 <button class="btn-quick" title="Abrir Dossiê Completo" onclick="abrirModal('${processo.id}')"><i class="fas fa-folder-open"></i></button>
+                ${isDenuncia ? `<button class="btn-quick" style="color: #fbbf24; border-color: #f59e0b; background: rgba(245, 158, 11, 0.12);" title="Gerar Multa IA com Fotos desta Denúncia" onclick="event.stopPropagation(); abrirDenunciaNoMultasIA('${processo.id}');"><i class="fas fa-gavel"></i></button>` : ''}
                 <button class="btn-quick" style="color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1);" title="Excluir Imediatamente" onclick="event.stopPropagation(); deletarDiretoDaTabela('${processo.id}');"><i class="fas fa-times"></i></button>
              </div>
           </td>
@@ -8679,6 +9104,1070 @@ REGRAS:
             showToast("Mensagem Copiada!", "Cole no WhatsApp junto com o PDF baixado.", "success");
         } catch (_) {
             showToast("Aviso", "Não foi possível copiar automaticamente.", "warning");
+        }
+    };
+
+    // =========================================================================
+    // CENTRAL DE MULTAS (DENÚNCIAS IA) & NOTIFICAÇÕES SANITÁRIAS IA (PDF ASSINADO)
+    // =========================================================================
+    let miaModoAtual = 'multa'; // 'multa' | 'notificacao'
+    let miaFotosLista = [];     // [{ url, nome, legenda, selecionado }]
+    let miaUltimoBlobUrl = null;
+    let miaUltimoBytes = null;
+    let miaUltimoFilename = '';
+    const UFESP_2026_VALOR = 38.42;
+
+    window.alternarModoMultasIA = (modo) => {
+        miaModoAtual = modo;
+        const btnM = document.getElementById('mia-tab-multa');
+        const btnN = document.getElementById('mia-tab-notificacao');
+        if (btnM) btnM.className = 'mia-mode-btn' + (modo === 'multa' ? ' active-multa' : '');
+        if (btnN) btnN.className = 'mia-mode-btn' + (modo === 'notificacao' ? ' active-notif' : '');
+
+        const srcBox = document.getElementById('mia-source-box');
+        const srcTitle = document.getElementById('mia-source-title');
+        const denWrap = document.getElementById('mia-denuncia-selector-wrap');
+        const notifBox = document.getElementById('mia-notif-prompt-box');
+        const finBox = document.getElementById('mia-multa-fin-box');
+        const finTitle = document.getElementById('mia-fin-title');
+        const artRow = document.getElementById('mia-artigo-row');
+        const valRow = document.getElementById('mia-valor-row');
+        const btnSaveDb = document.getElementById('btn-mia-salvar-firebase');
+        const protEl = document.getElementById('mia-protocolo');
+        const prazoLbl = document.getElementById('mia-prazo-data-label');
+        const relatoLbl = document.getElementById('mia-relato-label');
+
+        const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
+        if (modo === 'multa') {
+            if (srcBox) { srcBox.style.borderColor = 'rgba(239, 68, 68, 0.45)'; srcBox.style.background = 'linear-gradient(135deg, rgba(239, 68, 68, 0.08), #081020 75%)'; }
+            if (srcTitle) { srcTitle.style.color = '#fca5a5'; srcTitle.innerHTML = '<i class="fas fa-bullhorn"></i> 1. Selecionar Denúncia do Sistema (com Fotos) ou Processo'; }
+            if (denWrap) denWrap.style.display = 'flex';
+            if (notifBox) notifBox.style.display = 'none';
+            if (finBox) finBox.style.borderColor = 'rgba(239, 68, 68, 0.45)';
+            if (finTitle) { finTitle.style.color = '#f87171'; finTitle.innerHTML = '<i class="fas fa-balance-scale"></i> Enquadramento Legal, Multa (UFESP) & QR Code PIX'; }
+            if (artRow) artRow.style.display = 'grid';
+            if (valRow) valRow.style.display = 'grid';
+            if (btnSaveDb) btnSaveDb.style.display = 'inline-flex';
+            if (prazoLbl) prazoLbl.innerText = 'Prazo p/ Defesa (10 dias)';
+            if (relatoLbl) relatoLbl.innerText = 'Relato Técnico da Infração (Gerado pela IA ou Editado)';
+            document.getElementById('mia-incluir-pix').value = '1';
+            if (protEl && (!protEl.value || protEl.value.startsWith('NOTIF-'))) protEl.value = `AI-COVISA-2026-${rand}`;
+        } else {
+            if (srcBox) { srcBox.style.borderColor = 'rgba(245, 158, 11, 0.45)'; srcBox.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.07), #081020 75%)'; }
+            if (srcTitle) { srcTitle.style.color = '#fde68a'; srcTitle.innerHTML = '<i class="fas fa-user-tag"></i> 1. Importar Cliente (WhatsApp, Processo ou CNPJ abaixo)'; }
+            if (denWrap) denWrap.style.display = 'none';
+            if (notifBox) notifBox.style.display = 'flex';
+            if (finBox) finBox.style.borderColor = 'rgba(245, 158, 11, 0.45)';
+            if (finTitle) { finTitle.style.color = '#fbbf24'; finTitle.innerHTML = '<i class="fas fa-qrcode"></i> Taxa / PIX Opcional na Notificação'; }
+            if (artRow) artRow.style.display = 'none';
+            if (valRow) valRow.style.display = 'grid';
+            if (btnSaveDb) btnSaveDb.style.display = 'none';
+            if (prazoLbl) prazoLbl.innerText = 'Prazo Final p/ Regularização';
+            if (relatoLbl) relatoLbl.innerText = 'Texto Formal da Notificação Sanitária (Gerado pela IA)';
+            document.getElementById('mia-incluir-pix').value = '0';
+            if (protEl && (!protEl.value || protEl.value.startsWith('AI-'))) protEl.value = `NOTIF-COVISA-2026-${rand}`;
+        }
+        atualizarDataPrazoMIA();
+    };
+
+    window.togglePresetNotifMIA = (btn) => {
+        btn.classList.toggle('active');
+    };
+
+    window.recalcularValorUfespMIA = () => {
+        const ufesp = parseFloat(document.getElementById('mia-ufesp')?.value || '0') || 0;
+        const val = ufesp * UFESP_2026_VALOR;
+        const el = document.getElementById('mia-valor');
+        if (el) el.value = val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    };
+
+    window.atualizarDataPrazoMIA = () => {
+        const el = document.getElementById('mia-prazo-data');
+        if (!el) return;
+        const dias = miaModoAtual === 'multa'
+            ? 10
+            : (parseInt(document.getElementById('mia-notif-prazo')?.value || '5', 10) || 5);
+        const alvo = new Date();
+        alvo.setDate(alvo.getDate() + dias);
+        el.value = formatarDataBR(alvo);
+
+        const prot = document.getElementById('mia-protocolo');
+        if (prot && !prot.value) {
+            const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
+            prot.value = miaModoAtual === 'multa' ? `AI-COVISA-2026-${rand}` : `NOTIF-COVISA-2026-${rand}`;
+        }
+    };
+
+    window.atualizarListasFirebaseMIA = () => {
+        const denuncias = (todosProcessos || []).filter(p => p.tipo === '🚨 DENÚNCIA');
+        const badge = document.getElementById('mia-denuncia-badge');
+        if (badge) {
+            badge.innerText = String(denuncias.length);
+            badge.style.display = denuncias.length > 0 ? 'inline-flex' : 'none';
+        }
+
+        const selDen = document.getElementById('mia-denuncia-select');
+        if (selDen) {
+            const cur = selDen.value;
+            selDen.innerHTML = '<option value="">-- Selecione uma denúncia recebida (' + denuncias.length + ') --</option>' +
+                denuncias.map(d => {
+                    const qtdF = (Array.isArray(d.evidencias) ? d.evidencias.length : 0) || d.total_evidencias || 0;
+                    return `<option value="${d.id}">🚨 ${escaparHtmlWA((d.nome || 'Denúncia').slice(0, 48))} (${qtdF} foto(s)) — ${escaparHtmlWA(d.data || '')}</option>`;
+                }).join('');
+            if (cur) selDen.value = cur;
+        }
+
+        const selProc = document.getElementById('mia-process-select');
+        if (selProc) {
+            const curP = selProc.value;
+            selProc.innerHTML = '<option value="">-- Selecionar processo / cliente --</option>' +
+                (todosProcessos || []).map(p => `<option value="${p.id}">${escaparHtmlWA((p.nome || 'Sem nome').slice(0, 45))} (${escaparHtmlWA(p.cnpj || 'S/Doc')})</option>`).join('');
+            if (curP) selProc.value = curP;
+        }
+    };
+
+    window.atualizarFontesMultasIA = async (mostrarToast = false) => {
+        atualizarListasFirebaseMIA();
+        try {
+            const resp = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations?t=${Date.now()}`);
+            if (resp.ok) {
+                const dados = await resp.json();
+                if (dados.success && Array.isArray(dados.conversations)) {
+                    listaDeConversasAtuais = dados.conversations;
+                }
+            }
+        } catch (_) {}
+
+        const selWa = document.getElementById('mia-wa-select');
+        if (selWa) {
+            const cur = selWa.value;
+            selWa.innerHTML = '<option value="">-- Chat WhatsApp --</option>' +
+                (listaDeConversasAtuais || []).map(c => {
+                    const prev = (c.last_message || '').replace(/\s+/g, ' ').slice(0, 28);
+                    return `<option value="${escaparHtmlWA(c.phone)}">${formatarTelefoneWA(c.phone)} — ${escaparHtmlWA(prev)}</option>`;
+                }).join('');
+            if (cur) selWa.value = cur;
+        }
+        if (mostrarToast) showToast("Listas Atualizadas", "Denúncias, processos e chats do WhatsApp sincronizados.", "success");
+    };
+
+    function renderizarFotosMIA() {
+        const grid = document.getElementById('mia-photo-grid');
+        if (!grid) return;
+        if (miaFotosLista.length === 0) {
+            grid.innerHTML = '<div style="grid-column: 1 / -1; color: #94a3b8; font-size: 0.78rem; text-align: center; padding: 10px;">Nenhuma foto carregada ainda. Selecione uma denúncia acima ou clique em "Adicionar Fotos".</div>';
+            return;
+        }
+        grid.innerHTML = miaFotosLista.map((f, idx) => `
+            <div class="mia-photo-card ${f.selecionado ? 'selected' : ''}">
+                <button type="button" class="mia-photo-remove" onclick="removerFotoMIA(${idx})" title="Remover foto"><i class="fas fa-times"></i></button>
+                <img src="${f.url}" alt="${escaparHtmlWA(f.nome || 'Prova')}" onclick="abrirLightbox(this.src, '${escaparHtmlWA(f.legenda || f.nome || 'Evidência')}')" />
+                <div class="mia-photo-meta">
+                    <label style="display:flex; align-items:center; gap:5px; cursor:pointer; font-weight:700;">
+                        <input type="checkbox" ${f.selecionado ? 'checked' : ''} onchange="miaFotosLista[${idx}].selecionado = this.checked; renderizarFotosMIA();" style="accent-color:#10b981;" />
+                        <span>Prova #${idx + 1}</span>
+                    </label>
+                    <input type="text" value="${escaparHtmlWA(f.legenda || '')}" placeholder="Legenda da foto..." oninput="miaFotosLista[${idx}].legenda = this.value" />
+                </div>
+            </div>
+        `).join('');
+    }
+
+    window.removerFotoMIA = (idx) => {
+        miaFotosLista.splice(idx, 1);
+        renderizarFotosMIA();
+    };
+
+    window.adicionarFotosExtrasMIA = async (input) => {
+        if (!input.files || input.files.length === 0) return;
+        for (const file of Array.from(input.files)) {
+            if (!file.type.startsWith('image/')) continue;
+            const dataUrl = await new Promise((resolve) => {
+                const r = new FileReader();
+                r.onload = () => resolve(r.result);
+                r.readAsDataURL(file);
+            });
+            miaFotosLista.push({
+                url: dataUrl,
+                nome: file.name,
+                legenda: `Registro fotográfico — ${file.name.replace(/\.[^.]+$/, '')}`,
+                selecionado: true
+            });
+        }
+        input.value = '';
+        renderizarFotosMIA();
+        showToast("Fotos Adicionadas", `${miaFotosLista.length} foto(s) pronta(s) para análise da IA e Página 2 do PDF.`, "success");
+    };
+
+    async function carregarEvidenciasCompletasProcesso(procId, procObj) {
+        const lista = [];
+        if (Array.isArray(procObj?.evidencias)) {
+            procObj.evidencias.forEach((ev, idx) => {
+                if (ev && ev.url) lista.push({ url: ev.url, nome: ev.nome || `Prova ${idx + 1}`, legenda: ev.nome || `Registro fotográfico #${idx + 1}`, selecionado: true });
+            });
+        }
+        if (procObj?.evidencias_em_subcolecao || lista.length === 0) {
+            try {
+                const snapAnexos = await getDocs(collection(db, "pedidos", procId, "anexos"));
+                if (!snapAnexos.empty) {
+                    snapAnexos.docs
+                        .map(d => d.data())
+                        .sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0))
+                        .forEach((a, idx) => {
+                            if (a.url) lista.push({ url: a.url, nome: a.nome || `Anexo ${idx + 1}`, legenda: a.nome || `Registro fotográfico #${lista.length + 1}`, selecionado: true });
+                        });
+                }
+            } catch (_) {}
+        }
+        return lista;
+    }
+
+    function extrairDadosDaDenunciaTexto(docsStr, nomeStr) {
+        const txt = String(docsStr || '');
+        const localMatch = txt.match(/Local:\s*([^\n]+)/i);
+        const relatoMatch = txt.match(/Relato:\s*([\s\S]+)/i);
+        const localFull = localMatch ? localMatch[1].trim() : '';
+        let estNome = '';
+        let estEnd = localFull;
+        if (localFull.includes('|')) {
+            const parts = localFull.split('|');
+            estNome = parts[0].trim();
+            estEnd = parts.slice(1).join(' ').trim();
+        } else {
+            estNome = (nomeStr || '').replace(/^DENÚNCIA:\s*/i, '').trim();
+        }
+        return {
+            estNome: estNome || localFull || (nomeStr || 'Estabelecimento Denunciado'),
+            estEnd: estEnd || 'Conforme relato da denúncia',
+            relato: relatoMatch ? relatoMatch[1].trim() : txt
+        };
+    }
+
+    window.carregarDenunciaNoMultasIA = async (procId) => {
+        if (!procId) return;
+        const p = todosProcessos.find(x => x.id === procId);
+        if (!p) return;
+
+        const info = extrairDadosDaDenunciaTexto(p.docs, p.nome);
+        document.getElementById('mia-nome').value = info.estNome;
+        document.getElementById('mia-cnpj').value = (p.cnpj && p.cnpj !== 'Não informado') ? p.cnpj : '';
+        document.getElementById('mia-endereco').value = info.estEnd;
+        document.getElementById('mia-cidade').value = p.cidadeUF || 'São Paulo - SP';
+        document.getElementById('mia-ramo').value = 'Alimentos / Comércio / Saúde';
+        document.getElementById('mia-relato').value = info.relato;
+        document.getElementById('mia-protocolo').value = `AI-COVISA-2026-${p.id.substring(0, 6).toUpperCase()}`;
+
+        miaFotosLista = await carregarEvidenciasCompletasProcesso(procId, p);
+        renderizarFotosMIA();
+        atualizarDataPrazoMIA();
+
+        showToast("Denúncia Carregada", `${miaFotosLista.length} foto(s) carregada(s). Clique em "Analisar Fotos c/ IA" para montar o Auto!`, "success");
+    };
+
+    window.carregarProcessoNoMultasIA = async (procId) => {
+        if (!procId) return;
+        const p = todosProcessos.find(x => x.id === procId);
+        if (!p) return;
+        if (p.tipo === '🚨 DENÚNCIA') return carregarDenunciaNoMultasIA(procId);
+
+        const end = [p.rua, p.num ? `nº ${p.num}` : '', p.bairro, p.cep ? `CEP ${p.cep}` : ''].filter(Boolean).join(', ');
+        document.getElementById('mia-nome').value = p.nome || '';
+        document.getElementById('mia-cnpj').value = p.cnpj || '';
+        document.getElementById('mia-endereco').value = end;
+        document.getElementById('mia-cidade').value = p.cidadeUF || 'São Paulo - SP';
+        document.getElementById('mia-ramo').value = p.tipo || '';
+        if (p.telefone) document.getElementById('mia-telefone').value = p.telefone;
+        document.getElementById('mia-protocolo').value = `${miaModoAtual === 'multa' ? 'AI' : 'NOTIF'}-COVISA-2026-${p.id.substring(0, 6).toUpperCase()}`;
+
+        miaFotosLista = await carregarEvidenciasCompletasProcesso(procId, p);
+        renderizarFotosMIA();
+        showToast("Cliente Importado", `Dados de "${p.nome}" carregados com ${miaFotosLista.length} imagem(ns).`, "success");
+    };
+
+    window.abrirDenunciaNoMultasIA = async (procId) => {
+        const navBtn = document.getElementById('nav-item-multas-ia');
+        switchView('view-multas-ia', navBtn);
+        alternarModoMultasIA('multa');
+        atualizarListasFirebaseMIA();
+        const sel = document.getElementById('mia-denuncia-select');
+        if (sel) sel.value = procId;
+        await carregarDenunciaNoMultasIA(procId);
+    };
+
+    window.abrirProcessoAtualNoMultasIA = async () => {
+        if (!idProcessoAtual) return;
+        const id = idProcessoAtual;
+        const p = todosProcessos.find(x => x.id === id);
+        fecharModal();
+        const navBtn = document.getElementById('nav-item-multas-ia');
+        switchView('view-multas-ia', navBtn);
+        const ehDen = p && p.tipo === '🚨 DENÚNCIA';
+        alternarModoMultasIA(ehDen ? 'multa' : 'notificacao');
+        atualizarListasFirebaseMIA();
+        if (ehDen) {
+            const sel = document.getElementById('mia-denuncia-select');
+            if (sel) sel.value = id;
+            await carregarDenunciaNoMultasIA(id);
+        } else {
+            const sel = document.getElementById('mia-process-select');
+            if (sel) sel.value = id;
+            await carregarProcessoNoMultasIA(id);
+        }
+    };
+
+    window.buscarCnpjNoMultasIA = async () => {
+        const input = document.getElementById('mia-cnpj');
+        const btn = document.getElementById('btn-mia-busca-cnpj');
+        const cnpj = (input?.value || '').replace(/\D/g, '');
+        if (cnpj.length !== 14) return showToast("CNPJ Inválido", "Digite os 14 números do CNPJ.", "warning");
+        const orig = btn.innerHTML;
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        try {
+            let d = null;
+            try {
+                const r1 = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+                if (r1.ok) {
+                    const j = await r1.json();
+                    d = {
+                        nome: j.razao_social || j.nome_fantasia || '',
+                        end: [j.descricao_tipo_de_logradouro, j.logradouro, j.numero ? `nº ${j.numero}` : '', j.bairro, j.cep ? `CEP ${j.cep}` : ''].filter(Boolean).join(', '),
+                        cidade: [j.municipio, j.uf].filter(Boolean).join(' - '),
+                        ramo: (j.cnae_fiscal_descricao || '').slice(0, 60),
+                        tel: j.ddd_telefone_1 || ''
+                    };
+                }
+            } catch (_) {}
+            if (!d) {
+                const r2 = await fetch(`https://publica.cnpj.ws/cnpj/${cnpj}`);
+                if (r2.ok) {
+                    const j = await r2.json();
+                    const e = j.estabelecimento || {};
+                    d = {
+                        nome: j.razao_social || e.nome_fantasia || '',
+                        end: [e.tipo_logradouro, e.logradouro, e.numero ? `nº ${e.numero}` : '', e.bairro, e.cep ? `CEP ${e.cep}` : ''].filter(Boolean).join(', '),
+                        cidade: [e.cidade?.nome, e.estado?.sigla].filter(Boolean).join(' - '),
+                        ramo: (e.atividade_principal?.descricao || '').slice(0, 60),
+                        tel: e.telefone1 ? `(${e.ddd1 || ''}) ${e.telefone1}` : ''
+                    };
+                }
+            }
+            if (!d || !d.nome) throw new Error('CNPJ não localizado nas bases públicas.');
+            document.getElementById('mia-nome').value = d.nome;
+            if (d.end) document.getElementById('mia-endereco').value = d.end;
+            if (d.cidade) document.getElementById('mia-cidade').value = d.cidade;
+            if (d.ramo) document.getElementById('mia-ramo').value = d.ramo;
+            if (d.tel && !document.getElementById('mia-telefone').value) document.getElementById('mia-telefone').value = d.tel;
+            showToast("Receita Federal", `Dados de "${d.nome}" preenchidos!`, "success");
+        } catch (err) {
+            showToast("Falha na Consulta", err.message, "error");
+        } finally {
+            btn.disabled = false; btn.innerHTML = orig;
+        }
+    };
+
+    window.puxarChatWaNoMultasIA = async () => {
+        const phone = document.getElementById('mia-wa-select')?.value;
+        if (!phone) return showToast("Selecione o Chat", "Escolha um chat do WhatsApp na lista.", "warning");
+        try {
+            const resp = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations/history?phone=${encodeURIComponent(phone)}&t=${Date.now()}`);
+            const dados = await resp.json();
+            if (!resp.ok || !dados.success) throw new Error(dados.error || 'Erro ao buscar chat');
+            const hist = Array.isArray(dados.conversation?.history) ? dados.conversation.history : [];
+            const transc = hist.map(m => `${m.role === 'user' ? 'CLIENTE' : 'ATENDIMENTO'}: ${m.content || ''}`).join('\n');
+
+            const rIA = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: `Extraia do histórico de WhatsApp abaixo os dados do cliente/estabelecimento em JSON puro: {"nome":"","cnpj":"","endereco":"","cidade":"","ramo":"","resumo_situacao":""}\n\n${transc}` }] }],
+                    generationConfig: { responseMimeType: 'application/json' }
+                })
+            });
+            const jIA = await rIA.json();
+            const raw = jIA.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+            const ext = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || raw);
+
+            if (ext.nome) document.getElementById('mia-nome').value = ext.nome;
+            if (ext.cnpj) document.getElementById('mia-cnpj').value = ext.cnpj;
+            if (ext.endereco) document.getElementById('mia-endereco').value = ext.endereco;
+            if (ext.cidade) document.getElementById('mia-cidade').value = ext.cidade;
+            if (ext.ramo) document.getElementById('mia-ramo').value = ext.ramo;
+            document.getElementById('mia-telefone').value = formatarTelefoneWA(phone);
+            if (ext.resumo_situacao && miaModoAtual === 'notificacao') {
+                document.getElementById('mia-notif-base-input').value = ext.resumo_situacao;
+            }
+            showToast("Dados Puxados!", "Informações da conversa preenchidas com sucesso.", "success");
+        } catch (err) {
+            showToast("Erro", err.message, "error");
+        }
+    };
+
+    window.limparFormularioMultasIA = () => {
+        ['mia-denuncia-select', 'mia-process-select', 'mia-wa-select', 'mia-nome', 'mia-cnpj',
+         'mia-endereco', 'mia-ramo', 'mia-telefone', 'mia-pix-code', 'mia-titulo-custom',
+         'mia-relato', 'mia-exigencias', 'mia-notif-base-input', 'mia-wa-msg'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        document.getElementById('mia-cidade').value = 'São Paulo - SP';
+        document.getElementById('mia-ufesp').value = '50';
+        recalcularValorUfespMIA();
+        miaFotosLista = [];
+        renderizarFotosMIA();
+        atualizarDataPrazoMIA();
+        showToast("Limpo", "Formulário pronto para novo Auto ou Notificação.", "success");
+    };
+
+    // -------------------------------------------------------------------------
+    // IA #1: ANALISAR DENÚNCIA + IMAGENS ENVIADAS PELO DENUNCIANTE -> AUTO DE INFRAÇÃO
+    // -------------------------------------------------------------------------
+    window.analisarDenunciaComIA = async () => {
+        const nome = (document.getElementById('mia-nome')?.value || '').trim();
+        const relatoAtual = (document.getElementById('mia-relato')?.value || '').trim();
+        const fotosAtivas = miaFotosLista.filter(f => f.selecionado).slice(0, 4);
+
+        if (!nome && !relatoAtual && fotosAtivas.length === 0) {
+            return showToast("Selecione uma Denúncia", "Escolha uma denúncia na lista acima ou anexe fotos para a IA analisar.", "warning");
+        }
+
+        const btn = document.getElementById('btn-mia-analisar-denuncia');
+        const orig = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analisando fotos...';
+
+        try {
+            const prompt = `Você é um Auditor Fiscal Perito Sênior da Vigilância Sanitária (COVISA — Prefeitura de São Paulo).
+Analise o relato da denúncia e TODAS as imagens anexadas abaixo (provas enviadas pelo denunciante) para lavrar um Auto de Infração Sanitária (AI) rigoroso, técnico e fundamentado na Lei Estadual nº 10.083/1998 (Art. 122), Lei Municipal nº 13.725/2004 e RDC ANVISA nº 216/2004.
+
+DADOS DA DENÚNCIA:
+- Estabelecimento: ${nome || 'Não informado'}
+- Endereço: ${document.getElementById('mia-endereco')?.value || 'Não informado'}
+- Relato do denunciante: ${relatoAtual || 'Analisar diretamente as imagens anexadas.'}
+- Quantidade de fotos enviadas: ${fotosAtivas.length}
+
+Retorne APENAS JSON válido (sem markdown **):
+{
+  "artigo_inciso": "122, I" | "122, II" | "122, III" | "122, IV" | "122, V" | "122, VI" | "122, VII" | "122, VIII" | "122, IX" | "122, XI" | "122, XIII" | "122, XIV" | "122, XVII" | "122, XIX" | "122, XX",
+  "gravidade": "LEVE" | "GRAVE" | "GRAVÍSSIMA",
+  "ufesp_sugerido": 50,
+  "ramo_identificado": "Ex: Alimentos / Restaurante / Clínica / Estética",
+  "relato_tecnico": "Parecer técnico formal de 2 a 3 parágrafos descrevendo objetivamente as irregularidades constatadas nas imagens e no relato, citando a legislação sanitária aplicável.",
+  "exigencias": ["Exigência corretiva imediata 1", "Exigência 2", "Exigência 3"],
+  "legendas_fotos": ["Legenda técnica detalhada para a Foto 1 descrevendo a irregularidade visível", "Legenda para Foto 2..."],
+  "mensagem_whatsapp": "Mensagem formal e direta para enviar no WhatsApp ao responsável pelo estabelecimento informando sobre o Auto de Infração emitido, o prazo de defesa (10 dias) e que o documento oficial com QR Code PIX segue em anexo. Use apenas asterisco simples *negrito*."
+}`;
+
+            const parts = [{ text: prompt }];
+            for (let i = 0; i < fotosAtivas.length; i++) {
+                const imgObj = await obterDadosImagemSeguro(fotosAtivas[i].url);
+                if (imgObj) {
+                    parts.push({ text: `[FOTO DE PROVA #${i + 1}]` });
+                    parts.push({ inline_data: imgObj });
+                }
+            }
+
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts }],
+                    generationConfig: { responseMimeType: 'application/json' }
+                })
+            });
+            if (!resp.ok) throw new Error(`Erro HTTP ${resp.status} na API Gemini`);
+            const data = await resp.json();
+            const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            const res = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || raw);
+
+            if (res.artigo_inciso) {
+                const selArt = document.getElementById('mia-artigo');
+                if (selArt && [...selArt.options].some(o => o.value === res.artigo_inciso)) {
+                    selArt.value = res.artigo_inciso;
+                }
+            }
+            if (res.gravidade) document.getElementById('mia-gravidade').value = res.gravidade;
+            if (res.ufesp_sugerido) {
+                document.getElementById('mia-ufesp').value = String(Number(res.ufesp_sugerido) || 50);
+                recalcularValorUfespMIA();
+            }
+            if (res.ramo_identificado) document.getElementById('mia-ramo').value = res.ramo_identificado;
+            if (res.relato_tecnico) document.getElementById('mia-relato').value = res.relato_tecnico.replace(/\*\*/g, '');
+            if (Array.isArray(res.exigencias)) document.getElementById('mia-exigencias').value = res.exigencias.join('\n');
+            if (res.mensagem_whatsapp) document.getElementById('mia-wa-msg').value = res.mensagem_whatsapp.replace(/\*\*([^*\n]+)\*\*/g, '*$1*');
+
+            if (Array.isArray(res.legendas_fotos)) {
+                let k = 0;
+                miaFotosLista.forEach(f => {
+                    if (f.selecionado && res.legendas_fotos[k]) {
+                        f.legenda = res.legendas_fotos[k];
+                        k++;
+                    }
+                });
+                renderizarFotosMIA();
+            }
+
+            showToast("Perícia IA Concluída!", `Auto enquadrado no Art. ${res.artigo_inciso || '122'} (${res.ufesp_sugerido || 50} UFESP) com legendas nas fotos!`, "success");
+            registrarLog("Auto de Infração IA", `IA analisou denúncia e ${fotosAtivas.length} foto(s) de ${nome || 'estabelecimento'}`);
+            await gerarPdfMultasIA(false);
+        } catch (err) {
+            console.error("Erro na perícia IA da denúncia:", err);
+            showToast("Erro na Análise IA", err.message, "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = orig;
+        }
+    };
+
+    // -------------------------------------------------------------------------
+    // IA #2: GERAR NOTIFICAÇÃO SANITÁRIA FORMAL COM BASE NO QUE O FISCAL COLOCAR
+    // -------------------------------------------------------------------------
+    window.gerarTextoNotificacaoComIA = async () => {
+        const chipsAtivos = Array.from(document.querySelectorAll('#mia-notif-presets .mia-preset-chip.active'))
+            .map(b => b.getAttribute('data-motivo'));
+        const textoLivre = (document.getElementById('mia-notif-base-input')?.value || '').trim();
+        const nome = (document.getElementById('mia-nome')?.value || 'o estabelecimento').trim();
+        const cnpj = (document.getElementById('mia-cnpj')?.value || '').trim();
+        const end = (document.getElementById('mia-endereco')?.value || '').trim();
+        const ramo = (document.getElementById('mia-ramo')?.value || '').trim();
+        const nivel = document.getElementById('mia-notif-nivel')?.value || 'NOTIFICAÇÃO SANITÁRIA';
+        const prazoDias = document.getElementById('mia-notif-prazo')?.value || '5';
+        const prazoData = document.getElementById('mia-prazo-data')?.value || '';
+        const fotosAtivas = miaFotosLista.filter(f => f.selecionado).slice(0, 3);
+
+        if (chipsAtivos.length === 0 && !textoLivre && fotosAtivas.length === 0) {
+            return showToast("Informe a Base", "Selecione pelo menos um motivo ou escreva no campo o que você quer notificar.", "warning");
+        }
+
+        const btn = document.getElementById('btn-mia-gerar-notif-ia');
+        const orig = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redigindo notificação oficial...';
+
+        try {
+            const prompt = `Você é um Auditor Fiscal Sênior da Vigilância Sanitária (COVISA — Prefeitura de São Paulo).
+Redija uma NOTIFICAÇÃO SANITÁRIA OFICIAL formal, firme, clara e juridicamente embasada, pronta para ir para um PDF assinado e ser enviada ao cliente.
+
+DADOS DO NOTIFICADO:
+- Estabelecimento / Profissional: ${nome}
+- CPF/CNPJ: ${cnpj || 'Não informado'}
+- Endereço: ${end || 'Não informado'}
+- Ramo: ${ramo || 'Não especificado'}
+- Modalidade / Gravidade: ${nivel}
+- Prazo de Regularização: ${prazoDias} dias (até ${prazoData})
+
+IRREGULARIDADES / BASE INFORMADA PELO FISCAL:
+- Motivos marcados: ${chipsAtivos.length > 0 ? chipsAtivos.join('; ') : 'Nenhum'}
+- Observações livres do fiscal: ${textoLivre || '(Basear-se nos motivos marcados acima)'}
+
+Retorne APENAS JSON válido (sem asteriscos duplos **):
+{
+  "titulo_notificacao": "TÍTULO FORMAL EM MAIÚSCULAS (máx 60 caracteres, ex: NOTIFICAÇÃO SANITÁRIA — FUNCIONAMENTO SEM NORMAS)",
+  "texto_formal": "Corpo oficial da notificação com 2 a 3 parágrafos objetivos, explicando que foi constatado o funcionamento fora das normas sanitárias conforme a base informada, citando a Lei Municipal nº 13.725/2004, Lei Estadual nº 10.083/1998, Portaria SMS nº 266/2025 (e RDC 216/04 ou normas pertinentes ao ramo), informando o prazo fatal até ${prazoData} e alertando sobre multa (10 a 10.000 UFESP) e interdição em caso de descumprimento.",
+  "exigencias": ["Exigência clara 1", "Exigência clara 2", "Exigência clara 3", "Exigência clara 4"],
+  "mensagem_whatsapp": "Mensagem formal e educadamente firme pronta para enviar no WhatsApp acompanhando o PDF assinado da Notificação Sanitária. Use apenas asterisco simples *negrito*."
+}`;
+
+            const parts = [{ text: prompt }];
+            for (let i = 0; i < fotosAtivas.length; i++) {
+                const imgObj = await obterDadosImagemSeguro(fotosAtivas[i].url);
+                if (imgObj) {
+                    parts.push({ text: `[FOTO ANEXADA #${i + 1}]` });
+                    parts.push({ inline_data: imgObj });
+                }
+            }
+
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts }],
+                    generationConfig: { responseMimeType: 'application/json' }
+                })
+            });
+            if (!resp.ok) throw new Error(`Erro HTTP ${resp.status} na IA`);
+            const data = await resp.json();
+            const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            const res = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || raw);
+
+            if (res.titulo_notificacao) document.getElementById('mia-titulo-custom').value = res.titulo_notificacao;
+            if (res.texto_formal) document.getElementById('mia-relato').value = res.texto_formal.replace(/\*\*/g, '');
+            if (Array.isArray(res.exigencias)) document.getElementById('mia-exigencias').value = res.exigencias.join('\n');
+            if (res.mensagem_whatsapp) document.getElementById('mia-wa-msg').value = res.mensagem_whatsapp.replace(/\*\*([^*\n]+)\*\*/g, '*$1*');
+
+            showToast("Notificação Redigida!", "Texto formal e exigências gerados pela IA! Atualizando prévia do PDF assinado...", "success");
+            registrarLog("Notificação Sanitária IA", `Gerou notificação oficial para ${nome}`);
+            await gerarPdfMultasIA(false);
+        } catch (err) {
+            showToast("Erro IA", err.message, "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = orig;
+        }
+    };
+
+    window.gerarPixParaMultasIA = async () => {
+        const btn = document.getElementById('btn-mia-gerar-pix');
+        const valRaw = (document.getElementById('mia-valor')?.value || '').replace(/R\$\s?/g, '').trim();
+        const valNum = parseFloat(valRaw.replace(/\./g, '').replace(',', '.'));
+        const nome = (document.getElementById('mia-nome')?.value || 'Contribuinte Autuado').trim();
+        const docNum = (document.getElementById('mia-cnpj')?.value || '').replace(/\D/g, '') || '00000000000';
+        const prot = (document.getElementById('mia-protocolo')?.value || 'AI_' + Date.now()).trim();
+
+        if (!valNum || isNaN(valNum) || valNum <= 0) {
+            return showToast("Informe o Valor", "Defina a quantidade de UFESP ou o Valor (R$) antes de gerar o PIX.", "warning");
+        }
+        const orig = btn.innerHTML;
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+        try {
+            const apiPixUrl = window.location.hostname.includes('netlify.app')
+                ? 'https://portal-vigilancia.vercel.app/api/pix'
+                : '/api/pix';
+            const resp = await fetch(apiPixUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    amount: valNum,
+                    description: `${miaModoAtual === 'multa' ? 'Multa COVISA' : 'Taxa Regularização'} - ${prot}`,
+                    payerName: nome,
+                    payerDocument: docNum,
+                    externalReference: prot
+                })
+            });
+            const data = await resp.json();
+            if (!resp.ok || !data.copyPaste) throw new Error(data.error || data.erro || 'Gateway PIX indisponível.');
+            document.getElementById('mia-pix-code').value = data.copyPaste;
+            document.getElementById('mia-incluir-pix').value = '1';
+            showToast("PIX Gerado!", "QR Code PIX pronto para sair no PDF oficial.", "success");
+        } catch (err) {
+            showToast("Aviso PIX", `${err.message} (Você também pode colar um código PIX manualmente.)`, "warning");
+        } finally {
+            btn.disabled = false; btn.innerHTML = orig;
+        }
+    };
+
+    // Helper seguro para converter QUALQUER foto (JPG, PNG, WebP, dataURL ou URL) em JPEG limpo p/ pdf-lib
+    async function converterFotoParaJpegBytesPDF(src) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                try {
+                    const maxSide = 960;
+                    let w = img.width, h = img.height;
+                    if (w > maxSide || h > maxSide) {
+                        if (w >= h) { h = Math.round((h * maxSide) / w); w = maxSide; }
+                        else { w = Math.round((w * maxSide) / h); h = maxSide; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, w, h);
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const b64 = canvas.toDataURL('image/jpeg', 0.86).split(',')[1];
+                    const bin = atob(b64);
+                    const bytes = new Uint8Array(bin.length);
+                    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+                    resolve(bytes);
+                } catch (_) { resolve(null); }
+            };
+            img.onerror = () => resolve(null);
+            img.src = src;
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // CONSTRUTOR DE PDF OFICIAL: AUTO DE INFRAÇÃO IA (2 PÁGINAS) & NOTIFICAÇÃO ASSINADA
+    // -------------------------------------------------------------------------
+    window.gerarPdfMultasIA = async (fazerDownload = false) => {
+        if (typeof PDFLib === 'undefined') {
+            return showToast("Aguarde", "Biblioteca PDF carregando...", "warning");
+        }
+        atualizarDataPrazoMIA();
+
+        const nome = (document.getElementById('mia-nome')?.value || '').trim();
+        if (!nome) return showToast("Falta o Nome", "Preencha o Nome do Estabelecimento ou importe uma denúncia/cliente.", "warning");
+
+        const btnPrev = document.getElementById('btn-mia-preview');
+        const btnDl = document.getElementById('btn-mia-download');
+        const oP = btnPrev?.innerHTML || '', oD = btnDl?.innerHTML || '';
+        if (btnPrev) { btnPrev.disabled = true; btnPrev.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
+        if (btnDl) { btnDl.disabled = true; btnDl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
+
+        try {
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const pdfDoc = await PDFDocument.create();
+            const page = pdfDoc.addPage([595.28, 841.89]);
+            const { width, height } = page.getSize();
+
+            const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            const fontMono = await pdfDoc.embedFont(StandardFonts.CourierBold);
+
+            const ehMulta = miaModoAtual === 'multa';
+            const corPrim = ehMulta ? rgb(0.76, 0.10, 0.10) : rgb(0.76, 0.42, 0.02);
+            const corSec = rgb(0.08, 0.15, 0.28);
+            const corEscuro = rgb(0.09, 0.12, 0.18);
+            const corCinza = rgb(0.36, 0.41, 0.49);
+            const corBorda = rgb(0.78, 0.83, 0.89);
+            const corFundo = ehMulta ? rgb(0.996, 0.96, 0.96) : rgb(0.998, 0.978, 0.93);
+
+            const dataAuto = formatarDataBR(new Date());
+            const cidadeAuto = (document.getElementById('mia-cidade')?.value || 'São Paulo - SP').trim();
+            const cnpj = (document.getElementById('mia-cnpj')?.value || '').trim();
+            const endereco = (document.getElementById('mia-endereco')?.value || '').trim();
+            const ramo = (document.getElementById('mia-ramo')?.value || '').trim();
+            const protocolo = (document.getElementById('mia-protocolo')?.value || `COVISA-2026-${Date.now().toString().slice(-5)}`).trim();
+            const prazoData = (document.getElementById('mia-prazo-data')?.value || dataAuto).trim();
+            const artigo = document.getElementById('mia-artigo')?.value || '122, I';
+            const gravidade = document.getElementById('mia-gravidade')?.value || 'GRAVE';
+            const ufesp = document.getElementById('mia-ufesp')?.value || '50';
+            const valorStr = (document.getElementById('mia-valor')?.value || '0,00').trim();
+            const incluirPix = document.getElementById('mia-incluir-pix')?.value === '1';
+            const pixCode = (document.getElementById('mia-pix-code')?.value || '').trim();
+            const tituloCustom = (document.getElementById('mia-titulo-custom')?.value || '').trim();
+            const relato = (document.getElementById('mia-relato')?.value || '').trim();
+            const exigenciasRaw = (document.getElementById('mia-exigencias')?.value || '').trim();
+            const usarAssinatura = document.getElementById('mia-usar-assinatura')?.checked !== false;
+            const incluirAnexoFotos = document.getElementById('mia-incluir-anexo-fotos')?.checked !== false;
+            const nivelNotif = document.getElementById('mia-notif-nivel')?.value || 'NOTIFICAÇÃO SANITÁRIA FORMAL';
+            const fotosSel = miaFotosLista.filter(f => f.selecionado);
+
+            const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
+            const sigImg = usarAssinatura ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
+
+            // Moldura + Barra lateral de alerta fiscal
+            page.drawRectangle({ x: 18, y: 18, width: width - 36, height: height - 36, borderColor: corPrim, borderWidth: 2 });
+            page.drawRectangle({ x: 18, y: height - 100, width: width - 36, height: 82, color: corSec });
+
+            let hx = 34;
+            if (brasaoImg) {
+                const bd = brasaoImg.scaleToFit(50, 50);
+                page.drawImage(brasaoImg, { x: 30, y: height - 84, width: bd.width, height: bd.height });
+                hx = 90;
+            }
+            drawTextFitPDF(page, 'PREFEITURA DO MUNICÍPIO DE SÃO PAULO', hx, height - 42, fontBold, 11.2, 330, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'SECRETARIA MUNICIPAL DA SAÚDE — VIGILÂNCIA SANITÁRIA (COVISA)', hx, height - 58, fontBold, 8.6, 330, rgb(0.95, 0.85, 0.55));
+            drawTextFitPDF(page, `Local e Data: ${cidadeAuto}, ${dataAuto}  •  Portal COVISA Digital 2026`, hx, height - 74, fontReg, 7.8, 330, rgb(0.84, 0.89, 0.96));
+
+            // Selo Protocolo no canto superior direito
+            page.drawRectangle({ x: width - 166, y: height - 88, width: 138, height: 56, color: corPrim });
+            drawTextFitPDF(page, ehMulta ? 'AUTO DE INFRAÇÃO' : 'NOTIFICAÇÃO OFICIAL', width - 158, height - 46, fontBold, 7.2, 124, rgb(1, 0.95, 0.82));
+            drawTextFitPDF(page, protocolo, width - 158, height - 63, fontMono, 8.8, 124, rgb(1, 1, 1));
+            drawTextFitPDF(page, ehMulta ? `GRAVIDADE: ${gravidade}` : `PRAZO: ${prazoData}`, width - 158, height - 79, fontBold, 7.2, 124, rgb(1, 1, 1));
+
+            // Faixa Título Principal
+            let y = height - 110;
+            page.drawRectangle({ x: 30, y: y - 34, width: width - 60, height: 34, color: corPrim });
+            const tituloFinal = tituloCustom
+                ? tituloCustom.toUpperCase()
+                : (ehMulta ? 'AUTO DE INFRAÇÃO E IMPOSIÇÃO DE PENALIDADE SANITÁRIA (AI)' : 'NOTIFICAÇÃO SANITÁRIA — FUNCIONAMENTO EM DESACORDO COM AS NORMAS');
+            const subFinal = ehMulta
+                ? `Lei Estadual nº 10.083/1998 (Art. ${artigo}) • Lei Municipal nº 13.725/2004 • Defesa em 10 dias`
+                : `${nivelNotif} • Lei Municipal nº 13.725/2004 e Portaria SMS nº 266/2025`;
+            drawTextFitPDF(page, tituloFinal, 40, y - 14, fontBold, 11.0, width - 80, rgb(1, 1, 1));
+            drawTextFitPDF(page, subFinal, 40, y - 27, fontReg, 7.5, width - 80, rgb(0.98, 0.94, 0.90));
+
+            y -= 44;
+
+            // Bloco 1: Identificação do Autuado / Notificado
+            const idH = 88;
+            page.drawRectangle({ x: 30, y: y - idH, width: width - 60, height: idH, color: rgb(0.97, 0.98, 0.996), borderColor: corBorda, borderWidth: 1 });
+            drawTextFitPDF(page, ehMulta ? '01. IDENTIFICAÇÃO DO ESTABELECIMENTO AUTUADO' : '01. IDENTIFICAÇÃO DO ESTABELECIMENTO NOTIFICADO', 40, y - 13, fontBold, 7.8, width - 80, corPrim);
+
+            const drawKv = (lbl, val, fx, fy, maxW) => {
+                page.drawText(sanitizarTextoPDF(lbl), { x: fx, y: fy, size: 6.7, font: fontBold, color: corCinza });
+                drawTextFitPDF(page, val || 'Não informado', fx, fy - 11, fontBold, 8.7, maxW, corEscuro, 6.4);
+            };
+
+            drawKv('RAZÃO SOCIAL / NOME', nome.toUpperCase(), 40, y - 28, 330);
+            drawKv((cnpj.replace(/\D/g, '').length === 11) ? 'CPF' : 'CNPJ / CPF', cnpj || 'Em apuração', 385, y - 28, 170);
+            drawKv('ENDEREÇO / LOCAL DA CONSTATAÇÃO', (endereco || 'Conforme cadastro').toUpperCase(), 40, y - 58, 280);
+            drawKv('MUNICÍPIO / UF', cidadeAuto.toUpperCase(), 332, y - 58, 118);
+            drawKv('RAMO / ATIVIDADE', (ramo || 'Comércio / Saúde').toUpperCase(), 458, y - 58, 98);
+
+            y = y - idH - 10;
+
+            // Bloco 2: Quadro de Destaque (Valor/UFESP na Multa OU Prazo Fatal na Notificação)
+            if (ehMulta) {
+                const mH = 52;
+                page.drawRectangle({ x: 30, y: y - mH, width: width - 60, height: mH, color: corFundo, borderColor: corPrim, borderWidth: 1.3 });
+                const valFmt = valorStr.startsWith('R$') ? valorStr : `R$ ${valorStr}`;
+                drawKv('PENALIDADE APLICADA (MULTA)', `${valFmt} (${ufesp} UFESP)`, 40, y - 15, 195);
+                drawKv('ENQUADRAMENTO LEGAL', `Art. ${artigo} — Lei 10.083/98`, 245, y - 15, 175);
+                drawKv('PRAZO DEFESA / PGTO', `${prazoData} (10d / 30d)`, 430, y - 15, 125);
+                y = y - mH - 12;
+            } else {
+                const nH = 48;
+                page.drawRectangle({ x: 30, y: y - nH, width: width - 60, height: nH, color: corFundo, borderColor: corPrim, borderWidth: 1.3 });
+                drawKv('PRAZO FATAL PARA REGULARIZAÇÃO', `ATÉ ${prazoData}`, 40, y - 14, 175);
+                drawKv('CONSEQUÊNCIA EM CASO DE DESCUMPRIMENTO', 'Multa de 10 a 10.000 UFESP e/ou Interdição Cautelar', 225, y - 14, 330);
+                y = y - nH - 12;
+            }
+
+            // Bloco 3: Relato Técnico / Texto Formal
+            const temPixBloco = incluirPix && pixCode.length > 20;
+            const bottomLimit = temPixBloco ? 250 : 148;
+
+            drawTextFitPDF(page, ehMulta ? '02. RELATO TÉCNICO DA INFRAÇÃO CONSTATADA' : '02. FUNDAMENTAÇÃO E TERMO DE NOTIFICAÇÃO SANITÁRIA', 34, y, fontBold, 8.2, width - 68, corPrim);
+            y -= 14;
+
+            const relatoFinal = relato || (ehMulta
+                ? `Em verificação fiscal motivada por denúncia registrada sob o protocolo ${protocolo}, constataram-se irregularidades sanitárias no estabelecimento acima qualificado, em infringência ao Art. ${artigo} da Lei Estadual nº 10.083/1998 e à Lei Municipal nº 13.725/2004. Fica assegurado ao autuado o prazo legal de 10 (dez) dias para defesa ou 30 (trinta) dias para quitação.`
+                : `Fica o estabelecimento acima qualificado formalmente NOTIFICADO de que foram constatadas não conformidades em relação às normas sanitárias vigentes (Lei Municipal nº 13.725/2004, Lei Estadual nº 10.083/1998 e Portaria SMS nº 266/2025), devendo regularizar integralmente as exigências abaixo até a data de ${prazoData}, sob pena de lavratura de Auto de Infração, multa pecuniária e interdição cautelar.`);
+
+            const rLines = quebrarLinhasPDF(relatoFinal, fontReg, 9.1, width - 72);
+            const maxRelatoLines = temPixBloco ? 10 : 16;
+            rLines.slice(0, maxRelatoLines).forEach(ln => {
+                if (y < bottomLimit + 55) return;
+                if (ln) page.drawText(ln, { x: 34, y, size: 9.1, font: fontReg, color: corEscuro });
+                y -= 12.6;
+            });
+
+            // Bloco 4: Exigências Corretivas (lista numerada limpa)
+            const exList = exigenciasRaw.split('\n').map(s => s.trim()).filter(Boolean);
+            if (exList.length > 0 && y > bottomLimit + 38) {
+                y -= 6;
+                drawTextFitPDF(page, '03. EXIGÊNCIAS / MEDIDAS OBRIGATÓRIAS', 34, y, fontBold, 8.2, width - 68, corPrim);
+                y -= 13;
+                exList.slice(0, temPixBloco ? 4 : 7).forEach((ex, idx) => {
+                    if (y < bottomLimit + 10) return;
+                    const itemLines = quebrarLinhasPDF(`${idx + 1}. ${ex}`, fontBold, 8.5, width - 76);
+                    itemLines.slice(0, 2).forEach(il => {
+                        if (y < bottomLimit + 6) return;
+                        page.drawText(il, { x: 38, y, size: 8.5, font: fontBold, color: corEscuro });
+                        y -= 11.8;
+                    });
+                });
+            }
+
+            if (incluirAnexoFotos && fotosSel.length > 0 && y > bottomLimit + 12) {
+                drawTextFitPDF(page, `>> ANEXO FOTOGRÁFICO: ${fotosSel.length} evidência(s) fotográfica(s) periciada(s) anexada(s) na Página 2 deste documento.`, 34, Math.max(bottomLimit + 6, y - 4), fontBold, 7.8, width - 68, corSec);
+            }
+
+            // Bloco PIX com QR Code real (quando habilitado e preenchido)
+            if (temPixBloco) {
+                const pixH = 104;
+                const pixY = 132;
+                page.drawRectangle({ x: 30, y: pixY, width: width - 60, height: pixH, color: rgb(0.96, 0.975, 0.996), borderColor: corPrim, borderWidth: 1.2 });
+                drawTextFitPDF(page, 'PAGAMENTO VIA PIX — QUITAÇÃO DA PENALIDADE / GUIA (QR CODE + COPIA E COLA)', 40, pixY + pixH - 14, fontBold, 7.8, width - 80, corPrim);
+
+                const qrPixUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&format=png&data=${encodeURIComponent(pixCode)}`;
+                const qrPixImg = await carregarImagemEmbedPDF(pdfDoc, qrPixUrl);
+                let pxX = 40, pxW = width - 80;
+                if (qrPixImg) {
+                    page.drawImage(qrPixImg, { x: 40, y: pixY + 8, width: 78, height: 78 });
+                    pxX = 130; pxW = width - 172;
+                }
+                drawTextFitPDF(page, 'Escaneie o QR Code no aplicativo do banco ou utilize o código PIX Copia e Cola abaixo:', pxX, pixY + pixH - 29, fontReg, 7.8, pxW, corCinza);
+                const pLines = quebrarLinhasPDF(pixCode, fontMono, 7.1, pxW);
+                let py = pixY + pixH - 42;
+                pLines.slice(0, 5).forEach(pl => {
+                    page.drawText(pl, { x: pxX, y: py, size: 7.1, font: fontMono, color: corEscuro });
+                    py -= 9.5;
+                });
+            }
+
+            // Rodapé com Assinatura Fixa DIRETORIA23.png + QR Code de Consulta/Validação
+            const dadosAssinatura = {
+                usarAssinaturaFixa: usarAssinatura,
+                fiscal: document.getElementById('docgen-fiscal')?.value || 'Giliard De Oliveira Santiago',
+                cargo: document.getElementById('docgen-cargo')?.value || 'Assessor Técnico CEVISA/COVIS/SMS'
+            };
+            desenharBlocoAssinaturaFixa(page, sigImg, dadosAssinatura, fontBold, fontReg, corEscuro, corCinza, width / 2, 44, 230, 74);
+
+            const qrPortalUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?protocolo=' + protocolo)}`;
+            const qrPortalImg = await carregarImagemEmbedPDF(pdfDoc, qrPortalUrl);
+            if (qrPortalImg) {
+                page.drawImage(qrPortalImg, { x: width - 92, y: 42, width: 54, height: 54 });
+                page.drawText('Consultar', { x: width - 85, y: 33, size: 6.4, font: fontBold, color: corCinza });
+            }
+            drawTextFitPDF(page, `Documento assinado eletronicamente em ${cidadeAuto}, ${dataAuto} • Protocolo ${protocolo}`, 32, 28, fontReg, 7.0, width - 135, corCinza);
+
+            // =================================================================
+            // PÁGINA 2: ANEXO FOTOGRÁFICO PERICIAL (COM AS PROVAS DA DENÚNCIA!)
+            // =================================================================
+            if (incluirAnexoFotos && fotosSel.length > 0) {
+                const page2 = pdfDoc.addPage([595.28, 841.89]);
+                page2.drawRectangle({ x: 18, y: 18, width: width - 36, height: height - 36, borderColor: corPrim, borderWidth: 1.8 });
+                page2.drawRectangle({ x: 18, y: height - 78, width: width - 36, height: 60, color: corSec });
+                drawTextFitPDF(page2, 'ANEXO FOTOGRÁFICO PERICIAL — EVIDÊNCIAS DA CONSTATAÇÃO', 32, height - 42, fontBold, 12.2, width - 64, rgb(1, 1, 1));
+                drawTextFitPDF(page2, `Estabelecimento: ${nome.toUpperCase()}  •  Protocolo: ${protocolo}  •  ${cidadeAuto}, ${dataAuto}`, 32, height - 60, fontReg, 8.0, width - 64, rgb(0.86, 0.90, 0.96));
+
+                const fotosParaPdf = fotosSel.slice(0, 4);
+                const cols = fotosParaPdf.length === 1 ? 1 : 2;
+                const cellW = cols === 1 ? (width - 80) : ((width - 92) / 2);
+                const cellH = fotosParaPdf.length <= 2 ? 320 : 270;
+                const startY = height - 96;
+
+                for (let i = 0; i < fotosParaPdf.length; i++) {
+                    const col = i % cols;
+                    const row = Math.floor(i / cols);
+                    const cx = 36 + col * (cellW + 20);
+                    const cyTop = startY - row * (cellH + 18);
+                    const cyBot = cyTop - cellH;
+
+                    page2.drawRectangle({ x: cx, y: cyBot, width: cellW, height: cellH, color: rgb(0.98, 0.985, 0.995), borderColor: corBorda, borderWidth: 1 });
+                    page2.drawRectangle({ x: cx, y: cyTop - 18, width: cellW, height: 18, color: corPrim });
+                    drawTextFitPDF(page2, `EVIDÊNCIA FOTOGRÁFICA #${i + 1}`, cx + 8, cyTop - 12, fontBold, 7.5, cellW - 16, rgb(1, 1, 1));
+
+                    const jpgBytes = await converterFotoParaJpegBytesPDF(fotosParaPdf[i].url);
+                    if (jpgBytes) {
+                        try {
+                            const embImg = await pdfDoc.embedJpg(jpgBytes);
+                            const imgBoxH = cellH - 72;
+                            const imgBoxW = cellW - 16;
+                            const dims = embImg.scaleToFit(imgBoxW, imgBoxH);
+                            page2.drawImage(embImg, {
+                                x: cx + (cellW - dims.width) / 2,
+                                y: cyBot + 48 + (imgBoxH - dims.height) / 2,
+                                width: dims.width,
+                                height: dims.height
+                            });
+                        } catch (_) {}
+                    }
+
+                    const leg = fotosParaPdf[i].legenda || `Registro fotográfico #${i + 1} anexado ao processo ${protocolo}`;
+                    const legLines = quebrarLinhasPDF(leg, fontBold, 7.6, cellW - 16);
+                    let ly = cyBot + 36;
+                    legLines.slice(0, 3).forEach(ln => {
+                        page2.drawText(ln, { x: cx + 8, y: ly, size: 7.6, font: fontBold, color: corEscuro });
+                        ly -= 10;
+                    });
+                }
+
+                desenharBlocoAssinaturaFixa(page2, sigImg, dadosAssinatura, fontBold, fontReg, corEscuro, corCinza, width / 2, 40, 220, 70);
+                drawTextFitPDF(page2, `Página 2/2 — Anexo Fotográfico Oficial • Protocolo ${protocolo} • ${cidadeAuto}, ${dataAuto}`, 32, 26, fontReg, 7.0, width - 64, corCinza);
+            }
+
+            const pdfBytes = await pdfDoc.save();
+            const docLimpo = (cnpj || protocolo).replace(/[^a-zA-Z0-9]/g, '') || 'COVISA';
+            const filename = ehMulta
+                ? `Auto_Infracao_IA_${docLimpo}.pdf`
+                : `Notificacao_Sanitaria_Assinada_${docLimpo}.pdf`;
+
+            if (miaUltimoBlobUrl) {
+                try { URL.revokeObjectURL(miaUltimoBlobUrl); } catch (_) {}
+            }
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            miaUltimoBlobUrl = URL.createObjectURL(blob);
+            miaUltimoBytes = pdfBytes;
+            miaUltimoFilename = filename;
+
+            const iframe = document.getElementById('mia-pdf-iframe');
+            const idle = document.getElementById('mia-preview-idle');
+            if (idle) idle.style.display = 'none';
+            if (iframe) { iframe.src = miaUltimoBlobUrl + '#view=FitH'; iframe.style.display = 'block'; }
+            document.getElementById('mia-preview-filename').innerText = filename;
+            document.getElementById('btn-mia-open-tab').disabled = false;
+            document.getElementById('btn-mia-dl-top').disabled = false;
+
+            if (fazerDownload) dispararDownloadBytesPDF(pdfBytes, filename);
+            registrarLog("Multas & Notificações IA", `Emitiu ${filename} para ${nome}`);
+            showToast(fazerDownload ? "PDF Assinado Baixado!" : "Prévia Pronta!", `${filename} gerado com assinatura fixa.`, "success");
+        } catch (err) {
+            console.error("Erro ao gerar PDF Multas/Notificações IA:", err);
+            showToast("Erro PDF", err.message, "error");
+        } finally {
+            if (btnPrev) { btnPrev.disabled = false; btnPrev.innerHTML = oP; }
+            if (btnDl) { btnDl.disabled = false; btnDl.innerHTML = oD; }
+        }
+    };
+
+    window.abrirPdfMIANovaAba = () => {
+        if (miaUltimoBlobUrl) window.open(miaUltimoBlobUrl, '_blank', 'noopener');
+    };
+
+    window.baixarUltimoPdfMIA = () => {
+        if (miaUltimoBytes && miaUltimoFilename) dispararDownloadBytesPDF(miaUltimoBytes, miaUltimoFilename);
+    };
+
+    // Salva a multa gerada diretamente na coleção "multas" do Firebase para aparecer na aba Multas do site público!
+    window.salvarMultaNoFirebaseMIA = async () => {
+        const cnpj = (document.getElementById('mia-cnpj')?.value || '').trim();
+        const nome = (document.getElementById('mia-nome')?.value || '').trim();
+        const valor = (document.getElementById('mia-valor')?.value || '').trim();
+        const artigo = document.getElementById('mia-artigo')?.value || '122, I';
+        const relato = (document.getElementById('mia-relato')?.value || '').trim();
+
+        if (!cnpj) return showToast("Falta CPF/CNPJ", "Informe o CPF ou CNPJ do autuado para vincular na aba Multas do portal.", "warning");
+        if (!valor) return showToast("Falta o Valor", "Defina o valor da multa em reais.", "warning");
+
+        const btn = document.getElementById('btn-mia-salvar-firebase');
+        const orig = btn.innerHTML;
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+
+        try {
+            const fotoPrincipal = miaFotosLista.find(f => f.selecionado)?.url || '';
+            await addDoc(collection(db, "multas"), {
+                cnpj,
+                nome: nome || 'Contribuinte Autuado',
+                motivo: `[Art. ${artigo}] ${relato || 'Infração Sanitária constatada pela COVISA.'}`,
+                valor,
+                foto_prova: fotoPrincipal,
+                data_emissao: new Date().toLocaleString('pt-BR'),
+                status: 'Pendente de Pagamento'
+            });
+            showToast("Multa Registrada!", `Multa de R$ ${valor} salva no Firebase e já visível na aba Multas do site para ${cnpj}.`, "success");
+            registrarLog("Multa Salva via IA", `Gravou multa de R$ ${valor} para ${nome} (${cnpj})`);
+        } catch (err) {
+            showToast("Erro Firebase", err.message, "error");
+        } finally {
+            btn.disabled = false; btn.innerHTML = orig;
+        }
+    };
+
+    function montarMensagemWhatsAppMIA() {
+        let msg = (document.getElementById('mia-wa-msg')?.value || '').trim();
+        const nome = (document.getElementById('mia-nome')?.value || 'Estabelecimento').trim();
+        const prot = (document.getElementById('mia-protocolo')?.value || '').trim();
+        const prazo = (document.getElementById('mia-prazo-data')?.value || '').trim();
+        const valor = (document.getElementById('mia-valor')?.value || '').trim();
+
+        if (!msg) {
+            msg = miaModoAtual === 'multa'
+                ? `Olá! Informamos que foi lavrado o *Auto de Infração Sanitária (${prot})* referente a *${nome}*, no valor de *R$ ${valor}*.\n\nSegue em anexo o documento oficial assinado com as evidências e o QR Code PIX para quitação ou apresentação de defesa até *${prazo}*.`
+                : `Olá! Segue em anexo a *Notificação Sanitária Oficial (${prot})* assinada referente a *${nome}*.\n\nSolicitamos atenção às adequações descritas no documento dentro do prazo até *${prazo}* para evitar autuação ou interdição.`;
+            document.getElementById('mia-wa-msg').value = msg;
+        }
+        const prefixo = `*Giliard:*`;
+        return msg.startsWith(prefixo) ? msg : `${prefixo}\n${msg}`;
+    }
+
+    window.copiarMsgWhatsAppMIA = async () => {
+        const txt = montarMensagemWhatsAppMIA();
+        try {
+            await navigator.clipboard.writeText(txt);
+            showToast("Copiado!", "Mensagem copiada — cole no WhatsApp junto com o PDF assinado.", "success");
+        } catch (_) {
+            showToast("Aviso", "Selecione o texto manualmente para copiar.", "warning");
+        }
+    };
+
+    window.enviarMsgWhatsAppDiretoMIA = async () => {
+        const telRaw = (document.getElementById('mia-telefone')?.value || '').trim() || (document.getElementById('mia-wa-select')?.value || '').trim();
+        const phone = normalizarNumeroInput(telRaw);
+        if (phone.length < 12) {
+            return showToast("Informe o WhatsApp", "Preencha o campo WhatsApp do Cliente (com DDD) ou selecione um chat acima.", "warning");
+        }
+        const txt = montarMensagemWhatsAppMIA();
+        const btn = document.getElementById('btn-mia-send-wa');
+        const orig = btn.innerHTML;
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        try {
+            const resp = await fetch(`${CLOUDFLARE_WORKER_URL}/api/conversations/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone, text: txt, pause_ai: true })
+            });
+            const dados = await resp.json();
+            if (!resp.ok || !dados.success) throw new Error(dados.error || 'Falha no envio');
+            showToast("Enviado no WhatsApp!", `Mensagem enviada para ${formatarTelefoneWA(phone)}. Agora anexe o PDF baixado na conversa!`, "success");
+            registrarLog("Disparo Multa/Notificação WA", `Enviou mensagem oficial para ${phone}`);
+        } catch (err) {
+            showToast("Erro no Envio", err.message, "error");
+        } finally {
+            btn.disabled = false; btn.innerHTML = orig;
         }
     };
 

