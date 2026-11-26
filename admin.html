@@ -6618,7 +6618,7 @@ Retorne APENAS JSON válido neste formato (use string vazia "" se não encontrar
         document.getElementById('docgen-valor').value = p.valor || '';
         if (p.telefone) document.getElementById('docgen-telefone').value = p.telefone;
         if (p.motivo_cliente) document.getElementById('docgen-corpo').value = p.motivo_cliente;
-        else if (p.docs) document.getElementById('docgen-corpo').value = p.docs;
+        else document.getElementById('docgen-corpo').value = '';
 
         inicializarDatasPadraoDocGen(false);
         showToast("Dados Importados", `Dados de "${p.nome}" preenchidos automaticamente.`, "success");
@@ -6867,7 +6867,13 @@ REGRAS:
     }
 
     // -------------------------------------------------------------------------
-    // CONSTRUTOR 1: RECEITUÁRIOS CONTROLADOS & RETENÇÃO
+    // CONSTRUTOR 1: RECEITUÁRIOS CONTROLADOS & RETENÇÃO (7 LAYOUTS ÚNICOS)
+    // - Receita A (Amarela): Talão Horizontal ANVISA (Canhoto + Emitente à Esq / Prescrição à Dir)
+    // - Receita B / B2 (Azul): Talão Horizontal ANVISA com Emblema B / B2 + Alerta B2
+    // - Receita Retinoides (C2): A4 com Faixa de Segurança Teratogênica + Duas Colunas
+    // - Receita Branca (C1/C5): Clássica Portaria 344/98 (Emitente compacto topo-esq / Título topo-dir / 2 Vias)
+    // - Receita Antimicrobiano (RDC 471): Layout Clínico Teal com Barra Lateral + Tabela de Duração (10 dias) + Médico no Rodapé
+    // - Receita GLP-1: Layout Especializado Índigo com Checkboxes de Caneta/Dose + Validade 90 dias + Médico no Rodapé
     // -------------------------------------------------------------------------
     async function construirPdfReceitaEspecial(tipo, dados) {
         const { PDFDocument, rgb, StandardFonts } = PDFLib;
@@ -6876,274 +6882,470 @@ REGRAS:
         const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
         const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
         const fontMono = await pdfDoc.embedFont(StandardFonts.CourierBold);
+        const fontSerifBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
         const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
         const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
 
-        const temas = {
-            receita_a: {
-                bg: rgb(0.996, 0.978, 0.80),
-                accent: rgb(0.68, 0.44, 0.02),
-                headerBg: rgb(0.76, 0.50, 0.03),
-                titulo: 'NOTIFICAÇÃO DE RECEITA "A"',
-                sub: 'MEDICAMENTOS ENTORPECENTES - LISTAS A1, A2 E A3 (PORTARIA SVS/MS Nº 344/1998)',
-                aviso: 'Válida em todo o Território Nacional por 30 (trinta) dias a contar da data de emissão. Máximo de 5 ampolas ou tratamento para até 30 dias.',
-                alertaVermelho: '',
-                duasVias: false
-            },
-            receita_b: {
-                bg: rgb(0.87, 0.94, 0.996),
-                accent: rgb(0.06, 0.27, 0.58),
-                headerBg: rgb(0.07, 0.30, 0.64),
-                titulo: 'NOTIFICAÇÃO DE RECEITA "B"',
-                sub: 'MEDICAMENTOS PSICOTRÓPICOS - LISTA B1 (PORTARIA SVS/MS Nº 344/1998)',
-                aviso: 'Válida na Unidade Federativa emissora por 30 (trinta) dias a contar da data de emissão. Quantidade máxima correspondente a 60 dias de tratamento.',
-                alertaVermelho: '',
-                duasVias: false
-            },
-            receita_b2: {
-                bg: rgb(0.85, 0.92, 0.996),
-                accent: rgb(0.05, 0.22, 0.52),
-                headerBg: rgb(0.06, 0.24, 0.56),
-                titulo: 'NOTIFICAÇÃO DE RECEITA "B2"',
-                sub: 'PSICOTRÓPICOS ANOREXÍGENOS - LISTA B2 (RDC ANVISA Nº 50/2014 E PORTARIA 344/98)',
-                aviso: 'Válida por 30 (trinta) dias. Tratamento máximo de 30 dias. Obrigatório acompanhamento do Termo de Responsabilidade do Prescritor.',
-                alertaVermelho: 'ATENÇÃO: MEDICAMENTO SUJEITO A CONTROLE RIGOROSO (LISTA B2 - ANOREXÍGENOS). PROIBIDA DISPENSAÇÃO ACIMA DA DOSE DIÁRIA RECOMENDADA.',
-                duasVias: false
-            },
-            receita_retinoides: {
-                bg: rgb(0.99, 0.99, 1.0),
-                accent: rgb(0.76, 0.11, 0.11),
-                headerBg: rgb(0.78, 0.12, 0.12),
-                titulo: 'NOTIFICAÇÃO DE RECEITA ESPECIAL - RETINOIDES',
-                sub: 'RETINOIDES DE USO SISTÊMICO - LISTA C2 (PORTARIA SVS/MS Nº 344/1998)',
-                aviso: 'Válida por 30 (trinta) dias. Obrigatória a apresentação conjunta do Termo de Consentimento Pós-Informação assinado pelo paciente e médico.',
-                alertaVermelho: 'RISCO DE GRAVES DEFEITOS NA FACE, NAS ORELHAS, NO CORAÇÃO OU NO SISTEMA NERVOSO DO FETO. PROIBIDO O USO POR MULHERES GRÁVIDAS OU COM CHANCE DE ENGRAVIDAR.',
-                duasVias: false
-            },
-            receita_branca: {
-                bg: rgb(0.985, 0.99, 0.998),
-                accent: rgb(0.09, 0.28, 0.52),
-                headerBg: rgb(0.09, 0.28, 0.52),
-                titulo: 'RECEITUÁRIO DE CONTROLE ESPECIAL (BRANCA)',
-                sub: 'SUBSTÂNCIAS LISTAS C1 E C5 - PORTARIA SVS/MS Nº 344/1998 (EMITIDA EM 2 VIAS)',
-                aviso: 'Válida em todo o Território Nacional por 30 (trinta) dias a contar da data de emissão. 1ª Via: Retenção da Farmácia | 2ª Via: Orientação ao Paciente.',
-                alertaVermelho: '',
-                duasVias: true
-            },
-            receita_antimicrobiano: {
-                bg: rgb(0.96, 0.985, 0.998),
-                accent: rgb(0.04, 0.42, 0.48),
-                headerBg: rgb(0.04, 0.42, 0.48),
-                titulo: 'RECEITUÁRIO DE RETENÇÃO - ANTIMICROBIANOS',
-                sub: 'RDC ANVISA Nº 471/2021 - CONTROLE DE ANTIMICROBIANOS (EMITIDA EM 2 VIAS)',
-                aviso: 'Válida em todo o Território Nacional por 10 (dez) dias corridos a contar da data de emissão. 1ª Via: Retenção da Farmácia | 2ª Via: Orientação ao Paciente.',
-                alertaVermelho: '',
-                duasVias: true
-            },
-            receita_glp1: {
-                bg: rgb(0.955, 0.975, 0.998),
-                accent: rgb(0.08, 0.30, 0.62),
-                headerBg: rgb(0.08, 0.30, 0.62),
-                titulo: 'RECEITUÁRIO DE RETENÇÃO - AGONISTAS DE GLP-1',
-                sub: 'NORMAS ANVISA DE RETENÇÃO DE RECEITA (SEMAGLUTIDA / TIRZEPATIDA / LIRAGLUTIDA - 2 VIAS)',
-                aviso: 'Válida por 90 (noventa) dias a contar da data de emissão conforme regulamentação vigente. 1ª Via: Retenção da Farmácia | 2ª Via: Orientação ao Paciente.',
-                alertaVermelho: '',
-                duasVias: true
-            }
-        };
-
-        const t = temas[tipo] || temas.receita_b;
         const corEscuro = rgb(0.08, 0.11, 0.16);
-        const corCinza = rgb(0.32, 0.37, 0.45);
-        const corLinha = rgb(0.55, 0.60, 0.68);
+        const corCinza = rgb(0.34, 0.39, 0.47);
+        const corLinha = rgb(0.56, 0.62, 0.70);
         const qtd = Math.max(1, Math.min(50, parseInt(dados.rxQtd, 10) || 1));
         const numIni = Math.max(1, parseInt(dados.rxInicio, 10) || 1001);
         const serie = sanitizarTextoPDF(dados.rxSerie || 'SP-2026-');
-        const viasPorFolha = t.duasVias ? ['1ª Via - Retenção Farmácia', '2ª Via - Orientação Paciente'] : [null];
         const dataAuto = dados.emissao || formatarDataBR(new Date());
+        const cidadeAuto = (dados.cidade || 'São Paulo - SP').trim();
+        const endEmitRaw = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ');
+        const endEmit = endEmitRaw || (dados.homeOffice ? 'Atendimento Home Office / Telemedicina' : 'Conforme Cadastro');
 
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?receita=' + dados.protocolo)}`;
         const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
 
-        for (let folha = 0; folha < qtd; folha++) {
-            const numeroReceita = `${serie}${String(numIni + folha).padStart(6, '0')}`;
-            for (const viaLabel of viasPorFolha) {
-                const page = pdfDoc.addPage([595.28, 841.89]);
+        const drawBlankLine = (page, label, prefillVal, lx, ly, endX, size = 8.0) => {
+            const lTxt = sanitizarTextoPDF(label);
+            page.drawText(lTxt, { x: lx, y: ly, size, font: fontBold, color: corEscuro });
+            const startLineX = lx + fontBold.widthOfTextAtSize(lTxt, size) + 4;
+            page.drawLine({ start: { x: startLineX, y: ly - 2 }, end: { x: endX, y: ly - 2 }, thickness: 0.65, color: corLinha });
+            if (prefillVal) {
+                drawTextFitPDF(page, prefillVal, startLineX + 3, ly + 1, fontReg, size + 0.3, Math.max(30, endX - startLineX - 5), corEscuro);
+            }
+        };
+
+        // ---------------------------------------------------------------------
+        // MODELO A, B e B2: TALONÁRIO HORIZONTAL OFICIAL (MEIA-FOLHA PAISAGEM)
+        // ---------------------------------------------------------------------
+        if (['receita_a', 'receita_b', 'receita_b2'].includes(tipo)) {
+            const cfg = {
+                receita_a: {
+                    letra: 'A', bg: rgb(0.996, 0.968, 0.72), accent: rgb(0.62, 0.39, 0.02),
+                    titulo: 'NOTIFICAÇÃO DE RECEITA "A"',
+                    sub: 'ENTORPECENTES • LISTAS A1, A2 E A3 (PORTARIA 344/98)',
+                    rodape: 'Válida em todo o Território Nacional por 30 dias. Máximo 5 ampolas ou 30 dias de tratamento.',
+                    alerta: ''
+                },
+                receita_b: {
+                    letra: 'B', bg: rgb(0.84, 0.925, 0.996), accent: rgb(0.05, 0.26, 0.58),
+                    titulo: 'NOTIFICAÇÃO DE RECEITA "B"',
+                    sub: 'PSICOTRÓPICOS • LISTA B1 (PORTARIA SVS/MS Nº 344/98)',
+                    rodape: 'Válida na UF emissora por 30 dias a contar da emissão. Tratamento máximo de 60 dias.',
+                    alerta: ''
+                },
+                receita_b2: {
+                    letra: 'B2', bg: rgb(0.82, 0.905, 0.996), accent: rgb(0.04, 0.20, 0.50),
+                    titulo: 'NOTIFICAÇÃO DE RECEITA "B2"',
+                    sub: 'ANOREXÍGENOS • LISTA B2 (RDC ANVISA Nº 50/2014)',
+                    rodape: 'Válida por 30 dias. Tratamento máximo de 30 dias. Exige Termo de Responsabilidade.',
+                    alerta: 'ATENÇÃO LISTA B2 (ANOREXÍGENOS): PROIBIDA DISPENSAÇÃO ACIMA DA DOSE DIÁRIA MÁXIMA.'
+                }
+            }[tipo];
+
+            for (let folha = 0; folha < qtd; folha++) {
+                const numeroReceita = `${serie}${String(numIni + folha).padStart(6, '0')}`;
+                const page = pdfDoc.addPage([620, 415]); // Formato Talão Horizontal Real!
                 const { width, height } = page.getSize();
 
-                page.drawRectangle({ x: 18, y: 18, width: width - 36, height: height - 36, color: t.bg, borderColor: t.accent, borderWidth: 2 });
-                page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: t.accent, borderWidth: 0.6 });
+                // Papel colorido de talão + borda dupla
+                page.drawRectangle({ x: 12, y: 12, width: width - 24, height: height - 24, color: cfg.bg, borderColor: cfg.accent, borderWidth: 2 });
+                page.drawRectangle({ x: 17, y: 17, width: width - 34, height: height - 34, borderColor: cfg.accent, borderWidth: 0.6 });
 
-                let yTop = height - 34;
-                const hdrH = 66;
-                page.drawRectangle({ x: 30, y: yTop - hdrH, width: width - 60, height: hdrH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1 });
-                let hx = 40;
-                if (brasaoImg) {
-                    const bd = brasaoImg.scaleToFit(46, 46);
-                    page.drawImage(brasaoImg, { x: 36, y: yTop - 56 + (46 - bd.height) / 2, width: bd.width, height: bd.height });
-                    hx = 90;
-                }
+                // COLUNA ESQUERDA: EMBLEMA LETRA + IDENTIFICAÇÃO DO EMITENTE (como no talão real!)
+                const leftW = 196;
+                const leftX = 24;
+                const topY = height - 24;
 
-                const numBoxW = 148;
-                const numBoxX = width - 30 - numBoxW - 6;
-                const maxHdrTextW = (numBoxX - 10) - hx;
+                // Emblema gigante A / B / B2 + UF + Número
+                page.drawRectangle({ x: leftX, y: topY - 62, width: 54, height: 62, color: cfg.accent });
+                drawTextFitPDF(page, cfg.letra, leftX + (cfg.letra.length > 1 ? 8 : 16), topY - 42, fontBold, 28, 42, rgb(1, 1, 1));
+                drawTextFitPDF(page, 'UF: SP', leftX + 11, topY - 56, fontBold, 7.5, 40, rgb(0.95, 0.97, 1));
 
-                drawTextFitPDF(page, 'SECRETARIA MUNICIPAL DA SAÚDE - VIGILÂNCIA SANITÁRIA (COVISA)', hx, yTop - 21, fontBold, 9.0, maxHdrTextW, corEscuro);
-                drawTextFitPDF(page, 'PREFEITURA DO MUNICÍPIO DE SÃO PAULO - AUTORIZAÇÃO DE RECEITUÁRIO', hx, yTop - 36, fontReg, 7.6, maxHdrTextW, corCinza);
-                drawTextFitPDF(page, `Protocolo: ${dados.protocolo} | UF: SP | Emitida em: ${dataAuto}`, hx, yTop - 52, fontBold, 7.8, maxHdrTextW, t.accent);
+                page.drawRectangle({ x: leftX + 58, y: topY - 62, width: leftW - 58, height: 62, color: rgb(1, 1, 1), borderColor: cfg.accent, borderWidth: 1 });
+                drawTextFitPDF(page, 'NÚMERO DA NOTIFICAÇÃO', leftX + 64, topY - 15, fontBold, 6.4, leftW - 68, corCinza);
+                drawTextFitPDF(page, numeroReceita, leftX + 64, topY - 33, fontMono, 10.5, leftW - 68, cfg.accent);
+                drawTextFitPDF(page, `Emissão: ${dataAuto}`, leftX + 64, topY - 47, fontBold, 7.0, leftW - 68, corEscuro);
+                drawTextFitPDF(page, `Prot: ${dados.protocolo}`, leftX + 64, topY - 57, fontReg, 6.2, leftW - 68, corCinza);
 
-                page.drawRectangle({ x: numBoxX, y: yTop - 59, width: numBoxW, height: 52, color: t.bg, borderColor: t.accent, borderWidth: 1.3 });
-                drawTextFitPDF(page, t.duasVias ? 'CONTROLE / PROTOCOLO' : 'NÚMERO DA NOTIFICAÇÃO', numBoxX + 8, yTop - 19, fontBold, 6.8, numBoxW - 14, corCinza);
-                drawTextFitPDF(page, numeroReceita, numBoxX + 8, yTop - 36, fontMono, 10.6, numBoxW - 14, t.accent);
-                const subViaTxt = viaLabel || (qtd > 1 ? `Folha ${folha + 1} de ${qtd} - 1ª Via` : '1ª Via - Retenção Farmácia');
-                drawTextFitPDF(page, subViaTxt, numBoxX + 8, yTop - 51, fontReg, 6.6, numBoxW - 14, corCinza);
+                // Caixa Identificação do Emitente à ESQUERDA (compacta, estilo carimbo/talão)
+                const emitBoxH = 148;
+                const emitBoxY = topY - 68 - emitBoxH;
+                page.drawRectangle({ x: leftX, y: emitBoxY, width: leftW, height: emitBoxH, color: rgb(1, 1, 1), borderColor: cfg.accent, borderWidth: 1 });
+                page.drawRectangle({ x: leftX, y: emitBoxY + emitBoxH - 16, width: leftW, height: 16, color: cfg.accent });
+                drawTextFitPDF(page, dados.homeOffice ? 'EMITENTE (HOME OFFICE / PF)' : 'IDENTIFICAÇÃO DO EMITENTE', leftX + 7, emitBoxY + emitBoxH - 11, fontBold, 6.9, leftW - 14, rgb(1, 1, 1));
 
-                let y = yTop - hdrH - 8;
-                page.drawRectangle({ x: 30, y: y - 34, width: width - 60, height: 34, color: t.headerBg });
-                drawTextFitPDF(page, t.titulo, 40, y - 15, fontBold, 12.2, width - 84, rgb(1, 1, 1));
-                drawTextFitPDF(page, t.sub, 40, y - 28, fontReg, 7.2, width - 84, rgb(0.95, 0.97, 1));
-
-                y -= 42;
-
-                if (t.alertaVermelho) {
-                    const aLines = quebrarLinhasPDF(t.alertaVermelho, fontBold, 7.5, width - 82);
-                    const aH = Math.max(26, aLines.length * 10 + 10);
-                    page.drawRectangle({ x: 30, y: y - aH, width: width - 60, height: aH, color: rgb(1, 0.93, 0.93), borderColor: rgb(0.82, 0.12, 0.12), borderWidth: 1.2 });
-                    let ay = y - 12;
-                    aLines.forEach(ln => {
-                        page.drawText(ln, { x: 40, y: ay, size: 7.5, font: fontBold, color: rgb(0.76, 0.08, 0.08) });
-                        ay -= 10;
-                    });
-                    y = y - aH - 8;
-                }
-
-                // QUADRO 1: IDENTIFICAÇÃO DO EMITENTE (emitH = 116 em Home Office -> ZERO sobreposição!)
-                const emitH = dados.homeOffice ? 116 : 96;
-                page.drawRectangle({ x: 30, y: y - emitH, width: width - 60, height: emitH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1 });
-                drawTextFitPDF(
-                    page,
-                    dados.homeOffice
-                        ? 'IDENTIFICAÇÃO DO PRESCRITOR - HOME OFFICE / TELEMEDICINA (PESSOA FÍSICA - RES. CFM 2.314/22)'
-                        : 'IDENTIFICAÇÃO DO EMITENTE (PRÉ-PREENCHIDO - AUTORIZADO PELA VIGILÂNCIA SANITÁRIA)',
-                    40, y - 14, fontBold, 7.3, width - 84, t.accent
-                );
-
-                const endEmitRaw = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ');
-                const endEmit = endEmitRaw || (dados.homeOffice ? 'ATENDIMENTO DOMICILIAR / TELEMEDICINA (HOME OFFICE)' : 'NÃO INFORMADO');
-                const drawEmitField = (lbl, val, fx, fy, maxW) => {
-                    page.drawText(sanitizarTextoPDF(lbl), { x: fx, y: fy, size: 6.6, font: fontBold, color: corCinza });
-                    drawTextFitPDF(page, val || '-', fx, fy - 11, fontBold, 8.6, maxW, corEscuro, 6.4);
-                };
-
-                drawEmitField('PROFISSIONAL / INSTITUIÇÃO EMITENTE', (dados.nome || 'NÃO INFORMADO').toUpperCase(), 40, y - 28, 325);
-                drawEmitField('CONSELHO (CRM / CRO / CRMV)', (dados.crm || 'CONFORME CARIMBO').toUpperCase(), 378, y - 28, 175);
-                drawEmitField(dados.homeOffice ? 'LOCAL / MODALIDADE' : 'ENDEREÇO COMPLETO', endEmit.toUpperCase(), 40, y - 54, 265);
-                drawEmitField('MUNICÍPIO / UF / CEP', `${dados.cidade || 'São Paulo - SP'}${dados.cep ? ' - CEP ' + dados.cep : ''}`.toUpperCase(), 314, y - 54, 240);
-                drawEmitField('CPF / CNPJ', dados.cnpj || '-', 40, y - 80, 148);
-                drawEmitField('ESPECIALIDADE / RAMO', (dados.especialidade || dados.ramo || 'CLÍNICA MÉDICA').toUpperCase(), 198, y - 80, 206);
-                drawEmitField('TELEFONE', dados.telefone || '-', 416, y - 80, 138);
-
-                if (dados.homeOffice) {
-                    page.drawRectangle({ x: 38, y: y - emitH + 5, width: width - 76, height: 14, color: rgb(0.92, 0.96, 1) });
-                    drawTextFitPDF(page, 'PRESCRITOR PESSOA FÍSICA EM REGIME HOME OFFICE / TELEMEDICINA - VÁLIDO MEDIANTE ASSINATURA E CARIMBO DO MÉDICO', 44, y - emitH + 9, fontBold, 6.4, width - 88, rgb(0.05, 0.25, 0.56));
-                }
-
-                y = y - emitH - 8;
-
-                const authH = 92;
-                const authY = 34;
-                const cfH = 104;
-                const cfBottomY = authY + authH + 8;
-                const cfTopY = cfBottomY + cfH;
-
-                const prescBottomY = cfTopY + 8;
-                const prescH = Math.max(175, y - prescBottomY);
-                page.drawRectangle({ x: 30, y: prescBottomY, width: width - 60, height: prescH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1 });
-                drawTextFitPDF(page, 'IDENTIFICAÇÃO DO PACIENTE E PRESCRIÇÃO MÉDICA (PREENCHIMENTO PELO PRESCRITOR)', 40, y - 14, fontBold, 7.5, width - 84, t.accent);
-
-                let py = y - 30;
-                const drawBlankLine = (label, prefillVal, lx, ly, endX) => {
-                    const lTxt = sanitizarTextoPDF(label);
-                    page.drawText(lTxt, { x: lx, y: ly, size: 8.2, font: fontBold, color: corEscuro });
-                    const startLineX = lx + fontBold.widthOfTextAtSize(lTxt, 8.2) + 5;
-                    page.drawLine({ start: { x: startLineX, y: ly - 2 }, end: { x: endX, y: ly - 2 }, thickness: 0.7, color: corLinha });
-                    if (prefillVal) {
-                        drawTextFitPDF(page, prefillVal, startLineX + 4, ly + 1, fontReg, 8.6, Math.max(40, endX - startLineX - 6), corEscuro);
-                    }
-                };
-
-                drawBlankLine('Paciente:', dados.rxPaciente || '', 40, py, width - 42);
-                py -= 20;
-                drawBlankLine('Endereço do Paciente:', '', 40, py, width - 42);
-                py -= 22;
-                drawBlankLine('Medicamento ou Substância:', dados.rxMed || '', 40, py, width - 42);
-                py -= 20;
-                drawBlankLine('Quantidade e Apresentação:', '', 40, py, 330);
-                drawBlankLine('Forma Farmacêutica:', '', 340, py, width - 42);
-                py -= 20;
-                drawBlankLine('Dose por Unidade Posológica:', '', 40, py, 330);
-                drawBlankLine('Posologia:', '', 340, py, width - 42);
-                py -= 18;
-
-                const stampBoxY = prescBottomY + 8;
-                const stampBoxH = 50;
-                while (py > stampBoxY + stampBoxH + 10) {
-                    page.drawLine({ start: { x: 40, y: py - 2 }, end: { x: width - 42, y: py - 2 }, thickness: 0.55, color: corLinha });
-                    py -= 17;
-                }
-
-                drawBlankLine('Data da Prescrição:', dataAuto, 40, stampBoxY + 25, 224);
-
-                page.drawRectangle({
-                    x: 245, y: stampBoxY, width: width - 287, height: stampBoxH,
-                    color: rgb(0.985, 0.99, 1), borderColor: corLinha, borderWidth: 0.9, borderDashArray: [4, 3]
+                let ey = emitBoxY + emitBoxH - 29;
+                drawTextFitPDF(page, (dados.nome || 'MÉDICO / INSTITUIÇÃO').toUpperCase(), leftX + 7, ey, fontBold, 8.2, leftW - 14, corEscuro); ey -= 13;
+                drawTextFitPDF(page, `Conselho: ${(dados.crm || 'Conforme Carimbo').toUpperCase()}`, leftX + 7, ey, fontBold, 7.4, leftW - 14, cfg.accent); ey -= 12;
+                drawTextFitPDF(page, `CPF/CNPJ: ${dados.cnpj || '-'}`, leftX + 7, ey, fontReg, 7.2, leftW - 14, corEscuro); ey -= 12;
+                drawTextFitPDF(page, `Esp.: ${(dados.especialidade || dados.ramo || 'Clínica Médica').toUpperCase()}`, leftX + 7, ey, fontReg, 7.0, leftW - 14, corCinza); ey -= 12;
+                const endLines = quebrarLinhasPDF(`${endEmit} - ${cidadeAuto}`, fontReg, 6.8, leftW - 14);
+                endLines.slice(0, 2).forEach(ln => {
+                    page.drawText(ln, { x: leftX + 7, y: ey, size: 6.8, font: fontReg, color: corCinza });
+                    ey -= 9.5;
                 });
-                drawTextFitPDF(page, 'ESPAÇO RESERVADO PARA CARIMBO E ASSINATURA DO MÉDICO / PRESCRITOR', 254, stampBoxY + 37, fontBold, 6.6, width - 304, corCinza);
-                page.drawLine({ start: { x: 266, y: stampBoxY + 14 }, end: { x: width - 62, y: stampBoxY + 14 }, thickness: 0.7, color: corCinza });
-                drawTextFitPDF(page, 'Assinatura e Carimbo (CRM / CRO / CRMV)', 322, stampBoxY + 4, fontReg, 6.8, 190, corCinza);
+                drawTextFitPDF(page, `Tel: ${dados.telefone || '-'}`, leftX + 7, emitBoxY + 34, fontReg, 7.0, leftW - 14, corEscuro);
 
-                const halfW = (width - 68) / 2;
-                page.drawRectangle({ x: 30, y: cfBottomY, width: halfW, height: cfH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 0.9 });
-                drawTextFitPDF(page, 'IDENTIFICAÇÃO DO COMPRADOR', 38, cfTopY - 13, fontBold, 7.2, halfW - 14, t.accent);
-                drawBlankLine('Nome:', '', 38, cfTopY - 28, 30 + halfW - 10);
-                drawBlankLine('Ident. / RG:', '', 38, cfTopY - 46, 172);
-                drawBlankLine('Órg. Emissor:', '', 177, cfTopY - 46, 30 + halfW - 10);
-                drawBlankLine('End.:', '', 38, cfTopY - 64, 30 + halfW - 10);
-                drawBlankLine('Cidade/UF:', '', 38, cfTopY - 82, 182);
-                drawBlankLine('Tel:', '', 187, cfTopY - 82, 30 + halfW - 10);
+                // Espaço Carimbo do Médico no pé da coluna esquerda
+                page.drawLine({ start: { x: leftX + 10, y: emitBoxY + 14 }, end: { x: leftX + leftW - 10, y: emitBoxY + 14 }, thickness: 0.7, color: corLinha });
+                drawTextFitPDF(page, 'Assinatura e Carimbo do Prescritor', leftX + 26, emitBoxY + 5, fontReg, 6.4, leftW - 20, corCinza);
 
-                const fx0 = 38 + halfW;
-                page.drawRectangle({ x: fx0, y: cfBottomY, width: halfW, height: cfH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 0.9 });
-                drawTextFitPDF(page, 'IDENTIFICAÇÃO DO FORNECEDOR (FARMÁCIA)', fx0 + 8, cfTopY - 13, fontBold, 7.2, halfW - 14, t.accent);
-                drawTextFitPDF(page, 'Carimbo da Farmácia / Drogaria e Assinatura do Farmacêutico:', fx0 + 8, cfTopY - 27, fontReg, 6.6, halfW - 14, corCinza);
-                drawBlankLine('Data Dispensação:', '', fx0 + 8, cfBottomY + 12, fx0 + halfW - 10);
-
-                page.drawRectangle({ x: 30, y: authY, width: width - 60, height: authH, color: rgb(1, 1, 1), borderColor: t.accent, borderWidth: 1.1 });
-                drawTextFitPDF(page, 'AUTORIZAÇÃO SANITÁRIA - ASSINATURA FIXA DA DIRETORIA (COVISA / ANVISA)', 40, authY + authH - 13, fontBold, 7.2, width - 84, t.accent);
-
-                const avLines = quebrarLinhasPDF(t.aviso, fontReg, 7.0, 182);
-                let avy = authY + authH - 25;
-                avLines.slice(0, 5).forEach(ln => {
-                    page.drawText(ln, { x: 40, y: avy, size: 7.0, font: fontReg, color: corCinza });
-                    avy -= 9.0;
-                });
-                drawTextFitPDF(page, `Emissão: ${dataAuto} | Validade: ${dados.validade}`, 40, authY + 8, fontBold, 6.8, 186, corEscuro);
-
-                desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, 358, authY + 6, 210, 70);
-
+                // Autorização Sanitária + Assinatura Fixa no canto inferior esquerdo
+                const authBoxH = emitBoxY - 26;
+                page.drawRectangle({ x: leftX, y: 24, width: leftW, height: authBoxH, color: rgb(1, 1, 1), borderColor: cfg.accent, borderWidth: 0.9 });
+                drawTextFitPDF(page, 'AUTORIZAÇÃO COVISA / ANVISA', leftX + 7, 24 + authBoxH - 11, fontBold, 6.5, leftW - 14, cfg.accent);
+                desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, leftX + leftW / 2 - 22, 34, 130, 56);
                 if (qrImg) {
-                    page.drawImage(qrImg, { x: width - 96, y: authY + 14, width: 56, height: 56 });
-                    page.drawText(sanitizarTextoPDF('Validar'), { x: width - 80, y: authY + 5, size: 6.5, font: fontBold, color: corCinza });
+                    page.drawImage(qrImg, { x: leftX + leftW - 48, y: 32, width: 42, height: 42 });
+                }
+                drawTextFitPDF(page, `Validade: ${dados.validade}`, leftX + 7, 28, fontBold, 6.2, leftW - 60, corCinza);
+
+                // LINHA TRACEJADA VERTICAL (CANHOTO)
+                const divX = leftX + leftW + 8;
+                page.drawLine({ start: { x: divX, y: 20 }, end: { x: divX, y: height - 20 }, thickness: 0.8, color: cfg.accent, dashArray: [4, 3] });
+
+                // COLUNA DIREITA: TÍTULO + PRESCRIÇÃO + COMPRADOR/FORNECEDOR
+                const rxX = divX + 8;
+                const rxW = width - rxX - 24;
+
+                // Faixa Título à Direita
+                page.drawRectangle({ x: rxX, y: topY - 34, width: rxW, height: 34, color: cfg.accent });
+                drawTextFitPDF(page, cfg.titulo, rxX + 10, topY - 15, fontBold, 11.2, rxW - 20, rgb(1, 1, 1));
+                drawTextFitPDF(page, cfg.sub, rxX + 10, topY - 27, fontReg, 6.8, rxW - 20, rgb(0.95, 0.97, 1));
+
+                let ry = topY - 42;
+                if (cfg.alerta) {
+                    page.drawRectangle({ x: rxX, y: ry - 18, width: rxW, height: 18, color: rgb(1, 0.92, 0.92), borderColor: rgb(0.8, 0.1, 0.1), borderWidth: 0.9 });
+                    drawTextFitPDF(page, cfg.alerta, rxX + 6, ry - 12, fontBold, 6.5, rxW - 12, rgb(0.76, 0.08, 0.08));
+                    ry -= 24;
+                }
+
+                // Quadro Paciente & Prescrição
+                const cfH = 98;
+                const cfY = 24;
+                const prescY = cfY + cfH + 8;
+                const prescH = ry - prescY;
+                page.drawRectangle({ x: rxX, y: prescY, width: rxW, height: prescH, color: rgb(1, 1, 1), borderColor: cfg.accent, borderWidth: 1 });
+
+                let py = ry - 16;
+                drawBlankLine(page, 'Paciente:', dados.rxPaciente || '', rxX + 8, py, rxX + rxW - 8, 8.0); py -= 18;
+                drawBlankLine(page, 'Endereço:', '', rxX + 8, py, rxX + rxW - 8, 8.0); py -= 20;
+                drawBlankLine(page, 'Medicamento / Substância:', dados.rxMed || '', rxX + 8, py, rxX + rxW - 8, 8.0); py -= 18;
+                drawBlankLine(page, 'Qtd. e Apresentação:', '', rxX + 8, py, rxX + rxW * 0.56, 7.6);
+                drawBlankLine(page, 'Forma:', '', rxX + rxW * 0.58, py, rxX + rxW - 8, 7.6); py -= 18;
+                drawBlankLine(page, 'Dose:', '', rxX + 8, py, rxX + rxW * 0.45, 7.6);
+                drawBlankLine(page, 'Posologia:', '', rxX + rxW * 0.47, py, rxX + rxW - 8, 7.6); py -= 18;
+                while (py > prescY + 24) {
+                    page.drawLine({ start: { x: rxX + 8, y: py }, end: { x: rxX + rxW - 8, y: py }, thickness: 0.5, color: corLinha });
+                    py -= 16;
+                }
+                drawBlankLine(page, 'Data:', `${cidadeAuto}, ${dataAuto}`, rxX + 8, prescY + 8, rxX + rxW - 8, 7.6);
+
+                // Comprador & Fornecedor lado a lado no rodapé direito
+                const halfRx = (rxW - 6) / 2;
+                page.drawRectangle({ x: rxX, y: cfY, width: halfRx, height: cfH, color: rgb(1, 1, 1), borderColor: cfg.accent, borderWidth: 0.9 });
+                drawTextFitPDF(page, 'IDENTIFICAÇÃO DO COMPRADOR', rxX + 6, cfY + cfH - 12, fontBold, 6.6, halfRx - 12, cfg.accent);
+                drawBlankLine(page, 'Nome:', '', rxX + 6, cfY + cfH - 26, rxX + halfRx - 6, 7.0);
+                drawBlankLine(page, 'RG:', '', rxX + 6, cfY + cfH - 42, rxX + halfRx * 0.55, 7.0);
+                drawBlankLine(page, 'Órg.:', '', rxX + halfRx * 0.57, cfY + cfH - 42, rxX + halfRx - 6, 7.0);
+                drawBlankLine(page, 'End.:', '', rxX + 6, cfY + cfH - 58, rxX + halfRx - 6, 7.0);
+                drawBlankLine(page, 'Cidade/UF:', '', rxX + 6, cfY + cfH - 74, rxX + halfRx - 6, 7.0);
+                drawBlankLine(page, 'Tel:', '', rxX + 6, cfY + cfH - 89, rxX + halfRx - 6, 7.0);
+
+                const fX = rxX + halfRx + 6;
+                page.drawRectangle({ x: fX, y: cfY, width: halfRx, height: cfH, color: rgb(1, 1, 1), borderColor: cfg.accent, borderWidth: 0.9 });
+                drawTextFitPDF(page, 'IDENTIFICAÇÃO DO FORNECEDOR', fX + 6, cfY + cfH - 12, fontBold, 6.6, halfRx - 12, cfg.accent);
+                drawTextFitPDF(page, 'Carimbo da Farmácia e Assinatura do Farmacêutico:', fX + 6, cfY + cfH - 25, fontReg, 6.2, halfRx - 12, corCinza);
+                drawBlankLine(page, 'Data:', '', fX + 6, cfY + 10, fX + halfRx - 6, 7.0);
+            }
+            return await pdfDoc.save();
+        }
+
+        // ---------------------------------------------------------------------
+        // MODELO BRANCA C1/C5 (2 VIAS): CLÁSSICA PORTARIA 344/98 (SPLIT HEADER)
+        // ---------------------------------------------------------------------
+        if (tipo === 'receita_branca') {
+            const accent = rgb(0.10, 0.25, 0.46);
+            const vias = ['1ª VIA — RETENÇÃO DA FARMÁCIA', '2ª VIA — ORIENTAÇÃO AO PACIENTE'];
+            for (let folha = 0; folha < qtd; folha++) {
+                const numRec = `${serie}${String(numIni + folha).padStart(6, '0')}`;
+                for (const viaTxt of vias) {
+                    const page = pdfDoc.addPage([595.28, 841.89]);
+                    const { width, height } = page.getSize();
+
+                    page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: accent, borderWidth: 1.5 });
+
+                    // TOPO DIVIDIDO EM 2 COLUNAS (como a Receita Branca C1 real!)
+                    // Esquerda: Identificação do Emitente (caixa compacta)
+                    const eW = 268;
+                    const eH = 104;
+                    const eY = height - 34 - eH;
+                    page.drawRectangle({ x: 34, y: eY, width: eW, height: eH, color: rgb(0.97, 0.985, 1), borderColor: accent, borderWidth: 1 });
+                    page.drawRectangle({ x: 34, y: eY + eH - 16, width: eW, height: 16, color: accent });
+                    drawTextFitPDF(page, dados.homeOffice ? 'IDENTIFICAÇÃO DO EMITENTE (HOME OFFICE)' : 'IDENTIFICAÇÃO DO EMITENTE', 42, eY + eH - 11, fontBold, 7.2, eW - 16, rgb(1, 1, 1));
+                    drawTextFitPDF(page, (dados.nome || 'MÉDICO PRESCRITOR').toUpperCase(), 42, eY + eH - 30, fontBold, 8.8, eW - 16, corEscuro);
+                    drawTextFitPDF(page, `Conselho: ${(dados.crm || 'Conforme Carimbo').toUpperCase()}`, 42, eY + eH - 44, fontBold, 7.8, eW - 16, accent);
+                    drawTextFitPDF(page, `CPF/CNPJ: ${dados.cnpj || '-'} | Tel: ${dados.telefone || '-'}`, 42, eY + eH - 58, fontReg, 7.4, eW - 16, corEscuro);
+                    drawTextFitPDF(page, endEmit.toUpperCase(), 42, eY + eH - 72, fontReg, 7.2, eW - 16, corCinza);
+                    drawTextFitPDF(page, `${cidadeAuto}${dados.cep ? ' • CEP ' + dados.cep : ''}`.toUpperCase(), 42, eY + eH - 85, fontReg, 7.2, eW - 16, corCinza);
+
+                    // Direita: Título Clássico + Via + Número
+                    const rX = 314;
+                    const rW = width - rX - 34;
+                    drawTextFitPDF(page, 'RECEITUÁRIO DE', rX, height - 54, fontSerifBold, 14, rW, accent);
+                    drawTextFitPDF(page, 'CONTROLE ESPECIAL', rX, height - 72, fontSerifBold, 15.5, rW, corEscuro);
+                    drawTextFitPDF(page, 'Portaria SVS/MS nº 344/1998 — Listas C1 e C5', rX, height - 86, fontReg, 7.5, rW, corCinza);
+                    page.drawRectangle({ x: rX, y: height - 112, width: rW, height: 20, color: accent });
+                    drawTextFitPDF(page, viaTxt, rX + 8, height - 105, fontBold, 8.0, rW - 16, rgb(1, 1, 1));
+                    drawTextFitPDF(page, `Controle: ${numRec}  |  Emissão: ${dataAuto}`, rX, height - 128, fontMono, 7.8, rW, corEscuro);
+
+                    // Paciente + Prescrição Aberta com marca d'água "Rx"
+                    let y = eY - 18;
+                    drawBlankLine(page, 'Paciente:', dados.rxPaciente || '', 36, y, width - 36, 9.0); y -= 22;
+                    drawBlankLine(page, 'Endereço:', '', 36, y, width - 36, 9.0); y -= 26;
+
+                    page.drawLine({ start: { x: 34, y }, end: { x: width - 34, y }, thickness: 1.2, color: accent });
+                    page.drawText('Rx', { x: 42, y: y - 34, size: 28, font: fontSerifBold, color: rgb(0.84, 0.88, 0.94) });
+
+                    let ly = y - 24;
+                    if (dados.rxMed) {
+                        const mLines = quebrarLinhasPDF(dados.rxMed, fontReg, 10, width - 120);
+                        mLines.slice(0, 8).forEach(ln => {
+                            page.drawText(ln, { x: 86, y: ly, size: 10, font: fontReg, color: corEscuro });
+                            ly -= 18;
+                        });
+                    }
+                    while (ly > 268) {
+                        page.drawLine({ start: { x: 84, y: ly }, end: { x: width - 38, y: ly }, thickness: 0.45, color: rgb(0.80, 0.84, 0.89) });
+                        ly -= 24;
+                    }
+
+                    // Data + Carimbo Médico no pé da área de prescrição
+                    drawBlankLine(page, 'Local e Data:', `${cidadeAuto}, ${dataAuto}`, 36, 232, 275, 8.4);
+                    page.drawLine({ start: { x: 310, y: 230 }, end: { x: width - 42, y: 230 }, thickness: 0.8, color: corEscuro });
+                    drawTextFitPDF(page, 'Assinatura e Carimbo do Médico (CRM / CRO)', 335, 218, fontBold, 7.2, 210, corCinza);
+
+                    // Quadros Comprador (esq) e Fornecedor (dir) no rodapé
+                    const bY = 104;
+                    const bH = 104;
+                    const hW = (width - 76) / 2;
+                    page.drawRectangle({ x: 34, y: bY, width: hW, height: bH, borderColor: accent, borderWidth: 1 });
+                    page.drawRectangle({ x: 34, y: bY + bH - 16, width: hW, height: 16, color: accent });
+                    drawTextFitPDF(page, 'IDENTIFICAÇÃO DO COMPRADOR', 42, bY + bH - 11, fontBold, 7.0, hW - 14, rgb(1, 1, 1));
+                    drawBlankLine(page, 'Nome:', '', 42, bY + bH - 30, 34 + hW - 8, 7.5);
+                    drawBlankLine(page, 'Ident.:', '', 42, bY + bH - 48, 165, 7.5);
+                    drawBlankLine(page, 'Órg. Emissor:', '', 170, bY + bH - 48, 34 + hW - 8, 7.5);
+                    drawBlankLine(page, 'End.:', '', 42, bY + bH - 66, 34 + hW - 8, 7.5);
+                    drawBlankLine(page, 'Cidade/UF:', '', 42, bY + bH - 84, 180, 7.5);
+                    drawBlankLine(page, 'Tel:', '', 185, bY + bH - 84, 34 + hW - 8, 7.5);
+
+                    const fx = 42 + hW;
+                    page.drawRectangle({ x: fx, y: bY, width: hW, height: bH, borderColor: accent, borderWidth: 1 });
+                    page.drawRectangle({ x: fx, y: bY + bH - 16, width: hW, height: 16, color: accent });
+                    drawTextFitPDF(page, 'IDENTIFICAÇÃO DO FORNECEDOR', fx + 8, bY + bH - 11, fontBold, 7.0, hW - 14, rgb(1, 1, 1));
+                    drawTextFitPDF(page, 'Assinatura do Farmacêutico e Carimbo da Farmácia:', fx + 8, bY + bH - 30, fontReg, 6.8, hW - 16, corCinza);
+                    drawBlankLine(page, 'Data Dispensação:', '', fx + 8, bY + 12, fx + hW - 8, 7.5);
+
+                    // Rodapé institucional
+                    desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, 180, 34, 180, 56);
+                    if (qrImg) page.drawImage(qrImg, { x: width - 92, y: 34, width: 52, height: 52 });
+                    drawTextFitPDF(page, `Válida em todo Território Nacional por 30 dias • Protocolo ${dados.protocolo}`, 34, 28, fontReg, 6.8, 380, corCinza);
                 }
             }
+            return await pdfDoc.save();
+        }
+
+        // ---------------------------------------------------------------------
+        // MODELO ANTIMICROBIANO (RDC 471/21) & GLP-1 (RETENÇÃO) — 2 VIAS MODERNOS
+        // Prescritor no RODAPÉ (não em cima!) + Tabela estruturada específica!
+        // ---------------------------------------------------------------------
+        if (tipo === 'receita_antimicrobiano' || tipo === 'receita_glp1') {
+            const isGlp = tipo === 'receita_glp1';
+            const corP = isGlp ? rgb(0.28, 0.14, 0.56) : rgb(0.03, 0.44, 0.46);
+            const corLight = isGlp ? rgb(0.95, 0.93, 0.99) : rgb(0.92, 0.98, 0.98);
+            const vias = ['1ª VIA — RETENÇÃO FARMÁCIA', '2ª VIA — PACIENTE'];
+
+            for (let folha = 0; folha < qtd; folha++) {
+                const numRec = `${serie}${String(numIni + folha).padStart(6, '0')}`;
+                for (const viaTxt of vias) {
+                    const page = pdfDoc.addPage([595.28, 841.89]);
+                    const { width, height } = page.getSize();
+
+                    // Barra lateral vertical estilizada (identidade moderna completamente diferente!)
+                    page.drawRectangle({ x: 0, y: 0, width: 18, height, color: corP });
+
+                    // Cabeçalho limpo sem caixa de médico em cima
+                    let hx = 36;
+                    if (brasaoImg) {
+                        const bd = brasaoImg.scaleToFit(42, 42);
+                        page.drawImage(brasaoImg, { x: 34, y: height - 70, width: bd.width, height: bd.height });
+                        hx = 86;
+                    }
+                    drawTextFitPDF(page, isGlp ? 'RECEITUÁRIO DE RETENÇÃO — AGONISTAS DE GLP-1' : 'RECEITUÁRIO DE ANTIMICROBIANOS (RDC 471/2021)', hx, height - 42, fontBold, 13.0, 345, corP);
+                    drawTextFitPDF(page, isGlp ? 'Controle Especial de Canetas / Injetáveis (Semaglutida • Tirzepatida • Liraglutida)' : 'Prescrição Sujeita à Retenção de Receita em Farmácia — 2 Vias Obrigatórias', hx, height - 57, fontReg, 8.0, 345, corCinza);
+                    drawTextFitPDF(page, `Controle: ${numRec}  •  Emissão: ${dataAuto}`, hx, height - 70, fontMono, 7.6, 345, corEscuro);
+
+                    // Pílula de Validade no canto superior direito
+                    page.drawRectangle({ x: width - 152, y: height - 74, width: 124, height: 44, color: corLight, borderColor: corP, borderWidth: 1.2 });
+                    drawTextFitPDF(page, viaTxt, width - 146, height - 44, fontBold, 6.8, 112, corP);
+                    drawTextFitPDF(page, isGlp ? 'VALIDADE: 90 DIAS' : 'VALIDADE: 10 DIAS', width - 146, height - 58, fontBold, 8.5, 112, corEscuro);
+                    drawTextFitPDF(page, `Até ${dados.validade}`, width - 146, height - 69, fontReg, 6.8, 112, corCinza);
+
+                    page.drawLine({ start: { x: 34, y: height - 86 }, end: { x: width - 28, y: height - 86 }, thickness: 1.5, color: corP });
+
+                    // Paciente (no topo do corpo, como receita real!)
+                    let y = height - 108;
+                    page.drawRectangle({ x: 34, y: y - 50, width: width - 62, height: 56, color: corLight, borderColor: rgb(0.82, 0.86, 0.90), borderWidth: 0.8 });
+                    drawTextFitPDF(page, 'DADOS DO PACIENTE', 44, y - 6, fontBold, 7.4, 200, corP);
+                    drawBlankLine(page, 'Nome Completo:', dados.rxPaciente || '', 44, y - 23, width - 40, 8.4);
+                    drawBlankLine(page, 'Idade / Sexo:', '', 44, y - 41, 215, 8.0);
+                    drawBlankLine(page, 'CPF / CNS:', '', 225, y - 41, width - 40, 8.0);
+
+                    y -= 70;
+
+                    if (isGlp) {
+                        // Bloco específico de GLP-1: Seleção de Molécula e Titulação Semanal
+                        page.drawRectangle({ x: 34, y: y - 68, width: width - 62, height: 68, color: rgb(1, 1, 1), borderColor: corP, borderWidth: 1 });
+                        drawTextFitPDF(page, 'MOLÉCULA E TITULAÇÃO SEMANAL (MARCAR OPÇÃO PRESCRITA)', 44, y - 14, fontBold, 7.4, width - 82, corP);
+                        drawTextFitPDF(page, '[  ] Semaglutida (Ozempic / Wegovy)     [  ] Tirzepatida (Mounjaro)     [  ] Liraglutida     [  ] Outro: ________________', 44, y - 33, fontBold, 8.0, width - 82, corEscuro);
+                        drawTextFitPDF(page, 'Dose:   [  ] 0,25 mg    [  ] 0,5 mg    [  ] 1,0 mg    [  ] 1,7 mg    [  ] 2,4 mg    [  ] 2,5 mg    [  ] 5,0 mg    [  ] 7,5 mg+', 44, y - 53, fontReg, 8.0, width - 82, corEscuro);
+                        y -= 82;
+                    } else {
+                        // Tabela específica de Antimicrobianos (RDC 471 exige duração e posologia claras!)
+                        const tblH = 148;
+                        page.drawRectangle({ x: 34, y: y - tblH, width: width - 62, height: tblH, borderColor: corP, borderWidth: 1 });
+                        page.drawRectangle({ x: 34, y: y - 22, width: width - 62, height: 22, color: corP });
+                        drawTextFitPDF(page, 'ANTIMICROBIANO (DCB / NOME)', 42, y - 14, fontBold, 7.4, 190, rgb(1, 1, 1));
+                        drawTextFitPDF(page, 'CONCENTRAÇÃO', 240, y - 14, fontBold, 7.4, 85, rgb(1, 1, 1));
+                        drawTextFitPDF(page, 'POSOLOGIA / INTERVALO', 332, y - 14, fontBold, 7.4, 130, rgb(1, 1, 1));
+                        drawTextFitPDF(page, 'DURAÇÃO', 474, y - 14, fontBold, 7.4, 85, rgb(1, 1, 1));
+                        [235, 326, 468].forEach(cx => {
+                            page.drawLine({ start: { x: cx, y: y - tblH }, end: { x: cx, y }, thickness: 0.7, color: corLinha });
+                        });
+                        for (let r = 1; r <= 4; r++) {
+                            const ry = y - 22 - r * 31.5;
+                            if (r < 4) page.drawLine({ start: { x: 34, y: ry }, end: { x: width - 28, y: ry }, thickness: 0.55, color: corLinha });
+                        }
+                        if (dados.rxMed) {
+                            drawTextFitPDF(page, dados.rxMed, 42, y - 40, fontReg, 8.5, 188, corEscuro);
+                        }
+                        y -= (tblH + 14);
+                    }
+
+                    // Área aberta de orientações / prescrição complementar
+                    drawTextFitPDF(page, 'PRESCRIÇÃO DETALHADA E ORIENTAÇÕES DE USO:', 36, y, fontBold, 8.0, 320, corP);
+                    let ly = y - 20;
+                    if (isGlp && dados.rxMed) {
+                        quebrarLinhasPDF(dados.rxMed, fontReg, 9.5, width - 78).slice(0, 6).forEach(ln => {
+                            page.drawText(ln, { x: 38, y: ly, size: 9.5, font: fontReg, color: corEscuro });
+                            ly -= 16;
+                        });
+                    }
+                    while (ly > 246) {
+                        page.drawLine({ start: { x: 36, y: ly }, end: { x: width - 30, y: ly }, thickness: 0.5, color: corLinha });
+                        ly -= 22;
+                    }
+
+                    // RODAPÉ DO MÉDICO / PRESCRITOR (EMBAIXO, NÃO EM CIMA!) + DISPENSAÇÃO FARMÁCIA
+                    const medY = 122;
+                    const medH = 104;
+                    const colW = (width - 70) / 2;
+                    page.drawRectangle({ x: 34, y: medY, width: colW, height: medH, color: corLight, borderColor: corP, borderWidth: 1 });
+                    drawTextFitPDF(page, dados.homeOffice ? 'MÉDICO PRESCRITOR (HOME OFFICE)' : 'IDENTIFICAÇÃO DO PRESCRITOR', 42, medY + medH - 14, fontBold, 7.2, colW - 16, corP);
+                    drawTextFitPDF(page, (dados.nome || 'MÉDICO PRESCRITOR').toUpperCase(), 42, medY + medH - 29, fontBold, 8.8, colW - 16, corEscuro);
+                    drawTextFitPDF(page, `Conselho: ${(dados.crm || 'Conforme Carimbo').toUpperCase()}  |  CPF/CNPJ: ${dados.cnpj || '-'}`, 42, medY + medH - 42, fontReg, 7.2, colW - 16, corEscuro);
+                    drawTextFitPDF(page, `${endEmit} • ${cidadeAuto}`, 42, medY + medH - 55, fontReg, 7.0, colW - 16, corCinza);
+                    page.drawLine({ start: { x: 48, y: medY + 18 }, end: { x: 34 + colW - 14, y: medY + 18 }, thickness: 0.7, color: corEscuro });
+                    drawTextFitPDF(page, `Assinatura e Carimbo • ${cidadeAuto}, ${dataAuto}`, 48, medY + 7, fontReg, 6.7, colW - 24, corCinza);
+
+                    const farmX = 42 + colW;
+                    page.drawRectangle({ x: farmX, y: medY, width: colW, height: medH, borderColor: corLinha, borderWidth: 0.9 });
+                    drawTextFitPDF(page, 'REGISTRO DE DISPENSAÇÃO (FARMÁCIA)', farmX + 8, medY + medH - 14, fontBold, 7.2, colW - 16, corP);
+                    drawBlankLine(page, 'Lote / Qtd:', '', farmX + 8, medY + medH - 34, farmX + colW - 8, 7.4);
+                    drawBlankLine(page, 'Comprador:', '', farmX + 8, medY + medH - 54, farmX + colW - 8, 7.4);
+                    drawBlankLine(page, 'RG / CPF:', '', farmX + 8, medY + medH - 72, farmX + colW - 8, 7.4);
+                    drawBlankLine(page, 'Data / Farmacêutico:', '', farmX + 8, medY + 10, farmX + colW - 8, 7.2);
+
+                    // Assinatura Fixa + QR no pé
+                    desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, 185, 30, 185, 62);
+                    if (qrImg) page.drawImage(qrImg, { x: width - 90, y: 32, width: 54, height: 54 });
+                    drawTextFitPDF(page, `Emitido em ${cidadeAuto}, ${dataAuto} • Protocolo ${dados.protocolo}`, 34, 16, fontReg, 6.8, 380, corCinza);
+                }
+            }
+            return await pdfDoc.save();
+        }
+
+        // ---------------------------------------------------------------------
+        // MODELO RETINOIDES (LISTA C2): LAYOUT DE ALERTA TERATOGÊNICO VERMELHO
+        // ---------------------------------------------------------------------
+        const corRed = rgb(0.76, 0.10, 0.10);
+        for (let folha = 0; folha < qtd; folha++) {
+            const numRec = `${serie}${String(numIni + folha).padStart(6, '0')}`;
+            const page = pdfDoc.addPage([595.28, 841.89]);
+            const { width, height } = page.getSize();
+
+            page.drawRectangle({ x: 18, y: 18, width: width - 36, height: height - 36, borderColor: corRed, borderWidth: 2.2 });
+            // Faixa de perigo no topo
+            page.drawRectangle({ x: 18, y: height - 92, width: width - 36, height: 74, color: corRed });
+            drawTextFitPDF(page, 'NOTIFICAÇÃO DE RECEITA ESPECIAL — RETINOIDES (LISTA C2)', 34, height - 42, fontBold, 13.5, width - 190, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'RISCO DE GRAVES DEFEITOS NO FETO. PROIBIDO O USO POR MULHERES GRÁVIDAS OU COM CHANCE DE ENGRAVIDAR.', 34, height - 60, fontBold, 7.8, width - 190, rgb(1, 0.92, 0.72));
+            drawTextFitPDF(page, `Portaria SVS/MS nº 344/1998 • Validade: 30 dias • Emissão: ${dataAuto}`, 34, height - 76, fontReg, 7.6, width - 190, rgb(1, 0.94, 0.94));
+
+            page.drawRectangle({ x: width - 156, y: height - 82, width: 126, height: 52, color: rgb(1, 1, 1) });
+            drawTextFitPDF(page, 'Nº NOTIFICAÇÃO C2', width - 148, height - 44, fontBold, 6.8, 110, corCinza);
+            drawTextFitPDF(page, numRec, width - 148, height - 62, fontMono, 10.2, 110, corRed);
+            drawTextFitPDF(page, 'UF: SP • 1ª Via', width - 148, height - 75, fontBold, 6.8, 110, corEscuro);
+
+            // Paciente + Termo de Consentimento check
+            let y = height - 112;
+            drawBlankLine(page, 'Paciente:', dados.rxPaciente || '', 34, y, width - 34, 8.8); y -= 22;
+            drawBlankLine(page, 'Endereço:', '', 34, y, 360, 8.4);
+            drawBlankLine(page, 'Data Nasc.:', '', 370, y, width - 34, 8.4); y -= 24;
+            page.drawRectangle({ x: 34, y: y - 24, width: width - 68, height: 24, color: rgb(1, 0.94, 0.94), borderColor: corRed, borderWidth: 0.9 });
+            drawTextFitPDF(page, 'TERMO DE CONSENTIMENTO PÓS-INFORMAÇÃO ANEXADO?   [  ] SIM (Obrigatório)     [  ] Paciente do sexo masculino', 44, y - 15, fontBold, 7.8, width - 86, corRed);
+
+            y -= 42;
+            drawTextFitPDF(page, 'PRESCRIÇÃO DE RETINOIDE SISTÊMICO:', 34, y, fontBold, 8.4, 300, corRed);
+            y -= 20;
+            drawBlankLine(page, 'Medicamento:', dados.rxMed || '', 34, y, width - 34, 8.4); y -= 20;
+            drawBlankLine(page, 'Quantidade / Caixas:', '', 34, y, 290, 8.4);
+            drawBlankLine(page, 'Dose Diária:', '', 300, y, width - 34, 8.4); y -= 22;
+            while (y > 328) {
+                page.drawLine({ start: { x: 34, y }, end: { x: width - 34, y }, thickness: 0.5, color: corLinha });
+                y -= 22;
+            }
+
+            // Bloco do Prescritor embaixo da prescrição
+            page.drawRectangle({ x: 34, y: 236, width: width - 68, height: 76, color: rgb(0.985, 0.985, 0.99), borderColor: corLinha, borderWidth: 0.9 });
+            drawTextFitPDF(page, 'PRESCRITOR HABILITADO', 44, 298, fontBold, 7.2, 200, corRed);
+            drawTextFitPDF(page, `${(dados.nome || 'MÉDICO').toUpperCase()}  •  ${(dados.crm || 'CONFORME CARIMBO').toUpperCase()}`, 44, 283, fontBold, 8.6, 305, corEscuro);
+            drawTextFitPDF(page, `CPF/CNPJ: ${dados.cnpj || '-'}  |  ${endEmit} — ${cidadeAuto}`, 44, 269, fontReg, 7.3, 305, corCinza);
+            drawBlankLine(page, 'Local e Data:', `${cidadeAuto}, ${dataAuto}`, 44, 248, 320, 7.8);
+            page.drawLine({ start: { x: 355, y: 254 }, end: { x: width - 48, y: 254 }, thickness: 0.8, color: corEscuro });
+            drawTextFitPDF(page, 'Assinatura e Carimbo do Médico', 385, 243, fontReg, 6.8, 165, corCinza);
+
+            // Comprador & Fornecedor
+            const hW = (width - 76) / 2;
+            page.drawRectangle({ x: 34, y: 122, width: hW, height: 102, borderColor: corRed, borderWidth: 0.9 });
+            drawTextFitPDF(page, 'IDENTIFICAÇÃO DO COMPRADOR', 42, 210, fontBold, 7.2, hW - 14, corRed);
+            drawBlankLine(page, 'Nome:', '', 42, 194, 34 + hW - 8, 7.4);
+            drawBlankLine(page, 'RG / Órgão:', '', 42, 176, 34 + hW - 8, 7.4);
+            drawBlankLine(page, 'Endereço:', '', 42, 158, 34 + hW - 8, 7.4);
+            drawBlankLine(page, 'Tel:', '', 42, 140, 34 + hW - 8, 7.4);
+
+            const fx = 42 + hW;
+            page.drawRectangle({ x: fx, y: 122, width: hW, height: 102, borderColor: corRed, borderWidth: 0.9 });
+            drawTextFitPDF(page, 'IDENTIFICAÇÃO DO FORNECEDOR', fx + 8, 210, fontBold, 7.2, hW - 14, corRed);
+            drawTextFitPDF(page, 'Carimbo da Farmácia e Assinatura do Farmacêutico:', fx + 8, 194, fontReg, 6.8, hW - 16, corCinza);
+            drawBlankLine(page, 'Data Dispensação:', '', fx + 8, 134, fx + hW - 8, 7.4);
+
+            desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, 185, 32, 185, 64);
+            if (qrImg) page.drawImage(qrImg, { x: width - 92, y: 34, width: 54, height: 54 });
         }
 
         return await pdfDoc.save();
     }
 
     // -------------------------------------------------------------------------
-    // CONSTRUTOR 1B: DOCUMENTOS CLÍNICOS & SUS SEPARADOS E REAIS (10 MODELOS)
+    // CONSTRUTOR 1B: DOCUMENTOS CLÍNICOS & SUS COM IDENTIDADES PRÓPRIAS (10 MODELOS)
+    // Cada documento tem design único e profissional (médico no rodapé onde faz sentido!)
     // -------------------------------------------------------------------------
     async function construirPdfClinicoSUS(tipo, dados) {
         const { PDFDocument, rgb, StandardFonts } = PDFLib;
@@ -7153,327 +7355,524 @@ REGRAS:
 
         const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
         const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const fontSerifBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+        const fontSerif = await pdfDoc.embedFont(StandardFonts.TimesRoman);
 
-        const corSusAzul = rgb(0.05, 0.28, 0.56);
-        const corSusVerde = rgb(0.04, 0.48, 0.34);
-        const corRoxo = rgb(0.38, 0.16, 0.62);
-        const corAmbar = rgb(0.72, 0.42, 0.04);
         const corEscuro = rgb(0.09, 0.12, 0.18);
-        const corCinza = rgb(0.35, 0.40, 0.48);
-        const corLinha = rgb(0.62, 0.68, 0.76);
-        const corFundo = rgb(0.965, 0.98, 0.996);
-
-        const origem = dados.homeOffice ? 'home' : (dados.rxOrigem || 'sus');
-        const corTema = tipo === 'lme_sus' ? corRoxo : (tipo === 'ter_consentimento' ? corAmbar : (origem === 'sus' ? corSusVerde : corSusAzul));
+        const corCinza = rgb(0.36, 0.41, 0.49);
+        const corLinha = rgb(0.64, 0.70, 0.78);
         const dataAuto = dados.emissao || formatarDataBR(new Date());
         const cidadeAuto = (dados.cidade || 'São Paulo - SP').trim();
+        const origem = dados.homeOffice ? 'home' : (dados.rxOrigem || 'sus');
+        const endMed = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ')
+            || (dados.homeOffice ? 'Atendimento Home Office / Telemedicina' : 'Conforme Cadastro');
 
         const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
         const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?doc=' + dados.protocolo)}`;
         const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
 
-        page.drawRectangle({ x: 22, y: 22, width: width - 44, height: height - 44, borderColor: corTema, borderWidth: 1.5 });
-        page.drawRectangle({ x: 22, y: height - 102, width: width - 44, height: 80, color: corFundo });
-        page.drawRectangle({ x: 22, y: height - 105, width: width - 44, height: 3, color: corTema });
-
-        let hx = 38;
-        if (brasaoImg) {
-            const bd = brasaoImg.scaleToFit(50, 50);
-            page.drawImage(brasaoImg, { x: 34, y: height - 88 + (50 - bd.height) / 2, width: bd.width, height: bd.height });
-            hx = 96;
-        }
-
-        const badgeW = 132;
-        const badgeX = width - 22 - badgeW - 12;
-        const maxHdrW = (badgeX - 10) - hx;
-
-        if (origem === 'sus') {
-            drawTextFitPDF(page, 'SISTEMA ÚNICO DE SAÚDE (SUS) - SECRETARIA MUNICIPAL DA SAÚDE', hx, height - 46, fontBold, 10.2, maxHdrW, corTema);
-            drawTextFitPDF(page, dados.unidadeSus ? `UNIDADE: ${dados.unidadeSus.toUpperCase()}` : 'PREFEITURA DO MUNICÍPIO DE SÃO PAULO - ATENDIMENTO CLÍNICO SUS', hx, height - 62, fontBold, 8.2, maxHdrW, corEscuro);
-            drawTextFitPDF(page, `Protocolo: ${dados.protocolo} | Emissão: ${dataAuto}`, hx, height - 78, fontReg, 8.0, maxHdrW, corCinza);
-        } else if (origem === 'home') {
-            drawTextFitPDF(page, 'ATENDIMENTO MÉDICO HOME OFFICE / TELEMEDICINA (PESSOA FÍSICA)', hx, height - 46, fontBold, 10.0, maxHdrW, corTema);
-            drawTextFitPDF(page, 'DOCUMENTO CLÍNICO - RESOLUÇÃO CFM Nº 2.314/2022 E NORMAS SANITÁRIAS', hx, height - 62, fontBold, 7.8, maxHdrW, corEscuro);
-            drawTextFitPDF(page, `Protocolo: ${dados.protocolo} | Emissão: ${dataAuto}`, hx, height - 78, fontReg, 8.0, maxHdrW, corCinza);
-        } else {
-            drawTextFitPDF(page, (dados.unidadeSus || dados.nome || 'CONSULTÓRIO MÉDICO PARTICULAR').toUpperCase(), hx, height - 46, fontBold, 10.5, maxHdrW, corTema);
-            drawTextFitPDF(page, 'ATENDIMENTO CLÍNICO PARTICULAR - DOCUMENTO PROFISSIONAL DE SAÚDE', hx, height - 62, fontBold, 8.0, maxHdrW, corEscuro);
-            drawTextFitPDF(page, `Protocolo: ${dados.protocolo} | Emissão: ${dataAuto}`, hx, height - 78, fontReg, 8.0, maxHdrW, corCinza);
-        }
-
-        page.drawRectangle({ x: badgeX, y: height - 88, width: badgeW, height: 50, color: rgb(1, 1, 1), borderColor: corTema, borderWidth: 1.2 });
-        drawTextFitPDF(page, origem === 'sus' ? 'SUS - SAÚDE' : (origem === 'home' ? 'TELEMEDICINA' : 'PARTICULAR'), badgeX + 8, height - 56, fontBold, 9.5, badgeW - 16, corTema);
-        drawTextFitPDF(page, 'Pronto p/ Assinatura', badgeX + 8, height - 71, fontReg, 7.5, badgeW - 16, corCinza);
-        drawTextFitPDF(page, `UF: SP • ${dataAuto}`, badgeX + 8, height - 82, fontBold, 7.2, badgeW - 16, corEscuro);
-
-        let y = height - 118;
-        const titulos = {
-            receita_sus: { t: 'RECEITUÁRIO MÉDICO COMUM (USO SIMPLES / CONTÍNUO)', s: 'Prescrição clínica pronta para preenchimento, carimbo e assinatura do médico habilitado' },
-            receita_odonto: { t: 'RECEITUÁRIO ODONTOLÓGICO OFICIAL (CRO)', s: 'Prescrição odontológica conforme legislação vigente — Pronto para carimbo e assinatura' },
-            atestado_medico: { t: 'ATESTADO MÉDICO', s: 'Comprovação oficial de atendimento médico e necessidade de afastamento / repouso' },
-            laudo_medico: { t: 'LAUDO / RELATÓRIO MÉDICO CIRCUNSTANCIADO', s: 'Descrição clínica detalhada de diagnóstico, evolução, exames e conduta terapêutica' },
-            declaracao_comparecimento: { t: 'DECLARAÇÃO DE COMPARECIMENTO', s: 'Comprovante oficial de presença em consulta, exame ou acompanhamento clínico' },
-            solicitacao_exames: { t: 'SOLICITAÇÃO DE EXAMES E PROCEDIMENTOS (SUS / CLÍNICO)', s: 'Requisição profissional de exames laboratoriais, de imagem ou diagnósticos' },
-            guia_referencia: { t: 'GUIA DE REFERÊNCIA E ENCAMINHAMENTO MÉDICO', s: 'Encaminhamento assistencial para avaliação especializada / contrarreferência SUS' },
-            lme_sus: { t: 'LME - LAUDO PARA SOLICITAÇÃO DE MEDICAMENTOS (SUS / CEAF)', s: 'Componente Especializado da Assistência Farmacêutica (Alto Custo) — Preenchimento Médico' },
-            ter_consentimento: { t: 'TERMO DE ESCLARECIMENTO E RESPONSABILIDADE (TER)', s: 'Ciência e consentimento informado do paciente/responsável (Retinoides / B2 / CEAF / Procedimentos)' },
-            civp_vacina: { t: 'COMPROVANTE DE VACINAÇÃO / REGISTRO VACINAL (SUS / CIVP)', s: 'Registro oficial de doses aplicadas — Profilaxia e Imunização' }
-        };
-        const ti = titulos[tipo] || titulos.receita_sus;
-        page.drawRectangle({ x: 34, y: y - 34, width: width - 68, height: 34, color: corTema });
-        drawTextFitPDF(page, ti.t, 44, y - 14, fontBold, 11.6, width - 88, rgb(1, 1, 1));
-        drawTextFitPDF(page, ti.s, 44, y - 27, fontReg, 7.5, width - 88, rgb(0.93, 0.96, 1));
-
-        y -= 44;
-
-        const medH = 84;
-        page.drawRectangle({ x: 34, y: y - medH, width: width - 68, height: medH, color: corFundo, borderColor: corLinha, borderWidth: 1 });
-        drawTextFitPDF(page, tipo === 'receita_odonto' ? 'IDENTIFICAÇÃO DO CIRURGIÃO-DENTISTA' : 'IDENTIFICAÇÃO DO MÉDICO / PRESCRITOR', 44, y - 13, fontBold, 7.6, width - 90, corTema);
-
-        const drawKv = (lbl, val, fx, fy, maxW) => {
-            page.drawText(sanitizarTextoPDF(lbl), { x: fx, y: fy, size: 6.6, font: fontBold, color: corCinza });
-            drawTextFitPDF(page, val || '-', fx, fy - 11, fontBold, 8.6, maxW, corEscuro, 6.4);
-        };
-
-        const endMed = [dados.rua, dados.num ? `nº ${dados.num}` : '', dados.bairro].filter(Boolean).join(', ')
-            || (dados.homeOffice ? 'HOME OFFICE / TELEMEDICINA (ATENDIMENTO REMOTO)' : 'CONFORME CADASTRO');
-
-        drawKv('NOME DO PROFISSIONAL / CLÍNICA', (dados.nome || 'NÃO INFORMADO').toUpperCase(), 44, y - 28, 285);
-        drawKv(tipo === 'receita_odonto' ? 'CONSELHO (CRO)' : 'CONSELHO (CRM / CRO)', (dados.crm || 'CONFORME CARIMBO').toUpperCase(), 340, y - 28, 122);
-        drawKv('CPF / CNPJ', dados.cnpj || '-', 470, y - 28, 86);
-
-        drawKv('ESPECIALIDADE / RQE', (dados.especialidade || dados.ramo || (tipo === 'receita_odonto' ? 'ODONTOLOGIA' : 'CLÍNICA MÉDICA')).toUpperCase(), 44, y - 57, 168);
-        drawKv('ENDEREÇO / LOCAL DE ATENDIMENTO', endMed.toUpperCase(), 222, y - 57, 224);
-        drawKv('TELEFONE', dados.telefone || '-', 456, y - 57, 100);
-
-        y = y - medH - 10;
-
-        const pacH = 64;
-        page.drawRectangle({ x: 34, y: y - pacH, width: width - 68, height: pacH, color: rgb(1, 1, 1), borderColor: corLinha, borderWidth: 1 });
-        drawTextFitPDF(page, 'IDENTIFICAÇÃO DO PACIENTE', 44, y - 13, fontBold, 7.6, width - 90, corTema);
-
-        const drawBlank = (lbl, val, lx, ly, endX) => {
+        const drawBlank = (lbl, val, lx, ly, endX, sz = 8.4) => {
             const l = sanitizarTextoPDF(lbl);
-            page.drawText(l, { x: lx, y: ly, size: 8.3, font: fontBold, color: corEscuro });
-            const sx = lx + fontBold.widthOfTextAtSize(l, 8.3) + 5;
+            page.drawText(l, { x: lx, y: ly, size: sz, font: fontBold, color: corEscuro });
+            const sx = lx + fontBold.widthOfTextAtSize(l, sz) + 5;
             page.drawLine({ start: { x: sx, y: ly - 2 }, end: { x: endX, y: ly - 2 }, thickness: 0.7, color: corLinha });
-            if (val) drawTextFitPDF(page, val, sx + 4, ly + 1, fontReg, 8.6, Math.max(40, endX - sx - 6), corEscuro);
+            if (val) drawTextFitPDF(page, val, sx + 4, ly + 1, fontReg, sz + 0.3, Math.max(30, endX - sx - 6), corEscuro);
         };
 
-        drawBlank('Nome do Paciente:', dados.rxPaciente || '', 44, y - 30, width - 46);
-        drawBlank('Cartão SUS (CNS) / CPF:', '', 44, y - 50, 325);
-        drawBlank('Data Nasc.:', '', 335, y - 50, width - 46);
+        const drawFooterDoctor = (corTema, labelProf = 'MÉDICO PRESCRITOR', bottomY = 104) => {
+            page.drawRectangle({ x: 36, y: bottomY, width: width - 72, height: 84, color: rgb(0.97, 0.985, 0.996), borderColor: corTema, borderWidth: 0.9 });
+            drawTextFitPDF(page, `${labelProf} — ${dados.homeOffice ? 'TELEMEDICINA / HOME OFFICE (RES. CFM 2.314/22)' : 'IDENTIFICAÇÃO E ASSINATURA'}`, 46, bottomY + 70, fontBold, 7.0, width - 96, corTema);
+            drawTextFitPDF(page, (dados.nome || 'PROFISSIONAL HABILITADO').toUpperCase(), 46, bottomY + 54, fontBold, 9.2, 260, corEscuro);
+            drawTextFitPDF(page, `Conselho: ${(dados.crm || 'Conforme Carimbo').toUpperCase()}  |  CPF/CNPJ: ${dados.cnpj || '-'}`, 46, bottomY + 40, fontReg, 7.5, 260, corEscuro);
+            drawTextFitPDF(page, `${endMed} — ${cidadeAuto}`, 46, bottomY + 27, fontReg, 7.2, 260, corCinza);
+            drawTextFitPDF(page, `Local e Data: ${cidadeAuto}, ${dataAuto}`, 46, bottomY + 12, fontBold, 7.6, 260, corTema);
 
-        y = y - pacH - 10;
+            page.drawLine({ start: { x: 325, y: bottomY + 28 }, end: { x: width - 48, y: bottomY + 28 }, thickness: 0.8, color: corEscuro });
+            drawTextFitPDF(page, 'Assinatura e Carimbo do Profissional', 352, bottomY + 15, fontBold, 7.2, 180, corCinza);
+            if (dados.telefone) drawTextFitPDF(page, `Tel: ${dados.telefone}`, 382, bottomY + 5, fontReg, 6.8, 140, corCinza);
+        };
 
-        const corpoH = 294;
-        page.drawRectangle({ x: 34, y: y - corpoH, width: width - 68, height: corpoH, color: rgb(1, 1, 1), borderColor: corTema, borderWidth: 1.1 });
+        const drawBottomBar = () => {
+            if (dados.usarAssinaturaFixa && sigImg) {
+                desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, 175, 30, 175, 56);
+            }
+            if (qrImg) {
+                page.drawImage(qrImg, { x: width - 88, y: 30, width: 50, height: 50 });
+                page.drawText('Validar', { x: width - 76, y: 22, size: 6.4, font: fontBold, color: corCinza });
+            }
+            drawTextFitPDF(page, `Protocolo ${dados.protocolo} • Emitido em ${cidadeAuto}, ${dataAuto}`, 36, 18, fontReg, 7.0, 380, corCinza);
+        };
 
-        if (tipo === 'receita_sus' || tipo === 'receita_odonto') {
-            drawTextFitPDF(page, tipo === 'receita_odonto' ? 'PRESCRIÇÃO ODONTOLÓGICA (USO INTERNO / EXTERNO)' : 'PRESCRIÇÃO MÉDICA / ORIENTAÇÃO DE USO (USO INTERNO / EXTERNO / CONTÍNUO)', 44, y - 14, fontBold, 7.8, width - 90, corTema);
+        // =====================================================================
+        // 1) RECEITA COMUM (SUS / TELEMEDICINA) — PAPEL CLÍNICO LIMPO + "Rx" + MÉDICO EMBAIXO
+        // =====================================================================
+        if (tipo === 'receita_sus') {
+            const corTema = origem === 'sus' ? rgb(0.04, 0.48, 0.34) : rgb(0.06, 0.28, 0.56);
+            // Linha superior elegante + cabeçalho minimalista (SEM bloco pesado!)
+            page.drawRectangle({ x: 0, y: height - 10, width, height: 10, color: corTema });
+            let hx = 40;
+            if (brasaoImg) {
+                const bd = brasaoImg.scaleToFit(48, 48);
+                page.drawImage(brasaoImg, { x: 36, y: height - 74, width: bd.width, height: bd.height });
+                hx = 94;
+            }
+            const titTop = origem === 'sus'
+                ? 'SISTEMA ÚNICO DE SAÚDE (SUS) • SECRETARIA MUNICIPAL DA SAÚDE'
+                : (origem === 'home' ? 'ATENDIMENTO MÉDICO — TELEMEDICINA / HOME OFFICE' : (dados.unidadeSus || dados.nome || 'CONSULTÓRIO MÉDICO').toUpperCase());
+            drawTextFitPDF(page, titTop, hx, height - 40, fontBold, 9.8, 355, corTema);
+            drawTextFitPDF(page, dados.unidadeSus ? `Unidade: ${dados.unidadeSus}` : 'Receituário Clínico de Uso Simples / Contínuo', hx, height - 55, fontReg, 8.4, 355, corCinza);
+            drawTextFitPDF(page, `${cidadeAuto} • ${dataAuto}`, hx, height - 69, fontBold, 8.0, 355, corEscuro);
+
+            // Título centralizado elegante
+            page.drawLine({ start: { x: 36, y: height - 86 }, end: { x: width - 36, y: height - 86 }, thickness: 1.2, color: corTema });
+            const tStr = 'RECEITUÁRIO MÉDICO';
+            const tw = fontSerifBold.widthOfTextAtSize(tStr, 17);
+            page.drawText(tStr, { x: (width - tw) / 2, y: height - 114, size: 17, font: fontSerifBold, color: corEscuro });
+
+            // Paciente (direto no topo, como toda receita real!)
+            drawBlank('Paciente:', dados.rxPaciente || '', 40, height - 146, width - 40, 9.2);
+            drawBlank('Cartão SUS (CNS) / CPF:', '', 40, height - 170, 340, 8.6);
+            drawBlank('Data Nasc.:', '', 352, height - 170, width - 40, 8.6);
+
+            // Marca d'água Rx + folha limpa de prescrição
+            page.drawText('Rx', { x: 42, y: height - 228, size: 36, font: fontSerifBold, color: rgb(0.86, 0.91, 0.90) });
+            let ly = height - 216;
+            if (dados.rxMed) {
+                quebrarLinhasPDF(dados.rxMed, fontReg, 10.5, width - 125).slice(0, 8).forEach(ln => {
+                    page.drawText(ln, { x: 92, y: ly, size: 10.5, font: fontReg, color: corEscuro });
+                    ly -= 19;
+                });
+            }
+            while (ly > 224) {
+                page.drawLine({ start: { x: 90, y: ly }, end: { x: width - 40, y: ly }, thickness: 0.45, color: rgb(0.82, 0.86, 0.89) });
+                ly -= 26;
+            }
+
+            drawFooterDoctor(corTema, 'MÉDICO PRESCRITOR', 102);
+            drawBottomBar();
+            return await pdfDoc.save();
+        }
+
+        // =====================================================================
+        // 2) RECEITA ODONTOLÓGICA (CRO) — BARRA LATERAL TURQUESA + BLOCO ODONTO + DENTISTA EMBAIXO
+        // =====================================================================
+        if (tipo === 'receita_odonto') {
+            const corOdonto = rgb(0.02, 0.46, 0.58);
+            const corOdontoBg = rgb(0.92, 0.98, 0.99);
+            page.drawRectangle({ x: 0, y: 0, width: 22, height, color: corOdonto });
+            page.drawRectangle({ x: 22, y: height - 92, width: width - 22, height: 92, color: corOdontoBg });
+
+            if (brasaoImg) {
+                const bd = brasaoImg.scaleToFit(46, 46);
+                page.drawImage(brasaoImg, { x: 38, y: height - 70, width: bd.width, height: bd.height });
+            }
+            drawTextFitPDF(page, 'RECEITUÁRIO ODONTOLÓGICO', 96, height - 42, fontBold, 16.5, 340, corOdonto);
+            drawTextFitPDF(page, 'Cirurgia e Clínica Odontológica — Prescrição Profissional (CRO)', 96, height - 60, fontReg, 8.6, 340, corCinza);
+            drawTextFitPDF(page, `Protocolo: ${dados.protocolo} • ${cidadeAuto}, ${dataAuto}`, 96, height - 74, fontBold, 7.8, 340, corEscuro);
+
+            page.drawRectangle({ x: width - 122, y: height - 72, width: 88, height: 42, color: corOdonto });
+            drawTextFitPDF(page, 'ODONTO', width - 108, height - 49, fontBold, 11, 70, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'CRO • SP', width - 104, height - 63, fontReg, 8.0, 70, rgb(0.88, 0.97, 1));
+
+            // Paciente + Procedimento / Dente
+            let y = height - 120;
+            drawBlank('Paciente:', dados.rxPaciente || '', 42, y, width - 36, 9.0); y -= 24;
+            drawBlank('CPF / CNS:', '', 42, y, 250, 8.4);
+            drawBlank('Procedimento / Dente:', '', 262, y, width - 36, 8.4); y -= 28;
+
+            page.drawRectangle({ x: 42, y: y - 24, width: width - 78, height: 24, color: corOdontoBg, borderColor: corOdonto, borderWidth: 0.7 });
+            drawTextFitPDF(page, 'Cuidados Pós-Procedimento:   [  ] Compressa fria    [  ] Dieta pastosa/fria    [  ] Repouso 24h    [  ] Retorno em ___ dias', 50, y - 15, fontBold, 7.6, width - 94, corOdonto);
+
+            y -= 42;
+            drawTextFitPDF(page, 'PRESCRIÇÃO ODONTOLÓGICA:', 42, y, fontBold, 8.6, 260, corOdonto);
+            let ly = y - 24;
+            if (dados.rxMed) {
+                quebrarLinhasPDF(dados.rxMed, fontReg, 10, width - 90).slice(0, 8).forEach(ln => {
+                    page.drawText(ln, { x: 44, y: ly, size: 10, font: fontReg, color: corEscuro });
+                    ly -= 18;
+                });
+            }
+            while (ly > 220) {
+                page.drawLine({ start: { x: 42, y: ly }, end: { x: width - 36, y: ly }, thickness: 0.5, color: corLinha });
+                ly -= 25;
+            }
+
+            drawFooterDoctor(corOdonto, 'CIRURGIÃO-DENTISTA (CRO)', 102);
+            drawBottomBar();
+            return await pdfDoc.save();
+        }
+
+        // =====================================================================
+        // 3) ATESTADO MÉDICO — CERTIFICADO CLÁSSICO EM SERIFA + CAIXA DE DIAS EM DESTAQUE
+        // =====================================================================
+        if (tipo === 'atestado_medico') {
+            const corNavy = rgb(0.08, 0.18, 0.36);
+            page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: corNavy, borderWidth: 2 });
+            page.drawRectangle({ x: 30, y: 30, width: width - 60, height: height - 60, borderColor: rgb(0.75, 0.80, 0.88), borderWidth: 0.8 });
+
+            // Topo centralizado solene
+            if (brasaoImg) {
+                const bd = brasaoImg.scaleToFit(54, 54);
+                page.drawImage(brasaoImg, { x: (width - bd.width) / 2, y: height - 96, width: bd.width, height: bd.height });
+            }
+            const subTop = origem === 'sus'
+                ? 'SISTEMA ÚNICO DE SAÚDE (SUS) — SECRETARIA MUNICIPAL DA SAÚDE'
+                : (origem === 'home' ? 'ATENDIMENTO MÉDICO — TELEMEDICINA / HOME OFFICE (RES. CFM 2.314/22)' : (dados.unidadeSus || dados.nome || 'CLÍNICA MÉDICA').toUpperCase());
+            const subW = fontBold.widthOfTextAtSize(sanitizarTextoPDF(subTop), 8.5);
+            page.drawText(sanitizarTextoPDF(subTop), { x: Math.max(42, (width - subW) / 2), y: height - 114, size: 8.5, font: fontBold, color: corCinza });
+
+            const titAt = 'ATESTADO MÉDICO';
+            const titW = fontSerifBold.widthOfTextAtSize(titAt, 22);
+            page.drawText(titAt, { x: (width - titW) / 2, y: height - 150, size: 22, font: fontSerifBold, color: corNavy });
+            page.drawLine({ start: { x: 165, y: height - 160 }, end: { x: width - 165, y: height - 160 }, thickness: 1.8, color: corNavy });
+
+            // Paciente
+            let y = height - 202;
+            drawBlank('Paciente:', dados.rxPaciente || '', 54, y, width - 54, 9.5); y -= 26;
+            drawBlank('CPF / Cartão SUS (CNS):', '', 54, y, 330, 8.8);
+            drawBlank('Data Nasc.:', '', 345, y, width - 54, 8.8); y -= 42;
+
+            // Texto solene em Times Roman
+            const txtAt = dados.rxMed
+                ? dados.rxMed
+                : `Atesto, para os devidos fins legais, trabalhistas e escolares, que o(a) paciente acima identificado(a) foi atendido(a) sob meus cuidados médicos na data de ${dataAuto}, necessitando de afastamento de suas atividades habituais para repouso e recuperação clínica.`;
+            const linesAt = quebrarLinhasPDF(txtAt, fontSerif, 12, width - 112);
+            linesAt.slice(0, 7).forEach(ln => {
+                page.drawText(ln, { x: 56, y, size: 12, font: fontSerif, color: corEscuro });
+                y -= 19;
+            });
+
+            // Caixa em destaque para Período de Afastamento
+            y -= 16;
+            page.drawRectangle({ x: 54, y: y - 54, width: width - 108, height: 54, color: rgb(0.95, 0.97, 1), borderColor: corNavy, borderWidth: 1.2 });
+            drawTextFitPDF(page, 'PERÍODO DE AFASTAMENTO RECOMENDADO:', 70, y - 18, fontBold, 8.2, 260, corNavy);
+            drawTextFitPDF(page, `______ ( ________________________ ) dia(s) corrido(s), a contar de ${dataAuto}.`, 70, y - 38, fontBold, 10.5, width - 140, corEscuro);
+
+            // CID-10 + Autorização expressa do paciente
+            y -= 86;
+            drawBlank('CID-10 (apenas se autorizado):', '', 54, y, 325, 8.8);
+            drawTextFitPDF(page, 'Autorizo CID:   [  ] Sim    [  ] Não', 340, y, fontBold, 8.8, 200, corEscuro);
+            y -= 30;
+            drawBlank('Assinatura do Paciente (autorização do CID):', '', 54, y, width - 54, 8.4);
+
+            // Local e Data centralizado + Bloco do Médico no rodapé
+            const ldStr = `${cidadeAuto}, ${dataAuto}.`;
+            const ldW = fontSerifBold.widthOfTextAtSize(sanitizarTextoPDF(ldStr), 11);
+            page.drawText(sanitizarTextoPDF(ldStr), { x: (width - ldW) / 2, y: 230, size: 11, font: fontSerifBold, color: corEscuro });
+
+            drawFooterDoctor(corNavy, 'MÉDICO ATESTANTE', 108);
+            drawBottomBar();
+            return await pdfDoc.save();
+        }
+
+        // =====================================================================
+        // 4) LAUDO / RELATÓRIO MÉDICO — ESTRUTURADO EM SEÇÕES NUMERADAS (01, 02, 03)
+        // =====================================================================
+        if (tipo === 'laudo_medico') {
+            const corAzul = rgb(0.06, 0.24, 0.50);
+            page.drawRectangle({ x: 0, y: height - 78, width, height: 78, color: corAzul });
+            if (brasaoImg) {
+                const bd = brasaoImg.scaleToFit(46, 46);
+                page.drawImage(brasaoImg, { x: 34, y: height - 62, width: bd.width, height: bd.height });
+            }
+            drawTextFitPDF(page, 'LAUDO / RELATÓRIO MÉDICO CIRCUNSTANCIADO', 92, height - 38, fontBold, 14.5, width - 130, rgb(1, 1, 1));
+            drawTextFitPDF(page, `Avaliação Clínica, Diagnóstico e Parecer Técnico  •  Emissão: ${cidadeAuto}, ${dataAuto}`, 92, height - 56, fontReg, 8.4, width - 130, rgb(0.86, 0.92, 1));
+
+            // Barra de metadados do paciente
+            let y = height - 96;
+            page.drawRectangle({ x: 36, y: y - 62, width: width - 72, height: 62, color: rgb(0.96, 0.975, 0.995), borderColor: corLinha, borderWidth: 0.9 });
+            drawBlank('Paciente:', dados.rxPaciente || '', 46, y - 18, 360, 8.6);
+            drawBlank('Data Nasc.:', '', 370, y - 18, width - 46, 8.4);
+            drawBlank('CPF / CNS:', '', 46, y - 42, 240, 8.4);
+            drawBlank('Finalidade (INSS / Perícia / Plano):', '', 252, y - 42, width - 46, 8.4);
+
+            y -= 80;
+            // Seção 01: Diagnóstico
+            page.drawRectangle({ x: 36, y: y - 56, width: width - 72, height: 56, borderColor: corAzul, borderWidth: 0.9 });
+            page.drawRectangle({ x: 36, y: y - 18, width: width - 72, height: 18, color: rgb(0.92, 0.95, 0.99) });
+            drawTextFitPDF(page, '01. DIAGNÓSTICO PRINCIPAL E CLASSIFICAÇÃO (CID-10)', 46, y - 13, fontBold, 7.8, width - 92, corAzul);
+            drawBlank('CID-10 Principal:', '', 46, y - 38, 220, 8.4);
+            drawBlank('CID Secundário:', '', 232, y - 38, 385, 8.4);
+            drawBlank('Evolução:', '', 395, y - 38, width - 46, 8.4);
+
+            y -= 70;
+            // Seção 02: Histórico e Exames
+            const s2H = 225;
+            page.drawRectangle({ x: 36, y: y - s2H, width: width - 72, height: s2H, borderColor: corAzul, borderWidth: 0.9 });
+            page.drawRectangle({ x: 36, y: y - 18, width: width - 72, height: 18, color: rgb(0.92, 0.95, 0.99) });
+            drawTextFitPDF(page, '02. HISTÓRICO CLÍNICO, EXAMES COMPLEMENTARES E CONDUTA TERAPÊUTICA', 46, y - 13, fontBold, 7.8, width - 92, corAzul);
             let ly = y - 36;
             if (dados.rxMed) {
-                const medLines = quebrarLinhasPDF(dados.rxMed, fontReg, 9.5, width - 92);
-                medLines.slice(0, 6).forEach(ln => {
+                quebrarLinhasPDF(dados.rxMed, fontReg, 9.5, width - 96).slice(0, 7).forEach(ln => {
                     page.drawText(ln, { x: 46, y: ly, size: 9.5, font: fontReg, color: corEscuro });
                     ly -= 16;
                 });
-                ly -= 6;
             }
-            while (ly > (y - corpoH + 20)) {
-                page.drawLine({ start: { x: 44, y: ly }, end: { x: width - 46, y: ly }, thickness: 0.55, color: corLinha });
-                ly -= 22;
-            }
-        } else if (tipo === 'atestado_medico') {
-            drawTextFitPDF(page, 'ATESTADO MÉDICO DE AFASTAMENTO / REPOUSO', 44, y - 14, fontBold, 7.8, width - 90, corTema);
-            const txtAtestado = dados.rxMed
-                ? dados.rxMed
-                : `Atesto, para os devidos fins legais e trabalhistas, que o(a) paciente acima identificado(a) foi atendido(a) sob meus cuidados médicos na data de ${dataAuto}, necessitando de afastamento de suas atividades habituais pelo período de ______ (______________________) dia(s), a contar de ${dataAuto}.`;
-            const aLines = quebrarLinhasPDF(txtAtestado, fontReg, 10, width - 96);
-            let ly = y - 38;
-            aLines.slice(0, 6).forEach(ln => {
-                page.drawText(ln, { x: 46, y: ly, size: 10, font: fontReg, color: corEscuro });
-                ly -= 16.5;
-            });
-            ly -= 14;
-            drawBlank('CID-10 (somente com autorização expressa do paciente):', '', 46, ly, 365);
-            drawBlank('Autorizo CID:', '[  ] Sim   [  ] Não', 375, ly, width - 48);
-            ly -= 26;
-            drawBlank('Assinatura do Paciente (autorização do CID):', '', 46, ly, width - 48);
-            ly -= 28;
-            drawTextFitPDF(page, 'Observações Complementares:', 46, ly, fontBold, 8.0, 240, corCinza);
-            ly -= 18;
-            while (ly > (y - corpoH + 20)) {
-                page.drawLine({ start: { x: 46, y: ly }, end: { x: width - 48, y: ly }, thickness: 0.55, color: corLinha });
-                ly -= 22;
-            }
-        } else if (tipo === 'laudo_medico') {
-            drawTextFitPDF(page, 'LAUDO / RELATÓRIO MÉDICO CIRCUNSTANCIADO', 44, y - 14, fontBold, 7.8, width - 90, corTema);
-            let ly = y - 34;
-            drawBlank('Finalidade do Laudo (INSS / Perícia / Plano / Escolar / Outros):', '', 44, ly, width - 46);
-            ly -= 24;
-            drawBlank('Diagnóstico Principal (CID-10):', '', 44, ly, 315);
-            drawBlank('Tempo de Evolução:', '', 325, ly, width - 46);
-            ly -= 26;
-            drawTextFitPDF(page, 'Histórico Clínico, Achados de Exames e Conduta Terapêutica:', 44, ly, fontBold, 8.0, width - 90, corTema);
-            ly -= 18;
-            if (dados.rxMed) {
-                const lLines = quebrarLinhasPDF(dados.rxMed, fontReg, 9.4, width - 92);
-                lLines.slice(0, 6).forEach(ln => {
-                    page.drawText(ln, { x: 46, y: ly, size: 9.4, font: fontReg, color: corEscuro });
-                    ly -= 15.5;
-                });
-                ly -= 6;
-            }
-            while (ly > (y - corpoH + 56)) {
-                page.drawLine({ start: { x: 44, y: ly }, end: { x: width - 46, y: ly }, thickness: 0.55, color: corLinha });
+            while (ly > y - s2H + 14) {
+                page.drawLine({ start: { x: 46, y: ly }, end: { x: width - 46, y: ly }, thickness: 0.5, color: corLinha });
                 ly -= 21;
             }
-            drawBlank('Conclusão / Parecer Médico:', '', 44, y - corpoH + 34, width - 46);
-            page.drawLine({ start: { x: 44, y: y - corpoH + 14 }, end: { x: width - 46, y: y - corpoH + 14 }, thickness: 0.55, color: corLinha });
-        } else if (tipo === 'declaracao_comparecimento') {
-            drawTextFitPDF(page, 'DECLARAÇÃO DE COMPARECIMENTO EM ATENDIMENTO DE SAÚDE', 44, y - 14, fontBold, 7.8, width - 90, corTema);
-            const txtComp = dados.rxMed
-                ? dados.rxMed
-                : `Declaro, para fins de justificativa junto ao empregador ou instituição de ensino, que o(a) cidadão(ã) acima identificado(a) compareceu a este serviço de saúde na data de ${dataAuto}, no período das _____:_____ às _____:_____ horas, para atendimento clínico / procedimento de saúde.`;
-            const cLines = quebrarLinhasPDF(txtComp, fontReg, 10, width - 96);
-            let ly = y - 40;
-            cLines.slice(0, 6).forEach(ln => {
-                page.drawText(ln, { x: 46, y: ly, size: 10, font: fontReg, color: corEscuro });
-                ly -= 16.5;
-            });
-            ly -= 18;
-            drawBlank('Modalidade:', '[  ] Paciente atendido(a)     [  ] Acompanhante de paciente', 46, ly, width - 48);
-            ly -= 26;
-            drawBlank('Nome do Paciente Acompanhado (se aplicável):', '', 46, ly, width - 48);
-            ly -= 26;
-            drawBlank('Setor / Serviço / Consulta:', '', 46, ly, width - 48);
-            ly -= 28;
-            while (ly > (y - corpoH + 20)) {
-                page.drawLine({ start: { x: 46, y: ly }, end: { x: width - 48, y: ly }, thickness: 0.55, color: corLinha });
-                ly -= 22;
+
+            y -= (s2H + 14);
+            // Seção 03: Conclusão / Parecer
+            const s3H = 92;
+            page.drawRectangle({ x: 36, y: y - s3H, width: width - 72, height: s3H, borderColor: corAzul, borderWidth: 1.1 });
+            page.drawRectangle({ x: 36, y: y - 18, width: width - 72, height: 18, color: corAzul });
+            drawTextFitPDF(page, '03. CONCLUSÃO / PARECER MÉDICO', 46, y - 13, fontBold, 7.8, width - 92, rgb(1, 1, 1));
+            for (let k = 0; k < 3; k++) {
+                const cy = y - 38 - k * 21;
+                page.drawLine({ start: { x: 46, y: cy }, end: { x: width - 46, y: cy }, thickness: 0.55, color: corLinha });
             }
-        } else if (tipo === 'solicitacao_exames') {
-            drawTextFitPDF(page, 'SOLICITAÇÃO DE EXAMES LABORATORIAIS / IMAGEM / PROCEDIMENTOS', 44, y - 14, fontBold, 7.8, width - 90, corTema);
-            let ly = y - 34;
-            drawBlank('Indicação Clínica / Hipótese Diagnóstica:', '', 44, ly, 395);
-            drawBlank('CID-10:', '', 405, ly, width - 46);
-            ly -= 24;
-            drawBlank('Caráter:', '[  ] Rotina / Eletivo     [  ] Urgência / Prioridade', 44, ly, width - 46);
-            ly -= 26;
-            drawTextFitPDF(page, 'Relação de Exames / Procedimentos Solicitados:', 44, ly, fontBold, 8.0, width - 90, corTema);
-            ly -= 18;
+
+            drawFooterDoctor(corAzul, 'MÉDICO RESPONSÁVEL PELO LAUDO', 102);
+            drawBottomBar();
+            return await pdfDoc.save();
+        }
+
+        // =====================================================================
+        // 5) SOLICITAÇÃO DE EXAMES — PAINEL COM CHECKLIST DE EXAMES EM 2 COLUNAS
+        // =====================================================================
+        if (tipo === 'solicitacao_exames') {
+            const corEx = rgb(0.05, 0.34, 0.58);
+            page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: corEx, borderWidth: 1.4 });
+            page.drawRectangle({ x: 24, y: height - 86, width: width - 48, height: 62, color: rgb(0.93, 0.97, 1) });
+            if (brasaoImg) {
+                const bd = brasaoImg.scaleToFit(42, 42);
+                page.drawImage(brasaoImg, { x: 36, y: height - 76, width: bd.width, height: bd.height });
+            }
+            drawTextFitPDF(page, 'GUIA DE SOLICITAÇÃO DE EXAMES E PROCEDIMENTOS', 88, height - 48, fontBold, 13.0, width - 130, corEx);
+            drawTextFitPDF(page, `Requisição Laboratorial / Diagnóstico por Imagem • ${cidadeAuto}, ${dataAuto}`, 88, height - 64, fontReg, 8.2, width - 130, corCinza);
+
+            let y = height - 108;
+            drawBlank('Paciente:', dados.rxPaciente || '', 38, y, 370, 8.8);
+            drawBlank('Data Nasc.:', '', 380, y, width - 38, 8.4); y -= 22;
+            drawBlank('CNS / CPF:', '', 38, y, 220, 8.4);
+            drawBlank('Hipótese Diagnóstica / CID-10:', '', 232, y, width - 38, 8.4); y -= 24;
+            drawTextFitPDF(page, 'Caráter do Pedido:    [  ] Eletivo / Rotina      [  ] Prioridade      [  ] Urgência', 38, y, fontBold, 8.4, width - 76, corEx);
+
+            // Checklist de exames comuns em 2 colunas!
+            y -= 16;
+            const chkH = 166;
+            page.drawRectangle({ x: 38, y: y - chkH, width: width - 76, height: chkH, color: rgb(0.98, 0.99, 1), borderColor: corEx, borderWidth: 0.9 });
+            page.drawRectangle({ x: 38, y: y - 18, width: width - 76, height: 18, color: corEx });
+            drawTextFitPDF(page, 'EXAMES FREQUENTES (MARQUE OS SOLICITADOS)', 48, y - 13, fontBold, 7.6, width - 96, rgb(1, 1, 1));
+
+            const examesCol1 = ['[  ] Hemograma Completo', '[  ] Glicemia de Jejum / HbA1c', '[  ] Colesterol Total e Frações', '[  ] Triglicerídeos', '[  ] TSH e T4 Livre', '[  ] Ureia e Creatinina', '[  ] TGO (AST) e TGP (ALT)'];
+            const examesCol2 = ['[  ] Urina Tipo I + Urocultura', '[  ] Ácido Úrico / Ferritina', '[  ] Vitamina D (25-OH) e B12', '[  ] Eletrocardiograma (ECG)', '[  ] Radiografia (Raio-X): ___________', '[  ] Ultrassonografia: ______________', '[  ] Tomografia / Ressonância: ______'];
+            let cy = y - 34;
+            for (let i = 0; i < examesCol1.length; i++) {
+                page.drawText(sanitizarTextoPDF(examesCol1[i]), { x: 48, y: cy, size: 8.6, font: fontReg, color: corEscuro });
+                page.drawText(sanitizarTextoPDF(examesCol2[i]), { x: 300, y: cy, size: 8.6, font: fontReg, color: corEscuro });
+                cy -= 19;
+            }
+
+            y -= (chkH + 18);
+            drawTextFitPDF(page, 'OUTROS EXAMES / JUSTIFICATIVA CLÍNICA:', 38, y, fontBold, 8.2, 320, corEx);
+            let ly = y - 20;
             if (dados.rxMed) {
-                const eLines = quebrarLinhasPDF(dados.rxMed, fontReg, 9.5, width - 92);
-                eLines.slice(0, 7).forEach(ln => {
-                    page.drawText(ln, { x: 46, y: ly, size: 9.5, font: fontReg, color: corEscuro });
+                quebrarLinhasPDF(dados.rxMed, fontReg, 9.4, width - 86).slice(0, 6).forEach(ln => {
+                    page.drawText(ln, { x: 40, y: ly, size: 9.4, font: fontReg, color: corEscuro });
                     ly -= 16;
                 });
-                ly -= 4;
             }
-            while (ly > (y - corpoH + 20)) {
-                page.drawLine({ start: { x: 44, y: ly }, end: { x: width - 46, y: ly }, thickness: 0.55, color: corLinha });
+            while (ly > 205) {
+                page.drawLine({ start: { x: 38, y: ly }, end: { x: width - 38, y: ly }, thickness: 0.5, color: corLinha });
                 ly -= 22;
             }
+
+            drawFooterDoctor(corEx, 'PROFISSIONAL SOLICITANTE', 102);
+            drawBottomBar();
+            return await pdfDoc.save();
+        }
+
+        // =====================================================================
+        // 6) COMPROVANTE DE VACINAÇÃO / CIVP — CARTÃO OURO COM TABELA DE DOSES
+        // =====================================================================
+        if (tipo === 'civp_vacina') {
+            const corOuro = rgb(0.66, 0.46, 0.02);
+            const corOuroBg = rgb(0.996, 0.975, 0.86);
+            page.drawRectangle({ x: 20, y: 20, width: width - 40, height: height - 40, borderColor: corOuro, borderWidth: 2.2 });
+            page.drawRectangle({ x: 20, y: height - 102, width: width - 40, height: 82, color: corOuroBg });
+            page.drawRectangle({ x: 20, y: height - 105, width: width - 40, height: 3, color: corOuro });
+
+            if (brasaoImg) {
+                const bd = brasaoImg.scaleToFit(50, 50);
+                page.drawImage(brasaoImg, { x: 34, y: height - 86, width: bd.width, height: bd.height });
+            }
+            drawTextFitPDF(page, 'CERTIFICADO DE VACINAÇÃO / PROFILAXIA (SUS • CIVP)', 94, height - 48, fontBold, 13.0, width - 130, corOuro);
+            drawTextFitPDF(page, 'INTERNATIONAL CERTIFICATE OF VACCINATION OR PROPHYLAXIS — REGISTRO DE DOSES', 94, height - 64, fontBold, 7.4, width - 130, corEscuro);
+            drawTextFitPDF(page, `Emissão: ${cidadeAuto}, ${dataAuto} • Protocolo: ${dados.protocolo}`, 94, height - 79, fontReg, 7.8, width - 130, corCinza);
+
+            let y = height - 128;
+            drawBlank('Nome Completo / Name:', dados.rxPaciente || '', 36, y, width - 36, 8.8); y -= 22;
+            drawBlank('CPF / CNS / Passport:', '', 36, y, 280, 8.4);
+            drawBlank('Data Nasc. / DOB:', '', 292, y, 440, 8.4);
+            drawBlank('Sexo:', '', 450, y, width - 36, 8.4); y -= 30;
+
+            // Tabela Oficial de Vacinas (5 linhas)
+            const tblH = 260;
+            page.drawRectangle({ x: 36, y: y - tblH, width: width - 72, height: tblH, borderColor: corOuro, borderWidth: 1.1 });
+            page.drawRectangle({ x: 36, y: y - 24, width: width - 72, height: 24, color: corOuro });
+            drawTextFitPDF(page, 'VACINA / DOENÇA', 42, y - 16, fontBold, 7.6, 145, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'DATA', 194, y - 16, fontBold, 7.6, 65, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'DOSE', 266, y - 16, fontBold, 7.6, 55, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'LOTE / FABRICANTE', 328, y - 16, fontBold, 7.6, 115, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'UNIDADE / ASSINATURA', 450, y - 16, fontBold, 7.6, 105, rgb(1, 1, 1));
+            [188, 260, 322, 444].forEach(cx => {
+                page.drawLine({ start: { x: cx, y: y - tblH }, end: { x: cx, y }, thickness: 0.7, color: corLinha });
+            });
+            for (let r = 1; r <= 5; r++) {
+                const ry = y - 24 - r * 47.2;
+                if (r < 5) page.drawLine({ start: { x: 36, y: ry }, end: { x: width - 36, y: ry }, thickness: 0.6, color: corLinha });
+            }
+            if (dados.rxMed) {
+                drawTextFitPDF(page, dados.rxMed, 42, y - 46, fontBold, 8.4, 142, corEscuro);
+                drawTextFitPDF(page, dataAuto, 194, y - 46, fontReg, 8.0, 62, corEscuro);
+            }
+
+            drawFooterDoctor(corOuro, 'RESPONSÁVEL PELA VACINAÇÃO / UNIDADE', 102);
+            drawBottomBar();
+            return await pdfDoc.save();
+        }
+
+        // =====================================================================
+        // 7) LME ALTO CUSTO (SUS/CEAF) — FORMULÁRIO TABULAR NUMERADO OFICIAL
+        // =====================================================================
+        if (tipo === 'lme_sus') {
+            const corLme = rgb(0.32, 0.14, 0.56);
+            page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: corLme, borderWidth: 1.5 });
+            page.drawRectangle({ x: 24, y: height - 80, width: width - 48, height: 56, color: corLme });
+            drawTextFitPDF(page, 'LME — LAUDO PARA SOLICITAÇÃO, AVALIAÇÃO E AUTORIZAÇÃO DE MEDICAMENTOS', 36, height - 46, fontBold, 10.8, width - 72, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'SISTEMA ÚNICO DE SAÚDE (SUS) • COMPONENTE ESPECIALIZADO DA ASSISTÊNCIA FARMACÊUTICA (CEAF)', 36, height - 63, fontReg, 7.6, width - 72, rgb(0.93, 0.90, 1));
+
+            const drawCell = (num, lbl, val, x, y, w, h) => {
+                page.drawRectangle({ x, y: y - h, width: w, height: h, borderColor: corLme, borderWidth: 0.8 });
+                drawTextFitPDF(page, `${num}. ${lbl}`, x + 5, y - 10, fontBold, 6.6, w - 10, corLme);
+                if (val) drawTextFitPDF(page, val, x + 6, y - 24, fontBold, 8.4, w - 12, corEscuro);
+            };
+
+            let y = height - 90;
+            drawCell('1', 'CNES / UNIDADE', dados.unidadeSus || '', 34, y, 165, 34);
+            drawCell('2', 'NOME DO ESTABELECIMENTO SOLICITANTE', (dados.nome || '').toUpperCase(), 199, y, width - 233, 34);
+            y -= 34;
+            drawCell('3', 'NOME COMPLETO DO PACIENTE', dados.rxPaciente || '', 34, y, 360, 34);
+            drawCell('4', 'CNS / CPF DO PACIENTE', '', 394, y, width - 428, 34);
+            y -= 34;
+            drawCell('5', 'NOME DA MÃE', '', 34, y, 300, 34);
+            drawCell('6', 'PESO (kg)', '', 334, y, 75, 34);
+            drawCell('7', 'ALTURA (cm)', '', 409, y, 75, 34);
+            drawCell('8', 'DATA', dataAuto, 484, y, width - 518, 34);
+            y -= 34;
+            drawCell('9', 'CID-10', '', 34, y, 110, 34);
+            drawCell('10', 'DIAGNÓSTICO', '', 144, y, width - 178, 34);
+            y -= 42;
+
+            // Tabela Medicamentos Mês 1 / 2 / 3
+            drawCell('11', 'MEDICAMENTO SOLICITADO (DCB)', dados.rxMed || '', 34, y, 310, 42);
+            drawCell('12', 'QTD MÊS 1', '', 344, y, 72, 42);
+            drawCell('13', 'QTD MÊS 2', '', 416, y, 72, 42);
+            drawCell('14', 'QTD MÊS 3', '', 488, y, width - 522, 42);
+            y -= 42;
+            drawCell('15', 'ANAMNESE / TRATAMENTOS PRÉVIOS / JUSTIFICATIVA CLÍNICA', '', 34, y, width - 68, 175);
+            for (let k = 1; k <= 6; k++) {
+                page.drawLine({ start: { x: 42, y: y - 24 - k * 23 }, end: { x: width - 42, y: y - 24 - k * 23 }, thickness: 0.45, color: corLinha });
+            }
+
+            drawFooterDoctor(corLme, 'MÉDICO SOLICITANTE (PREENCHIMENTO OBRIGATÓRIO)', 102);
+            drawBottomBar();
+            return await pdfDoc.save();
+        }
+
+        // =====================================================================
+        // 8) DECLARAÇÃO DE COMPARECIMENTO, GUIA REFERÊNCIA & TER (LAYOUTS DEDICADOS)
+        // =====================================================================
+        const cfgRest = {
+            declaracao_comparecimento: { cor: rgb(0.05, 0.46, 0.34), titulo: 'DECLARAÇÃO DE COMPARECIMENTO', sub: 'Comprovante de Presença em Atendimento de Saúde (Paciente / Acompanhante)' },
+            guia_referencia: { cor: rgb(0.08, 0.30, 0.60), titulo: 'GUIA DE REFERÊNCIA E ENCAMINHAMENTO MÉDICO', sub: 'Rede Assistencial SUS / Especialidades — Referência e Contrarreferência' },
+            ter_consentimento: { cor: rgb(0.70, 0.40, 0.04), titulo: 'TERMO DE ESCLARECIMENTO E RESPONSABILIDADE (TER)', sub: 'Consentimento Livre e Esclarecido para Tratamento / Medicamento Especial' }
+        }[tipo] || { cor: rgb(0.05, 0.35, 0.55), titulo: 'DOCUMENTO CLÍNICO OFICIAL', sub: 'Atendimento de Saúde' };
+
+        page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: cfgRest.cor, borderWidth: 1.5 });
+        page.drawRectangle({ x: 24, y: height - 86, width: width - 48, height: 62, color: rgb(0.965, 0.98, 0.995) });
+        page.drawRectangle({ x: 24, y: height - 89, width: width - 48, height: 3, color: cfgRest.cor });
+        if (brasaoImg) {
+            const bd = brasaoImg.scaleToFit(42, 42);
+            page.drawImage(brasaoImg, { x: 36, y: height - 76, width: bd.width, height: bd.height });
+        }
+        drawTextFitPDF(page, cfgRest.titulo, 88, height - 48, fontBold, 13.0, width - 130, cfgRest.cor);
+        drawTextFitPDF(page, `${cfgRest.sub}  •  ${cidadeAuto}, ${dataAuto}`, 88, height - 65, fontReg, 7.8, width - 130, corCinza);
+
+        let y = height - 115;
+        drawBlank('Paciente / Cidadão:', dados.rxPaciente || '', 40, y, width - 40, 9.0); y -= 24;
+        drawBlank('CPF / CNS:', '', 40, y, 290, 8.6);
+        drawBlank('Data Nasc.:', '', 302, y, width - 40, 8.6); y -= 32;
+
+        if (tipo === 'declaracao_comparecimento') {
+            const txtC = dados.rxMed || `Declaro, para fins de justificativa junto ao empregador ou instituição de ensino, que o(a) cidadão(ã) acima identificado(a) compareceu a este serviço de saúde na data de ${dataAuto}.`;
+            quebrarLinhasPDF(txtC, fontSerif, 11.5, width - 86).slice(0, 5).forEach(ln => {
+                page.drawText(ln, { x: 42, y, size: 11.5, font: fontSerif, color: corEscuro });
+                y -= 18;
+            });
+            y -= 18;
+            // Cartões de Entrada e Saída em destaque!
+            const cardW = (width - 96) / 2;
+            page.drawRectangle({ x: 40, y: y - 54, width: cardW, height: 54, color: rgb(0.94, 0.99, 0.96), borderColor: cfgRest.cor, borderWidth: 1.1 });
+            drawTextFitPDF(page, 'HORÁRIO DE ENTRADA', 52, y - 16, fontBold, 7.6, cardW - 20, cfgRest.cor);
+            drawTextFitPDF(page, '______ : ______ h', 52, y - 38, fontBold, 14, cardW - 20, corEscuro);
+
+            page.drawRectangle({ x: 56 + cardW, y: y - 54, width: cardW, height: 54, color: rgb(0.94, 0.99, 0.96), borderColor: cfgRest.cor, borderWidth: 1.1 });
+            drawTextFitPDF(page, 'HORÁRIO DE SAÍDA', 68 + cardW, y - 16, fontBold, 7.6, cardW - 20, cfgRest.cor);
+            drawTextFitPDF(page, '______ : ______ h', 68 + cardW, y - 38, fontBold, 14, cardW - 20, corEscuro);
+
+            y -= 82;
+            drawTextFitPDF(page, 'Condição:   [  ] Paciente atendido(a)     [  ] Acompanhante de: ______________________________________', 40, y, fontBold, 8.8, width - 80, corEscuro);
+            y -= 30;
+            drawBlank('Setor / Especialidade:', '', 40, y, width - 40, 8.6);
         } else if (tipo === 'guia_referencia') {
-            drawTextFitPDF(page, 'GUIA DE REFERÊNCIA E ENCAMINHAMENTO PARA ESPECIALIDADE', 44, y - 14, fontBold, 7.8, width - 90, corTema);
-            let ly = y - 34;
-            drawBlank('Especialidade / Serviço de Destino:', '', 44, ly, 365);
-            drawBlank('Prioridade:', '[ ] Alta  [ ] Média', 375, ly, width - 46);
-            ly -= 24;
-            drawBlank('Hipótese Diagnóstica / CID-10:', '', 44, ly, width - 46);
-            ly -= 24;
-            drawTextFitPDF(page, 'Resumo Clínico, Exames Realizados e Motivo do Encaminhamento:', 44, ly, fontBold, 8.0, width - 90, corTema);
-            ly -= 18;
+            page.drawRectangle({ x: 40, y: y - 26, width: width - 80, height: 26, color: rgb(0.93, 0.96, 1), borderColor: cfgRest.cor, borderWidth: 0.9 });
+            drawTextFitPDF(page, 'CLASSIFICAÇÃO DE PRIORIDADE:   [  ] URGÊNCIA     [  ] PRIORIDADE     [  ] ELETIVO / ROTINA', 52, y - 16, fontBold, 8.2, width - 104, cfgRest.cor);
+            y -= 44;
+            drawBlank('Especialidade / Serviço de Destino:', '', 40, y, width - 40, 8.8); y -= 24;
+            drawBlank('Hipótese Diagnóstica / CID-10:', '', 40, y, width - 40, 8.8); y -= 28;
+            drawTextFitPDF(page, 'RESUMO CLÍNICO, EXAMES E MOTIVO DO ENCAMINHAMENTO:', 40, y, fontBold, 8.2, 360, cfgRest.cor);
+            y -= 20;
             if (dados.rxMed) {
-                const gLines = quebrarLinhasPDF(dados.rxMed, fontReg, 9.4, width - 92);
-                gLines.slice(0, 6).forEach(ln => {
-                    page.drawText(ln, { x: 46, y: ly, size: 9.4, font: fontReg, color: corEscuro });
-                    ly -= 15.5;
+                quebrarLinhasPDF(dados.rxMed, fontReg, 9.5, width - 88).slice(0, 6).forEach(ln => {
+                    page.drawText(ln, { x: 42, y, size: 9.5, font: fontReg, color: corEscuro });
+                    y -= 16;
                 });
-                ly -= 4;
             }
-            while (ly > (y - corpoH + 20)) {
-                page.drawLine({ start: { x: 44, y: ly }, end: { x: width - 46, y: ly }, thickness: 0.55, color: corLinha });
-                ly -= 21;
-            }
-        } else if (tipo === 'ter_consentimento') {
-            drawTextFitPDF(page, 'TERMO DE ESCLARECIMENTO E RESPONSABILIDADE (TER)', 44, y - 14, fontBold, 7.8, width - 90, corTema);
-            const txtTer = dados.rxMed
-                ? dados.rxMed
-                : 'Declaro que fui devidamente informado(a) pelo(a) médico(a) prescritor(a) sobre os benefícios, riscos, contraindicações, possíveis efeitos adversos e cuidados obrigatórios relacionados ao tratamento medicamentoso ou procedimento indicado, comprometendo-me a seguir integralmente as orientações médicas e realizar o acompanhamento periódico recomendado.';
-            const tLines = quebrarLinhasPDF(txtTer, fontReg, 9.5, width - 96);
-            let ly = y - 36;
-            tLines.slice(0, 7).forEach(ln => {
-                page.drawText(ln, { x: 46, y: ly, size: 9.5, font: fontReg, color: corEscuro });
-                ly -= 15;
-            });
-            ly -= 12;
-            drawBlank('Medicamento / Tratamento / Protocolo:', '', 46, ly, width - 48);
-            ly -= 24;
-            drawBlank('Responsável Legal (se menor ou incapaz):', '', 46, ly, width - 48);
-            ly -= 34;
-            page.drawLine({ start: { x: 46, y: ly }, end: { x: 310, y: ly }, thickness: 0.8, color: corEscuro });
-            drawTextFitPDF(page, 'Assinatura do Paciente ou Responsável Legal', 46, ly - 12, fontBold, 7.4, 260, corCinza);
-            drawBlank('RG / CPF:', '', 325, ly + 2, width - 48);
-        } else if (tipo === 'civp_vacina') {
-            drawTextFitPDF(page, 'REGISTRO OFICIAL DE VACINAÇÃO / PROFILAXIA (SUS / CIVP)', 44, y - 14, fontBold, 7.8, width - 90, corTema);
-            let ly = y - 36;
-            drawBlank('Vacina / Profilaxia Aplicada:', dados.rxMed || '', 44, ly, width - 46);
-            ly -= 24;
-            drawBlank('Data Aplicação:', dataAuto, 44, ly, 210);
-            drawBlank('Dose:', '', 220, ly, 340);
-            drawBlank('Lote / Fabr.:', '', 350, ly, width - 46);
-            ly -= 24;
-            drawBlank('Unidade Vacinadora / CNES:', dados.unidadeSus || '', 44, ly, width - 46);
-            ly -= 24;
-            drawBlank('Vacinador / Coren / CRM:', dados.crm || '', 44, ly, width - 46);
-            ly -= 28;
-            drawTextFitPDF(page, 'Observações / Doses Adicionais:', 44, ly, fontBold, 8.0, 240, corCinza);
-            ly -= 18;
-            while (ly > (y - corpoH + 20)) {
-                page.drawLine({ start: { x: 44, y: ly }, end: { x: width - 46, y: ly }, thickness: 0.55, color: corLinha });
-                ly -= 22;
+            while (y > 215) {
+                page.drawLine({ start: { x: 40, y }, end: { x: width - 40, y }, thickness: 0.5, color: corLinha });
+                y -= 22;
             }
         } else {
-            drawTextFitPDF(page, 'DADOS CLÍNICOS E SOLICITAÇÃO DE MEDICAMENTO ESPECIALIZADO (CEAF / SUS)', 44, y - 14, fontBold, 7.8, width - 90, corTema);
-            let ly = y - 34;
-            drawBlank('Diagnóstico / CID-10:', '', 44, ly, 290);
-            drawBlank('Peso (kg):', '', 300, ly, 420);
-            drawBlank('Altura (cm):', '', 430, ly, width - 46);
-            ly -= 24;
-            drawBlank('Medicamento Solicitado (DCB):', dados.rxMed || '', 44, ly, width - 46);
-            ly -= 24;
-            drawBlank('Quantidade Mensal (Mês 1 / 2 / 3):', '', 44, ly, width - 46);
-            ly -= 26;
-            drawTextFitPDF(page, 'Anamnese / Justificativa Clínica / Tratamentos Prévios:', 44, ly, fontBold, 8.0, width - 90, corCinza);
-            ly -= 18;
-            while (ly > (y - corpoH + 20)) {
-                page.drawLine({ start: { x: 44, y: ly }, end: { x: width - 46, y: ly }, thickness: 0.55, color: corLinha });
-                ly -= 21;
-            }
+            // TER - Termo de Esclarecimento e Responsabilidade
+            const clausulas = [
+                '1. DECLARAÇÃO DE CIÊNCIA: Declaro que fui claramente informado(a) pelo(a) médico(a) prescritor(a) sobre os benefícios, riscos, contraindicações e possíveis efeitos adversos relacionados ao tratamento ou medicamento indicado.',
+                '2. COMPROMISSO DE ACOMPANHAMENTO: Comprometo-me a seguir rigorosamente a posologia prescrita, não compartilhar o medicamento com terceiros e realizar os exames periódicos solicitados.',
+                '3. CONSENTIMENTO: Autorizo o início/continuidade do tratamento proposto, ciente de que posso revogar este consentimento a qualquer momento.'
+            ];
+            clausulas.forEach(cl => {
+                quebrarLinhasPDF(cl, fontReg, 9.6, width - 86).forEach(ln => {
+                    page.drawText(ln, { x: 42, y, size: 9.6, font: fontReg, color: corEscuro });
+                    y -= 14.5;
+                });
+                y -= 10;
+            });
+            drawBlank('Medicamento / Tratamento / Protocolo:', dados.rxMed || '', 42, y - 6, width - 42, 8.8);
+            y -= 34;
+            drawBlank('Responsável Legal (se aplicável):', '', 42, y, width - 42, 8.6);
+            y -= 48;
+            // Assinatura do Paciente destacada antes do bloco médico
+            page.drawLine({ start: { x: 42, y }, end: { x: 340, y }, thickness: 0.9, color: corEscuro });
+            drawTextFitPDF(page, 'Assinatura do Paciente ou Responsável Legal', 42, y - 13, fontBold, 7.6, 280, cfgRest.cor);
+            drawBlank('RG / CPF:', '', 355, y + 2, width - 42, 8.2);
         }
 
-        y = y - corpoH - 12;
-
-        const docSigH = 74;
-        page.drawRectangle({ x: 34, y: y - docSigH, width: width - 68, height: docSigH, color: corFundo, borderColor: corTema, borderWidth: 1, borderDashArray: [4, 3] });
-        drawBlank('Local e Data:', `${cidadeAuto}, ${dataAuto}`, 44, y - 28, 258);
-        drawTextFitPDF(page, 'ASSINATURA E CARIMBO DO PROFISSIONAL HABILITADO', 278, y - 16, fontBold, 7.3, 270, corTema);
-        page.drawLine({ start: { x: 278, y: y - 48 }, end: { x: width - 50, y: y - 48 }, thickness: 0.8, color: corEscuro });
-        drawTextFitPDF(page, `${(dados.nome || 'Profissional Prescritor').toUpperCase()}${dados.crm ? ' - ' + dados.crm.toUpperCase() : ''}`, 278, y - 62, fontBold, 7.4, width - 336, corCinza);
-
-        const footY = 34;
-        if (dados.usarAssinaturaFixa && sigImg) {
-            desenharBlocoAssinaturaFixa(page, sigImg, dados, fontBold, fontReg, corEscuro, corCinza, 175, footY + 14, 185, 58);
-        }
-        if (qrImg) {
-            page.drawImage(qrImg, { x: width - 90, y: footY + 14, width: 52, height: 52 });
-            page.drawText(sanitizarTextoPDF('Validar'), { x: width - 77, y: footY + 5, size: 6.5, font: fontBold, color: corCinza });
-        }
-        drawTextFitPDF(page, `Emitido via Portal COVISA Digital • ${cidadeAuto}, ${dataAuto} • Validade: ${dados.validade}`, 36, footY + 4, fontReg, 7.0, width - 140, corCinza);
-
+        drawFooterDoctor(cfgRest.cor, 'PROFISSIONAL RESPONSÁVEL', 102);
+        drawBottomBar();
         return await pdfDoc.save();
     }
 
@@ -7747,7 +8146,11 @@ REGRAS:
     }
 
     // -------------------------------------------------------------------------
-    // CONSTRUTOR 4: DOCUMENTOS INSTITUCIONAIS A4 COMPLETOS (17 MODELOS)
+    // CONSTRUTOR 4: DOCUMENTOS INSTITUCIONAIS A4 COM LAYOUTS DIFERENCIADOS (17 MODELOS)
+    // - Termo de Inutilização & Livro Controlados: Tabela real de Medicamentos / Lotes / Validade
+    // - AFE / AE & CBPF (ANVISA): Diploma Federal centralizado com moldura dupla ouro/azul
+    // - Recibo de Quitação: Selo "PAGO / QUITADO" em destaque
+    // - Auto de Infração & Interdição: Cabeçalho fiscal de alto contraste vermelho/ardósia
     // -------------------------------------------------------------------------
     async function construirPdfInstitucionalA4(tipo, dados) {
         const { PDFDocument, rgb, StandardFonts } = PDFLib;
@@ -7758,20 +8161,22 @@ REGRAS:
         const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
         const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
         const fontMono = await pdfDoc.embedFont(StandardFonts.Courier);
+        const fontSerifBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
         const corGovAzul = rgb(0.05, 0.23, 0.52);
-        const corVermelho = rgb(0.82, 0.14, 0.11);
-        const corVerde = rgb(0.06, 0.50, 0.33);
-        const corAmbar = rgb(0.76, 0.45, 0.04);
-        const corRoxo = rgb(0.42, 0.16, 0.68);
+        const corVermelho = rgb(0.80, 0.12, 0.10);
+        const corVerde = rgb(0.05, 0.48, 0.32);
+        const corAmbar = rgb(0.74, 0.42, 0.03);
+        const corRoxo = rgb(0.40, 0.15, 0.64);
         const corEscuro = rgb(0.11, 0.15, 0.22);
         const corCinza = rgb(0.38, 0.44, 0.52);
-        const corBorda = rgb(0.82, 0.86, 0.91);
-        const corFundoBox = rgb(0.96, 0.97, 0.99);
+        const corBorda = rgb(0.80, 0.85, 0.90);
+        const corFundoBox = rgb(0.96, 0.975, 0.995);
         const dataAuto = dados.emissao || formatarDataBR(new Date());
         const cidadeAuto = (dados.cidade || 'São Paulo - SP').trim();
 
         const ehFederal = tipo === 'afe_anvisa' || tipo === 'cbpf_anvisa';
+        const ehTabelaControlados = tipo === 'termo_inutilizacao' || tipo === 'termo_livro';
 
         const mapaTema = {
             licenca: { titulo: 'CERTIFICADO DE LICENÇA SANITÁRIA PROVISÓRIA', cor: corVerde, sub: 'Documento Provisório de Regularidade Sanitária - COVISA' },
@@ -7782,8 +8187,8 @@ REGRAS:
             autorizacao_talonario: { titulo: 'AUTORIZAÇÃO DE NUMERAÇÃO E CONFECÇÃO DE TALONÁRIO (SNCR)', cor: corRoxo, sub: 'Portaria SVS/MS nº 344/1998 - Liberação de Receituário de Controle Especial' },
             termo_livro: { titulo: 'TERMO DE ABERTURA / ENCERRAMENTO DE LIVRO DE CONTROLADOS', cor: corRoxo, sub: 'Portaria SVS/MS nº 344/1998 - Escrituração de Medicamentos Sujeitos a Controle Especial' },
             termo_inutilizacao: { titulo: 'TERMO DE INUTILIZAÇÃO DE MEDICAMENTOS CONTROLADOS', cor: corAmbar, sub: 'Portaria SVS/MS nº 344/1998 - Conferência e Descarte de Substâncias Controladas' },
-            afe_anvisa: { titulo: 'AUTORIZAÇÃO DE FUNCIONAMENTO DE EMPRESA (AFE / AE - ANVISA)', cor: corGovAzul, sub: 'Agência Nacional de Vigilância Sanitária - Regularização Federal de Empresa' },
-            cbpf_anvisa: { titulo: 'CERTIFICADO DE BOAS PRÁTICAS (CBPF / CBPDA - ANVISA)', cor: corVerde, sub: 'Agência Nacional de Vigilância Sanitária - Fabricação, Distribuição e Armazenagem' },
+            afe_anvisa: { titulo: 'AUTORIZAÇÃO DE FUNCIONAMENTO DE EMPRESA (AFE / AE)', cor: corGovAzul, sub: 'Agência Nacional de Vigilância Sanitária - Regularização Federal de Empresa' },
+            cbpf_anvisa: { titulo: 'CERTIFICADO DE BOAS PRÁTICAS (CBPF / CBPDA)', cor: corVerde, sub: 'Agência Nacional de Vigilância Sanitária - Fabricação, Distribuição e Armazenagem' },
             declaracao: { titulo: 'DECLARAÇÃO DE REGULARIDADE E PROTOCOLO ATIVO', cor: corGovAzul, sub: 'Certidão de Andamento de Processo Sanitário Digital' },
             dispensa: { titulo: 'CERTIDÃO DE DISPENSA DE LICENCIAMENTO - BAIXO RISCO', cor: corVerde, sub: 'Lei Federal nº 13.874/2019 (Liberdade Econômica) e Normas COVISA' },
             dca_dcff: { titulo: 'DECLARAÇÃO DE CONFORMIDADE SANITÁRIA (DCA / DCFF)', cor: corRoxo, sub: 'Portaria SMS/COVISA nº 404/2024 - Regularização de Atividade e Estrutura Físico-Funcional' },
@@ -7794,34 +8199,56 @@ REGRAS:
             oficio: { titulo: (dados.tituloCustom || 'OFÍCIO OFICIAL - VIGILÂNCIA SANITÁRIA').toUpperCase(), cor: corGovAzul, sub: 'Comunicação Oficial da Coordenação de Vigilância em Saúde' }
         };
         const tema = mapaTema[tipo] || mapaTema.oficio;
-
-        page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: corBorda, borderWidth: 1.2 });
-        page.drawRectangle({ x: 24, y: height - 104, width: width - 48, height: 80, color: rgb(0.97, 0.98, 1) });
-        page.drawRectangle({ x: 24, y: height - 107, width: width - 48, height: 3, color: tema.cor });
-
         const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
-        let textStartX = 44;
-        if (brasaoImg) {
-            const dims = brasaoImg.scaleToFit(54, 54);
-            page.drawImage(brasaoImg, { x: 40, y: height - 92 + (54 - dims.height) / 2, width: dims.width, height: dims.height });
-            textStartX = 108;
+
+        let y;
+        if (ehFederal) {
+            // ESTILO DIPLOMA FEDERAL ANVISA (Moldura dupla ouro/azul + cabeçalho centralizado!)
+            const corOuro = rgb(0.70, 0.52, 0.12);
+            page.drawRectangle({ x: 20, y: 20, width: width - 40, height: height - 40, borderColor: tema.cor, borderWidth: 2.5 });
+            page.drawRectangle({ x: 26, y: 26, width: width - 52, height: height - 52, borderColor: corOuro, borderWidth: 1.0 });
+            if (brasaoImg) {
+                const bd = brasaoImg.scaleToFit(54, 54);
+                page.drawImage(brasaoImg, { x: (width - bd.width) / 2, y: height - 92, width: bd.width, height: bd.height });
+            }
+            const l1 = 'MINISTÉRIO DA SAÚDE • AGÊNCIA NACIONAL DE VIGILÂNCIA SANITÁRIA (ANVISA)';
+            const l1w = fontBold.widthOfTextAtSize(l1, 9.2);
+            page.drawText(l1, { x: Math.max(36, (width - l1w) / 2), y: height - 108, size: 9.2, font: fontBold, color: corCinza });
+            const tW = fontSerifBold.widthOfTextAtSize(sanitizarTextoPDF(tema.titulo), 15.5);
+            page.drawText(sanitizarTextoPDF(tema.titulo), { x: Math.max(36, (width - tW) / 2), y: height - 134, size: 15.5, font: fontSerifBold, color: tema.cor });
+            page.drawLine({ start: { x: 110, y: height - 144 }, end: { x: width - 110, y: height - 144 }, thickness: 1.4, color: corOuro });
+            const pStr = `Protocolo: ${dados.protocolo}  |  Emissão: ${cidadeAuto}, ${dataAuto}`;
+            const pW = fontBold.widthOfTextAtSize(sanitizarTextoPDF(pStr), 8.2);
+            page.drawText(sanitizarTextoPDF(pStr), { x: Math.max(36, (width - pW) / 2), y: height - 158, size: 8.2, font: fontBold, color: corEscuro });
+            y = height - 176;
+        } else {
+            // Cabeçalho Institucional Padrão COVISA
+            page.drawRectangle({ x: 24, y: 24, width: width - 48, height: height - 48, borderColor: corBorda, borderWidth: 1.2 });
+            page.drawRectangle({ x: 24, y: height - 104, width: width - 48, height: 80, color: rgb(0.97, 0.98, 1) });
+            page.drawRectangle({ x: 24, y: height - 107, width: width - 48, height: 3, color: tema.cor });
+
+            let textStartX = 44;
+            if (brasaoImg) {
+                const dims = brasaoImg.scaleToFit(54, 54);
+                page.drawImage(brasaoImg, { x: 40, y: height - 92 + (54 - dims.height) / 2, width: dims.width, height: dims.height });
+                textStartX = 108;
+            }
+            const maxHdrW = width - textStartX - 36;
+            drawTextFitPDF(page, 'PREFEITURA DO MUNICÍPIO DE SÃO PAULO', textStartX, height - 50, fontBold, 12, maxHdrW, corEscuro);
+            drawTextFitPDF(page, 'SECRETARIA MUNICIPAL DA SAÚDE - COVISA', textStartX, height - 65, fontBold, 9.4, maxHdrW, corVermelho);
+            drawTextFitPDF(page, 'Coordenação de Vigilância em Saúde | Portal COVISA Digital 2026', textStartX, height - 79, fontReg, 8.5, maxHdrW, corCinza);
+            drawTextFitPDF(page, `Protocolo: ${dados.protocolo}  |  Local e Data: ${cidadeAuto}, ${dataAuto}`, textStartX, height - 93, fontBold, 8.4, maxHdrW, corGovAzul);
+
+            y = height - 142;
+            page.drawRectangle({ x: 38, y: y - 10, width: width - 76, height: 40, color: tema.cor });
+            drawTextFitPDF(page, tema.titulo, 50, y + 13, fontBold, 11.6, width - 100, rgb(1, 1, 1));
+            drawTextFitPDF(page, tema.sub, 50, y - 1, fontReg, 7.9, width - 100, rgb(0.92, 0.95, 1));
+            y -= 28;
         }
 
-        const maxHdrW = width - textStartX - 36;
-        drawTextFitPDF(page, ehFederal ? 'AGÊNCIA NACIONAL DE VIGILÂNCIA SANITÁRIA - ANVISA' : 'PREFEITURA DO MUNICÍPIO DE SÃO PAULO', textStartX, height - 50, fontBold, 12, maxHdrW, corEscuro);
-        drawTextFitPDF(page, ehFederal ? 'MINISTÉRIO DA SAÚDE • SISTEMA NACIONAL DE VIGILÂNCIA SANITÁRIA (SNVS)' : 'SECRETARIA MUNICIPAL DA SAÚDE - COVISA', textStartX, height - 65, fontBold, 9.4, maxHdrW, corVermelho);
-        drawTextFitPDF(page, 'Coordenação de Vigilância em Saúde | Portal COVISA Digital 2026', textStartX, height - 79, fontReg, 8.5, maxHdrW, corCinza);
-        drawTextFitPDF(page, `Protocolo: ${dados.protocolo}  |  Local e Data: ${cidadeAuto}, ${dataAuto}`, textStartX, height - 93, fontBold, 8.4, maxHdrW, corGovAzul);
-
-        let y = height - 142;
-        page.drawRectangle({ x: 38, y: y - 10, width: width - 76, height: 40, color: tema.cor });
-        drawTextFitPDF(page, tema.titulo, 50, y + 13, fontBold, 11.6, width - 100, rgb(1, 1, 1));
-        drawTextFitPDF(page, tema.sub, 50, y - 1, fontReg, 7.9, width - 100, rgb(0.92, 0.95, 1));
-
-        y -= 28;
-        const boxH = 118;
+        const boxH = 114;
         page.drawRectangle({ x: 38, y: y - boxH, width: width - 76, height: boxH, color: corFundoBox, borderColor: corBorda, borderWidth: 1 });
-        drawTextFitPDF(page, 'IDENTIFICAÇÃO DO ESTABELECIMENTO / PROFISSIONAL', 50, y - 15, fontBold, 8.2, width - 100, corGovAzul);
+        drawTextFitPDF(page, 'IDENTIFICAÇÃO DO ESTABELECIMENTO / PROFISSIONAL', 50, y - 15, fontBold, 8.0, width - 100, tema.cor);
 
         const digits = (dados.cnpj || '').replace(/\D/g, '');
         const docRotulo = digits.length === 11 ? 'CPF' : 'CNPJ';
@@ -7835,68 +8262,73 @@ REGRAS:
 
         drawKv('RAZÃO SOCIAL / NOME', (dados.nome || 'Não informado').toUpperCase(), 50, y - 32, 330);
         drawKv(docRotulo, dados.cnpj || 'Não informado', 402, y - 32, 145);
-        drawKv('ENDEREÇO COMPLETO', endFull, 50, y - 64, 330);
-        drawKv('CEP', dados.cep || 'Não informado', 402, y - 64, 145);
-        drawKv('MUNICÍPIO / UF', cidadeAuto, 50, y - 95, 170);
-        drawKv(dados.crm ? 'CONSELHO / RAMO' : 'RAMO DE ATIVIDADE', dados.crm ? `${dados.crm} - ${dados.ramo || 'Saúde'}` : (dados.ramo || 'Geral'), 232, y - 95, 160);
-        drawKv('EMISSÃO / PRAZO', `${dataAuto} | ${dados.validade}`, 402, y - 95, 148);
+        drawKv('ENDEREÇO COMPLETO', endFull, 50, y - 62, 330);
+        drawKv('CEP', dados.cep || 'Não informado', 402, y - 62, 145);
+        drawKv('MUNICÍPIO / UF', cidadeAuto, 50, y - 92, 170);
+        drawKv(dados.crm ? 'CONSELHO / RAMO' : 'RAMO DE ATIVIDADE', dados.crm ? `${dados.crm} - ${dados.ramo || 'Saúde'}` : (dados.ramo || 'Geral'), 232, y - 92, 160);
+        drawKv('EMISSÃO / PRAZO', `${dataAuto} | ${dados.validade}`, 402, y - 92, 148);
 
-        y = y - boxH - 16;
+        y = y - boxH - 14;
 
         if (tipo === 'guia' || tipo === 'infracao' || tipo === 'recibo_quitacao') {
             const valorFmt = dados.valor
                 ? (dados.valor.trim().startsWith('R$') ? dados.valor.trim() : `R$ ${dados.valor.trim()}`)
                 : 'R$ 0,00';
-            const finH = 60;
-            const bgFin = tipo === 'recibo_quitacao' ? rgb(0.93, 0.99, 0.96) : rgb(1, 0.97, 0.97);
-            page.drawRectangle({ x: 38, y: y - finH, width: width - 76, height: finH, color: bgFin, borderColor: tema.cor, borderWidth: 1.2 });
-            drawKv(tipo === 'recibo_quitacao' ? 'VALOR QUITADO (PAGO)' : (tipo === 'infracao' ? 'VALOR DA MULTA (UFESP/R$)' : 'VALOR TOTAL DA GUIA'), valorFmt, 50, y - 18, 170);
-            drawKv(tipo === 'recibo_quitacao' ? 'STATUS / DATA QUITAÇÃO' : (tipo === 'infracao' ? 'PRAZO DE DEFESA' : 'DATA DE VENCIMENTO'), tipo === 'recibo_quitacao' ? `PAGO • ${dados.validade}` : dados.validade, 230, y - 18, 148);
-            drawKv('REFERÊNCIA / ENQUADRAMENTO', dados.artigo || dados.tipoTaxa || 'Lei Municipal 13.725/2004', 388, y - 18, 160);
-            y = y - finH - 16;
+            const finH = 62;
+            const bgFin = tipo === 'recibo_quitacao' ? rgb(0.92, 0.99, 0.95) : rgb(1, 0.96, 0.96);
+            page.drawRectangle({ x: 38, y: y - finH, width: width - 76, height: finH, color: bgFin, borderColor: tema.cor, borderWidth: 1.4 });
+            drawKv(tipo === 'recibo_quitacao' ? 'VALOR QUITADO' : (tipo === 'infracao' ? 'VALOR DA MULTA (UFESP/R$)' : 'VALOR TOTAL A PAGAR'), valorFmt, 50, y - 18, 165);
+            drawKv(tipo === 'recibo_quitacao' ? 'DATA QUITAÇÃO' : (tipo === 'infracao' ? 'PRAZO DEFESA' : 'VENCIMENTO'), dados.validade, 225, y - 18, 120);
+            if (tipo === 'recibo_quitacao') {
+                page.drawRectangle({ x: width - 176, y: y - 46, width: 126, height: 30, color: corVerde });
+                drawTextFitPDF(page, 'PAGO / QUITADO', width - 164, y - 35, fontBold, 11, 108, rgb(1, 1, 1));
+            } else {
+                drawKv('ENQUADRAMENTO', dados.artigo || dados.tipoTaxa || 'Lei Municipal 13.725/2004', 355, y - 18, 192);
+            }
+            y = y - finH - 14;
         } else if (tipo === 'autorizacao_talonario') {
             const numIni = Math.max(1, parseInt(dados.rxInicio, 10) || 1001);
             const qtd = Math.max(1, parseInt(dados.rxQtd, 10) || 50);
             const numFim = numIni + qtd - 1;
             const ser = dados.rxSerie || 'SP-2026-';
-            const rxH = 56;
+            const rxH = 54;
             page.drawRectangle({ x: 38, y: y - rxH, width: width - 76, height: rxH, color: rgb(0.97, 0.95, 1), borderColor: corRoxo, borderWidth: 1.2 });
-            drawKv('FAIXA NUMÉRICA AUTORIZADA', `${ser}${String(numIni).padStart(6, '0')} a ${ser}${String(numFim).padStart(6, '0')}`, 50, y - 17, 255);
-            drawKv('QUANTIDADE TOTAL', `${qtd} folha(s)`, 318, y - 17, 95);
-            drawKv('CONSELHO / REGISTRO', dados.crm || 'Conforme cadastro', 425, y - 17, 125);
-            y = y - rxH - 16;
+            drawKv('FAIXA NUMÉRICA AUTORIZADA (SNCR)', `${ser}${String(numIni).padStart(6, '0')} a ${ser}${String(numFim).padStart(6, '0')}`, 50, y - 17, 255);
+            drawKv('QUANTIDADE', `${qtd} folha(s)`, 318, y - 17, 95);
+            drawKv('CONSELHO', dados.crm || 'Conforme cadastro', 425, y - 17, 125);
+            y = y - rxH - 14;
         } else if (['cmvs_rt', 'assuncao_rt', 'dca_dcff', 'afe_anvisa', 'cbpf_anvisa'].includes(tipo)) {
             const cH = 54;
             page.drawRectangle({ x: 38, y: y - cH, width: width - 76, height: cH, color: rgb(0.95, 0.97, 1), borderColor: tema.cor, borderWidth: 1.2 });
             drawKv(ehFederal ? 'Nº AUTORIZAÇÃO / REGISTRO' : 'Nº CMVS / REGISTRO', dados.cmvs || `355030801-${(dados.cnpj || '2026').replace(/\D/g, '').slice(-6).padStart(6, '0')}-1-9`, 50, y - 16, 172);
             drawKv('RESPONSÁVEL TÉCNICO (RT)', dados.rt || dados.crm || 'Conforme Cadastro', 232, y - 16, 174);
             drawKv('CNAE / ESCOPO', dados.cnae || dados.ramo || 'Conforme CNPJ', 416, y - 16, 134);
-            y = y - cH - 16;
+            y = y - cH - 14;
         } else if (['termo_vistoria', 'termo_livro', 'termo_interdicao'].includes(tipo)) {
             const vH = 44;
             page.drawRectangle({ x: 38, y: y - vH, width: width - 76, height: vH, color: tipo === 'termo_interdicao' ? rgb(1, 0.95, 0.95) : rgb(0.97, 0.95, 1), borderColor: tema.cor, borderWidth: 1.2 });
             drawKv(tipo === 'termo_livro' ? 'TIPO DE TERMO DE LIVRO CONTROLADO' : (tipo === 'termo_interdicao' ? 'MEDIDA SANITÁRIA APLICADA' : 'RESULTADO DA INSPEÇÃO SANITÁRIA'), dados.vistoriaStatus || 'SATISFATÓRIO - Apto para funcionamento', 50, y - 15, width - 104);
-            y = y - vH - 16;
+            y = y - vH - 14;
         }
 
         const corpoPadrao = {
             licenca: 'Certificamos que o estabelecimento acima identificado cumpriu as etapas iniciais de regularização documental perante o Portal COVISA Digital 2026, estando autorizado a operar provisoriamente dentro das normas sanitárias vigentes até a data de validade indicada.',
             cmvs_rt: 'Certificamos que o estabelecimento acima identificado encontra-se regularmente inscrito no Cadastro Municipal de Vigilância em Saúde (CMVS), em conformidade com a Portaria SMS nº 266/2025 e demais normas sanitárias vigentes.',
             assuncao_rt: 'Formalizamos, para os devidos fins de regularização sanitária, o registro de Assunção / Atualização de Responsabilidade Técnica (RT) do profissional habilitado acima qualificado junto ao estabelecimento descrito, nos termos da Portaria SMS nº 266/2025.',
-            guia: 'Guia oficial referente à Taxa de Análise e Regularização Sanitária (COVISA). Efetue o pagamento via PIX através do QR Code ou código Copia e Cola abaixo até a data de vencimento para liberação imediata do processo e emissão do documento definitivo.',
-            recibo_quitacao: 'Atestamos, para os devidos fins de comprovação fiscal e sanitária, que a taxa referente ao protocolo acima identificado foi devidamente quitada junto ao sistema de arrecadação do Portal COVISA Digital, dando plena quitação à obrigação correspondente.',
-            autorizacao_talonario: 'Fica o profissional/instituição acima identificado AUTORIZADO pela Vigilância Sanitária (COVISA) a confeccionar e utilizar a faixa numérica de Notificações de Receita de Controle Especial especificada neste documento, nos termos da Portaria SVS/MS nº 344/1998 e regras SNCR 2026. Esta autorização deve ser apresentada à gráfica credenciada para impressão dos talonários.',
-            termo_livro: 'Aos cuidados do Responsável Técnico: fica formalizado o presente Termo referente ao Livro de Registro Específico de substâncias e medicamentos sujeitos a controle especial, em conformidade com a Portaria SVS/MS nº 344/1998, devendo todas as movimentações ser escrituradas e mantidas à disposição da autoridade sanitária.',
-            termo_inutilizacao: 'Aos cuidados do Responsável Técnico: lavra-se o presente Termo de Inutilização de medicamentos/substâncias sujeitos a controle especial após conferência dos lotes e quantidades relacionados, observando integralmente a Portaria SVS/MS nº 344/1998 e as normas de gerenciamento de resíduos de serviços de saúde (PGRSS).',
-            afe_anvisa: 'Certificamos o enquadramento cadastral referente à Autorização de Funcionamento de Empresa (AFE / AE) para o exercício das atividades sujeitas à vigilância sanitária federal descritas neste documento, observadas as normas vigentes da Agência Nacional de Vigilância Sanitária (ANVISA).',
+            guia: 'Guia oficial referente à Taxa de Análise e Regularização Sanitária (COVISA). Efetue o pagamento via PIX através do QR Code ou código Copia e Cola abaixo até a data de vencimento para liberação imediata do processo.',
+            recibo_quitacao: 'Atestamos, para os devidos fins de comprovação fiscal e sanitária, que a taxa referente ao protocolo acima identificado foi devidamente quitada junto ao sistema de arrecadação do Portal COVISA Digital.',
+            autorizacao_talonario: 'Fica o profissional/instituição acima identificado AUTORIZADO pela Vigilância Sanitária (COVISA) a confeccionar e utilizar a faixa numérica de Notificações de Receita de Controle Especial especificada neste documento, nos termos da Portaria SVS/MS nº 344/1998 e regras SNCR 2026.',
+            termo_livro: 'Lavra-se o presente Termo referente ao Livro de Registro Específico de substâncias e medicamentos sujeitos a controle especial, nos termos da Portaria SVS/MS nº 344/1998, devendo todas as movimentações ser escrituradas e mantidas à disposição da autoridade sanitária.',
+            termo_inutilizacao: 'Lavra-se o presente Termo de Inutilização de medicamentos/substâncias sujeitos a controle especial após conferência dos lotes e quantidades relacionados na tabela abaixo, observando integralmente a Portaria SVS/MS nº 344/1998 e as normas de descarte (PGRSS).',
+            afe_anvisa: 'Certificamos o enquadramento cadastral referente à Autorização de Funcionamento de Empresa (AFE / AE) para o exercício das atividades sujeitas à vigilância sanitária federal descritas neste documento, observadas as normas da ANVISA.',
             cbpf_anvisa: 'Certificamos o cumprimento dos requisitos de Boas Práticas de Fabricação, Distribuição e/ou Armazenagem (CBPF / CBPDA) para o estabelecimento acima identificado, conforme inspeção técnica e regulamentação sanitária vigente.',
-            declaracao: 'Declaramos, para os devidos fins, que o estabelecimento acima identificado encontra-se regularmente protocolado e em acompanhamento perante a Coordenação de Vigilância em Saúde (COVISA), sob o protocolo especificado neste documento.',
-            dispensa: 'Certificamos que a atividade econômica informada pelo estabelecimento acima identificado enquadra-se como de Baixo Risco Sanitário, ficando dispensada de licenciamento sanitário prévio nos termos da Lei Federal nº 13.874/2019 (Lei da Liberdade Econômica) e das normas sanitárias vigentes, sujeita à fiscalização orientadora posterior.',
-            dca_dcff: 'Declara-se, sob as penas da lei e em atendimento à Portaria SMS/COVISA nº 404/2024, que as instalações físico-funcionais e a atividade exercida pelo estabelecimento acima qualificado atendem integralmente às normas sanitárias municipais, estaduais e federais vigentes, estando aptas para regularização junto à COVISA.',
+            declaracao: 'Declaramos, para os devidos fins, que o estabelecimento acima identificado encontra-se regularmente protocolado e em acompanhamento perante a Coordenação de Vigilância em Saúde (COVISA).',
+            dispensa: 'Certificamos que a atividade econômica informada enquadra-se como de Baixo Risco Sanitário, ficando dispensada de licenciamento sanitário prévio nos termos da Lei Federal nº 13.874/2019 (Lei da Liberdade Econômica).',
+            dca_dcff: 'Declara-se, sob as penas da lei e em atendimento à Portaria SMS/COVISA nº 404/2024, que as instalações físico-funcionais e a atividade exercida atendem integralmente às normas sanitárias vigentes.',
             notificacao: 'Fica o estabelecimento acima identificado NOTIFICADO a apresentar a documentação pendente junto ao Portal COVISA Digital dentro do prazo estabelecido, sob pena de aplicação das medidas previstas na Lei Municipal 13.725/2004 e Lei Estadual 10.083/1998.',
             infracao: 'Auto de Infração lavrado em decorrência de irregularidade sanitária constatada. Fica assegurado ao autuado o prazo legal de 10 (dez) dias para apresentação de defesa administrativa ou 30 (trinta) dias para quitação da penalidade.',
-            termo_vistoria: 'Aos cuidados do responsável legal: realizou-se inspeção sanitária nas dependências do estabelecimento acima qualificado, avaliando condições físico-estruturais, boas práticas de manipulação/atendimento, higienização, controle de pragas e documentação sanitária obrigatória, resultando no parecer registrado neste Termo.',
-            termo_interdicao: 'Lavra-se o presente Termo de Interdição / Desinterdição Sanitária em cumprimento ao Código Sanitário Estadual (Lei nº 10.083/1998) e Municipal (Lei nº 13.725/2004), determinando o imediato cumprimento da medida sanitária especificada até posterior deliberação da autoridade fiscal.',
+            termo_vistoria: 'Realizou-se inspeção sanitária nas dependências do estabelecimento acima qualificado, avaliando condições físico-estruturais, boas práticas, higienização, controle de pragas e documentação sanitária obrigatória.',
+            termo_interdicao: 'Lavra-se o presente Termo de Interdição / Desinterdição Sanitária em cumprimento ao Código Sanitário Estadual (Lei nº 10.083/1998) e Municipal (Lei nº 13.725/2004), determinando o imediato cumprimento da medida especificada.',
             oficio: 'Comunicamos oficialmente a situação cadastral e sanitária referente ao processo em trâmite nesta Coordenação de Vigilância em Saúde.'
         };
 
@@ -7905,17 +8337,43 @@ REGRAS:
             ? 'EXIGÊNCIAS E PENDÊNCIAS CONSTATADAS'
             : (tipo === 'infracao' ? 'DESCRIÇÃO DA INFRAÇÃO E FUNDAMENTAÇÃO' : (tipo === 'termo_vistoria' ? 'CONSTATAÇÕES E EXIGÊNCIAS DA VISTORIA' : 'DESCRIÇÃO / DISPOSIÇÕES OFICIAIS'));
 
-        page.drawText(sanitizarTextoPDF(tituloSecao), { x: 42, y, size: 8.8, font: fontBold, color: corGovAzul });
-        y -= 15;
+        page.drawText(sanitizarTextoPDF(tituloSecao), { x: 42, y, size: 8.6, font: fontBold, color: tema.cor });
+        y -= 14;
 
-        const linhasCorpo = quebrarLinhasPDF(textoCorpo, fontReg, 9.5, width - 88);
+        const linhasCorpo = quebrarLinhasPDF(textoCorpo, fontReg, 9.4, width - 88);
         const temBlocoPix = (tipo === 'guia' || tipo === 'infracao') && dados.pixCode && dados.pixCode.trim().length > 20;
-        const maxLinhas = temBlocoPix ? 10 : 20;
+        const maxLinhas = ehTabelaControlados ? 5 : (temBlocoPix ? 9 : 18);
         linhasCorpo.slice(0, maxLinhas).forEach((ln) => {
-            if (y < (temBlocoPix ? 255 : 155)) return;
-            if (ln) page.drawText(ln, { x: 42, y, size: 9.5, font: fontReg, color: corEscuro });
-            y -= 13.2;
+            if (y < (temBlocoPix ? 255 : 165)) return;
+            if (ln) page.drawText(ln, { x: 42, y, size: 9.4, font: fontReg, color: corEscuro });
+            y -= 13;
         });
+
+        // TABELA ESPECÍFICA PARA TERMO DE INUTILIZAÇÃO / LIVRO DE CONTROLADOS
+        if (ehTabelaControlados) {
+            y -= 8;
+            const tblH = 165;
+            page.drawRectangle({ x: 38, y: y - tblH, width: width - 76, height: tblH, borderColor: tema.cor, borderWidth: 1 });
+            page.drawRectangle({ x: 38, y: y - 20, width: width - 76, height: 20, color: tema.cor });
+            if (tipo === 'termo_inutilizacao') {
+                drawTextFitPDF(page, 'MEDICAMENTO / SUBSTÂNCIA CONTROLADA', 44, y - 13, fontBold, 7.2, 200, rgb(1, 1, 1));
+                drawTextFitPDF(page, 'LOTE', 258, y - 13, fontBold, 7.2, 65, rgb(1, 1, 1));
+                drawTextFitPDF(page, 'VALIDADE', 330, y - 13, fontBold, 7.2, 65, rgb(1, 1, 1));
+                drawTextFitPDF(page, 'QTD.', 402, y - 13, fontBold, 7.2, 50, rgb(1, 1, 1));
+                drawTextFitPDF(page, 'MOTIVO / DESTINO', 458, y - 13, fontBold, 7.2, 92, rgb(1, 1, 1));
+                [252, 324, 396, 452].forEach(cx => page.drawLine({ start: { x: cx, y: y - tblH }, end: { x: cx, y }, thickness: 0.65, color: corBorda }));
+            } else {
+                drawTextFitPDF(page, 'LIVRO / LISTA (PORT. 344/98)', 44, y - 13, fontBold, 7.2, 180, rgb(1, 1, 1));
+                drawTextFitPDF(page, 'Nº FOLHAS', 236, y - 13, fontBold, 7.2, 65, rgb(1, 1, 1));
+                drawTextFitPDF(page, 'PERÍODO', 310, y - 13, fontBold, 7.2, 100, rgb(1, 1, 1));
+                drawTextFitPDF(page, 'OBSERVAÇÕES / CONFERÊNCIA', 418, y - 13, fontBold, 7.2, 130, rgb(1, 1, 1));
+                [230, 304, 412].forEach(cx => page.drawLine({ start: { x: cx, y: y - tblH }, end: { x: cx, y }, thickness: 0.65, color: corBorda }));
+            }
+            for (let r = 1; r <= 5; r++) {
+                const ry = y - 20 - r * 29;
+                if (r < 5) page.drawLine({ start: { x: 38, y: ry }, end: { x: width - 38, y: ry }, thickness: 0.55, color: corBorda });
+            }
+        }
 
         if (temBlocoPix) {
             y -= 8;
@@ -7933,7 +8391,6 @@ REGRAS:
                 pixTextX = 146;
                 pixMaxW = width - 198;
             }
-
             drawTextFitPDF(page, 'Aponte a câmera do aplicativo do seu banco para o QR Code ou utilize o código abaixo:', pixTextX, boxY + pixBoxH - 32, fontReg, 8, pixMaxW, corCinza);
             const pixLines = quebrarLinhasPDF(dados.pixCode.trim(), fontMono, 7.3, pixMaxW);
             let py = boxY + pixBoxH - 47;
@@ -7949,13 +8406,10 @@ REGRAS:
         if (!temBlocoPix) {
             const qrValUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&format=png&data=${encodeURIComponent('https://vigilanciadigital-sp.com.br/?protocolo=' + dados.protocolo)}`;
             const qrVal = await carregarImagemEmbedPDF(pdfDoc, qrValUrl);
-            if (qrVal) {
-                page.drawImage(qrVal, { x: width - 92, y: 48, width: 52, height: 52 });
-            }
+            if (qrVal) page.drawImage(qrVal, { x: width - 92, y: 48, width: 52, height: 52 });
         }
 
         drawTextFitPDF(page, `Documento emitido eletronicamente em ${cidadeAuto}, ${dataAuto} • vigilanciadigital-sp.com.br`, 40, 34, fontReg, 7.2, width - 140, corCinza);
-
         return await pdfDoc.save();
     }
 
