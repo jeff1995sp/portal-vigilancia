@@ -709,6 +709,8 @@
                   <input type="text" class="form-control" id="nome_fantasia" placeholder="Nome Fantasia" />
               </div>
 
+              <div id="raiox-inline-card" style="display: none; margin: 12px 0; padding: 14px 16px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.88rem; line-height: 1.5;"></div>
+
               <!-- NOVO: Área de Endereço unificada para CPF e CNPJ -->
               <div id="endereco-automatico" style="display: none; margin-top: 15px;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -1347,21 +1349,54 @@
                     </div>
                   </div>`;
             } else {
-                let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${queryDoc}`);
-                if (!req.ok) throw new Error("CNPJ não encontrado");
-                let dados = await req.json();
+                let nome = "", situacao = "ATIVA", cnaeDesc = "Atividade Comercial / Serviços", cnaeCod = "", enderecoStr = "";
+                let cepD = "", logD = "", numD = "", baiD = "", munD = "", ufD = "";
+                let achou = false;
 
-                let nome = dados.nome_fantasia || dados.razao_social;
-                let situacao = dados.descricao_situacao_cadastral || "ATIVA";
-                let cnaeDesc = dados.cnae_fiscal_descricao || "Atividade Comercial / Serviços";
-                let cnaeCod = dados.cnae_fiscal ? `${dados.cnae_fiscal} - ` : '';
-                let enderecoStr = [dados.logradouro, dados.numero, dados.bairro, dados.municipio, dados.uf].filter(Boolean).join(', ');
+                try {
+                    let req = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${queryDoc}`);
+                    if (req.ok) {
+                        let dados = await req.json();
+                        if (dados && dados.razao_social) {
+                            nome = dados.nome_fantasia || dados.razao_social;
+                            situacao = dados.descricao_situacao_cadastral || "ATIVA";
+                            cnaeDesc = dados.cnae_fiscal_descricao || "Atividade Comercial / Serviços";
+                            cnaeCod = dados.cnae_fiscal ? `${dados.cnae_fiscal} - ` : '';
+                            cepD = dados.cep || ''; logD = dados.logradouro || ''; numD = dados.numero || '';
+                            baiD = dados.bairro || ''; munD = dados.municipio || ''; ufD = dados.uf || '';
+                            enderecoStr = [logD, numD, baiD, munD, ufD].filter(Boolean).join(', ');
+                            achou = true;
+                        }
+                    }
+                } catch (_) {}
+
+                if (!achou) {
+                    try {
+                        let req2 = await fetch(`https://publica.cnpj.ws/cnpj/${queryDoc}`);
+                        if (req2.ok) {
+                            let d2 = await req2.json();
+                            if (d2 && d2.razao_social) {
+                                let est = d2.estabelecimento || {};
+                                nome = est.nome_fantasia || d2.razao_social;
+                                situacao = est.situacao_cadastral || "ATIVA";
+                                cnaeDesc = est.atividade_principal?.descricao || "Atividade Comercial / Serviços";
+                                cnaeCod = est.atividade_principal?.id ? `${est.atividade_principal.id} - ` : '';
+                                cepD = est.cep || ''; logD = est.logradouro || ''; numD = est.numero || '';
+                                baiD = est.bairro || ''; munD = est.cidade?.nome || ''; ufD = est.estado?.sigla || '';
+                                enderecoStr = [logD, numD, baiD, munD, ufD].filter(Boolean).join(', ');
+                                achou = true;
+                            }
+                        }
+                    } catch (_) {}
+                }
+
+                if (!achou) throw new Error("CNPJ não encontrado");
                 let risco = classificarRiscoCnae(cnaeDesc);
 
                 if (typeof window.atualizarLocalizacaoCNPJ === 'function') {
                     window.atualizarLocalizacaoCNPJ({
-                        cnpj: queryDoc, nome, cep: dados.cep || '', logradouro: dados.logradouro || '',
-                        numero: dados.numero || '', bairro: dados.bairro || '', municipio: dados.municipio || '', uf: dados.uf || ''
+                        cnpj: queryDoc, nome, cep: cepD, logradouro: logD,
+                        numero: numD, bairro: baiD, municipio: munD, uf: ufD
                     });
                 }
 
@@ -3182,6 +3217,7 @@
                 document.getElementById('msg-cpf-encontrado').style.display = 'none';
                 document.getElementById('endereco-automatico').style.display = 'none';
                 document.getElementById('map-container').style.display = 'none';
+                if (document.getElementById('raiox-inline-card')) document.getElementById('raiox-inline-card').style.display = 'none';
 
                 let erroAntigo = document.getElementById('erro-cpf-msg');
                 if(erroAntigo) erroAntigo.remove();
@@ -3243,6 +3279,8 @@
                     let bairro = "";
                     let municipio = "";
                     let uf = "";
+                    let cnaeDesc = "";
+                    let cnaeCod = "";
                     let dadosEncontrados = false;
 
                     try {
@@ -3258,6 +3296,8 @@
                                 bairro = dados.bairro || '';
                                 municipio = dados.municipio || '';
                                 uf = dados.uf || '';
+                                cnaeDesc = dados.cnae_fiscal_descricao || '';
+                                cnaeCod = dados.cnae_fiscal ? `${dados.cnae_fiscal} - ` : '';
                                 dadosEncontrados = true;
                             }
                         }
@@ -3280,6 +3320,8 @@
                                         municipio = estab.cidade.nome;
                                         uf = estab.estado.sigla;
                                     }
+                                    cnaeDesc = estab.atividade_principal?.descricao || '';
+                                    cnaeCod = estab.atividade_principal?.id ? `${estab.atividade_principal.id} - ` : '';
                                     dadosEncontrados = true;
                                 }
                             }
@@ -3319,6 +3361,41 @@
 
                         document.getElementById('map-container').style.display = 'block';
                         document.getElementById('google-map-frame').src = mapUrl;
+
+                        // Exibe Raio-X Sanitário (CNAE + Risco + PDF) direto no formulário e seleciona o ramo automaticamente
+                        try {
+                            const riscoAuto = classificarRiscoCnae(cnaeDesc);
+                            window.ultimoRaioX = {
+                                documento: valLimpo,
+                                documentoFormatado: document.getElementById('cnpj_empresa').value,
+                                nome: nomeFantasia || razaoSocial,
+                                cnae: `${cnaeCod}${cnaeDesc || 'Atividade Comercial / Serviços'}`,
+                                endereco: `${logradouro}, ${numero} - ${bairro}, ${municipio} - ${uf}`,
+                                risco: riscoAuto,
+                                statusPortal: 'Pronto para Regularização'
+                            };
+                            const cardInline = document.getElementById('raiox-inline-card');
+                            if (cardInline) {
+                                cardInline.style.display = 'block';
+                                cardInline.style.borderLeft = `4px solid ${riscoAuto.cor}`;
+                                cardInline.style.background = riscoAuto.bg;
+                                cardInline.innerHTML = `
+                                    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                                        <div>
+                                            <strong style="color:${riscoAuto.cor}; font-size:0.9rem;"><i class="fas fa-microscope"></i> RAIO-X CNAE: ${riscoAuto.nivel}</strong><br>
+                                            <span style="color:#334155; font-size:0.82rem;"><strong>CNAE:</strong> ${cnaeCod}${cnaeDesc || 'Não informado'}</span>
+                                        </div>
+                                        <button type="button" onclick="window.baixarDiagnosticoRaioXPDF()" style="background:#0f172a; color:#fff; border:none; padding:8px 12px; border-radius:8px; font-weight:800; font-size:0.78rem; cursor:pointer; white-space:nowrap;"><i class="fas fa-file-pdf"></i> Baixar Raio-X PDF</button>
+                                    </div>`;
+                            }
+                            const selRamo = document.getElementById('tipo_estab');
+                            if (selRamo && riscoAuto.ramo && !selRamo.value) {
+                                selRamo.value = riscoAuto.ramo;
+                                window._silenciarPopupChecklist = true;
+                                window.mostrarChecklist();
+                                window._silenciarPopupChecklist = false;
+                            }
+                        } catch (_) {}
 
                         window.salvarRascunho();
                     } else {
