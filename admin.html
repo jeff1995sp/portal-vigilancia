@@ -10744,8 +10744,18 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
         const mod = (s.modelo || '').toLowerCase();
         const tela = (s.tela || '').trim();
         const loc = (s.locInfo?.texto || '').toLowerCase();
-        if (mod.includes('linux') && tela === '800x600' && s.eventos.length <= 2) return true;
-        if (mod.includes('headless') || mod.includes('bot')) return true;
+        const isp = (s.operadora || '').toLowerCase();
+        const cid = (s.locInfo?.cidade || '').toLowerCase();
+        const uf = (s.locInfo?.uf || '').toUpperCase();
+        if (mod.includes('linux') && (tela === '800x600' || tela === '1280x720') && s.eventos.length <= 2) return true;
+        if (mod.includes('headless') || mod.includes('bot') || mod.includes('crawler') || mod.includes('spider')) return true;
+        // Filtra datacenters / robôs estrangeiros (AWS Boardman-OR, Ashburn, Washington-DC, Google/Azure/Cloudflare)
+        const cloudISPs = ['amazon', 'aws', 'google llc', 'google cloud', 'microsoft corporation', 'azure', 'digitalocean', 'hetzner', 'ovh', 'cloudflare', 'oracle', 'linode', 'vultr', 'akamai', 'fastly', 'alibaba', 'tencent'];
+        if (cloudISPs.some(k => isp.includes(k))) return true;
+        const botCities = ['boardman', 'ashburn', 'council bluffs', 'mountain view', 'santa clara', 'boydton', 'quincy', 'the dalles', 'prineville', 'washington'];
+        if (botCities.some(c => cid.includes(c) || loc.includes(c))) return true;
+        const brUFs = new Set(['', 'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']);
+        if (uf && !brUFs.has(uf) && !s.cnpjDigitado && s.eventos.length <= 3) return true;
         if ((loc.includes('localizando') || loc.includes('aguardando rede')) && !s.online && s.eventos.length <= 1 && (s.ultimaHora - s.primeiraHora) <= 2000) return true;
         return false;
     }
@@ -10893,8 +10903,13 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
 
         let badge = '<span class="spy-badge spy-badge-ip"><i class="fas fa-wifi"></i> IP Aprox.</span>';
         if (fonte === 'gps') {
-            const precTxt = d.precisaoGPS ? ` ±${d.precisaoGPS}m` : '';
-            badge = `<span class="spy-badge spy-badge-gps"><i class="fas fa-crosshairs"></i> GPS Exato${precTxt}</span>`;
+            const precNum = Number(d.precisaoGPS || 0);
+            if (precNum > 250) {
+                badge = `<span class="spy-badge spy-badge-ip" title="Localização aproximada pela rede/antena (±${precNum}m)"><i class="fas fa-map-marker-alt"></i> Local Aprox. (±${precNum >= 1000 ? (precNum/1000).toFixed(1) + 'km' : precNum + 'm'})</span>`;
+            } else {
+                const precTxt = precNum > 0 ? ` ±${precNum}m` : '';
+                badge = `<span class="spy-badge spy-badge-gps"><i class="fas fa-crosshairs"></i> GPS Exato${precTxt}</span>`;
+            }
         } else if (fonte === 'cnpj') {
             badge = '<span class="spy-badge spy-badge-cnpj"><i class="fas fa-building"></i> Endereço CNPJ</span>';
         }
@@ -11015,6 +11030,28 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
                 ? '<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 14px;">Sem dados neste período</div>'
                 : topOrigs.map(([nome, qtd]) => `<div class="spy-rank-item"><strong>${escaparHtmlWA(nome)}</strong><span>${qtd}</span></div>`).join('');
         }
+
+        // Atualiza barra de Telemetria Real Verificada com as sessões reais (sem bots)
+        try {
+            const totalS = sessoesAgrupadas.length;
+            const mobCnt = sessoesAgrupadas.filter(x => x.dispositivo === '📱' || /android|iphone|ipad|mobile/i.test(x.modelo || '')).length;
+            const mobPct = totalS > 0 ? Math.round((mobCnt / totalS) * 100) : 0;
+            const cnpjLeads = sessoesAgrupadas.filter(x => x.cnpjDigitado || x.temCnpj).length;
+            const gpsReal = sessoesAgrupadas.filter(x => x.locFonte === 'gps' && Number(x.precisaoGPS || 0) <= 250).length;
+            const ipReal = Math.max(0, totalS - gpsReal);
+            const entrou = parseInt((document.getElementById('funil-entrou')?.innerText || '0').replace(/\D/g, ''), 10) || totalS;
+            const enviou = parseInt((document.getElementById('funil-enviou')?.innerText || '0').replace(/\D/g, ''), 10) || 0;
+            const conv = entrou > 0 ? Math.round((enviou / entrou) * 100) : 0;
+
+            const s1 = document.getElementById('spy-real-device-split');
+            const s2 = document.getElementById('spy-real-leads-cnpj');
+            const s3 = document.getElementById('spy-real-conv-rate');
+            const s4 = document.getElementById('spy-real-gps-rate');
+            if (s1) s1.innerText = totalS > 0 ? `${mobPct}% Celular • ${100 - mobPct}% PC` : 'Sem acessos reais';
+            if (s2) s2.innerText = `${cnpjLeads} sessão(ões)`;
+            if (s3) s3.innerText = `${conv}% (${enviou}/${entrou})`;
+            if (s4) s4.innerText = `${gpsReal} GPS Exato • ${ipReal} Rede/IP`;
+        } catch (_) {}
     }
 
     function agruparSessoesEspiao(logs) {
@@ -11185,23 +11222,22 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
                     ? `<button type="button" class="btn-live-screen" onclick="event.stopPropagation(); abrirTelaAoVivoEspiao('${escaparHtmlWA(s.sid)}')" title="Assistir a tela deste visitante em tempo real em HD"><i class="fas fa-desktop"></i> Ver Tela Ao Vivo</button>`
                     : '';
 
-                const btnClarity = `<button type="button" class="btn-clarity-sm" onclick="event.stopPropagation(); abrirClaritySessao('${escaparHtmlWA(s.sid)}')" title="Copiar ID da sessão e abrir gravação no Microsoft Clarity"><i class="fas fa-video"></i> Clarity</button>`;
+                const ehCelularSess = s.dispositivo === '📱' || /android|iphone|ipad|mobile/i.test(s.modelo || '');
+                const btnClarity = '';
 
                 const btnMapa = (typeof s.lat === 'number' && typeof s.lng === 'number')
-                    ? `<button type="button" class="wa-btn-sm" style="padding:6px 11px; font-size:0.78rem; border-color:#10b981;" onclick="event.stopPropagation(); focarNoMapaEspiao(${s.lat}, ${s.lng})"><i class="fas fa-map-pin" style="color:#10b981;"></i> Mapa</button>
-                       <a href="https://www.google.com/maps?q=${s.lat},${s.lng}" target="_blank" class="wa-btn-sm" style="padding:6px 10px; font-size:0.78rem;" onclick="event.stopPropagation();" title="Abrir ponto no Google Maps"><i class="fas fa-external-link-alt"></i></a>`
+                    ? `<button type="button" class="wa-btn-sm" style="padding:6px 11px; font-size:0.78rem; border-color:#10b981;" onclick="event.stopPropagation(); focarNoMapaEspiao(${s.lat}, ${s.lng})"><i class="fas fa-map-pin" style="color:#10b981;"></i> Ver no Mapa</button>`
                     : '';
 
-                // Chips de dados ricos bem nítidos
+                // Chips de dados reais e honestos (sem "4G" ou "100% bateria" falso em PC Desktop)
                 const chips = [];
-                if (s.ipPublico) chips.push(`<span class="spy-chip chip-ip"><i class="fas fa-network-wired"></i> IP: ${escaparHtmlWA(s.ipPublico)}</span>`);
-                if (s.operadora) chips.push(`<span class="spy-chip chip-isp"><i class="fas fa-broadcast-tower"></i> ${escaparHtmlWA(s.operadora.slice(0, 38))}</span>`);
-                chips.push(`<span class="spy-chip"><i class="fas fa-laptop"></i> ${escaparHtmlWA(s.modelo)}</span>`);
-                if (s.tela) chips.push(`<span class="spy-chip"><i class="fas fa-desktop"></i> ${escaparHtmlWA(s.tela)}${s.orientacao ? ' • ' + escaparHtmlWA(s.orientacao) : ''}</span>`);
-                if (s.conexao) chips.push(`<span class="spy-chip"><i class="fas fa-signal"></i> ${escaparHtmlWA(s.conexao)}</span>`);
-                if (s.bateria) chips.push(`<span class="spy-chip chip-bat"><i class="fas fa-battery-three-quarters"></i> ${escaparHtmlWA(s.bateria)}</span>`);
-                if (s.scrollMax > 0) chips.push(`<span class="spy-chip"><i class="fas fa-arrows-alt-v"></i> Scroll ${s.scrollMax}%</span>`);
-                chips.push(`<span class="spy-chip"><i class="fas fa-history"></i> Visita #${s.visitaNumero} • ${durTxt}</span>`);
+                if (s.ipPublico) chips.push(`<span class="spy-chip chip-ip"><i class="fas fa-network-wired"></i> ${escaparHtmlWA(s.ipPublico)}</span>`);
+                if (s.operadora) chips.push(`<span class="spy-chip chip-isp"><i class="fas fa-broadcast-tower"></i> ${escaparHtmlWA(s.operadora.slice(0, 34))}</span>`);
+                chips.push(`<span class="spy-chip"><i class="fas ${ehCelularSess ? 'fa-mobile-alt' : 'fa-laptop'}"></i> ${escaparHtmlWA(s.modelo)}</span>`);
+                if (ehCelularSess && s.conexao) chips.push(`<span class="spy-chip"><i class="fas fa-signal"></i> ${escaparHtmlWA(s.conexao)}</span>`);
+                if (ehCelularSess && s.bateria) chips.push(`<span class="spy-chip chip-bat"><i class="fas fa-battery-three-quarters"></i> ${escaparHtmlWA(s.bateria)}</span>`);
+                if (s.scrollMax > 0) chips.push(`<span class="spy-chip"><i class="fas fa-arrows-alt-v"></i> Leu ${s.scrollMax}%</span>`);
+                chips.push(`<span class="spy-chip"><i class="fas fa-clock"></i> Visita #${s.visitaNumero} • ${durTxt}</span>`);
                 chips.push(badgeAds);
                 if (s.ramoEscolhido) chips.push(`<span class="spy-chip chip-cnpj"><i class="fas fa-store"></i> Ramo: ${escaparHtmlWA(s.ramoEscolhido)}</span>`);
                 if (s.cnpjDigitado) chips.push(`<span class="spy-chip chip-cnpj"><i class="fas fa-id-card"></i> ${escaparHtmlWA(s.empresaDigitada || s.cnpjDigitado)}</span>`);
@@ -11234,7 +11270,7 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
                         <div class="spy-xray-item"><span>Coordenadas & GPS</span><strong>${s.lat !== null ? `${s.lat}, ${s.lng}` : 'Sem coordenadas'} (${escaparHtmlWA(s.gpsStatus)})</strong></div>
                         <div class="spy-xray-item"><span>Hardware (GPU / RAM / CPU)</span><strong>${escaparHtmlWA([s.gpu, s.ramGB, s.cpuNucleos].filter(Boolean).join(' • ') || 'Padrão')}</strong></div>
                         <div class="spy-xray-item"><span>Campanha / Origem / Termo</span><strong>${escaparHtmlWA([s.origem, s.utmTerm].filter(Boolean).join(' • '))}</strong></div>
-                        <div class="spy-xray-item"><span>Idioma / Fuso / 1ª Visita</span><strong>${escaparHtmlWA([s.idioma, s.fusoHorario, s.primeiraVisitaEm ? '1ª em ' + s.primeiraVisitaEm : ''].filter(Boolean).join(' • ') || 'pt-BR')}</strong></div>
+                        <div class="spy-xray-item"><span>Tela / Idioma / Ações Externas</span><strong style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">${escaparHtmlWA(s.tela || '--')} ${typeof s.lat === 'number' ? `<a href="https://www.google.com/maps?q=${s.lat},${s.lng}" target="_blank" style="color:#6ee7b7; text-decoration:underline;">Google Maps ↗</a>` : ''} <a href="#" onclick="event.preventDefault(); abrirClaritySessao('${escaparHtmlWA(s.sid)}')" style="color:#93c5fd; text-decoration:underline;">Clarity ↗</a></strong></div>
                     </div>`;
 
                 return `
@@ -12903,34 +12939,42 @@ Responda APENAS JSON válido:
                     });
                 }
 
-                // 2) SELO DOURADO DE SEGURANÇA (VETORIAL METÁLICO DE ALTO PADRÃO)
+                // 2) SELO DOURADO DE SEGURANÇA (POSICIONAMENTO INTELIGENTE — ZERO SOBREPOSIÇÃO)
                 if (dados.seloDourado) {
-                    const cx = width - 82;
-                    const cy = height > 600 ? 128 : 62;
-                    const goldDark = rgb(0.58, 0.42, 0.06);
+                    const ehPaisagem = height < 600;
+                    const ehClinicoLayout = DOCGEN_CLINICO_SUS_TYPES.has(dados.tipo);
+                    // A4 Institucional/Alvará: canto inferior ESQUERDO (x=76, y=82) — longe da assinatura central e do QR Code na direita!
+                    // A4 Clínico (assinatura à esquerda x=175, QR à direita x=507): zona livre entre eles (x=395, y=64)!
+                    // Meia-folha Paisagem (Receitas A/B/B2): canto inferior esquerdo compacto (x=62, y=46)!
+                    const r = ehPaisagem ? 19 : 25;
+                    const cx = ehPaisagem ? 62 : (ehClinicoLayout ? 395 : 78);
+                    const cy = ehPaisagem ? 46 : (ehClinicoLayout ? 64 : 84);
+
+                    const goldDark = rgb(0.56, 0.40, 0.05);
                     const goldMid = rgb(0.82, 0.64, 0.14);
-                    const goldLight = rgb(0.99, 0.95, 0.78);
+                    const goldLight = rgb(0.99, 0.96, 0.82);
                     const goldRibbon = rgb(0.72, 0.54, 0.08);
+                    const s = r / 25;
 
-                    // Fitas inferiores do selo
-                    page.drawRectangle({ x: cx - 18, y: cy - 42, width: 12, height: 24, color: goldRibbon, borderColor: goldDark, borderWidth: 0.8 });
-                    page.drawRectangle({ x: cx + 6, y: cy - 42, width: 12, height: 24, color: goldRibbon, borderColor: goldDark, borderWidth: 0.8 });
+                    // Fitas inferiores proporcionais
+                    page.drawRectangle({ x: cx - 13 * s, y: cy - 31 * s, width: 9 * s, height: 18 * s, color: goldRibbon, borderColor: goldDark, borderWidth: 0.7 });
+                    page.drawRectangle({ x: cx + 4 * s, y: cy - 31 * s, width: 9 * s, height: 18 * s, color: goldRibbon, borderColor: goldDark, borderWidth: 0.7 });
 
-                    // Anéis concêntricos dourados
-                    page.drawCircle({ x: cx, y: cy, size: 34, color: goldLight, borderColor: goldDark, borderWidth: 2.2 });
-                    page.drawCircle({ x: cx, y: cy, size: 29, borderColor: goldMid, borderWidth: 1.4 });
-                    page.drawCircle({ x: cx, y: cy, size: 24, borderColor: goldDark, borderWidth: 0.7 });
+                    // Anéis concêntricos dourados nítidos
+                    page.drawCircle({ x: cx, y: cy, size: r, color: goldLight, borderColor: goldDark, borderWidth: 1.9 });
+                    page.drawCircle({ x: cx, y: cy, size: r - 3.6 * s, borderColor: goldMid, borderWidth: 1.2 });
+                    page.drawCircle({ x: cx, y: cy, size: r - 7.2 * s, borderColor: goldDark, borderWidth: 0.6 });
 
-                    // Textos internos do selo dourado
-                    const t1 = sanitizarTextoPDF('SELO DE SEGURANCA');
-                    const t2 = sanitizarTextoPDF(orgao.slice(0, 14));
+                    // Textos internos proporcionais
+                    const t1 = sanitizarTextoPDF('SELO OFICIAL');
+                    const t2 = sanitizarTextoPDF(orgao.slice(0, 13));
                     const t3 = sanitizarTextoPDF('AUTENTICADO');
                     const t4 = sanitizarTextoPDF(`#${hashCod}`);
 
-                    page.drawText(t1, { x: cx - fontBold.widthOfTextAtSize(t1, 4.9) / 2, y: cy + 13, size: 4.9, font: fontBold, color: goldDark });
-                    page.drawText(t2, { x: cx - fontBold.widthOfTextAtSize(t2, 7.6) / 2, y: cy + 2, size: 7.6, font: fontBold, color: goldDark });
-                    page.drawText(t3, { x: cx - fontBold.widthOfTextAtSize(t3, 5.4) / 2, y: cy - 8, size: 5.4, font: fontBold, color: goldMid });
-                    page.drawText(t4, { x: cx - fontReg.widthOfTextAtSize(t4, 4.8) / 2, y: cy - 17, size: 4.8, font: fontReg, color: goldDark });
+                    page.drawText(t1, { x: cx - fontBold.widthOfTextAtSize(t1, 4.1 * s) / 2, y: cy + 9.5 * s, size: 4.1 * s, font: fontBold, color: goldDark });
+                    page.drawText(t2, { x: cx - fontBold.widthOfTextAtSize(t2, 5.8 * s) / 2, y: cy + 1.5 * s, size: 5.8 * s, font: fontBold, color: goldDark });
+                    page.drawText(t3, { x: cx - fontBold.widthOfTextAtSize(t3, 4.2 * s) / 2, y: cy - 6.0 * s, size: 4.2 * s, font: fontBold, color: goldMid });
+                    page.drawText(t4, { x: cx - fontReg.widthOfTextAtSize(t4, 3.8 * s) / 2, y: cy - 12.5 * s, size: 3.8 * s, font: fontReg, color: goldDark });
                 }
             });
 
