@@ -28,8 +28,20 @@
   ],
   "routes": [
     {
+      "src": "/api/pix",
+      "dest": "/api/pix.js"
+    },
+    {
       "src": "/api/webhook",
       "dest": "/api/webhook.js"
+    },
+    {
+      "src": "/api/webhook-elite",
+      "dest": "/api/webhook-elite.js"
+    },
+    {
+      "src": "/api/webhook-alura",
+      "dest": "/api/webhook-alura.js"
     },
     {
       "src": "/(.*)",

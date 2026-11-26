@@ -6737,19 +6737,23 @@ Retorne APENAS JSON válido neste formato (use string vazia "" se não encontrar
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
 
         try {
-            const resp = await fetch('/api/gerar-pix', {
+            const apiPixUrl = window.location.hostname.includes('netlify.app')
+                ? 'https://portal-vigilancia.vercel.app/api/pix'
+                : '/api/pix';
+            const resp = await fetch(apiPixUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    pedidoId: prot,
-                    valor: valNum,
-                    nome,
-                    documento: docNum
+                    amount: valNum,
+                    description: `Taxa COVISA - ${prot}`,
+                    payerName: nome,
+                    payerDocument: docNum || '00000000000',
+                    externalReference: prot
                 })
             });
             const data = await resp.json();
             if (!resp.ok || !data.copyPaste) {
-                throw new Error(data.erro || 'Não foi possível gerar o PIX no gateway.');
+                throw new Error(data.error || data.erro || 'Não foi possível gerar o PIX no gateway.');
             }
             document.getElementById('docgen-pix-code').value = data.copyPaste;
             showToast("PIX Gerado!", "Código Copia e Cola inserido — o QR Code sairá automaticamente no PDF.", "success");
