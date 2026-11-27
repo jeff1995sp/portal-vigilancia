@@ -248,6 +248,7 @@
 
     .docgen-types-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      max-height: 290px; overflow-y: auto; padding-right: 4px;
     }
     .docgen-type-card {
       background: #070e1c; border: 1px solid #223456; border-radius: 11px;
@@ -274,6 +275,7 @@
     .docgen-type-card span { font-size: 0.69rem; color: #94a3b8; line-height: 1.2; }
 
     .docgen-box {
+      position: relative; z-index: 1; flex-shrink: 0;
       background: #081020; border: 1px solid #1e2f4f; border-radius: 12px;
       padding: 13px 15px; display: flex; flex-direction: column; gap: 9px;
     }
@@ -9264,6 +9266,97 @@ REGRAS:
     // -------------------------------------------------------------------------
     // CONSTRUTOR 2B: ALVARÁ SANITÁRIO OFICIAL (LFS 2026), RENOVAÇÃO E LICENÇA PF HOME OFFICE
     // -------------------------------------------------------------------------
+
+    // =========================================================================
+    // MOTOR VISUAL DE ALTA AUTENTICIDADE (HASH • SELO FUNDO • BRASÃO • BARCODE)
+    // =========================================================================
+    function gerarHashAutenticidadePDF(seedStr) {
+        const s = String(seedStr || 'COVISA-2026');
+        let h1 = 0x811c9dc5, h2 = 0x9e3779b9, h3 = 0x85ebca6b;
+        for (let i = 0; i < s.length; i++) {
+            const c = s.charCodeAt(i);
+            h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
+            h2 = Math.imul(h2 ^ (c + i * 7), 0x27d4eb2d) >>> 0;
+            h3 = Math.imul(h3 ^ (c * 13 + i), 0x165667b1) >>> 0;
+        }
+        const hex = (h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0') + h3.toString(16).padStart(8, '0')).toUpperCase();
+        return `${hex.slice(0,4)}-${hex.slice(4,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20,24)}`;
+    }
+
+    function desenharMolduraOficialPDF(page, width, height, corPrim, corSec) {
+        page.drawRectangle({ x: 16, y: 16, width: width - 32, height: height - 32, borderColor: corPrim, borderWidth: 2.2 });
+        page.drawRectangle({ x: 21, y: 21, width: width - 42, height: height - 42, borderColor: corSec, borderWidth: 0.7 });
+        const cs = 7;
+        [[16, 16], [width - 16 - cs, 16], [16, height - 16 - cs], [width - 16 - cs, height - 16 - cs]].forEach(([cx, cy]) => {
+            page.drawRectangle({ x: cx, y: cy, width: cs, height: cs, color: corPrim });
+        });
+    }
+
+    function desenharBrasaoVetorialPDF(page, cx, cy, r, cor, fontBold, txtTopo, txtCentro) {
+        const { rgb } = PDFLib;
+        page.drawCircle({ x: cx, y: cy, size: r, color: rgb(1, 1, 1), borderColor: cor, borderWidth: 2.0 });
+        page.drawCircle({ x: cx, y: cy, size: r - 3.5, borderColor: cor, borderWidth: 0.7 });
+        page.drawCircle({ x: cx, y: cy, size: r - 9, color: cor, opacity: 0.10 });
+        const t1 = sanitizarTextoPDF(txtTopo || 'SP');
+        const t2 = sanitizarTextoPDF(txtCentro || 'OFICIAL');
+        const w1 = fontBold.widthOfTextAtSize(t1, r * 0.34);
+        const w2 = fontBold.widthOfTextAtSize(t2, r * 0.23);
+        page.drawText(t1, { x: cx - w1 / 2, y: cy + 1, size: r * 0.34, font: fontBold, color: cor });
+        page.drawText(t2, { x: cx - w2 / 2, y: cy - r * 0.36, size: r * 0.23, font: fontBold, color: cor });
+    }
+
+    function desenharSeloMarcaAguaFundoPDF(page, cx, cy, r, cor, fontBold, linha1, linha2, linha3) {
+        page.drawCircle({ x: cx, y: cy, size: r, borderColor: cor, borderWidth: 3.0, opacity: 0.075 });
+        page.drawCircle({ x: cx, y: cy, size: r - 10, borderColor: cor, borderWidth: 1.1, opacity: 0.075 });
+        page.drawCircle({ x: cx, y: cy, size: r * 0.58, borderColor: cor, borderWidth: 1.0, opacity: 0.065 });
+        const drawC = (txt, dy, sz) => {
+            const safe = sanitizarTextoPDF(txt || '');
+            if (!safe) return;
+            const tw = fontBold.widthOfTextAtSize(safe, sz);
+            page.drawText(safe, { x: cx - tw / 2, y: cy + dy, size: sz, font: fontBold, color: cor, opacity: 0.08 });
+        };
+        drawC(linha1, r * 0.66, 11);
+        drawC(linha2, -7, 22);
+        drawC(linha3, -r * 0.76, 10);
+    }
+
+    function gerarLinhaDigitavelArrecadacao(valorStr, codStr, protStr) {
+        const valLimpo = String(valorStr || '0').replace(/\D/g, '').padStart(11, '0').slice(-11);
+        const seed = (String(codStr || '') + String(protStr || '')).replace(/[^0-9]/g, '') + '35503080120269876543210';
+        const base44 = ('8167' + valLimpo + '0355' + seed).replace(/\D/g, '').slice(0, 44).padEnd(44, '0');
+        const dv = (bloco) => {
+            let sum = 0;
+            for (let i = 0; i < bloco.length; i++) sum += (parseInt(bloco[i], 10) || 0) * ((i % 2 === 0) ? 2 : 1);
+            return String((10 - (sum % 10)) % 10);
+        };
+        const b1 = base44.slice(0, 11), b2 = base44.slice(11, 22), b3 = base44.slice(22, 33), b4 = base44.slice(33, 44);
+        return {
+            linha: `${b1}-${dv(b1)}  ${b2}-${dv(b2)}  ${b3}-${dv(b3)}  ${b4}-${dv(b4)}`,
+            raw: base44
+        };
+    }
+
+    function desenharCodigoBarrasArrecadacaoPDF(page, x, y, w, h, rawDigits, fontMono, corEscuro) {
+        const digits = String(rawDigits || '816700000250003550308012026').replace(/\D/g, '').padEnd(44, '5');
+        const patterns = ['11221', '21112', '12112', '22111', '11212', '21211', '12211', '11122', '21121', '12121'];
+        const bars = [1, 1, 1, 1];
+        for (let i = 0; i < digits.length; i++) {
+            const pat = patterns[parseInt(digits[i], 10) % 10];
+            for (let k = 0; k < pat.length; k++) bars.push(parseInt(pat[k], 10));
+        }
+        bars.push(2, 1, 1);
+        const totalUnits = bars.reduce((a, b) => a + b, 0);
+        const unitW = w / totalUnits;
+        let curX = x;
+        for (let i = 0; i < bars.length; i++) {
+            const bw = bars[i] * unitW;
+            if (i % 2 === 0) {
+                page.drawRectangle({ x: curX, y, width: Math.max(0.5, bw - 0.12), height: h, color: corEscuro });
+            }
+            curX += bw;
+        }
+    }
+
     async function construirPdfAlvaraOficial(tipo, dados) {
         const { PDFDocument, rgb, StandardFonts } = PDFLib;
         const pdfDoc = await PDFDocument.create();
@@ -9460,8 +9553,8 @@ REGRAS:
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&format=png&data=${encodeURIComponent('https://vigilancia-sp-gov.netlify.app/?alvara=' + dados.protocolo)}`;
         const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
 
-        page.drawRectangle({ x: 20, y: 20, width: width - 40, height: height - 40, borderColor: corPrim, borderWidth: 2.2 });
-        page.drawRectangle({ x: 26, y: 26, width: width - 52, height: height - 52, borderColor: corBorda, borderWidth: 0.8 });
+        desenharMolduraOficialPDF(page, width, height, corPrim, corBorda);
+        desenharSeloMarcaAguaFundoPDF(page, width / 2, height * 0.44, 118, corPrim, fontBold, 'PREFEITURA DE SAO PAULO', 'COVISA', 'DOCUMENTO AUTENTICO');
 
         page.drawRectangle({ x: 26, y: height - 112, width: width - 52, height: 86, color: corFundo });
         page.drawRectangle({ x: 26, y: height - 115, width: width - 52, height: 3, color: corPrim });
@@ -9566,7 +9659,9 @@ REGRAS:
             page.drawText(sanitizarTextoPDF('Autenticidade'), { x: width - 92, y: 37, size: 6.4, font: fontBold, color: corCinza });
         }
 
-        drawTextFitPDF(page, `Documento emitido eletronicamente em ${cidadeAuto}, ${dataAuto} • vigilancia-sp-gov.netlify.app`, 38, 32, fontReg, 7.2, width - 148, corCinza);
+        const hashAlv = gerarHashAutenticidadePDF(`${dados.protocolo}|${dados.cnpj}|${dados.nome}|${dataAuto}`);
+        drawTextFitPDF(page, `Chave de Autenticidade: ${hashAlv}`, 38, 41, fontMono, 6.8, width - 148, corPrim);
+        drawTextFitPDF(page, `Documento emitido eletronicamente em ${cidadeAuto}, ${dataAuto} • Conferir em vigilancia-sp-gov.netlify.app`, 38, 29, fontReg, 7.0, width - 148, corCinza);
 
         return await pdfDoc.save();
     }
@@ -9924,7 +10019,9 @@ REGRAS:
             if (qrVal) page.drawImage(qrVal, { x: width - 92, y: 48, width: 52, height: 52 });
         }
 
-        drawTextFitPDF(page, `Documento emitido eletronicamente em ${cidadeAuto}, ${dataAuto} • vigilancia-sp-gov.netlify.app`, 40, 34, fontReg, 7.2, width - 140, corCinza);
+        const hashInst = gerarHashAutenticidadePDF(`${dados.protocolo}|${dados.cnpj}|${dados.nome}|${tipo}`);
+        drawTextFitPDF(page, `Chave de Autenticidade: ${hashInst}`, 40, 44, fontMono, 6.8, width - 140, tema.cor);
+        drawTextFitPDF(page, `Documento emitido eletronicamente em ${cidadeAuto}, ${dataAuto} • vigilancia-sp-gov.netlify.app`, 40, 32, fontReg, 7.0, width - 140, corCinza);
         return await pdfDoc.save();
     }
 
@@ -12942,6 +13039,7 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
     window.executarRenovadorPorFotoIA = async (input) => {
         const file = input.files?.[0];
         if (!file) return;
+        const pdfRgb = (typeof PDFLib !== 'undefined' && PDFLib.rgb) ? PDFLib.rgb : null;
         const ehPdfUpload = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
         const btnSobrePdf = document.getElementById('btn-renovar-sobre-pdf');
         if (ehPdfUpload) {
@@ -13032,7 +13130,11 @@ Responda APENAS JSON válido:
 
             if (st) st.innerHTML = '<span style="color:#6ee7b7;"><i class="fas fa-check-circle"></i> Documento lido! Dados preenchidos abaixo. Revise e clique em Gerar Prévia.</span>';
             showToast("Renovador IA", "Dados extraídos do documento antigo com sucesso!", "success");
-            await gerarDocumentoOficialPDF(false);
+            try {
+                await gerarDocumentoOficialPDF(false);
+            } catch (pdfErr) {
+                console.warn("Prévia após leitura:", pdfErr);
+            }
         } catch (err) {
             console.error(err);
             if (st) st.innerHTML = `<span style="color:#fca5a5;"><i class="fas fa-exclamation-triangle"></i> Falha ao ler imagem/PDF: ${escaparHtmlWA(err.message)}</span>`;
@@ -14496,98 +14598,108 @@ Retorne EXCLUSIVAMENTE um JSON válido neste formato exato:
         const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
         const fontMono = await pdfDoc.embedFont(StandardFonts.CourierBold);
 
-        const corEscuro = rgb(0.09, 0.13, 0.20);
-        const corCinza = rgb(0.38, 0.44, 0.52);
-        const corBorda = rgb(0.78, 0.83, 0.89);
+        const corEscuro = rgb(0.08, 0.11, 0.17);
+        const corCinza = rgb(0.36, 0.42, 0.50);
+        const corBorda = rgb(0.75, 0.80, 0.87);
 
         const themes = {
-            damsp:     { cor: rgb(0.05, 0.24, 0.52), sec: rgb(0.04, 0.46, 0.30), bg: rgb(0.95, 0.975, 1),   orgao: 'PREFEITURA DO MUNICÍPIO DE SÃO PAULO • COVISA', subOrgao: 'DOCUMENTO DE ARRECADAÇÃO MUNICIPAL SANITÁRIA (DAMSP)' },
-            gru:       { cor: rgb(0.04, 0.38, 0.24), sec: rgb(0.74, 0.54, 0.04), bg: rgb(0.94, 0.985, 0.96), orgao: 'MINISTÉRIO DA SAÚDE • ANVISA (TAXA FEDERAL TFVS)', subOrgao: 'GUIA DE RECOLHIMENTO DA UNIÃO (GRU SIMPLES / PIX)' },
-            talonario: { cor: rgb(0.36, 0.14, 0.58), sec: rgb(0.05, 0.28, 0.56), bg: rgb(0.965, 0.945, 1),  orgao: 'COVISA • SISTEMA NACIONAL DE CONTROLE DE RECEITUÁRIOS (SNCR)', subOrgao: 'GUIA DE TAXA DE NUMERAÇÃO E TALONÁRIO CONTROLADO' },
-            vistoria:  { cor: rgb(0.04, 0.42, 0.48), sec: rgb(0.06, 0.26, 0.50), bg: rgb(0.935, 0.98, 0.99), orgao: 'VIGILÂNCIA SANITÁRIA MUNICIPAL • DIVISÃO DE INSPEÇÃO', subOrgao: 'GUIA DE TAXA DE VISTORIA, LAUDO E ANÁLISE TÉCNICA' },
-            multa:     { cor: rgb(0.76, 0.10, 0.10), sec: rgb(0.55, 0.06, 0.06), bg: rgb(1, 0.95, 0.95),    orgao: 'COVISA • AUTO DE IMPOSIÇÃO DE PENALIDADE (LEI 10.083/98)', subOrgao: 'GUIA OFICIAL DE RECOLHIMENTO DE MULTA SANITÁRIA (UFESP)' },
-            certidao:  { cor: rgb(0.16, 0.25, 0.40), sec: rgb(0.05, 0.46, 0.32), bg: rgb(0.96, 0.97, 0.985), orgao: 'COVISA • SECRETARIA MUNICIPAL DA SAÚDE (CMVS)', subOrgao: 'GUIA DE EMOLUMENTOS, CERTIDÕES E ALTERAÇÕES CADASTRAIS' }
+            damsp:     { cor: rgb(0.05, 0.24, 0.52), sec: rgb(0.04, 0.46, 0.30), bg: rgb(0.95, 0.975, 1),   sigla: 'COVISA', orgao: 'PREFEITURA DO MUNICÍPIO DE SÃO PAULO • COVISA', subOrgao: 'DOCUMENTO DE ARRECADAÇÃO MUNICIPAL SANITÁRIA (DAMSP)' },
+            gru:       { cor: rgb(0.04, 0.38, 0.24), sec: rgb(0.74, 0.54, 0.04), bg: rgb(0.94, 0.985, 0.96), sigla: 'ANVISA', orgao: 'MINISTÉRIO DA SAÚDE • ANVISA (TAXA FEDERAL TFVS)', subOrgao: 'GUIA DE RECOLHIMENTO DA UNIÃO (GRU SIMPLES / PIX)' },
+            talonario: { cor: rgb(0.36, 0.14, 0.58), sec: rgb(0.05, 0.28, 0.56), bg: rgb(0.965, 0.945, 1),  sigla: 'SNCR',   orgao: 'COVISA • SISTEMA NACIONAL DE CONTROLE DE RECEITUÁRIOS (SNCR)', subOrgao: 'GUIA DE TAXA DE NUMERAÇÃO E TALONÁRIO CONTROLADO' },
+            vistoria:  { cor: rgb(0.04, 0.42, 0.48), sec: rgb(0.06, 0.26, 0.50), bg: rgb(0.935, 0.98, 0.99), sigla: 'SIVISA', orgao: 'VIGILÂNCIA SANITÁRIA MUNICIPAL • DIVISÃO DE INSPEÇÃO', subOrgao: 'GUIA DE TAXA DE VISTORIA, LAUDO E ANÁLISE TÉCNICA' },
+            multa:     { cor: rgb(0.76, 0.10, 0.10), sec: rgb(0.55, 0.06, 0.06), bg: rgb(1, 0.95, 0.95),    sigla: 'UFESP',  orgao: 'COVISA • AUTO DE IMPOSIÇÃO DE PENALIDADE (LEI 10.083/98)', subOrgao: 'GUIA OFICIAL DE RECOLHIMENTO DE MULTA SANITÁRIA (UFESP)' },
+            certidao:  { cor: rgb(0.14, 0.24, 0.42), sec: rgb(0.05, 0.46, 0.32), bg: rgb(0.96, 0.97, 0.985), sigla: 'CMVS',   orgao: 'COVISA • SECRETARIA MUNICIPAL DA SAÚDE (CMVS)', subOrgao: 'GUIA DE EMOLUMENTOS, CERTIDÕES E ALTERAÇÕES CADASTRAIS' }
         };
         const t = themes[modelo.layout] || themes.damsp;
         const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
+        const valFmt = d.valor.startsWith('R$') ? d.valor : `R$ ${d.valor}`;
+        const hashGuia = gerarHashAutenticidadePDF(`${d.protocolo}|${d.cnpj}|${d.valor}|${d.vencimento}`);
+        const arrec = gerarLinhaDigitavelArrecadacao(d.valor, d.codReceita, d.protocolo);
 
-        // Moldura externa
-        page.drawRectangle({ x: 20, y: 20, width: width - 40, height: height - 40, borderColor: t.cor, borderWidth: 1.8 });
+        // Moldura dupla oficial + marca d'água central suave
+        desenharMolduraOficialPDF(page, width, height, t.cor, corBorda);
+        desenharSeloMarcaAguaFundoPDF(page, width / 2, height * 0.54, 105, t.cor, fontBold, 'GUIA DE ARRECADACAO', t.sigla, 'DOCUMENTO OFICIAL');
 
-        // Cabeçalho diferenciado por modelo
-        page.drawRectangle({ x: 20, y: height - 102, width: width - 40, height: 82, color: t.bg });
-        page.drawRectangle({ x: 20, y: height - 106, width: width - 40, height: 4, color: t.cor });
+        // Cabeçalho institucional (Via do Contribuinte)
+        page.drawRectangle({ x: 22, y: height - 100, width: width - 44, height: 78, color: t.bg });
+        page.drawRectangle({ x: 22, y: height - 104, width: width - 44, height: 4, color: t.cor });
 
         let hx = 36;
         if (brasaoImg) {
-            const bd = brasaoImg.scaleToFit(50, 50);
+            const bd = brasaoImg.scaleToFit(48, 48);
             page.drawImage(brasaoImg, { x: 34, y: height - 86, width: bd.width, height: bd.height });
-            hx = 94;
+            hx = 92;
+        } else {
+            desenharBrasaoVetorialPDF(page, 58, height - 62, 22, t.cor, fontBold, 'SP', t.sigla);
+            hx = 92;
         }
-        drawTextFitPDF(page, t.orgao, hx, height - 44, fontBold, 10.4, 345, t.cor);
-        drawTextFitPDF(page, t.subOrgao, hx, height - 60, fontBold, 8.6, 345, corEscuro);
-        drawTextFitPDF(page, `Guia / Protocolo: ${d.protocolo}   •   Código Receita: ${d.codReceita}`, hx, height - 76, fontMono, 8.0, 345, corCinza);
-        drawTextFitPDF(page, `Emissão: ${d.emissao}   •   Município: ${d.cidade}`, hx, height - 90, fontReg, 7.8, 345, corCinza);
 
-        // Quadro Valor em destaque no canto superior direito
+        drawTextFitPDF(page, t.orgao, hx, height - 42, fontBold, 10.0, 345, t.cor);
+        drawTextFitPDF(page, t.subOrgao, hx, height - 57, fontBold, 8.4, 345, corEscuro);
+        drawTextFitPDF(page, `Nº Documento: ${d.protocolo}   •   Código Receita: ${d.codReceita}`, hx, height - 72, fontMono, 7.8, 345, corCinza);
+        drawTextFitPDF(page, `Competência: ${d.emissao.slice(3)}   •   Emissão: ${d.emissao}   •   1ª VIA — CONTRIBUINTE`, hx, height - 86, fontReg, 7.4, 345, corCinza);
+
+        // Quadro Valor + Vencimento no topo direito
         const vBoxW = 128;
-        const vBoxX = width - 20 - vBoxW - 12;
-        const valFmt = d.valor.startsWith('R$') ? d.valor : `R$ ${d.valor}`;
-        page.drawRectangle({ x: vBoxX, y: height - 92, width: vBoxW, height: 60, color: rgb(1, 1, 1), borderColor: t.cor, borderWidth: 1.4 });
-        drawTextFitPDF(page, 'VALOR A PAGAR', vBoxX + 8, height - 44, fontBold, 7.0, vBoxW - 16, corCinza);
-        drawTextFitPDF(page, valFmt, vBoxX + 8, height - 64, fontBold, 13.5, vBoxW - 16, t.cor);
-        drawTextFitPDF(page, `Venc: ${d.vencimento}`, vBoxX + 8, height - 82, fontBold, 7.6, vBoxW - 16, rgb(0.75, 0.1, 0.1));
+        const vBoxX = width - 22 - vBoxW - 10;
+        page.drawRectangle({ x: vBoxX, y: height - 92, width: vBoxW, height: 60, color: rgb(1, 1, 1), borderColor: t.cor, borderWidth: 1.5 });
+        page.drawRectangle({ x: vBoxX, y: height - 46, width: vBoxW, height: 14, color: t.cor });
+        drawTextFitPDF(page, 'TOTAL A RECOLHER', vBoxX + 10, height - 42, fontBold, 6.8, vBoxW - 20, rgb(1, 1, 1));
+        drawTextFitPDF(page, valFmt, vBoxX + 10, height - 66, fontBold, 13.8, vBoxW - 20, t.cor);
+        drawTextFitPDF(page, `VENCIMENTO: ${d.vencimento}`, vBoxX + 10, height - 84, fontBold, 7.2, vBoxW - 20, rgb(0.78, 0.1, 0.1));
 
-        // Faixa Título do Modelo
-        let y = height - 118;
-        page.drawRectangle({ x: 34, y: y - 34, width: width - 68, height: 34, color: t.cor });
-        drawTextFitPDF(page, (d.tituloDoc || modelo.titulo).toUpperCase(), 46, y - 15, fontBold, 11.4, width - 92, rgb(1, 1, 1));
-        drawTextFitPDF(page, `${modelo.sub}  •  Base Legal: ${d.baseLegal}`, 46, y - 28, fontReg, 7.6, width - 92, rgb(0.92, 0.96, 1));
-        y -= 46;
+        // Faixa Título do Tributo / Serviço
+        let y = height - 114;
+        page.drawRectangle({ x: 32, y: y - 32, width: width - 64, height: 32, color: t.cor });
+        drawTextFitPDF(page, (d.tituloDoc || modelo.titulo).toUpperCase(), 42, y - 14, fontBold, 11.0, width - 84, rgb(1, 1, 1));
+        drawTextFitPDF(page, `${modelo.sub}   •   Enquadramento: ${d.baseLegal}`, 42, y - 26, fontReg, 7.4, width - 84, rgb(0.92, 0.96, 1));
+        y -= 42;
 
-        // Tabela Dados do Contribuinte / Pagador
         const drawKv = (lbl, val, x, yPos, maxW) => {
-            page.drawText(sanitizarTextoPDF(lbl), { x, y: yPos, size: 6.8, font: fontBold, color: corCinza });
-            drawTextFitPDF(page, val || 'Não informado', x, yPos - 11.5, fontBold, 8.8, maxW, corEscuro, 6.4);
+            page.drawText(sanitizarTextoPDF(lbl), { x, y: yPos, size: 6.6, font: fontBold, color: corCinza });
+            drawTextFitPDF(page, val || 'Não informado', x, yPos - 11, fontBold, 8.6, maxW, corEscuro, 6.4);
         };
 
-        const pBoxH = 104;
-        page.drawRectangle({ x: 34, y: y - pBoxH, width: width - 68, height: pBoxH, color: rgb(0.985, 0.99, 1), borderColor: corBorda, borderWidth: 1 });
-        drawTextFitPDF(page, 'IDENTIFICAÇÃO DO CONTRIBUINTE / PAGADOR', 44, y - 13, fontBold, 7.6, width - 90, t.cor);
-        drawKv('RAZÃO SOCIAL / NOME COMPLETO', (d.nome || 'NÃO INFORMADO').toUpperCase(), 44, y - 29, 345);
-        drawKv('CPF / CNPJ', d.cnpj || 'Não informado', 402, y - 29, 150);
-        drawKv('ENDEREÇO', (d.endereco || 'Conforme Cadastro').toUpperCase(), 44, y - 59, 345);
-        drawKv('TELEFONE / WHATSAPP', d.telefone || '-', 402, y - 59, 150);
-        drawKv('MUNICÍPIO / UF', d.cidade.toUpperCase(), 44, y - 87, 220);
-        drawKv('RAMO / ATIVIDADE', (d.ramo || 'Geral').toUpperCase(), 274, y - 87, 275);
-        y -= (pBoxH + 12);
+        // Bloco Dados do Contribuinte
+        const pBoxH = 88;
+        page.drawRectangle({ x: 32, y: y - pBoxH, width: width - 64, height: pBoxH, color: rgb(0.985, 0.99, 1), borderColor: corBorda, borderWidth: 0.9 });
+        drawTextFitPDF(page, 'CONTRIBUINTE / SACADO', 42, y - 12, fontBold, 7.2, 220, t.cor);
+        drawKv('RAZÃO SOCIAL / NOME COMPLETO', (d.nome || 'NÃO INFORMADO').toUpperCase(), 42, y - 27, 345);
+        drawKv('CPF / CNPJ', d.cnpj || 'Não informado', 400, y - 27, 150);
+        drawKv('ENDEREÇO', (d.endereco || 'Conforme Cadastro').toUpperCase(), 42, y - 55, 255);
+        drawKv('MUNICÍPIO / UF', d.cidade.toUpperCase(), 305, y - 55, 115);
+        drawKv('TELEFONE', d.telefone || '-', 428, y - 55, 125);
+        drawTextFitPDF(page, `ATIVIDADE / RAMO: ${(d.ramo || 'Geral').toUpperCase()}`, 42, y - 80, fontReg, 7.3, width - 84, corCinza);
+        y -= (pBoxH + 10);
 
-        // Quadro Discriminação da Taxa / Serviço (estilo GRU/DAMSP)
-        const dBoxH = 108;
-        page.drawRectangle({ x: 34, y: y - dBoxH, width: width - 68, height: dBoxH, borderColor: t.cor, borderWidth: 1 });
-        page.drawRectangle({ x: 34, y: y - 20, width: width - 68, height: 20, color: t.bg });
-        drawTextFitPDF(page, 'DISCRIMINAÇÃO DO SERVIÇO / RECEITA', 44, y - 13, fontBold, 7.6, 260, t.cor);
-        drawTextFitPDF(page, 'CÓDIGO', 330, y - 13, fontBold, 7.6, 80, t.cor);
-        drawTextFitPDF(page, 'VENCIMENTO', 415, y - 13, fontBold, 7.6, 70, t.cor);
-        drawTextFitPDF(page, 'VALOR', 492, y - 13, fontBold, 7.6, 65, t.cor);
+        // Tabela Oficial de Valores (Principal / Multa / Juros / Desconto / Total)
+        const dBoxH = 92;
+        page.drawRectangle({ x: 32, y: y - dBoxH, width: width - 64, height: dBoxH, borderColor: t.cor, borderWidth: 1.0 });
+        page.drawRectangle({ x: 32, y: y - 18, width: width - 64, height: 18, color: t.bg });
+        drawTextFitPDF(page, 'DISCRIMINAÇÃO DA RECEITA / SERVIÇO', 40, y - 12, fontBold, 7.2, 270, t.cor);
+        drawTextFitPDF(page, 'CÓD. RECEITA', 325, y - 12, fontBold, 7.2, 65, t.cor);
+        drawTextFitPDF(page, 'PRINCIPAL', 398, y - 12, fontBold, 7.2, 55, t.cor);
+        drawTextFitPDF(page, 'ACRÉSC.', 458, y - 12, fontBold, 7.2, 42, t.cor);
+        drawTextFitPDF(page, 'TOTAL', 504, y - 12, fontBold, 7.2, 54, t.cor);
+        [320, 393, 454, 500].forEach(cx => page.drawLine({ start: { x: cx, y: y - dBoxH }, end: { x: cx, y }, thickness: 0.6, color: corBorda }));
 
-        drawTextFitPDF(page, d.codReceita, 330, y - 36, fontMono, 8.2, 80, corEscuro);
-        drawTextFitPDF(page, d.vencimento, 415, y - 36, fontBold, 8.2, 70, corEscuro);
-        drawTextFitPDF(page, valFmt, 492, y - 36, fontBold, 8.8, 65, t.cor);
+        drawTextFitPDF(page, d.codReceita, 325, y - 34, fontMono, 7.8, 64, corEscuro);
+        drawTextFitPDF(page, valFmt, 398, y - 34, fontBold, 8.0, 52, corEscuro);
+        drawTextFitPDF(page, 'R$ 0,00', 458, y - 34, fontReg, 7.6, 40, corCinza);
+        drawTextFitPDF(page, valFmt, 504, y - 34, fontBold, 8.4, 54, t.cor);
 
-        const descLines = quebrarLinhasPDF(d.descricao || modelo.desc, fontReg, 8.6, 275);
-        let dy = y - 35;
-        descLines.slice(0, 5).forEach(ln => {
-            page.drawText(ln, { x: 44, y: dy, size: 8.6, font: fontReg, color: corEscuro });
-            dy -= 12;
+        let dy = y - 32;
+        quebrarLinhasPDF(d.descricao || modelo.desc, fontReg, 8.3, 272).slice(0, 5).forEach(ln => {
+            page.drawText(ln, { x: 40, y: dy, size: 8.3, font: fontReg, color: corEscuro });
+            dy -= 11.5;
         });
-        y -= (dBoxH + 14);
+        y -= (dBoxH + 10);
 
-        // BLOCO DE PAGAMENTO PIX (FOTO DO QR CODE ESCOLHIDA + COPIA E COLA)
-        const pixH = 148;
-        page.drawRectangle({ x: 34, y: y - pixH, width: width - 68, height: pixH, color: t.bg, borderColor: t.cor, borderWidth: 1.4 });
-        page.drawRectangle({ x: 34, y: y - 22, width: width - 68, height: 22, color: t.cor });
-        drawTextFitPDF(page, 'PAGAMENTO INSTANTÂNEO VIA PIX — QR CODE + COPIA E COLA', 44, y - 15, fontBold, 8.4, width - 88, rgb(1, 1, 1));
+        // BLOCO PIX OFICIAL (SUA FOTO DO QR CODE OU QR AUTOMÁTICO + COPIA E COLA)
+        const pixH = 128;
+        page.drawRectangle({ x: 32, y: y - pixH, width: width - 64, height: pixH, color: t.bg, borderColor: t.cor, borderWidth: 1.3 });
+        page.drawRectangle({ x: 32, y: y - 20, width: width - 64, height: 20, color: t.cor });
+        drawTextFitPDF(page, 'PAGAMENTO INSTANTÂNEO VIA PIX — QR CODE + COPIA E COLA (BAIXA IMEDIATA)', 42, y - 13.5, fontBold, 8.0, width - 84, rgb(1, 1, 1));
 
         let qrImg = null;
         if (d.pixQrDataUrl) {
@@ -14607,39 +14719,58 @@ Retorne EXCLUSIVAMENTE um JSON válido neste formato exato:
             qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
         }
 
-        let pixTxtX = 46;
-        let pixMaxW = width - 92;
+        let pixTxtX = 44;
+        let pixMaxW = width - 88;
         if (qrImg) {
-            page.drawRectangle({ x: 44, y: y - pixH + 10, width: 108, height: 108, color: rgb(1, 1, 1), borderColor: corBorda, borderWidth: 0.8 });
-            const qd = qrImg.scaleToFit(102, 102);
-            page.drawImage(qrImg, { x: 44 + (108 - qd.width) / 2, y: y - pixH + 10 + (108 - qd.height) / 2, width: qd.width, height: qd.height });
-            pixTxtX = 164;
-            pixMaxW = width - 210;
+            page.drawRectangle({ x: 42, y: y - pixH + 8, width: 92, height: 92, color: rgb(1, 1, 1), borderColor: corBorda, borderWidth: 0.8 });
+            const qd = qrImg.scaleToFit(86, 86);
+            page.drawImage(qrImg, { x: 42 + (92 - qd.width) / 2, y: y - pixH + 8 + (92 - qd.height) / 2, width: qd.width, height: qd.height });
+            pixTxtX = 146;
+            pixMaxW = width - 190;
         }
 
         if (d.pixCode && d.pixCode.length > 5) {
-            drawTextFitPDF(page, 'Escaneie o QR Code ao lado ou copie e cole o código PIX abaixo no app do seu banco:', pixTxtX, y - 38, fontBold, 8.0, pixMaxW, corEscuro);
-            const pLines = quebrarLinhasPDF(d.pixCode, fontMono, 7.4, pixMaxW);
-            let py = y - 54;
-            pLines.slice(0, 7).forEach(pl => {
-                page.drawText(pl, { x: pixTxtX, y: py, size: 7.4, font: fontMono, color: corEscuro });
-                py -= 10.5;
+            drawTextFitPDF(page, 'Aponte a câmera do aplicativo bancário para o QR Code ou utilize o PIX Copia e Cola:', pixTxtX, y - 34, fontBold, 7.8, pixMaxW, corEscuro);
+            const pLines = quebrarLinhasPDF(d.pixCode, fontMono, 7.2, pixMaxW);
+            let py = y - 48;
+            pLines.slice(0, 6).forEach(pl => {
+                page.drawText(pl, { x: pixTxtX, y: py, size: 7.2, font: fontMono, color: corEscuro });
+                py -= 10;
             });
         } else {
-            drawTextFitPDF(page, 'Aponte a câmera do aplicativo do seu banco para o QR Code ao lado para pagar via PIX.', pixTxtX, y - 48, fontBold, 8.6, pixMaxW, corEscuro);
-            drawTextFitPDF(page, 'Confirmação imediata. Após o pagamento, envie o comprovante ou aguarde a liberação no portal.', pixTxtX, y - 66, fontReg, 8.0, pixMaxW, corCinza);
+            drawTextFitPDF(page, 'Aponte a câmera do app do seu banco para o QR Code ao lado para pagar via PIX.', pixTxtX, y - 44, fontBold, 8.4, pixMaxW, corEscuro);
+            drawTextFitPDF(page, 'Compensação imediata. Guarde o comprovante para conferência no Portal COVISA Digital.', pixTxtX, y - 62, fontReg, 7.8, pixMaxW, corCinza);
         }
-        y -= (pixH + 14);
+        y -= (pixH + 12);
 
-        // Instruções & Linha de Autenticação Mecânica
-        page.drawLine({ start: { x: 34, y }, end: { x: width - 34, y }, thickness: 0.8, color: corCinza, dashArray: [4, 3] });
-        drawTextFitPDF(page, `AUTENTICAÇÃO ELETRÔNICA • ${d.protocolo} • ${d.codReceita} • ${valFmt} • VENC. ${d.vencimento}`, 38, y - 14, fontMono, 7.6, width - 76, corCinza);
+        // Assinatura Fixa compacta (acima da linha de corte)
+        if (d.usarAssinatura) {
+            const sigImg = await carregarAssinaturaDiretoriaPDF(pdfDoc);
+            desenharBlocoAssinaturaFixa(page, sigImg, { usarAssinaturaFixa: true, fiscal: 'Giliard De Oliveira Santiago', cargo: 'Assessor Técnico CEVISA/COVIS/SMS' }, fontBold, fontReg, corEscuro, corCinza, width / 2, y - 62, 195, 58);
+            y -= 68;
+        }
 
-        // Assinatura Fixa
-        const sigImg = d.usarAssinatura ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
-        desenharBlocoAssinaturaFixa(page, sigImg, { usarAssinaturaFixa: d.usarAssinatura, fiscal: 'Giliard De Oliveira Santiago', cargo: 'Assessor Técnico CEVISA/COVIS/SMS' }, fontBold, fontReg, corEscuro, corCinza, width / 2, 48, 220, 72);
+        // =====================================================================
+        // LINHA DE CORTE + FICHA DE COMPENSAÇÃO / CÓDIGO DE BARRAS FEBRABAN
+        // =====================================================================
+        const corteY = Math.min(y - 4, 178);
+        page.drawLine({ start: { x: 24, y: corteY }, end: { x: width - 24, y: corteY }, thickness: 0.9, color: corCinza, dashArray: [5, 4] });
+        drawTextFitPDF(page, 'CORTE AQUI — 2ª VIA: FICHA DE COMPENSAÇÃO / AUTENTICAÇÃO MECÂNICA', 34, corteY + 4, fontBold, 6.8, 360, corCinza);
+        drawTextFitPDF(page, `Chave: ${hashGuia}`, width - 215, corteY + 4, fontMono, 6.4, 185, t.cor);
 
-        drawTextFitPDF(page, `Documento emitido eletronicamente em ${d.cidade}, ${d.emissao} • vigilancia-sp-gov.netlify.app`, 38, 30, fontReg, 7.2, width - 76, corCinza);
+        const fY = corteY - 10;
+        page.drawRectangle({ x: 32, y: 34, width: width - 64, height: fY - 34, borderColor: t.cor, borderWidth: 1.0, color: rgb(0.995, 0.997, 1) });
+        drawTextFitPDF(page, `${t.sigla} • ${d.protocolo}   |   Pagador: ${(d.nome || '-').toUpperCase()} (${d.cnpj || '-'})`, 40, fY - 14, fontBold, 7.6, 365, corEscuro);
+        drawTextFitPDF(page, `VENC: ${d.vencimento}  |  ${valFmt}`, width - 178, fY - 14, fontBold, 8.2, 140, t.cor);
+
+        // Linha Digitável FEBRABAN
+        const ldW = fontMono.widthOfTextAtSize(arrec.linha, 9.2);
+        page.drawText(arrec.linha, { x: Math.max(40, (width - ldW) / 2), y: fY - 36, size: 9.2, font: fontMono, color: corEscuro });
+
+        // Código de Barras Vetorial Nítido
+        desenharCodigoBarrasArrecadacaoPDF(page, 48, 52, width - 96, Math.max(38, fY - 96), arrec.raw, fontMono, corEscuro);
+
+        drawTextFitPDF(page, `Autenticação Eletrônica: ${hashGuia}  •  Emitido em ${d.cidade}, ${d.emissao}  •  vigilancia-sp-gov.netlify.app`, 36, 22, fontReg, 6.8, width - 72, corCinza);
         return await pdfDoc.save();
     }
 
@@ -15087,99 +15218,453 @@ Retorne APENAS o texto pronto do corpo do documento.`;
     async function construirPdfEspecial100(m, d) {
         const { PDFDocument, rgb, StandardFonts } = PDFLib;
         const pdfDoc = await PDFDocument.create();
-        const page = pdfDoc.addPage([595.28, 841.89]);
-        const { width, height } = page.getSize();
 
         const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
         const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
         const fontMono = await pdfDoc.embedFont(StandardFonts.CourierBold);
 
-        const corEscuro = rgb(0.09, 0.13, 0.20);
-        const corCinza = rgb(0.38, 0.44, 0.52);
-        const corBorda = rgb(0.78, 0.83, 0.89);
+        const corEscuro = rgb(0.08, 0.11, 0.16);
+        const corCinza = rgb(0.36, 0.41, 0.48);
+        const corBorda = rgb(0.74, 0.79, 0.85);
+        const corFundoClaro = rgb(0.96, 0.975, 0.99);
+        const hojeStr = formatarDataBR(new Date());
+        const tituloFinal = (d.tituloDoc || m.titulo).toUpperCase();
+        const nomeEmp = (d.nome || 'ESTABELECIMENTO NÃO INFORMADO').toUpperCase();
+        const hashDoc = gerarHashAutenticidadePDF(`${d.protocolo}|${d.cnpj}|${nomeEmp}|${m.id}`);
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&format=png&data=${encodeURIComponent('https://vigilancia-sp-gov.netlify.app/?doc=' + d.protocolo + '&h=' + hashDoc.slice(0,8))}`;
+        const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
+        const sigImg = d.usarAssinatura ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
 
+        // =====================================================================
+        // LAYOUT ESPECIAL A: CERTIFICADO DE APLICAÇÃO / PRAGAS / CAIXA D'ÁGUA
+        // (Formato Certificado Paisagem com Faixas Dourado/Preto + Precauções)
+        // =====================================================================
+        const ehCertAplicacao = ['e_pop_pragas', 'e_pop_caixa_agua', 'e_decl_agua', 'e_termo_capacitacao', 'e_cert_treinamento'].includes(m.id);
+        if (ehCertAplicacao) {
+            const page = pdfDoc.addPage([841.89, 595.28]); // A4 Paisagem
+            const { width, height } = page.getSize();
+            const corOuro = rgb(0.92, 0.70, 0.04);
+            const corOuroEscuro = rgb(0.58, 0.40, 0.02);
+            const corPreto = rgb(0.08, 0.09, 0.11);
+
+            // Borda preta externa + acentos dourados diagonais/laterais (estilo Certificado Imperial!)
+            page.drawRectangle({ x: 18, y: 18, width: width - 36, height: height - 36, borderColor: corPreto, borderWidth: 2.2 });
+            page.drawRectangle({ x: 18, y: height - 34, width: width - 36, height: 16, color: corOuro });
+            page.drawRectangle({ x: 18, y: 18, width: 16, height: height - 36, color: corOuro });
+            page.drawRectangle({ x: width - 34, y: 18, width: 16, height: height - 36, color: corOuro });
+            page.drawRectangle({ x: 18, y: 18, width: width - 36, height: 12, color: corPreto });
+
+            // Topo: Dados da empresa / contato à esq + QR Code centro + Selo à dir
+            drawTextFitPDF(page, `CNPJ: ${d.cnpj || 'Não informado'}  •  ${d.cidade}`, 50, height - 56, fontBold, 9.0, 260, corEscuro);
+            drawTextFitPDF(page, 'CONTROLE SANITÁRIO & AMBIENTAL', 50, height - 74, fontBold, 8.2, 240, corOuroEscuro);
+            drawTextFitPDF(page, `Protocolo: ${d.protocolo}`, 50, height - 88, fontMono, 8.2, 240, corCinza);
+            drawTextFitPDF(page, `Emissão: ${hojeStr}`, 50, height - 102, fontReg, 8.2, 240, corCinza);
+
+            if (qrImg) {
+                page.drawRectangle({ x: width / 2 - 44, y: height - 134, width: 88, height: 88, borderColor: corBorda, borderWidth: 0.9, color: rgb(1, 1, 1) });
+                page.drawImage(qrImg, { x: width / 2 - 40, y: height - 130, width: 80, height: 80 });
+            }
+
+            desenharBrasaoVetorialPDF(page, width - 105, height - 88, 36, corOuroEscuro, fontBold, 'CERT', '2026');
+            drawTextFitPDF(page, 'CERTIFICADO OFICIAL', width - 165, height - 136, fontBold, 8.0, 120, corPreto);
+
+            // Título central de impacto
+            const tStr = tituloFinal.includes('CERTIFICADO') ? tituloFinal : `CERTIFICADO — ${tituloFinal}`;
+            const tW = Math.min(fontBold.widthOfTextAtSize(sanitizarTextoPDF(tStr), 18), width - 120);
+            drawTextFitPDF(page, tStr, (width - tW) / 2, height - 164, fontBold, 18, width - 120, corPreto);
+            drawTextFitPDF(page, 'Certificamos que nesta data foi executado e homologado o serviço técnico conforme especificações abaixo:', 95, height - 186, fontReg, 10.2, width - 190, corEscuro);
+
+            // Linhas formais preenchidas (estilo certificado físico!)
+            const drawCertLine = (lbl, val, lx, ly, endX, valColor = corEscuro) => {
+                const l = sanitizarTextoPDF(lbl);
+                page.drawText(l, { x: lx, y: ly, size: 10.5, font: fontBold, color: corPreto });
+                const sx = lx + fontBold.widthOfTextAtSize(l, 10.5) + 8;
+                page.drawLine({ start: { x: sx, y: ly - 3 }, end: { x: endX, y: ly - 3 }, thickness: 0.9, color: corCinza });
+                drawTextFitPDF(page, val, sx + 6, ly + 1, fontBold, 10.4, Math.max(60, endX - sx - 10), valColor);
+            };
+
+            let cy = height - 220;
+            drawCertLine('Cliente / Estabelecimento:', nomeEmp, 54, cy, width - 54); cy -= 32;
+            drawCertLine('Serviço Executado:', m.titulo.toUpperCase(), 54, cy, 445);
+            drawCertLine('Local:', (d.endereco || d.cidade).toUpperCase(), 458, cy, width - 54); cy -= 32;
+            drawCertLine('Procedimento / Substâncias:', (d.corpo || m.corpo).replace(/\s+/g, ' ').slice(0, 88), 54, cy, 560);
+            drawCertLine('Registro:', 'ANVISA / COVISA', 572, cy, width - 54); cy -= 32;
+            drawCertLine('Responsável Técnico:', (d.responsavel || 'Conforme Cadastro Técnico').toUpperCase(), 54, cy, 530);
+            drawCertLine('Validade:', d.validade, 545, cy, width - 54, rgb(0.78, 0.08, 0.08)); cy -= 42;
+
+            // Esquerda: Registros técnicos | Direita: Local/Data + Assinatura
+            drawTextFitPDF(page, `Chave de Autenticidade: ${hashDoc}`, 54, cy + 8, fontMono, 8.0, 340, corOuroEscuro);
+            drawTextFitPDF(page, `Ramo / Atividade: ${(d.ramo || 'Geral').toUpperCase()}`, 54, cy - 8, fontReg, 8.6, 340, corEscuro);
+            drawTextFitPDF(page, `Vig. Sanitária / Protocolo: ${d.protocolo}`, 54, cy - 24, fontBold, 8.4, 340, corEscuro);
+
+            drawTextFitPDF(page, `${d.cidade}, ${hojeStr}`, width - 330, cy + 12, fontBold, 10.2, 270, corPreto);
+            if (d.usarAssinatura && sigImg) {
+                desenharBlocoAssinaturaFixa(page, sigImg, { usarAssinaturaFixa: true, fiscal: 'Giliard De Oliveira Santiago', cargo: 'Assessor Técnico' }, fontBold, fontReg, corEscuro, corCinza, width - 200, cy - 58, 210, 62);
+            } else {
+                page.drawLine({ start: { x: width - 340, y: cy - 28 }, end: { x: width - 60, y: cy - 28 }, thickness: 1.0, color: corPreto });
+                drawTextFitPDF(page, (d.responsavel || nomeEmp).toUpperCase(), width - 330, cy - 42, fontBold, 8.6, 260, corEscuro);
+            }
+
+            // Faixa de Precauções / Recomendações no rodapé (idêntico ao print!)
+            page.drawRectangle({ x: 50, y: 108, width: 145, height: 18, color: corOuro });
+            drawTextFitPDF(page, 'PRECAUÇÕES / RECOMENDAÇÕES', 56, 113, fontBold, 7.6, 135, corPreto);
+            page.drawRectangle({ x: 50, y: 42, width: width - 100, height: 64, borderColor: corOuro, borderWidth: 1.0, color: rgb(1, 0.99, 0.94) });
+            const precTxt = 'Manter este certificado afixado em local visível à fiscalização sanitária. Respeitar os prazos de validade e renovação periódica. Em caso de aplicação química, respeitar o intervalo mínimo de reentrada (2 horas), manter alimentos e utensílios protegidos e seguir as orientações do fabricante e do Responsável Técnico.';
+            let py = 92;
+            quebrarLinhasPDF(precTxt, fontReg, 8.5, width - 118).forEach(ln => {
+                page.drawText(ln, { x: 58, y: py, size: 8.5, font: fontReg, color: corEscuro });
+                py -= 12.5;
+            });
+
+            return await pdfDoc.save();
+        }
+
+        // Páginas A4 Retrato para os demais 5 layouts
+        const page = pdfDoc.addPage([595.28, 841.89]);
+        const { width, height } = page.getSize();
+
+        const drawKv = (lbl, val, x, yPos, maxW, valSize = 8.8) => {
+            page.drawText(sanitizarTextoPDF(lbl), { x, y: yPos, size: 6.8, font: fontBold, color: corCinza });
+            drawTextFitPDF(page, val || 'Não informado', x, yPos - 11.5, fontBold, valSize, maxW, corEscuro, 6.4);
+        };
+
+        const drawFooterDualSig = (corTema, leftTitle = 'RESPONSÁVEL TÉCNICO / ELABORAÇÃO', rightTitle = 'RESPONSÁVEL LEGAL / APROVAÇÃO') => {
+            const fy = 44;
+            if (d.usarAssinatura && sigImg) {
+                desenharBlocoAssinaturaFixa(page, sigImg, { usarAssinaturaFixa: true, fiscal: 'Giliard De Oliveira Santiago', cargo: 'Assessor Técnico' }, fontBold, fontReg, corEscuro, corCinza, width / 2, fy + 8, 220, 68);
+            } else {
+                const colW = 215;
+                page.drawRectangle({ x: 32, y: fy + 10, width: colW, height: 62, borderColor: corBorda, borderWidth: 0.8, color: rgb(0.99, 0.995, 1) });
+                drawTextFitPDF(page, leftTitle, 40, fy + 60, fontBold, 6.5, colW - 16, corTema);
+                page.drawLine({ start: { x: 44, y: fy + 31 }, end: { x: 32 + colW - 12, y: fy + 31 }, thickness: 0.7, color: corEscuro });
+                drawTextFitPDF(page, (d.responsavel || 'Responsável Técnico').toUpperCase(), 40, fy + 19, fontBold, 7.4, colW - 16, corEscuro);
+
+                const rx = 258;
+                page.drawRectangle({ x: rx, y: fy + 10, width: colW, height: 62, borderColor: corBorda, borderWidth: 0.8, color: rgb(0.99, 0.995, 1) });
+                drawTextFitPDF(page, rightTitle, rx + 8, fy + 60, fontBold, 6.5, colW - 16, corTema);
+                page.drawLine({ start: { x: rx + 12, y: fy + 31 }, end: { x: rx + colW - 12, y: fy + 31 }, thickness: 0.7, color: corEscuro });
+                drawTextFitPDF(page, nomeEmp, rx + 8, fy + 19, fontBold, 7.2, colW - 16, corEscuro);
+            }
+            if (qrImg) {
+                page.drawImage(qrImg, { x: width - 92, y: fy + 12, width: 58, height: 58 });
+                page.drawText('Autenticidade', { x: width - 89, y: fy + 4, size: 6.2, font: fontBold, color: corCinza });
+            }
+            drawTextFitPDF(page, `Chave: ${hashDoc}   •   ${d.cidade}, ${hojeStr}   •   Validade: ${d.validade}`, 32, 26, fontMono, 6.6, width - 135, corTema);
+        };
+
+        // =====================================================================
+        // LAYOUT 1: POPs & MANUAL BPF (PADRÃO REAL ISO / ANVISA)
+        // =====================================================================
+        if (m.style === 'pop') {
+            const corPop = rgb(0.04, 0.42, 0.34);
+            const corPopBg = rgb(0.92, 0.98, 0.96);
+
+            desenharMolduraOficialPDF(page, width, height, corPop, corBorda);
+            desenharSeloMarcaAguaFundoPDF(page, width / 2, height * 0.45, 112, corPop, fontBold, 'BOAS PRATICAS SANITARIAS', 'POP', 'CONTROLE DE QUALIDADE');
+
+            // Cabeçalho em Tabela 3 Colunas
+            const hTop = height - 28;
+            const hH = 74;
+            const hY = hTop - hH;
+            page.drawRectangle({ x: 30, y: hY, width: width - 60, height: hH, borderColor: corPop, borderWidth: 1.2 });
+            page.drawRectangle({ x: 30, y: hY, width: 155, height: hH, color: corPopBg, borderColor: corPop, borderWidth: 0.9 });
+            drawTextFitPDF(page, 'ESTABELECIMENTO', 38, hTop - 16, fontBold, 6.8, 140, corPop);
+            const empLines = quebrarLinhasPDF(nomeEmp, fontBold, 8.2, 140);
+            let ey = hTop - 30;
+            empLines.slice(0, 3).forEach(ln => { page.drawText(ln, { x: 38, y: ey, size: 8.2, font: fontBold, color: corEscuro }); ey -= 10.5; });
+            drawTextFitPDF(page, `CNPJ: ${d.cnpj || '-'}`, 38, hY + 8, fontMono, 7.0, 140, corCinza);
+
+            page.drawRectangle({ x: 185, y: hY, width: 245, height: hH, borderColor: corPop, borderWidth: 0.9 });
+            drawTextFitPDF(page, 'PROCEDIMENTO OPERACIONAL PADRONIZADO (POP)', 193, hTop - 16, fontBold, 7.2, 230, corPop);
+            const titLines = quebrarLinhasPDF(tituloFinal, fontBold, 10.6, 230);
+            let ty = hTop - 34;
+            titLines.slice(0, 3).forEach(ln => { page.drawText(ln, { x: 193, y: ty, size: 10.6, font: fontBold, color: corEscuro }); ty -= 13; });
+            drawTextFitPDF(page, m.sub, 193, hY + 8, fontReg, 7.4, 230, corCinza);
+
+            const c3x = 430;
+            const c3w = width - 30 - c3x;
+            page.drawRectangle({ x: c3x, y: hY, width: c3w, height: hH, color: corFundoClaro, borderColor: corPop, borderWidth: 0.9 });
+            drawTextFitPDF(page, `CÓDIGO: ${d.protocolo}`, c3x + 7, hTop - 15, fontMono, 7.0, c3w - 14, corPop);
+            page.drawLine({ start: { x: c3x, y: hTop - 22 }, end: { x: c3x + c3w, y: hTop - 22 }, thickness: 0.6, color: corBorda });
+            drawTextFitPDF(page, `EMISSÃO: ${hojeStr}`, c3x + 7, hTop - 34, fontBold, 7.0, c3w - 14, corEscuro);
+            page.drawLine({ start: { x: c3x, y: hTop - 40 }, end: { x: c3x + c3w, y: hTop - 40 }, thickness: 0.6, color: corBorda });
+            drawTextFitPDF(page, `REVISÃO: ${d.validade}`, c3x + 7, hTop - 52, fontBold, 7.0, c3w - 14, corEscuro);
+            page.drawLine({ start: { x: c3x, y: hTop - 58 }, end: { x: c3x + c3w, y: hTop - 58 }, thickness: 0.6, color: corBorda });
+            drawTextFitPDF(page, 'VERSÃO: 01  •  PÁG: 1/1', c3x + 7, hY + 6, fontBold, 6.8, c3w - 14, corCinza);
+
+            let y = hY - 8;
+            page.drawRectangle({ x: 30, y: y - 24, width: width - 60, height: 24, color: corFundoClaro, borderColor: corBorda, borderWidth: 0.8 });
+            drawTextFitPDF(page, `ENDEREÇO: ${(d.endereco || 'Conforme Cadastro').toUpperCase()} — ${d.cidade.toUpperCase()}   |   RAMO: ${(d.ramo || 'Geral').toUpperCase()}`, 38, y - 15, fontBold, 7.4, width - 76, corEscuro);
+            y -= 34;
+
+            const drawSectionBox = (numTitle, bodyText, boxHeight) => {
+                page.drawRectangle({ x: 30, y: y - boxHeight, width: width - 60, height: boxHeight, borderColor: corBorda, borderWidth: 0.9 });
+                page.drawRectangle({ x: 30, y: y - 18, width: width - 60, height: 18, color: corPopBg });
+                page.drawRectangle({ x: 30, y: y - 18, width: 4, height: 18, color: corPop });
+                drawTextFitPDF(page, numTitle, 40, y - 12.5, fontBold, 8.0, width - 80, corPop);
+                const lns = quebrarLinhasPDF(bodyText, fontReg, 8.9, width - 82);
+                let by = y - 31;
+                const maxL = Math.floor((boxHeight - 24) / 12.5);
+                lns.slice(0, maxL).forEach(ln => {
+                    if (ln) page.drawText(ln, { x: 40, y: by, size: 8.9, font: fontReg, color: corEscuro });
+                    by -= 12.5;
+                });
+                y -= (boxHeight + 9);
+            };
+
+            drawSectionBox('1. OBJETIVO E PROCEDIMENTO OPERACIONAL DETALHADO', d.corpo || m.corpo, 144);
+            drawSectionBox('2. RESPONSÁVEIS, CAMPO DE APLICAÇÃO E EPIs OBRIGATÓRIOS', 'Aplica-se integralmente às dependências operacionais e de atendimento do estabelecimento acima qualificado. A execução compete à equipe treinada sob supervisão do Responsável Técnico/Legal. EPIs obrigatórios durante o procedimento: luvas de borracha nitrílica/látex, calçado fechado antiderrapante, avental impermeável e máscara/touca conforme a atividade.', 86);
+            drawSectionBox('3. PRODUTOS SANEANTES, DILUIÇÃO E MATERIAIS UTILIZADOS', 'Utilizar exclusivamente detergentes neutros, desinfetantes (hipoclorito de sódio 1% a 2,5%, quaternário de amônio ou álcool 70%) com registro/notificação ativos na ANVISA, respeitando rigorosamente a diluição e o tempo de contato (mínimo 10 minutos) indicados no rótulo do fabricante. Manter utensílios de limpeza identificados e separados por setor.', 86);
+            drawSectionBox('4. FREQUÊNCIA, MONITORAMENTO E REGISTRO DE EXECUÇÃO', 'Frequência: Diária (início e término do expediente) e sempre que houver contaminação ou sujidade visível; limpeza terminal semanal. O monitoramento é realizado visualmente pelo responsável do setor e registrado diariamente na Planilha de Controle de Higienização, mantida arquivada à disposição da Vigilância Sanitária.', 82);
+            drawSectionBox('5. AÇÕES CORRETIVAS EM CASO DE NÃO CONFORMIDADE', 'Constatada falha na execução, produto vencido ou ausência de registro, o procedimento deverá ser refeito imediatamente, o colaborador reorientado e a ocorrência anotada no campo de observações da planilha de controle.', 66);
+
+            drawFooterDualSig(corPop);
+            return await pdfDoc.save();
+        }
+
+        // =====================================================================
+        // LAYOUT 2: BOMBEIROS / AVCB / CLCB (FIEL AO PADRÃO OFICIAL SP)
+        // =====================================================================
+        if (m.style === 'fire') {
+            const corFire = rgb(0.76, 0.10, 0.10);
+            const corFireBg = rgb(1, 0.96, 0.96);
+
+            desenharMolduraOficialPDF(page, width, height, corFire, rgb(0.85, 0.35, 0.35));
+
+            // Brasões vetoriais à esquerda e à direita no topo (estilo AVCB SP!)
+            desenharBrasaoVetorialPDF(page, 68, height - 66, 30, corFire, fontBold, 'CB', 'SP');
+            desenharBrasaoVetorialPDF(page, width - 68, height - 66, 30, corEscuro, fontBold, 'SP', 'SEG');
+
+            const drawCenter = (txt, yPos, font, sz, col, maxW = width - 210) => {
+                const safe = sanitizarTextoPDF(txt);
+                const tw = Math.min(font.widthOfTextAtSize(safe, sz), maxW);
+                drawTextFitPDF(page, safe, (width - tw) / 2, yPos, font, sz, maxW, col);
+            };
+
+            drawCenter('ESTADO DE SÃO PAULO — SEGURANÇA CONTRA INCÊNDIO', height - 42, fontBold, 11.2, corEscuro);
+            drawCenter('PREVENÇÃO E COMBATE A INCÊNDIO — VISTORIA TÉCNICA', height - 60, fontBold, 10.4, corFire);
+            drawCenter(tituloFinal, height - 78, fontBold, 11.8, corFire);
+            drawCenter(`REGISTRO / PROTOCOLO Nº ${d.protocolo}`, height - 98, fontMono, 11.2, corEscuro);
+
+            const introFire = 'EXPEDE-SE O PRESENTE DOCUMENTO TÉCNICO DE CONFORMIDADE E MEDIDAS DE SEGURANÇA CONTRA INCÊNDIO PARA A EDIFICAÇÃO / ÁREA DE RISCO ABAIXO QUALIFICADA, NOS TERMOS DO REGULAMENTO DE SEGURANÇA CONTRA INCÊNDIO VIGENTE.';
+            let iy0 = height - 118;
+            quebrarLinhasPDF(introFire, fontBold, 7.6, width - 72).forEach(ln => {
+                page.drawText(ln, { x: 36, y: iy0, size: 7.6, font: fontBold, color: corEscuro });
+                iy0 -= 10.5;
+            });
+
+            // Quadro principal com borda vermelha + marca d'água circular central suave!
+            let y = iy0 - 8;
+            const mainBoxH = 478;
+            page.drawRectangle({ x: 32, y: y - mainBoxH, width: width - 64, height: mainBoxH, borderColor: corFire, borderWidth: 1.2 });
+            desenharSeloMarcaAguaFundoPDF(page, width / 2, y - mainBoxH / 2, 128, corFire, fontBold, 'SEGURANCA CONTRA INCENDIO', 'SP', 'VISTORIA TECNICA');
+
+            let fy = y - 18;
+            const drawFireLine = (lbl, val, x = 44, maxW = width - 92) => {
+                const lTxt = sanitizarTextoPDF(lbl);
+                page.drawText(lTxt, { x, y: fy, size: 8.6, font: fontBold, color: corEscuro });
+                const vx = x + fontBold.widthOfTextAtSize(lTxt, 8.6) + 5;
+                drawTextFitPDF(page, val || '-', vx, fy, fontReg, 8.6, Math.max(60, maxW - (vx - x)), corEscuro);
+            };
+
+            drawFireLine('Projeto / Protocolo Nº:', d.protocolo, 44, 290);
+            drawFireLine('Emissão:', hojeStr, 355, 195); fy -= 17;
+            drawFireLine('Endereço:', (d.endereco || 'Conforme Cadastro').toUpperCase(), 44, 495); fy -= 17;
+            drawFireLine('Município / UF:', d.cidade.toUpperCase(), 44, 290);
+            drawFireLine('CPF / CNPJ:', d.cnpj || '-', 355, 195); fy -= 17;
+            drawFireLine('Ocupação / Ramo:', (d.ramo || 'Comercial / Serviços').toUpperCase(), 44, 495); fy -= 17;
+            drawFireLine('Proprietário:', nomeEmp, 44, 495); fy -= 17;
+            drawFireLine('Responsável pelo Uso:', nomeEmp, 44, 495); fy -= 17;
+            drawFireLine('Responsável Técnico:', (d.responsavel || 'Conforme ART/RRT / Cadastro').toUpperCase(), 44, 495); fy -= 17;
+            drawFireLine('Validade:', d.validade, 44, 220);
+            drawFireLine('Chave:', hashDoc.slice(0, 19), 270, 275); fy -= 20;
+
+            page.drawLine({ start: { x: 40, y: fy + 8 }, end: { x: width - 40, y: fy + 8 }, thickness: 0.7, color: corBorda });
+            page.drawText('OBSERVAÇÕES / MEDIDAS PREVENTIVAS:', { x: 44, y: fy - 6, size: 8.5, font: fontBold, color: corFire });
+            fy -= 22;
+
+            quebrarLinhasPDF(d.corpo || m.corpo, fontReg, 9.2, width - 92).slice(0, 12).forEach(ln => {
+                if (ln) page.drawText(ln, { x: 44, y: fy, size: 9.2, font: fontReg, color: corEscuro });
+                fy -= 13.5;
+            });
+
+            fy = Math.min(fy - 10, y - 365);
+            if (fy > y - mainBoxH + 26) {
+                page.drawRectangle({ x: 44, y: y - mainBoxH + 14, width: width - 88, height: fy - (y - mainBoxH + 14), color: corFundoClaro, borderColor: corBorda, borderWidth: 0.7 });
+                drawTextFitPDF(page, 'ITENS PREVENTIVOS CONFERIDOS:', 54, fy - 14, fontBold, 7.6, width - 110, corFire);
+                const itensF = [
+                    '[OK] Extintores portáteis carregados, lacrados, desobstruídos e com sinalização',
+                    '[OK] Saídas de emergência e rotas de fuga livres e sinalizadas',
+                    '[OK] Iluminação de emergência e placas fotoluminescentes operantes',
+                    '[OK] Instalações elétricas e de gás em conformidade de segurança'
+                ];
+                let iy = fy - 29;
+                itensF.forEach(it => {
+                    if (iy > y - mainBoxH + 20) { drawTextFitPDF(page, it, 54, iy, fontReg, 8.1, width - 110, corEscuro); iy -= 13.5; }
+                });
+            }
+
+            // Notas oficiais + Data à direita + QR Code à esquerda + Caixa Vermelha de Validação à direita
+            const notaY = y - mainBoxH - 13;
+            let ny = notaY;
+            quebrarLinhasPDF('NOTAS: 1) Este documento deve ser afixado na entrada principal da edificação, em local visível ao público. 2) Compete ao proprietário ou responsável pelo uso manter as medidas de segurança contra incêndio em perfeitas condições e providenciar a renovação no prazo.', fontReg, 7.3, width - 68).forEach(ln => {
+                page.drawText(ln, { x: 34, y: ny, size: 7.3, font: fontReg, color: corEscuro });
+                ny -= 10;
+            });
+
+            drawTextFitPDF(page, `${d.cidade}, ${hojeStr}.`, width - 210, ny - 6, fontBold, 8.6, 175, corEscuro);
+
+            if (qrImg) page.drawImage(qrImg, { x: 34, y: 30, width: 68, height: 68 });
+            page.drawRectangle({ x: 114, y: 34, width: width - 148, height: 52, borderColor: corFire, borderWidth: 1.0, color: corFireBg });
+            drawTextFitPDF(page, 'Documento emitido eletronicamente com chave de verificação digital.', 124, 72, fontBold, 8.2, width - 168, corFire);
+            drawTextFitPDF(page, `Chave de Autenticidade: ${hashDoc}`, 124, 57, fontMono, 7.4, width - 168, corEscuro);
+            drawTextFitPDF(page, `Protocolo: ${d.protocolo}  •  Validade: ${d.validade}  •  vigilancia-sp-gov.netlify.app`, 124, 43, fontReg, 7.2, width - 168, corCinza);
+
+            return await pdfDoc.save();
+        }
+
+        // =====================================================================
+        // LAYOUT 3: PGRSS / RESÍDUOS (COM TABELA OFICIAL COLORIDA GRUPOS A/B/D/E)
+        // =====================================================================
+        if (m.style === 'pgrss') {
+            const corP = rgb(0.36, 0.14, 0.58);
+            const corPBg = rgb(0.96, 0.94, 1);
+
+            desenharMolduraOficialPDF(page, width, height, corP, corBorda);
+            desenharSeloMarcaAguaFundoPDF(page, width / 2, height * 0.42, 110, corP, fontBold, 'GERENCIAMENTO DE RESIDUOS', 'PGRSS', 'RDC ANVISA 222/2018');
+
+            page.drawRectangle({ x: 22, y: height - 94, width: width - 44, height: 72, color: corP });
+            drawTextFitPDF(page, 'PLANO DE GERENCIAMENTO DE RESÍDUOS (PGRSS / PGRS) — RDC ANVISA Nº 222/2018', 36, height - 42, fontBold, 9.0, width - 72, rgb(0.92, 0.88, 1));
+            drawTextFitPDF(page, tituloFinal, 36, height - 62, fontBold, 14.0, width - 72, rgb(1, 1, 1));
+            drawTextFitPDF(page, `Protocolo: ${d.protocolo}   •   Emissão: ${hojeStr}   •   Validade: ${d.validade}`, 36, height - 80, fontMono, 8.0, width - 72, rgb(0.95, 0.93, 1));
+
+            let y = height - 108;
+            const bH = 90;
+            page.drawRectangle({ x: 32, y: y - bH, width: width - 64, height: bH, color: corFundoClaro, borderColor: corBorda, borderWidth: 0.9 });
+            drawKv('ESTABELECIMENTO GERADOR', nomeEmp, 42, y - 16, 345);
+            drawKv('CPF / CNPJ', d.cnpj || '-', 400, y - 16, 150);
+            drawKv('ENDEREÇO', `${(d.endereco || 'Conforme Cadastro').toUpperCase()} — ${d.cidade.toUpperCase()}`, 42, y - 45, 345);
+            drawKv('RAMO / ATIVIDADE', (d.ramo || 'Saúde / Comércio').toUpperCase(), 400, y - 45, 150);
+            drawKv('RESPONSÁVEL TÉCNICO / LEGAL', (d.responsavel || nomeEmp).toUpperCase(), 42, y - 73, 500);
+            y -= (bH + 14);
+
+            drawTextFitPDF(page, '1. CLASSIFICAÇÃO, ACONDICIONAMENTO E DESTINAÇÃO DOS RESÍDUOS', 32, y, fontBold, 8.4, width - 64, corP);
+            y -= 10;
+            const tblH = 140;
+            page.drawRectangle({ x: 32, y: y - tblH, width: width - 64, height: tblH, borderColor: corP, borderWidth: 1 });
+            page.drawRectangle({ x: 32, y: y - 22, width: width - 64, height: 22, color: corPBg });
+            drawTextFitPDF(page, 'GRUPO', 38, y - 15, fontBold, 7.4, 55, corP);
+            drawTextFitPDF(page, 'TIPO DE RESÍDUO', 100, y - 15, fontBold, 7.4, 150, corP);
+            drawTextFitPDF(page, 'ACONDICIONAMENTO', 260, y - 15, fontBold, 7.4, 150, corP);
+            drawTextFitPDF(page, 'COLETA / DESTINO', 418, y - 15, fontBold, 7.4, 140, corP);
+            [94, 254, 412].forEach(cx => page.drawLine({ start: { x: cx, y: y - tblH }, end: { x: cx, y }, thickness: 0.65, color: corBorda }));
+
+            const grupos = [
+                ['Grupo A', 'Biológico / Infectante (gaze, luva)', 'Saco branco leitoso c/ símbolo', 'Coleta licenciada / Autoclave', rgb(0.75, 0.12, 0.12)],
+                ['Grupo B', 'Químico / Medicamentos vencidos', 'Recipiente rígido identificado', 'Incineração licenciada', rgb(0.74, 0.42, 0.04)],
+                ['Grupo D', 'Resíduo Comum / Reciclável', 'Saco preto / Coleta seletiva', 'Coleta pública municipal', rgb(0.05, 0.46, 0.32)],
+                ['Grupo E', 'Perfurocortantes (agulha/lâmina)', 'Caixa rígida (Descarpack 2/3)', 'Coleta especializada RSS', rgb(0.36, 0.14, 0.58)]
+            ];
+            let gy = y - 38;
+            grupos.forEach((g, idx) => {
+                if (idx > 0) page.drawLine({ start: { x: 32, y: gy + 12 }, end: { x: width - 32, y: gy + 12 }, thickness: 0.55, color: corBorda });
+                page.drawRectangle({ x: 32, y: gy - 8, width: 4, height: 20, color: g[4] });
+                drawTextFitPDF(page, g[0], 40, gy, fontBold, 7.8, 50, g[4]);
+                drawTextFitPDF(page, g[1], 100, gy, fontReg, 7.6, 148, corEscuro);
+                drawTextFitPDF(page, g[2], 260, gy, fontReg, 7.6, 148, corEscuro);
+                drawTextFitPDF(page, g[3], 418, gy, fontReg, 7.6, 138, corEscuro);
+                gy -= 29;
+            });
+            y -= (tblH + 16);
+
+            drawTextFitPDF(page, '2. PROCEDIMENTOS E DISPOSIÇÕES DO PLANO', 32, y, fontBold, 8.4, width - 64, corP);
+            y -= 15;
+            quebrarLinhasPDF(d.corpo || m.corpo, fontReg, 9.2, width - 72).slice(0, 18).forEach(ln => {
+                if (y < 140) return;
+                if (ln) page.drawText(ln, { x: 34, y, size: 9.2, font: fontReg, color: corEscuro });
+                y -= 13.5;
+            });
+
+            drawFooterDualSig(corP, 'RESPONSÁVEL TÉCNICO (PGRSS)', 'RESPONSÁVEL LEGAL DO ESTABELECIMENTO');
+            return await pdfDoc.save();
+        }
+
+        // =====================================================================
+        // LAYOUT 4: PLANILHAS ZEBRADAS & DEMAIS DOCUMENTOS (CORP / PREF / TECH)
+        // =====================================================================
         const styles = {
-            corp:     { cor: rgb(0.07, 0.25, 0.54), bg: rgb(0.95, 0.975, 1),   hdr: 'DOCUMENTAÇÃO EMPRESARIAL & REGULARIZAÇÃO CADASTRAL' },
-            pref:     { cor: rgb(0.05, 0.42, 0.28), bg: rgb(0.94, 0.99, 0.96), hdr: 'LICENCIAMENTO MUNICIPAL • PREFEITURA & POSTURAS' },
-            fire:     { cor: rgb(0.76, 0.12, 0.12), bg: rgb(1, 0.95, 0.95),    hdr: 'SEGURANÇA CONTRA INCÊNDIO • AVCB / CLCB (BOMBEIROS)' },
-            tech:     { cor: rgb(0.10, 0.30, 0.58), bg: rgb(0.94, 0.97, 1),    hdr: 'RESPONSABILIDADE TÉCNICA (RT) • HABILITAÇÃO PROFISSIONAL' },
-            pgrss:    { cor: rgb(0.40, 0.16, 0.62), bg: rgb(0.97, 0.95, 1),    hdr: 'GERENCIAMENTO DE RESÍDUOS • PGRSS / PGRS (RDC 222/2018)' },
-            pop:      { cor: rgb(0.04, 0.45, 0.36), bg: rgb(0.93, 0.99, 0.97), hdr: 'PROCEDIMENTO OPERACIONAL PADRONIZADO (POP) • BOAS PRÁTICAS' },
-            planilha: { cor: rgb(0.12, 0.34, 0.52), bg: rgb(0.94, 0.98, 0.99), hdr: 'PLANILHA DE CONTROLE OPERACIONAL & REGISTRO PERIÓDICO' }
+            corp:     { cor: rgb(0.07, 0.25, 0.54), bg: rgb(0.95, 0.975, 1),   sigla: 'CNPJ', hdr: 'DOCUMENTAÇÃO EMPRESARIAL & REGULARIZAÇÃO CADASTRAL' },
+            pref:     { cor: rgb(0.05, 0.42, 0.28), bg: rgb(0.94, 0.99, 0.96), sigla: 'PREF', hdr: 'LICENCIAMENTO MUNICIPAL • PREFEITURA & POSTURAS' },
+            tech:     { cor: rgb(0.10, 0.30, 0.58), bg: rgb(0.94, 0.97, 1),    sigla: 'RT',   hdr: 'RESPONSABILIDADE TÉCNICA (RT) • HABILITAÇÃO PROFISSIONAL' },
+            planilha: { cor: rgb(0.06, 0.34, 0.54), bg: rgb(0.94, 0.98, 0.99), sigla: 'CTRL', hdr: 'PLANILHA DE CONTROLE OPERACIONAL & REGISTRO PERIÓDICO' }
         };
         const st = styles[m.style] || styles.corp;
-        const hojeStr = formatarDataBR(new Date());
 
-        // Moldura e Cabeçalho
-        page.drawRectangle({ x: 22, y: 22, width: width - 44, height: height - 44, borderColor: st.cor, borderWidth: 1.6 });
+        desenharMolduraOficialPDF(page, width, height, st.cor, corBorda);
+        if (m.style !== 'planilha') {
+            desenharSeloMarcaAguaFundoPDF(page, width / 2, height * 0.42, 112, st.cor, fontBold, 'DOCUMENTO OFICIAL', st.sigla, 'REGULARIZACAO 2026');
+        }
+
         page.drawRectangle({ x: 22, y: height - 96, width: width - 44, height: 74, color: st.bg });
         page.drawRectangle({ x: 22, y: height - 100, width: width - 44, height: 4, color: st.cor });
+        desenharBrasaoVetorialPDF(page, 56, height - 60, 22, st.cor, fontBold, 'SP', st.sigla);
 
-        drawTextFitPDF(page, st.hdr, 38, height - 44, fontBold, 9.5, width - 76, st.cor);
-        drawTextFitPDF(page, (d.tituloDoc || m.titulo).toUpperCase(), 38, height - 64, fontBold, 13.5, width - 76, corEscuro);
-        drawTextFitPDF(page, `Código: ${d.protocolo}   •   Emissão: ${hojeStr}   •   Validade/Revisão: ${d.validade}`, 38, height - 82, fontMono, 8.0, width - 76, corCinza);
+        drawTextFitPDF(page, st.hdr, 88, height - 42, fontBold, 8.8, width - 122, st.cor);
+        drawTextFitPDF(page, tituloFinal, 88, height - 63, fontBold, 13.5, width - 122, corEscuro);
+        drawTextFitPDF(page, `Código: ${d.protocolo}   •   Emissão: ${hojeStr}   •   Validade/Revisão: ${d.validade}`, 88, height - 81, fontMono, 7.8, width - 122, corCinza);
 
-        // Quadro Dados da Empresa
         let y = height - 114;
-        const drawKv = (lbl, val, x, yPos, maxW) => {
-            page.drawText(sanitizarTextoPDF(lbl), { x, y: yPos, size: 6.8, font: fontBold, color: corCinza });
-            drawTextFitPDF(page, val || 'Não informado', x, yPos - 11.5, fontBold, 8.8, maxW, corEscuro, 6.4);
-        };
+        const bH = 96;
+        page.drawRectangle({ x: 32, y: y - bH, width: width - 64, height: bH, color: corFundoClaro, borderColor: corBorda, borderWidth: 0.9 });
+        drawTextFitPDF(page, 'IDENTIFICAÇÃO DO ESTABELECIMENTO / EMPRESA', 42, y - 13, fontBold, 7.5, width - 84, st.cor);
+        drawKv('RAZÃO SOCIAL / NOME', nomeEmp, 42, y - 28, 345);
+        drawKv('CPF / CNPJ', d.cnpj || 'Não informado', 400, y - 28, 150);
+        drawKv('ENDEREÇO COMPLETO', (d.endereco || 'Conforme Cadastro').toUpperCase(), 42, y - 56, 345);
+        drawKv('MUNICÍPIO / UF', d.cidade.toUpperCase(), 400, y - 56, 150);
+        drawKv('RAMO / CNAE', (d.ramo || 'Geral').toUpperCase(), 42, y - 83, 240);
+        drawKv('RESPONSÁVEL LEGAL / TÉCNICO', (d.responsavel || 'Conforme Contrato Social / RT').toUpperCase(), 292, y - 83, 255);
+        y -= (bH + 14);
 
-        const bH = 102;
-        page.drawRectangle({ x: 36, y: y - bH, width: width - 72, height: bH, color: rgb(0.985, 0.99, 1), borderColor: corBorda, borderWidth: 1 });
-        drawTextFitPDF(page, 'IDENTIFICAÇÃO DO ESTABELECIMENTO / EMPRESA', 46, y - 13, fontBold, 7.6, width - 92, st.cor);
-        drawKv('RAZÃO SOCIAL / NOME', (d.nome || 'NÃO INFORMADO').toUpperCase(), 46, y - 29, 345);
-        drawKv('CPF / CNPJ', d.cnpj || 'Não informado', 404, y - 29, 145);
-        drawKv('ENDEREÇO COMPLETO', (d.endereco || 'Conforme Cadastro').toUpperCase(), 46, y - 59, 345);
-        drawKv('MUNICÍPIO / UF', d.cidade.toUpperCase(), 404, y - 59, 145);
-        drawKv('RAMO / CNAE', (d.ramo || 'Geral').toUpperCase(), 46, y - 87, 240);
-        drawKv('RESPONSÁVEL LEGAL / TÉCNICO', (d.responsavel || 'Conforme Contrato Social / RT').toUpperCase(), 296, y - 87, 250);
-        y -= (bH + 16);
+        if (m.style === 'planilha') {
+            drawTextFitPDF(page, 'INSTRUÇÕES DE PREENCHIMENTO:', 32, y, fontBold, 8.0, 200, st.cor);
+            const pLines = quebrarLinhasPDF(d.corpo || m.corpo, fontReg, 8.5, width - 72);
+            y -= 13;
+            pLines.slice(0, 3).forEach(ln => { page.drawText(ln, { x: 32, y, size: 8.5, font: fontReg, color: corEscuro }); y -= 12; });
+            y -= 8;
 
-        // Corpo do Documento
-        drawTextFitPDF(page, m.style === 'planilha' ? 'INSTRUÇÕES E REGISTRO DE CONTROLE' : 'DISPOSIÇÕES TÉCNICAS / CONTEÚDO DO DOCUMENTO', 38, y, fontBold, 8.8, width - 76, st.cor);
-        y -= 16;
-
-        const lines = quebrarLinhasPDF(d.corpo || m.corpo, fontReg, 9.6, width - 80);
-        const maxLines = m.style === 'planilha' ? 5 : 26;
-        lines.slice(0, maxLines).forEach(ln => {
-            if (y < 160) return;
-            if (ln) page.drawText(ln, { x: 38, y, size: 9.6, font: fontReg, color: corEscuro });
-            y -= 14;
-        });
-
-        // Se for planilha/checklist, desenha tabela limpa para preenchimento
-        if (m.style === 'planilha' && y > 220) {
-            y -= 10;
-            const tblH = Math.min(280, y - 155);
-            page.drawRectangle({ x: 36, y: y - tblH, width: width - 72, height: tblH, borderColor: st.cor, borderWidth: 1 });
-            page.drawRectangle({ x: 36, y: y - 22, width: width - 72, height: 22, color: st.cor });
-            drawTextFitPDF(page, 'DATA', 44, y - 15, fontBold, 7.6, 70, rgb(1, 1, 1));
-            drawTextFitPDF(page, 'ITEM / SETOR / EQUIPAMENTO', 120, y - 15, fontBold, 7.6, 175, rgb(1, 1, 1));
-            drawTextFitPDF(page, 'CONFORMIDADE / MEDIÇÃO', 305, y - 15, fontBold, 7.6, 130, rgb(1, 1, 1));
-            drawTextFitPDF(page, 'RESPONSÁVEL / VISTO', 445, y - 15, fontBold, 7.6, 110, rgb(1, 1, 1));
-            [112, 298, 438].forEach(cx => page.drawLine({ start: { x: cx, y: y - tblH }, end: { x: cx, y }, thickness: 0.65, color: corBorda }));
-            const rows = Math.floor((tblH - 22) / 26);
-            for (let r = 1; r < rows; r++) {
-                const ry = y - 22 - r * 26;
-                page.drawLine({ start: { x: 36, y: ry }, end: { x: width - 36, y: ry }, thickness: 0.55, color: corBorda });
+            const tblH = Math.max(320, y - 135);
+            const rowH = 24;
+            const rows = Math.floor((tblH - 22) / rowH);
+            const realTblH = 22 + rows * rowH;
+            page.drawRectangle({ x: 32, y: y - realTblH, width: width - 64, height: realTblH, borderColor: st.cor, borderWidth: 1.1 });
+            page.drawRectangle({ x: 32, y: y - 22, width: width - 64, height: 22, color: st.cor });
+            drawTextFitPDF(page, 'DATA / HORA', 38, y - 15, fontBold, 7.4, 72, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'ITEM / SETOR / EQUIPAMENTO', 118, y - 15, fontBold, 7.4, 175, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'MEDIÇÃO / CONFORMIDADE', 302, y - 15, fontBold, 7.4, 130, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'RESPONSÁVEL / VISTO', 442, y - 15, fontBold, 7.4, 115, rgb(1, 1, 1));
+            for (let r = 0; r < rows; r++) {
+                const ryTop = y - 22 - r * rowH;
+                if (r % 2 === 1) {
+                    page.drawRectangle({ x: 32.5, y: ryTop - rowH, width: width - 65, height: rowH, color: rgb(0.965, 0.975, 0.99) });
+                }
+                if (r > 0) page.drawLine({ start: { x: 32, y: ryTop }, end: { x: width - 32, y: ryTop }, thickness: 0.5, color: corBorda });
             }
-        }
-
-        // Local, Data e Assinatura
-        drawTextFitPDF(page, `${d.cidade}, ${hojeStr}.`, 38, 128, fontBold, 9.2, 300, corEscuro);
-
-        if (d.usarAssinatura) {
-            const sigImg = await carregarAssinaturaDiretoriaPDF(pdfDoc);
-            desenharBlocoAssinaturaFixa(page, sigImg, { usarAssinaturaFixa: true, fiscal: 'Giliard De Oliveira Santiago', cargo: 'Assessor Técnico' }, fontBold, fontReg, corEscuro, corCinza, width / 2, 46, 220, 72);
+            [112, 296, 436].forEach(cx => page.drawLine({ start: { x: cx, y: y - realTblH }, end: { x: cx, y }, thickness: 0.65, color: corBorda }));
         } else {
-            page.drawLine({ start: { x: 160, y: 74 }, end: { x: width - 160, y: 74 }, thickness: 0.9, color: corEscuro });
-            drawTextFitPDF(page, (d.responsavel || d.nome || 'RESPONSÁVEL LEGAL / TÉCNICO').toUpperCase(), 165, 60, fontBold, 8.5, width - 330, corEscuro);
-            drawTextFitPDF(page, 'Assinatura e Carimbo do Responsável', 228, 48, fontReg, 7.6, 200, corCinza);
+            const boxCorpoH = 385;
+            page.drawRectangle({ x: 32, y: y - boxCorpoH, width: width - 64, height: boxCorpoH, borderColor: corBorda, borderWidth: 0.9 });
+            page.drawRectangle({ x: 32, y: y - 20, width: width - 64, height: 20, color: st.bg });
+            drawTextFitPDF(page, 'DISPOSIÇÕES FORMAIS E CONTEÚDO DO DOCUMENTO', 42, y - 13.5, fontBold, 8.0, width - 84, st.cor);
+
+            let cy = y - 36;
+            quebrarLinhasPDF(d.corpo || m.corpo, fontReg, 9.6, width - 84).slice(0, 23).forEach(ln => {
+                if (cy < y - boxCorpoH + 14) return;
+                if (ln) page.drawText(ln, { x: 42, y: cy, size: 9.6, font: fontReg, color: corEscuro });
+                cy -= 14.5;
+            });
         }
 
-        drawTextFitPDF(page, `Documento gerado em ${d.cidade}, ${hojeStr} • Protocolo ${d.protocolo}`, 38, 30, fontReg, 7.2, width - 76, corCinza);
+        drawFooterDualSig(st.cor, 'RESPONSÁVEL LEGAL / DECLARANTE', 'CONFERÊNCIA / RESPONSÁVEL TÉCNICO');
         return await pdfDoc.save();
     }
 
