@@ -4106,6 +4106,72 @@
 
     const CLOUDFLARE_WORKER_URL = "https://covisa.jeffinho1995sp.workers.dev";
 
+    const COVISA_AUDITOR_ADMIN_URL = "https://covisa-auditor-admin.alberto1010sp.workers.dev";
+
+    async function consultarCloudflareAuditorAdmin({ prompt, code = "", focus = "Auditoria do admin.html" }) {
+      const resp = await fetch(COVISA_AUDITOR_ADMIN_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt, code: String(code || "").slice(0, 14000), focus })
+      });
+      const data = await resp.json();
+      if (!resp.ok || !data.success) {
+        throw new Error(data.error || "Falha no covisa-auditor-admin");
+      }
+      return String(data.analysis || "").trim();
+    }
+
+    async function consultarGeminiAdmin({ prompt, code = "", focus = "Auditoria do admin.html" }) {
+      if (!GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY não disponível");
+      }
+      const textoPrompt = [
+        "Você é revisor técnico e auditor do painel admin.html da COVISA / Vigilância Sanitária.",
+        `Foco: ${focus}`,
+        prompt ? `Solicitação:\n${prompt}` : "",
+        code ? `Código/trecho:\n${String(code).slice(0, 14000)}` : ""
+      ].filter(Boolean).join("\n\n");
+
+      const resp = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: textoPrompt }] }]
+          })
+        }
+      );
+      const data = await resp.json();
+      const texto = data?.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("").trim();
+      if (!resp.ok || !texto) {
+        throw new Error(data?.error?.message || "Falha na resposta da Gemini");
+      }
+      return texto;
+    }
+
+    window.analisarAdminEmDupla = async ({ prompt, code = "", focus = "Auditoria do admin.html" }) => {
+      const [cfRes, gmRes] = await Promise.allSettled([
+        consultarCloudflareAuditorAdmin({ prompt, code, focus }),
+        consultarGeminiAdmin({ prompt, code, focus })
+      ]);
+
+      const cloudflare = cfRes.status === "fulfilled" ? cfRes.value : "";
+      const gemini = gmRes.status === "fulfilled" ? gmRes.value : "";
+      const erros = [];
+      if (cfRes.status === "rejected") erros.push(`Cloudflare Auditor: ${cfRes.reason?.message || "erro"}`);
+      if (gmRes.status === "rejected") erros.push(`Gemini: ${gmRes.reason?.message || "erro"}`);
+
+      const combinado = [
+        cloudflare ? `### 1. COVISA Auditor (Cloudflare Workers AI)\n${cloudflare}` : "",
+        gemini ? `### 2. Gemini 2.5 Flash\n${gemini}` : "",
+        erros.length ? `### Avisos\n- ${erros.join("\n- ")}` : ""
+      ].filter(Boolean).join("\n\n");
+
+      return { cloudflare, gemini, combinado, erros };
+    };
+
+
 
     let idProcessoAtual = null;
     let dadosProcessoAtual = null; 
