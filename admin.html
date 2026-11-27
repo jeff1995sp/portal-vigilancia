@@ -1742,10 +1742,11 @@
               <h3 style="color:#ffffff; font-size:1.18rem; margin:0;"><i class="fas fa-radar" style="color:#ef4444;"></i> Radar OSINT 360° PRO — Busca por Rua, Bairro, Cidade ou CEP (SP Todo)</h3>
               <span class="fn-help-pill"><i class="fas fa-infinity"></i> Varredura contínua • Histórico salvo • 🔴 Grave / 🟡 Atenção / 🟢 De Boa</span>
             </div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <button type="button" class="target-act-btn" id="btn-radar-sound" onclick="alternarSomRadar()" title="Tocar bip discreto quando achar caso VERMELHO"><i class="fas fa-volume-up" style="color:#10b981;"></i> Alerta Som: ON</button>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              <button type="button" class="target-act-btn" id="btn-start-radar-top" style="background:rgba(239,68,68,0.16); border-color:#ef4444; color:#fca5a5; padding:6px 13px;" onclick="toggleRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura</button>
+              <button type="button" class="target-act-btn" id="btn-radar-sound" onclick="alternarSomRadar()" title="Tocar bip discreto quando achar caso VERMELHO"><i class="fas fa-volume-up" style="color:#10b981;"></i> Som: ON</button>
               <button type="button" class="target-act-btn act-wa" onclick="exportarHistoricoRadarCSV()" title="Baixar todos os alvos do histórico em planilha CSV/Excel"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-              <button type="button" class="target-act-btn act-pdf" onclick="limparTodoHistoricoRadar()" title="Apagar todo o histórico do Radar"><i class="fas fa-trash-alt"></i> Limpar Histórico</button>
+              <button type="button" class="target-act-btn act-pdf" onclick="limparTodoHistoricoRadar()" title="Apagar todos os alvos do histórico do Radar"><i class="fas fa-trash-alt"></i> Limpar Todos</button>
             </div>
           </div>
 
@@ -1791,7 +1792,7 @@
                         <h4 style="margin:0;"><i class="fas fa-crosshairs"></i> 3. Ramos / Alvos (14)</h4>
                         <div style="display:flex; gap:5px;">
                             <button type="button" class="target-act-btn" style="padding:3px 8px; font-size:0.7rem;" onclick="selecionarTodosRamosRadar()"><i class="fas fa-check-double"></i> Tudo</button>
-                            <button type="button" class="target-act-btn" style="padding:3px 8px; font-size:0.7rem; color:#94a3b8;" onclick="limparRamosRadar()" title="Desmarcar todos"><i class="fas fa-times"></i></button>
+                            <button type="button" class="target-act-btn" style="padding:3px 8px; font-size:0.7rem; color:#fca5a5; border-color:rgba(239,68,68,0.4);" onclick="limparRamosRadar()" title="Desmarcar todos os ramos"><i class="fas fa-times"></i> Limpar</button>
                         </div>
                     </div>
                     <div class="threat-grid-pro">
@@ -1799,7 +1800,7 @@
                         <button type="button" class="threat-btn" data-cat="medicos" data-query="Médicos, clínicas médicas, consultórios, dentistas, laboratórios, clínicas populares e hospitais" onclick="toggleThreat(this)"><i class="fas fa-user-md"></i> Médicos / Clínicas</button>
                         <button type="button" class="threat-btn" data-cat="idosos" data-query="Casas de idosos, casas de repouso, asilos, lares geriátricos (ILPI) e clínicas de reabilitação" onclick="toggleThreat(this)"><i class="fas fa-wheelchair"></i> Casa de Idosos</button>
                         <button type="button" class="threat-btn" data-cat="farmacia" data-query="Farmácias, drogarias, farmácias de manipulação e distribuidoras de medicamentos" onclick="toggleThreat(this)"><i class="fas fa-pills"></i> Farmácias / Meds</button>
-                        <button type="button" class="threat-btn" data-cat="nails" data-query="Nails designer, estúdios de unhas, alongamento de unhas, cílios, lash designer, sobrancelhas, salões de beleza e barbearias" onclick="toggleThreat(this)"><i class="fas fa-spa"></i> Nails / Cílios / Salão</button>
+                        <button type="button" class="threat-btn" data-cat="nails" data-query="Nails designer, estúdios de unhas, manicure, alongamento de unhas, cílios, lash designer, sobrancelhas, bronzeamento artificial/natural, espaços de bronze, salões de beleza, cabeleireiros e barbearias" onclick="toggleThreat(this)"><i class="fas fa-spa"></i> Nails / Cílios / Bronze</button>
                         <button type="button" class="threat-btn" data-cat="botox" data-query="Clínicas de estética, botox, harmonização facial, preenchimento, biomedicina estética, depilação a laser e procedimentos invasivos" onclick="toggleThreat(this)"><i class="fas fa-syringe"></i> Estética / Botox</button>
                         <button type="button" class="threat-btn" data-cat="academia" data-query="Academias de ginástica, crossfit, pilates, estúdios fitness, lutas, natação e lojas de suplementos" onclick="toggleThreat(this)"><i class="fas fa-dumbbell"></i> Academias / Fitness</button>
                         <button type="button" class="threat-btn" data-cat="adega" data-query="Adegas, distribuidoras de bebidas, bares, tabacarias, empórios e conveniências" onclick="toggleThreat(this)"><i class="fas fa-wine-bottle"></i> Adegas / Bares</button>
@@ -1862,6 +1863,7 @@
                     <button type="button" class="radar-flt-btn flt-green" id="radar-flt-VERDE" onclick="definirFiltroRadar('VERDE')">🟢 De Boa</button>
                     <button type="button" class="radar-flt-btn" id="radar-flt-SALVOS" onclick="definirFiltroRadar('SALVOS')">🗄️ Salvos</button>
                     <input type="text" class="radar-hist-search" id="radar-hist-search" placeholder="Filtrar no histórico (nome, rua, bairro, CNPJ)..." oninput="renderizarHistoricoRadar()">
+                    <button type="button" class="radar-flt-btn" style="border-color:rgba(239,68,68,0.45); color:#fca5a5;" onclick="limparTodoHistoricoRadar()" title="Apagar todos os alvos do histórico"><i class="fas fa-trash-alt"></i> Limpar Todos</button>
                 </div>
 
                 <!-- STATUS LIVE DA VARREDURA -->
@@ -4382,6 +4384,7 @@
         if (['vazio', 'empty', 'null', 'none', 'n/a', 'na', 'não informado', 'nao informado', 'não encontrado', 'nao encontrado', '-', '--', 'sem nota', 'desconhecido'].includes(low)) {
             return '';
         }
+        if (/xxx+|0000-0000|99999-9999/i.test(s)) return '';
         return s;
     }
 
@@ -4824,11 +4827,24 @@
         const telLimpo = limparValorVazioIA(alvo.telefone);
         const notaLimpa = limparValorVazioIA(alvo.nota_google);
         const catLimpa = limparValorVazioIA(alvo.categoria);
+        const donoLimpo = limparValorVazioIA(alvo.dono_responsavel);
+        const instaLimpo = limparValorVazioIA(alvo.instagram);
+        const emailLimpo = limparValorVazioIA(alvo.email);
+        const horarioLimpo = limparValorVazioIA(alvo.horario);
+        const ticketLimpo = limparValorVazioIA(alvo.ticket_estimado);
+        const multaLimpa = limparValorVazioIA(alvo.multa_ufesp);
         const scoreLimpo = alvo.score_oportunidade ? `${alvo.score_oportunidade}/100` : '';
 
         const telChip = telLimpo ? `<span class="target-meta-chip"><i class="fas fa-phone" style="color:#10b981;"></i> ${escaparHtmlWA(telLimpo)}</span>` : '';
+        const donoChip = donoLimpo ? `<span class="target-meta-chip" style="border-color:rgba(56,189,248,0.45); color:#bae6fd;"><i class="fas fa-user-tie" style="color:#38bdf8;"></i> ${escaparHtmlWA(donoLimpo)}</span>` : '';
+        const instaHandle = instaLimpo ? instaLimpo.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, '').replace(/^@/, '') : '';
+        const instaChip = instaHandle ? `<a class="target-meta-chip" href="https://instagram.com/${encodeURIComponent(instaHandle)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none; border-color:rgba(236,72,153,0.5); color:#fbcfe8;"><i class="fab fa-instagram" style="color:#f472b6;"></i> @${escaparHtmlWA(instaHandle)}</a>` : '';
+        const emailChip = emailLimpo ? `<span class="target-meta-chip"><i class="fas fa-envelope" style="color:#93c5fd;"></i> ${escaparHtmlWA(emailLimpo)}</span>` : '';
+        const horarioChip = horarioLimpo ? `<span class="target-meta-chip"><i class="fas fa-door-open" style="color:#cbd5e1;"></i> ${escaparHtmlWA(horarioLimpo)}</span>` : '';
         const notaChip = notaLimpa ? `<span class="target-meta-chip"><i class="fas fa-star" style="color:#fbbf24;"></i> ${escaparHtmlWA(notaLimpa)}</span>` : '';
         const catChip = catLimpa ? `<span class="target-meta-chip"><i class="fas fa-tag" style="color:#38bdf8;"></i> ${escaparHtmlWA(catLimpa)}</span>` : '';
+        const ticketChip = ticketLimpo ? `<span class="target-meta-chip cnpj-ok"><i class="fas fa-coins"></i> ${escaparHtmlWA(ticketLimpo)}</span>` : '';
+        const multaChip = multaLimpa ? `<span class="target-meta-chip" style="border-color:rgba(239,68,68,0.5); color:#fecaca; background:rgba(239,68,68,0.12);"><i class="fas fa-gavel"></i> Risco: ${escaparHtmlWA(multaLimpa)}</span>` : '';
         const scoreChip = scoreLimpo ? `<span class="target-meta-chip chip-score"><i class="fas fa-bolt" style="color:#facc15;"></i> Score: ${escaparHtmlWA(scoreLimpo)}</span>` : '';
         const horaChip = alvo.captado_em ? `<span class="target-meta-chip" style="color:#94a3b8;"><i class="fas fa-clock"></i> ${escaparHtmlWA(alvo.captado_em)}</span>` : '';
         const salvoChip = alvo.salvo_dossie ? `<span class="target-meta-chip cnpj-ok"><i class="fas fa-check-double"></i> Salvo no Dossiê</span>` : '';
@@ -4846,8 +4862,15 @@
                 </div>`;
         }
 
-        const estrategiaHtml = limparValorVazioIA(alvo.estrategia)
-            ? `<div class="target-strategy-box"><strong><i class="fas fa-chess-knight" style="color:#facc15;"></i> Oportunidade / Abordagem Premium:</strong> ${escaparHtmlWA(alvo.estrategia)}</div>`
+        const scriptZapPronto = limparValorVazioIA(alvo.script_whatsapp) || limparValorVazioIA(alvo.estrategia);
+        const estrategiaHtml = scriptZapPronto
+            ? `<div class="target-strategy-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:5px; flex-wrap:wrap;">
+                    <strong><i class="fas fa-chess-knight" style="color:#facc15;"></i> Abordagem Premium Pronta (WhatsApp / Venda):</strong>
+                    <button type="button" class="target-act-btn act-wa" style="padding:3px 9px; font-size:0.7rem;" onclick="copiarScriptAbordagemRadar('${id}')"><i class="fas fa-copy"></i> Copiar Script</button>
+                </div>
+                <div style="color:#f8fafc; font-style:italic;">"${escaparHtmlWA(scriptZapPronto)}"</div>
+               </div>`
             : '';
 
         const labelRelato = nivel === 'VERDE' ? 'SITUAÇÃO / PERFIL DO LOCAL' : 'FATOS / RECLAMAÇÃO REAL';
@@ -4859,7 +4882,7 @@
                 <span style="background:${color}; color:${nivel === 'AMARELO' ? '#000' : '#fff'}; padding:3px 9px; border-radius:5px; font-size:0.7rem; margin-left:auto; font-weight:900;">${badgeLabel}</span>
             </h4>
             <span class="loc"><i class="fas fa-map-marker-alt" style="color:var(--primary);"></i> ${escaparHtmlWA(alvo.endereco || alvo.cidade || '')}</span>
-            <div class="target-meta-grid">${cnpjChip}${telChip}${notaChip}${catChip}${scoreChip}${horaChip}${salvoChip}</div>
+            <div class="target-meta-grid">${cnpjChip}${telChip}${donoChip}${instaChip}${emailChip}${horarioChip}${notaChip}${catChip}${ticketChip}${multaChip}${scoreChip}${horaChip}${salvoChip}</div>
             <div class="reason" style="color: ${txtCor};">
                 <strong>${labelRelato} (${escaparHtmlWA(alvo.fonte || 'Web')}):</strong> ${escaparHtmlWA(alvo.perigo || '')}
                 ${limparValorVazioIA(alvo.infracao_possivel) ? `<div style="margin-top:6px; font-size:0.8rem; color:#93c5fd;"><strong><i class="fas fa-gavel"></i> Base / Documentos Exigidos:</strong> ${escaparHtmlWA(alvo.infracao_possivel)}</div>` : ''}
@@ -4968,6 +4991,13 @@
             perigo: limparValorVazioIA(rawAlvo.perigo) || (nivel === 'VERDE' ? 'Estabelecimento sem reclamações graves recentes — oportunidade de regularização preventiva.' : 'Reclamação pública identificada.'),
             infracao_possivel: limparValorVazioIA(rawAlvo.infracao_possivel),
             estrategia: limparValorVazioIA(rawAlvo.estrategia),
+            script_whatsapp: limparValorVazioIA(rawAlvo.script_whatsapp),
+            dono_responsavel: limparValorVazioIA(rawAlvo.dono_responsavel),
+            instagram: limparValorVazioIA(rawAlvo.instagram),
+            email: limparValorVazioIA(rawAlvo.email),
+            horario: limparValorVazioIA(rawAlvo.horario),
+            ticket_estimado: limparValorVazioIA(rawAlvo.ticket_estimado),
+            multa_ufesp: limparValorVazioIA(rawAlvo.multa_ufesp),
             score_oportunidade: rawAlvo.score_oportunidade ? Number(rawAlvo.score_oportunidade) : null,
             ramo: rawAlvo.ramo || '',
             provas: Array.isArray(rawAlvo.provas) ? rawAlvo.provas : [],
@@ -5175,32 +5205,91 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
         }
     };
 
+    window.copiarScriptAbordagemRadar = async (id) => {
+        const alvo = radarAlvosEncontrados.find(a => a._id === id);
+        if (!alvo) return;
+        const txt = limparValorVazioIA(alvo.script_whatsapp) || limparValorVazioIA(alvo.estrategia) || '';
+        if (!txt) return;
+        try {
+            await navigator.clipboard.writeText(txt);
+            showToast('Script Copiado!', 'Abordagem pronta copiada — é só colar no WhatsApp.', 'success');
+        } catch (_) {
+            showToast('Copie manualmente', txt, 'warning');
+        }
+    };
+
     window.abordarAlvoRadarZap = (id) => {
         const alvo = radarAlvosEncontrados.find(a => a._id === id);
         if (!alvo) return;
         const fone = normalizarNumeroInput(alvo.telefone || '');
         const nv = normalizarNivelRadar(alvo.nivel);
-        const msg = nv === 'VERDE'
+        const scriptPronto = limparValorVazioIA(alvo.script_whatsapp);
+        const msg = scriptPronto || (nv === 'VERDE'
             ? `Olá, tudo bem? Falo da consultoria de regularização sanitária.\n\nVi que *${alvo.nome}* tem um ótimo trabalho na região e entrei em contato para oferecer nosso suporte na emissão/renovação do Alvará Sanitário (COVISA/ANVISA) e documentação preventiva para manter tudo 100% em dia.\n\nPodemos conversar rapidamente?`
-            : `Olá, tudo bem? Falo da consultoria de regularização sanitária.\n\nNotamos apontamentos públicos recentes relacionados a *${alvo.nome}* e queremos ajudar vocês a blindar o estabelecimento com toda a documentação sanitária em dia (Alvará/Licença COVISA) para evitar autuações e multas.\n\nPodemos conversar rapidamente?`;
+            : `Olá, tudo bem? Falo da consultoria de regularização sanitária.\n\nNotamos apontamentos públicos recentes relacionados a *${alvo.nome}* e queremos ajudar vocês a blindar o estabelecimento com toda a documentação sanitária em dia (Alvará/Licença COVISA) para evitar autuações e multas.\n\nPodemos conversar rapidamente?`);
         const url = fone.length >= 12
             ? `https://api.whatsapp.com/send?phone=${fone}&text=${encodeURIComponent(msg)}`
             : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
         window.open(url, '_blank');
     };
 
+    function detectarModeloPdfIdealParaAlvo(alvo) {
+        const txt = [alvo.categoria, alvo.ramo, alvo.nome, alvo.receita?.cnae, alvo.infracao_possivel].join(' ').toLowerCase();
+        const nv = normalizarNivelRadar(alvo.nivel);
+
+        if (/nail|unha|manicure|pedicure|c[ií]lio|lash|sobrancelha|bronze/.test(txt)) return 'studio_nails';
+        if (/botox|harmoniza|preenchimento|biomedic|est[eé]tica avan|laser|invasiv/.test(txt)) return 'alvara_clinica_estetica';
+        if (/sal[aã]o|barbear|cabeleireir|beleza/.test(txt)) return 'salao_barbearia';
+        if (/farm[aá]cia|drogaria|manipula[cç][aã]o/.test(txt)) return 'alvara_farmacia';
+        if (/academia|crossfit|pilates|fitness|muscula/.test(txt)) return 'academia_fitness';
+        if (/pet|veterin|banho e tosa/.test(txt)) return 'pet_shop';
+        if (/adega|tabacaria|bebida|bar\b|cervej/.test(txt)) return 'adega_tabacaria';
+        if (/mercado|supermercado|a[cç]ougue|padaria|hortifruti|peixaria/.test(txt)) return 'mercado_padaria';
+        if (/lanchonete|restaurante|pizzaria|hamburguer|fast.?food|marmit|pastel|aliment/.test(txt)) return 'fast_food';
+        if (/idoso|repouso|asilo|ilpi|cl[ií]nica|m[eé]dic|odont|dentist|hospital|laborat/.test(txt)) return 'alvara_oficial';
+        if (nv === 'VERMELHO') return 'notificacao';
+        return 'alvara_oficial';
+    }
+
     window.enviarAlvoRadarParaDocGen = (id) => {
         const alvo = radarAlvosEncontrados.find(a => a._id === id);
         if (!alvo) return;
         const navDoc = document.getElementById('nav-item-docgen');
         switchView('view-docgen', navDoc);
+
+        const modeloId = detectarModeloPdfIdealParaAlvo(alvo);
+        const btnModelo = document.querySelector(`.docgen-type-card[data-doctype="${modeloId}"]`);
+        if (typeof window.selecionarTipoDocumento === 'function') {
+            window.selecionarTipoDocumento(modeloId, btnModelo || null);
+            if (btnModelo) {
+                btnModelo.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
         if (document.getElementById('docgen-nome')) document.getElementById('docgen-nome').value = alvo.receita?.razao_social || alvo.nome || '';
-        if (document.getElementById('docgen-cnpj') && alvo.cnpj) document.getElementById('docgen-cnpj').value = alvo.cnpj;
+        if (document.getElementById('docgen-cnpj')) document.getElementById('docgen-cnpj').value = alvo.cnpj || '';
         if (document.getElementById('docgen-rua')) document.getElementById('docgen-rua').value = alvo.receita?.endereco_oficial || alvo.endereco || '';
+        if (document.getElementById('docgen-bairro')) document.getElementById('docgen-bairro').value = alvo.bairro || alvo.receita?.bairro || '';
         if (document.getElementById('docgen-cidade')) document.getElementById('docgen-cidade').value = `${alvo.cidade || 'São Paulo'} - SP`;
-        if (document.getElementById('docgen-ramo')) document.getElementById('docgen-ramo').value = alvo.receita?.cnae || alvo.categoria || alvo.ramo || 'Alimentos';
-        if (document.getElementById('docgen-corpo')) document.getElementById('docgen-corpo').value = `Registro via Radar OSINT 360° (${alvo.fonte || 'Web'}): ${alvo.perigo || ''}`;
-        showToast('Dados Importados', `${alvo.nome} enviado para o Gerador de Documentos.`, 'success');
+        if (document.getElementById('docgen-ramo')) document.getElementById('docgen-ramo').value = alvo.receita?.cnae || alvo.categoria || alvo.ramo || '';
+        if (document.getElementById('docgen-telefone')) document.getElementById('docgen-telefone').value = alvo.telefone || alvo.receita?.telefone_receita || '';
+        if (document.getElementById('docgen-cnae') && alvo.receita?.cnae) document.getElementById('docgen-cnae').value = alvo.receita.cnae;
+        if (document.getElementById('docgen-rt') && alvo.dono_responsavel) document.getElementById('docgen-rt').value = alvo.dono_responsavel;
+        if (document.getElementById('docgen-corpo')) {
+            document.getElementById('docgen-corpo').value = [
+                alvo.perigo ? `Situação identificada (${alvo.fonte || 'Radar'}): ${alvo.perigo}` : '',
+                alvo.infracao_possivel ? `Documentos / Base Legal: ${alvo.infracao_possivel}` : ''
+            ].filter(Boolean).join('\n');
+        }
+
+        const modInfo = window.DOCGEN_CATALOG_100_MAP?.[modeloId];
+        showToast('PDF Ideal Selecionado!', `${alvo.nome} → modelo "${modInfo?.title || modeloId}" marcado automaticamente.`, 'success');
+
+        setTimeout(() => {
+            if (typeof window.gerarDocumentoOficialPDF === 'function') {
+                window.gerarDocumentoOficialPDF(false);
+            }
+        }, 250);
     };
 
     window.salvarAlvoRadarNoFirebase = async (id) => {
@@ -5298,20 +5387,20 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
 
     const RADAR_CAMADAS_PREMIUM = [
         {
-            nome: 'Diário Oficial, COVISA, Autuações & Interdições',
-            foco: 'publicações do Diário Oficial, autos de infração da Vigilância Sanitária (COVISA/UVIS), interdições, multas do Procon, operações sanitárias e notícias locais (G1, R7, jornais regionais) citando estabelecimentos reais'
+            nome: 'Raio-X Comercial & Contatos (Instagram, WhatsApp, Dono & CNPJ)',
+            foco: 'estabelecimentos reais EXCLUSIVAMENTE dos ramos selecionados localizados nesta rua/bairro/cidade, levantando dono/responsável, Instagram, telefone/WhatsApp, e-mail, CNPJ e horário de funcionamento'
         },
         {
-            nome: 'iFood, Instagram, Facebook & Denúncias de Bairro',
-            foco: 'reclamações reais de clientes no iFood, Instagram, Facebook, TikTok e Google sobre comércios locais, estúdios de nails/cílios, clínicas de estética/botox/harmonização, academias, adegas, lanchonetes e clínicas'
+            nome: 'Avaliações Google, Reclame Aqui, Fresha, Booksy & Redes Sociais',
+            foco: 'reclamações reais e avaliações de clientes EXCLUSIVAMENTE nos ramos selecionados no Google Maps, Reclame Aqui, Instagram, Facebook, iFood ou apps de agendamento'
         },
         {
-            nome: 'Raio-X Comercial da Rua/Bairro (CNPJ + Documentação Obrigatória)',
-            foco: 'estabelecimentos reais localizados exatamente nesta rua/bairro/região (incluindo empresas novas ou pequenas) identificando CNPJ, WhatsApp/telefone, endereço completo e quais licenças sanitárias (LFS/Alvará COVISA, RT, PGRSS, Dedetização, Manual BPF, Esterilização) eles precisam regularizar'
+            nome: 'Diário Oficial, COVISA/VISA, Procon & Regularização Obrigatória',
+            foco: 'autuações, licenças, alvarás, PGRSS, esterilização, dedetização ou pendências sanitárias de estabelecimentos EXCLUSIVAMENTE nos ramos selecionados'
         },
         {
-            nome: 'Clínicas Médicas, Estética Invasiva, Casas de Idosos & Farmácias',
-            foco: 'clínicas médicas/odontológicas, casas de repouso/idosos (ILPI), estética com botox/preenchimento, farmácias e pet shops da região com apontamentos, processos, denúncias ou necessidade de regularização técnica'
+            nome: 'Novos Negócios & Prospecção de Bairro (Pequenos e Médios)',
+            foco: 'pequenos e médios estabelecimentos locais e espaços recém-abertos EXCLUSIVAMENTE nos ramos selecionados nesta região, com alto potencial de fechamento de regularização sanitária'
         }
     ];
 
@@ -5320,11 +5409,18 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
         const radarCircle = document.getElementById('radar-circle-ui');
         const radarSweep = document.getElementById('radar-sweep-ui');
 
+        const btnTop = document.getElementById('btn-start-radar-top');
         if (isRadarScanning) {
             isRadarScanning = false;
             btn.innerHTML = '<i class="fas fa-play"></i> Retomar Varredura Contínua';
             btn.style.borderColor = 'var(--success)';
             btn.style.color = 'var(--success)';
+            if (btnTop) {
+                btnTop.innerHTML = '<i class="fas fa-play"></i> Retomar';
+                btnTop.style.borderColor = '#10b981';
+                btnTop.style.color = '#6ee7b7';
+                btnTop.style.background = 'rgba(16,185,129,0.16)';
+            }
             radarSweep.style.display = 'none';
             atualizarStatusLiveRadar(false);
             showToast('Radar Pausado', 'Varredura pausada. Todo o histórico permanece salvo.', 'warning');
@@ -5359,6 +5455,12 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
         btn.innerHTML = '<i class="fas fa-pause"></i> Pausar Varredura';
         btn.style.borderColor = 'var(--warning)';
         btn.style.color = 'var(--warning)';
+        if (btnTop) {
+            btnTop.innerHTML = '<i class="fas fa-pause"></i> Pausar Agora';
+            btnTop.style.borderColor = '#f59e0b';
+            btnTop.style.color = '#fde68a';
+            btnTop.style.background = 'rgba(245,158,11,0.2)';
+        }
         radarSweep.style.display = 'block';
 
         try {
@@ -5376,7 +5478,7 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
 
 REGRAS OBRIGATÓRIAS:
 1. NÃO repita nenhum destes locais já encontrados: [${jaEncontrados || 'nenhum'}].
-2. PRIORIZE estabelecimentos locais, pequenos e médios do bairro/rua pesquisada. Evite só grandes redes nacionais.
+2. TRAVA RÍGIDA DE RAMO: Retorne EXCLUSIVAMENTE estabelecimentos dos ramos selecionados (${queries}) — NUNCA misture outros ramos! Priorize pequenos e médios do bairro/rua pesquisada.
 3. CLASSIFIQUE CADA LOCAL EM 3 NÍVEIS REAIS:
    - "VERMELHO": Caso GRAVE (sujeira, insetos/baratas, comida vencida/estragada, intoxicação, maus-tratos em casa de idosos, autuação/multa COVISA/ANVISA, procedimento estético/botox ou clínica sem higiene).
    - "AMARELO": Caso de ATENÇÃO (mau atendimento, atraso, erro de pedido, reclamações médias recorrentes, estrutura precária).
@@ -5408,38 +5510,51 @@ Retorne APENAS um array JSON válido com 6 a 8 estabelecimentos reais:
 
                     promptFinal = `Você é um sistema de Inteligência OSINT PREMIUM da Vigilância Sanitária e Consultoria Regulatória em São Paulo.
 LOCAL ALVO EXATO: "${radarTargetCity} - SP"
-RAMOS SELECIONADOS: (${queries})
+RAMOS SELECIONADOS (FILTRO RÍGIDO): (${queries})
 CAMADA ATUAL DE VARREDURA: ${camada.nome} — pesquise profundamente por ${camada.foco}.
 
 REGRAS OBRIGATÓRIAS DO MODO PREMIUM:
-1. NÃO repita nenhum destes locais já encontrados: [${jaEncontrados || 'nenhum'}].
-2. Encontre estabelecimentos REAIS, específicos e verificáveis na web ligados a "${radarTargetCity}" (ou arredores imediatos se for uma rua pequena).
-3. Para CADA estabelecimento, faça um RAIO-X COMPLETO:
-   - Busque CNPJ real (14 dígitos), telefone/WhatsApp, endereço exato e nota Google se existir.
-   - Calcule um "score_oportunidade" de 0 a 100 (quanto maior, maior a urgência de fiscalização ou chance de fechar regularização).
-   - Classifique em "VERMELHO" (grave: autuação, sujeira, pragas, interdição, irregularidade sanitária séria), "AMARELO" (atenção: críticas recorrentes, estrutura/higiene questionada) ou "VERDE" (de boa: sem escândalo, ideal para prospecção preventiva de alvará/PGRSS/RT).
-   - Em "perigo", descreva o FATO REAL encontrado na fonte (PROIBIDO frase genérica).
-   - Em "infracao_possivel", liste a lei/norma exata ou documentos obrigatórios para o ramo (ex: "Alvará COVISA + PGRSS + RT Biomédico/Médico + Autoclave" para estética/botox/nails).
-   - Em "estrategia", escreva 1 frase prática e direta de como abordar esse estabelecimento para fechar o serviço ou agir.
-4. Deixe "" (vazio) onde não encontrar — NUNCA escreva "vazio" ou "não informado".
+1. TRAVA RÍGIDA DE RAMO: Retorne EXCLUSIVAMENTE estabelecimentos que pertençam aos RAMOS SELECIONADOS (${queries}). É TERMINANTEMENTE PROIBIDO retornar qualquer local de outro ramo (ex: se o usuário marcou apenas Nails/Cílios/Bronze/Salão, NÃO retorne dentista, clínica médica, casa de idosos, restaurante ou mercado!).
+2. NÃO repita nenhum destes locais já encontrados: [${jaEncontrados || 'nenhum'}].
+3. Para CADA estabelecimento real encontrado, faça um RAIO-X COMPLETO DO CLIENTE:
+   - "cnpj": 14 dígitos se achar, senão "".
+   - "telefone": telefone/WhatsApp real se achar (PROIBIDO inventar ou colocar XXXXX-XXXX; se não achar deixe "").
+   - "dono_responsavel": nome da dona/dono/sócia/profissional se achar na web/Instagram/CNPJ, senão "".
+   - "instagram": @usuario do Instagram se achar, senão "".
+   - "email": e-mail comercial se achar, senão "".
+   - "horario": horário de funcionamento se achar, senão "".
+   - "ticket_estimado": estimativa de pacote de regularização (ex: "Alvará + PGRSS: R$ 450–850").
+   - "multa_ufesp": risco de multa se autuado sem licença (ex: "10 a 50 UFESP (R$ 384–1.921)").
+   - "score_oportunidade": 0 a 100.
+   - "nivel": "VERMELHO" (grave: autuação, sujeira, pragas, interdição, irregularidade séria), "AMARELO" (atenção: críticas recorrentes, estrutura/higiene questionada) ou "VERDE" (de boa: sem escândalo, ideal para regularização preventiva).
+   - "perigo": FATO REAL encontrado na fonte (PROIBIDO frase genérica).
+   - "infracao_possivel": lei/norma exata e documentos obrigatórios para este ramo.
+   - "script_whatsapp": uma mensagem PRONTA, educada, persuasiva e natural para enviar no WhatsApp da empresa/dona, citando o nome do local, o ramo exato e oferecendo resolver a regularização sanitária/alvará sem burocracia (máx 45 palavras).
+4. Deixe "" (vazio) onde não encontrar — NUNCA escreva "vazio", "não informado" ou "XXXXX".
 
 Retorne APENAS um array JSON válido com 6 a 8 estabelecimentos reais:
 [
   {
     "nome": "Nome real do estabelecimento",
-    "categoria": "Categoria exata (ex: Clínica de Botox/Estética, Studio Nails, Academia, Adega, Casa de Idosos)",
+    "categoria": "Categoria exata dentro dos ramos selecionados",
     "cnpj": "",
     "endereco": "Rua, número e bairro",
     "bairro": "",
     "telefone": "",
+    "dono_responsavel": "",
+    "instagram": "",
+    "email": "",
+    "horario": "",
     "nota_google": "",
     "foto_url": "",
-    "fonte": "Diário Oficial / COVISA / iFood / Instagram / Google / Procon / Notícia",
+    "fonte": "Instagram / Google / Fresha / Diário Oficial / Reclame Aqui / iFood",
     "nivel": "VERMELHO" ou "AMARELO" ou "VERDE",
     "score_oportunidade": 85,
+    "ticket_estimado": "Alvará + POPs: R$ 450–800",
+    "multa_ufesp": "10 a 50 UFESP",
     "perigo": "Descrição real e concreta encontrada na investigação (18 a 42 palavras).",
     "infracao_possivel": "Norma/Lei aplicável e documentos exigidos para este ramo",
-    "estrategia": "Dica objetiva de abordagem comercial/regulatória para este lead."
+    "script_whatsapp": "Mensagem pronta e personalizada para mandar no WhatsApp deste cliente."
   }
 ]`;
                 }
@@ -5486,6 +5601,13 @@ Retorne APENAS um array JSON válido com 6 a 8 estabelecimentos reais:
             btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura Contínua';
             btn.style.borderColor = 'var(--danger)';
             btn.style.color = 'var(--danger)';
+            const bTop = document.getElementById('btn-start-radar-top');
+            if (bTop) {
+                bTop.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura';
+                bTop.style.borderColor = '#ef4444';
+                bTop.style.color = '#fca5a5';
+                bTop.style.background = 'rgba(239,68,68,0.16)';
+            }
             radarSweep.style.display = 'none';
             atualizarStatusLiveRadar(false);
         }
