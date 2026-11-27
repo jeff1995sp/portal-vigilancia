@@ -1813,7 +1813,7 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn-scan" id="btn-start-radar" style="padding: 15px; font-size: 1.02rem;" onclick="toggleRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura Contínua</button>
+                
             </div>
 
             <div class="radar-display-area">
@@ -5405,16 +5405,16 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
     ];
 
     window.toggleRadarHUD = async () => {
-        const btn = document.getElementById('btn-start-radar');
+        const btn = document.getElementById('btn-start-radar') || document.getElementById('btn-start-radar-top');
         const radarCircle = document.getElementById('radar-circle-ui');
         const radarSweep = document.getElementById('radar-sweep-ui');
 
         const btnTop = document.getElementById('btn-start-radar-top');
         if (isRadarScanning) {
             isRadarScanning = false;
-            btn.innerHTML = '<i class="fas fa-play"></i> Retomar Varredura Contínua';
-            btn.style.borderColor = 'var(--success)';
-            btn.style.color = 'var(--success)';
+            if (btn) btn.innerHTML = '<i class="fas fa-play"></i> Retomar Varredura Contínua';
+            if (btn) btn.style.borderColor = 'var(--success)';
+            if (btn) btn.style.color = 'var(--success)';
             if (btnTop) {
                 btnTop.innerHTML = '<i class="fas fa-play"></i> Retomar';
                 btnTop.style.borderColor = '#10b981';
@@ -5452,9 +5452,9 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
         centralizarMapaPorTexto(radarTargetCity);
 
         isRadarScanning = true;
-        btn.innerHTML = '<i class="fas fa-pause"></i> Pausar Varredura';
-        btn.style.borderColor = 'var(--warning)';
-        btn.style.color = 'var(--warning)';
+        if (btn) btn.innerHTML = '<i class="fas fa-pause"></i> Pausar Varredura';
+        if (btn) btn.style.borderColor = 'var(--warning)';
+        if (btn) btn.style.color = 'var(--warning)';
         if (btnTop) {
             btnTop.innerHTML = '<i class="fas fa-pause"></i> Pausar Agora';
             btnTop.style.borderColor = '#f59e0b';
@@ -5598,9 +5598,9 @@ Retorne APENAS um array JSON válido com 6 a 8 estabelecimentos reais:
             showToast('Erro no Radar', error.message, 'error');
         } finally {
             isRadarScanning = false;
-            btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura Contínua';
-            btn.style.borderColor = 'var(--danger)';
-            btn.style.color = 'var(--danger)';
+            if (btn) btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura Contínua';
+            if (btn) btn.style.borderColor = 'var(--danger)';
+            if (btn) btn.style.color = 'var(--danger)';
             const bTop = document.getElementById('btn-start-radar-top');
             if (bTop) {
                 bTop.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura';
@@ -12708,7 +12708,7 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
         const ignorando = localStorage.getItem('covisa_ignorar_monitor') === '1';
         if (ignorando) {
             btn.innerHTML = '<i class="fas fa-user-secret" style="color: var(--success);"></i> Ignorar meu aparelho: ON';
-            btn.style.borderColor = 'var(--success)';
+            if (btn) btn.style.borderColor = 'var(--success)';
         } else {
             btn.innerHTML = '<i class="fas fa-user-secret"></i> Ignorar meu aparelho: OFF';
             btn.style.borderColor = 'var(--border-light)';
