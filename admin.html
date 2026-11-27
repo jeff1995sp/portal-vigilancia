@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js"></script>
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
   <style>
     :root {
@@ -1506,8 +1507,11 @@
       </nav>
       
       <div class="sidebar-footer">
-        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 2.5 Flash Core</p>
-        <p>Status da IA: <span id="status-ia-sidebar" style="color:var(--success); font-weight:800;">Ativa e Conectada</span></p>
+        <p style="margin-bottom:4px; font-weight:900; color:var(--gemini-purple);">Gemini + Workers AI</p>
+        <p style="margin-bottom:8px; font-size:0.78rem;">Motor: <span id="status-ia-sidebar" style="color:var(--success); font-weight:800;">Híbrido Ativo</span></p>
+        <button type="button" onclick="window.abrirModalConfigWorkersAI()" style="width:100%; background:rgba(192,132,252,0.14); border:1px solid rgba(192,132,252,0.45); color:#e9d5ff; padding:7px 10px; border-radius:8px; font-size:0.76rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+          <i class="fas fa-microchip"></i> Configurar API Workers AI
+        </button>
       </div>
     </aside>
 
@@ -2223,6 +2227,12 @@
                       <button type="button" class="btn btn-gemini" id="btn-docgen-puxar-wa" style="padding: 9px 14px; font-size: 0.8rem; white-space: nowrap;" onclick="puxarDadosWhatsAppParaDocGen()">
                         <i class="fas fa-magic"></i> Analisar Pedido (IA)
                       </button>
+                      <button type="button" class="wa-btn-sm" style="border-color:#25D366; color:#6ee7b7; padding: 9px 11px; white-space:nowrap;" onclick="window.abrirChatPorInput('docgen-wa-selector', false)" title="Abrir conversa atual do WhatsApp (áudios, PDFs e imagens)">
+                        <i class="fab fa-whatsapp"></i> Ver Chat
+                      </button>
+                      <button type="button" class="wa-btn-sm" style="border-color:var(--gemini-purple); color:#e9d5ff; padding: 9px 11px; white-space:nowrap;" onclick="window.abrirChatPorInput('docgen-wa-selector', true)" title="Analisar conversa + áudios + PDFs + imagens">
+                        <i class="fas fa-brain"></i> Analisar
+                      </button>
                     </div>
                     <div id="docgen-ia-sugestoes-box" style="display:none; margin-top:8px; background:#0f172a; border:1px solid #a855f7; border-radius:10px; padding:10px 12px;">
                       <div style="font-size:0.75rem; font-weight:900; color:#e9d5ff; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
@@ -2293,7 +2303,10 @@
                     </div>
                     <div class="docgen-field">
                       <label>Telefone / WhatsApp Médico</label>
-                      <input type="text" id="docgen-telefone" placeholder="(11) 99999-9999" />
+                      <div class="docgen-inline-input">
+                        <input type="text" id="docgen-telefone" placeholder="(11) 99999-9999" style="flex:1;" />
+                        <button type="button" class="wa-btn-sm" style="border-color:#25D366; color:#6ee7b7; padding:8px 9px;" onclick="window.abrirChatPorInput('docgen-telefone', false)" title="Ver conversa atual no WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                      </div>
                     </div>
                   </div>
 
@@ -2681,7 +2694,10 @@
                         <select id="mia-wa-select" style="flex:1;">
                           <option value="">-- Chat WhatsApp --</option>
                         </select>
-                        <button type="button" class="wa-btn-sm" style="border-color: #25D366; color: #6ee7b7; padding: 9px 10px;" onclick="puxarChatWaNoMultasIA()" title="Ler conversa do WhatsApp com IA">
+                        <button type="button" class="wa-btn-sm" style="border-color: #25D366; color: #6ee7b7; padding: 9px 10px;" onclick="puxarChatWaNoMultasIA()" title="Ler conversa do WhatsApp com IA e preencher campos">
+                          <i class="fas fa-magic"></i>
+                        </button>
+                        <button type="button" class="wa-btn-sm" style="border-color: #25D366; color: #6ee7b7; padding: 9px 10px;" onclick="window.abrirChatPorInput('mia-wa-select', false)" title="Abrir conversa atual (áudios, PDFs e imagens)">
                           <i class="fab fa-whatsapp"></i>
                         </button>
                       </div>
@@ -2777,7 +2793,10 @@
                     </div>
                     <div class="docgen-field">
                       <label>WhatsApp do Cliente (p/ envio)</label>
-                      <input type="text" id="mia-telefone" placeholder="(11) 99999-9999" />
+                      <div class="docgen-inline-input">
+                        <input type="text" id="mia-telefone" placeholder="(11) 99999-9999" style="flex:1;" />
+                        <button type="button" class="wa-btn-sm" style="border-color:#25D366; color:#6ee7b7; padding:8px 9px;" onclick="window.abrirChatPorInput('mia-telefone', false)" title="Abrir conversa atual deste número (áudios, PDFs, imagens)"><i class="fab fa-whatsapp"></i></button>
+                      </div>
                     </div>
                     <div class="docgen-field">
                       <label id="mia-prazo-data-label">Prazo Defesa / Regularização</label>
@@ -3253,6 +3272,16 @@
                     <input type="text" id="cobr-protocolo" placeholder="GUIA-2026-000001" style="background:#040914; border:1px solid #26385a; color:#38bdf8; padding:4px 9px; border-radius:7px; font-size:0.74rem; font-family:var(--font-code); font-weight:800; width:165px;" title="Número da Guia / Protocolo" />
                   </div>
 
+                  <div class="docgen-field">
+                    <label style="color:#6ee7b7;"><i class="fab fa-whatsapp"></i> Conversas Atuais do WhatsApp (Ver / Analisar Áudios, PDFs & Imagens)</label>
+                    <div class="docgen-inline-input">
+                      <select id="cobr-wa-selector" class="covisa-wa-universal-select" style="flex:1;" onchange="window.aoSelecionarChatUniversal(this.value, 'cobr-telefone')">
+                        <option value="">-- Selecionar conversa atual do WhatsApp --</option>
+                      </select>
+                      <button type="button" class="wa-btn-sm" style="border-color:#25D366; color:#6ee7b7; padding:9px 11px; white-space:nowrap;" onclick="window.abrirChatPorInput('cobr-wa-selector', false)" title="Ver conversa completa"><i class="fab fa-whatsapp"></i> Chat</button>
+                      <button type="button" class="wa-btn-sm" style="border-color:var(--gemini-purple); color:#e9d5ff; padding:9px 11px; white-space:nowrap;" onclick="window.abrirChatPorInput('cobr-wa-selector', true)" title="Analisar áudios, PDFs e imagens"><i class="fas fa-brain"></i> Analisar</button>
+                    </div>
+                  </div>
                   <div class="docgen-row-2">
                     <div class="docgen-field">
                       <label>Importar Cliente do Sistema (Firebase)</label>
@@ -3291,8 +3320,12 @@
                       <input type="text" id="cobr-ramo" placeholder="Ex: Alimentos / Clínica / Farmácia / Estética" />
                     </div>
                     <div class="docgen-field">
-                      <label>WhatsApp / Telefone (Opcional)</label>
-                      <input type="text" id="cobr-telefone" placeholder="(11) 99999-9999" />
+                      <label>WhatsApp / Telefone (Ver Conversa Atual)</label>
+                      <div class="docgen-inline-input">
+                        <input type="text" id="cobr-telefone" placeholder="(11) 99999-9999" style="flex:1;" />
+                        <button type="button" class="wa-btn-sm" style="border-color:#25D366; color:#6ee7b7; padding:8px 10px;" onclick="window.abrirChatPorInput('cobr-telefone', false)" title="Ver conversa atual (áudios, PDFs e imagens)"><i class="fab fa-whatsapp"></i></button>
+                        <button type="button" class="wa-btn-sm" style="border-color:var(--gemini-purple); color:#e9d5ff; padding:8px 10px;" onclick="window.abrirChatPorInput('cobr-telefone', true)" title="Analisar conversa + áudios + PDFs + imagens"><i class="fas fa-brain"></i></button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -3495,6 +3528,17 @@
                     <input type="text" id="esp-protocolo" placeholder="DOC-2026-000001" style="background:#040914; border:1px solid #26385a; color:#38bdf8; padding:4px 9px; border-radius:7px; font-size:0.74rem; font-family:var(--font-code); font-weight:800; width:165px;" />
                   </div>
 
+                  <div class="docgen-field">
+                    <label style="color:#6ee7b7;"><i class="fab fa-whatsapp"></i> Conversas Atuais do WhatsApp (Ver / Analisar Áudios, PDFs & Imagens)</label>
+                    <div class="docgen-inline-input">
+                      <select id="esp-wa-selector" class="covisa-wa-universal-select" style="flex:1;" onchange="window.aoSelecionarChatUniversal(this.value, 'esp-telefone')">
+                        <option value="">-- Selecionar conversa atual do WhatsApp --</option>
+                      </select>
+                      <input type="text" id="esp-telefone" placeholder="(11) 99999-9999" style="width:145px;" />
+                      <button type="button" class="wa-btn-sm" style="border-color:#25D366; color:#6ee7b7; padding:9px 11px; white-space:nowrap;" onclick="window.abrirChatPorInput('esp-telefone', false, 'esp-wa-selector')" title="Ver conversa completa"><i class="fab fa-whatsapp"></i> Chat</button>
+                      <button type="button" class="wa-btn-sm" style="border-color:var(--gemini-purple); color:#e9d5ff; padding:9px 11px; white-space:nowrap;" onclick="window.abrirChatPorInput('esp-telefone', true, 'esp-wa-selector')" title="Analisar áudios, PDFs e imagens"><i class="fas fa-brain"></i> Analisar</button>
+                    </div>
+                  </div>
                   <div class="docgen-row-2">
                     <div class="docgen-field">
                       <label>Importar Cliente do Sistema (Firebase)</label>
@@ -3757,6 +3801,22 @@
         </div>
 
         <div id="tab-detalhes" class="tab-content">
+          <div id="modal-wa-quick-bar" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.4); border-radius:12px; padding:12px 16px; margin-bottom:20px;">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <i class="fab fa-whatsapp" style="color:#25D366; font-size:1.4rem;"></i>
+              <div>
+                <strong style="color:#ffffff; font-size:0.9rem; display:block;" id="modal-wa-quick-title">Conversa Atual do WhatsApp</strong>
+                <span style="color:#94a3b8; font-size:0.8rem;" id="modal-wa-quick-sub">Selecione um chat ou clique para analisar áudios, PDFs e imagens.</span>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <select id="modal-wa-selector" class="covisa-wa-universal-select" style="background:#040914; border:1px solid #26385a; color:#fff; padding:8px 10px; border-radius:8px; font-size:0.8rem; max-width:230px;">
+                <option value="">-- Conversas atuais do WhatsApp --</option>
+              </select>
+              <button type="button" class="wa-btn-sm" style="border-color:#25D366; color:#6ee7b7;" onclick="window.abrirChatDoModalDetalhes(false)"><i class="fab fa-whatsapp"></i> Ver Chat</button>
+              <button type="button" class="wa-btn-sm" style="border-color:var(--gemini-purple); color:#e9d5ff;" onclick="window.abrirChatDoModalDetalhes(true)"><i class="fas fa-brain"></i> Analisar Áudios/PDF/Img</button>
+            </div>
+          </div>
           <div class="info-grid">
             <div class="info-group"><label>Razão Social / Nome de Registro</label><p id="modal-nome">...</p></div>
             <div class="info-group"><label>Documento Oficial (CNPJ / CPF)</label><p id="modal-cnpj">...</p></div>
@@ -5828,7 +5888,7 @@ REGRAS OBRIGATÓRIAS:
                   ${localCurto ? `<span class="malha-tag"><i class="fas fa-map-marker-alt"></i> ${escaparHtmlWA(localCurto.slice(0, 28))}</span>` : ''}
                   ${qtdAnexos > 0 ? `<span class="malha-tag attach"><i class="fas fa-paperclip"></i> ${qtdAnexos} anexo(s)</span>` : ''}
                   ${processo.tem_documentos_liberados ? `<span class="malha-tag" style="color:#34d399; border-color:rgba(16,185,129,0.4);"><i class="fas fa-file-pdf"></i> PDF Liberado</span>` : ''}
-                  ${telHref ? `<a href="${telHref}" target="_blank" class="malha-tag wa" onclick="event.stopPropagation()" title="Abrir WhatsApp do cliente"><i class="fab fa-whatsapp"></i> ${escaparHtmlWA(processo.telefone)}</a>` : ''}
+                  ${telHref ? `<button type="button" class="malha-tag wa" style="background:rgba(16,185,129,0.14);" onclick="event.stopPropagation(); window.abrirChatPorNumeroQualquer('${escaparHtmlWA(processo.telefone)}', false)" title="Abrir conversa atual no Admin (áudios, PDFs e imagens)"><i class="fab fa-whatsapp"></i> ${escaparHtmlWA(processo.telefone)} • Chat</button><button type="button" class="malha-tag" style="color:#e9d5ff; border-color:rgba(192,132,252,0.45); cursor:pointer;" onclick="event.stopPropagation(); window.abrirChatPorNumeroQualquer('${escaparHtmlWA(processo.telefone)}', true)" title="Analisar conversa, áudios, PDFs e imagens com IA"><i class="fas fa-brain"></i> Analisar WA</button>` : ''}
                 </div>
               </div>
             </div>
@@ -7196,7 +7256,382 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
             <h2>Orientação ao Fiscal</h2><p>${escaparHtmlWA(r.orientacao_fiscal || '')}</p>
             <h2>Mensagem Sugerida para o WhatsApp</h2><div class="box">${escaparHtmlWA(msg)}</div>
             <script>window.onload = function(){ window.print(); }<\/script>
-            </body></html>
+            
+  <!-- MODAL CONFIGURAÇÃO API CLOUDFLARE WORKERS AI (AJUDANTE DO GEMINI) -->
+  <div class="modal-overlay" id="modalConfigWorkersAI">
+    <div class="modal-box" style="max-width: 640px;">
+      <div class="modal-header">
+        <h3><i class="fas fa-microchip" style="color: var(--gemini-purple);"></i> Motor Híbrido: Gemini + Cloudflare Workers AI</h3>
+        <button class="btn-close" onclick="document.getElementById('modalConfigWorkersAI').style.display='none'"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" style="padding: 24px 28px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.4); border-radius: 12px; padding: 14px 16px; font-size: 0.88rem; color: #d1fae5; line-height: 1.5;">
+          <strong>Como funciona:</strong> Todas as 19 funções de IA do painel (Laboratório IA, Análise de Conversas/Áudios/PDFs/Imagens, Gerador de Documentos, Multas e Relatórios) usam este motor híbrido. Se a API do Google Gemini falhar ou atingir limite, a <strong>API Cloudflare Workers AI</strong> assume automaticamente sem travar nada!
+        </div>
+
+        <div class="docgen-field">
+          <label>URL do Worker de IA (Cloudflare Workers AI)</label>
+          <input type="text" id="cfg-workers-ai-url" placeholder="https://covisa-ia-helper.jeffinho1995sp.workers.dev/api/ai" />
+          <span style="font-size:0.75rem; color:#94a3b8;">Aceita rota <code>/api/ai</code> no seu Worker atual ou em um Worker dedicado de IA.</span>
+        </div>
+
+        <div class="docgen-field">
+          <label>Modo de Operação da IA</label>
+          <select id="cfg-workers-ai-mode">
+            <option value="hybrid">Híbrido Inteligente (Tenta Gemini → se falhar, usa Workers AI)</option>
+            <option value="workers_first">Workers AI Primeiro (Usa Workers AI → se falhar, usa Gemini)</option>
+            <option value="workers_only">Somente Workers AI (Ignora a API do Google)</option>
+            <option value="gemini_only">Somente Gemini (Google)</option>
+          </select>
+        </div>
+
+        <div class="docgen-field">
+          <label>Chave Secreta Opcional (Header X-AI-Key, se você configurou no Worker)</label>
+          <input type="password" id="cfg-workers-ai-token" placeholder="(Opcional — deixe em branco se o Worker for aberto)" />
+        </div>
+
+        <div id="cfg-workers-ai-test-result" style="display:none; padding: 12px 14px; border-radius: 10px; font-size: 0.84rem; line-height: 1.45;"></div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 6px;">
+          <button type="button" class="btn btn-secondary" style="padding: 10px 18px; font-size: 0.88rem;" onclick="window.testarConexaoWorkersAI()"><i class="fas fa-vial"></i> Testar Workers AI</button>
+          <button type="button" class="btn btn-success" style="padding: 10px 22px; font-size: 0.88rem;" onclick="window.salvarConfigWorkersAI()"><i class="fas fa-save"></i> Salvar e Ativar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // MOTOR HÍBRIDO DE IA (GEMINI + CLOUDFLARE WORKERS AI) + CHAT WA UNIVERSAL
+    // =========================================================================
+    (function() {
+      const DEFAULT_WORKERS_AI_URL = "https://covisa.jeffinho1995sp.workers.dev/api/ai";
+
+      function getAIConfig() {
+        return {
+          url: (localStorage.getItem("covisa_workers_ai_url") || DEFAULT_WORKERS_AI_URL).trim(),
+          mode: localStorage.getItem("covisa_workers_ai_mode") || "hybrid",
+          token: (localStorage.getItem("covisa_workers_ai_token") || "").trim()
+        };
+      }
+
+      function atualizarStatusSidebarIA(texto, cor) {
+        const el = document.getElementById("status-ia-sidebar");
+        if (!el) return;
+        const cfg = getAIConfig();
+        if (texto) {
+          el.textContent = texto;
+          if (cor) el.style.color = cor;
+          return;
+        }
+        const labels = {
+          hybrid: "Híbrido (Gemini + Workers)",
+          workers_first: "Workers AI + Gemini",
+          workers_only: "Workers AI (Cloudflare)",
+          gemini_only: "Somente Gemini"
+        };
+        el.textContent = labels[cfg.mode] || "Híbrido Ativo";
+        el.style.color = "var(--success)";
+      }
+
+      // Extrai texto de um PDF em base64 usando pdf.js no navegador (para o Workers AI ler PDFs reais!)
+      async function extrairTextoPdfBase64(b64) {
+        try {
+          if (typeof pdfjsLib === "undefined") return "";
+          if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+          }
+          const raw = atob(b64);
+          const bytes = new Uint8Array(raw.length);
+          for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+          const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+          const maxPages = Math.min(pdf.numPages || 1, 10);
+          let fullText = "";
+          for (let p = 1; p <= maxPages; p++) {
+            const page = await pdf.getPage(p);
+            const txt = await page.getTextContent();
+            fullText += `\n--- PÁGINA ${p} ---\n` + txt.items.map(it => it.str).join(" ");
+          }
+          return fullText.trim().slice(0, 20000);
+        } catch (e) {
+          return "";
+        }
+      }
+
+      // Prepara o payload Gemini (converte PDFs inline_data em texto extraído para o Workers AI)
+      async function prepararPayloadParaWorkersAI(bodyStr) {
+        const parsed = typeof bodyStr === "string" ? JSON.parse(bodyStr) : (bodyStr || {});
+        const contents = Array.isArray(parsed.contents) ? parsed.contents : [];
+        const clonedContents = [];
+
+        for (const msg of contents) {
+          const newParts = [];
+          for (const part of (msg.parts || [])) {
+            const inline = part.inline_data || part.inlineData;
+            if (inline && inline.mime_type && inline.mime_type.toLowerCase().includes("pdf") && inline.data) {
+              const extracted = await extrairTextoPdfBase64(inline.data);
+              newParts.push({
+                text: extracted
+                  ? `[CONTEÚDO EXTRAÍDO DO PDF]:\n${extracted}`
+                  : `[PDF anexado sem camada de texto legível — verifique se é imagem escaneada.]`
+              });
+            } else {
+              newParts.push(part);
+            }
+          }
+          clonedContents.push({ ...msg, parts: newParts });
+        }
+        return { ...parsed, contents: clonedContents };
+      }
+
+      const originalFetch = window.fetch.bind(window);
+
+      async function chamarWorkersAI(initBody) {
+        const cfg = getAIConfig();
+        if (!cfg.url) throw new Error("URL do Workers AI não configurada.");
+        const payloadWorkers = await prepararPayloadParaWorkersAI(initBody);
+        const headers = { "Content-Type": "application/json" };
+        if (cfg.token) headers["X-AI-Key"] = cfg.token;
+
+        const resp = await originalFetch(cfg.url, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payloadWorkers)
+        });
+        if (!resp.ok) {
+          const errTxt = await resp.text().catch(() => "");
+          throw new Error(`Workers AI HTTP ${resp.status}: ${errTxt.slice(0, 140)}`);
+        }
+        atualizarStatusSidebarIA("Workers AI (Ativo)", "#38bdf8");
+        return resp;
+      }
+
+      // Interceptador inteligente: TODAS as 19 chamadas ao Gemini ganham fallback/reforço automático do Workers AI!
+      window.fetch = async function(input, init) {
+        const urlStr = typeof input === "string" ? input : (input && input.url ? input.url : "");
+        if (!urlStr.includes("generativelanguage.googleapis.com") || !urlStr.includes(":generateContent")) {
+          return originalFetch(input, init);
+        }
+
+        const cfg = getAIConfig();
+        const bodyStr = init && init.body ? init.body : null;
+
+        if (cfg.mode === "workers_only") {
+          return chamarWorkersAI(bodyStr);
+        }
+
+        if (cfg.mode === "workers_first") {
+          try {
+            return await chamarWorkersAI(bodyStr);
+          } catch (errW) {
+            console.warn("Workers AI falhou, tentando Gemini...", errW);
+            const respG = await originalFetch(input, init);
+            if (respG.ok) atualizarStatusSidebarIA("Gemini (Fallback)", "#c084fc");
+            return respG;
+          }
+        }
+
+        if (cfg.mode === "gemini_only") {
+          return originalFetch(input, init);
+        }
+
+        // Padrão: HYBRID (Tenta Gemini; se der erro de cota/chave/rede, aciona Workers AI na hora!)
+        try {
+          const respGemini = await originalFetch(input, init);
+          if (respGemini.ok) {
+            atualizarStatusSidebarIA("Gemini + Workers AI", "var(--success)");
+            return respGemini;
+          }
+          console.warn(`Gemini retornou HTTP ${respGemini.status}. Acionando Workers AI automaticamente...`);
+          try {
+            return await chamarWorkersAI(bodyStr);
+          } catch (errFallback) {
+            console.error("Fallback Workers AI também falhou:", errFallback);
+            return respGemini;
+          }
+        } catch (errNet) {
+          console.warn("Erro de rede no Gemini, acionando Workers AI...", errNet);
+          return chamarWorkersAI(bodyStr);
+        }
+      };
+
+      window.abrirModalConfigWorkersAI = function() {
+        const cfg = getAIConfig();
+        document.getElementById("cfg-workers-ai-url").value = cfg.url;
+        document.getElementById("cfg-workers-ai-mode").value = cfg.mode;
+        document.getElementById("cfg-workers-ai-token").value = cfg.token;
+        const boxRes = document.getElementById("cfg-workers-ai-test-result");
+        if (boxRes) boxRes.style.display = "none";
+        document.getElementById("modalConfigWorkersAI").style.display = "flex";
+      };
+
+      window.salvarConfigWorkersAI = function() {
+        const url = document.getElementById("cfg-workers-ai-url").value.trim();
+        const mode = document.getElementById("cfg-workers-ai-mode").value;
+        const token = document.getElementById("cfg-workers-ai-token").value.trim();
+        localStorage.setItem("covisa_workers_ai_url", url || DEFAULT_WORKERS_AI_URL);
+        localStorage.setItem("covisa_workers_ai_mode", mode);
+        localStorage.setItem("covisa_workers_ai_token", token);
+        atualizarStatusSidebarIA();
+        document.getElementById("modalConfigWorkersAI").style.display = "none";
+        if (typeof window.showToast === "function") {
+          window.showToast("Motor de IA Atualizado", "Configuração Gemini + Cloudflare Workers AI salva com sucesso!", "success");
+        }
+      };
+
+      window.testarConexaoWorkersAI = async function() {
+        const url = document.getElementById("cfg-workers-ai-url").value.trim();
+        const token = document.getElementById("cfg-workers-ai-token").value.trim();
+        const box = document.getElementById("cfg-workers-ai-test-result");
+        box.style.display = "block";
+        box.style.background = "rgba(59,130,246,0.12)";
+        box.style.border = "1px solid #3b82f6";
+        box.style.color = "#bae6fd";
+        box.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testando resposta do Cloudflare Workers AI...';
+        try {
+          const headers = { "Content-Type": "application/json" };
+          if (token) headers["X-AI-Key"] = token;
+          const r = await originalFetch(url, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: "Responda apenas: OK COVISA WORKERS AI ONLINE" }] }] })
+          });
+          const j = await r.json();
+          const txt = j?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          if (!r.ok || !txt) throw new Error(j?.error || `HTTP ${r.status}`);
+          box.style.background = "rgba(16,185,129,0.14)";
+          box.style.border = "1px solid #10b981";
+          box.style.color = "#a7f3d0";
+          box.innerHTML = `<i class="fas fa-check-circle"></i> <strong>Conectado!</strong> Resposta: "${txt.slice(0, 120)}"`;
+        } catch (e) {
+          box.style.background = "rgba(239,68,68,0.14)";
+          box.style.border = "1px solid #ef4444";
+          box.style.color = "#fecaca";
+          box.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>Não conectou:</strong> ${e.message}. Verifique se fez deploy do <code>worker-ia-helper.js</code> na URL informada.`;
+        }
+      };
+
+      // =======================================================================
+      // INTEGRAÇÃO UNIVERSAL DE CONVERSAS DO WHATSAPP EM TODAS AS ABAS DO ADMIN
+      // =======================================================================
+      let cacheConversasUniversais = [];
+
+      function normalizarTelBR(raw) {
+        let d = String(raw || "").replace(/\D/g, "");
+        if (!d) return "";
+        if ((d.length === 10 || d.length === 11) && !d.startsWith("55")) d = "55" + d;
+        return d;
+      }
+
+      function formatarTelBonito(raw) {
+        const d = normalizarTelBR(raw);
+        if (d.length === 13 && d.startsWith("55")) return `+55 (${d.slice(2,4)}) ${d.slice(4,9)}-${d.slice(9)}`;
+        if (d.length === 12 && d.startsWith("55")) return `+55 (${d.slice(2,4)}) ${d.slice(4,8)}-${d.slice(8)}`;
+        return d ? "+" + d : "";
+      }
+
+      async function sincronizarConversasUniversaisWA() {
+        try {
+          const r = await originalFetch("https://covisa.jeffinho1995sp.workers.dev/api/conversations?t=" + Date.now());
+          if (!r.ok) return;
+          const data = await r.json();
+          if (!data.success || !Array.isArray(data.conversations)) return;
+          cacheConversasUniversais = data.conversations;
+
+          const selects = document.querySelectorAll(".covisa-wa-universal-select");
+          selects.forEach(sel => {
+            const valAnterior = sel.value;
+            sel.innerHTML = '<option value="">-- Selecionar conversa atual do WhatsApp (' + cacheConversasUniversais.length + ') --</option>';
+            cacheConversasUniversais.forEach(c => {
+              const previa = (c.last_message || "").replace(/\s+/g, " ").slice(0, 38);
+              const tag = c.paused === 1 ? "🔴" : "🟢";
+              const opt = document.createElement("option");
+              opt.value = c.phone;
+              opt.textContent = `${tag} ${formatarTelBonito(c.phone)} — ${previa || "Sem msg"}`;
+              sel.appendChild(opt);
+            });
+            if (valAnterior) sel.value = valAnterior;
+          });
+        } catch (_) {}
+      }
+
+      window.aoSelecionarChatUniversal = function(phone, targetInputId) {
+        if (!phone) return;
+        const inp = document.getElementById(targetInputId);
+        if (inp) inp.value = formatarTelBonito(phone);
+      };
+
+      window.abrirChatPorNumeroQualquer = async function(rawPhone, autoAnalisar = false) {
+        const phone = normalizarTelBR(rawPhone);
+        if (!phone || phone.length < 10) {
+          if (typeof window.showToast === "function") {
+            window.showToast("Número não informado", "Selecione uma conversa do WhatsApp ou digite o DDD + número.", "warning");
+          }
+          return;
+        }
+        if (autoAnalisar && typeof window.abrirAnaliseDiretaConversaWA === "function") {
+          return window.abrirAnaliseDiretaConversaWA(phone);
+        }
+        if (typeof window.abrirModalChatWhatsApp === "function") {
+          await window.abrirModalChatWhatsApp(phone);
+          if (autoAnalisar && typeof window.analisarConversaAtualWhatsApp === "function") {
+            setTimeout(() => window.analisarConversaAtualWhatsApp(), 350);
+          }
+        }
+      };
+
+      window.abrirChatPorInput = function(inputId, autoAnalisar = false, fallbackSelectId = null) {
+        let val = document.getElementById(inputId)?.value || "";
+        if (!val && fallbackSelectId) {
+          val = document.getElementById(fallbackSelectId)?.value || "";
+        }
+        window.abrirChatPorNumeroQualquer(val, autoAnalisar);
+      };
+
+      window.abrirChatDoModalDetalhes = function(autoAnalisar = false) {
+        const selVal = document.getElementById("modal-wa-selector")?.value || "";
+        const telProcesso = (window._telefoneProcessoModalAtual || "");
+        const alvo = selVal || telProcesso;
+        window.abrirChatPorNumeroQualquer(alvo, autoAnalisar);
+      };
+
+      // Injeta botões de "Ver Chat WA" automaticamente onde houver links wa.me / api.whatsapp.com no Monitor Espião e Central de Lucro
+      function enriquecerLinksWhatsAppNoAdmin() {
+        const containers = ["live-feed-container", "nasa-resgate-lista", "nasa-recorrencia-lista"];
+        containers.forEach(cid => {
+          const root = document.getElementById(cid);
+          if (!root) return;
+          root.querySelectorAll('a[href*="whatsapp.com"], a[href*="wa.me"]').forEach(a => {
+            if (a.dataset.waEnhanced === "1") return;
+            a.dataset.waEnhanced = "1";
+            const m = (a.href || "").match(/(?:phone=|wa\.me\/)(\d{10,15})/);
+            if (!m) return;
+            const phone = m[1];
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "wa-btn-sm";
+            btn.style.cssText = "padding:4px 9px; font-size:0.74rem; border-color:var(--gemini-purple); color:#e9d5ff; margin-left:6px;";
+            btn.innerHTML = '<i class="fas fa-brain"></i> Ver/Analisar Chat';
+            btn.title = "Abrir conversa atual do WhatsApp (áudios, PDFs e imagens)";
+            btn.onclick = (ev) => {
+              ev.preventDefault();
+              ev.stopPropagation();
+              window.abrirChatPorNumeroQualquer(phone, false);
+            };
+            a.insertAdjacentElement("afterend", btn);
+          });
+        });
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        atualizarStatusSidebarIA();
+        setTimeout(sincronizarConversasUniversaisWA, 2500);
+        setInterval(sincronizarConversasUniversaisWA, 20000);
+        setInterval(enriquecerLinksWhatsAppNoAdmin, 3000);
+      });
+    })();
+  </script>
+</body></html>
         `);
         w.document.close();
     };
