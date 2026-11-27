@@ -1474,6 +1474,10 @@
           <i class="fas fa-file-pdf" style="color: #f87171;"></i>
           <div class="nav-item-text"><span class="nav-item-title">Gerador de Documentos</span><span class="nav-item-sub">100 PDFs, selo e IA</span></div>
         </a>
+        <a class="nav-item" id="nav-item-cobranca" onclick="switchView('view-cobranca', this)">
+          <i class="fas fa-file-invoice-dollar" style="color: #10b981;"></i>
+          <div class="nav-item-text"><span class="nav-item-title" style="color:#6ee7b7;">Cobrança (100 Guias)</span><span class="nav-item-sub">Taxas COVISA, ANVISA e PIX</span></div>
+        </a>
         <a class="nav-item" id="nav-item-multas-ia" onclick="switchView('view-multas-ia', this)" style="color: #fca5a5;">
           <i class="fas fa-gavel" style="color: #ef4444;"></i>
           <div class="nav-item-text"><span class="nav-item-title">Multas & Notificações IA</span><span class="nav-item-sub">Autos UFESP, fotos e intimações</span></div>
@@ -2449,13 +2453,31 @@
                         <input type="text" id="docgen-artigo" placeholder="Ex: Lei Municipal 13.725/2004" />
                       </div>
                     </div>
-                    <div class="docgen-field" id="docgen-group-pix">
-                      <label>Código PIX Copia e Cola (Gera QR Code automático no PDF)</label>
+                    <div class="docgen-field" id="docgen-group-pix" style="gap: 8px;">
+                      <label>Código PIX Copia e Cola (Cole o seu ou gere automático)</label>
                       <div class="docgen-inline-input">
-                        <input type="text" id="docgen-pix-code" placeholder="Cole o código PIX ou clique em Gerar PIX..." />
+                        <input type="text" id="docgen-pix-code" placeholder="Cole o código PIX Copia e Cola que você escolher..." />
                         <button type="button" class="wa-btn-sm" id="btn-docgen-gerar-pix" style="border-color: var(--success); color: #6ee7b7; padding: 9px 12px; white-space: nowrap;" onclick="gerarPixParaDocumento()">
                           <i class="fas fa-qrcode"></i> Gerar PIX
                         </button>
+                      </div>
+                      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; background:#040914; border:1px dashed #2b4470; border-radius:9px; padding:8px 11px; margin-top:2px;">
+                        <div style="display:flex; align-items:center; gap:9px; flex:1; min-width:190px;">
+                          <img id="docgen-pix-qr-thumb" src="" alt="QR PIX" style="display:none; width:42px; height:42px; object-fit:contain; background:#ffffff; border-radius:6px; padding:2px; border:1px solid #38bdf8;" />
+                          <div>
+                            <strong style="display:block; font-size:0.76rem; color:#bae6fd;"><i class="fas fa-image"></i> Foto do QR Code PIX (Opcional)</strong>
+                            <span id="docgen-pix-qr-status" style="font-size:0.71rem; color:#94a3b8;">Envie sua imagem do QR Code para sair no PDF da guia</span>
+                          </div>
+                        </div>
+                        <div style="display:flex; gap:6px; align-items:center;">
+                          <label class="wa-btn-sm" style="padding:6px 11px; font-size:0.75rem; border-color:#38bdf8; color:#bae6fd; cursor:pointer; margin:0;">
+                            <i class="fas fa-upload"></i> Escolher Foto QR
+                            <input type="file" id="docgen-pix-qr-file" accept="image/*" style="display:none;" onchange="carregarFotoQrPixDocGen(this)" />
+                          </label>
+                          <button type="button" id="btn-docgen-pix-qr-clear" class="wa-btn-sm" style="display:none; padding:6px 9px; font-size:0.74rem; border-color:var(--danger); color:#fca5a5;" onclick="limparFotoQrPixDocGen()" title="Remover foto do QR Code">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -3163,6 +3185,236 @@
             </div>
           </section>
         </div>
+          </div>
+        </div>
+
+        <div id="view-cobranca" class="page-view">
+          <div class="page-title" style="margin-bottom: 16px;">
+            <div>
+              <h1><i class="fas fa-file-invoice-dollar" style="color: #10b981;"></i> Central de Cobrança — 100 Guias & Taxas Pagáveis (COVISA • Vigilância • ANVISA)</h1>
+              <p>Gere qualquer documento cobrado do cliente (DAMSP, GRU ANVISA, taxas de alvará, renovação, talonário, vistoria, certidões e multas) com dados digitados ou puxados do sistema + sua foto do QR Code PIX e Copia e Cola.</p>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary" style="padding: 10px 15px; font-size: 0.85rem;" onclick="limparFormularioCobranca()">
+                <i class="fas fa-eraser"></i> Limpar
+              </button>
+              <button type="button" class="btn btn-primary" style="padding: 10px 17px; font-size: 0.87rem;" onclick="gerarPdfCobranca(false)">
+                <i class="fas fa-eye"></i> Atualizar Prévia
+              </button>
+              <button type="button" class="btn btn-success" style="padding: 10px 17px; font-size: 0.87rem;" onclick="gerarPdfCobranca(true)">
+                <i class="fas fa-download"></i> Baixar Guia PDF
+              </button>
+            </div>
+          </div>
+
+          <div class="docgen-layout">
+            <!-- COLUNA ESQUERDA: 100 MODELOS DE COBRANÇA + DADOS + PIX -->
+            <div class="docgen-form-panel">
+              <div class="docgen-form-scroll">
+
+                <!-- 1. CATÁLOGO DE 100 DOCUMENTOS PAGÁVEIS -->
+                <div class="docgen-box" style="border-color: rgba(16, 185, 129, 0.45);">
+                  <div class="docgen-box-title">
+                    <span style="color:#6ee7b7;"><i class="fas fa-receipt"></i> 1. Catálogo de Documentos Pagáveis (100 Modelos)</span>
+                    <span id="cobr-template-tag" style="color:#38bdf8; font-size:0.71rem;">DAMSP COVISA • Layout Próprio</span>
+                  </div>
+
+                  <div class="docgen-inline-input" style="margin-bottom: 2px;">
+                    <input type="text" id="cobr-model-search" placeholder="Buscar guia/taxa (ex: anvisa, gru, alvará, renovação, talonário, vistoria, multa, afe)..." oninput="filtrarModelosCobranca()" style="flex:1; background:#040914; border:1px solid #26385a; color:#fff; padding:8px 12px; border-radius:9px; font-size:0.82rem;" />
+                  </div>
+
+                  <div class="docgen-cat-tabs" id="cobr-cat-tabs">
+                    <button type="button" class="docgen-cat-btn active" data-cobr-cat="todos" onclick="filtrarCategoriaCobranca('todos', this)"><i class="fas fa-th-large"></i> Todos (100)</button>
+                    <button type="button" class="docgen-cat-btn" data-cobr-cat="covisa_lic" onclick="filtrarCategoriaCobranca('covisa_lic', this)">1. Licenças COVISA (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-cobr-cat="anvisa_gru" onclick="filtrarCategoriaCobranca('anvisa_gru', this)">2. GRU ANVISA (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-cobr-cat="talonario" onclick="filtrarCategoriaCobranca('talonario', this)">3. Talonários (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-cobr-cat="comercios" onclick="filtrarCategoriaCobranca('comercios', this)">4. Comércios (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-cobr-cat="vistorias" onclick="filtrarCategoriaCobranca('vistorias', this)">5. Vistorias (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-cobr-cat="alteracoes" onclick="filtrarCategoriaCobranca('alteracoes', this)">6. Alterações & RT (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-cobr-cat="certidoes" onclick="filtrarCategoriaCobranca('certidoes', this)">7. Certidões (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-cobr-cat="multas_ufesp" onclick="filtrarCategoriaCobranca('multas_ufesp', this)">8. Multas UFESP (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-cobr-cat="produtos_reg" onclick="filtrarCategoriaCobranca('produtos_reg', this)">9. Registro Prod. (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-cobr-cat="especiais_tax" onclick="filtrarCategoriaCobranca('especiais_tax', this)">10. Especiais (10)</button>
+                  </div>
+
+                  <div class="docgen-types-grid" id="cobr-types-grid"></div>
+                </div>
+
+                <!-- 2. DADOS DO SISTEMA OU DIGITADOS -->
+                <div class="docgen-box highlight-wa">
+                  <div class="docgen-box-title">
+                    <span style="color:#6ee7b7;"><i class="fas fa-database"></i> 2. Puxar do Sistema (Firebase / CNPJ) ou Digitar Manualmente</span>
+                    <input type="text" id="cobr-protocolo" placeholder="GUIA-2026-000001" style="background:#040914; border:1px solid #26385a; color:#38bdf8; padding:4px 9px; border-radius:7px; font-size:0.74rem; font-family:var(--font-code); font-weight:800; width:165px;" title="Número da Guia / Protocolo" />
+                  </div>
+
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Importar Cliente do Sistema (Firebase)</label>
+                      <select id="cobr-process-selector" onchange="importarProcessoNoCobranca(this.value)">
+                        <option value="">-- Digitar manual ou selecionar cliente --</option>
+                      </select>
+                    </div>
+                    <div class="docgen-field">
+                      <label>CPF ou CNPJ (Busca Receita Federal)</label>
+                      <div class="docgen-inline-input">
+                        <input type="text" id="cobr-cnpj" placeholder="00.000.000/0001-00 ou CPF" oninput="mascararDocGenCnpj(this)" maxlength="18" />
+                        <button type="button" class="wa-btn-sm btn-chat" id="btn-cobr-busca-cnpj" onclick="buscarCnpjNoCobranca()" style="padding:9px 11px;" title="Consultar CNPJ na Receita Federal"><i class="fas fa-search"></i></button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="docgen-field">
+                    <label>Razão Social / Nome do Pagador (Contribuinte)</label>
+                    <input type="text" id="cobr-nome" placeholder="Digite o nome da empresa ou pessoa física..." />
+                  </div>
+
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Endereço Completo</label>
+                      <input type="text" id="cobr-endereco" placeholder="Rua, nº, bairro, CEP..." />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Município / UF</label>
+                      <input type="text" id="cobr-cidade" value="São Paulo - SP" placeholder="São Paulo - SP" />
+                    </div>
+                  </div>
+
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Ramo / Atividade</label>
+                      <input type="text" id="cobr-ramo" placeholder="Ex: Alimentos / Clínica / Farmácia / Estética" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>WhatsApp / Telefone (Opcional)</label>
+                      <input type="text" id="cobr-telefone" placeholder="(11) 99999-9999" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. VALOR, VENCIMENTO, CÓDIGO PIX E FOTO DO QR CODE -->
+                <div class="docgen-box" style="border-color: rgba(56, 189, 248, 0.5); background: linear-gradient(135deg, rgba(14, 165, 233, 0.08), #081020 75%);">
+                  <div class="docgen-box-title">
+                    <span style="color:#bae6fd;"><i class="fas fa-qrcode"></i> 3. Valor da Cobrança, Foto do QR Code & PIX Copia e Cola</span>
+                  </div>
+
+                  <div class="docgen-row-3-eq">
+                    <div class="docgen-field">
+                      <label>Valor a Cobrar (R$)</label>
+                      <input type="text" id="cobr-valor" value="250,00" placeholder="Ex: 250,00" style="color:#6ee7b7; font-weight:900; font-size:0.95rem;" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Data de Emissão</label>
+                      <input type="text" id="cobr-emissao" placeholder="DD/MM/AAAA" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Vencimento</label>
+                      <input type="text" id="cobr-vencimento" placeholder="DD/MM/AAAA" />
+                    </div>
+                  </div>
+
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Código da Receita / Taxa</label>
+                      <input type="text" id="cobr-cod-receita" placeholder="Ex: 14021-8 / GRU 28830-6" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Enquadramento / Base Legal</label>
+                      <input type="text" id="cobr-base-legal" placeholder="Ex: Lei Municipal 13.725/2004" />
+                    </div>
+                  </div>
+
+                  <div class="docgen-field">
+                    <label>Código PIX Copia e Cola (Cole o seu ou gere automático)</label>
+                    <div class="docgen-inline-input">
+                      <input type="text" id="cobr-pix-code" placeholder="Cole o código PIX Copia e Cola que você escolher..." />
+                      <button type="button" class="wa-btn-sm" id="btn-cobr-gerar-pix" style="border-color: var(--success); color: #6ee7b7; padding: 9px 12px; white-space: nowrap;" onclick="gerarPixParaCobranca()">
+                        <i class="fas fa-qrcode"></i> Gerar PIX
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; background:#040914; border:1px dashed #2b4470; border-radius:9px; padding:8px 11px;">
+                    <div style="display:flex; align-items:center; gap:9px; flex:1; min-width:190px;">
+                      <img id="cobr-pix-qr-thumb" src="" alt="QR PIX" style="display:none; width:44px; height:44px; object-fit:contain; background:#ffffff; border-radius:6px; padding:2px; border:1px solid #38bdf8;" />
+                      <div>
+                        <strong style="display:block; font-size:0.77rem; color:#bae6fd;"><i class="fas fa-image"></i> Foto do QR Code PIX (Sua Imagem)</strong>
+                        <span id="cobr-pix-qr-status" style="font-size:0.71rem; color:#94a3b8;">Envie a foto do QR Code que você quer na guia PDF</span>
+                      </div>
+                    </div>
+                    <div style="display:flex; gap:6px; align-items:center;">
+                      <label class="wa-btn-sm" style="padding:6px 11px; font-size:0.75rem; border-color:#38bdf8; color:#bae6fd; cursor:pointer; margin:0;">
+                        <i class="fas fa-upload"></i> Escolher Foto QR
+                        <input type="file" id="cobr-pix-qr-file" accept="image/*" style="display:none;" onchange="carregarFotoQrPixCobranca(this)" />
+                      </label>
+                      <button type="button" id="btn-cobr-pix-qr-clear" class="wa-btn-sm" style="display:none; padding:6px 9px; font-size:0.74rem; border-color:var(--danger); color:#fca5a5;" onclick="limparFotoQrPixCobranca()" title="Remover foto do QR Code">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="docgen-field">
+                    <label>Descrição / Discriminação do Serviço Cobrado (Editável)</label>
+                    <textarea id="cobr-descricao" style="min-height: 68px;" placeholder="Preenchido automaticamente conforme o modelo escolhido..."></textarea>
+                  </div>
+
+                  <div class="docgen-sig-strip">
+                    <label style="display:flex; align-items:center; gap:9px; color:#e2e8f0; font-size:0.81rem; font-weight:800; cursor:pointer;">
+                      <input type="checkbox" id="cobr-usar-assinatura" checked style="width:16px; height:16px; accent-color:#10b981;" />
+                      <span>Assinatura Fixa (<code style="color:#6ee7b7;">DIRETORIA23.png</code>)</span>
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="docgen-footer-actions">
+                <button type="button" class="wa-btn-sm" onclick="copiarMsgCobrancaWA()">
+                  <i class="fab fa-whatsapp" style="color:#25D366;"></i> Copiar Msg Cobrança
+                </button>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-primary" id="btn-cobr-preview" style="padding: 10px 18px; font-size: 0.88rem;" onclick="gerarPdfCobranca(false)">
+                    <i class="fas fa-sync-alt"></i> Gerar Prévia
+                  </button>
+                  <button type="button" class="btn btn-success" id="btn-cobr-download" style="padding: 10px 20px; font-size: 0.88rem;" onclick="gerarPdfCobranca(true)">
+                    <i class="fas fa-file-download"></i> Baixar Guia PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLUNA DIREITA: PRÉVIA EM TEMPO REAL DA GUIA -->
+            <div class="docgen-preview-panel">
+              <div class="docgen-preview-bar">
+                <div style="display:flex; align-items:center; gap:9px; flex-wrap:wrap;">
+                  <strong style="color:#ffffff; font-size:0.94rem;"><i class="fas fa-file-invoice-dollar" style="color:#10b981;"></i> Prévia da Guia de Cobrança</strong>
+                  <span id="cobr-preview-filename" class="spy-chip" style="font-family: var(--font-code); font-size:0.74rem;">Nenhuma guia gerada</span>
+                </div>
+                <div style="display:flex; gap:7px; flex-wrap:wrap;">
+                  <button type="button" class="wa-btn-sm" id="btn-cobr-open-tab" disabled onclick="abrirPdfCobrancaNovaAba()" style="padding:6px 11px; font-size:0.78rem;">
+                    <i class="fas fa-external-link-alt"></i> Nova Aba / Imprimir
+                  </button>
+                  <button type="button" class="wa-btn-sm btn-chat" id="btn-cobr-dl-top" disabled onclick="baixarUltimoPdfCobranca()" style="padding:6px 11px; font-size:0.78rem;">
+                    <i class="fas fa-download"></i> Baixar
+                  </button>
+                </div>
+              </div>
+
+              <div class="docgen-preview-stage">
+                <div class="docgen-preview-idle" id="cobr-preview-idle">
+                  <i class="fas fa-file-invoice-dollar" style="font-size: 3.8rem; color: #10b981; opacity: 0.45; margin-bottom: 14px; display: block;"></i>
+                  <h3 style="color:#ffffff; margin-bottom:8px;">Pronto para Emitir Cobrança</h3>
+                  <p style="font-size:0.9rem; line-height:1.55;">
+                    Escolha 1 dos <strong>100 modelos pagáveis</strong> (COVISA, Vigilância Sanitária ou ANVISA), informe os dados ou puxe do sistema, coloque sua <strong>foto do QR Code PIX</strong> e <strong>Copia e Cola</strong> e clique em <strong>Gerar Prévia</strong>.
+                  </p>
+                </div>
+                <iframe id="cobr-pdf-iframe" title="Prévia da Guia de Cobrança PDF" style="width:100%; height:100%; border:none; background:#1e293b; display:none;"></iframe>
+              </div>
+
+              <div class="docgen-history-strip" id="cobr-history-strip">
+                <span><i class="fas fa-history"></i> Guias recentes:</span>
+                <span style="opacity:0.7;">nenhuma guia emitida ainda.</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -4010,6 +4262,9 @@
         if (viewId === 'view-docgen') {
             inicializarDatasPadraoDocGen();
             atualizarListaWaNoDocGen(false);
+        }
+        if (viewId === 'view-cobranca') {
+            if (typeof window.inicializarCobranca100 === 'function') window.inicializarCobranca100();
         }
         if (viewId === 'view-multas-ia') {
             atualizarFontesMultasIA(false);
@@ -5228,6 +5483,7 @@ REGRAS OBRIGATÓRIAS:
       
       aplicarFiltros(); // Já filtra e renderiza ordenado
       if (typeof window.atualizarListasFirebaseMIA === 'function') window.atualizarListasFirebaseMIA();
+      if (typeof window.atualizarProcessosCobranca === 'function') window.atualizarProcessosCobranca();
     });
 
     window.renderizarTabelas = (arrayDeDados) => {
@@ -7271,6 +7527,7 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
         document.getElementById('docgen-emissao').value = '';
         document.getElementById('docgen-validade').value = '';
         document.getElementById('docgen-rx-qtd').value = '1';
+        if (typeof window.limparFotoQrPixDocGen === 'function') window.limparFotoQrPixDocGen(true);
         inicializarDatasPadraoDocGen(true);
         showToast("Campos Limpos", "Pronto para emitir um novo documento.", "success");
     };
@@ -9365,7 +9622,7 @@ REGRAS:
         y -= 14;
 
         const linhasCorpo = quebrarLinhasPDF(textoCorpo, fontReg, 9.4, width - 88);
-        const temBlocoPix = (tipo === 'guia' || tipo === 'infracao') && dados.pixCode && dados.pixCode.trim().length > 20;
+        const temBlocoPix = (tipo === 'guia' || tipo === 'infracao') && ((dados.pixCode && dados.pixCode.trim().length > 5) || Boolean(dados.pixQrDataUrl));
         const maxLinhas = ehTabelaControlados ? 5 : (temBlocoPix ? 9 : 18);
         linhasCorpo.slice(0, maxLinhas).forEach((ln) => {
             if (y < (temBlocoPix ? 255 : 165)) return;
@@ -9406,22 +9663,43 @@ REGRAS:
             page.drawRectangle({ x: 38, y: boxY, width: width - 76, height: pixBoxH, color: corFundoBox, borderColor: corGovAzul, borderWidth: 1.1 });
             page.drawText(sanitizarTextoPDF('PAGAMENTO INSTANTÂNEO VIA PIX (QR CODE + COPIA E COLA)'), { x: 50, y: boxY + pixBoxH - 16, size: 8.2, font: fontBold, color: corGovAzul });
 
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&format=png&data=${encodeURIComponent(dados.pixCode.trim())}`;
-            const qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
+            let qrImg = null;
+            if (dados.pixQrDataUrl) {
+                try {
+                    const b64 = dados.pixQrDataUrl.split(',')[1];
+                    const bytesQr = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+                    qrImg = await pdfDoc.embedPng(bytesQr);
+                } catch (_) {
+                    try {
+                        const b64 = dados.pixQrDataUrl.split(',')[1];
+                        const bytesQr = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+                        qrImg = await pdfDoc.embedJpg(bytesQr);
+                    } catch (__) { qrImg = null; }
+                }
+            } else if (dados.pixCode && dados.pixCode.trim().length > 5) {
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&format=png&data=${encodeURIComponent(dados.pixCode.trim())}`;
+                qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
+            }
             let pixTextX = 50;
             let pixMaxW = width - 104;
             if (qrImg) {
-                page.drawImage(qrImg, { x: 48, y: boxY + 9, width: 84, height: 84 });
+                const qrDims = qrImg.scaleToFit(84, 84);
+                page.drawImage(qrImg, { x: 48 + (84 - qrDims.width) / 2, y: boxY + 9 + (84 - qrDims.height) / 2, width: qrDims.width, height: qrDims.height });
                 pixTextX = 146;
                 pixMaxW = width - 198;
             }
-            drawTextFitPDF(page, 'Aponte a câmera do aplicativo do seu banco para o QR Code ou utilize o código abaixo:', pixTextX, boxY + pixBoxH - 32, fontReg, 8, pixMaxW, corCinza);
-            const pixLines = quebrarLinhasPDF(dados.pixCode.trim(), fontMono, 7.3, pixMaxW);
-            let py = boxY + pixBoxH - 47;
-            pixLines.slice(0, 5).forEach((pl) => {
-                page.drawText(pl, { x: pixTextX, y: py, size: 7.3, font: fontMono, color: corEscuro });
-                py -= 10;
-            });
+            if (dados.pixCode && dados.pixCode.trim().length > 5) {
+                drawTextFitPDF(page, 'Aponte a câmera do aplicativo do seu banco para o QR Code ou utilize o código Copia e Cola abaixo:', pixTextX, boxY + pixBoxH - 32, fontReg, 8, pixMaxW, corCinza);
+                const pixLines = quebrarLinhasPDF(dados.pixCode.trim(), fontMono, 7.3, pixMaxW);
+                let py = boxY + pixBoxH - 47;
+                pixLines.slice(0, 5).forEach((pl) => {
+                    page.drawText(pl, { x: pixTextX, y: py, size: 7.3, font: fontMono, color: corEscuro });
+                    py -= 10;
+                });
+            } else {
+                drawTextFitPDF(page, 'Aponte a câmera do aplicativo do seu banco para o QR Code ao lado para efetuar o pagamento via PIX.', pixTextX, boxY + pixBoxH - 42, fontReg, 8.4, pixMaxW, corEscuro);
+                drawTextFitPDF(page, 'Após a confirmação, o processo segue automaticamente para emissão do documento sanitário.', pixTextX, boxY + pixBoxH - 58, fontReg, 7.8, pixMaxW, corCinza);
+            }
         }
 
         const sigImg = dados.usarAssinaturaFixa ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
@@ -9471,6 +9749,7 @@ REGRAS:
             tipoTaxa: (document.getElementById('docgen-tipo-taxa')?.value || '').trim(),
             artigo: (document.getElementById('docgen-artigo')?.value || '').trim(),
             pixCode: (document.getElementById('docgen-pix-code')?.value || '').trim(),
+            pixQrDataUrl: window.docGenPixQrDataUrl || '',
             corpo: (document.getElementById('docgen-corpo')?.value || '').trim(),
             tituloCustom: (document.getElementById('docgen-titulo-custom')?.value || '').trim(),
             vistoriaStatus: (document.getElementById('docgen-vistoria-status')?.value || '').trim(),
@@ -13608,6 +13887,648 @@ Retorne EXCLUSIVAMENTE um JSON válido neste formato exato:
             showToast("Aviso na Análise", err.message, "warning");
         } finally {
             if (btn) { btn.disabled = false; btn.innerHTML = origBtn; }
+        }
+    };
+
+    window.docGenPixQrDataUrl = '';
+
+    window.carregarFotoQrPixDocGen = (input) => {
+        const file = input?.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+                const maxSide = 600;
+                let w = img.width, h = img.height;
+                if (w > maxSide || h > maxSide) {
+                    const ratio = Math.min(maxSide / w, maxSide / h);
+                    w = Math.round(w * ratio);
+                    h = Math.round(h * ratio);
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, w, h);
+                ctx.drawImage(img, 0, 0, w, h);
+                window.docGenPixQrDataUrl = canvas.toDataURL('image/png');
+
+                const thumb = document.getElementById('docgen-pix-qr-thumb');
+                const st = document.getElementById('docgen-pix-qr-status');
+                const btnClr = document.getElementById('btn-docgen-pix-qr-clear');
+                if (thumb) { thumb.src = window.docGenPixQrDataUrl; thumb.style.display = 'block'; }
+                if (st) { st.innerText = `Foto carregada: ${file.name}`; st.style.color = '#6ee7b7'; }
+                if (btnClr) btnClr.style.display = 'inline-flex';
+                showToast('QR Code Anexado!', 'Sua foto do QR Code já está pronta para sair no PDF da guia.', 'success');
+            };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.limparFotoQrPixDocGen = (silencioso = false) => {
+        window.docGenPixQrDataUrl = '';
+        const inp = document.getElementById('docgen-pix-qr-file');
+        const thumb = document.getElementById('docgen-pix-qr-thumb');
+        const st = document.getElementById('docgen-pix-qr-status');
+        const btnClr = document.getElementById('btn-docgen-pix-qr-clear');
+        if (inp) inp.value = '';
+        if (thumb) { thumb.src = ''; thumb.style.display = 'none'; }
+        if (st) { st.innerText = 'Envie sua imagem do QR Code para sair no PDF da guia'; st.style.color = '#94a3b8'; }
+        if (btnClr) btnClr.style.display = 'none';
+        if (!silencioso) showToast('Removido', 'Foto do QR Code removida.', 'warning');
+    };
+
+    // =========================================================================
+    // CENTRAL DE COBRANÇA — 100 GUIAS & DOCUMENTOS PAGÁVEIS (COVISA / ANVISA)
+    // =========================================================================
+    const COBRANCA_CATALOG_100 = [
+        // 1. LICENÇAS COVISA (10)
+        { id:'c_lic_inicial', cat:'covisa_lic', layout:'damsp', theme:'theme-green', icon:'fa-certificate', titulo:'Taxa Licença Inicial (LFS)', sub:'DAMSP • Abertura Sanitária', valor:'280,00', cod:'14021-8', lei:'Lei Municipal 13.725/2004 • Port. SMS 266/25', desc:'Taxa de Licença de Funcionamento Sanitária Inicial (LFS) para abertura e regularização do estabelecimento perante a COVISA.' },
+        { id:'c_lic_renovacao', cat:'covisa_lic', layout:'damsp', theme:'theme-green', icon:'fa-sync-alt', titulo:'Taxa Renovação Anual LFS', sub:'DAMSP • Renovação 2026', valor:'220,00', cod:'14022-6', lei:'Portaria SMS 266/2025 • SIVISA', desc:'Taxa de Renovação Anual de Licença de Funcionamento Sanitária (LFS) referente ao exercício vigente.' },
+        { id:'c_lic_provisoria', cat:'covisa_lic', layout:'damsp', theme:'theme-green', icon:'fa-clock', titulo:'Taxa Licença Provisória', sub:'DAMSP • Liberação Rápida', valor:'190,00', cod:'14023-4', lei:'Lei Municipal 13.725/2004', desc:'Guia de recolhimento para emissão de Certificado de Licença Sanitária Provisória.' },
+        { id:'c_lic_pf_home', cat:'covisa_lic', layout:'damsp', theme:'theme-blue', icon:'fa-home', titulo:'Taxa Licença PF / Home Office', sub:'DAMSP • Telemedicina / Autônomo', valor:'180,00', cod:'14024-2', lei:'Port. SMS 266/25 • Res. CFM 2.314/22', desc:'Taxa de licenciamento sanitário para Profissional Pessoa Física atuando em Home Office ou Telemedicina.' },
+        { id:'c_cmvs_cadastro', cat:'covisa_lic', layout:'damsp', theme:'theme-blue', icon:'fa-id-badge', titulo:'Taxa Inscrição CMVS', sub:'DAMSP • Cadastro Municipal', valor:'160,00', cod:'14025-0', lei:'Portaria SMS 266/2025', desc:'Taxa de inscrição e homologação no Cadastro Municipal de Vigilância em Saúde (CMVS).' },
+        { id:'c_lic_alto_risco', cat:'covisa_lic', layout:'damsp', theme:'theme-red', icon:'fa-hospital', titulo:'Taxa Licenciamento Alto Risco', sub:'DAMSP • Clínicas / Hospitais', valor:'450,00', cod:'14026-9', lei:'Portaria SMS 266/2025 • Alto Risco', desc:'Taxa de licenciamento sanitário completo para estabelecimento classificado em Alto Risco Sanitário.' },
+        { id:'c_lic_medio_risco', cat:'covisa_lic', layout:'damsp', theme:'theme-yellow', icon:'fa-clinic-medical', titulo:'Taxa Licenciamento Médio Risco', sub:'DAMSP • Simplificado', valor:'240,00', cod:'14027-7', lei:'Portaria SMS 266/2025 • Médio Risco', desc:'Taxa de licenciamento sanitário simplificado para atividades de Médio Risco Sanitário.' },
+        { id:'c_lic_revalidacao', cat:'covisa_lic', layout:'damsp', theme:'theme-green', icon:'fa-check-double', titulo:'Taxa Revalidação de Alvará', sub:'DAMSP • Regularização Vencida', valor:'260,00', cod:'14028-5', lei:'Lei Municipal 13.725/2004', desc:'Guia para revalidação e atualização de Alvará Sanitário com prazo expirado.' },
+        { id:'c_lic_filial', cat:'covisa_lic', layout:'damsp', theme:'theme-blue', icon:'fa-code-branch', titulo:'Taxa Licença Nova Filial', sub:'DAMSP • Unidade Adicional', valor:'280,00', cod:'14029-3', lei:'Lei Municipal 13.725/2004', desc:'Taxa de licenciamento sanitário inicial para abertura de unidade filial.' },
+        { id:'c_lic_temporaria', cat:'covisa_lic', layout:'damsp', theme:'theme-yellow', icon:'fa-calendar-alt', titulo:'Taxa Licença Evento / Feira', sub:'DAMSP • Temporário', valor:'170,00', cod:'14030-7', lei:'Decreto Municipal 55.085/2014', desc:'Taxa sanitária para funcionamento temporário em eventos, feiras gastronômicas ou exposições.' },
+
+        // 2. GRU ANVISA FEDERAL (10)
+        { id:'c_gru_afe', cat:'anvisa_gru', layout:'gru', theme:'theme-blue', icon:'fa-shield-virus', titulo:'GRU ANVISA — Concessão AFE', sub:'Taxa Federal • Autorização Empresa', valor:'620,00', cod:'GRU 28830-6', lei:'Lei Federal 9.782/1999 • RDC 16/2014', desc:'Guia de Recolhimento da União (GRU/TFVS) referente à Concessão de Autorização de Funcionamento de Empresa (AFE).' },
+        { id:'c_gru_ae', cat:'anvisa_gru', layout:'gru', theme:'theme-purple', icon:'fa-pills', titulo:'GRU ANVISA — Concessão AE', sub:'Taxa Federal • Controlados', valor:'680,00', cod:'GRU 28831-4', lei:'Portaria SVS/MS 344/1998 • Lei 9.782/99', desc:'Guia de Recolhimento da União (GRU/TFVS) para Autorização Especial (AE) de substâncias sujeitas a controle especial.' },
+        { id:'c_gru_cbpf', cat:'anvisa_gru', layout:'gru', theme:'theme-green', icon:'fa-award', titulo:'GRU ANVISA — Certificado CBPF', sub:'Taxa Federal • Boas Práticas', valor:'850,00', cod:'GRU 28832-2', lei:'RDC ANVISA 497/2021', desc:'Guia Federal (GRU) para emissão ou renovação de Certificado de Boas Práticas de Fabricação (CBPF).' },
+        { id:'c_gru_cbpda', cat:'anvisa_gru', layout:'gru', theme:'theme-green', icon:'fa-truck-loading', titulo:'GRU ANVISA — Certificado CBPDA', sub:'Taxa Federal • Distribuição', valor:'720,00', cod:'GRU 28833-0', lei:'RDC ANVISA 430/2020', desc:'Guia Federal (GRU) para Certificado de Boas Práticas de Distribuição e Armazenagem (CBPDA).' },
+        { id:'c_gru_alt_afe', cat:'anvisa_gru', layout:'gru', theme:'theme-blue', icon:'fa-edit', titulo:'GRU ANVISA — Alteração de AFE', sub:'Taxa Federal • Endereço / RT', valor:'340,00', cod:'GRU 28834-9', lei:'RDC ANVISA 16/2014', desc:'Guia Federal (GRU) para alteração cadastral, ampliação de atividades ou mudança de endereço em AFE vigente.' },
+        { id:'c_gru_importacao', cat:'anvisa_gru', layout:'gru', theme:'theme-yellow', icon:'fa-ship', titulo:'GRU ANVISA — Licença Importação', sub:'Taxa Federal • Anuência LI', valor:'490,00', cod:'GRU 28835-7', lei:'RDC ANVISA 81/2008', desc:'Taxa de Fiscalização de Vigilância Sanitária (TFVS) para anuência de Licença de Importação de produtos sujeitos à vigilância.' },
+        { id:'c_gru_exportacao', cat:'anvisa_gru', layout:'gru', theme:'theme-blue', icon:'fa-plane-departure', titulo:'GRU ANVISA — Certidão Exportação', sub:'Taxa Federal • Livre Venda', valor:'290,00', cod:'GRU 28836-5', lei:'Lei Federal 9.782/1999', desc:'Guia Federal (GRU) para emissão de Certidão de Livre Comercialização / Exportação perante a ANVISA.' },
+        { id:'c_gru_sngpc', cat:'anvisa_gru', layout:'gru', theme:'theme-purple', icon:'fa-laptop-medical', titulo:'GRU ANVISA — Regularização SNGPC', sub:'Taxa Federal • Controlados', valor:'260,00', cod:'GRU 28837-3', lei:'RDC ANVISA 22/2014', desc:'Guia referente a regularização cadastral e inventário de medicamentos controlados no SNGPC.' },
+        { id:'c_gru_recurso', cat:'anvisa_gru', layout:'gru', theme:'theme-red', icon:'fa-balance-scale', titulo:'GRU ANVISA — Recurso Administrativo', sub:'Taxa Federal • Petição', valor:'310,00', cod:'GRU 28838-1', lei:'RDC ANVISA 266/2019', desc:'Guia de recolhimento para protocolo de recurso administrativo junto à ANVISA.' },
+        { id:'c_gru_renov_afe', cat:'anvisa_gru', layout:'gru', theme:'theme-green', icon:'fa-redo', titulo:'GRU ANVISA — Atualização AFE/AE', sub:'Taxa Federal • Manutenção', valor:'390,00', cod:'GRU 28839-0', lei:'Lei Federal 9.782/1999', desc:'Taxa Federal de atualização e manutenção cadastral de Autorização de Funcionamento (AFE/AE).' },
+
+        // 3. TALONÁRIOS & RECEITUÁRIOS (10)
+        { id:'c_tal_receita_a', cat:'talonario', layout:'talonario', theme:'theme-yellow', icon:'fa-file-prescription', titulo:'Taxa Talonário Receita A (Amarela)', sub:'SNCR • Entorpecentes A1/A2/A3', valor:'180,00', cod:'SNCR-A01', lei:'Portaria SVS/MS 344/1998 • SNCR', desc:'Taxa de liberação de numeração e autorização de talonário de Notificação de Receita A (Amarela).' },
+        { id:'c_tal_receita_b', cat:'talonario', layout:'talonario', theme:'theme-blue', icon:'fa-file-prescription', titulo:'Taxa Talonário Receita B (Azul)', sub:'SNCR • Psicotrópicos B1', valor:'160,00', cod:'SNCR-B01', lei:'Portaria SVS/MS 344/1998 • SNCR', desc:'Taxa de autorização e emissão de faixa numérica para Notificação de Receita B (Azul — Lista B1).' },
+        { id:'c_tal_receita_b2', cat:'talonario', layout:'talonario', theme:'theme-blue', icon:'fa-pills', titulo:'Taxa Talonário Receita B2', sub:'SNCR • Anorexígenos', valor:'170,00', cod:'SNCR-B02', lei:'RDC ANVISA 50/2014 • SNCR', desc:'Taxa de liberação de numeração para Notificação de Receita B2 (Anorexígenos).' },
+        { id:'c_tal_retinoides', cat:'talonario', layout:'talonario', theme:'theme-red', icon:'fa-exclamation-circle', titulo:'Taxa Talonário Retinoides C2', sub:'SNCR • Controle Especial C2', valor:'170,00', cod:'SNCR-C02', lei:'Portaria SVS/MS 344/1998', desc:'Taxa de autorização de numeração para Notificação de Receita Especial de Retinoides (Lista C2).' },
+        { id:'c_tal_branca_c1', cat:'talonario', layout:'talonario', theme:'theme-purple', icon:'fa-prescription', titulo:'Taxa Receituário Controle C1/C5', sub:'Emissão • 2 Vias Oficiais', valor:'140,00', cod:'SNCR-C01', lei:'Portaria SVS/MS 344/1998', desc:'Taxa de homologação e emissão de receituário de Controle Especial (Branca C1/C5 — 2 Vias).' },
+        { id:'c_tal_glp1', cat:'talonario', layout:'talonario', theme:'theme-purple', icon:'fa-syringe', titulo:'Taxa Receituário GLP-1 Retenção', sub:'Emissão • Semaglutida / Tirzepatida', valor:'150,00', cod:'SNCR-GLP', lei:'Normativa ANVISA Retenção GLP-1', desc:'Taxa de emissão e registro de receituário de retenção obrigatória para agonistas de GLP-1.' },
+        { id:'c_tal_odonto', cat:'talonario', layout:'talonario', theme:'theme-blue', icon:'fa-tooth', titulo:'Taxa Cadastro Prescritor CRO', sub:'SNCR • Cirurgião-Dentista', valor:'150,00', cod:'SNCR-CRO', lei:'Portaria SVS/MS 344/1998', desc:'Taxa de cadastramento de Cirurgião-Dentista (CRO) para retirada de numeração de receituário especial.' },
+        { id:'c_tal_vet', cat:'talonario', layout:'talonario', theme:'theme-green', icon:'fa-paw', titulo:'Taxa Talonário Veterinário CRMV', sub:'SNCR • Uso Veterinário', valor:'160,00', cod:'SNCR-VET', lei:'Portaria SVS/MS 344/1998 • MAPA', desc:'Taxa de liberação de talonário de receita controlada de uso veterinário (CRMV).' },
+        { id:'c_tal_cadastro_med', cat:'talonario', layout:'talonario', theme:'theme-green', icon:'fa-user-md', titulo:'Taxa Cadastro Inicial Prescritor', sub:'COVISA • Habilitação CRM', valor:'150,00', cod:'SNCR-MED', lei:'Portaria SMS 266/2025 • SNCR', desc:'Taxa de habilitação cadastral de médico prescritor perante a Vigilância Sanitária Municipal.' },
+        { id:'c_tal_livro', cat:'talonario', layout:'talonario', theme:'theme-purple', icon:'fa-book-medical', titulo:'Taxa Termo Livro Controlados', sub:'Abertura / Encerramento', valor:'130,00', cod:'SNCR-LIV', lei:'Portaria SVS/MS 344/1998', desc:'Taxa referente à lavratura de Termo de Abertura ou Encerramento de Livro de Registro Específico.' },
+
+        // 4. COMÉRCIOS & SERVIÇOS (10)
+        { id:'c_com_fastfood', cat:'comercios', layout:'damsp', theme:'theme-red', icon:'fa-hamburger', titulo:'Guia Taxa Fast Food / Lanchonete', sub:'Alimentos • RDC 216/2004', valor:'240,00', cod:'14101-0', lei:'RDC 216/2004 • Lei 13.725/04', desc:'Guia de taxa sanitária para licenciamento de lanchonete, hamburgueria, pastelaria ou fast food.' },
+        { id:'c_com_adega', cat:'comercios', layout:'damsp', theme:'theme-purple', icon:'fa-wine-bottle', titulo:'Guia Taxa Adega & Tabacaria', sub:'Bebidas • Varejo / Conveniência', valor:'220,00', cod:'14102-8', lei:'Lei Municipal 13.725/2004', desc:'Guia de taxa sanitária para licenciamento de adega, distribuidora de bebidas e tabacaria.' },
+        { id:'c_com_nails', cat:'comercios', layout:'damsp', theme:'theme-purple', icon:'fa-hand-sparkles', titulo:'Guia Taxa Studio Nails / Manicure', sub:'Estética • Biossegurança', valor:'190,00', cod:'14103-6', lei:'Portaria CVS 01/2024 • COVISA', desc:'Guia de taxa sanitária para licenciamento de Studio Nails, alongamento de unhas, manicure e podologia.' },
+        { id:'c_com_salao', cat:'comercios', layout:'damsp', theme:'theme-blue', icon:'fa-cut', titulo:'Guia Taxa Salão & Barbearia', sub:'Beleza • Cosmetovigilância', valor:'200,00', cod:'14104-4', lei:'Lei Municipal 13.725/2004', desc:'Guia de taxa sanitária para salão de beleza, cabeleireiro e barbearia.' },
+        { id:'c_com_carrocinha', cat:'comercios', layout:'damsp', theme:'theme-yellow', icon:'fa-hotdog', titulo:'Guia Taxa Carrocinha / Food Truck', sub:'Comida de Rua • Ambulante', valor:'150,00', cod:'14105-2', lei:'Decreto Municipal 55.085/2014', desc:'Guia de taxa sanitária para autorização de comércio ambulante de alimentos, carrocinha ou food truck.' },
+        { id:'c_com_mercado', cat:'comercios', layout:'damsp', theme:'theme-green', icon:'fa-shopping-basket', titulo:'Guia Taxa Mercado / Padaria', sub:'Varejo Alimentar • Açougue', valor:'290,00', cod:'14106-0', lei:'RDC 216/2004 • Lei 13.725/04', desc:'Guia de taxa sanitária para supermercado, mercearia, padaria, açougue ou hortifrúti.' },
+        { id:'c_com_petshop', cat:'comercios', layout:'damsp', theme:'theme-blue', icon:'fa-dog', titulo:'Guia Taxa Pet Shop / Banho & Tosa', sub:'Zoonoses • Serviços Pet', valor:'210,00', cod:'14107-9', lei:'Lei Municipal 13.725/2004', desc:'Guia de taxa sanitária para Pet Shop, Banho & Tosa e atendimento veterinário.' },
+        { id:'c_com_estetica', cat:'comercios', layout:'damsp', theme:'theme-purple', icon:'fa-spa', titulo:'Guia Taxa Clínica Estética Avançada', sub:'Injetáveis • Harmonização', valor:'360,00', cod:'14108-7', lei:'Portaria SMS 266/2025', desc:'Guia de taxa sanitária para clínica de estética avançada, harmonização e procedimentos injetáveis.' },
+        { id:'c_com_farmacia', cat:'comercios', layout:'damsp', theme:'theme-blue', icon:'fa-prescription-bottle-alt', titulo:'Guia Taxa Farmácia / Drogaria', sub:'Dispensação • RDC 44/2009', valor:'420,00', cod:'14109-5', lei:'RDC ANVISA 44/2009 • Port. 344/98', desc:'Guia de taxa sanitária para licenciamento e renovação de farmácia ou drogaria.' },
+        { id:'c_com_academia', cat:'comercios', layout:'damsp', theme:'theme-green', icon:'fa-dumbbell', titulo:'Guia Taxa Academia / Pilates', sub:'Fitness • Qualidade do Ar', valor:'230,00', cod:'14110-9', lei:'Lei Municipal 13.725/2004', desc:'Guia de taxa sanitária para academia de ginástica, estúdio de pilates ou centro de treinamento.' },
+
+        // 5. VISTORIAS & LAUDOS (10)
+        { id:'c_vis_inicial', cat:'vistorias', layout:'vistoria', theme:'theme-blue', icon:'fa-clipboard-check', titulo:'Taxa Vistoria Sanitária Inicial', sub:'Inspeção Prévia no Local', valor:'210,00', cod:'VST-001', lei:'Lei Municipal 13.725/2004', desc:'Taxa de inspeção e vistoria sanitária inicial para liberação de licença de funcionamento.' },
+        { id:'c_vis_reinspecao', cat:'vistorias', layout:'vistoria', theme:'theme-yellow', icon:'fa-redo-alt', titulo:'Taxa Reinspeção / Retorno Fiscal', sub:'Conferência de Adequações', valor:'180,00', cod:'VST-002', lei:'Lei Estadual 10.083/1998', desc:'Taxa de nova vistoria sanitária para verificação do cumprimento de exigências técnicas.' },
+        { id:'c_vis_veiculo', cat:'vistorias', layout:'vistoria', theme:'theme-blue', icon:'fa-truck', titulo:'Taxa Vistoria Veículo Transporte', sub:'Alimentos / Medicamentos', valor:'195,00', cod:'VST-003', lei:'Portaria CVS 15/1991 • COVISA', desc:'Taxa de inspeção sanitária e emissão de certificado para veículo transportador de alimentos ou insumos.' },
+        { id:'c_vis_lta', cat:'vistorias', layout:'vistoria', theme:'theme-purple', icon:'fa-drafting-compass', titulo:'Taxa Análise de Projeto (LTA)', sub:'Laudo Técnico de Avaliação', valor:'480,00', cod:'VST-004', lei:'Portaria CVS 01/2024 • LTA', desc:'Taxa de análise físico-funcional de projeto arquitetônico para emissão de Laudo Técnico de Avaliação (LTA).' },
+        { id:'c_vis_desinterdicao', cat:'vistorias', layout:'vistoria', theme:'theme-red', icon:'fa-unlock', titulo:'Taxa Vistoria de Desinterdição', sub:'Liberação Pós-Adequação', valor:'320,00', cod:'VST-005', lei:'Lei Estadual 10.083/1998', desc:'Taxa de vistoria técnica extraordinária para avaliação de desinterdição parcial ou total do estabelecimento.' },
+        { id:'c_vis_piscina', cat:'vistorias', layout:'vistoria', theme:'theme-blue', icon:'fa-swimming-pool', titulo:'Taxa Inspeção Piscina / Clube', sub:'Potabilidade & Balneabilidade', valor:'240,00', cod:'VST-006', lei:'Decreto Estadual 13.166/1979', desc:'Taxa de vistoria sanitária em piscina coletiva, clube recreativo ou escola de natação.' },
+        { id:'c_vis_agua', cat:'vistorias', layout:'vistoria', theme:'theme-green', icon:'fa-tint', titulo:'Taxa Análise Potabilidade Água', sub:'Reservatório / Poço Artesiano', valor:'190,00', cod:'VST-007', lei:'Portaria GM/MS 888/2021', desc:'Taxa de conferência sanitária de laudos de potabilidade de água e limpeza de reservatório.' },
+        { id:'c_vis_dedetizacao', cat:'vistorias', layout:'vistoria', theme:'theme-green', icon:'fa-bug', titulo:'Taxa Homologação Controle Pragas', sub:'RDC 622/2022 • Certificação', valor:'160,00', cod:'VST-008', lei:'RDC ANVISA 622/2022', desc:'Taxa de homologação de certificado de controle integrado de vetores e pragas urbanas.' },
+        { id:'c_vis_pgrss', cat:'vistorias', layout:'vistoria', theme:'theme-purple', icon:'fa-biohazard', titulo:'Taxa Análise de Plano PGRSS', sub:'Resíduos de Saúde • RDC 222/18', valor:'230,00', cod:'VST-009', lei:'RDC ANVISA 222/2018', desc:'Taxa de análise e validação do Plano de Gerenciamento de Resíduos de Serviços de Saúde (PGRSS).' },
+        { id:'c_vis_mbp', cat:'vistorias', layout:'vistoria', theme:'theme-green', icon:'fa-book', titulo:'Taxa Validação Manual BPF / POP', sub:'Boas Práticas • RDC 216/04', valor:'200,00', cod:'VST-010', lei:'RDC ANVISA 216/2004', desc:'Taxa de conferência técnica do Manual de Boas Práticas (MBP) e Procedimentos Operacionais Padronizados (POP).' },
+
+        // 6. ALTERAÇÕES CADASTRAIS & RT (10)
+        { id:'c_alt_rt_assuncao', cat:'alteracoes', layout:'certidao', theme:'theme-blue', icon:'fa-user-plus', titulo:'Taxa Assunção Resp. Técnico (RT)', sub:'Inclusão de RT no CMVS', valor:'145,00', cod:'ALT-101', lei:'Portaria SMS 266/2025', desc:'Taxa de averbação de Assunção de Responsabilidade Técnica (RT) perante a COVISA.' },
+        { id:'c_alt_rt_baixa', cat:'alteracoes', layout:'certidao', theme:'theme-yellow', icon:'fa-user-minus', titulo:'Taxa Baixa de Resp. Técnico (RT)', sub:'Desvinculação de RT', valor:'120,00', cod:'ALT-102', lei:'Portaria SMS 266/2025', desc:'Taxa administrativa para registro de baixa de Responsabilidade Técnica.' },
+        { id:'c_alt_endereco', cat:'alteracoes', layout:'certidao', theme:'theme-blue', icon:'fa-map-marked-alt', titulo:'Taxa Alteração de Endereço', sub:'Mudança de Local do CMVS', valor:'220,00', cod:'ALT-103', lei:'Lei Municipal 13.725/2004', desc:'Taxa de alteração de endereço de estabelecimento já licenciado na Vigilância Sanitária.' },
+        { id:'c_alt_razao', cat:'alteracoes', layout:'certidao', theme:'theme-blue', icon:'fa-building', titulo:'Taxa Alteração Razão Social', sub:'Atualização Contratual', valor:'140,00', cod:'ALT-104', lei:'Portaria SMS 266/2025', desc:'Taxa de atualização cadastral por alteração de Razão Social ou Nome Fantasia.' },
+        { id:'c_alt_cnae', cat:'alteracoes', layout:'certidao', theme:'theme-purple', icon:'fa-list-ul', titulo:'Taxa Inclusão / Alteração CNAE', sub:'Ampliação de Atividades', valor:'190,00', cod:'ALT-105', lei:'Portaria SMS 266/2025', desc:'Taxa de inclusão ou alteração de atividade econômica (CNAE) no licenciamento sanitário.' },
+        { id:'c_alt_resp_legal', cat:'alteracoes', layout:'certidao', theme:'theme-blue', icon:'fa-user-tie', titulo:'Taxa Alteração Resp. Legal', sub:'Quadro Societário', valor:'135,00', cod:'ALT-106', lei:'Portaria SMS 266/2025', desc:'Taxa de atualização do responsável legal / quadro societário no cadastro sanitário.' },
+        { id:'c_alt_area', cat:'alteracoes', layout:'certidao', theme:'theme-yellow', icon:'fa-ruler-combined', titulo:'Taxa Ampliação de Área Física', sub:'Reforma / Expansão', valor:'250,00', cod:'ALT-107', lei:'Portaria SMS 266/2025', desc:'Taxa de atualização cadastral por ampliação ou redução de área física do estabelecimento.' },
+        { id:'c_alt_baixa_cmvs', cat:'alteracoes', layout:'certidao', theme:'theme-red', icon:'fa-times-circle', titulo:'Taxa Cancelamento / Baixa CMVS', sub:'Encerramento de Atividades', valor:'110,00', cod:'ALT-108', lei:'Portaria SMS 266/2025', desc:'Taxa administrativa para cancelamento definitivo de Cadastro Municipal (CMVS).' },
+        { id:'c_alt_subst_rt', cat:'alteracoes', layout:'certidao', theme:'theme-blue', icon:'fa-exchange-alt', titulo:'Taxa Substituição de RT', sub:'Troca Simultânea de RT', valor:'165,00', cod:'ALT-109', lei:'Portaria SMS 266/2025', desc:'Taxa de substituição simultânea de Responsável Técnico (baixa + nova assunção).' },
+        { id:'c_alt_horario', cat:'alteracoes', layout:'certidao', theme:'theme-green', icon:'fa-clock', titulo:'Taxa Alteração Horário / Plantão', sub:'Assistência Farmacêutica', valor:'130,00', cod:'ALT-110', lei:'RDC ANVISA 44/2009', desc:'Taxa de atualização de horário de funcionamento e escala de assistência técnica.' },
+
+        // 7. CERTIDÕES & 2ª VIA (10)
+        { id:'c_cert_regularidade', cat:'certidoes', layout:'certidao', theme:'theme-green', icon:'fa-file-signature', titulo:'Taxa Certidão de Regularidade', sub:'Situação Ativa COVISA', valor:'110,00', cod:'CRT-201', lei:'Lei Municipal 13.725/2004', desc:'Emolumento para emissão de Certidão de Regularidade Sanitária e protocolo ativo.' },
+        { id:'c_cert_dispensa', cat:'certidoes', layout:'certidao', theme:'theme-green', icon:'fa-check-circle', titulo:'Taxa Certidão Baixo Risco', sub:'Dispensa • Lei 13.874/19', valor:'120,00', cod:'CRT-202', lei:'Lei Federal 13.874/2019', desc:'Taxa de emissão de Certidão de Dispensa de Licenciamento para atividade de Baixo Risco.' },
+        { id:'c_cert_2via_alvara', cat:'certidoes', layout:'certidao', theme:'theme-blue', icon:'fa-copy', titulo:'Taxa 2ª Via de Alvará Sanitário', sub:'Reemissão Digital 2026', valor:'95,00', cod:'CRT-203', lei:'Portaria SMS 266/2025', desc:'Taxa de expedição de 2ª via atualizada de Alvará / Licença de Funcionamento Sanitária.' },
+        { id:'c_cert_negativa', cat:'certidoes', layout:'certidao', theme:'theme-green', icon:'fa-shield-alt', titulo:'Taxa Certidão Negativa Infrações', sub:'Nada Consta Sanitário', valor:'105,00', cod:'CRT-204', lei:'Lei Estadual 10.083/1998', desc:'Taxa de expedição de Certidão Negativa de Débitos e Infrações Sanitárias.' },
+        { id:'c_cert_inteiro_teor', cat:'certidoes', layout:'certidao', theme:'theme-purple', icon:'fa-folder-open', titulo:'Taxa Cópia Processo Inteiro Teor', sub:'Digitalização Oficial', valor:'130,00', cod:'CRT-205', lei:'Lei Municipal 14.141/2006', desc:'Taxa de reprografia digital e autenticação de processo administrativo sanitário.' },
+        { id:'c_cert_dca', cat:'certidoes', layout:'certidao', theme:'theme-purple', icon:'fa-file-contract', titulo:'Taxa Homologação DCA / DCFF', sub:'Portaria SMS 404/2024', valor:'150,00', cod:'CRT-206', lei:'Portaria SMS 404/2024', desc:'Taxa de protocolo e homologação de Declaração de Conformidade (DCA/DCFF).' },
+        { id:'c_cert_cnes', cat:'certidoes', layout:'certidao', theme:'theme-blue', icon:'fa-hospital-user', titulo:'Taxa Validação Cadastro CNES', sub:'Estabelecimento de Saúde', valor:'140,00', cod:'CRT-207', lei:'Portaria MS 1.646/2015', desc:'Taxa de conferência e validação sanitária para atualização do Cadastro Nacional (CNES).' },
+        { id:'c_cert_cli', cat:'certidoes', layout:'certidao', theme:'theme-green', icon:'fa-stamp', titulo:'Taxa Certificado Integrado (CLI)', sub:'Licenciamento Integrado', valor:'210,00', cod:'CRT-208', lei:'Decreto Municipal Integrado', desc:'Taxa referente à emissão do Certificado de Licenciamento Integrado (CLI).' },
+        { id:'c_cert_autenticacao', cat:'certidoes', layout:'certidao', theme:'theme-yellow', icon:'fa-award', titulo:'Taxa Selo Digital de Autenticidade', sub:'Validação QR Code', valor:'85,00', cod:'CRT-209', lei:'Portal COVISA Digital 2026', desc:'Taxa de autenticação eletrônica com selo de segurança e QR Code verificável.' },
+        { id:'c_cert_historico', cat:'certidoes', layout:'certidao', theme:'theme-blue', icon:'fa-history', titulo:'Taxa Certidão Histórico Cadastral', sub:'Anos Anteriores CMVS', valor:'125,00', cod:'CRT-210', lei:'Portaria SMS 266/2025', desc:'Taxa de busca e emissão de certidão de histórico cadastral de exercícios anteriores.' },
+
+        // 8. MULTAS & AUTOS UFESP (10)
+        { id:'c_mul_leve_10', cat:'multas_ufesp', layout:'multa', theme:'theme-yellow', icon:'fa-gavel', titulo:'Multa Sanitária Leve (10 UFESP)', sub:'Lei 10.083/98 • R$ 384,20', valor:'384,20', cod:'AI-UFESP10', lei:'Art. 122, Lei Estadual 10.083/1998', desc:'Guia de recolhimento de multa sanitária — Infração de natureza LEVE (10 UFESP).' },
+        { id:'c_mul_leve_20', cat:'multas_ufesp', layout:'multa', theme:'theme-yellow', icon:'fa-gavel', titulo:'Multa Sanitária Leve (20 UFESP)', sub:'Lei 10.083/98 • R$ 768,40', valor:'768,40', cod:'AI-UFESP20', lei:'Art. 122, Lei Estadual 10.083/1998', desc:'Guia de recolhimento de multa sanitária — Infração de natureza LEVE (20 UFESP).' },
+        { id:'c_mul_sem_alvara', cat:'multas_ufesp', layout:'multa', theme:'theme-red', icon:'fa-ban', titulo:'Multa Funcionamento Sem Alvará', sub:'Art. 122, I • 50 UFESP', valor:'1.921,00', cod:'AI-122-I', lei:'Art. 122, Inciso I, Lei 10.083/1998', desc:'Auto de Imposição de Penalidade de Multa por funcionamento sem licença sanitária vigente (50 UFESP).' },
+        { id:'c_mul_sem_rt', cat:'multas_ufesp', layout:'multa', theme:'theme-red', icon:'fa-user-slash', titulo:'Multa Ausência de Resp. Técnico', sub:'Art. 122, II • 50 UFESP', valor:'1.921,00', cod:'AI-122-II', lei:'Art. 122, Inciso II, Lei 10.083/1998', desc:'Multa sanitária por funcionamento sem Responsável Técnico legalmente habilitado.' },
+        { id:'c_mul_vencido', cat:'multas_ufesp', layout:'multa', theme:'theme-red', icon:'fa-box-open', titulo:'Multa Produto Vencido / Sem Rótulo', sub:'Art. 122, XIII • 100 UFESP', valor:'3.842,00', cod:'AI-122-XIII', lei:'Art. 122, Inciso XIII, Lei 10.083/1998', desc:'Multa sanitária por comercialização ou exposição de produtos vencidos ou sem rotulagem válida.' },
+        { id:'c_mul_higiene', cat:'multas_ufesp', layout:'multa', theme:'theme-red', icon:'fa-bug', titulo:'Multa Higiene Precária / Pragas', sub:'Art. 122, XIX • 50 UFESP', valor:'1.921,00', cod:'AI-122-XIX', lei:'Art. 122, Inciso XIX, Lei 10.083/1998', desc:'Multa sanitária por descumprimento de boas práticas de higiene e presença de vetores/pragas.' },
+        { id:'c_mul_residuos', cat:'multas_ufesp', layout:'multa', theme:'theme-red', icon:'fa-trash-alt', titulo:'Multa Descarte Irregular PGRSS', sub:'Art. 122, VI • 100 UFESP', valor:'3.842,00', cod:'AI-122-VI', lei:'Art. 122, Inciso VI, Lei 10.083/1998', desc:'Multa sanitária por descarte irregular de resíduos infectantes ou perfurocortantes.' },
+        { id:'c_mul_obstrucao', cat:'multas_ufesp', layout:'multa', theme:'theme-red', icon:'fa-hand-paper', titulo:'Multa Impedir Fiscalização', sub:'Art. 122, VIII • 100 UFESP', valor:'3.842,00', cod:'AI-122-VIII', lei:'Art. 122, Inciso VIII, Lei 10.083/1998', desc:'Multa sanitária por dificultar, atrasar ou impedir a ação da autoridade sanitária.' },
+        { id:'c_mul_descumprir', cat:'multas_ufesp', layout:'multa', theme:'theme-red', icon:'fa-exclamation-triangle', titulo:'Multa Descumprir Intimação', sub:'Art. 122, XX • 100 UFESP', valor:'3.842,00', cod:'AI-122-XX', lei:'Art. 122, Inciso XX, Lei 10.083/1998', desc:'Multa sanitária por descumprimento de determinação ou notificação da autoridade sanitária.' },
+        { id:'c_mul_acordo', cat:'multas_ufesp', layout:'multa', theme:'theme-green', icon:'fa-handshake', titulo:'Guia Acordo / Desconto 20% Multa', sub:'Quitação Antecipada AI', valor:'1.536,80', cod:'AI-DESC20', lei:'Lei Estadual 10.083/1998 • Pagamento à Vista', desc:'Guia com redução legal de 20% para quitação antecipada de Auto de Infração Sanitária.' },
+
+        // 9. REGISTRO & NOTIFICAÇÃO DE PRODUTOS (10)
+        { id:'c_prod_alimento', cat:'produtos_reg', layout:'gru', theme:'theme-green', icon:'fa-utensils', titulo:'Taxa Comunicado Início Alimento', sub:'ANVISA • Anexo X / RDC 843', valor:'260,00', cod:'PRD-301', lei:'RDC ANVISA 843/2024', desc:'Taxa de protocolo de Comunicado de Início de Fabricação ou Importação de Alimentos.' },
+        { id:'c_prod_suplemento', cat:'produtos_reg', layout:'gru', theme:'theme-green', icon:'fa-capsules', titulo:'Taxa Notificação Suplementos', sub:'ANVISA • RDC 243/2018', valor:'290,00', cod:'PRD-302', lei:'RDC ANVISA 243/2018', desc:'Guia referente à notificação sanitária de suplementos alimentares perante a ANVISA.' },
+        { id:'c_prod_cosmetico1', cat:'produtos_reg', layout:'gru', theme:'theme-purple', icon:'fa-spray-can', titulo:'Taxa Notificação Cosmético Grau 1', sub:'ANVISA • Isento Registro', valor:'240,00', cod:'PRD-303', lei:'RDC ANVISA 752/2022', desc:'Taxa de notificação de produto de higiene pessoal, perfume ou cosmético Grau 1.' },
+        { id:'c_prod_cosmetico2', cat:'produtos_reg', layout:'gru', theme:'theme-purple', icon:'fa-magic', titulo:'Taxa Registro Cosmético Grau 2', sub:'ANVISA • Risco Grau 2', valor:'420,00', cod:'PRD-304', lei:'RDC ANVISA 752/2022', desc:'Guia de recolhimento para registro sanitário de cosmético Grau 2.' },
+        { id:'c_prod_saneante1', cat:'produtos_reg', layout:'gru', theme:'theme-blue', icon:'fa-pump-soap', titulo:'Taxa Notificação Saneante Risco 1', sub:'ANVISA • Limpeza Geral', valor:'250,00', cod:'PRD-305', lei:'RDC ANVISA 59/2010', desc:'Taxa de notificação de produto saneante domissanitário classificado em Risco 1.' },
+        { id:'c_prod_saneante2', cat:'produtos_reg', layout:'gru', theme:'theme-blue', icon:'fa-flask', titulo:'Taxa Registro Saneante Risco 2', sub:'ANVISA • Desinfetante / Pragas', valor:'460,00', cod:'PRD-306', lei:'RDC ANVISA 59/2010', desc:'Guia de recolhimento para registro de saneante Risco 2 (desinfetantes, alvejantes, inseticidas).' },
+        { id:'c_prod_dispositivo', cat:'produtos_reg', layout:'gru', theme:'theme-blue', icon:'fa-stethoscope', titulo:'Taxa Notificação Dispositivo Médico', sub:'ANVISA • Classe I / II', valor:'390,00', cod:'PRD-307', lei:'RDC ANVISA 751/2022', desc:'Taxa de notificação sanitária de dispositivo médico / produto para saúde Classe I ou II.' },
+        { id:'c_prod_rotulo', cat:'produtos_reg', layout:'gru', theme:'theme-yellow', icon:'fa-tag', titulo:'Taxa Análise de Rotulagem', sub:'Tabela Nutricional • RDC 429', valor:'190,00', cod:'PRD-308', lei:'RDC ANVISA 429/2020', desc:'Taxa de conferência técnica de rotulagem nutricional frontal e alegações sanitárias.' },
+        { id:'c_prod_renov_reg', cat:'produtos_reg', layout:'gru', theme:'theme-green', icon:'fa-sync', titulo:'Taxa Renovação Registro Produto', sub:'ANVISA • Revalidação', valor:'380,00', cod:'PRD-309', lei:'Lei Federal 6.360/1976', desc:'Guia Federal (GRU) para revalidação de registro de produto sujeito à vigilância sanitária.' },
+        { id:'c_prod_cancel_reg', cat:'produtos_reg', layout:'gru', theme:'theme-red', icon:'fa-ban', titulo:'Taxa Cancelamento Registro Prod.', sub:'ANVISA • Baixa de Produto', valor:'150,00', cod:'PRD-310', lei:'Lei Federal 9.782/1999', desc:'Taxa administrativa para cancelamento de registro ou notificação de produto.' },
+
+        // 10. SERVIÇOS ESPECIAIS & EMOLUMENTOS (10)
+        { id:'c_esp_taxa_geral', cat:'especiais_tax', layout:'damsp', theme:'theme-green', icon:'fa-file-invoice-dollar', titulo:'Guia Única Taxa Vigilância', sub:'DAMSP • Padrão Geral', valor:'250,00', cod:'TX-GERAL', lei:'Lei Municipal 13.725/2004', desc:'Guia oficial de arrecadação referente à Taxa de Vigilância Sanitária (COVISA).' },
+        { id:'c_esp_urgencia', cat:'especiais_tax', layout:'damsp', theme:'theme-red', icon:'fa-bolt', titulo:'Taxa Análise Prioritária / Urgente', sub:'Tramitação Expressa 24h', valor:'320,00', cod:'TX-URG24', lei:'Portaria SMS 266/2025', desc:'Taxa de tramitação prioritária para análise documental e expedição expressa.' },
+        { id:'c_esp_inutilizacao', cat:'especiais_tax', layout:'vistoria', theme:'theme-yellow', icon:'fa-fire', titulo:'Taxa Termo Inutilização Controlados', sub:'Conferência & Descarte', valor:'175,00', cod:'TX-INUT', lei:'Portaria SVS/MS 344/1998', desc:'Taxa de conferência e lavratura de Termo de Inutilização de medicamentos controlados.' },
+        { id:'c_esp_radiodiag', cat:'especiais_tax', layout:'vistoria', theme:'theme-purple', icon:'fa-x-ray', titulo:'Taxa Licenciamento Radiologia / RX', sub:'RDC 611/2022 • Proteção', valor:'410,00', cod:'TX-RX611', lei:'RDC ANVISA 611/2022', desc:'Taxa de licenciamento sanitário para serviço de radiodiagnóstico médico ou odontológico.' },
+        { id:'c_esp_laboratorio', cat:'especiais_tax', layout:'vistoria', theme:'theme-blue', icon:'fa-vials', titulo:'Taxa Posto Coleta / Laboratório', sub:'RDC 786/2023 • Análises', valor:'340,00', cod:'TX-LAB', lei:'RDC ANVISA 786/2023', desc:'Taxa de licenciamento sanitário para laboratório clínico ou posto de coleta.' },
+        { id:'c_esp_vacinacao', cat:'especiais_tax', layout:'vistoria', theme:'theme-green', icon:'fa-syringe', titulo:'Taxa Sala de Vacinação Privada', sub:'RDC 197/2017 • Cadeia Frio', valor:'350,00', cod:'TX-VAC', lei:'RDC ANVISA 197/2017', desc:'Taxa de autorização sanitária para sala de vacinação humana em clínica ou farmácia.' },
+        { id:'c_esp_ilpi', cat:'especiais_tax', layout:'vistoria', theme:'theme-blue', icon:'fa-hands-helping', titulo:'Taxa Licenciamento ILPI / Creche', sub:'RDC 502/2021 • Instituição', valor:'310,00', cod:'TX-ILPI', lei:'RDC ANVISA 502/2021', desc:'Taxa de licenciamento sanitário para Instituição de Longa Permanência para Idosos (ILPI) ou creche.' },
+        { id:'c_esp_funeraria', cat:'especiais_tax', layout:'vistoria', theme:'theme-yellow', icon:'fa-cross', titulo:'Taxa Tanatopraxia / Funerária', sub:'Normas Sanitárias Mortuárias', valor:'330,00', cod:'TX-FUN', lei:'Lei Municipal 13.725/2004', desc:'Taxa de licenciamento sanitário para clínica de somatoconservação, tanatopraxia ou funerária.' },
+        { id:'c_esp_procuracao', cat:'especiais_tax', layout:'certidao', theme:'theme-blue', icon:'fa-user-check', titulo:'Taxa Protocolo de Procuração', sub:'Habilitação Representante', valor:'90,00', cod:'TX-PROC', lei:'Lei Municipal 14.141/2006', desc:'Taxa administrativa para cadastro e habilitação de procurador sanitário no processo.' },
+        { id:'c_esp_recibo_quit', cat:'especiais_tax', layout:'certidao', theme:'theme-green', icon:'fa-check-double', titulo:'Comprovante de Quitação / Guia Paga', sub:'Recibo Oficial COVISA', valor:'250,00', cod:'TX-QUIT', lei:'Portal COVISA Digital 2026', desc:'Comprovante oficial de quitação de guia/taxa sanitária recolhida junto à COVISA.' }
+    ];
+
+    let cobrTipoAtual = 'c_lic_inicial';
+    let cobrCatAtual = 'todos';
+    let cobrUltimoBlobUrl = null;
+    let cobrUltimoBytes = null;
+    let cobrUltimoFilename = '';
+    let cobrHistorico = [];
+    window.cobrPixQrDataUrl = '';
+
+    window.atualizarProcessosCobranca = () => {
+        const sel = document.getElementById('cobr-process-selector');
+        if (!sel) return;
+        const cur = sel.value;
+        sel.innerHTML = '<option value="">-- Digitar manual ou selecionar cliente --</option>' +
+            (todosProcessos || []).filter(p => p.nome).map(p =>
+                `<option value="${p.id}">${escaparHtmlWA(p.nome)} (${escaparHtmlWA(p.cnpj || 'S/Doc')})</option>`
+            ).join('');
+        if (cur) sel.value = cur;
+    };
+
+    window.inicializarCobranca100 = () => {
+        const grid = document.getElementById('cobr-types-grid');
+        if (grid && grid.children.length === 0) {
+            grid.innerHTML = COBRANCA_CATALOG_100.map((m, idx) => `
+                <button type="button" class="docgen-type-card ${m.theme || ''} ${m.id === cobrTipoAtual ? 'active' : ''}" data-cobr-id="${m.id}" data-cobr-cat="${m.cat}" onclick="selecionarModeloCobranca('${m.id}')">
+                    <span class="docgen-num-badge">#${String(idx + 1).padStart(2, '0')}</span>
+                    <i class="fas ${m.icon}"></i>
+                    <strong>${m.titulo}</strong>
+                    <span>${m.sub} • R$ ${m.valor}</span>
+                </button>
+            `).join('');
+        }
+        const hoje = new Date();
+        const venc = new Date(hoje); venc.setDate(venc.getDate() + 3);
+        const emEl = document.getElementById('cobr-emissao');
+        const vcEl = document.getElementById('cobr-vencimento');
+        const prEl = document.getElementById('cobr-protocolo');
+        if (emEl && !emEl.value) emEl.value = formatarDataBR(hoje);
+        if (vcEl && !vcEl.value) vcEl.value = formatarDataBR(venc);
+        if (prEl && !prEl.value) prEl.value = `GUIA-2026-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+        atualizarProcessosCobranca();
+        if (!document.getElementById('cobr-cod-receita')?.value) {
+            selecionarModeloCobranca(cobrTipoAtual, true);
+        }
+    };
+
+    window.filtrarModelosCobranca = () => {
+        const termo = (document.getElementById('cobr-model-search')?.value || '').toLowerCase().trim();
+        document.querySelectorAll('#cobr-types-grid .docgen-type-card').forEach(card => {
+            const matchCat = (cobrCatAtual === 'todos' || card.dataset.cobrCat === cobrCatAtual);
+            const matchTxt = !termo || card.innerText.toLowerCase().includes(termo);
+            card.style.display = (matchCat && matchTxt) ? 'flex' : 'none';
+        });
+    };
+
+    window.filtrarCategoriaCobranca = (cat, btnEl) => {
+        cobrCatAtual = cat;
+        document.querySelectorAll('#cobr-cat-tabs .docgen-cat-btn').forEach(b => b.classList.remove('active'));
+        if (btnEl) btnEl.classList.add('active');
+        filtrarModelosCobranca();
+    };
+
+    window.selecionarModeloCobranca = (id, silencioso = false) => {
+        const m = COBRANCA_CATALOG_100.find(x => x.id === id);
+        if (!m) return;
+        cobrTipoAtual = id;
+        document.querySelectorAll('#cobr-types-grid .docgen-type-card').forEach(c => {
+            c.classList.toggle('active', c.dataset.cobrId === id);
+        });
+        const tag = document.getElementById('cobr-template-tag');
+        if (tag) tag.innerText = `${m.titulo} • Modelo ${m.layout.toUpperCase()}`;
+        const valEl = document.getElementById('cobr-valor');
+        const codEl = document.getElementById('cobr-cod-receita');
+        const leiEl = document.getElementById('cobr-base-legal');
+        const descEl = document.getElementById('cobr-descricao');
+        if (valEl) valEl.value = m.valor;
+        if (codEl) codEl.value = m.cod;
+        if (leiEl) leiEl.value = m.lei;
+        if (descEl) descEl.value = m.desc;
+        if (!silencioso) showToast('Modelo Selecionado', `${m.titulo} (R$ ${m.valor}) pronto para emitir.`, 'success');
+    };
+
+    window.importarProcessoNoCobranca = (procId) => {
+        if (!procId) return;
+        const p = todosProcessos.find(x => x.id === procId);
+        if (!p) return;
+        document.getElementById('cobr-nome').value = p.nome || '';
+        document.getElementById('cobr-cnpj').value = p.cnpj || '';
+        const end = [p.rua, p.num ? `nº ${p.num}` : '', p.bairro, p.cep ? `CEP ${p.cep}` : ''].filter(Boolean).join(', ');
+        document.getElementById('cobr-endereco').value = end;
+        document.getElementById('cobr-cidade').value = p.cidadeUF || 'São Paulo - SP';
+        document.getElementById('cobr-ramo').value = p.tipo || '';
+        if (p.telefone) document.getElementById('cobr-telefone').value = p.telefone;
+        if (p.valor) document.getElementById('cobr-valor').value = p.valor;
+        document.getElementById('cobr-protocolo').value = `GUIA-2026-${p.id.substring(0, 6).toUpperCase()}`;
+        showToast('Cliente Importado', `Dados de "${p.nome}" preenchidos na Cobrança.`, 'success');
+    };
+
+    window.buscarCnpjNoCobranca = async () => {
+        const cnpj = (document.getElementById('cobr-cnpj')?.value || '').replace(/\D/g, '');
+        if (cnpj.length !== 14) return showToast('CNPJ Inválido', 'Digite os 14 números do CNPJ.', 'warning');
+        const btn = document.getElementById('btn-cobr-busca-cnpj');
+        const orig = btn.innerHTML;
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        try {
+            const r = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+            if (!r.ok) throw new Error('CNPJ não encontrado.');
+            const d = await r.json();
+            document.getElementById('cobr-nome').value = d.razao_social || d.nome_fantasia || '';
+            document.getElementById('cobr-endereco').value = [d.descricao_tipo_de_logradouro, d.logradouro, d.numero ? `nº ${d.numero}` : '', d.bairro, d.cep ? `CEP ${d.cep}` : ''].filter(Boolean).join(', ');
+            document.getElementById('cobr-cidade').value = [d.municipio, d.uf].filter(Boolean).join(' - ') || 'São Paulo - SP';
+            if (d.cnae_fiscal_descricao) document.getElementById('cobr-ramo').value = d.cnae_fiscal_descricao.slice(0, 60);
+            if (d.ddd_telefone_1) document.getElementById('cobr-telefone').value = d.ddd_telefone_1;
+            showToast('Receita Federal', `Dados de "${d.razao_social}" carregados!`, 'success');
+        } catch (err) {
+            showToast('Erro CNPJ', err.message, 'error');
+        } finally {
+            btn.disabled = false; btn.innerHTML = orig;
+        }
+    };
+
+    window.gerarPixParaCobranca = async () => {
+        const btn = document.getElementById('btn-cobr-gerar-pix');
+        const valRaw = (document.getElementById('cobr-valor')?.value || '').replace(/R\$\s?/g, '').trim();
+        const valNum = parseFloat(valRaw.replace(/\./g, '').replace(',', '.'));
+        const nome = (document.getElementById('cobr-nome')?.value || 'Contribuinte').trim();
+        const docNum = (document.getElementById('cobr-cnpj')?.value || '').replace(/\D/g, '');
+        const prot = (document.getElementById('cobr-protocolo')?.value || 'GUIA_' + Date.now()).trim();
+        if (!valNum || isNaN(valNum) || valNum <= 0) return showToast('Valor Inválido', 'Informe o Valor (R$) primeiro.', 'warning');
+
+        const orig = btn.innerHTML;
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+        try {
+            const apiPixUrl = window.location.hostname.includes('netlify.app') ? 'https://portal-vigilancia.vercel.app/api/pix' : '/api/pix';
+            const resp = await fetch(apiPixUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: valNum, description: `Guia COVISA - ${prot}`, payerName: nome, payerDocument: docNum || '00000000000', externalReference: prot })
+            });
+            const data = await resp.json();
+            if (!resp.ok || !data.copyPaste) throw new Error(data.error || data.erro || 'Não foi possível gerar PIX.');
+            document.getElementById('cobr-pix-code').value = data.copyPaste;
+            showToast('PIX Gerado!', 'Código Copia e Cola pronto para sair na guia PDF.', 'success');
+        } catch (err) {
+            showToast('Aviso PIX', `${err.message} (Você pode colar o seu código Copia e Cola manualmente.)`, 'warning');
+        } finally {
+            btn.disabled = false; btn.innerHTML = orig;
+        }
+    };
+
+    window.carregarFotoQrPixCobranca = (input) => {
+        const file = input?.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+                const maxSide = 600;
+                let w = img.width, h = img.height;
+                if (w > maxSide || h > maxSide) {
+                    const ratio = Math.min(maxSide / w, maxSide / h);
+                    w = Math.round(w * ratio); h = Math.round(h * ratio);
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
+                ctx.drawImage(img, 0, 0, w, h);
+                window.cobrPixQrDataUrl = canvas.toDataURL('image/png');
+
+                const thumb = document.getElementById('cobr-pix-qr-thumb');
+                const st = document.getElementById('cobr-pix-qr-status');
+                const btnClr = document.getElementById('btn-cobr-pix-qr-clear');
+                if (thumb) { thumb.src = window.cobrPixQrDataUrl; thumb.style.display = 'block'; }
+                if (st) { st.innerText = `Foto carregada: ${file.name}`; st.style.color = '#6ee7b7'; }
+                if (btnClr) btnClr.style.display = 'inline-flex';
+                showToast('QR Code Anexado!', 'Sua foto do QR Code sairá no PDF da guia de cobrança.', 'success');
+            };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.limparFotoQrPixCobranca = (silencioso = false) => {
+        window.cobrPixQrDataUrl = '';
+        const inp = document.getElementById('cobr-pix-qr-file');
+        const thumb = document.getElementById('cobr-pix-qr-thumb');
+        const st = document.getElementById('cobr-pix-qr-status');
+        const btnClr = document.getElementById('btn-cobr-pix-qr-clear');
+        if (inp) inp.value = '';
+        if (thumb) { thumb.src = ''; thumb.style.display = 'none'; }
+        if (st) { st.innerText = 'Envie a foto do QR Code que você quer na guia PDF'; st.style.color = '#94a3b8'; }
+        if (btnClr) btnClr.style.display = 'none';
+        if (!silencioso) showToast('Removido', 'Foto do QR Code removida.', 'warning');
+    };
+
+    window.limparFormularioCobranca = () => {
+        ['cobr-process-selector', 'cobr-cnpj', 'cobr-nome', 'cobr-endereco', 'cobr-ramo', 'cobr-telefone', 'cobr-pix-code'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.value = '';
+        });
+        document.getElementById('cobr-cidade').value = 'São Paulo - SP';
+        document.getElementById('cobr-protocolo').value = `GUIA-2026-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+        limparFotoQrPixCobranca(true);
+        showToast('Limpo', 'Campos da Cobrança limpos.', 'success');
+    };
+
+    async function construirPdfCobranca100(modelo, d) {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage([595.28, 841.89]);
+        const { width, height } = page.getSize();
+
+        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const fontMono = await pdfDoc.embedFont(StandardFonts.CourierBold);
+
+        const corEscuro = rgb(0.09, 0.13, 0.20);
+        const corCinza = rgb(0.38, 0.44, 0.52);
+        const corBorda = rgb(0.78, 0.83, 0.89);
+
+        const themes = {
+            damsp:     { cor: rgb(0.05, 0.24, 0.52), sec: rgb(0.04, 0.46, 0.30), bg: rgb(0.95, 0.975, 1),   orgao: 'PREFEITURA DO MUNICÍPIO DE SÃO PAULO • COVISA', subOrgao: 'DOCUMENTO DE ARRECADAÇÃO MUNICIPAL SANITÁRIA (DAMSP)' },
+            gru:       { cor: rgb(0.04, 0.38, 0.24), sec: rgb(0.74, 0.54, 0.04), bg: rgb(0.94, 0.985, 0.96), orgao: 'MINISTÉRIO DA SAÚDE • ANVISA (TAXA FEDERAL TFVS)', subOrgao: 'GUIA DE RECOLHIMENTO DA UNIÃO (GRU SIMPLES / PIX)' },
+            talonario: { cor: rgb(0.36, 0.14, 0.58), sec: rgb(0.05, 0.28, 0.56), bg: rgb(0.965, 0.945, 1),  orgao: 'COVISA • SISTEMA NACIONAL DE CONTROLE DE RECEITUÁRIOS (SNCR)', subOrgao: 'GUIA DE TAXA DE NUMERAÇÃO E TALONÁRIO CONTROLADO' },
+            vistoria:  { cor: rgb(0.04, 0.42, 0.48), sec: rgb(0.06, 0.26, 0.50), bg: rgb(0.935, 0.98, 0.99), orgao: 'VIGILÂNCIA SANITÁRIA MUNICIPAL • DIVISÃO DE INSPEÇÃO', subOrgao: 'GUIA DE TAXA DE VISTORIA, LAUDO E ANÁLISE TÉCNICA' },
+            multa:     { cor: rgb(0.76, 0.10, 0.10), sec: rgb(0.55, 0.06, 0.06), bg: rgb(1, 0.95, 0.95),    orgao: 'COVISA • AUTO DE IMPOSIÇÃO DE PENALIDADE (LEI 10.083/98)', subOrgao: 'GUIA OFICIAL DE RECOLHIMENTO DE MULTA SANITÁRIA (UFESP)' },
+            certidao:  { cor: rgb(0.16, 0.25, 0.40), sec: rgb(0.05, 0.46, 0.32), bg: rgb(0.96, 0.97, 0.985), orgao: 'COVISA • SECRETARIA MUNICIPAL DA SAÚDE (CMVS)', subOrgao: 'GUIA DE EMOLUMENTOS, CERTIDÕES E ALTERAÇÕES CADASTRAIS' }
+        };
+        const t = themes[modelo.layout] || themes.damsp;
+        const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
+
+        // Moldura externa
+        page.drawRectangle({ x: 20, y: 20, width: width - 40, height: height - 40, borderColor: t.cor, borderWidth: 1.8 });
+
+        // Cabeçalho diferenciado por modelo
+        page.drawRectangle({ x: 20, y: height - 102, width: width - 40, height: 82, color: t.bg });
+        page.drawRectangle({ x: 20, y: height - 106, width: width - 40, height: 4, color: t.cor });
+
+        let hx = 36;
+        if (brasaoImg) {
+            const bd = brasaoImg.scaleToFit(50, 50);
+            page.drawImage(brasaoImg, { x: 34, y: height - 86, width: bd.width, height: bd.height });
+            hx = 94;
+        }
+        drawTextFitPDF(page, t.orgao, hx, height - 44, fontBold, 10.4, 345, t.cor);
+        drawTextFitPDF(page, t.subOrgao, hx, height - 60, fontBold, 8.6, 345, corEscuro);
+        drawTextFitPDF(page, `Guia / Protocolo: ${d.protocolo}   •   Código Receita: ${d.codReceita}`, hx, height - 76, fontMono, 8.0, 345, corCinza);
+        drawTextFitPDF(page, `Emissão: ${d.emissao}   •   Município: ${d.cidade}`, hx, height - 90, fontReg, 7.8, 345, corCinza);
+
+        // Quadro Valor em destaque no canto superior direito
+        const vBoxW = 128;
+        const vBoxX = width - 20 - vBoxW - 12;
+        const valFmt = d.valor.startsWith('R$') ? d.valor : `R$ ${d.valor}`;
+        page.drawRectangle({ x: vBoxX, y: height - 92, width: vBoxW, height: 60, color: rgb(1, 1, 1), borderColor: t.cor, borderWidth: 1.4 });
+        drawTextFitPDF(page, 'VALOR A PAGAR', vBoxX + 8, height - 44, fontBold, 7.0, vBoxW - 16, corCinza);
+        drawTextFitPDF(page, valFmt, vBoxX + 8, height - 64, fontBold, 13.5, vBoxW - 16, t.cor);
+        drawTextFitPDF(page, `Venc: ${d.vencimento}`, vBoxX + 8, height - 82, fontBold, 7.6, vBoxW - 16, rgb(0.75, 0.1, 0.1));
+
+        // Faixa Título do Modelo
+        let y = height - 118;
+        page.drawRectangle({ x: 34, y: y - 34, width: width - 68, height: 34, color: t.cor });
+        drawTextFitPDF(page, modelo.titulo.toUpperCase(), 46, y - 15, fontBold, 11.4, width - 92, rgb(1, 1, 1));
+        drawTextFitPDF(page, `${modelo.sub}  •  Base Legal: ${d.baseLegal}`, 46, y - 28, fontReg, 7.6, width - 92, rgb(0.92, 0.96, 1));
+        y -= 46;
+
+        // Tabela Dados do Contribuinte / Pagador
+        const drawKv = (lbl, val, x, yPos, maxW) => {
+            page.drawText(sanitizarTextoPDF(lbl), { x, y: yPos, size: 6.8, font: fontBold, color: corCinza });
+            drawTextFitPDF(page, val || 'Não informado', x, yPos - 11.5, fontBold, 8.8, maxW, corEscuro, 6.4);
+        };
+
+        const pBoxH = 104;
+        page.drawRectangle({ x: 34, y: y - pBoxH, width: width - 68, height: pBoxH, color: rgb(0.985, 0.99, 1), borderColor: corBorda, borderWidth: 1 });
+        drawTextFitPDF(page, 'IDENTIFICAÇÃO DO CONTRIBUINTE / PAGADOR', 44, y - 13, fontBold, 7.6, width - 90, t.cor);
+        drawKv('RAZÃO SOCIAL / NOME COMPLETO', (d.nome || 'NÃO INFORMADO').toUpperCase(), 44, y - 29, 345);
+        drawKv('CPF / CNPJ', d.cnpj || 'Não informado', 402, y - 29, 150);
+        drawKv('ENDEREÇO', (d.endereco || 'Conforme Cadastro').toUpperCase(), 44, y - 59, 345);
+        drawKv('TELEFONE / WHATSAPP', d.telefone || '-', 402, y - 59, 150);
+        drawKv('MUNICÍPIO / UF', d.cidade.toUpperCase(), 44, y - 87, 220);
+        drawKv('RAMO / ATIVIDADE', (d.ramo || 'Geral').toUpperCase(), 274, y - 87, 275);
+        y -= (pBoxH + 12);
+
+        // Quadro Discriminação da Taxa / Serviço (estilo GRU/DAMSP)
+        const dBoxH = 108;
+        page.drawRectangle({ x: 34, y: y - dBoxH, width: width - 68, height: dBoxH, borderColor: t.cor, borderWidth: 1 });
+        page.drawRectangle({ x: 34, y: y - 20, width: width - 68, height: 20, color: t.bg });
+        drawTextFitPDF(page, 'DISCRIMINAÇÃO DO SERVIÇO / RECEITA', 44, y - 13, fontBold, 7.6, 260, t.cor);
+        drawTextFitPDF(page, 'CÓDIGO', 330, y - 13, fontBold, 7.6, 80, t.cor);
+        drawTextFitPDF(page, 'VENCIMENTO', 415, y - 13, fontBold, 7.6, 70, t.cor);
+        drawTextFitPDF(page, 'VALOR', 492, y - 13, fontBold, 7.6, 65, t.cor);
+
+        drawTextFitPDF(page, d.codReceita, 330, y - 36, fontMono, 8.2, 80, corEscuro);
+        drawTextFitPDF(page, d.vencimento, 415, y - 36, fontBold, 8.2, 70, corEscuro);
+        drawTextFitPDF(page, valFmt, 492, y - 36, fontBold, 8.8, 65, t.cor);
+
+        const descLines = quebrarLinhasPDF(d.descricao || modelo.desc, fontReg, 8.6, 275);
+        let dy = y - 35;
+        descLines.slice(0, 5).forEach(ln => {
+            page.drawText(ln, { x: 44, y: dy, size: 8.6, font: fontReg, color: corEscuro });
+            dy -= 12;
+        });
+        y -= (dBoxH + 14);
+
+        // BLOCO DE PAGAMENTO PIX (FOTO DO QR CODE ESCOLHIDA + COPIA E COLA)
+        const pixH = 148;
+        page.drawRectangle({ x: 34, y: y - pixH, width: width - 68, height: pixH, color: t.bg, borderColor: t.cor, borderWidth: 1.4 });
+        page.drawRectangle({ x: 34, y: y - 22, width: width - 68, height: 22, color: t.cor });
+        drawTextFitPDF(page, 'PAGAMENTO INSTANTÂNEO VIA PIX — QR CODE + COPIA E COLA', 44, y - 15, fontBold, 8.4, width - 88, rgb(1, 1, 1));
+
+        let qrImg = null;
+        if (d.pixQrDataUrl) {
+            try {
+                const b64 = d.pixQrDataUrl.split(',')[1];
+                const bytesQr = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+                qrImg = await pdfDoc.embedPng(bytesQr);
+            } catch (_) {
+                try {
+                    const b64 = d.pixQrDataUrl.split(',')[1];
+                    const bytesQr = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+                    qrImg = await pdfDoc.embedJpg(bytesQr);
+                } catch (__) { qrImg = null; }
+            }
+        } else if (d.pixCode && d.pixCode.length > 5) {
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&format=png&data=${encodeURIComponent(d.pixCode)}`;
+            qrImg = await carregarImagemEmbedPDF(pdfDoc, qrUrl);
+        }
+
+        let pixTxtX = 46;
+        let pixMaxW = width - 92;
+        if (qrImg) {
+            page.drawRectangle({ x: 44, y: y - pixH + 10, width: 108, height: 108, color: rgb(1, 1, 1), borderColor: corBorda, borderWidth: 0.8 });
+            const qd = qrImg.scaleToFit(102, 102);
+            page.drawImage(qrImg, { x: 44 + (108 - qd.width) / 2, y: y - pixH + 10 + (108 - qd.height) / 2, width: qd.width, height: qd.height });
+            pixTxtX = 164;
+            pixMaxW = width - 210;
+        }
+
+        if (d.pixCode && d.pixCode.length > 5) {
+            drawTextFitPDF(page, 'Escaneie o QR Code ao lado ou copie e cole o código PIX abaixo no app do seu banco:', pixTxtX, y - 38, fontBold, 8.0, pixMaxW, corEscuro);
+            const pLines = quebrarLinhasPDF(d.pixCode, fontMono, 7.4, pixMaxW);
+            let py = y - 54;
+            pLines.slice(0, 7).forEach(pl => {
+                page.drawText(pl, { x: pixTxtX, y: py, size: 7.4, font: fontMono, color: corEscuro });
+                py -= 10.5;
+            });
+        } else {
+            drawTextFitPDF(page, 'Aponte a câmera do aplicativo do seu banco para o QR Code ao lado para pagar via PIX.', pixTxtX, y - 48, fontBold, 8.6, pixMaxW, corEscuro);
+            drawTextFitPDF(page, 'Confirmação imediata. Após o pagamento, envie o comprovante ou aguarde a liberação no portal.', pixTxtX, y - 66, fontReg, 8.0, pixMaxW, corCinza);
+        }
+        y -= (pixH + 14);
+
+        // Instruções & Linha de Autenticação Mecânica
+        page.drawLine({ start: { x: 34, y }, end: { x: width - 34, y }, thickness: 0.8, color: corCinza, dashArray: [4, 3] });
+        drawTextFitPDF(page, `AUTENTICAÇÃO ELETRÔNICA • ${d.protocolo} • ${d.codReceita} • ${valFmt} • VENC. ${d.vencimento}`, 38, y - 14, fontMono, 7.6, width - 76, corCinza);
+
+        // Assinatura Fixa
+        const sigImg = d.usarAssinatura ? await carregarAssinaturaDiretoriaPDF(pdfDoc) : null;
+        desenharBlocoAssinaturaFixa(page, sigImg, { usarAssinaturaFixa: d.usarAssinatura, fiscal: 'Giliard De Oliveira Santiago', cargo: 'Assessor Técnico CEVISA/COVIS/SMS' }, fontBold, fontReg, corEscuro, corCinza, width / 2, 48, 220, 72);
+
+        drawTextFitPDF(page, `Documento emitido eletronicamente em ${d.cidade}, ${d.emissao} • vigilancia-sp-gov.netlify.app`, 38, 30, fontReg, 7.2, width - 76, corCinza);
+        return await pdfDoc.save();
+    }
+
+    window.gerarPdfCobranca = async (fazerDownload = false) => {
+        if (typeof PDFLib === 'undefined') return showToast('Erro', 'Biblioteca PDF carregando...', 'error');
+        const modelo = COBRANCA_CATALOG_100.find(x => x.id === cobrTipoAtual) || COBRANCA_CATALOG_100[0];
+        const d = {
+            protocolo: (document.getElementById('cobr-protocolo')?.value || '').trim() || `GUIA-2026-${Date.now().toString().slice(-5)}`,
+            nome: (document.getElementById('cobr-nome')?.value || '').trim(),
+            cnpj: (document.getElementById('cobr-cnpj')?.value || '').trim(),
+            endereco: (document.getElementById('cobr-endereco')?.value || '').trim(),
+            cidade: (document.getElementById('cobr-cidade')?.value || 'São Paulo - SP').trim(),
+            ramo: (document.getElementById('cobr-ramo')?.value || '').trim(),
+            telefone: (document.getElementById('cobr-telefone')?.value || '').trim(),
+            valor: (document.getElementById('cobr-valor')?.value || modelo.valor).trim(),
+            emissao: (document.getElementById('cobr-emissao')?.value || formatarDataBR(new Date())).trim(),
+            vencimento: (document.getElementById('cobr-vencimento')?.value || formatarDataBR(new Date())).trim(),
+            codReceita: (document.getElementById('cobr-cod-receita')?.value || modelo.cod).trim(),
+            baseLegal: (document.getElementById('cobr-base-legal')?.value || modelo.lei).trim(),
+            pixCode: (document.getElementById('cobr-pix-code')?.value || '').trim(),
+            pixQrDataUrl: window.cobrPixQrDataUrl || '',
+            descricao: (document.getElementById('cobr-descricao')?.value || modelo.desc).trim(),
+            usarAssinatura: document.getElementById('cobr-usar-assinatura')?.checked !== false
+        };
+
+        if (!d.nome) return showToast('Falta o Nome', 'Digite o nome do pagador ou selecione um cliente do sistema.', 'warning');
+
+        const btnP = document.getElementById('btn-cobr-preview');
+        const btnD = document.getElementById('btn-cobr-download');
+        const origP = btnP?.innerHTML || ''; const origD = btnD?.innerHTML || '';
+        if (btnP) { btnP.disabled = true; btnP.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
+        if (btnD) { btnD.disabled = true; btnD.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
+
+        try {
+            const pdfBytes = await construirPdfCobranca100(modelo, d);
+            const docClean = (d.cnpj || d.protocolo).replace(/[^a-zA-Z0-9]/g, '') || 'COVISA';
+            const filename = `Guia_${modelo.id.replace(/^c_/, '')}_${docClean}.pdf`;
+
+            if (cobrUltimoBlobUrl) { try { URL.revokeObjectURL(cobrUltimoBlobUrl); } catch (_) {} }
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            cobrUltimoBlobUrl = URL.createObjectURL(blob);
+            cobrUltimoBytes = pdfBytes;
+            cobrUltimoFilename = filename;
+
+            const iframe = document.getElementById('cobr-pdf-iframe');
+            const idle = document.getElementById('cobr-preview-idle');
+            const fnEl = document.getElementById('cobr-preview-filename');
+            if (idle) idle.style.display = 'none';
+            if (iframe) { iframe.src = cobrUltimoBlobUrl + '#view=FitH'; iframe.style.display = 'block'; }
+            if (fnEl) fnEl.innerText = filename;
+            document.getElementById('btn-cobr-open-tab').disabled = false;
+            document.getElementById('btn-cobr-dl-top').disabled = false;
+
+            cobrHistorico.unshift({ filename, bytes: pdfBytes, hora: new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) });
+            if (cobrHistorico.length > 8) cobrHistorico.pop();
+            const strip = document.getElementById('cobr-history-strip');
+            if (strip) {
+                strip.innerHTML = '<span><i class="fas fa-history"></i> Recentes:</span>' +
+                    cobrHistorico.map((it, idx) => `<button type="button" class="docgen-hist-chip" onclick="reabrirHistoricoCobranca(${idx})"><i class="fas fa-file-invoice-dollar" style="color:#10b981;"></i> ${escaparHtmlWA(it.filename)} (${it.hora})</button>`).join('');
+            }
+
+            if (fazerDownload) dispararDownloadBytesPDF(pdfBytes, filename);
+            registrarLog('Cobrança PDF', `Emitiu ${filename} (R$ ${d.valor}) para ${d.nome}`);
+            showToast(fazerDownload ? 'Guia Baixada!' : 'Prévia Pronta!', `${filename} gerada com sucesso.`, 'success');
+        } catch (err) {
+            showToast('Erro PDF', err.message, 'error');
+        } finally {
+            if (btnP) { btnP.disabled = false; btnP.innerHTML = origP; }
+            if (btnD) { btnD.disabled = false; btnD.innerHTML = origD; }
+        }
+    };
+
+    window.reabrirHistoricoCobranca = (idx) => {
+        const it = cobrHistorico[idx];
+        if (!it) return;
+        if (cobrUltimoBlobUrl) { try { URL.revokeObjectURL(cobrUltimoBlobUrl); } catch (_) {} }
+        cobrUltimoBlobUrl = URL.createObjectURL(new Blob([it.bytes], { type: 'application/pdf' }));
+        cobrUltimoBytes = it.bytes;
+        cobrUltimoFilename = it.filename;
+        document.getElementById('cobr-preview-idle').style.display = 'none';
+        const iframe = document.getElementById('cobr-pdf-iframe');
+        iframe.src = cobrUltimoBlobUrl + '#view=FitH';
+        iframe.style.display = 'block';
+        document.getElementById('cobr-preview-filename').innerText = it.filename;
+    };
+
+    window.abrirPdfCobrancaNovaAba = () => { if (cobrUltimoBlobUrl) window.open(cobrUltimoBlobUrl, '_blank', 'noopener'); };
+    window.baixarUltimoPdfCobranca = () => { if (cobrUltimoBytes && cobrUltimoFilename) dispararDownloadBytesPDF(cobrUltimoBytes, cobrUltimoFilename); };
+
+    window.copiarMsgCobrancaWA = async () => {
+        const modelo = COBRANCA_CATALOG_100.find(x => x.id === cobrTipoAtual) || COBRANCA_CATALOG_100[0];
+        const nome = (document.getElementById('cobr-nome')?.value || 'seu cadastro').trim();
+        const valor = (document.getElementById('cobr-valor')?.value || modelo.valor).trim();
+        const venc = (document.getElementById('cobr-vencimento')?.value || '').trim();
+        const prot = (document.getElementById('cobr-protocolo')?.value || '').trim();
+        const pix = (document.getElementById('cobr-pix-code')?.value || '').trim();
+        let msg = `*Giliard:*\nOlá! Segue em anexo a *${modelo.titulo}* referente a *${nome}*.\n\n*Protocolo:* ${prot}\n*Valor:* R$ ${valor}\n*Vencimento:* ${venc}`;
+        if (pix) msg += `\n\n*PIX Copia e Cola:*\n${pix}`;
+        msg += `\n\nAssim que efetuar o pagamento, pode me avisar por aqui para prosseguirmos com a emissão!`;
+        try {
+            await navigator.clipboard.writeText(msg);
+            showToast('Mensagem Copiada!', 'Cole no WhatsApp junto com a Guia PDF.', 'success');
+        } catch (_) {
+            showToast('Aviso', 'Não foi possível copiar automaticamente.', 'warning');
         }
     };
   </script>
