@@ -1506,8 +1506,8 @@
       </nav>
       
       <div class="sidebar-footer">
-        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 2.5 Flash Core</p>
-        <p>Status da IA: <span id="status-ia-sidebar" style="color:var(--success); font-weight:800;">Ativa e Conectada</span></p>
+        <p style="margin-bottom:5px; font-weight:900; color:var(--gemini-purple);">Gemini 2.5 + COVISA Auditor AI</p>
+        <p>Status da IA: <span id="status-ia-sidebar" style="color:var(--success); font-weight:800;">Dupla Ativa (Cloudflare + Gemini)</span></p>
       </div>
     </aside>
 
@@ -7269,178 +7269,122 @@ Responda EXCLUSIVAMENTE em JSON válido com esta estrutura exata:
 
     // MODO MANUAL (UPLOAD DE FOTO / PDF / VÍDEO)
     window.iniciarAnaliseLaboratorioForense = async () => {
-        if (!arquivoLaboratorio) return;
+      if (!arquivoLaboratorio) return;
 
-        mudarModoLaboratorio('manual');
-        const previewArea = document.getElementById('lab-preview');
-        const ehPdf = arquivoLaboratorio.type === 'application/pdf' || arquivoLaboratorio.name.toLowerCase().endsWith('.pdf');
-        const ehVid = arquivoLaboratorio.type.startsWith('video/');
+      const dropArea = document.getElementById('lab-drop-area');
+      const previewArea = document.getElementById('lab-preview');
+      const idleState = document.getElementById('lab-idle-state');
+      const loadingState = document.getElementById('lab-loading-state');
+      const finalResult = document.getElementById('lab-final-result');
+      const resultContent = document.getElementById('lab-result-content');
 
-        if (ehPdf) {
-            previewArea.innerHTML = `<iframe src="${URL.createObjectURL(arquivoLaboratorio)}" style="width:100%; height:100%; border:none; background:#fff;"></iframe><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
-        } else if (ehVid) {
-            previewArea.innerHTML = `<video src="${URL.createObjectURL(arquivoLaboratorio)}" controls></video><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
-        } else {
-            previewArea.innerHTML = `<img src="${URL.createObjectURL(arquivoLaboratorio)}"><button class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
-        }
-        
-        document.getElementById('lab-drop-area').style.display = 'block';
+      if (dropArea) dropArea.style.display = 'none';
+      if (previewArea) {
         previewArea.style.display = 'block';
-        
-        document.getElementById('lab-idle-state').style.display = 'none';
-        document.getElementById('lab-final-result').style.display = 'none';
-        document.getElementById('lab-loading-state').style.display = 'flex';
-
-        let promptFinal = `Você é um Perito Forense da Vigilância Sanitária (COVISA). Analise o arquivo anexado (PDF, imagem ou vídeo) e retorne um Laudo Técnico Oficial completo.
-        Procure por:
-        1. Identificação do documento ou ambiente (extraia CNPJ, razão social, datas de validade, assinaturas ou valores se for PDF/documento).
-        2. Problemas de Higiene, Estrutura (RDC 216) ou irregularidades documentais.
-        3. Indícios de manipulação ou fraude digital (Photoshop).
-        4. Sugestão de mensagem curta e educada para mandar ao contribuinte no WhatsApp.
-        Formate a resposta em HTML (use <b> para negrito e <br> para quebras). Não use asteriscos markdown.`;
-
-        let pacoteDeEnvio = [{ text: promptFinal }];
-
-        try {
-            const dadosMdia = await converterArquivoParaBase64(arquivoLaboratorio);
-            pacoteDeEnvio.push({ inline_data: dadosMdia });
-
-            const envioApi = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: pacoteDeEnvio }] })
-            });
-            
-            if(!envioApi.ok) throw new Error("Falha na API do Google");
-            
-            const respostaCompleta = await envioApi.json(); 
-            document.getElementById('lab-loading-state').style.display = 'none';
-            document.getElementById('lab-final-result').style.display = 'block';
-            document.getElementById('lab-result-content').innerHTML = respostaCompleta.candidates[0].content.parts[0].text;
-
-            registrarLog("Laboratório de Mídia", `Arquivo local processado (${arquivoLaboratorio.name}).`);
-        } catch(e) {
-            document.getElementById('lab-loading-state').style.display = 'none';
-            document.getElementById('lab-final-result').style.display = 'block';
-            document.getElementById('lab-result-content').innerHTML = `<div style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Falha: ${e.message}</div>`;
+        const urlObj = URL.createObjectURL(arquivoLaboratorio);
+        if (arquivoLaboratorio.type.startsWith('image/')) {
+          previewArea.innerHTML = `<img src="${urlObj}" alt="Prévia"><button type="button" class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
+        } else if (arquivoLaboratorio.type.startsWith('video/')) {
+          previewArea.innerHTML = `<video src="${urlObj}" controls><button type="button" class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button></video>`;
+        } else {
+          previewArea.innerHTML = `<iframe src="${urlObj}" style="width:100%;height:100%;border:none;background:#fff;"></iframe><button type="button" class="lab-btn-close-preview" onclick="fecharPreviewLab()"><i class="fas fa-times"></i> Fechar</button>`;
         }
-    }
+      }
 
-    window.enviarChatZap = async () => {
-        const campoDeTexto = document.getElementById('zap-input-text'); 
-        const instrucaoDoFiscal = campoDeTexto.value.trim(); 
-        if(!instrucaoDoFiscal && !arquivoAnexoParaEnviarZap) return;
-        
-        const areaHistorico = document.getElementById('chat-historico-whatsapp');
-        
-        const bolhaUser = document.createElement('div');
-        bolhaUser.className = 'chat-msg msg-user';
-        if(instrucaoDoFiscal) bolhaUser.innerHTML = instrucaoDoFiscal;
+      if (idleState) idleState.style.display = 'none';
+      if (finalResult) finalResult.style.display = 'none';
+      if (loadingState) loadingState.style.display = 'flex';
 
-        if (arquivoAnexoParaEnviarZap) {
-          if (instrucaoDoFiscal) bolhaUser.innerHTML += '<br><br>';
-          if (arquivoAnexoParaEnviarZap.type.startsWith('image/')) bolhaUser.innerHTML += `<img src="${URL.createObjectURL(arquivoAnexoParaEnviarZap)}" style="max-width:100%; border-radius:8px;">`;
-          else if (arquivoAnexoParaEnviarZap.type.startsWith('video/')) bolhaUser.innerHTML += `<i class="fas fa-video"></i> [Vídeo Anexado: ${arquivoAnexoParaEnviarZap.name}]`;
-        }
+      const promptForense = `Você é um perito documental e fiscal da COVISA / Vigilância Sanitária.
+Analise este arquivo (${arquivoLaboratorio.name || 'documento'}, tipo ${arquivoLaboratorio.type || 'desconhecido'}) com atenção máxima.
+Extraia e verifique:
+1. Identificação do documento, órgão emissor, datas, validade, códigos, CNPJ/CPF/protocolos e assinaturas/selos.
+2. Consistência, possíveis irregularidades, divergências ou pendências sanitárias.
+3. Orientação objetiva ao fiscal sobre o que validar ou exigir a seguir.
+Responda em português claro, estruturado e direto.`;
 
-        areaHistorico.appendChild(bolhaUser);
-        campoDeTexto.value = ''; 
-        areaHistorico.scrollTop = areaHistorico.scrollHeight;
-        
-        const idLoaderChat = 'loader_zap_' + Date.now(); 
-        const bolhaLoader = document.createElement('div');
-        bolhaLoader.id = idLoaderChat;
-        bolhaLoader.className = 'chat-msg msg-ai';
-        bolhaLoader.style.borderColor = 'var(--success)';
-        bolhaLoader.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:var(--success); font-size:1.5rem; margin-right: 10px;"></i> Escrevendo mensagem...`;
-        areaHistorico.appendChild(bolhaLoader);
-        areaHistorico.scrollTop = areaHistorico.scrollHeight;
-
-        let promptFinal = `Você é um Assistente de Atendimento da Vigilância Sanitária via WhatsApp.
-        Sua tarefa: Analisar o contexto ou a imagem/vídeo fornecidos e gerar UMA MENSAGEM FORMAL, EDUCADAMENTE DIRETA, pronta para eu copiar e mandar no WhatsApp do contribuinte.
-        
-        Instruções do fiscal: ${instrucaoDoFiscal}
-
-        A mensagem deve informar claramente a irregularidade e o que ele deve fazer para corrigir.
-        
-        REGRA RIGOROSA: 
-        1. Gere APENAS o texto da mensagem do WhatsApp. Não adicione comentários seus.
-        2. Para negrito, use APENAS o asterisco simples (*palavra*), não use duplo asterisco ou tags HTML.
-        3. Formate o texto em HTML apenas com quebras de linha (<br>) para separar os parágrafos na tela do sistema.`;
-
-        let partesDoEnvio = [{ text: promptFinal }];
-
-        if (arquivoAnexoParaEnviarZap) {
-          try {
-            const dadosMdia = await converterArquivoParaBase64(arquivoAnexoParaEnviarZap);
-            partesDoEnvio.push({ inline_data: dadosMdia });
-          } catch (e) {
-             document.getElementById(idLoaderChat).innerHTML = "Erro ao ler arquivo."; removerAnexoZap(); return;
+      try {
+        const media = await converterArquivoParaBase64(arquivoLaboratorio);
+        const resp = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                role: 'user',
+                parts: [
+                  { text: promptForense },
+                  { inline_data: { mime_type: media.mime_type, data: media.data } }
+                ]
+              }]
+            })
           }
+        );
+
+        const data = await resp.json();
+        const respostaIA = data?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('').trim();
+        if (!resp.ok || !respostaIA) {
+          throw new Error(data?.error?.message || `HTTP ${resp.status} na API do Google`);
         }
 
-        memoriaDoChatZap.push({ role: "user", parts: partesDoEnvio });
-
-        try {
-            const url_api_gemini = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            const envioPergunta = await fetch(url_api_gemini, {
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ 
-                    contents: memoriaDoChatZap 
-                })
+        let parecerAuditor = '';
+        if (typeof window.consultarCloudflareAuditorAdmin === 'function') {
+          try {
+            parecerAuditor = await window.consultarCloudflareAuditorAdmin({
+              focus: 'Revisão complementar do Laudo Técnico Multimídia',
+              prompt: `Com base neste laudo preliminar do arquivo "${arquivoLaboratorio.name}", aponte pontos de atenção rápidos para o fiscal:
+${respostaIA.slice(0, 3500)}`
             });
-            
-            if(!envioPergunta.ok) {
-                const erroDoGoogle = await envioPergunta.json();
-                memoriaDoChatZap.pop();
-                throw new Error(erroDoGoogle.error?.message || "Erro desconhecido na API do Chat.");
-            }
-            
-            const respostaCompleta = await envioPergunta.json(); 
-            document.getElementById(idLoaderChat).remove(); 
-            
-            let textoDoAssistente = respostaCompleta.candidates[0].content.parts[0].text;
-            
-            memoriaDoChatZap.push({ role: "model", parts: [{ text: textoDoAssistente }] });
-            
-            const bolhaIA = document.createElement('div');
-            bolhaIA.className = 'chat-msg msg-ai';
-            bolhaIA.style.borderColor = 'var(--success)';
-            bolhaIA.innerHTML = `<strong style="color:var(--success); font-size: 1.1rem;"><i class="fab fa-whatsapp"></i> Mensagem Pronta:</strong><br><br><div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border-left: 4px solid var(--success); font-family: sans-serif; white-space: pre-wrap;">${textoDoAssistente.replace(/\n/g, '<br>')}</div><br><button onclick="navigator.clipboard.writeText(this.previousSibling.previousSibling.innerText); showToast('Copiado!', 'Mensagem copiada para a área de transferência', 'success');" class="btn" style="background:var(--success); color:#000; padding: 8px 15px; font-size: 0.9rem;"><i class="fas fa-copy"></i> Copiar Mensagem</button>`;
-            areaHistorico.appendChild(bolhaIA);
-
-            areaHistorico.scrollTop = areaHistorico.scrollHeight;
-            registrarLog("Assistente WhatsApp", "Mensagem gerada baseada em mídia/texto.");
-
-        } catch(erroNoChat) { 
-            console.error("Erro no Assistente WhatsApp:", erroNoChat);
-            const loaderElement = document.getElementById(idLoaderChat);
-            if(loaderElement) loaderElement.remove(); 
-            areaHistorico.innerHTML += `<div class="chat-msg msg-ai" style="color:var(--danger); border-color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> Erro: ${erroNoChat.message}</div>`;
-            areaHistorico.scrollTop = areaHistorico.scrollHeight;
-        } finally {
-            removerAnexoZap();
+          } catch (_) {}
         }
-    }
 
-    // =========================================================================
-    // GERADOR DE DOCUMENTOS, ALVARÁS & RECEITUÁRIOS OFICIAIS 4.0 (38 MODELOS)
-    // ZERO SOBREPOSIÇÃO • LOCAL E DATA AUTOMÁTICOS • ATESTADO E LAUDO SEPARADOS
-    // =========================================================================
-    let docGenTipoAtual = 'alvara_oficial';
-    let docGenCatAtual = 'todos';
-    let docGenUltimoBlobUrl = null;
-    let docGenUltimoFilename = '';
-    let docGenUltimoBytes = null;
-    let docGenHistorico = [];
-    let docGenCacheAssets = {};
+        const htmlSaida = `
+          <div style="white-space: pre-line;">${escaparHtmlWA(respostaIA)}</div>
+          ${parecerAuditor ? `
+            <div style="margin-top: 20px; padding: 16px; border-radius: 12px; background: rgba(56, 189, 248, 0.08); border-left: 4px solid var(--accent);">
+              <strong style="color: var(--accent); display: block; margin-bottom: 8px;"><i class="fas fa-microchip"></i> Parecer Complementar — COVISA Auditor (Cloudflare AI):</strong>
+              <div style="white-space: pre-line;">${escaparHtmlWA(parecerAuditor)}</div>
+            </div>` : ''}
+        `;
 
-    const DOCGEN_REPO_FILES = {
-        licenca: 'certificacao_provisoria.pdf',
-        receita_a: 'NOTIFICAÇÃO DE RECEITA A.pdf',
-        receita_b: 'NOTIFICAÇÃO DE RECEITA B.pdf',
-        receita_b2: 'NOTIFICAÇÃO DE RECEITA B2.pdf',
-        receita_retinoides: 'NOTIFICAÇÃO DE RECEITA RETINOIDES.pdf',
-        guia: 'TAXA VIGILANCIA.pdf'
+        if (loadingState) loadingState.style.display = 'none';
+        if (resultContent) resultContent.innerHTML = htmlSaida;
+        if (finalResult) finalResult.style.display = 'block';
+        registrarLog("Laboratório IA", `Analisou arquivo: ${arquivoLaboratorio.name}`);
+      } catch (err) {
+        const detalheErro = err?.message || 'Erro desconhecido';
+        let notaCloudflare = '';
+        if (typeof window.consultarCloudflareAuditorAdmin === 'function') {
+          try {
+            notaCloudflare = await window.consultarCloudflareAuditorAdmin({
+              focus: 'Diagnóstico quando a visão/PDF da Gemini falha',
+              prompt: `O envio direto de arquivo (${arquivoLaboratorio.name}, ${arquivoLaboratorio.type}) para a API do Google falhou com: "${detalheErro}". Explique brevemente ao usuário em português o que pode ter causado (ex.: cota, tamanho/formato do PDF ou chave) e oriente como tentar novamente ou usar análise por chat/texto.`
+            });
+          } catch (_) {}
+        }
+
+        if (loadingState) loadingState.style.display = 'none';
+        if (resultContent) {
+          resultContent.innerHTML = `
+            <div class="alerta-offline" style="background: rgba(239, 68, 68, 0.14); border-color: var(--danger); color: #fecaca;">
+              <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; color: var(--danger);"></i>
+              <div>
+                <strong>Falha na leitura multimídia (Google Gemini):</strong><br>
+                <span style="font-family: var(--font-code); font-size: 0.88rem;">${escaparHtmlWA(detalheErro)}</span>
+              </div>
+            </div>
+            ${notaCloudflare ? `
+              <div style="padding: 16px; border-radius: 12px; background: rgba(56, 189, 248, 0.08); border-left: 4px solid var(--accent); margin-bottom: 16px;">
+                <strong style="color: var(--accent); display: block; margin-bottom: 6px;"><i class="fas fa-shield-alt"></i> Diagnóstico — COVISA Auditor (Cloudflare AI):</strong>
+                <div style="white-space: pre-line;">${escaparHtmlWA(notaCloudflare)}</div>
+              </div>` : ''}
+            <button type="button" class="btn btn-primary" onclick="iniciarAnaliseLaboratorioForense()"><i class="fas fa-redo"></i> Tentar Novamente</button>
+          `;
+        }
+        if (finalResult) finalResult.style.display = 'block';
+        registrarLog("Erro Laboratório IA", detalheErro, "ERRO");
+      }
     };
 
     const DOCGEN_RECEITA_CONTROLADA_TYPES = new Set([
