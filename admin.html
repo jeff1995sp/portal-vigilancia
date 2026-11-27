@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js"></script>
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
   <style>
     :root {
@@ -1727,6 +1728,9 @@
               <button class="btn btn-secondary" id="btn-wa-notify" style="padding: 11px 16px; font-size: 0.88rem;" onclick="ativarNotificacoesPC()" title="Receber aviso no Windows/Chrome mesmo em outra aba">
                 <i class="fas fa-bell" style="color: var(--warning);"></i> Alertas no PC
               </button>
+              <button class="btn btn-gemini" style="padding: 11px 18px; font-size: 0.88rem;" onclick="abrirModalImportarChatWA('wa')" title="Importar conversa antiga do WhatsApp (.txt, áudios, PDFs e fotos)">
+                <i class="fas fa-file-import"></i> Importar Chat WA
+              </button>
               <button class="btn btn-secondary" style="padding: 11px 20px; font-size: 0.9rem;" onclick="carregarConversasWhatsApp(true)">
                 <i class="fas fa-sync-alt"></i> Atualizar
               </button>
@@ -2005,6 +2009,9 @@
               </button>
               <button type="button" class="lab-mode-btn" id="lab-mode-btn-manual" onclick="mudarModoLaboratorio('manual')">
                 <i class="fas fa-cloud-upload-alt"></i> Upload Manual (PDF/Foto)
+              </button>
+              <button type="button" class="btn btn-success" style="padding: 10px 15px; font-size: 0.85rem;" onclick="abrirModalImportarChatWA('lab')" title="Importar conversa que já está no WhatsApp (texto, áudios, PDFs e imagens)">
+                <i class="fas fa-file-import"></i> Importar Chat WA
               </button>
               <button type="button" class="btn btn-secondary" style="padding: 10px 15px; font-size: 0.85rem;" onclick="carregarListaChatsLaboratorio(true)">
                 <i class="fas fa-sync-alt"></i> Atualizar Chats
@@ -4071,6 +4078,40 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="modalImportarChatWA" style="z-index: 25000;">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header" style="padding: 22px 28px;">
+        <h3 style="margin: 0; font-size: 1.25rem;"><i class="fab fa-whatsapp" style="color: #25D366;"></i> Importar Conversa Existente do WhatsApp</h3>
+        <button class="btn-close" onclick="fecharModalImportarChatWA()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" style="padding: 22px 28px; display: flex; flex-direction: column; gap: 14px;">
+        <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 10px; padding: 12px 14px; font-size: 0.84rem; color: #cbd5e1; line-height: 1.5;">
+          <strong style="color: #38bdf8;"><i class="fas fa-info-circle"></i> Como trazer conversas antigas do WhatsApp:</strong><br>
+          A API oficial da Meta só envia mensagens novas. Para analisar conversas que <b>já estão no seu WhatsApp</b>, exporte a conversa no celular (<b>⋮ &gt; Mais &gt; Exportar conversa &gt; Incluir mídia</b>) ou cole o texto abaixo e anexe os áudios, PDFs e imagens. Ela vai aparecer em <b>todas as abas</b> (WhatsApp, Laboratório IA, Gerador e Multas).
+        </div>
+        <div class="docgen-field">
+          <label>Número do Cliente (com DDD)</label>
+          <input type="text" id="imp-wa-phone" placeholder="Ex: 11 98995-3296 ou 5511989953296" />
+        </div>
+        <div class="docgen-field">
+          <label>Colar Mensagens da Conversa (Opcional — ou envie o .txt abaixo)</label>
+          <textarea id="imp-wa-text" style="min-height: 110px;" placeholder="Cole aqui as mensagens copiadas do WhatsApp Web / celular..."></textarea>
+        </div>
+        <div class="docgen-field">
+          <label>Arquivos da Conversa (.txt exportado, Áudios, PDFs e Imagens — pode selecionar vários)</label>
+          <input type="file" id="imp-wa-files" multiple accept=".txt,application/pdf,image/*,audio/*,video/*" style="padding: 12px; border: 1px dashed var(--gemini-purple); background: #040914; cursor: pointer;" />
+          <span id="imp-wa-files-info" style="font-size: 0.78rem; color: #94a3b8; margin-top: 4px;">Nenhum arquivo selecionado.</span>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 18px 28px;">
+        <button type="button" class="btn btn-secondary" onclick="fecharModalImportarChatWA()">Cancelar</button>
+        <button type="button" class="btn btn-success" id="btn-confirmar-import-wa" onclick="confirmarImportarChatWA()">
+          <i class="fas fa-check"></i> Importar Conversa no Painel
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="lightbox" onclick="fecharLightbox()">
     <button class="btn-close-lightbox"><i class="fas fa-times"></i></button>
     <img id="lightbox-img" src="">
@@ -4105,6 +4146,438 @@
     const GEMINI_API_KEY = chaveOculta.split('').reverse().join('');
 
     const CLOUDFLARE_WORKER_URL = "https://covisa.jeffinho1995sp.workers.dev";
+    const WORKERS_AI_FALLBACK_URL = "https://covisa-auditor-admin.alberto1010sp.workers.dev";
+
+    // =========================================================================
+    // 1) SUPORTE A CONVERSAS IMPORTADAS DO WHATSAPP (EM TODAS AS ABAS)
+    // 2) FALLBACK AUTOMÁTICO GEMINI -> CLOUDFLARE WORKERS AI
+    // =========================================================================
+    window._waConversasImportadas = window._waConversasImportadas || [];
+    window._waMidiasLocaisMap = window._waMidiasLocaisMap || new Map();
+    let _origemModalImportWA = 'lab';
+
+    if (typeof window.pdfjsLib !== 'undefined' && !window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+    }
+
+    async function extrairTextoOuImagemDePdfBase64(base64Str) {
+        try {
+            if (typeof window.pdfjsLib === 'undefined') return { texto: '', imagemBase64: null };
+            const raw = atob(base64Str);
+            const bytes = new Uint8Array(raw.length);
+            for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+            const pdf = await window.pdfjsLib.getDocument({ data: bytes }).promise;
+            let textoTotal = '';
+            const maxPags = Math.min(pdf.numPages, 5);
+            for (let p = 1; p <= maxPags; p++) {
+                const page = await pdf.getPage(p);
+                const tc = await page.getTextContent();
+                const txt = tc.items.map(it => it.str).join(' ').trim();
+                if (txt) textoTotal += `\n[Página ${p}]: ${txt}`;
+            }
+            if (textoTotal.trim().length >= 30) {
+                return { texto: textoTotal.trim(), imagemBase64: null };
+            }
+            // PDF escaneado (sem texto selecionável): renderiza página 1 como JPEG para Vision
+            const page1 = await pdf.getPage(1);
+            const vp = page1.getViewport({ scale: 1.3 });
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(vp.width);
+            canvas.height = Math.round(vp.height);
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            await page1.render({ canvasContext: ctx, viewport: vp }).promise;
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+            return { texto: textoTotal.trim(), imagemBase64: dataUrl.split(',')[1] };
+        } catch (err) {
+            console.warn('Erro ao ler PDF para fallback Workers AI:', err);
+            return { texto: '', imagemBase64: null };
+        }
+    }
+
+    async function chamarWorkersAIFallbackDeGemini(bodyJson, originalFetchFn) {
+        const systemParts = (bodyJson?.systemInstruction?.parts || []).map(p => p.text).filter(Boolean);
+        const textParts = [];
+        const mediaParts = [];
+
+        if (systemParts.length) textParts.push(systemParts.join('\n'));
+
+        const contents = Array.isArray(bodyJson?.contents) ? bodyJson.contents : [];
+        for (const c of contents) {
+            const parts = Array.isArray(c?.parts) ? c.parts : [];
+            for (const p of parts) {
+                if (p.text) textParts.push(p.text);
+                const inl = p.inline_data || p.inlineData;
+                if (inl && inl.data) {
+                    mediaParts.push({
+                        mime: (inl.mime_type || inl.mimeType || 'application/octet-stream').toLowerCase(),
+                        data: inl.data
+                    });
+                }
+            }
+        }
+
+        let promptBase = textParts.join('\n\n').trim() || 'Analise o conteúdo enviado em português.';
+        const imagensParaEnviar = [];
+        const anexosExtraidos = [];
+
+        for (let i = 0; i < mediaParts.length; i++) {
+            const mp = mediaParts[i];
+            if (mp.mime.includes('pdf')) {
+                const resPdf = await extrairTextoOuImagemDePdfBase64(mp.data);
+                if (resPdf.texto) {
+                    anexosExtraidos.push(`[CONTEÚDO EXTRAÍDO DO PDF #${i + 1}]:\n${resPdf.texto}`);
+                }
+                if (resPdf.imagemBase64) {
+                    imagensParaEnviar.push(resPdf.imagemBase64);
+                }
+            } else if (mp.mime.startsWith('audio/')) {
+                try {
+                    const rAud = await originalFetchFn(WORKERS_AI_FALLBACK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            tipo: 'audio',
+                            prompt: 'Transcreva este áudio fielmente em português.',
+                            base64: mp.data
+                        })
+                    });
+                    const dAud = await rAud.json();
+                    if (rAud.ok && dAud.success && dAud.text) {
+                        anexosExtraidos.push(`[TRANSCRIÇÃO DO ÁUDIO #${i + 1}]:\n${dAud.text}`);
+                    }
+                } catch (_) {}
+            } else if (mp.mime.startsWith('image/')) {
+                imagensParaEnviar.push(mp.data);
+            }
+        }
+
+        if (anexosExtraidos.length > 0) {
+            promptBase += '\n\n' + anexosExtraidos.join('\n\n');
+        }
+
+        let textoFinal = '';
+        if (imagensParaEnviar.length === 1) {
+            const rImg = await originalFetchFn(WORKERS_AI_FALLBACK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tipo: 'image', prompt: promptBase, base64: imagensParaEnviar[0] })
+            });
+            const dImg = await rImg.json();
+            if (!rImg.ok || !dImg.success) throw new Error(dImg.error || 'Falha no Workers AI (Imagem)');
+            textoFinal = dImg.text || '';
+        } else if (imagensParaEnviar.length > 1) {
+            const descricoes = [];
+            for (let j = 0; j < Math.min(imagensParaEnviar.length, 6); j++) {
+                try {
+                    const rImg = await originalFetchFn(WORKERS_AI_FALLBACK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            tipo: 'image',
+                            prompt: 'Descreva todos os textos, dados, CNPJs, datas, valores e detalhes visíveis nesta imagem em português.',
+                            base64: imagensParaEnviar[j]
+                        })
+                    });
+                    const dImg = await rImg.json();
+                    if (rImg.ok && dImg.success && dImg.text) {
+                        descricoes.push(`[IMAGEM #${j + 1}]: ${dImg.text}`);
+                    }
+                } catch (_) {}
+            }
+            const rTxt = await originalFetchFn(WORKERS_AI_FALLBACK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tipo: 'text',
+                    prompt: `${promptBase}\n\nANÁLISE DAS IMAGENS ANEXADAS:\n${descricoes.join('\n\n')}`
+                })
+            });
+            const dTxt = await rTxt.json();
+            if (!rTxt.ok || !dTxt.success) throw new Error(dTxt.error || 'Falha no Workers AI (Texto)');
+            textoFinal = dTxt.text || '';
+        } else {
+            const rTxt = await originalFetchFn(WORKERS_AI_FALLBACK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tipo: 'text', prompt: promptBase })
+            });
+            const dTxt = await rTxt.json();
+            if (!rTxt.ok || !dTxt.success) throw new Error(dTxt.error || 'Falha no Workers AI');
+            textoFinal = dTxt.text || '';
+        }
+
+        const stSidebar = document.getElementById('status-ia-sidebar');
+        if (stSidebar) {
+            stSidebar.innerText = 'Workers AI (Apoio Ativo)';
+            stSidebar.style.color = '#38bdf8';
+        }
+
+        return new Response(JSON.stringify({
+            candidates: [{ content: { parts: [{ text: textoFinal }] } }],
+            _provider: 'cloudflare-workers-ai'
+        }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+
+    if (!window._covisaAdminFetchIntercepted) {
+        window._covisaAdminFetchIntercepted = true;
+        const _origFetchAdmin = window.fetch.bind(window);
+        window.fetch = async function(input, init) {
+            const urlStr = typeof input === 'string' ? input : (input && input.url ? input.url : '');
+
+            // A) Intercepta /api/media para arquivos importados localmente
+            if (urlStr.startsWith(CLOUDFLARE_WORKER_URL + '/api/media')) {
+                try {
+                    const u = new URL(urlStr);
+                    const mid = u.searchParams.get('id') || '';
+                    if (mid.startsWith('local_') && window._waMidiasLocaisMap.has(mid)) {
+                        const fileObj = window._waMidiasLocaisMap.get(mid);
+                        return new Response(fileObj, {
+                            status: 200,
+                            headers: { 'Content-Type': fileObj.type || 'application/octet-stream' }
+                        });
+                    }
+                } catch (_) {}
+            }
+
+            // B) Intercepta /api/conversations/history para conversas importadas
+            if (urlStr.startsWith(CLOUDFLARE_WORKER_URL + '/api/conversations/history')) {
+                try {
+                    const u = new URL(urlStr);
+                    const ph = (u.searchParams.get('phone') || '').replace(/\D/g, '');
+                    const imp = window._waConversasImportadas.find(c => c.phone === ph);
+                    if (imp) {
+                        return new Response(JSON.stringify({
+                            success: true,
+                            conversation: {
+                                phone: imp.phone,
+                                paused: imp.paused,
+                                updated_at: imp.updated_at,
+                                history: imp.history
+                            }
+                        }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                    }
+                } catch (_) {}
+            }
+
+            // C) Intercepta /api/conversations para mesclar conversas importadas com as do Worker
+            if (urlStr.startsWith(CLOUDFLARE_WORKER_URL + '/api/conversations?') || urlStr === CLOUDFLARE_WORKER_URL + '/api/conversations') {
+                try {
+                    const respOrig = await _origFetchAdmin(input, init);
+                    if (window._waConversasImportadas.length === 0) return respOrig;
+                    const dados = await respOrig.json();
+                    const baseList = Array.isArray(dados.conversations) ? dados.conversations : [];
+                    const mapMerged = new Map();
+                    for (const c of baseList) mapMerged.set(c.phone, c);
+                    for (const imp of window._waConversasImportadas) {
+                        if (!mapMerged.has(imp.phone)) {
+                            mapMerged.set(imp.phone, {
+                                phone: imp.phone,
+                                paused: imp.paused,
+                                updated_at: imp.updated_at,
+                                last_message: imp.last_message,
+                                last_role: imp.last_role,
+                                message_count: imp.history.length
+                            });
+                        }
+                    }
+                    dados.conversations = Array.from(mapMerged.values()).sort((a, b) => (b.updated_at || 0) - (a.updated_at || 0));
+                    return new Response(JSON.stringify(dados), {
+                        status: respOrig.status,
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                } catch (err) {
+                    if (window._waConversasImportadas.length > 0) {
+                        return new Response(JSON.stringify({
+                            success: true,
+                            conversations: window._waConversasImportadas.map(imp => ({
+                                phone: imp.phone,
+                                paused: imp.paused,
+                                updated_at: imp.updated_at,
+                                last_message: imp.last_message,
+                                last_role: imp.last_role,
+                                message_count: imp.history.length
+                            }))
+                        }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                    }
+                    throw err;
+                }
+            }
+
+            // D) Intercepta chamadas ao Gemini e aciona Workers AI automaticamente se o Gemini falhar
+            if (urlStr.includes('generativelanguage.googleapis.com')) {
+                let bodyParsed = null;
+                try {
+                    if (init && typeof init.body === 'string') bodyParsed = JSON.parse(init.body);
+                } catch (_) {}
+
+                try {
+                    const resGemini = await _origFetchAdmin(input, init);
+                    if (resGemini.ok) {
+                        const cloneCheck = await resGemini.clone().json().catch(() => null);
+                        if (cloneCheck && cloneCheck.candidates?.[0]?.content?.parts?.[0]?.text) {
+                            return resGemini;
+                        }
+                    }
+                    console.warn('Gemini retornou falha HTTP', resGemini.status, '-> usando Cloudflare Workers AI');
+                    return await chamarWorkersAIFallbackDeGemini(bodyParsed, _origFetchAdmin);
+                } catch (errGemini) {
+                    console.warn('Erro de rede/cota no Gemini -> usando Cloudflare Workers AI:', errGemini);
+                    return await chamarWorkersAIFallbackDeGemini(bodyParsed, _origFetchAdmin);
+                }
+            }
+
+            return _origFetchAdmin(input, init);
+        };
+    }
+
+    // UI do Importador de Conversas Existentes do WhatsApp
+    document.getElementById('imp-wa-files')?.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files || []);
+        const info = document.getElementById('imp-wa-files-info');
+        if (!info) return;
+        if (files.length === 0) {
+            info.innerText = 'Nenhum arquivo selecionado.';
+        } else {
+            info.innerText = `${files.length} arquivo(s) selecionado(s): ${files.map(f => f.name).slice(0, 4).join(', ')}${files.length > 4 ? '...' : ''}`;
+        }
+    });
+
+    window.abrirModalImportarChatWA = (origem = 'lab') => {
+        _origemModalImportWA = origem;
+        const modal = document.getElementById('modalImportarChatWA');
+        if (modal) modal.style.display = 'flex';
+    };
+
+    window.fecharModalImportarChatWA = () => {
+        const modal = document.getElementById('modalImportarChatWA');
+        if (modal) modal.style.display = 'none';
+    };
+
+    window.confirmarImportarChatWA = async () => {
+        const phoneInput = (document.getElementById('imp-wa-phone')?.value || '').trim();
+        let textoChat = (document.getElementById('imp-wa-text')?.value || '').trim();
+        const files = Array.from(document.getElementById('imp-wa-files')?.files || []);
+
+        if (!textoChat && files.length === 0) {
+            return showToast('Faltam dados', 'Cole o texto da conversa ou selecione arquivos (.txt, áudios, PDFs ou fotos).', 'warning');
+        }
+
+        let phoneLimpo = phoneInput.replace(/\D/g, '');
+        if (phoneLimpo.length === 10 || phoneLimpo.length === 11) phoneLimpo = '55' + phoneLimpo;
+        if (!phoneLimpo) phoneLimpo = '5511999' + String(Date.now()).slice(-6);
+
+        const history = [];
+        const agora = Date.now();
+
+        // Lê arquivos .txt se houver
+        for (const f of files) {
+            if (f.name.toLowerCase().endsWith('.txt') || f.type === 'text/plain') {
+                const txt = await f.text();
+                if (txt.trim()) textoChat = (textoChat ? textoChat + '\n' : '') + txt.trim();
+            }
+        }
+
+        // Converte linhas do texto exportado em bolhas de conversa
+        if (textoChat) {
+            const linhas = textoChat.split(/\r?\n/).filter(l => l.trim());
+            const regexLinhaWA = /^(?:\[?\d{1,2}\/\d{1,2}\/\d{2,4},?\s+\d{1,2}:\d{2}(?::\d{2})?\]?\s*-?\s*)([^:]+):\s*(.*)$/;
+            let idxMsg = 0;
+            for (const linha of linhas) {
+                const m = linha.match(regexLinhaWA);
+                if (m) {
+                    const autor = m[1].trim().toLowerCase();
+                    const conteudo = m[2].trim();
+                    if (!conteudo || /<mídia oculta>|arquivo de mídia oculto/i.test(conteudo)) continue;
+                    const ehAtendente = /giliard|covisa|vigilância|vigilancia|ana|atendente|você|voce/.test(autor);
+                    history.push({
+                        role: ehAtendente ? 'assistant' : 'user',
+                        content: ehAtendente ? `[Atendente] ${conteudo}` : conteudo,
+                        ts: agora - (linhas.length - idxMsg) * 1000
+                    });
+                } else if (history.length > 0) {
+                    history[history.length - 1].content += '\n' + linha.trim();
+                } else {
+                    history.push({ role: 'user', content: linha.trim(), ts: agora - 1000 });
+                }
+                idxMsg++;
+            }
+        }
+
+        // Adiciona todos os PDFs, imagens, áudios e vídeos
+        let midiaIdx = 0;
+        for (const f of files) {
+            const lower = f.name.toLowerCase();
+            if (lower.endsWith('.txt') || f.type === 'text/plain') continue;
+            const localId = `local_${Date.now()}_${midiaIdx++}_${Math.random().toString(36).slice(2, 6)}`;
+            window._waMidiasLocaisMap.set(localId, f);
+            const localUrl = URL.createObjectURL(f);
+
+            let mType = 'document';
+            let mime = f.type || 'application/octet-stream';
+            if (mime.startsWith('image/') || /\.(jpg|jpeg|png|webp|gif)$/i.test(lower)) {
+                mType = 'image';
+                if (!mime.startsWith('image/')) mime = 'image/jpeg';
+            } else if (mime.startsWith('audio/') || /\.(ogg|opus|mp3|wav|m4a|aac)$/i.test(lower)) {
+                mType = 'audio';
+                if (!mime.startsWith('audio/')) mime = 'audio/ogg';
+            } else if (mime.startsWith('video/') || /\.(mp4|mov|webm)$/i.test(lower)) {
+                mType = 'video';
+            } else if (lower.endsWith('.pdf')) {
+                mType = 'document';
+                mime = 'application/pdf';
+            }
+
+            history.push({
+                role: 'user',
+                content: `[Arquivo importado: ${f.name}]`,
+                ts: agora + midiaIdx * 500,
+                media: {
+                    id: localId,
+                    type: mType,
+                    filename: f.name,
+                    mime_type: mime,
+                    localUrl
+                }
+            });
+        }
+
+        const ultimaMsg = history.length > 0 ? history[history.length - 1] : { content: 'Conversa importada', role: 'user' };
+        const existenteIdx = window._waConversasImportadas.findIndex(c => c.phone === phoneLimpo);
+        const registro = {
+            phone: phoneLimpo,
+            paused: 1,
+            updated_at: Date.now(),
+            last_message: ultimaMsg.content,
+            last_role: ultimaMsg.role,
+            history
+        };
+        if (existenteIdx >= 0) window._waConversasImportadas[existenteIdx] = registro;
+        else window._waConversasImportadas.unshift(registro);
+
+        // Limpa formulário e fecha modal
+        document.getElementById('imp-wa-phone').value = '';
+        document.getElementById('imp-wa-text').value = '';
+        document.getElementById('imp-wa-files').value = '';
+        document.getElementById('imp-wa-files-info').innerText = 'Nenhum arquivo selecionado.';
+        fecharModalImportarChatWA();
+
+        showToast('Conversa Importada!', `${history.length} item(ns) carregados para ${formatarTelefoneWA(phoneLimpo)} em todas as abas.`, 'success');
+
+        await carregarConversasWhatsApp(false);
+        if (typeof carregarListaChatsLaboratorio === 'function') await carregarListaChatsLaboratorio(false);
+        if (typeof atualizarListaWaNoDocGen === 'function') atualizarListaWaNoDocGen(false);
+        if (typeof atualizarFontesMultasIA === 'function') atualizarFontesMultasIA(false);
+
+        if (_origemModalImportWA === 'lab' && typeof selecionarChatLaboratorio === 'function') {
+            mudarModoLaboratorio('wa');
+            await selecionarChatLaboratorio(phoneLimpo);
+        }
+    };
 
 
     let idProcessoAtual = null;
@@ -5216,7 +5689,7 @@
             const filename = m.media.filename || (mType === 'document' ? 'documento.pdf' : `midia_${m.media.id}`);
             const mime = (m.media.mime_type || '').toLowerCase();
             const caption = (m.media.caption || '').trim();
-            const mediaUrl = `${CLOUDFLARE_WORKER_URL}/api/media?id=${encodeURIComponent(m.media.id)}&filename=${encodeURIComponent(filename)}`;
+            const mediaUrl = m.media.localUrl || `${CLOUDFLARE_WORKER_URL}/api/media?id=${encodeURIComponent(m.media.id)}&filename=${encodeURIComponent(filename)}`;
             const downloadUrl = `${mediaUrl}&download=1`;
             const safeUrlAttr = escaparHtmlWA(mediaUrl);
             const safeDownloadAttr = escaparHtmlWA(downloadUrl);
