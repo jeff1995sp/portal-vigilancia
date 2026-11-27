@@ -3083,13 +3083,31 @@
                     </div>
                   </div>
 
-                  <div class="docgen-field" id="mia-pix-row">
-                    <label>Código PIX Copia e Cola (Gera QR Code real no PDF)</label>
+                  <div class="docgen-field" id="mia-pix-row" style="gap: 8px;">
+                    <label>Código PIX Copia e Cola (Cole o seu manual ou clique em Gerar PIX)</label>
                     <div class="docgen-inline-input">
-                      <input type="text" id="mia-pix-code" placeholder="Clique em Gerar PIX ou cole um código PIX..." />
+                      <input type="text" id="mia-pix-code" placeholder="Cole aqui seu código PIX Copia e Cola manual..." />
                       <button type="button" class="wa-btn-sm" id="btn-mia-gerar-pix" style="border-color: var(--success); color: #6ee7b7; padding: 9px 12px; white-space: nowrap;" onclick="gerarPixParaMultasIA()">
                         <i class="fas fa-qrcode"></i> Gerar PIX
                       </button>
+                    </div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; background:#040914; border:1px dashed #2b4470; border-radius:9px; padding:8px 11px;">
+                      <div style="display:flex; align-items:center; gap:9px; flex:1; min-width:190px;">
+                        <img id="mia-pix-qr-thumb" src="" alt="QR PIX Multa" style="display:none; width:44px; height:44px; object-fit:contain; background:#ffffff; border-radius:6px; padding:2px; border:1px solid #38bdf8;" />
+                        <div>
+                          <strong style="display:block; font-size:0.77rem; color:#bae6fd;"><i class="fas fa-qrcode"></i> Imagem do QR Code PIX (Opcional)</strong>
+                          <span id="mia-pix-qr-status" style="font-size:0.71rem; color:#94a3b8;">Envie a imagem do QR Code para sair no PDF da multa</span>
+                        </div>
+                      </div>
+                      <div style="display:flex; gap:6px; align-items:center;">
+                        <label class="wa-btn-sm" style="padding:6px 11px; font-size:0.75rem; border-color:#38bdf8; color:#bae6fd; cursor:pointer; margin:0;">
+                          <i class="fas fa-upload"></i> Adicionar QR Code
+                          <input type="file" id="mia-pix-qr-file" accept="image/*" style="display:none;" onchange="carregarFotoQrPixMIA(this)" />
+                        </label>
+                        <button type="button" id="btn-mia-pix-qr-clear" class="wa-btn-sm" style="display:none; padding:6px 9px; font-size:0.74rem; border-color:var(--danger); color:#fca5a5;" onclick="limparFotoQrPixMIA()" title="Remover imagem do QR Code">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -5237,7 +5255,8 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
         const txt = [alvo.categoria, alvo.ramo, alvo.nome, alvo.receita?.cnae, alvo.infracao_possivel].join(' ').toLowerCase();
         const nv = normalizarNivelRadar(alvo.nivel);
 
-        if (/nail|unha|manicure|pedicure|c[ií]lio|lash|sobrancelha|bronze/.test(txt)) return 'studio_nails';
+        if (/bronze|solarium/.test(txt)) return 'bronzeamento_sanitario';
+        if (/nail|unha|manicure|pedicure|c[ií]lio|lash|sobrancelha/.test(txt)) return 'studio_nails';
         if (/botox|harmoniza|preenchimento|biomedic|est[eé]tica avan|laser|invasiv/.test(txt)) return 'alvara_clinica_estetica';
         if (/sal[aã]o|barbear|cabeleireir|beleza/.test(txt)) return 'salao_barbearia';
         if (/farm[aá]cia|drogaria|manipula[cç][aã]o/.test(txt)) return 'alvara_farmacia';
@@ -5266,24 +5285,57 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
             }
         }
 
-        if (document.getElementById('docgen-nome')) document.getElementById('docgen-nome').value = alvo.receita?.razao_social || alvo.nome || '';
-        if (document.getElementById('docgen-cnpj')) document.getElementById('docgen-cnpj').value = alvo.cnpj || '';
-        if (document.getElementById('docgen-rua')) document.getElementById('docgen-rua').value = alvo.receita?.endereco_oficial || alvo.endereco || '';
-        if (document.getElementById('docgen-bairro')) document.getElementById('docgen-bairro').value = alvo.bairro || alvo.receita?.bairro || '';
-        if (document.getElementById('docgen-cidade')) document.getElementById('docgen-cidade').value = `${alvo.cidade || 'São Paulo'} - SP`;
-        if (document.getElementById('docgen-ramo')) document.getElementById('docgen-ramo').value = alvo.receita?.cnae || alvo.categoria || alvo.ramo || '';
-        if (document.getElementById('docgen-telefone')) document.getElementById('docgen-telefone').value = alvo.telefone || alvo.receita?.telefone_receita || '';
-        if (document.getElementById('docgen-cnae') && alvo.receita?.cnae) document.getElementById('docgen-cnae').value = alvo.receita.cnae;
-        if (document.getElementById('docgen-rt') && alvo.dono_responsavel) document.getElementById('docgen-rt').value = alvo.dono_responsavel;
+        const nomeVal = limparValorVazioIA(alvo.receita?.razao_social || alvo.nome) || '';
+        const cnpjVal = limparValorVazioIA(alvo.cnpj) || '';
+        const endRaw = limparValorVazioIA(alvo.receita?.endereco_oficial || alvo.endereco) || '';
+        const bairroVal = limparValorVazioIA(alvo.bairro || alvo.receita?.bairro) || '';
+        const cidadeBase = String(alvo.cidade || 'São Paulo').split(',')[0].trim() || 'São Paulo';
+        const cidadeVal = cidadeBase.toLowerCase().includes(' - sp') ? cidadeBase : `${cidadeBase} - SP`;
+        const ramoVal = limparValorVazioIA(alvo.receita?.cnae || alvo.categoria || alvo.ramo) || '';
+        const telVal = limparValorVazioIA(alvo.telefone || alvo.receita?.telefone_receita) || '';
+        const cnaeVal = limparValorVazioIA(alvo.receita?.cnae) || '';
+        const rtVal = limparValorVazioIA(alvo.dono_responsavel) || '';
+
+        if (document.getElementById('docgen-nome')) document.getElementById('docgen-nome').value = nomeVal;
+        if (document.getElementById('docgen-cnpj')) document.getElementById('docgen-cnpj').value = cnpjVal;
+        if (document.getElementById('docgen-rua')) document.getElementById('docgen-rua').value = endRaw;
+        if (document.getElementById('docgen-bairro')) document.getElementById('docgen-bairro').value = bairroVal;
+        if (document.getElementById('docgen-cidade')) document.getElementById('docgen-cidade').value = cidadeVal;
+        if (document.getElementById('docgen-ramo')) document.getElementById('docgen-ramo').value = ramoVal;
+        if (document.getElementById('docgen-telefone')) document.getElementById('docgen-telefone').value = telVal;
+        if (document.getElementById('docgen-cnae')) document.getElementById('docgen-cnae').value = cnaeVal;
+        if (document.getElementById('docgen-rt')) document.getElementById('docgen-rt').value = rtVal;
+
+        const faltantes = [];
+        if (!cnpjVal) faltantes.push('CNPJ/CPF (clique na lupa para buscar ou preencha manualmente)');
+        if (!telVal) faltantes.push('Telefone / WhatsApp');
+        if (!rtVal) faltantes.push('Responsável Técnico / Dono');
+        if (!cnaeVal) faltantes.push('CNAE / Nº CMVS');
+
+        const boxFalt = document.getElementById('docgen-faltantes-box');
+        const listFalt = document.getElementById('docgen-faltantes-list');
+        window._ultimosFaltantesDocGen = faltantes;
+        if (boxFalt && listFalt) {
+            if (faltantes.length > 0) {
+                boxFalt.style.display = 'block';
+                listFalt.innerHTML = faltantes.map(f => `<li>${escaparHtmlWA(f)}</li>`).join('');
+            } else {
+                boxFalt.style.display = 'none';
+            }
+        }
+
         if (document.getElementById('docgen-corpo')) {
-            document.getElementById('docgen-corpo').value = [
+            const linhasCorpo = [
                 alvo.perigo ? `Situação identificada (${alvo.fonte || 'Radar'}): ${alvo.perigo}` : '',
-                alvo.infracao_possivel ? `Documentos / Base Legal: ${alvo.infracao_possivel}` : ''
-            ].filter(Boolean).join('\n');
+                alvo.infracao_possivel ? `Documentos / Base Legal: ${alvo.infracao_possivel}` : '',
+                faltantes.length > 0 ? `Preencher / confirmar manualmente: ${faltantes.join('; ')}.` : ''
+            ].filter(Boolean);
+            document.getElementById('docgen-corpo').value = linhasCorpo.join('\n');
         }
 
         const modInfo = window.DOCGEN_CATALOG_100_MAP?.[modeloId];
-        showToast('PDF Ideal Selecionado!', `${alvo.nome} → modelo "${modInfo?.title || modeloId}" marcado automaticamente.`, 'success');
+        const resumoFalt = faltantes.length > 0 ? ` — Preencher manual: ${faltantes.join(', ')}.` : ' — Todos os dados principais preenchidos!';
+        showToast('PDF Ideal Selecionado!', `${nomeVal} → "${modInfo?.title || modeloId}"${resumoFalt}`, 'success');
 
         setTimeout(() => {
             if (typeof window.gerarDocumentoOficialPDF === 'function') {
@@ -12305,6 +12357,19 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
             const usarAssinatura = document.getElementById('mia-usar-assinatura')?.checked !== false;
             const incluirAnexoFotos = document.getElementById('mia-incluir-anexo-fotos')?.checked !== false;
             const nivelNotif = document.getElementById('mia-notif-nivel')?.value || 'NOTIFICAÇÃO SANITÁRIA FORMAL';
+            const miaCustomQrDataUrl = window.miaPixQrDataUrl || '';
+            const marcaAguaMIA = document.getElementById('docgen-marca-agua')?.checked === true;
+            const seloDouradoMIA = document.getElementById('docgen-selo-dourado')?.checked === true;
+            const orgaoSeloMIA = document.getElementById('docgen-orgao-selo')?.value || 'COVISA';
+            const dados = {
+                nome,
+                cnpj,
+                protocolo,
+                validade: prazoData,
+                marcaAgua: marcaAguaMIA,
+                seloDourado: seloDouradoMIA,
+                orgaoSelo: orgaoSeloMIA
+            };
             const fotosSel = miaFotosLista.filter(f => f.selecionado);
 
             const brasaoImg = await carregarImagemEmbedPDF(pdfDoc, 'imagens/5.png');
@@ -12380,7 +12445,7 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
             }
 
             // Bloco 3: Relato Técnico / Texto Formal
-            const temPixBloco = incluirPix && pixCode.length > 20;
+            const temPixBloco = incluirPix && (pixCode.length > 0 || !!miaCustomQrDataUrl);
             const bottomLimit = temPixBloco ? 250 : 148;
 
             drawTextFitPDF(page, ehMulta ? '02. RELATO TÉCNICO DA INFRAÇÃO CONSTATADA' : '02. FUNDAMENTAÇÃO E TERMO DE NOTIFICAÇÃO SANITÁRIA', 34, y, fontBold, 8.2, width - 68, corPrim);
@@ -12426,20 +12491,30 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
                 page.drawRectangle({ x: 30, y: pixY, width: width - 60, height: pixH, color: rgb(0.96, 0.975, 0.996), borderColor: corPrim, borderWidth: 1.2 });
                 drawTextFitPDF(page, 'PAGAMENTO VIA PIX — QUITAÇÃO DA PENALIDADE / GUIA (QR CODE + COPIA E COLA)', 40, pixY + pixH - 14, fontBold, 7.8, width - 80, corPrim);
 
-                const qrPixUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&format=png&data=${encodeURIComponent(pixCode)}`;
-                const qrPixImg = await carregarImagemEmbedPDF(pdfDoc, qrPixUrl);
+                let qrPixImg = null;
+                if (miaCustomQrDataUrl) {
+                    qrPixImg = await carregarImagemEmbedPDF(pdfDoc, miaCustomQrDataUrl);
+                }
+                if (!qrPixImg && pixCode.length > 20) {
+                    const qrPixUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&format=png&data=${encodeURIComponent(pixCode)}`;
+                    qrPixImg = await carregarImagemEmbedPDF(pdfDoc, qrPixUrl);
+                }
                 let pxX = 40, pxW = width - 80;
                 if (qrPixImg) {
                     page.drawImage(qrPixImg, { x: 40, y: pixY + 8, width: 78, height: 78 });
                     pxX = 130; pxW = width - 172;
                 }
                 drawTextFitPDF(page, 'Escaneie o QR Code no aplicativo do banco ou utilize o código PIX Copia e Cola abaixo:', pxX, pixY + pixH - 29, fontReg, 7.8, pxW, corCinza);
-                const pLines = quebrarLinhasPDF(pixCode, fontMono, 7.1, pxW);
-                let py = pixY + pixH - 42;
-                pLines.slice(0, 5).forEach(pl => {
-                    page.drawText(pl, { x: pxX, y: py, size: 7.1, font: fontMono, color: corEscuro });
-                    py -= 9.5;
-                });
+                if (pixCode) {
+                    const pLines = quebrarLinhasPDF(pixCode, fontMono, 7.1, pxW);
+                    let py = pixY + pixH - 42;
+                    pLines.slice(0, 5).forEach(pl => {
+                        page.drawText(pl, { x: pxX, y: py, size: 7.1, font: fontMono, color: corEscuro });
+                        py -= 9.5;
+                    });
+                } else {
+                    drawTextFitPDF(page, '(QR Code anexado — preencha o Copia e Cola acima se desejar)', pxX, pixY + pixH - 44, fontReg, 7.3, pxW, corCinza);
+                }
             }
 
             // Rodapé com Assinatura Fixa DIRETORIA23.png + QR Code de Consulta/Validação
@@ -12553,6 +12628,50 @@ Retorne APENAS JSON válido (sem asteriscos duplos **):
 
     window.abrirPdfMIANovaAba = () => {
         if (miaUltimoBlobUrl) window.open(miaUltimoBlobUrl, '_blank', 'noopener');
+    };
+
+    window.miaPixQrDataUrl = '';
+    window.carregarFotoQrPixMIA = (input) => {
+        const file = input?.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_S = 500;
+                let w = img.width, h = img.height;
+                if (w > MAX_S || h > MAX_S) {
+                    if (w >= h) { h = Math.round((h * MAX_S) / w); w = MAX_S; }
+                    else { w = Math.round((w * MAX_S) / h); h = MAX_S; }
+                }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                window.miaPixQrDataUrl = canvas.toDataURL('image/png', 0.9);
+                const thumb = document.getElementById('mia-pix-qr-thumb');
+                const st = document.getElementById('mia-pix-qr-status');
+                const clr = document.getElementById('btn-mia-pix-qr-clear');
+                if (thumb) { thumb.src = window.miaPixQrDataUrl; thumb.style.display = 'block'; }
+                if (st) st.innerText = `QR Code carregado (${file.name})`;
+                if (clr) clr.style.display = 'inline-flex';
+                showToast('QR Code Anexado!', 'A imagem do QR Code será incluída no PDF da multa.', 'success');
+            };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.limparFotoQrPixMIA = (silencioso = false) => {
+        window.miaPixQrDataUrl = '';
+        const inp = document.getElementById('mia-pix-qr-file');
+        const thumb = document.getElementById('mia-pix-qr-thumb');
+        const st = document.getElementById('mia-pix-qr-status');
+        const clr = document.getElementById('btn-mia-pix-qr-clear');
+        if (inp) inp.value = '';
+        if (thumb) { thumb.src = ''; thumb.style.display = 'none'; }
+        if (st) st.innerText = 'Envie a imagem do QR Code para sair no PDF da multa';
+        if (clr) clr.style.display = 'none';
+        if (!silencioso) showToast('QR Code Removido', 'Imagem do QR Code removida.', 'warning');
     };
 
     window.baixarUltimoPdfMIA = () => {
@@ -14751,6 +14870,7 @@ Responda APENAS JSON válido:
         { num: 36, id: 'alvara_farmacia', cat: 'comercios', engine: 'alvara', theme: 'theme-blue', icon: 'fa-prescription-bottle', title: 'Farmácia e Drogaria', sub: 'SNGPC / Dispensação / RT' },
         { num: 37, id: 'dedetizacao_caixa', cat: 'comercios', engine: 'institucional', theme: 'theme-green', icon: 'fa-spray-can', title: 'Cert. Pragas & Caixa d\'Água', sub: 'Dedetização / Reservatório' },
         { num: 38, id: 'plano_pgrss', cat: 'comercios', engine: 'institucional', theme: 'theme-purple', icon: 'fa-recycle', title: 'Decl. Boas Práticas / PGRSS', sub: 'Resíduos & Rotinas BPF' },
+        { num: 38, id: 'bronzeamento_sanitario', cat: 'comercios', engine: 'alvara', theme: 'theme-yellow', icon: 'fa-sun', title: 'Licença / Roteiro Bronze', sub: 'Bronzeamento & Biossegurança' },
 
         // 4. LICENÇAS E CADASTROS COVISA (39-47)
         { num: 39, id: 'alvara_oficial', cat: 'licencas', engine: 'alvara', theme: 'theme-green', icon: 'fa-award', title: 'Licença Sanitária (LFS 2026)', sub: 'Alvará Oficial Port. 266/25' },
