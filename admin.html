@@ -1478,6 +1478,10 @@
           <i class="fas fa-file-invoice-dollar" style="color: #10b981;"></i>
           <div class="nav-item-text"><span class="nav-item-title" style="color:#6ee7b7;">Cobrança (100 Guias)</span><span class="nav-item-sub">Taxas COVISA, ANVISA e PIX</span></div>
         </a>
+        <a class="nav-item" id="nav-item-especiais" onclick="switchView('view-especiais', this)">
+          <i class="fas fa-folder-plus" style="color: #38bdf8;"></i>
+          <div class="nav-item-text"><span class="nav-item-title" style="color:#bae6fd;">Docs Especiais (100)</span><span class="nav-item-sub">CNPJ, AVCB, RT, PGRSS, POPs</span></div>
+        </a>
         <a class="nav-item" id="nav-item-multas-ia" onclick="switchView('view-multas-ia', this)" style="color: #fca5a5;">
           <i class="fas fa-gavel" style="color: #ef4444;"></i>
           <div class="nav-item-text"><span class="nav-item-title">Multas & Notificações IA</span><span class="nav-item-sub">Autos UFESP, fotos e intimações</span></div>
@@ -3430,6 +3434,199 @@
           </div>
         </div>
 
+        <div id="view-especiais" class="page-view">
+          <div class="page-title" style="margin-bottom: 16px;">
+            <div>
+              <h1><i class="fas fa-folder-plus" style="color: #38bdf8;"></i> Gerador de Documentos Especiais — 100 Modelos Empresariais & Técnicos</h1>
+              <p>Gere documentos completos de regularização: CNPJ/MEI, Alvará Prefeitura, AVCB/CLCB Bombeiros, Responsável Técnico (RT), PGRSS Lixo, POPs de Limpeza, Manual BPF, Biossegurança e Contratos.</p>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary" style="padding: 10px 15px; font-size: 0.85rem;" onclick="limparFormularioEspeciais()">
+                <i class="fas fa-eraser"></i> Limpar
+              </button>
+              <button type="button" class="btn btn-primary" style="padding: 10px 17px; font-size: 0.87rem;" onclick="gerarPdfEspecial(false)">
+                <i class="fas fa-eye"></i> Atualizar Prévia
+              </button>
+              <button type="button" class="btn btn-success" style="padding: 10px 17px; font-size: 0.87rem;" onclick="gerarPdfEspecial(true)">
+                <i class="fas fa-download"></i> Baixar PDF
+              </button>
+            </div>
+          </div>
+
+          <div class="docgen-layout" style="height: calc(100vh - 210px); min-height: 500px;">
+            <!-- COLUNA ESQUERDA: 100 MODELOS ESPECIAIS + DADOS + IA -->
+            <div class="docgen-form-panel">
+              <div class="docgen-form-scroll">
+
+                <!-- 1. CATÁLOGO DE 100 DOCUMENTOS ESPECIAIS -->
+                <div class="docgen-box" style="border-color: rgba(56, 189, 248, 0.45);">
+                  <div class="docgen-box-title">
+                    <span style="color:#bae6fd;"><i class="fas fa-layer-group"></i> 1. Catálogo de Documentos Especiais (100 Modelos)</span>
+                    <span id="esp-template-tag" style="color:#38bdf8; font-size:0.71rem;">CNPJ Ativo • Layout Próprio</span>
+                  </div>
+
+                  <div class="docgen-inline-input" style="margin-bottom: 2px;">
+                    <input type="text" id="esp-model-search" placeholder="Buscar documento (ex: cnpj, mei, alvará, avcb, bombeiros, rt, pgrss, pop limpeza, contrato)..." oninput="filtrarModelosEspeciais()" style="flex:1; background:#040914; border:1px solid #26385a; color:#fff; padding:8px 12px; border-radius:9px; font-size:0.82rem;" />
+                  </div>
+
+                  <div class="docgen-cat-tabs" id="esp-cat-tabs">
+                    <button type="button" class="docgen-cat-btn active" data-esp-cat="todos" onclick="filtrarCategoriaEspeciais('todos', this)"><i class="fas fa-th-large"></i> Todos (100)</button>
+                    <button type="button" class="docgen-cat-btn" data-esp-cat="empresa_mei" onclick="filtrarCategoriaEspeciais('empresa_mei', this)">1. CNPJ & MEI (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-esp-cat="prefeitura" onclick="filtrarCategoriaEspeciais('prefeitura', this)">2. Prefeitura (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-esp-cat="bombeiros" onclick="filtrarCategoriaEspeciais('bombeiros', this)">3. AVCB Bombeiros (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-esp-cat="resp_tecnico" onclick="filtrarCategoriaEspeciais('resp_tecnico', this)">4. Resp. Técnico (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-esp-cat="pgrss_lixo" onclick="filtrarCategoriaEspeciais('pgrss_lixo', this)">5. PGRSS Lixo (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-esp-cat="pop_limpeza" onclick="filtrarCategoriaEspeciais('pop_limpeza', this)">6. POP Limpeza (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-esp-cat="bpf_alimentos" onclick="filtrarCategoriaEspeciais('bpf_alimentos', this)">7. Manual BPF (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-esp-cat="estetica_saude" onclick="filtrarCategoriaEspeciais('estetica_saude', this)">8. Estética/Nails (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-esp-cat="contratos" onclick="filtrarCategoriaEspeciais('contratos', this)">9. Contratos (10)</button>
+                    <button type="button" class="docgen-cat-btn" data-esp-cat="outros_docs" onclick="filtrarCategoriaEspeciais('outros_docs', this)">10. Outros Docs (10)</button>
+                  </div>
+
+                  <div class="docgen-types-grid" id="esp-types-grid"></div>
+                </div>
+
+                <!-- 2. DADOS DA EMPRESA / CLIENTE -->
+                <div class="docgen-box highlight-wa">
+                  <div class="docgen-box-title">
+                    <span style="color:#6ee7b7;"><i class="fas fa-building"></i> 2. Dados da Empresa (Sistema, CNPJ ou Manual)</span>
+                    <input type="text" id="esp-protocolo" placeholder="DOC-2026-000001" style="background:#040914; border:1px solid #26385a; color:#38bdf8; padding:4px 9px; border-radius:7px; font-size:0.74rem; font-family:var(--font-code); font-weight:800; width:165px;" />
+                  </div>
+
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Importar Cliente do Sistema (Firebase)</label>
+                      <select id="esp-process-selector" onchange="importarProcessoNoEspecial(this.value)">
+                        <option value="">-- Digitar manual ou selecionar cliente --</option>
+                      </select>
+                    </div>
+                    <div class="docgen-field">
+                      <label>CPF ou CNPJ (Busca Receita Federal)</label>
+                      <div class="docgen-inline-input">
+                        <input type="text" id="esp-cnpj" placeholder="00.000.000/0001-00 ou CPF" oninput="mascararDocGenCnpj(this)" maxlength="18" />
+                        <button type="button" class="wa-btn-sm btn-chat" id="btn-esp-busca-cnpj" onclick="buscarCnpjNoEspecial()" style="padding:9px 11px;" title="Consultar CNPJ na Receita Federal"><i class="fas fa-search"></i></button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="docgen-field">
+                    <label>Razão Social / Nome Completo</label>
+                    <input type="text" id="esp-nome" placeholder="Nome da empresa, MEI ou profissional..." />
+                  </div>
+
+                  <div class="docgen-row-2">
+                    <div class="docgen-field">
+                      <label>Endereço Completo</label>
+                      <input type="text" id="esp-endereco" placeholder="Rua, nº, bairro, CEP..." />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Município / UF</label>
+                      <input type="text" id="esp-cidade" value="São Paulo - SP" placeholder="São Paulo - SP" />
+                    </div>
+                  </div>
+
+                  <div class="docgen-row-3-eq">
+                    <div class="docgen-field">
+                      <label>Ramo / CNAE</label>
+                      <input type="text" id="esp-ramo" placeholder="Ex: Alimentos / Estética / Saúde" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Resp. Técnico / Legal</label>
+                      <input type="text" id="esp-responsavel" placeholder="Nome + CRM/CRF/CREA (se houver)" />
+                    </div>
+                    <div class="docgen-field">
+                      <label>Emissão / Validade</label>
+                      <input type="text" id="esp-validade" placeholder="DD/MM/AAAA" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. TÍTULO, CONTEÚDO COM IA E ASSINATURA -->
+                <div class="docgen-box" style="border-color: rgba(192, 132, 252, 0.45);">
+                  <div class="docgen-box-title">
+                    <span style="color:#e9d5ff;"><i class="fas fa-file-alt"></i> 3. Título & Conteúdo do Documento Especial</span>
+                    <button type="button" class="wa-btn-sm" id="btn-esp-ia-texto" style="background: rgba(192,132,252,0.18); border-color: var(--gemini-purple); color: #e9d5ff; padding: 5px 11px; font-size: 0.75rem;" onclick="gerarConteudoEspecialComIA()">
+                      <i class="fas fa-magic"></i> Gerar Texto Completo com IA
+                    </button>
+                  </div>
+
+                  <div class="docgen-field">
+                    <label>Título Oficial do Documento</label>
+                    <input type="text" id="esp-titulo-doc" placeholder="Título do documento..." style="font-weight:800; color:#bae6fd;" />
+                  </div>
+
+                  <div class="docgen-field">
+                    <label>Texto / Cláusulas / Procedimentos / Itens do Documento (Editável)</label>
+                    <textarea id="esp-corpo" style="min-height: 115px;" placeholder="Preenchido automaticamente conforme o modelo escolhido (ou clique em Gerar Texto Completo com IA)..."></textarea>
+                  </div>
+
+                  <div class="docgen-sig-strip">
+                    <label style="display:flex; align-items:center; gap:9px; color:#e2e8f0; font-size:0.8rem; font-weight:800; cursor:pointer;">
+                      <input type="checkbox" id="esp-usar-assinatura" style="width:16px; height:16px; accent-color:#10b981;" />
+                      <span>Incluir Assinatura Fixa (<code style="color:#6ee7b7;">DIRETORIA23.png</code>) — desmarcado deixa linha limpa p/ cliente/RT assinar</span>
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="docgen-footer-actions">
+                <button type="button" class="wa-btn-sm" onclick="copiarMsgEspecialWA()">
+                  <i class="fab fa-whatsapp" style="color:#25D366;"></i> Copiar Msg WhatsApp
+                </button>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-primary" id="btn-esp-preview" style="padding: 10px 18px; font-size: 0.88rem;" onclick="gerarPdfEspecial(false)">
+                    <i class="fas fa-sync-alt"></i> Gerar Prévia
+                  </button>
+                  <button type="button" class="btn btn-success" id="btn-esp-download" style="padding: 10px 20px; font-size: 0.88rem;" onclick="gerarPdfEspecial(true)">
+                    <i class="fas fa-file-download"></i> Baixar PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLUNA DIREITA: PRÉVIA EM TEMPO REAL -->
+            <div class="docgen-preview-panel">
+              <div class="docgen-preview-bar">
+                <div style="display:flex; align-items:center; gap:9px; flex-wrap:wrap;">
+                  <strong style="color:#ffffff; font-size:0.94rem;"><i class="fas fa-file-pdf" style="color:#38bdf8;"></i> Prévia do Documento Especial</strong>
+                  <span id="esp-preview-filename" class="spy-chip" style="font-family: var(--font-code); font-size:0.74rem;">Nenhum PDF gerado</span>
+                </div>
+                <div style="display:flex; gap:7px; flex-wrap:wrap;">
+                  <button type="button" class="wa-btn-sm btn-chat" onclick="gerarPdfEspecial(false)" style="padding:6px 12px; font-size:0.78rem; background:var(--primary); color:#fff; border-color:var(--primary);">
+                    <i class="fas fa-eye"></i> Gerar Prévia
+                  </button>
+                  <button type="button" class="wa-btn-sm" id="btn-esp-open-tab" disabled onclick="abrirPdfEspecialNovaAba()" style="padding:6px 11px; font-size:0.78rem;">
+                    <i class="fas fa-external-link-alt"></i> Nova Aba
+                  </button>
+                  <button type="button" class="wa-btn-sm btn-chat" id="btn-esp-dl-top" disabled onclick="baixarUltimoPdfEspecial()" style="padding:6px 11px; font-size:0.78rem;">
+                    <i class="fas fa-download"></i> Baixar
+                  </button>
+                </div>
+              </div>
+
+              <div class="docgen-preview-stage">
+                <div class="docgen-preview-idle" id="esp-preview-idle">
+                  <i class="fas fa-folder-plus" style="font-size: 3.8rem; color: #38bdf8; opacity: 0.45; margin-bottom: 14px; display: block;"></i>
+                  <h3 style="color:#ffffff; margin-bottom:8px;">Pronto para Gerar Documento Especial</h3>
+                  <p style="font-size:0.9rem; line-height:1.55; margin-bottom:14px;">
+                    Escolha 1 dos <strong>100 modelos</strong> (CNPJ/MEI, Prefeitura, AVCB Bombeiros, RT, PGRSS Lixo, POP Limpeza, BPF, Estética ou Contratos) e clique abaixo.
+                  </p>
+                  <button type="button" class="btn btn-primary" style="padding:11px 22px; font-size:0.9rem;" onclick="gerarPdfEspecial(false)">
+                    <i class="fas fa-eye"></i> Gerar Prévia Agora
+                  </button>
+                </div>
+                <iframe id="esp-pdf-iframe" title="Prévia do Documento Especial PDF" style="width:100%; height:100%; border:none; background:#1e293b; display:none;"></iframe>
+              </div>
+
+              <div class="docgen-history-strip" id="esp-history-strip">
+                <span><i class="fas fa-history"></i> Recentes:</span>
+                <span style="opacity:0.7;">nenhum documento gerado ainda.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div id="view-logs" class="page-view">
           <div class="page-title">
             <div>
@@ -4277,6 +4474,9 @@
         }
         if (viewId === 'view-cobranca') {
             if (typeof window.inicializarCobranca100 === 'function') window.inicializarCobranca100();
+        }
+        if (viewId === 'view-especiais') {
+            if (typeof window.inicializarEspeciais100 === 'function') window.inicializarEspeciais100();
         }
         if (viewId === 'view-multas-ia') {
             atualizarFontesMultasIA(false);
@@ -5496,6 +5696,7 @@ REGRAS OBRIGATÓRIAS:
       aplicarFiltros(); // Já filtra e renderiza ordenado
       if (typeof window.atualizarListasFirebaseMIA === 'function') window.atualizarListasFirebaseMIA();
       if (typeof window.atualizarProcessosCobranca === 'function') window.atualizarProcessosCobranca();
+      if (typeof window.atualizarProcessosEspeciais === 'function') window.atualizarProcessosEspeciais();
     });
 
     window.renderizarTabelas = (arrayDeDados) => {
@@ -14600,6 +14801,476 @@ Retorne APENAS JSON válido sem crases:
         } finally {
             if (btn) { btn.disabled = false; btn.innerHTML = orig; }
         }
+    };
+
+    // =========================================================================
+    // GERADOR DE DOCUMENTOS ESPECIAIS — 100 MODELOS (CNPJ, AVCB, RT, PGRSS, POP)
+    // =========================================================================
+    const ESPECIAIS_CATALOG_100 = [
+        // 1. CNPJ & MEI (10)
+        { id:'e_cnpj_ficha', cat:'empresa_mei', style:'corp', theme:'theme-blue', icon:'fa-id-card', titulo:'Ficha Cadastral — CNPJ Ativo', sub:'Comprovante Cadastral Empresarial', corpo:'Certifica-se para fins de instrução cadastral e regularização municipal que a pessoa jurídica acima qualificada encontra-se com inscrição ativa no Cadastro Nacional da Pessoa Jurídica (CNPJ), exercendo regularmente suas atividades econômicas no endereço declarado.' },
+        { id:'e_mei_decl', cat:'empresa_mei', style:'corp', theme:'theme-blue', icon:'fa-file-contract', titulo:'Declaração de Enquadramento MEI', sub:'Microempreendedor Individual', corpo:'Declaro, sob as penas da lei, que o estabelecimento acima identificado encontra-se regularmente enquadrado como Microempreendedor Individual (MEI), nos termos da Lei Complementar nº 123/2006, operando de acordo com as atividades permitidas no CCMEI.' },
+        { id:'e_contrato_social', cat:'empresa_mei', style:'corp', theme:'theme-blue', icon:'fa-file-signature', titulo:'Resumo de Contrato Social / Ato Constitutivo', sub:'Dados Societários e Objeto', corpo:'Instrumento resumo dos dados constitutivos da sociedade empresarial, contendo razão social, sede, objeto social principal e representação legal para apresentação em processos de licenciamento.' },
+        { id:'e_req_empresario', cat:'empresa_mei', style:'corp', theme:'theme-blue', icon:'fa-user-tie', titulo:'Declaração de Empresário Individual', sub:'Titularidade e Atividade', corpo:'Declaração formal de titularidade empresarial individual para fins de comprovação de representação legal perante órgãos municipais, estaduais e sanitários.' },
+        { id:'e_ccm_insc', cat:'empresa_mei', style:'corp', theme:'theme-green', icon:'fa-landmark', titulo:'Ficha de Inscrição Municipal (CCM)', sub:'Cadastro de Contribuintes Mobiliários', corpo:'Comprovante resumo de dados cadastrais mobiliários (CCM) para fins de instrução de alvará de funcionamento, licenciamento sanitário e regularização fiscal.' },
+        { id:'e_decl_faturamento', cat:'empresa_mei', style:'corp', theme:'theme-green', icon:'fa-chart-line', titulo:'Declaração de Porte Empresarial (ME/EPP)', sub:'Enquadramento Tributário', corpo:'Declaro para os devidos fins legais que a empresa acima qualificada enquadra-se no porte declarado (MEI/ME/EPP), fazendo jus ao tratamento diferenciado e simplificado previsto na Lei Complementar nº 123/2006.' },
+        { id:'e_decl_endereco', cat:'empresa_mei', style:'corp', theme:'theme-blue', icon:'fa-map-marker-alt', titulo:'Declaração de Endereço Comercial', sub:'Comprovação de Sede / Ponto', corpo:'Declaro, sob responsabilidade civil e penal, que o estabelecimento acima identificado exerce suas atividades no endereço completo informado neste documento.' },
+        { id:'e_proc_empresarial', cat:'empresa_mei', style:'corp', theme:'theme-purple', icon:'fa-handshake', titulo:'Procuração Empresarial para Órgãos Públicos', sub:'Representação Administrativa', corpo:'Pelo presente instrumento, a empresa outorgante nomeia seu representante legal para protocolar documentos, acompanhar processos de licenciamento, assinar termos e retirar alvarás junto à Prefeitura, Bombeiros e Vigilância.' },
+        { id:'e_termo_socios', cat:'empresa_mei', style:'corp', theme:'theme-blue', icon:'fa-users', titulo:'Declaração de Quadro Societário (QSA)', sub:'Responsáveis Legais', corpo:'Declaração contendo a qualificação dos responsáveis legais pela administração da empresa para fins de cadastro e responsabilidade perante órgãos fiscalizadores.' },
+        { id:'e_cert_ativo', cat:'empresa_mei', style:'corp', theme:'theme-green', icon:'fa-check-circle', titulo:'Declaração de Empresa em Atividade Regular', sub:'Funcionamento Ativo', corpo:'Declaro que a empresa encontra-se em pleno funcionamento regular, cumprindo as obrigações cadastrais, tributárias e administrativas aplicáveis ao seu ramo.' },
+
+        // 2. PREFEITURA & ALVARÁS (10)
+        { id:'e_alv_prefeitura', cat:'prefeitura', style:'pref', theme:'theme-green', icon:'fa-city', titulo:'Alvará de Funcionamento — Prefeitura', sub:'Licença Municipal de Localização', corpo:'Documento de licenciamento municipal que autoriza o funcionamento regular do estabelecimento no endereço e atividade econômica informados, observadas as posturas municipais e normas de segurança vigentes.' },
+        { id:'e_alf_auto', cat:'prefeitura', style:'pref', theme:'theme-green', icon:'fa-building', titulo:'Auto de Licença de Funcionamento (ALF)', sub:'Regularização Municipal', corpo:'Auto de Licença de Funcionamento expedido para fins de comprovação de regularidade de uso e ocupação do imóvel comercial/serviços perante o município.' },
+        { id:'e_uso_solo', cat:'prefeitura', style:'pref', theme:'theme-blue', icon:'fa-map', titulo:'Declaração de Conformidade de Uso do Solo', sub:'Zoneamento Municipal', corpo:'Declaração de compatibilidade da atividade econômica (CNAE) com o zoneamento urbano do imóvel onde o estabelecimento encontra-se instalado.' },
+        { id:'e_cli_integrado', cat:'prefeitura', style:'pref', theme:'theme-green', icon:'fa-stamp', titulo:'Certificado de Licenciamento Integrado (CLI)', sub:'Via Rápida Empresa / Integrado', corpo:'Certificado consolidado de licenciamento integrado abrangendo regularidade municipal, posturas e compromissos de segurança e higiene do estabelecimento.' },
+        { id:'e_baixo_risco_mun', cat:'prefeitura', style:'pref', theme:'theme-green', icon:'fa-shield-alt', titulo:'Declaração de Dispensa — Baixo Risco Municipal', sub:'Lei da Liberdade Econômica 13.874/19', corpo:'Declaro que a atividade exercida enquadra-se como de Baixo Risco (Nível I), nos termos da Lei Federal nº 13.874/2019, estando dispensada de atos públicos prévios de liberação.' },
+        { id:'e_req_alvara', cat:'prefeitura', style:'pref', theme:'theme-blue', icon:'fa-file-alt', titulo:'Requerimento de Alvará de Funcionamento', sub:'Protocolo Prefeitura', corpo:'Requer-se à Prefeitura Municipal a análise e expedição do Alvará de Funcionamento para o estabelecimento acima qualificado, declarando veracidade das informações prestadas.' },
+        { id:'e_renov_pref', cat:'prefeitura', style:'pref', theme:'theme-green', icon:'fa-sync-alt', titulo:'Requerimento de Renovação de Alvará Municipal', sub:'Atualização Anual', corpo:'Requer-se a renovação anual da licença municipal de funcionamento, mantendo-se inalteradas as condições de uso, área construída e atividade licenciada.' },
+        { id:'e_cadan_anuncio', cat:'prefeitura', style:'pref', theme:'theme-yellow', icon:'fa-sign', titulo:'Declaração de Anúncio Indicativo (CADAN)', sub:'Fachada / Lei Cidade Limpa', corpo:'Declaração de conformidade do anúncio indicativo instalado na fachada do estabelecimento, atendendo às dimensões e critérios da legislação municipal vigente.' },
+        { id:'e_termo_imovel', cat:'prefeitura', style:'pref', theme:'theme-blue', icon:'fa-home', titulo:'Termo de Responsabilidade sobre o Imóvel', sub:'Condições de Segurança e Uso', corpo:'O responsável legal declara que o imóvel utilizado pelo estabelecimento apresenta condições adequadas de estabilidade, acessibilidade, ventilação e segurança para atendimento ao público.' },
+        { id:'e_cert_zoneamento', cat:'prefeitura', style:'pref', theme:'theme-blue', icon:'fa-compass', titulo:'Ficha Técnica de Zoneamento & Parâmetros', sub:'Uso e Ocupação do Solo', corpo:'Resumo técnico das informações de localização, área útil e compatibilidade de atividade para instrução de processos na Prefeitura.' },
+
+        // 3. BOMBEIROS AVCB / CLCB (10)
+        { id:'e_clcb_cert', cat:'bombeiros', style:'fire', theme:'theme-red', icon:'fa-fire-extinguisher', titulo:'Declaração / Certificado CLCB (Bombeiros)', sub:'Baixo Risco de Incêndio', corpo:'Certificado/Declaração de Licença do Corpo de Bombeiros (CLCB) para edificação de baixo potencial de risco, atestando a instalação de extintores, sinalização de emergência e saídas desobstruídas.' },
+        { id:'e_avcb_previstoria', cat:'bombeiros', style:'fire', theme:'theme-red', icon:'fa-fire', titulo:'Relatório de Pré-Vistoria AVCB', sub:'Conferência Preventiva Incêndio', corpo:'Relatório técnico de inspeção preventiva verificando validade de extintores, iluminação de emergência, sinalização fotoluminescente, hidrantes e rotas de fuga.' },
+        { id:'e_brigada_atestado', cat:'bombeiros', style:'fire', theme:'theme-red', icon:'fa-hard-hat', titulo:'Atestado de Treinamento de Brigada de Incêndio', sub:'IT-17 Corpo de Bombeiros', corpo:'Atesta-se que a equipe do estabelecimento recebeu orientações teóricas e práticas sobre prevenção, combate a princípios de incêndio e abandono seguro de área.' },
+        { id:'e_laudo_extintores', cat:'bombeiros', style:'fire', theme:'theme-red', icon:'fa-clipboard-check', titulo:'Relatório de Extintores e Sinalização', sub:'Inspeção de Equipamentos', corpo:'Registro de conferência dos extintores portáteis (Pó ABC / Água / CO2), lacres, manômetros, suportes, placas fotoluminescentes e prazos de recarga e teste hidrostático.' },
+        { id:'e_memorial_incendio', cat:'bombeiros', style:'fire', theme:'theme-red', icon:'fa-drafting-compass', titulo:'Memorial Simplificado de Segurança Contra Incêndio', sub:'Medidas Preventivas', corpo:'Memorial descritivo das medidas de segurança contra incêndio adotadas no imóvel: extintores, iluminação de emergência, saídas sinalizadas e controle de materiais combustíveis.' },
+        { id:'e_saida_emerg', cat:'bombeiros', style:'fire', theme:'theme-yellow', icon:'fa-door-open', titulo:'Declaração de Saídas de Emergência Desobstruídas', sub:'Rotas de Fuga', corpo:'Declaro que todas as portas, corredores e rotas de fuga do estabelecimento permanecem permanentemente desobstruídos, sinalizados e com abertura facilitada durante todo o horário de funcionamento.' },
+        { id:'e_eletrica_conf', cat:'bombeiros', style:'fire', theme:'theme-yellow', icon:'fa-bolt', titulo:'Declaração de Conformidade Elétrica (NBR 5410)', sub:'Instalações de Baixa Tensão', corpo:'Declaração de manutenção e conformidade das instalações elétricas de baixa tensão, quadros de distribuição identificados e proteção contra sobrecarga.' },
+        { id:'e_termo_bombeiros', cat:'bombeiros', style:'fire', theme:'theme-red', icon:'fa-file-signature', titulo:'Termo de Responsabilidade — Segurança Incêndio', sub:'Compromisso do Proprietário', corpo:'O responsável legal assume o compromisso de manter em pleno funcionamento todos os sistemas preventivos de combate a incêndio e renovar periodicamente as recargas.' },
+        { id:'e_planilha_extintor', cat:'bombeiros', style:'planilha', theme:'theme-red', icon:'fa-table', titulo:'Planilha de Inspeção Mensal de Extintores', sub:'Controle de Recarga e Lacres', corpo:'Registro mensal obrigatório de verificação de pressão, lacre, mangueira, validade da carga e desobstrução de cada extintor instalado no estabelecimento.' },
+        { id:'e_plano_abandono', cat:'bombeiros', style:'fire', theme:'theme-red', icon:'fa-running', titulo:'Plano Simplificado de Abandono de Emergência', sub:'Procedimento em Sinistro', corpo:'Procedimentos padronizados de alarme, desligamento de energia/gás, evacuação ordenada de clientes e colaboradores e ponto de encontro seguro externo.' },
+
+        // 4. RESPONSÁVEL TÉCNICO (RT) (10)
+        { id:'e_rt_assuncao', cat:'resp_tecnico', style:'tech', theme:'theme-blue', icon:'fa-user-md', titulo:'Termo de Assunção de Responsabilidade Técnica', sub:'Vínculo Oficial de RT', corpo:'Pelo presente Termo, o profissional habilitado acima identificado assume a Responsabilidade Técnica (RT) pelas atividades exercidas no estabelecimento, comprometendo-se ao cumprimento das normas sanitárias e éticas vigentes.' },
+        { id:'e_rt_contrato', cat:'resp_tecnico', style:'tech', theme:'theme-blue', icon:'fa-file-contract', titulo:'Contrato de Prestação de Serviços — RT', sub:'Vínculo Profissional Autônomo', corpo:'Contrato particular de prestação de serviços de Responsabilidade Técnica, definindo carga horária, atribuições de supervisão técnica, treinamentos e elaboração de POPs.' },
+        { id:'e_rt_vinculo', cat:'resp_tecnico', style:'tech', theme:'theme-blue', icon:'fa-id-badge', titulo:'Declaração de Vínculo de Responsável Técnico', sub:'Comprovação para Órgãos', corpo:'Declaramos para fins de licenciamento sanitário e cadastramento que o profissional qualificado atua como Responsável Técnico regular do estabelecimento.' },
+        { id:'e_rt_escala', cat:'resp_tecnico', style:'planilha', theme:'theme-blue', icon:'fa-calendar-check', titulo:'Escala de Assistência Técnica (Horários RT)', sub:'Presença Profissional', corpo:'Quadro oficial de dias e horários de presença e assistência técnica do Responsável Técnico titular e substituto durante o funcionamento do estabelecimento.' },
+        { id:'e_rt_baixa', cat:'resp_tecnico', style:'tech', theme:'theme-yellow', icon:'fa-user-minus', titulo:'Termo de Baixa de Responsabilidade Técnica', sub:'Desvinculação de RT', corpo:'Comunicamos oficialmente o encerramento do vínculo de Responsabilidade Técnica a partir da data informada, solicitando a baixa nos registros cadastrais.' },
+        { id:'e_rt_capacidade', cat:'resp_tecnico', style:'tech', theme:'theme-green', icon:'fa-award', titulo:'Atestado de Capacidade Técnica', sub:'Qualificação Operacional', corpo:'Atestamos que o estabelecimento dispõe de estrutura física, equipamentos e supervisão técnica qualificada para a execução segura de suas atividades.' },
+        { id:'e_rt_conselho', cat:'resp_tecnico', style:'tech', theme:'theme-blue', icon:'fa-certificate', titulo:'Declaração de Regularidade no Conselho de Classe', sub:'CRM / CRF / CRO / CRN / CREA', corpo:'Declaro encontrar-me regularmente inscrito e em situação ativa perante o respectivo Conselho Regional de Classe, sem impedimentos éticos ou legais para o exercício da RT.' },
+        { id:'e_rt_relatorio', cat:'resp_tecnico', style:'tech', theme:'theme-purple', icon:'fa-clipboard-list', titulo:'Relatório Mensal de Supervisão Técnica (RT)', sub:'Auditoria Interna', corpo:'Relatório mensal de acompanhamento técnico das rotinas operacionais, higiene, controle de validades, treinamento de equipe e conformidade documental.' },
+        { id:'e_rt_substituicao', cat:'resp_tecnico', style:'tech', theme:'theme-blue', icon:'fa-exchange-alt', titulo:'Termo de Substituição de Responsável Técnico', sub:'Troca de Profissional', corpo:'Formaliza-se a substituição do Responsável Técnico anterior pelo novo profissional habilitado, garantindo continuidade ininterrupta da assistência técnica.' },
+        { id:'e_rt_compromisso', cat:'resp_tecnico', style:'tech', theme:'theme-green', icon:'fa-handshake', titulo:'Termo de Compromisso de Boas Práticas (RT)', sub:'Conformidade Sanitária', corpo:'O Responsável Técnico compromete-se a implantar, revisar anualmente e monitorar o cumprimento do Manual de Boas Práticas e dos POPs do estabelecimento.' },
+
+        // 5. PGRSS & RESÍDUOS (10)
+        { id:'e_pgrss_completo', cat:'pgrss_lixo', style:'pgrss', theme:'theme-purple', icon:'fa-biohazard', titulo:'PGRSS — Plano de Gerenciamento de Resíduos', sub:'RDC ANVISA 222/2018 • Completo', corpo:'Plano de Gerenciamento de Resíduos de Serviços de Saúde (PGRSS) contemplando classificação (Grupos A, B, D e E), segregação na origem, acondicionamento em sacos branco leitoso e caixas rígidas (Descarpack), armazenamento temporário e coleta especializada.' },
+        { id:'e_pgrss_nao_gera', cat:'pgrss_lixo', style:'pgrss', theme:'theme-green', icon:'fa-leaf', titulo:'Declaração de Não Geração de Resíduos Infectantes', sub:'Apenas Resíduos Comuns (Grupo D)', corpo:'Declaro, sob as penas da lei, que o estabelecimento não gera resíduos biológicos, químicos perigosos ou perfurocortantes (Grupos A, B ou E), gerando exclusivamente resíduos comuns (Grupo D).' },
+        { id:'e_pgrss_mtr', cat:'pgrss_lixo', style:'planilha', theme:'theme-purple', icon:'fa-truck', titulo:'Manifesto de Transporte de Resíduos (MTR)', sub:'Controle de Coleta Especializada', corpo:'Registro de controle de retirada, transporte e destinação final ambientalmente adequada de resíduos gerados pelo estabelecimento.' },
+        { id:'e_pgrss_perfuro', cat:'pgrss_lixo', style:'pgrss', theme:'theme-red', icon:'fa-syringe', titulo:'POP Descarte de Perfurocortantes (Grupo E)', sub:'Agulhas, Lâminas e Vidros', corpo:'Procedimento obrigatório de descarte imediato em coletor rígido resistente à perfuração (Descarpack), preenchimento máximo até 2/3 da capacidade, lacre seguro e entrega à empresa coletora licenciada.' },
+        { id:'e_pgrss_segregacao', cat:'pgrss_lixo', style:'pgrss', theme:'theme-purple', icon:'fa-trash-alt', titulo:'POP Segregação e Acondicionamento de Resíduos', sub:'Grupos A, B, D e E', corpo:'Diretrizes técnicas para separação correta dos resíduos no momento da geração, uso de lixeiras com tampa acionada por pedal e identificação clara por grupo de risco.' },
+        { id:'e_pgrss_destinacao', cat:'pgrss_lixo', style:'pgrss', theme:'theme-green', icon:'fa-recycle', titulo:'Termo de Destinação Final de Resíduos', sub:'Comprovação Ambiental', corpo:'Termo de comprovação de encaminhamento dos resíduos gerados para empresa licenciada de tratamento (autoclavação/incineração) e disposição final em aterro licenciado.' },
+        { id:'e_pgrss_pesagem', cat:'pgrss_lixo', style:'planilha', theme:'theme-purple', icon:'fa-weight', titulo:'Planilha de Controle e Pesagem de Resíduos', sub:'Registro Mensal de Coletas', corpo:'Planilha de acompanhamento da data de coleta, grupo de resíduo, peso aproximado (kg), empresa coletora e número do manifesto (MTR).' },
+        { id:'e_pgrss_seletiva', cat:'pgrss_lixo', style:'pgrss', theme:'theme-green', icon:'fa-seedling', titulo:'Declaração de Coleta Seletiva e Recicláveis', sub:'Papel, Plástico, Vidro e Metal', corpo:'Declaração de implantação de práticas de coleta seletiva para resíduos recicláveis limpos (Grupo D), reduzindo o volume destinado a aterros.' },
+        { id:'e_pgrss_meds', cat:'pgrss_lixo', style:'pgrss', theme:'theme-yellow', icon:'fa-pills', titulo:'Termo de Descarte de Medicamentos Vencidos', sub:'Grupo B — Resíduos Químicos', corpo:'Procedimento e registro de segregação de medicamentos vencidos ou avariados em embalagem identificada (Grupo B) para destinação final por incineração licenciada.' },
+        { id:'e_pgrs_comercial', cat:'pgrss_lixo', style:'pgrss', theme:'theme-green', icon:'fa-globe-americas', titulo:'PGRS — Plano de Resíduos Sólidos Comerciais', sub:'Lei 12.305/2010 • Comércios', corpo:'Plano simplificado de gerenciamento de resíduos sólidos comerciais (orgânicos, recicláveis e rejeitos), com acondicionamento fechado e controle contra vetores.' },
+
+        // 6. POPs DE LIMPEZA (10)
+        { id:'e_pop_instalacoes', cat:'pop_limpeza', style:'pop', theme:'theme-green', icon:'fa-pump-soap', titulo:'POP 01 — Higienização de Instalações e Pisos', sub:'RDC 216/04 • Limpeza Geral', corpo:'Objetivo: Padronizar a limpeza e desinfecção de pisos, paredes, portas e ralos.\nFrequência: Diária e sempre que necessário.\nProcedimento: 1) Remoção de resíduos sólidos; 2) Lavagem com detergente neutro; 3) Enxágue com água potável; 4) Desinfecção com hipoclorito de sódio 1% (10 min); 5) Secagem e registro na planilha.' },
+        { id:'e_pop_caixa_agua', cat:'pop_limpeza', style:'pop', theme:'theme-blue', icon:'fa-tint', titulo:'POP 02 — Higienização de Reservatório de Água', sub:'Limpeza Semestral Caixa d\'Água', corpo:'Objetivo: Garantir a potabilidade da água utilizada no estabelecimento.\nFrequência: A cada 6 (seis) meses.\nProcedimento: Esvaziamento, escovação mecânica das paredes internas, desinfecção com solução clorada, enxágue completo, vedação da tampa e arquivamento do certificado.' },
+        { id:'e_pop_bancadas', cat:'pop_limpeza', style:'pop', theme:'theme-green', icon:'fa-soap', titulo:'POP 03 — Limpeza de Bancadas e Utensílios', sub:'Áreas de Manipulação / Atendimento', corpo:'Objetivo: Eliminar sujidades e contaminação cruzada em bancadas e equipamentos.\nFrequência: Antes, durante e após cada uso.\nProcedimento: Lavagem com detergente neutro, enxágue e desinfecção final com álcool 70%.' },
+        { id:'e_pop_autoclave', cat:'pop_limpeza', style:'pop', theme:'theme-purple', icon:'fa-thermometer-full', titulo:'POP 04 — Esterilização de Materiais em Autoclave', sub:'Ciclo, Envelope e Teste Biológico', corpo:'Objetivo: Assegurar esterilização eficaz de instrumentais.\nEtapas: 1) Limpeza com detergente enzimático; 2) Secagem; 3) Embalagem em papel grau cirúrgico com data e lote; 4) Ciclo em autoclave a 121°C/134°C; 5) Registro de integrador químico e teste biológico.' },
+        { id:'e_pop_superficies', cat:'pop_limpeza', style:'pop', theme:'theme-green', icon:'fa-spray-can', titulo:'POP 05 — Desinfecção de Superfícies e Mobiliário', sub:'Protocolo Álcool 70% / Quaternário', corpo:'Procedimento operacional para limpeza concorrente e terminal de cadeiras, balcões, maçanetas, interruptores e áreas de contato frequente dos clientes.' },
+        { id:'e_pop_maos', cat:'pop_limpeza', style:'pop', theme:'theme-blue', icon:'fa-hands-wash', titulo:'POP 06 — Higienização Correta das Mãos', sub:'Protocolo ANVISA / OMS', corpo:'Passo a passo obrigatório de lavagem das mãos com sabonete líquido antisséptico, fricção por 40 segundos, secagem em papel toalha não reciclado e uso de álcool gel 70%.' },
+        { id:'e_pop_geladeira', cat:'pop_limpeza', style:'pop', theme:'theme-blue', icon:'fa-snowflake', titulo:'POP 07 — Limpeza de Geladeiras e Câmaras Frias', sub:'Refrigeração e Conservação', corpo:'Frequência semanal para limpeza interna de prateleiras, borrachas de vedação e degelo programado, mantendo alimentos protegidos e em temperatura segura.' },
+        { id:'e_pop_sanitarios', cat:'pop_limpeza', style:'pop', theme:'theme-green', icon:'fa-restroom', titulo:'POP 08 — Higienização de Sanitários e Vestiários', sub:'Abastecimento e Desinfecção', corpo:'Limpeza no mínimo 2x ao dia com material exclusivo para sanitários, reposição de sabonete líquido, papel toalha e álcool 70%, e descarte diário de lixeiras com pedal.' },
+        { id:'e_pop_pragas', cat:'pop_limpeza', style:'pop', theme:'theme-yellow', icon:'fa-bug', titulo:'POP 09 — Controle Integrado de Vetores e Pragas', sub:'RDC 622/2022 • Barreiras Físicas', corpo:'Ações preventivas (telas milimétricas, ralos escamoteáveis, vedação de portas, lixo fechado) combinadas ao controle químico semestral por empresa licenciada.' },
+        { id:'e_planilha_limpeza', cat:'pop_limpeza', style:'planilha', theme:'theme-green', icon:'fa-check-square', titulo:'Planilha Diária de Limpeza e Desinfecção', sub:'Checklist de Execução (Assinar)', corpo:'Planilha para fixar no setor e registrar diariamente o responsável, horário, área higienizada (pisos, bancadas, sanitários, geladeiras) e visto do supervisor.' },
+
+        // 7. MANUAL BPF & ALIMENTOS (10)
+        { id:'e_mbp_alimentos', cat:'bpf_alimentos', style:'pop', theme:'theme-yellow', icon:'fa-utensils', titulo:'Manual de Boas Práticas (MBP) — Alimentos', sub:'RDC ANVISA 216/2004 • Completo', corpo:'Manual de Boas Práticas aplicável a serviços de alimentação, abrangendo higiene ambiental, controle de água, manejo de resíduos, saúde dos manipuladores, recebimento, armazenamento, preparo e exposição segura de alimentos.' },
+        { id:'e_pop_recebimento', cat:'bpf_alimentos', style:'pop', theme:'theme-yellow', icon:'fa-dolly', titulo:'POP Recebimento e Armazenamento de Insumos', sub:'PVPS • Validade e Temperatura', corpo:'Conferência obrigatória na entrega: integridade das embalagens, rotulagem, validade, temperatura de resfriados/congelados e organização pelo método PVPS (Primeiro que Vence, Primeiro que Sai) sobre estrados/prateleiras.' },
+        { id:'e_pop_temperatura', cat:'bpf_alimentos', style:'pop', theme:'theme-blue', icon:'fa-temperature-low', titulo:'POP Controle de Temperatura (Cadeia de Frio)', sub:'Resfriados, Congelados e Quentes', corpo:'Monitoramento duas vezes ao dia dos equipamentos: refrigerados até 4°C (ou conforme fabricante), congelados abaixo de -12°C/-18°C e alimentos prontos quentes acima de 60°C.' },
+        { id:'e_pop_hortifruti', cat:'bpf_alimentos', style:'pop', theme:'theme-green', icon:'fa-carrot', titulo:'POP Higienização de Frutas, Legumes e Verduras', sub:'Solução Clorada 100-200 ppm', corpo:'1) Seleção e descarte de partes danificadas; 2) Lavagem em água corrente; 3) Imersão em solução clorada própria para alimentos por 15 minutos; 4) Enxágue final em água potável.' },
+        { id:'e_pop_oleo', cat:'bpf_alimentos', style:'pop', theme:'theme-yellow', icon:'fa-burn', titulo:'POP Controle e Descarte de Óleo de Fritura', sub:'Qualidade e Coleta Sustentável', corpo:'Monitoramento visual/sensorial (cor, espuma, fumaça, odor), temperatura máxima de 180°C, filtragem periódica e armazenamento do óleo usado em bombonas para coleta reciclável.' },
+        { id:'e_planilha_temp', cat:'bpf_alimentos', style:'planilha', theme:'theme-blue', icon:'fa-thermometer-half', titulo:'Planilha de Registro de Temperatura Diária', sub:'Geladeiras, Freezers e Estufas', corpo:'Planilha mensal para anotação diária (Manhã e Tarde) das temperaturas de equipamentos térmicos e ações corretivas em caso de desvio.' },
+        { id:'e_ficha_validade', cat:'bpf_alimentos', style:'planilha', theme:'theme-yellow', icon:'fa-tags', titulo:'Controle de Etiquetagem e Validade Interna', sub:'Produtos Abertos e Manipulados', corpo:'Padrão de etiquetagem obrigatória contendo: Nome do Produto, Data de Abertura/Manipulação, Data de Validade e Responsável.' },
+        { id:'e_pop_manipuladores', cat:'bpf_alimentos', style:'pop', theme:'theme-green', icon:'fa-user-check', titulo:'POP Higiene e Conduta dos Manipuladores', sub:'Uniforme, Touca e Sem Adornos', corpo:'Uso obrigatório de uniforme limpo e claro, touca protegendo todo o cabelo, calçado fechado, unhas curtas sem esmalte e proibição de anéis, pulseiras, relógios e celular na cozinha.' },
+        { id:'e_controle_aso', cat:'bpf_alimentos', style:'planilha', theme:'theme-blue', icon:'fa-notes-medical', titulo:'Planilha de Controle de ASO dos Funcionários', sub:'Saúde Ocupacional Anual', corpo:'Controle atualizado de Atestados de Saúde Ocupacional (ASO) de todos os manipuladores e colaboradores, com data de realização e próximo vencimento.' },
+        { id:'e_termo_capacitacao', cat:'bpf_alimentos', style:'corp', theme:'theme-green', icon:'fa-graduation-cap', titulo:'Certificado / Termo de Capacitação em BPF', sub:'Treinamento Equipe Alimentos', corpo:'Certificamos que a equipe do estabelecimento participou da capacitação interna em Boas Práticas de Manipulação de Alimentos conforme RDC 216/2004.' },
+
+        // 8. ESTÉTICA, NAILS & SAÚDE (10)
+        { id:'e_mbp_nails', cat:'estetica_saude', style:'pop', theme:'theme-purple', icon:'fa-hand-sparkles', titulo:'Manual de Biossegurança — Studio Nails & Estética', sub:'Portaria CVS 01/2024 • Completo', corpo:'Manual completo de biossegurança para manicure, nail design, podologia e estética: esterilização em autoclave, uso de materiais descartáveis, EPIs, higienização de bancadas e produtos registrados na ANVISA.' },
+        { id:'e_pop_alicates', cat:'estetica_saude', style:'pop', theme:'theme-purple', icon:'fa-cut', titulo:'POP Esterilização de Alicates, Espátulas e Pinças', sub:'Limpeza + Envelope + Autoclave', corpo:'Procedimento rigoroso de lavagem com detergente enzimático, escovação, secagem, selagem em envelope grau cirúrgico individual e esterilização em autoclave validada.' },
+        { id:'e_planilha_autoclave', cat:'estetica_saude', style:'planilha', theme:'theme-purple', icon:'fa-vial', titulo:'Planilha de Controle Biológico da Autoclave', sub:'Registro de Ciclos e Lotes', corpo:'Registro de data, número do ciclo, temperatura/pressão, resultado do indicador químico, teste biológico semanal e assinatura do responsável.' },
+        { id:'e_ficha_anamnese', cat:'estetica_saude', style:'corp', theme:'theme-blue', icon:'fa-clipboard', titulo:'Ficha de Anamnese — Estética / Saúde', sub:'Avaliação Pré-Procedimento', corpo:'Ficha cadastral e clínica do cliente para registro de alergias, condições de saúde, medicamentos em uso, histórico de procedimentos e autorização assinada.' },
+        { id:'e_termo_estetico', cat:'estetica_saude', style:'corp', theme:'theme-purple', icon:'fa-file-signature', titulo:'Termo de Consentimento para Procedimento Estético', sub:'Ciência e Autorização do Cliente', corpo:'Declaro ter recebido todas as orientações sobre o procedimento estético a ser realizado, seus cuidados pós-atendimento, contraindicações e possíveis reações, autorizando sua execução.' },
+        { id:'e_pop_epis', cat:'estetica_saude', style:'pop', theme:'theme-blue', icon:'fa-head-side-mask', titulo:'POP Uso de EPIs e Materiais Descartáveis', sub:'Luvas, Máscaras, Lixas e Palitos', corpo:'Padronização do uso obrigatório de luvas descartáveis trocadas a cada cliente, máscara, jaleco e descarte imediato de lixas, palitos e lâminas de uso único.' },
+        { id:'e_pop_macas', cat:'estetica_saude', style:'pop', theme:'theme-green', icon:'fa-bed', titulo:'POP Higienização de Macas, Cadeiras e Cabines', sub:'Troca de Lençol e Álcool 70%', corpo:'Troca obrigatória de lençol descartável a cada atendimento, desinfecção do estofado com álcool 70% e higienização de cabines UV/LED entre clientes.' },
+        { id:'e_controle_cosmeticos', cat:'estetica_saude', style:'planilha', theme:'theme-purple', icon:'fa-pump-medical', titulo:'Planilha de Lote e Validade de Cosméticos/Insumos', sub:'Produtos Regularizados ANVISA', corpo:'Controle de marca, produto, número de registro/notificação ANVISA, lote, data de abertura e validade de géis, ácidos, tinturas e cosméticos.' },
+        { id:'e_decl_clinica', cat:'estetica_saude', style:'corp', theme:'theme-green', icon:'fa-clinic-medical', titulo:'Declaração de Conformidade de Clínica / Consultório', sub:'Estrutura e Biossegurança', corpo:'Declaramos que a clínica/consultório atende às exigências de biossegurança, acessibilidade, PGRSS e controle de infecção exigidos pela Vigilância Sanitária.' },
+        { id:'e_plano_equip', cat:'estetica_saude', style:'planilha', theme:'theme-blue', icon:'fa-tools', titulo:'Plano de Manutenção e Calibração de Equipamentos', sub:'Autoclave, Laser e Aparelhos', corpo:'Cronograma anual de manutenção preventiva, calibração e assistência técnica autorizada dos equipamentos utilizados nos atendimentos.' },
+
+        // 9. CONTRATOS & TERMOS (10)
+        { id:'e_contrato_serv', cat:'contratos', style:'corp', theme:'theme-blue', icon:'fa-file-contract', titulo:'Contrato de Prestação de Serviços Comerciais', sub:'Instrumento Particular Completo', corpo:'Contrato particular estabelecendo objeto dos serviços, prazo de execução, valor, forma de pagamento, obrigações das partes e foro de eleição.' },
+        { id:'e_recibo_comercial', cat:'contratos', style:'corp', theme:'theme-green', icon:'fa-receipt', titulo:'Recibo Oficial de Pagamento / Serviços', sub:'Comprovante de Quitação', corpo:'Recebemos da pessoa física/jurídica acima qualificada o valor referente aos serviços prestados, dando plena, geral e irrevogável quitação.' },
+        { id:'e_decl_veracidade', cat:'contratos', style:'corp', theme:'theme-blue', icon:'fa-check-double', titulo:'Declaração de Veracidade de Documentos', sub:'Responsabilidade Civil e Penal', corpo:'Declaro, sob as penas do Art. 299 do Código Penal, que todas as informações e cópias de documentos apresentadas neste processo são verdadeiras e autênticas.' },
+        { id:'e_termo_ciencia', cat:'contratos', style:'corp', theme:'theme-yellow', icon:'fa-exclamation-circle', titulo:'Termo de Ciência e Responsabilidade Legal', sub:'Compromisso de Adequação', corpo:'O signatário declara ciência integral das normas municipais, sanitárias e de segurança aplicáveis ao seu estabelecimento, assumindo responsabilidade pelo seu cumprimento.' },
+        { id:'e_locacao_simples', cat:'contratos', style:'corp', theme:'theme-blue', icon:'fa-key', titulo:'Resumo / Declaração de Locação Comercial', sub:'Comprovação de Posse do Imóvel', corpo:'Instrumento declaratório de uso e posse regular do imóvel comercial para fins de abertura de empresa, alvará e cadastro municipal.' },
+        { id:'e_aut_imovel', cat:'contratos', style:'corp', theme:'theme-green', icon:'fa-house-user', titulo:'Autorização do Proprietário para Uso Comercial', sub:'Cessão / Comodato de Ponto', corpo:'Na qualidade de proprietário do imóvel, autorizo o funcionamento regular da empresa acima qualificada no endereço descrito neste documento.' },
+        { id:'e_termo_lgpd', cat:'contratos', style:'corp', theme:'theme-purple', icon:'fa-user-shield', titulo:'Termo de Confidencialidade e Proteção de Dados (LGPD)', sub:'Lei 13.709/2018', corpo:'Compromisso formal de tratamento seguro, sigiloso e exclusivo dos dados pessoais de clientes e colaboradores em conformidade com a Lei Geral de Proteção de Dados (LGPD).' },
+        { id:'e_decl_horario', cat:'contratos', style:'corp', theme:'theme-blue', icon:'fa-clock', titulo:'Declaração de Horário de Funcionamento', sub:'Expediente Comercial', corpo:'Declaro para fins de cadastro municipal e fiscalização que o estabelecimento opera regularmente de segunda a sábado no horário comercial informado.' },
+        { id:'e_vistoria_imovel', cat:'contratos', style:'corp', theme:'theme-yellow', icon:'fa-clipboard-check', titulo:'Termo de Vistoria de Instalações Comerciais', sub:'Condições Físicas do Ponto', corpo:'Registro descritivo das condições físicas, piso lavável, paredes íntegras, iluminação, ventilação e instalações hidráulicas do ponto comercial.' },
+        { id:'e_carta_anuencia', cat:'contratos', style:'corp', theme:'theme-green', icon:'fa-envelope-open-text', titulo:'Carta de Anuência / Declaração de Regularidade', sub:'Autorização Formal', corpo:'Declaramos para os devidos fins não haver oposição ou pendência impeditiva quanto ao exercício regular da atividade no local indicado.' },
+
+        // 10. OUTROS DOCUMENTOS & DECLARAÇÕES (10)
+        { id:'e_decl_atividade', cat:'outros_docs', style:'corp', theme:'theme-blue', icon:'fa-briefcase', titulo:'Declaração Detalhada de Atividade Econômica', sub:'Memorial de Atividades (CNAE)', corpo:'Descrição detalhada das atividades efetivamente exercidas no local, esclarecendo ausência de manipulação industrial pesada ou risco ambiental.' },
+        { id:'e_decl_ruido', cat:'outros_docs', style:'corp', theme:'theme-green', icon:'fa-volume-mute', titulo:'Declaração de Conformidade Sonora (Sem Ruído)', sub:'Lei do Silêncio / PSIU', corpo:'Declaro que as atividades desenvolvidas no estabelecimento respeitam integralmente os limites de emissão sonora previstos na legislação municipal.' },
+        { id:'e_decl_acessib', cat:'outros_docs', style:'corp', theme:'theme-blue', icon:'fa-wheelchair', titulo:'Declaração de Acessibilidade (NBR 9050)', sub:'Acesso a Pessoas com Deficiência', corpo:'Declaração de atendimento às condições de acessibilidade nas áreas de acesso e atendimento ao público, conforme normas técnicas aplicáveis.' },
+        { id:'e_rel_fotografico', cat:'outros_docs', style:'corp', theme:'theme-purple', icon:'fa-camera', titulo:'Capa / Termo de Relatório Fotográfico', sub:'Instrução de Processo', corpo:'Relatório descritivo das evidências fotográficas da fachada, área de atendimento, estoque, sanitários e equipamentos do estabelecimento.' },
+        { id:'e_req_geral', cat:'outros_docs', style:'pref', theme:'theme-blue', icon:'fa-file-alt', titulo:'Requerimento Administrativo Geral', sub:'Prefeitura / Órgãos Públicos', corpo:'Vem, respeitosamente, requerer a juntada de documentos e regularização cadastral do estabelecimento acima qualificado.' },
+        { id:'e_oficio_reg', cat:'outros_docs', style:'pref', theme:'theme-blue', icon:'fa-envelope', titulo:'Ofício de Regularização Documental', sub:'Comunicação Formal', corpo:'Encaminhamos para ciência e providências a documentação atualizada comprovando a regularidade cadastral e operacional da empresa.' },
+        { id:'e_cert_treinamento', cat:'outros_docs', style:'corp', theme:'theme-green', icon:'fa-certificate', titulo:'Certificado de Treinamento Interno da Equipe', sub:'Higiene, Segurança e Atendimento', corpo:'Certificamos a realização de treinamento interno periódico com a equipe sobre normas de higiene, segurança do trabalho e atendimento ao cliente.' },
+        { id:'e_planilha_pmoc', cat:'outros_docs', style:'planilha', theme:'theme-blue', icon:'fa-wind', titulo:'Planilha PMOC — Manutenção de Ar-Condicionado', sub:'Qualidade do Ar Interior', corpo:'Registro de limpeza de filtros, bandejas de drenagem e manutenção preventiva dos aparelhos de climatização do estabelecimento.' },
+        { id:'e_decl_agua', cat:'outros_docs', style:'corp', theme:'theme-blue', icon:'fa-water', titulo:'Declaração de Abastecimento de Água Potável', sub:'Rede Pública SABESP / Potabilidade', corpo:'Declaro que o estabelecimento é abastecido exclusivamente por água potável proveniente da rede pública oficial de abastecimento.' },
+        { id:'e_dossie_checklist', cat:'outros_docs', style:'planilha', theme:'theme-green', icon:'fa-tasks', titulo:'Dossiê Checklist — Pasta de Documentos Obrigatórios', sub:'Índice Geral da Empresa', corpo:'Checklist conferido da pasta de regularização do estabelecimento: CNPJ Ativo, Contrato/MEI, Alvará Prefeitura, AVCB/CLCB Bombeiros, RT, PGRSS e POPs de Limpeza.' }
+    ];
+
+    let espTipoAtual = 'e_cnpj_ficha';
+    let espCatAtual = 'todos';
+    let espUltimoBlobUrl = null;
+    let espUltimoBytes = null;
+    let espUltimoFilename = '';
+    let espHistorico = [];
+
+    window.atualizarProcessosEspeciais = () => {
+        const sel = document.getElementById('esp-process-selector');
+        if (!sel) return;
+        const cur = sel.value;
+        sel.innerHTML = '<option value="">-- Digitar manual ou selecionar cliente --</option>' +
+            (todosProcessos || []).filter(p => p.nome).map(p =>
+                `<option value="${p.id}">${escaparHtmlWA(p.nome)} (${escaparHtmlWA(p.cnpj || 'S/Doc')})</option>`
+            ).join('');
+        if (cur) sel.value = cur;
+    };
+
+    window.inicializarEspeciais100 = () => {
+        const grid = document.getElementById('esp-types-grid');
+        if (grid && grid.children.length === 0) {
+            grid.innerHTML = ESPECIAIS_CATALOG_100.map((m, idx) => `
+                <button type="button" class="docgen-type-card ${m.theme || ''} ${m.id === espTipoAtual ? 'active' : ''}" data-esp-id="${m.id}" data-esp-cat="${m.cat}" onclick="selecionarModeloEspecial('${m.id}')">
+                    <span class="docgen-num-badge">#${String(idx + 1).padStart(2, '0')}</span>
+                    <i class="fas ${m.icon}"></i>
+                    <strong>${m.titulo}</strong>
+                    <span>${m.sub}</span>
+                </button>
+            `).join('');
+        }
+        const val = new Date(); val.setFullYear(val.getFullYear() + 1);
+        const vEl = document.getElementById('esp-validade');
+        const pEl = document.getElementById('esp-protocolo');
+        if (vEl && !vEl.value) vEl.value = formatarDataBR(val);
+        if (pEl && !pEl.value) pEl.value = `DOC-2026-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+        atualizarProcessosEspeciais();
+        if (!document.getElementById('esp-titulo-doc')?.value) {
+            selecionarModeloEspecial(espTipoAtual, true);
+        }
+    };
+
+    window.filtrarModelosEspeciais = () => {
+        const termo = (document.getElementById('esp-model-search')?.value || '').toLowerCase().trim();
+        document.querySelectorAll('#esp-types-grid .docgen-type-card').forEach(card => {
+            const matchCat = (espCatAtual === 'todos' || card.dataset.espCat === espCatAtual);
+            const matchTxt = !termo || card.innerText.toLowerCase().includes(termo);
+            card.style.display = (matchCat && matchTxt) ? 'flex' : 'none';
+        });
+    };
+
+    window.filtrarCategoriaEspeciais = (cat, btnEl) => {
+        espCatAtual = cat;
+        document.querySelectorAll('#esp-cat-tabs .docgen-cat-btn').forEach(b => b.classList.remove('active'));
+        if (btnEl) btnEl.classList.add('active');
+        filtrarModelosEspeciais();
+    };
+
+    window.selecionarModeloEspecial = (id, silencioso = false) => {
+        const m = ESPECIAIS_CATALOG_100.find(x => x.id === id);
+        if (!m) return;
+        espTipoAtual = id;
+        document.querySelectorAll('#esp-types-grid .docgen-type-card').forEach(c => {
+            c.classList.toggle('active', c.dataset.espId === id);
+        });
+        const tag = document.getElementById('esp-template-tag');
+        if (tag) tag.innerText = `${m.titulo} • ${m.sub}`;
+        const titEl = document.getElementById('esp-titulo-doc');
+        const crpEl = document.getElementById('esp-corpo');
+        if (titEl) titEl.value = m.titulo;
+        if (crpEl) crpEl.value = m.corpo;
+        if (!silencioso) showToast('Modelo Selecionado', `${m.titulo} pronto para gerar.`, 'success');
+    };
+
+    window.importarProcessoNoEspecial = (procId) => {
+        if (!procId) return;
+        const p = todosProcessos.find(x => x.id === procId);
+        if (!p) return;
+        document.getElementById('esp-nome').value = p.nome || '';
+        document.getElementById('esp-cnpj').value = p.cnpj || '';
+        const end = [p.rua, p.num ? `nº ${p.num}` : '', p.bairro, p.cep ? `CEP ${p.cep}` : ''].filter(Boolean).join(', ');
+        document.getElementById('esp-endereco').value = end;
+        document.getElementById('esp-cidade').value = p.cidadeUF || 'São Paulo - SP';
+        document.getElementById('esp-ramo').value = p.tipo || '';
+        document.getElementById('esp-protocolo').value = `DOC-2026-${p.id.substring(0, 6).toUpperCase()}`;
+        showToast('Cliente Importado', `Dados de "${p.nome}" carregados.`, 'success');
+    };
+
+    window.buscarCnpjNoEspecial = async () => {
+        const cnpj = (document.getElementById('esp-cnpj')?.value || '').replace(/\D/g, '');
+        if (cnpj.length !== 14) return showToast('CNPJ Inválido', 'Digite os 14 números do CNPJ.', 'warning');
+        const btn = document.getElementById('btn-esp-busca-cnpj');
+        const orig = btn.innerHTML;
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        try {
+            const r = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+            if (!r.ok) throw new Error('CNPJ não encontrado.');
+            const d = await r.json();
+            document.getElementById('esp-nome').value = d.razao_social || d.nome_fantasia || '';
+            document.getElementById('esp-endereco').value = [d.descricao_tipo_de_logradouro, d.logradouro, d.numero ? `nº ${d.numero}` : '', d.bairro, d.cep ? `CEP ${d.cep}` : ''].filter(Boolean).join(', ');
+            document.getElementById('esp-cidade').value = [d.municipio, d.uf].filter(Boolean).join(' - ') || 'São Paulo - SP';
+            if (d.cnae_fiscal_descricao) document.getElementById('esp-ramo').value = d.cnae_fiscal_descricao.slice(0, 65);
+            showToast('Receita Federal', `Dados de "${d.razao_social}" preenchidos!`, 'success');
+        } catch (err) {
+            showToast('Erro CNPJ', err.message, 'error');
+        } finally {
+            btn.disabled = false; btn.innerHTML = orig;
+        }
+    };
+
+    window.limparFormularioEspeciais = () => {
+        ['esp-process-selector', 'esp-cnpj', 'esp-nome', 'esp-endereco', 'esp-ramo', 'esp-responsavel'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.value = '';
+        });
+        document.getElementById('esp-cidade').value = 'São Paulo - SP';
+        document.getElementById('esp-protocolo').value = `DOC-2026-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+        showToast('Limpo', 'Campos limpos.', 'success');
+    };
+
+    window.gerarConteudoEspecialComIA = async () => {
+        const btn = document.getElementById('btn-esp-ia-texto');
+        const orig = btn ? btn.innerHTML : '';
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redigindo IA...'; }
+
+        const m = ESPECIAIS_CATALOG_100.find(x => x.id === espTipoAtual) || ESPECIAIS_CATALOG_100[0];
+        const nome = (document.getElementById('esp-nome')?.value || 'a empresa').trim();
+        const cnpj = (document.getElementById('esp-cnpj')?.value || '').trim();
+        const ramo = (document.getElementById('esp-ramo')?.value || 'comercial').trim();
+        const titAtual = (document.getElementById('esp-titulo-doc')?.value || m.titulo).trim();
+
+        const prompt = `Você é um especialista em documentação empresarial, regularização municipal, Corpo de Bombeiros (AVCB/CLCB), PGRSS e Boas Práticas Sanitárias (POPs/MBP).
+Escreva o conteúdo técnico formal e completo (3 a 5 parágrafos curtos ou tópicos numerados objetivos, sem markdown ** e sem HTML) para o documento:
+- Título: ${titAtual} (${m.sub})
+- Empresa: ${nome} (${cnpj || 'CNPJ não informado'})
+- Ramo / CNAE: ${ramo}
+
+Retorne APENAS o texto pronto do corpo do documento.`;
+
+        try {
+            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            const j = await r.json();
+            const txt = (j.candidates?.[0]?.content?.parts?.[0]?.text || '').replace(/\*\*/g, '').trim();
+            if (!txt) throw new Error('IA retornou vazio.');
+            document.getElementById('esp-corpo').value = txt;
+            showToast('Texto Gerado!', 'Conteúdo técnico atualizado. Clique em Gerar Prévia!', 'success');
+        } catch (err) {
+            showToast('Erro IA', err.message, 'error');
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+        }
+    };
+
+    async function construirPdfEspecial100(m, d) {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage([595.28, 841.89]);
+        const { width, height } = page.getSize();
+
+        const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const fontMono = await pdfDoc.embedFont(StandardFonts.CourierBold);
+
+        const corEscuro = rgb(0.09, 0.13, 0.20);
+        const corCinza = rgb(0.38, 0.44, 0.52);
+        const corBorda = rgb(0.78, 0.83, 0.89);
+
+        const styles = {
+            corp:     { cor: rgb(0.07, 0.25, 0.54), bg: rgb(0.95, 0.975, 1),   hdr: 'DOCUMENTAÇÃO EMPRESARIAL & REGULARIZAÇÃO CADASTRAL' },
+            pref:     { cor: rgb(0.05, 0.42, 0.28), bg: rgb(0.94, 0.99, 0.96), hdr: 'LICENCIAMENTO MUNICIPAL • PREFEITURA & POSTURAS' },
+            fire:     { cor: rgb(0.76, 0.12, 0.12), bg: rgb(1, 0.95, 0.95),    hdr: 'SEGURANÇA CONTRA INCÊNDIO • AVCB / CLCB (BOMBEIROS)' },
+            tech:     { cor: rgb(0.10, 0.30, 0.58), bg: rgb(0.94, 0.97, 1),    hdr: 'RESPONSABILIDADE TÉCNICA (RT) • HABILITAÇÃO PROFISSIONAL' },
+            pgrss:    { cor: rgb(0.40, 0.16, 0.62), bg: rgb(0.97, 0.95, 1),    hdr: 'GERENCIAMENTO DE RESÍDUOS • PGRSS / PGRS (RDC 222/2018)' },
+            pop:      { cor: rgb(0.04, 0.45, 0.36), bg: rgb(0.93, 0.99, 0.97), hdr: 'PROCEDIMENTO OPERACIONAL PADRONIZADO (POP) • BOAS PRÁTICAS' },
+            planilha: { cor: rgb(0.12, 0.34, 0.52), bg: rgb(0.94, 0.98, 0.99), hdr: 'PLANILHA DE CONTROLE OPERACIONAL & REGISTRO PERIÓDICO' }
+        };
+        const st = styles[m.style] || styles.corp;
+        const hojeStr = formatarDataBR(new Date());
+
+        // Moldura e Cabeçalho
+        page.drawRectangle({ x: 22, y: 22, width: width - 44, height: height - 44, borderColor: st.cor, borderWidth: 1.6 });
+        page.drawRectangle({ x: 22, y: height - 96, width: width - 44, height: 74, color: st.bg });
+        page.drawRectangle({ x: 22, y: height - 100, width: width - 44, height: 4, color: st.cor });
+
+        drawTextFitPDF(page, st.hdr, 38, height - 44, fontBold, 9.5, width - 76, st.cor);
+        drawTextFitPDF(page, (d.tituloDoc || m.titulo).toUpperCase(), 38, height - 64, fontBold, 13.5, width - 76, corEscuro);
+        drawTextFitPDF(page, `Código: ${d.protocolo}   •   Emissão: ${hojeStr}   •   Validade/Revisão: ${d.validade}`, 38, height - 82, fontMono, 8.0, width - 76, corCinza);
+
+        // Quadro Dados da Empresa
+        let y = height - 114;
+        const drawKv = (lbl, val, x, yPos, maxW) => {
+            page.drawText(sanitizarTextoPDF(lbl), { x, y: yPos, size: 6.8, font: fontBold, color: corCinza });
+            drawTextFitPDF(page, val || 'Não informado', x, yPos - 11.5, fontBold, 8.8, maxW, corEscuro, 6.4);
+        };
+
+        const bH = 102;
+        page.drawRectangle({ x: 36, y: y - bH, width: width - 72, height: bH, color: rgb(0.985, 0.99, 1), borderColor: corBorda, borderWidth: 1 });
+        drawTextFitPDF(page, 'IDENTIFICAÇÃO DO ESTABELECIMENTO / EMPRESA', 46, y - 13, fontBold, 7.6, width - 92, st.cor);
+        drawKv('RAZÃO SOCIAL / NOME', (d.nome || 'NÃO INFORMADO').toUpperCase(), 46, y - 29, 345);
+        drawKv('CPF / CNPJ', d.cnpj || 'Não informado', 404, y - 29, 145);
+        drawKv('ENDEREÇO COMPLETO', (d.endereco || 'Conforme Cadastro').toUpperCase(), 46, y - 59, 345);
+        drawKv('MUNICÍPIO / UF', d.cidade.toUpperCase(), 404, y - 59, 145);
+        drawKv('RAMO / CNAE', (d.ramo || 'Geral').toUpperCase(), 46, y - 87, 240);
+        drawKv('RESPONSÁVEL LEGAL / TÉCNICO', (d.responsavel || 'Conforme Contrato Social / RT').toUpperCase(), 296, y - 87, 250);
+        y -= (bH + 16);
+
+        // Corpo do Documento
+        drawTextFitPDF(page, m.style === 'planilha' ? 'INSTRUÇÕES E REGISTRO DE CONTROLE' : 'DISPOSIÇÕES TÉCNICAS / CONTEÚDO DO DOCUMENTO', 38, y, fontBold, 8.8, width - 76, st.cor);
+        y -= 16;
+
+        const lines = quebrarLinhasPDF(d.corpo || m.corpo, fontReg, 9.6, width - 80);
+        const maxLines = m.style === 'planilha' ? 5 : 26;
+        lines.slice(0, maxLines).forEach(ln => {
+            if (y < 160) return;
+            if (ln) page.drawText(ln, { x: 38, y, size: 9.6, font: fontReg, color: corEscuro });
+            y -= 14;
+        });
+
+        // Se for planilha/checklist, desenha tabela limpa para preenchimento
+        if (m.style === 'planilha' && y > 220) {
+            y -= 10;
+            const tblH = Math.min(280, y - 155);
+            page.drawRectangle({ x: 36, y: y - tblH, width: width - 72, height: tblH, borderColor: st.cor, borderWidth: 1 });
+            page.drawRectangle({ x: 36, y: y - 22, width: width - 72, height: 22, color: st.cor });
+            drawTextFitPDF(page, 'DATA', 44, y - 15, fontBold, 7.6, 70, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'ITEM / SETOR / EQUIPAMENTO', 120, y - 15, fontBold, 7.6, 175, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'CONFORMIDADE / MEDIÇÃO', 305, y - 15, fontBold, 7.6, 130, rgb(1, 1, 1));
+            drawTextFitPDF(page, 'RESPONSÁVEL / VISTO', 445, y - 15, fontBold, 7.6, 110, rgb(1, 1, 1));
+            [112, 298, 438].forEach(cx => page.drawLine({ start: { x: cx, y: y - tblH }, end: { x: cx, y }, thickness: 0.65, color: corBorda }));
+            const rows = Math.floor((tblH - 22) / 26);
+            for (let r = 1; r < rows; r++) {
+                const ry = y - 22 - r * 26;
+                page.drawLine({ start: { x: 36, y: ry }, end: { x: width - 36, y: ry }, thickness: 0.55, color: corBorda });
+            }
+        }
+
+        // Local, Data e Assinatura
+        drawTextFitPDF(page, `${d.cidade}, ${hojeStr}.`, 38, 128, fontBold, 9.2, 300, corEscuro);
+
+        if (d.usarAssinatura) {
+            const sigImg = await carregarAssinaturaDiretoriaPDF(pdfDoc);
+            desenharBlocoAssinaturaFixa(page, sigImg, { usarAssinaturaFixa: true, fiscal: 'Giliard De Oliveira Santiago', cargo: 'Assessor Técnico' }, fontBold, fontReg, corEscuro, corCinza, width / 2, 46, 220, 72);
+        } else {
+            page.drawLine({ start: { x: 160, y: 74 }, end: { x: width - 160, y: 74 }, thickness: 0.9, color: corEscuro });
+            drawTextFitPDF(page, (d.responsavel || d.nome || 'RESPONSÁVEL LEGAL / TÉCNICO').toUpperCase(), 165, 60, fontBold, 8.5, width - 330, corEscuro);
+            drawTextFitPDF(page, 'Assinatura e Carimbo do Responsável', 228, 48, fontReg, 7.6, 200, corCinza);
+        }
+
+        drawTextFitPDF(page, `Documento gerado em ${d.cidade}, ${hojeStr} • Protocolo ${d.protocolo}`, 38, 30, fontReg, 7.2, width - 76, corCinza);
+        return await pdfDoc.save();
+    }
+
+    window.gerarPdfEspecial = async (fazerDownload = false) => {
+        if (typeof PDFLib === 'undefined') return showToast('Erro', 'Biblioteca PDF carregando...', 'error');
+        const m = ESPECIAIS_CATALOG_100.find(x => x.id === espTipoAtual) || ESPECIAIS_CATALOG_100[0];
+        const d = {
+            protocolo: (document.getElementById('esp-protocolo')?.value || '').trim() || `DOC-2026-${Date.now().toString().slice(-5)}`,
+            nome: (document.getElementById('esp-nome')?.value || '').trim(),
+            cnpj: (document.getElementById('esp-cnpj')?.value || '').trim(),
+            endereco: (document.getElementById('esp-endereco')?.value || '').trim(),
+            cidade: (document.getElementById('esp-cidade')?.value || 'São Paulo - SP').trim(),
+            ramo: (document.getElementById('esp-ramo')?.value || '').trim(),
+            responsavel: (document.getElementById('esp-responsavel')?.value || '').trim(),
+            validade: (document.getElementById('esp-validade')?.value || formatarDataBR(new Date())).trim(),
+            tituloDoc: (document.getElementById('esp-titulo-doc')?.value || m.titulo).trim(),
+            corpo: (document.getElementById('esp-corpo')?.value || m.corpo).trim(),
+            usarAssinatura: document.getElementById('esp-usar-assinatura')?.checked === true
+        };
+        if (!d.nome) return showToast('Falta o Nome', 'Digite o nome da empresa ou selecione um cliente do sistema.', 'warning');
+
+        const btnP = document.getElementById('btn-esp-preview');
+        const btnD = document.getElementById('btn-esp-download');
+        const origP = btnP?.innerHTML || ''; const origD = btnD?.innerHTML || '';
+        if (btnP) { btnP.disabled = true; btnP.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
+        if (btnD) { btnD.disabled = true; btnD.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
+
+        try {
+            const pdfBytes = await construirPdfEspecial100(m, d);
+            const docClean = (d.cnpj || d.protocolo).replace(/[^a-zA-Z0-9]/g, '') || 'DOC';
+            const slug = (d.tituloDoc || m.titulo).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 38);
+            const filename = `${slug}_${docClean}.pdf`;
+
+            if (espUltimoBlobUrl) { try { URL.revokeObjectURL(espUltimoBlobUrl); } catch (_) {} }
+            espUltimoBlobUrl = URL.createObjectURL(new Blob([pdfBytes], { type: 'application/pdf' }));
+            espUltimoBytes = pdfBytes;
+            espUltimoFilename = filename;
+
+            document.getElementById('esp-preview-idle').style.display = 'none';
+            const iframe = document.getElementById('esp-pdf-iframe');
+            iframe.src = espUltimoBlobUrl + '#view=FitH';
+            iframe.style.display = 'block';
+            document.getElementById('esp-preview-filename').innerText = filename;
+            document.getElementById('btn-esp-open-tab').disabled = false;
+            document.getElementById('btn-esp-dl-top').disabled = false;
+
+            espHistorico.unshift({ filename, bytes: pdfBytes, hora: new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) });
+            if (espHistorico.length > 8) espHistorico.pop();
+            const strip = document.getElementById('esp-history-strip');
+            if (strip) {
+                strip.innerHTML = '<span><i class="fas fa-history"></i> Recentes:</span>' +
+                    espHistorico.map((it, idx) => `<button type="button" class="docgen-hist-chip" onclick="reabrirHistoricoEspecial(${idx})"><i class="fas fa-file-pdf" style="color:#38bdf8;"></i> ${escaparHtmlWA(it.filename)} (${it.hora})</button>`).join('');
+            }
+
+            if (fazerDownload) dispararDownloadBytesPDF(pdfBytes, filename);
+            registrarLog('Docs Especiais PDF', `Gerou ${filename} para ${d.nome}`);
+            showToast(fazerDownload ? 'PDF Baixado!' : 'Prévia Pronta!', `${filename} gerado com sucesso.`, 'success');
+        } catch (err) {
+            showToast('Erro PDF', err.message, 'error');
+        } finally {
+            if (btnP) { btnP.disabled = false; btnP.innerHTML = origP; }
+            if (btnD) { btnD.disabled = false; btnD.innerHTML = origD; }
+        }
+    };
+
+    window.reabrirHistoricoEspecial = (idx) => {
+        const it = espHistorico[idx];
+        if (!it) return;
+        if (espUltimoBlobUrl) { try { URL.revokeObjectURL(espUltimoBlobUrl); } catch (_) {} }
+        espUltimoBlobUrl = URL.createObjectURL(new Blob([it.bytes], { type: 'application/pdf' }));
+        espUltimoBytes = it.bytes;
+        espUltimoFilename = it.filename;
+        document.getElementById('esp-preview-idle').style.display = 'none';
+        const iframe = document.getElementById('esp-pdf-iframe');
+        iframe.src = espUltimoBlobUrl + '#view=FitH';
+        iframe.style.display = 'block';
+        document.getElementById('esp-preview-filename').innerText = it.filename;
+    };
+
+    window.abrirPdfEspecialNovaAba = () => { if (espUltimoBlobUrl) window.open(espUltimoBlobUrl, '_blank', 'noopener'); };
+    window.baixarUltimoPdfEspecial = () => { if (espUltimoBytes && espUltimoFilename) dispararDownloadBytesPDF(espUltimoBytes, espUltimoFilename); };
+
+    window.copiarMsgEspecialWA = async () => {
+        const tit = (document.getElementById('esp-titulo-doc')?.value || 'Documento').trim();
+        const nome = (document.getElementById('esp-nome')?.value || 'sua empresa').trim();
+        const prot = (document.getElementById('esp-protocolo')?.value || '').trim();
+        const msg = `*Giliard:*\nOlá! Segue em anexo o documento *${tit}* referente a *${nome}* (Protocolo: ${prot}).\n\nQualquer dúvida, estou à disposição!`;
+        try {
+            await navigator.clipboard.writeText(msg);
+            showToast('Mensagem Copiada!', 'Cole no WhatsApp junto com o PDF.', 'success');
+        } catch (_) {}
     };
   </script>
 </body>
