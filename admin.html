@@ -3207,7 +3207,7 @@
             </div>
           </div>
 
-          <div class="docgen-layout">
+          <div class="docgen-layout" style="height: calc(100vh - 210px); min-height: 500px;">
             <!-- COLUNA ESQUERDA: 100 MODELOS DE COBRANÇA + DADOS + PIX -->
             <div class="docgen-form-panel">
               <div class="docgen-form-scroll">
@@ -3353,8 +3353,14 @@
                   </div>
 
                   <div class="docgen-field">
-                    <label>Descrição / Discriminação do Serviço Cobrado (Editável)</label>
-                    <textarea id="cobr-descricao" style="min-height: 68px;" placeholder="Preenchido automaticamente conforme o modelo escolhido..."></textarea>
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:2px;">
+                      <label style="margin:0;">Nome / Título do Documento (Guia) + Descrição</label>
+                      <button type="button" class="wa-btn-sm" id="btn-cobr-ia-nome" style="background: rgba(192,132,252,0.18); border-color: var(--gemini-purple); color: #e9d5ff; padding: 5px 11px; font-size: 0.75rem;" onclick="gerarNomeEDescricaoCobrancaIA()">
+                        <i class="fas fa-magic"></i> Gerar Nome & Descrição com IA
+                      </button>
+                    </div>
+                    <input type="text" id="cobr-titulo-doc" placeholder="Nome oficial do documento (ou clique em Gerar com IA)..." style="margin-bottom:6px; font-weight:800; color:#fde68a;" />
+                    <textarea id="cobr-descricao" style="min-height: 68px;" placeholder="Descrição / Discriminação do serviço cobrado (editável ou gerada pela IA)..."></textarea>
                   </div>
 
                   <div class="docgen-sig-strip">
@@ -3390,6 +3396,9 @@
                   <span id="cobr-preview-filename" class="spy-chip" style="font-family: var(--font-code); font-size:0.74rem;">Nenhuma guia gerada</span>
                 </div>
                 <div style="display:flex; gap:7px; flex-wrap:wrap;">
+                  <button type="button" class="wa-btn-sm btn-chat" onclick="gerarPdfCobranca(false)" style="padding:6px 12px; font-size:0.78rem; background:var(--primary); color:#fff; border-color:var(--primary);">
+                    <i class="fas fa-eye"></i> Gerar Prévia
+                  </button>
                   <button type="button" class="wa-btn-sm" id="btn-cobr-open-tab" disabled onclick="abrirPdfCobrancaNovaAba()" style="padding:6px 11px; font-size:0.78rem;">
                     <i class="fas fa-external-link-alt"></i> Nova Aba / Imprimir
                   </button>
@@ -3403,9 +3412,12 @@
                 <div class="docgen-preview-idle" id="cobr-preview-idle">
                   <i class="fas fa-file-invoice-dollar" style="font-size: 3.8rem; color: #10b981; opacity: 0.45; margin-bottom: 14px; display: block;"></i>
                   <h3 style="color:#ffffff; margin-bottom:8px;">Pronto para Emitir Cobrança</h3>
-                  <p style="font-size:0.9rem; line-height:1.55;">
-                    Escolha 1 dos <strong>100 modelos pagáveis</strong> (COVISA, Vigilância Sanitária ou ANVISA), informe os dados ou puxe do sistema, coloque sua <strong>foto do QR Code PIX</strong> e <strong>Copia e Cola</strong> e clique em <strong>Gerar Prévia</strong>.
+                  <p style="font-size:0.9rem; line-height:1.55; margin-bottom:14px;">
+                    Escolha 1 dos <strong>100 modelos pagáveis</strong> (COVISA, Vigilância Sanitária ou ANVISA), informe os dados ou puxe do sistema, coloque sua <strong>foto do QR Code PIX</strong> e <strong>Copia e Cola</strong> e clique abaixo.
                   </p>
+                  <button type="button" class="btn btn-primary" style="padding:11px 22px; font-size:0.9rem;" onclick="gerarPdfCobranca(false)">
+                    <i class="fas fa-eye"></i> Gerar Prévia Agora
+                  </button>
                 </div>
                 <iframe id="cobr-pdf-iframe" title="Prévia da Guia de Cobrança PDF" style="width:100%; height:100%; border:none; background:#1e293b; display:none;"></iframe>
               </div>
@@ -14140,10 +14152,12 @@ Retorne EXCLUSIVAMENTE um JSON válido neste formato exato:
         const codEl = document.getElementById('cobr-cod-receita');
         const leiEl = document.getElementById('cobr-base-legal');
         const descEl = document.getElementById('cobr-descricao');
+        const titEl = document.getElementById('cobr-titulo-doc');
         if (valEl) valEl.value = m.valor;
         if (codEl) codEl.value = m.cod;
         if (leiEl) leiEl.value = m.lei;
         if (descEl) descEl.value = m.desc;
+        if (titEl) titEl.value = m.titulo;
         if (!silencioso) showToast('Modelo Selecionado', `${m.titulo} (R$ ${m.valor}) pronto para emitir.`, 'success');
     };
 
@@ -14326,7 +14340,7 @@ Retorne EXCLUSIVAMENTE um JSON válido neste formato exato:
         // Faixa Título do Modelo
         let y = height - 118;
         page.drawRectangle({ x: 34, y: y - 34, width: width - 68, height: 34, color: t.cor });
-        drawTextFitPDF(page, modelo.titulo.toUpperCase(), 46, y - 15, fontBold, 11.4, width - 92, rgb(1, 1, 1));
+        drawTextFitPDF(page, (d.tituloDoc || modelo.titulo).toUpperCase(), 46, y - 15, fontBold, 11.4, width - 92, rgb(1, 1, 1));
         drawTextFitPDF(page, `${modelo.sub}  •  Base Legal: ${d.baseLegal}`, 46, y - 28, fontReg, 7.6, width - 92, rgb(0.92, 0.96, 1));
         y -= 46;
 
@@ -14446,6 +14460,7 @@ Retorne EXCLUSIVAMENTE um JSON válido neste formato exato:
             baseLegal: (document.getElementById('cobr-base-legal')?.value || modelo.lei).trim(),
             pixCode: (document.getElementById('cobr-pix-code')?.value || '').trim(),
             pixQrDataUrl: window.cobrPixQrDataUrl || '',
+            tituloDoc: (document.getElementById('cobr-titulo-doc')?.value || modelo.titulo).trim(),
             descricao: (document.getElementById('cobr-descricao')?.value || modelo.desc).trim(),
             usarAssinatura: document.getElementById('cobr-usar-assinatura')?.checked !== false
         };
@@ -14461,7 +14476,8 @@ Retorne EXCLUSIVAMENTE um JSON válido neste formato exato:
         try {
             const pdfBytes = await construirPdfCobranca100(modelo, d);
             const docClean = (d.cnpj || d.protocolo).replace(/[^a-zA-Z0-9]/g, '') || 'COVISA';
-            const filename = `Guia_${modelo.id.replace(/^c_/, '')}_${docClean}.pdf`;
+            const titSlug = (d.tituloDoc || modelo.titulo).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 38) || modelo.id;
+            const filename = `${titSlug}_${docClean}.pdf`;
 
             if (cobrUltimoBlobUrl) { try { URL.revokeObjectURL(cobrUltimoBlobUrl); } catch (_) {} }
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
@@ -14521,7 +14537,8 @@ Retorne EXCLUSIVAMENTE um JSON válido neste formato exato:
         const venc = (document.getElementById('cobr-vencimento')?.value || '').trim();
         const prot = (document.getElementById('cobr-protocolo')?.value || '').trim();
         const pix = (document.getElementById('cobr-pix-code')?.value || '').trim();
-        let msg = `*Giliard:*\nOlá! Segue em anexo a *${modelo.titulo}* referente a *${nome}*.\n\n*Protocolo:* ${prot}\n*Valor:* R$ ${valor}\n*Vencimento:* ${venc}`;
+        const titDocWa = (document.getElementById('cobr-titulo-doc')?.value || modelo.titulo).trim();
+        let msg = `*Giliard:*\nOlá! Segue em anexo a *${titDocWa}* referente a *${nome}*.\n\n*Protocolo:* ${prot}\n*Valor:* R$ ${valor}\n*Vencimento:* ${venc}`;
         if (pix) msg += `\n\n*PIX Copia e Cola:*\n${pix}`;
         msg += `\n\nAssim que efetuar o pagamento, pode me avisar por aqui para prosseguirmos com a emissão!`;
         try {
@@ -14529,6 +14546,59 @@ Retorne EXCLUSIVAMENTE um JSON válido neste formato exato:
             showToast('Mensagem Copiada!', 'Cole no WhatsApp junto com a Guia PDF.', 'success');
         } catch (_) {
             showToast('Aviso', 'Não foi possível copiar automaticamente.', 'warning');
+        }
+    };
+
+    window.gerarNomeEDescricaoCobrancaIA = async () => {
+        const btn = document.getElementById('btn-cobr-ia-nome');
+        const orig = btn ? btn.innerHTML : '';
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando IA...'; }
+
+        const modelo = COBRANCA_CATALOG_100.find(x => x.id === cobrTipoAtual) || COBRANCA_CATALOG_100[0];
+        const nome = (document.getElementById('cobr-nome')?.value || '').trim();
+        const ramo = (document.getElementById('cobr-ramo')?.value || '').trim();
+        const valor = (document.getElementById('cobr-valor')?.value || modelo.valor).trim();
+        const baseLegal = (document.getElementById('cobr-base-legal')?.value || modelo.lei).trim();
+        const rascunho = (document.getElementById('cobr-descricao')?.value || '').trim();
+
+        const prompt = `Você é um auditor técnico da COVISA / Vigilância Sanitária / ANVISA.
+Crie o NOME OFICIAL curto do documento de cobrança (máximo 65 caracteres, claro e formal) e a DESCRIÇÃO/DISCRIMINAÇÃO formal do serviço cobrado (1 a 2 frases objetivas) para sair na guia de pagamento em PDF.
+
+Dados:
+- Modelo base: ${modelo.titulo} (${modelo.sub})
+- Pagador / Empresa: ${nome || 'Contribuinte'}
+- Ramo / Atividade: ${ramo || 'Geral'}
+- Valor: R$ ${valor}
+- Base Legal: ${baseLegal}
+- Rascunho atual: ${rascunho}
+
+Retorne APENAS JSON válido sem crases:
+{
+  "titulo": "Nome oficial curto do documento (ex: Guia de Taxa de Revalidação Sanitária — Serviços de Saúde)",
+  "descricao": "Descrição formal e objetiva do serviço cobrado."
+}`;
+
+        try {
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { responseMimeType: 'application/json' }
+                })
+            });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const j = await resp.json();
+            const raw = j.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            const res = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || raw);
+
+            if (res.titulo) document.getElementById('cobr-titulo-doc').value = String(res.titulo).trim();
+            if (res.descricao) document.getElementById('cobr-descricao').value = String(res.descricao).trim();
+            showToast('Gerado pela IA!', 'Nome do documento e descrição atualizados. Clique em Gerar Prévia!', 'success');
+        } catch (err) {
+            showToast('Erro IA', `Não foi possível gerar: ${err.message}`, 'error');
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerHTML = orig; }
         }
     };
   </script>
