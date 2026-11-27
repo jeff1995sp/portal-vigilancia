@@ -628,59 +628,6 @@
     .target-card-hud h4 { color: white; margin: 0 0 5px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
     .target-card-hud .loc { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-code); margin-bottom: 10px; display: block; }
     .target-card-hud .reason { font-size: 0.9rem; line-height: 1.4; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; }
-    .radar-display-area { display: flex; flex-direction: column; gap: 16px; align-items: stretch; position: relative; overflow: hidden; min-width: 0; }
-    .radar-top-strip { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; background: rgba(15,23,42,0.55); border: 1px solid #1e293b; border-radius: 12px; padding: 12px 16px; }
-    .radar-circle-wrap { width: 130px; height: 130px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .radar-map-box { flex: 1; min-width: 240px; height: 180px; border-radius: 10px; border: 1px solid #1e293b; overflow: hidden; background: #070e1c; position: relative; z-index: 1; }
-    .osint-results-list { flex: 1; width: 100%; height: 470px; overflow-y: auto; padding-right: 6px; display: flex; flex-direction: column; gap: 14px; }
-    .radar-mode-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .radar-mode-opt {
-      background: rgba(255,255,255,0.03); border: 1px solid #1e293b; color: var(--text-muted);
-      padding: 10px 8px; border-radius: 8px; cursor: pointer; font-size: 0.78rem; font-weight: 800;
-      display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.2s; text-align: center;
-    }
-    .radar-mode-opt:hover { border-color: var(--primary); color: white; }
-    .radar-mode-opt.active { background: rgba(59, 130, 246, 0.16); border-color: var(--primary); color: #ffffff; box-shadow: 0 0 12px rgba(59,130,246,0.25); }
-    .target-meta-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 9px; }
-    .target-meta-chip {
-      background: rgba(2,6,23,0.7); border: 1px solid #26385a; color: #e2e8f0;
-      padding: 3px 9px; border-radius: 6px; font-size: 0.74rem; font-weight: 700;
-      display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-code);
-    }
-    .target-meta-chip.cnpj-ok { border-color: rgba(16,185,129,0.55); color: #6ee7b7; background: rgba(16,185,129,0.1); }
-    .target-meta-chip.cnpj-warn { border-color: rgba(245,158,11,0.55); color: #fde68a; background: rgba(245,158,11,0.1); }
-    .target-receita-box {
-      margin-top: 8px; padding: 9px 11px; border-radius: 7px; background: rgba(16,185,129,0.08);
-      border: 1px solid rgba(16,185,129,0.35); color: #d1fae5; font-size: 0.78rem; line-height: 1.45;
-    }
-    .target-photos-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 9px; align-items: center; }
-    .target-photo-thumb {
-      width: 68px; height: 68px; border-radius: 8px; object-fit: cover; cursor: zoom-in;
-      border: 1px solid #334155; background: #020617; transition: 0.2s;
-    }
-    .target-photo-thumb:hover { transform: scale(1.06); border-color: var(--primary); }
-    .target-card-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-    .target-act-btn {
-      background: #0a1222; border: 1px solid #2a3d61; color: #e2e8f0; padding: 6px 10px;
-      border-radius: 7px; font-size: 0.75rem; font-weight: 800; cursor: pointer; text-decoration: none;
-      display: inline-flex; align-items: center; gap: 5px; transition: 0.2s;
-    }
-    .target-act-btn:hover { border-color: var(--primary); color: #ffffff; background: #13223d; }
-    .target-act-btn.act-wa { border-color: rgba(16,185,129,0.5); color: #6ee7b7; }
-    .target-act-btn.act-wa:hover { background: #10b981; color: #022c22; }
-    .target-act-btn.act-pdf { border-color: rgba(248,113,113,0.5); color: #fecaca; }
-    .target-act-btn.act-pdf:hover { background: #ef4444; color: #ffffff; }
-    .target-act-btn.act-cnpj { border-color: rgba(192,132,252,0.55); color: #e9d5ff; }
-    .target-act-btn.act-cnpj:hover { background: #9333ea; color: #ffffff; }
-    .target-act-btn.act-photo { border-color: rgba(245,158,11,0.55); color: #fde68a; }
-    .target-act-btn.act-photo:hover { background: #d97706; color: #ffffff; }
-    .target-proof-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .target-proof-pill {
-      font-size: 0.72rem; color: #93c5fd; background: rgba(59,130,246,0.12);
-      border: 1px solid rgba(59,130,246,0.35); padding: 3px 8px; border-radius: 50px;
-      text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
-    }
-    .target-proof-pill:hover { background: var(--primary); color: white; }
     
     /* ======================================================== */
     /* CSS MONITOR ESPIÃO (FEED DE OPERAÇÕES)                   */
@@ -1355,64 +1302,52 @@
             </div>
           </div>
           
-          <div class="radar-container" style="grid-template-columns: 340px 1fr; margin-bottom: 50px;">
+          <div class="radar-container" style="grid-template-columns: 350px 1fr; margin-bottom: 50px;">
             
             <div class="target-console">
                 <div class="console-step">
-                    <h4><i class="fas fa-sliders-h"></i> 1. Modo de Varredura</h4>
-                    <div class="radar-mode-switch">
-                        <button type="button" class="radar-mode-opt active" id="radar-mode-web" onclick="definirModoRadar('web')">
-                            <i class="fas fa-globe" style="color:#38bdf8; font-size:1.1rem;"></i>
-                            <span>Reclame Aqui + Google</span>
-                        </button>
-                        <button type="button" class="radar-mode-opt" id="radar-mode-osm" onclick="definirModoRadar('osm')">
-                            <i class="fas fa-map-marked-alt" style="color:#10b981; font-size:1.1rem;"></i>
-                            <span>OSM + Reclamações</span>
-                        </button>
-                    </div>
+                    <h4><i class="fas fa-map"></i> 1. Macro-Região</h4>
+                    <select class="form-input" id="radar-estado" onchange="resetRadar()" style="background: rgba(255,255,255,0.02); font-weight: bold; border-color: #1e293b;">
+                        <option value="São Paulo (Estado Inteiro)">São Paulo (Estado Inteiro)</option>
+                        <option value="Litoral SP">Litoral Paulista</option>
+                    </select>
                 </div>
 
                 <div class="console-step">
-                    <h4><i class="fas fa-map-marker-alt"></i> 2. Cidade / Região (SP)</h4>
-                    <input type="text" class="form-input" id="radar-cidade-texto" value="Diadema" placeholder="Digite a cidade (ex: Diadema, Ferraz...)" style="padding: 12px 15px; font-weight: 700; margin-bottom: 10px;" oninput="atualizarCidadeRadar(this.value)">
-                    <div class="az-bar" id="az-bar"></div>
-                    <select class="form-input" id="radar-cidade" style="margin-top: 10px; background: rgba(255,255,255,0.02); display: none; padding: 12px 15px;">
+                    <h4><i class="fas fa-sort-alpha-down"></i> 2. Foco de Varredura</h4>
+                    <div class="az-bar" id="az-bar">
+                        </div>
+                    <select class="form-input" id="radar-cidade" style="margin-top: 10px; background: rgba(255,255,255,0.02); display: none;">
                         <option value="">Selecione a Localidade...</option>
                     </select>
                 </div>
 
                 <div class="console-step">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <h4 style="margin:0;"><i class="fas fa-crosshairs"></i> 3. Ramos / Alvos</h4>
-                        <button type="button" class="target-act-btn" style="padding:3px 8px; font-size:0.7rem;" onclick="selecionarTodosRamosRadar()"><i class="fas fa-check-double"></i> Tudo (Geral)</button>
-                    </div>
+                    <h4><i class="fas fa-crosshairs"></i> 3. Natureza da Ameaça</h4>
                     <div class="threat-grid">
-                        <button type="button" class="threat-btn active" data-cat="alimentos" data-query="Restaurantes, lanchonetes, padarias, açougues, bares, adegas, pizzarias, marmitarias e mercados de bairro" onclick="toggleThreat(this)"><i class="fas fa-hamburger"></i> Alimentos</button>
-                        <button type="button" class="threat-btn" data-cat="saude" data-query="Clínicas médicas, consultórios, dentistas, laboratórios, clínicas populares, hospitais e estética invasiva" onclick="toggleThreat(this)"><i class="fas fa-user-md"></i> Médicos / Clínicas</button>
-                        <button type="button" class="threat-btn" data-cat="idosos" data-query="Casas de repouso, asilos, lares de idosos (ILPI), clínicas geriátricas e clínicas de reabilitação" onclick="toggleThreat(this)"><i class="fas fa-wheelchair"></i> Casa de Idosos</button>
-                        <button type="button" class="threat-btn" data-cat="farmacia" data-query="Farmácias, drogarias e farmácias de manipulação" onclick="toggleThreat(this)"><i class="fas fa-pills"></i> Farmácias / Meds</button>
-                        <button type="button" class="threat-btn" data-cat="beleza" data-query="Salões de beleza, barbearias, clínicas de estética, estúdios de tatuagem, podologia e academias" onclick="toggleThreat(this)"><i class="fas fa-cut"></i> Beleza / Estética</button>
-                        <button type="button" class="threat-btn" data-cat="geral" data-query="Pet shops, clínicas veterinárias, hotéis, motéis, escolas, creches, dedetizadoras e comércios em geral" onclick="toggleThreat(this)"><i class="fas fa-store"></i> Geral / Pet / Outros</button>
+                        <button class="threat-btn active" data-query="Restaurantes, lanchonetes, padarias, supermercados" onclick="toggleThreat(this)"><i class="fas fa-hamburger"></i> Alimentos</button>
+                        <button class="threat-btn" data-query="Farmácias e drogarias" onclick="toggleThreat(this)"><i class="fas fa-pills"></i> Insumos/Meds</button>
+                        <button class="threat-btn" data-query="Hospitais, clínicas e laboratórios" onclick="toggleThreat(this)"><i class="fas fa-hospital"></i> Serv. Saúde</button>
+                        <button class="threat-btn" data-query="Salões de beleza, estúdios de tatuagem, academias" onclick="toggleThreat(this)"><i class="fas fa-cut"></i> Interesse Saúde</button>
+                        <button class="threat-btn" data-query="Cosméticos, produtos de beleza e limpeza" onclick="toggleThreat(this)"><i class="fas fa-spray-can"></i> Cosméticos</button>
+                        <button class="threat-btn" data-query="Controle de pragas, água" onclick="toggleThreat(this)"><i class="fas fa-bug"></i> Ambiental</button>
                     </div>
                 </div>
 
-                <button type="button" class="btn-scan" id="btn-start-radar" onclick="toggleRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura</button>
+                <button class="btn-scan" id="btn-start-radar" onclick="toggleRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura</button>
             </div>
 
             <div class="radar-display-area">
-                <div class="radar-top-strip">
-                    <div class="radar-circle-wrap">
-                        <div class="radar-circle" id="radar-circle-ui">
-                            <div class="radar-sweep" id="radar-sweep-ui"></div>
+                <div class="radar-circle-wrap">
+                    <div class="radar-circle" id="radar-circle-ui">
+                        <div class="radar-sweep" id="radar-sweep-ui"></div>
                         </div>
-                    </div>
-                    <div class="radar-map-box" id="radar-osint-map"></div>
                 </div>
 
                 <div class="osint-results-list" id="radar-results-list">
                     <div class="osint-idle-msg" id="radar-idle-msg">
-                        <i class="fas fa-satellite" style="font-size: 2.6rem;"></i>
-                        <span>Escolha o Modo, a Cidade e os Ramos (Alimentos, Médicos, Casa de Idosos ou Tudo) e clique em <strong>Iniciar Varredura</strong>.</span>
+                        <i class="fas fa-satellite" style="font-size: 3rem;"></i>
+                        <span>Aguardando Trava de Alvo e Acionamento.</span>
                     </div>
                 </div>
             </div>
@@ -2922,31 +2857,15 @@
             select.appendChild(op);
         });
 
-        select.onchange = (e) => {
-            radarTargetCity = e.target.value;
-            const inp = document.getElementById('radar-cidade-texto');
-            if (inp && e.target.value) inp.value = e.target.value;
-        };
+        select.onchange = (e) => { radarTargetCity = e.target.value; };
     }
 
     window.resetRadar = () => {
-        const estadoEl = document.getElementById('radar-estado');
-        radarTargetArea = estadoEl ? estadoEl.value : "São Paulo (Estado Inteiro)";
+        radarTargetArea = document.getElementById('radar-estado').value;
         document.querySelectorAll('.az-btn').forEach(b => b.classList.remove('active'));
-        const cidSel = document.getElementById('radar-cidade');
-        if (cidSel) cidSel.style.display = 'none';
+        document.getElementById('radar-cidade').style.display = 'none';
         radarTargetLetter = "";
         radarTargetCity = "";
-    };
-
-    window.atualizarCidadeRadar = (val) => {
-        radarTargetCity = (val || '').trim();
-    };
-
-    window.selecionarTodosRamosRadar = () => {
-        const btns = Array.from(document.querySelectorAll('.threat-btn'));
-        const todosAtivos = btns.every(b => b.classList.contains('active'));
-        btns.forEach((b, i) => b.classList.toggle('active', todosAtivos ? i === 0 : true));
     };
 
     window.toggleThreat = (element) => {
@@ -2956,661 +2875,243 @@
     // =================================================================================
     // O CORAÇÃO DO RADAR: BUSCA GOOGLE MAPS + CLASSIFICAÇÃO GEMINI AO VIVO E CONTÍNUA
     // =================================================================================
-    let radarModoAtual = 'web';
-    let radarAlvosEncontrados = [];
-    let radarLeafletMap = null;
-    let radarMarkersLayer = null;
-
-    window.definirModoRadar = (modo) => {
-        radarModoAtual = modo;
-        document.getElementById('radar-mode-web')?.classList.toggle('active', modo === 'web');
-        document.getElementById('radar-mode-osm')?.classList.toggle('active', modo === 'osm');
-    };
-
-    function garantirMapaRadar() {
-        const el = document.getElementById('radar-osint-map');
-        if (!el || typeof L === 'undefined') return null;
-        if (!radarLeafletMap) {
-            radarLeafletMap = L.map('radar-osint-map', { zoomControl: true }).setView([-23.686, -46.623], 12);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OSM',
-                maxZoom: 19
-            }).addTo(radarLeafletMap);
-            radarMarkersLayer = L.layerGroup().addTo(radarLeafletMap);
-        }
-        setTimeout(() => radarLeafletMap && radarLeafletMap.invalidateSize(), 150);
-        return radarLeafletMap;
-    }
-
-    setTimeout(garantirMapaRadar, 1200);
-
-    function formatarCNPJDisplay(raw) {
-        const d = String(raw || '').replace(/\D/g, '');
-        if (d.length !== 14) return raw || '';
-        return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
-    }
-
-    function montarFiltroOverpassPorCategorias(cats, bboxStr) {
-        const blocos = [];
-        if (cats.includes('alimentos')) {
-            blocos.push(`node["amenity"~"restaurant|fast_food|cafe|bakery|bar|pub|food_court|ice_cream"](${bboxStr});`);
-            blocos.push(`node["shop"~"supermarket|butcher|bakery|convenience|greengrocer|beverages|alcohol"](${bboxStr});`);
-        }
-        if (cats.includes('saude')) {
-            blocos.push(`node["amenity"~"clinic|hospital|dentist|doctors|laboratory"](${bboxStr});`);
-            blocos.push(`node["healthcare"](${bboxStr});`);
-        }
-        if (cats.includes('idosos')) {
-            blocos.push(`node["amenity"~"nursing_home|social_facility"](${bboxStr});`);
-            blocos.push(`node["social_facility"~"nursing_home|assisted_living|group_home"](${bboxStr});`);
-            blocos.push(`way["amenity"~"nursing_home|social_facility"](${bboxStr});`);
-        }
-        if (cats.includes('farmacia')) {
-            blocos.push(`node["amenity"="pharmacy"](${bboxStr});`);
-        }
-        if (cats.includes('beleza')) {
-            blocos.push(`node["shop"~"beauty|hairdresser|tattoo|massage|cosmetics"](${bboxStr});`);
-            blocos.push(`node["leisure"="fitness_centre"](${bboxStr});`);
-        }
-        if (cats.includes('geral')) {
-            blocos.push(`node["amenity"~"veterinary|school|kindergarten|hotel|motel"](${bboxStr});`);
-            blocos.push(`node["shop"~"pet|chemist|perfumery"](${bboxStr});`);
-        }
-        if (blocos.length === 0) {
-            blocos.push(`node["amenity"~"restaurant|fast_food|pharmacy|clinic|nursing_home"](${bboxStr});`);
-        }
-        return `[out:json][timeout:25];(${blocos.join('')});out center 35;`;
-    }
-
-    async function buscarLocaisOpenStreetMap(cidade, cats) {
-        const nomUrl = `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(cidade)}&state=Sao%20Paulo&country=Brazil&format=json&limit=1`;
-        const rNom = await fetch(nomUrl, { headers: { 'Accept-Language': 'pt-BR' } });
-        if (!rNom.ok) throw new Error('Falha ao localizar coordenadas da cidade no OpenStreetMap.');
-        const nomData = await rNom.json();
-        if (!Array.isArray(nomData) || nomData.length === 0) {
-            throw new Error(`Cidade "${cidade}" não encontrada no OpenStreetMap.`);
-        }
-
-        const latCentro = parseFloat(nomData[0].lat);
-        const lonCentro = parseFloat(nomData[0].lon);
-        const mapa = garantirMapaRadar();
-        if (mapa && !isNaN(latCentro) && !isNaN(lonCentro)) {
-            mapa.setView([latCentro, lonCentro], 13);
-        }
-
-        const [south, north, west, east] = nomData[0].boundingbox;
-        const bboxStr = `${south},${west},${north},${east}`;
-        const queryOverpass = montarFiltroOverpassPorCategorias(cats, bboxStr);
-
-        const endpoints = [
-            'https://overpass-api.de/api/interpreter',
-            'https://overpass.kumi.systems/api/interpreter'
-        ];
-
-        let dadosOSM = null;
-        for (const ep of endpoints) {
-            try {
-                const rOv = await fetch(ep, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-                    body: 'data=' + encodeURIComponent(queryOverpass)
-                });
-                if (rOv.ok) {
-                    dadosOSM = await rOv.json();
-                    break;
-                }
-            } catch (_) {}
-        }
-
-        if (!dadosOSM || !Array.isArray(dadosOSM.elements)) {
-            throw new Error('Servidores do OpenStreetMap ocupados no momento. Tente novamente ou use o Modo Web.');
-        }
-
-        const vistos = new Set();
-        const locais = [];
-        for (const el of dadosOSM.elements) {
-            const tags = el.tags || {};
-            const nome = (tags.name || '').trim();
-            if (!nome || vistos.has(nome.toLowerCase())) continue;
-            vistos.add(nome.toLowerCase());
-
-            const rua = tags['addr:street'] || '';
-            const num = tags['addr:housenumber'] || '';
-            const bairro = tags['addr:suburb'] || tags['addr:neighbourhood'] || '';
-            const endereco = [rua && num ? `${rua}, ${num}` : rua, bairro, `${cidade} - SP`].filter(Boolean).join(' - ');
-            const telefone = tags.phone || tags['contact:phone'] || tags['contact:whatsapp'] || '';
-            const site = tags.website || tags['contact:website'] || '';
-            const lat = el.lat || el.center?.lat || null;
-            const lon = el.lon || el.center?.lon || null;
-
-            locais.push({ nome, endereco, telefone, site, lat, lon });
-        }
-        return locais;
-    }
-
-    async function chamarGeminiComBuscaWeb(promptTexto) {
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: promptTexto }] }],
-                tools: [{ google_search: {} }]
-            })
-        });
-
-        if (!resp.ok) {
-            const errData = await resp.json().catch(() => ({}));
-            if (resp.status === 429) throw new Error('Limite temporário do Gemini atingido. Aguarde 30 segundos e tente novamente.');
-            throw new Error(errData.error?.message || `Erro HTTP ${resp.status} no Gemini`);
-        }
-
-        const data = await resp.json();
-        const cand = data.candidates?.[0];
-        const texto = (cand?.content?.parts || []).map(p => p.text || '').join('\n').trim();
-        const chunks = cand?.groundingMetadata?.groundingChunks || [];
-        const fontes = chunks
-            .filter(c => c.web && c.web.uri)
-            .map(c => ({ title: c.web.title || 'Abrir Prova', uri: c.web.uri }));
-
-        return { texto, fontes };
-    }
-
-    async function geocodificarEPlotarAlvoNoMapa(alvo) {
-        const mapa = garantirMapaRadar();
-        if (!mapa || !radarMarkersLayer) return;
-        let lat = alvo.lat, lon = alvo.lon;
-        if (!lat || !lon) {
-            try {
-                const q = encodeURIComponent(`${alvo.endereco || alvo.nome}, ${alvo.cidade || 'São Paulo'}, SP, Brazil`);
-                const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
-                if (r.ok) {
-                    const arr = await r.json();
-                    if (arr[0]) {
-                        lat = parseFloat(arr[0].lat);
-                        lon = parseFloat(arr[0].lon);
-                        alvo.lat = lat;
-                        alvo.lon = lon;
-                    }
-                }
-            } catch (_) {}
-        }
-        if (lat && lon) {
-            const ehAmarelo = String(alvo.nivel || '').toUpperCase() === 'AMARELO';
-            const corPin = ehAmarelo ? '#f59e0b' : '#ef4444';
-            const marker = L.circleMarker([lat, lon], {
-                radius: 8, fillColor: corPin, color: '#ffffff', weight: 2, fillOpacity: 0.92
-            }).addTo(radarMarkersLayer);
-            marker.bindPopup(`<strong>${escaparHtmlWA(alvo.nome)}</strong><br><small>${escaparHtmlWA(alvo.endereco || '')}</small><br><span style="color:${corPin};">${escaparHtmlWA((alvo.perigo || '').slice(0, 120))}</span>`);
-            mapa.setView([lat, lon], 13);
-        }
-    }
-
-    function renderizarHtmlCardAlvo(idx) {
-        const alvo = radarAlvosEncontrados[idx];
-        if (!alvo) return '';
-        const ehAmarelo = String(alvo.nivel || '').toUpperCase() === 'AMARELO';
-        const color = ehAmarelo ? 'var(--warning)' : 'var(--danger)';
-
-        const buscaFotosReclameUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent('"' + alvo.nome + '" ' + (alvo.cidade || '') + ' sujeira OR barata OR reclamação OR irregularidade OR denúncia')}`;
-        const buscaFotosLocalUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent('"' + alvo.nome + '" ' + (alvo.cidade || '') + ' fachada OR fotos')}`;
-        const buscaReclameUrl = `https://www.google.com/search?q=${encodeURIComponent('"' + alvo.nome + '" ' + (alvo.cidade || '') + ' site:reclameaqui.com.br OR avaliação negativa')}`;
-        const buscaCnpjGoogleUrl = `https://www.google.com/search?q=${encodeURIComponent('"' + alvo.nome + '" ' + (alvo.cidade || '') + ' CNPJ')}`;
-
-        const provasHtml = (alvo.provas || []).slice(0, 4).map(p =>
-            `<a class="target-proof-pill" href="${escaparHtmlWA(p.uri)}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> ${escaparHtmlWA((p.title || 'Ver Prova').slice(0, 34))}</a>`
-        ).join('');
-
-        const fotosArr = Array.isArray(alvo.fotos) ? alvo.fotos : [];
-        const fotosHtml = fotosArr.length > 0
-            ? `<div class="target-photos-strip">${fotosArr.map((f, fi) =>
-                `<img class="target-photo-thumb" src="${escaparHtmlWA(f.url)}" alt="${escaparHtmlWA(f.nome || 'Prova')}" title="${escaparHtmlWA(f.nome || 'Clique para ampliar')}" onclick="abrirLightbox('${escaparHtmlWA(f.url).replace(/'/g, "\\'")}', '${escaparHtmlWA(f.nome || alvo.nome).replace(/'/g, "\\'")}')" onerror="this.style.display='none'" />`
-              ).join('')}</div>`
-            : '';
-
-        const cnpjLimpo = String(alvo.cnpj || '').replace(/\D/g, '');
-        const cnpjChip = cnpjLimpo.length === 14
-            ? `<span class="target-meta-chip cnpj-ok"><i class="fas fa-id-card"></i> CNPJ: ${formatarCNPJDisplay(cnpjLimpo)}</span>`
-            : `<span class="target-meta-chip cnpj-warn"><i class="fas fa-id-card"></i> CNPJ: pendente (clique em Buscar CNPJ)</span>`;
-
-        const telChip = alvo.telefone ? `<span class="target-meta-chip"><i class="fas fa-phone" style="color:#10b981;"></i> ${escaparHtmlWA(alvo.telefone)}</span>` : '';
-        const notaChip = alvo.nota_google ? `<span class="target-meta-chip"><i class="fas fa-star" style="color:#fbbf24;"></i> ${escaparHtmlWA(alvo.nota_google)}</span>` : '';
-        const catChip = alvo.categoria ? `<span class="target-meta-chip"><i class="fas fa-tag" style="color:#38bdf8;"></i> ${escaparHtmlWA(alvo.categoria)}</span>` : '';
-
-        let receitaHtml = '';
-        if (alvo.receita) {
-            const rc = alvo.receita;
-            receitaHtml = `
-                <div class="target-receita-box">
-                    <strong><i class="fas fa-landmark"></i> Receita Federal (${escaparHtmlWA(rc.situacao || 'CONSULTADO')}):</strong>
-                    ${escaparHtmlWA(rc.razao_social || alvo.nome)}<br>
-                    <span><strong>CNAE:</strong> ${escaparHtmlWA(rc.cnae || '--')} • <strong>Endereço Oficial:</strong> ${escaparHtmlWA(rc.endereco_oficial || '--')}</span>
-                    ${rc.socios ? `<br><span><strong>Sócios:</strong> ${escaparHtmlWA(rc.socios)}</span>` : ''}
-                </div>`;
-        }
-
-        return `
-            <h4 style="color:white; flex-wrap:wrap;">
-                <i class="fas fa-crosshairs" style="color:${color}"></i>
-                <span>${escaparHtmlWA(alvo.nome)}</span>
-                <span style="background:${color}; color:#000; padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-left:auto;">${escaparHtmlWA(alvo.nivel || 'VERMELHO')}</span>
-            </h4>
-            <span class="loc"><i class="fas fa-map-marker-alt" style="color:var(--primary);"></i> ${escaparHtmlWA(alvo.endereco || alvo.cidade || '')}</span>
-            <div class="target-meta-grid">${cnpjChip}${telChip}${notaChip}${catChip}</div>
-            <div class="reason" style="color: ${ehAmarelo ? '#fde68a' : '#fecaca'};">
-                <strong>FATOS / RECLAMAÇÃO REAL (${escaparHtmlWA(alvo.fonte || 'Web')}):</strong> ${escaparHtmlWA(alvo.perigo || '')}
-                ${alvo.infracao_possivel ? `<div style="margin-top:6px; font-size:0.8rem; color:#93c5fd;"><strong><i class="fas fa-gavel"></i> Possível Enquadramento:</strong> ${escaparHtmlWA(alvo.infracao_possivel)}</div>` : ''}
-            </div>
-            ${receitaHtml}
-            ${fotosHtml}
-            ${provasHtml ? `<div class="target-proof-links">${provasHtml}</div>` : ''}
-            <div class="target-card-actions">
-                <button type="button" class="target-act-btn act-cnpj" id="btn-radar-cnpj-${idx}" onclick="enriquecerAlvoRadar(${idx}, false)"><i class="fas fa-search-dollar"></i> Buscar CNPJ + Receita</button>
-                <button type="button" class="target-act-btn" id="btn-radar-save-${idx}" onclick="salvarAlvoRadarNoFirebase(${idx})"><i class="fas fa-database"></i> Salvar Dossiê Completo</button>
-                <button type="button" class="target-act-btn act-wa" onclick="abordarAlvoRadarZap(${idx})"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-                <button type="button" class="target-act-btn act-pdf" onclick="enviarAlvoRadarParaDocGen(${idx})"><i class="fas fa-file-pdf"></i> Gerar PDF</button>
-                <button type="button" class="target-act-btn act-photo" onclick="anexarFotoAlvoRadar(${idx})"><i class="fas fa-upload"></i> Anexar Print/Foto</button>
-                <a class="target-act-btn" href="${buscaFotosReclameUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-camera"></i> Fotos Sujeira/Reclamação</a>
-                <a class="target-act-btn" href="${buscaFotosLocalUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-store"></i> Fotos Fachada</a>
-                <a class="target-act-btn" href="${buscaReclameUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Reclame Aqui</a>
-                <a class="target-act-btn" href="${buscaCnpjGoogleUrl}" target="_blank" rel="noopener noreferrer"><i class="fab fa-google"></i> CNPJ Google</a>
-            </div>
-        `;
-    }
-
-    function atualizarCardAlvoNoDOM(idx) {
-        const el = document.getElementById(`radar-target-card-${idx}`);
-        if (el) el.innerHTML = renderizarHtmlCardAlvo(idx);
-    }
-
-    function adicionarCardAlvoRadar(alvo, statusMsg, radarCircle) {
-        if (!Array.isArray(alvo.fotos)) alvo.fotos = [];
-        const idx = radarAlvosEncontrados.push(alvo) - 1;
-        const ehAmarelo = String(alvo.nivel || '').toUpperCase() === 'AMARELO';
-        const color = ehAmarelo ? 'var(--warning)' : 'var(--danger)';
-        const bgClass = ehAmarelo ? 'rgba(245, 158, 11, 0.06)' : 'rgba(239, 68, 68, 0.06)';
-
-        radarCircle.classList.add('danger-mode');
-        radarCircle.style.borderColor = color;
-        radarCircle.style.background = `radial-gradient(circle, ${bgClass} 0%, transparent 70%)`;
-
-        const blip = document.createElement('div');
-        blip.className = 'radar-blip';
-        blip.style.background = color;
-        blip.style.boxShadow = `0 0 15px ${color}`;
-        blip.style.top = `${Math.floor(Math.random() * 60) + 20}%`;
-        blip.style.left = `${Math.floor(Math.random() * 60) + 20}%`;
-        radarCircle.appendChild(blip);
-
-        const divTarget = document.createElement('div');
-        divTarget.id = `radar-target-card-${idx}`;
-        divTarget.className = 'target-card-hud';
-        divTarget.style.borderColor = color;
-        divTarget.style.borderLeftColor = color;
-        divTarget.style.background = bgClass;
-        divTarget.innerHTML = renderizarHtmlCardAlvo(idx);
-        statusMsg.insertAdjacentElement('afterend', divTarget);
-
-        geocodificarEPlotarAlvoNoMapa(alvo);
-    }
-
-    window.anexarFotoAlvoRadar = (idx) => {
-        const alvo = radarAlvosEncontrados[idx];
-        if (!alvo) return;
-        const inp = document.createElement('input');
-        inp.type = 'file';
-        inp.accept = 'image/*';
-        inp.multiple = true;
-        inp.onchange = async (e) => {
-            const files = Array.from(e.target.files || []);
-            for (const file of files) {
-                try {
-                    const dataUrl = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = (ev) => {
-                            const img = new Image();
-                            img.onload = () => {
-                                const canvas = document.createElement('canvas');
-                                const MAX_W = 900;
-                                let w = img.width, h = img.height;
-                                if (w > MAX_W) { h = Math.round((h * MAX_W) / w); w = MAX_W; }
-                                canvas.width = w; canvas.height = h;
-                                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                                resolve(canvas.toDataURL('image/jpeg', 0.8));
-                            };
-                            img.onerror = reject;
-                            img.src = ev.target.result;
-                        };
-                        reader.onerror = reject;
-                        reader.readAsDataURL(file);
-                    });
-                    alvo.fotos.push({ nome: file.name, url: dataUrl });
-                } catch (_) {}
-            }
-            atualizarCardAlvoNoDOM(idx);
-            showToast('Foto Anexada', `${files.length} imagem(ns) adicionada(s) ao alvo para salvar no dossiê.`, 'success');
-        };
-        inp.click();
-    };
-
-    window.enriquecerAlvoRadar = async (idx, silencioso = false) => {
-        const alvo = radarAlvosEncontrados[idx];
-        if (!alvo) return;
-        const btn = document.getElementById(`btn-radar-cnpj-${idx}`);
-        const orig = btn ? btn.innerHTML : '';
-        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Consultando...'; }
-
-        try {
-            let cnpjDigits = String(alvo.cnpj || '').replace(/\D/g, '');
-            if (cnpjDigits.length !== 14) {
-                const promptCnpj = `Pesquise no Google o CNPJ, telefone, endereço completo, razão social e Instagram/site do estabelecimento "${alvo.nome}" localizado em "${alvo.cidade || 'São Paulo'} - SP" (${alvo.endereco || ''}).
-Retorne APENAS um JSON puro:
-{
-  "cnpj": "somente os 14 digitos ou vazio se nao achar",
-  "razao_social": "Razão social se achar ou vazio",
-  "endereco": "Endereço completo com número e bairro se achar",
-  "telefone": "Telefone ou WhatsApp se achar",
-  "foto_url": "URL direta de imagem pública do local/fachada se achar ou vazio"
-}`;
-                const { texto, fontes } = await chamarGeminiComBuscaWeb(promptCnpj);
-                const match = texto.match(/\{[\s\S]*\}/);
-                if (match) {
-                    const info = JSON.parse(match[0]);
-                    if (info.cnpj) cnpjDigits = String(info.cnpj).replace(/\D/g, '');
-                    if (info.endereco && (!alvo.endereco || info.endereco.length > alvo.endereco.length)) alvo.endereco = info.endereco;
-                    if (info.telefone && !alvo.telefone) alvo.telefone = info.telefone;
-                    if (info.razao_social) alvo.razao_social = info.razao_social;
-                    if (info.foto_url && /^https?:\/\//i.test(info.foto_url)) {
-                        if (!alvo.fotos.some(f => f.url === info.foto_url)) {
-                            alvo.fotos.push({ nome: `Foto ${alvo.nome}`, url: info.foto_url });
-                        }
-                    }
-                }
-                if (fontes && fontes.length > 0) {
-                    alvo.provas = [...(alvo.provas || []), ...fontes.slice(0, 2)].slice(0, 5);
-                }
-            }
-
-            if (cnpjDigits.length === 14) {
-                alvo.cnpj = formatarCNPJDisplay(cnpjDigits);
-                try {
-                    const rBr = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjDigits}`);
-                    if (rBr.ok) {
-                        const rc = await rBr.json();
-                        const endOficial = [
-                            rc.descricao_tipo_de_logradouro, rc.logradouro, rc.numero,
-                            rc.bairro, rc.municipio ? `${rc.municipio} - ${rc.uf}` : '', rc.cep ? `CEP ${rc.cep}` : ''
-                        ].filter(Boolean).join(', ');
-                        const socios = Array.isArray(rc.qsa) ? rc.qsa.map(s => s.nome_socio).filter(Boolean).slice(0, 4).join(', ') : '';
-                        alvo.receita = {
-                            situacao: rc.descricao_situacao_cadastral || 'CONSULTADO',
-                            razao_social: rc.razao_social || alvo.nome,
-                            nome_fantasia: rc.nome_fantasia || '',
-                            cnae: rc.cnae_fiscal_descricao || '',
-                            endereco_oficial: endOficial,
-                            cep: rc.cep || '',
-                            telefone_receita: rc.ddd_telefone_1 || '',
-                            socios
-                        };
-                        if (!alvo.telefone && rc.ddd_telefone_1) alvo.telefone = rc.ddd_telefone_1;
-                        if (endOficial && (!alvo.endereco || alvo.endereco.length < 15)) alvo.endereco = endOficial;
-                    }
-                } catch (_) {}
-                if (!silencioso) showToast('CNPJ + Receita Encontrados!', `${alvo.cnpj} consultado com sucesso.`, 'success');
-            } else if (!silencioso) {
-                showToast('CNPJ não localizado automaticamente', 'Use o botão "CNPJ Google" no card para consulta manual.', 'warning');
-            }
-            atualizarCardAlvoNoDOM(idx);
-        } catch (err) {
-            if (!silencioso) showToast('Erro na Consulta', err.message, 'error');
-        } finally {
-            if (btn) { btn.disabled = false; btn.innerHTML = orig; }
-        }
-    };
-
-    window.abordarAlvoRadarZap = (idx) => {
-        const alvo = radarAlvosEncontrados[idx];
-        if (!alvo) return;
-        const fone = normalizarNumeroInput(alvo.telefone || '');
-        const msg = `Olá, tudo bem? Falo da consultoria de regularização sanitária.\n\nNotamos apontamentos públicos recentes relacionados a *${alvo.nome}* e queremos ajudar vocês a blindar o estabelecimento com toda a documentação sanitária em dia (Alvará/Licença COVISA) para evitar autuações e multas.\n\nPodemos conversar rapidamente?`;
-        const url = fone.length >= 12
-            ? `https://api.whatsapp.com/send?phone=${fone}&text=${encodeURIComponent(msg)}`
-            : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
-        window.open(url, '_blank');
-    };
-
-    window.enviarAlvoRadarParaDocGen = (idx) => {
-        const alvo = radarAlvosEncontrados[idx];
-        if (!alvo) return;
-        const navDoc = document.getElementById('nav-item-docgen');
-        switchView('view-docgen', navDoc);
-        if (document.getElementById('docgen-nome')) document.getElementById('docgen-nome').value = alvo.receita?.razao_social || alvo.nome || '';
-        if (document.getElementById('docgen-cnpj') && alvo.cnpj) document.getElementById('docgen-cnpj').value = alvo.cnpj;
-        if (document.getElementById('docgen-rua')) document.getElementById('docgen-rua').value = alvo.receita?.endereco_oficial || alvo.endereco || '';
-        if (document.getElementById('docgen-cidade')) document.getElementById('docgen-cidade').value = `${alvo.cidade || 'São Paulo'} - SP`;
-        if (document.getElementById('docgen-ramo')) document.getElementById('docgen-ramo').value = alvo.receita?.cnae || alvo.categoria || alvo.ramo || 'Alimentos';
-        if (document.getElementById('docgen-corpo')) document.getElementById('docgen-corpo').value = `Apontamento identificado via monitoramento público (${alvo.fonte || 'Web'}): ${alvo.perigo || ''}`;
-        showToast('Dados Importados', `${alvo.nome} enviado para o Gerador de Documentos.`, 'success');
-    };
-
-    window.salvarAlvoRadarNoFirebase = async (idx) => {
-        const alvo = radarAlvosEncontrados[idx];
-        if (!alvo) return;
-        const btn = document.getElementById(`btn-radar-save-${idx}`);
-        const orig = btn ? btn.innerHTML : '';
-        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando CNPJ e Salvando...'; }
-
-        try {
-            // Consulta CNPJ + Receita Federal automaticamente antes de salvar o Dossiê
-            if (!alvo.receita && String(alvo.cnpj || '').replace(/\D/g, '').length !== 14) {
-                await enriquecerAlvoRadar(idx, true);
-            }
-
-            const rc = alvo.receita || {};
-            const nomeFinal = rc.razao_social ? `${alvo.nome} (${rc.razao_social})` : alvo.nome;
-            const cnpjFinal = alvo.cnpj || alvo.telefone || "CNPJ não localizado";
-            const buscaFotosReclame = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent('"' + alvo.nome + '" ' + (alvo.cidade || '') + ' sujeira OR barata OR reclamação')}`;
-            const linksProvas = (alvo.provas || []).map(p => `- ${p.title || 'Link'}: ${p.uri}`).join('\n');
-
-            const dossieTexto = [
-                `[RADAR OSINT 360° - ${alvo.fonte || 'Web'}]`,
-                `Categoria: ${alvo.categoria || alvo.ramo || 'Geral'} | Nível: ${alvo.nivel || 'VERMELHO'}`,
-                `Relato Real da Reclamação: ${alvo.perigo || ''}`,
-                alvo.infracao_possivel ? `Enquadramento Sugerido: ${alvo.infracao_possivel}` : '',
-                `Endereço: ${rc.endereco_oficial || alvo.endereco || alvo.cidade || ''}`,
-                `Telefone / WhatsApp: ${alvo.telefone || rc.telefone_receita || 'Não informado'}`,
-                alvo.cnpj ? `CNPJ: ${alvo.cnpj} | Situação Receita: ${rc.situacao || 'Consultado'}` : '',
-                rc.cnae ? `CNAE Principal: ${rc.cnae}` : '',
-                rc.socios ? `Quadro de Sócios: ${rc.socios}` : '',
-                `Fotos de Reclamação / Sujeira (Google Imagens): ${buscaFotosReclame}`,
-                linksProvas ? `Links de Provas:\n${linksProvas}` : ''
-            ].filter(Boolean).join('\n');
-
-            const evidenciasSalvar = (alvo.fotos || []).map(f => ({ nome: f.nome || alvo.nome, url: f.url }));
-
-            await addDoc(collection(db, "pedidos"), {
-                nome: nomeFinal,
-                cnpj: cnpjFinal,
-                tipo: "🚨 DENÚNCIA",
-                data: new Date().toLocaleString('pt-BR'),
-                docs: dossieTexto,
-                notas: `Captado pelo Radar OSINT 360° em ${alvo.cidade || 'SP'}. ${alvo.infracao_possivel || ''} | Tel: ${alvo.telefone || 'N/D'}`,
-                evidencias: evidenciasSalvar,
-                pago: false,
-                valor: ""
-            });
-
-            showToast('Dossiê Completo Salvo!', `${alvo.nome} salvo na Malha Fina com CNPJ, Receita e ${evidenciasSalvar.length} foto(s).`, 'success');
-            registrarLog('Radar OSINT', `Dossiê completo salvo: ${nomeFinal} (${cnpjFinal})`);
-        } catch (e) {
-            showToast('Erro ao Salvar', e.message, 'error');
-        } finally {
-            if (btn) { btn.disabled = false; btn.innerHTML = orig; }
-        }
-    };
-
     window.toggleRadarHUD = async () => {
         const btn = document.getElementById('btn-start-radar');
         const radarCircle = document.getElementById('radar-circle-ui');
         const radarSweep = document.getElementById('radar-sweep-ui');
         const resultsList = document.getElementById('radar-results-list');
 
+        // Se já está escaneando, o botão serve para Pausar
         if (isRadarScanning) {
             isRadarScanning = false;
-            btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura';
-            btn.style.borderColor = 'var(--danger)';
-            btn.style.color = 'var(--danger)';
+            btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Retomar Varredura';
+            btn.style.borderColor = 'var(--primary)';
+            btn.style.color = 'var(--primary)';
             radarSweep.style.display = 'none';
             return;
         }
 
-        const cidadeDigitada = (document.getElementById('radar-cidade-texto')?.value || '').trim();
-        radarTargetCity = cidadeDigitada || radarTargetCity;
-
-        if (!radarTargetCity) {
-            showToast("Cidade Obrigatória", "Digite ou selecione uma cidade para iniciar a varredura.", "warning");
+        // Validações
+        if(!radarTargetCity) {
+            showToast("Falha na Trava", "Selecione uma Letra e uma Cidade para focar o radar.", "warning");
+            return;
+        }
+        
+        if(GOOGLE_MAPS_API_KEY === 'SUA_CHAVE_AQUI') {
+            showToast("Satélite Offline", "Insira a chave da API do Google Maps no código para o radar funcionar.", "error");
             return;
         }
 
-        const activeThreatsBtn = Array.from(document.querySelectorAll('.threat-btn.active'));
-        if (activeThreatsBtn.length === 0) {
-            showToast("Selecione um Ramo", "Marque pelo menos uma categoria de estabelecimento.", "warning");
+        let activeThreatsBtn = document.querySelectorAll('.threat-btn.active');
+        if(activeThreatsBtn.length === 0) {
+            showToast("Falha na Trava", "Selecione pelo menos um tipo de ameaça.", "warning");
             return;
         }
 
-        const queries = activeThreatsBtn.map(b => b.getAttribute('data-query')).join('; ');
-        const cats = activeThreatsBtn.map(b => b.getAttribute('data-cat')).filter(Boolean);
+        // Monta a string de busca unindo todos os botões ativos
+        let queries = Array.from(activeThreatsBtn).map(b => b.getAttribute('data-query')).join(' e ');
+        const buscaTermo = `${queries} em ${radarTargetCity}, ${radarTargetArea}`;
 
-        garantirMapaRadar();
-        if (radarMarkersLayer) radarMarkersLayer.clearLayers();
-
+        // Inicia a Varredura Contínua
         isRadarScanning = true;
-        btn.innerHTML = '<i class="fas fa-stop"></i> Parar Varredura';
+        radarNextPageToken = ""; // Reseta a paginação para iniciar do começo
+        let totalAnalisados = 0; // Contador de locais vistos
+
+        btn.innerHTML = '<i class="fas fa-pause"></i> Pausar Satélite';
         btn.style.borderColor = 'var(--warning)';
         btn.style.color = 'var(--warning)';
         radarCircle.classList.remove('danger-mode');
         radarSweep.style.display = 'block';
 
-        if (resultsList.innerHTML.includes('Iniciar Varredura') || resultsList.innerHTML.includes('Aguardando Trava')) {
+        if(resultsList.innerHTML.includes('Aguardando Trava')) {
             resultsList.innerHTML = '';
             document.querySelectorAll('.radar-blip').forEach(el => el.remove());
         }
 
-        let statusMsg = document.getElementById('radar-status-msg');
-        if (!statusMsg) {
-            resultsList.insertAdjacentHTML('afterbegin', `<div id="radar-status-msg" class="osint-idle-msg" style="margin-bottom: 10px;"><i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary);"></i><span>Iniciando varredura em ${escaparHtmlWA(radarTargetCity)}...</span></div>`);
-            statusMsg = document.getElementById('radar-status-msg');
-        }
-
-        try {
-            if (radarModoAtual === 'web') {
-                statusMsg.innerHTML = `<i class="fas fa-globe fa-spin" style="font-size: 1.5rem; color: #38bdf8;"></i><span>Buscando reclamações reais (pequenos e médios locais, clínicas, casas de idosos e comércios) em ${escaparHtmlWA(radarTargetCity)}...</span>`;
-
-                const promptWeb = `Você é um investigador da Vigilância Sanitária (COVISA SP). Faça uma busca na web AGORA por estabelecimentos REAIS em ${radarTargetCity} - SP nos ramos: (${queries}) que tenham reclamações concretas no Google Avaliações, Reclame Aqui, iFood, notícias locais, Procon ou redes sociais.
-
-REGRAS OBRIGATÓRIAS:
-1. NÃO traga apenas grandes redes nacionais (como McDonald's, Coop, Drogasil, Sodiê). PRIORIZE estabelecimentos locais, pequenos e médios de bairro (lanchonetes, padarias, mercados de bairro, clínicas médicas/odontológicas, casas de repouso/idosos, salões, pet shops, farmácias locais).
-2. NO CAMPO "perigo", É TERMINANTEMENTE PROIBIDO escrever frases genéricas como "possui reclamações em plataforma de defesa do consumidor" ou "histórico de manifestações". Você DEVE escrever o FATO REAL E CONCRETO relatado (ex: "Avaliação cita barata na cozinha e salgado azedo", "Denúncia de falta de higiene e negligência com idosos", "Reclamação de exame atrasado e clínica sem higiene no banheiro").
-3. Pesquise também o CNPJ (se existir na web), endereço completo com bairro, telefone e nota do Google.
-
-Retorne APENAS um array JSON válido (sem texto antes ou depois) com até 10 estabelecimentos reais:
-[
-  {
-    "nome": "Nome real do estabelecimento",
-    "categoria": "Ex: Lanchonete / Clínica Médica / Casa de Idosos / Padaria / Farmácia",
-    "cnpj": "14 dígitos do CNPJ se encontrado ou vazio",
-    "endereco": "Rua, número e bairro em ${radarTargetCity} - SP",
-    "telefone": "Telefone/WhatsApp se encontrado ou vazio",
-    "nota_google": "Ex: 3.1/5 ou vazio",
-    "fonte": "Google Avaliações, Reclame Aqui, Notícia G1/Local ou iFood",
-    "nivel": "VERMELHO" ou "AMARELO",
-    "perigo": "Descrição REAL, direta e específica da irregularidade/sujeira/reclamação encontrada (15 a 40 palavras).",
-    "infracao_possivel": "Ex: Art. 122, I / XIII da Lei 10.083/98 ou RDC 216 (higiene/validade/alvará)"
-  }
-]
-Use VERMELHO para sujeira, barata/inseto, comida estragada/vencida, intoxicação, maus-tratos a idosos, erro médico/higiene clínica ou interdição. Use AMARELO para mau atendimento, atraso, erro de pedido ou estrutura precária.`;
-
-                const { texto, fontes } = await chamarGeminiComBuscaWeb(promptWeb);
-                const matchArr = texto.match(/\[[\s\S]*\]/);
-                if (!matchArr) throw new Error('Nenhuma reclamação detalhada retornada para este filtro. Tente clicar novamente ou marcar mais categorias.');
-
-                const lista = JSON.parse(matchArr[0]);
-                if (!Array.isArray(lista) || lista.length === 0) {
-                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.4rem; color: var(--success);"></i><span>Nenhum alvo com reclamação encontrado para este filtro.</span>`;
-                } else {
-                    for (const item of lista) {
-                        if (!isRadarScanning) break;
-                        adicionarCardAlvoRadar({
-                            ...item,
-                            cidade: radarTargetCity,
-                            ramo: queries,
-                            provas: fontes.slice(0, 3)
-                        }, statusMsg, radarCircle);
-                        await new Promise(r => setTimeout(r, 250));
-                    }
-                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.4rem; color: var(--success);"></i><span style="color:var(--success);">Varredura concluída: ${lista.length} estabelecimento(s) encontrado(s) em ${escaparHtmlWA(radarTargetCity)}.</span>`;
-                }
+        while (isRadarScanning) {
+            let statusMsg = document.getElementById('radar-status-msg');
+            if(!statusMsg) {
+                resultsList.insertAdjacentHTML('afterbegin', `<div id="radar-status-msg" class="osint-idle-msg" style="opacity: 0.8; margin-bottom: 15px;"><i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary);"></i><span>Iniciando varredura em lote...</span></div>`);
+                statusMsg = document.getElementById('radar-status-msg');
             } else {
-                statusMsg.innerHTML = `<i class="fas fa-map-marked-alt fa-spin" style="font-size: 1.5rem; color: #10b981;"></i><span>Varrendo estabelecimentos pequenos e médios no OpenStreetMap em ${escaparHtmlWA(radarTargetCity)}...</span>`;
-                const locaisOSM = await buscarLocaisOpenStreetMap(radarTargetCity, cats);
-
-                if (locaisOSM.length === 0) {
-                    statusMsg.innerHTML = `<i class="fas fa-info-circle" style="font-size: 1.4rem; color: var(--warning);"></i><span>Nenhum local mapeado no OpenStreetMap para essa categoria em ${escaparHtmlWA(radarTargetCity)}. Use o modo Reclame Aqui + Google.</span>`;
-                } else {
-                    let achados = 0;
-                    const limite = Math.min(locaisOSM.length, 12);
-                    for (let i = 0; i < limite; i++) {
-                        if (!isRadarScanning) break;
-                        const loc = locaisOSM[i];
-                        statusMsg.innerHTML = `<i class="fas fa-satellite-dish fa-spin" style="font-size: 1.4rem; color: var(--warning);"></i><span>Checando reclamações reais e CNPJ (${i + 1}/${limite}): ${escaparHtmlWA(loc.nome)}...</span>`;
-
-                        try {
-                            const promptCheck = `Pesquise na web avaliações negativas no Google, Reclame Aqui, iFood ou notícias sobre "${loc.nome}" em "${radarTargetCity}, SP".
-Se NÃO houver nenhuma reclamação concreta encontrada, responda apenas: IGNORAR.
-Se houver reclamação, responda APENAS um JSON puro. É PROIBIDO texto genérico — descreva o problema REAL citado pelos clientes:
-{"nivel":"VERMELHO" ou "AMARELO","fonte":"Google / Reclame Aqui / Notícia","cnpj":"14 dígitos se achar ou vazio","nota_google":"ex: 3.4/5 ou vazio","perigo":"Relato concreto e real da reclamação (15 a 35 palavras)","infracao_possivel":"Possível artigo Lei 10.083/98 ou RDC 216"}`;
-
-                            const { texto, fontes } = await chamarGeminiComBuscaWeb(promptCheck);
-                            if (texto && !texto.toUpperCase().includes('IGNORAR')) {
-                                const matchObj = texto.match(/\{[\s\S]*\}/);
-                                if (matchObj) {
-                                    const res = JSON.parse(matchObj[0]);
-                                    achados++;
-                                    adicionarCardAlvoRadar({
-                                        nome: loc.nome,
-                                        endereco: loc.endereco,
-                                        telefone: loc.telefone,
-                                        cnpj: res.cnpj || '',
-                                        nota_google: res.nota_google || '',
-                                        lat: loc.lat,
-                                        lon: loc.lon,
-                                        cidade: radarTargetCity,
-                                        ramo: queries,
-                                        nivel: res.nivel || 'AMARELO',
-                                        fonte: res.fonte || 'Web / OSM',
-                                        perigo: res.perigo || 'Reclamação pública identificada.',
-                                        infracao_possivel: res.infracao_possivel || '',
-                                        provas: fontes.slice(0, 3)
-                                    }, statusMsg, radarCircle);
-                                }
-                            }
-                            await new Promise(r => setTimeout(r, 850));
-                        } catch (errItem) {
-                            if (errItem.message.includes('Limite')) throw errItem;
-                        }
-                    }
-                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.4rem; color: var(--success);"></i><span style="color:var(--success);">Varredura Híbrida concluída: ${limite} locais checados no OSM, ${achados} com reclamação real.</span>`;
-                }
+                statusMsg.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary);"></i><span>Buscando próximo lote em ${radarTargetCity}...</span>`;
             }
-        } catch (error) {
-            console.error('Erro no Radar OSINT 360:', error);
-            statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size: 1.4rem; color: var(--danger);"></i><span style="color:var(--danger);">${escaparHtmlWA(error.message)}</span>`;
-        } finally {
-            isRadarScanning = false;
-            btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura';
-            btn.style.borderColor = 'var(--danger)';
-            btn.style.color = 'var(--danger)';
-            radarSweep.style.display = 'none';
-        }
+
+            try {
+                let requestBody = {
+                    textQuery: buscaTermo,
+                    maxResultCount: 15 // Pega de 15 em 15 para não travar a IA
+                };
+                
+                // Se tiver token de próxima página, adiciona na requisição
+                if (radarNextPageToken) {
+                    requestBody.pageToken = radarNextPageToken;
+                }
+
+                // 1. Busca os locais na API do Google
+                const responsePlaces = await fetch('https://places.googleapis.com/v1/places:searchText', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+                        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.reviews,nextPageToken'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if(!responsePlaces.ok) {
+                    const erroGoogle = await responsePlaces.json();
+                    console.error("Erro Google Maps API:", erroGoogle);
+                    throw new Error(erroGoogle.error?.message || "Acesso negado aos satélites do Google. Verifique a API Key.");
+                }
+
+                const dadosGoogle = await responsePlaces.json();
+                
+                if (!dadosGoogle.places || dadosGoogle.places.length === 0) {
+                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--success);"></i><span style="color:var(--success);">Varredura profunda concluída. Sem mais alvos na região.</span>`;
+                    isRadarScanning = false;
+                    break;
+                }
+
+                // 2. Passa cada local pro Gemini avaliar
+                for (let i = 0; i < dadosGoogle.places.length; i++) {
+                    if (!isRadarScanning) break; 
+
+                    let place = dadosGoogle.places[i];
+                    let nomeReal = place.displayName?.text || "Desconhecido";
+                    let enderecoReal = place.formattedAddress;
+                    let comentariosReais = "";
+
+                    if (place.reviews && place.reviews.length > 0) {
+                        place.reviews.forEach(rev => {
+                            if (rev.text && rev.text.text) comentariosReais += `"${rev.text.text}"\n`;
+                        });
+                    } else {
+                        // NOVO: Feedback visual quando pula o local para não parecer travado
+                        statusMsg.innerHTML = `<i class="fas fa-forward" style="font-size: 1.2rem; color: var(--text-muted);"></i><span style="color:var(--text-muted);">Pulando ${nomeReal} (Local sem avaliações)</span>`;
+                        await new Promise(r => setTimeout(r, 400));
+                        continue; 
+                    }
+
+                    totalAnalisados++;
+                    statusMsg.innerHTML = `<i class="fas fa-satellite-dish fa-spin" style="font-size: 1.5rem; color: var(--warning);"></i><span>Lendo a mente de: ${nomeReal}... (Analisados: ${totalAnalisados})</span>`;
+
+                    let prompt = `Você é um radar tático da Vigilância Sanitária e do Procon caçando QUALQUER irregularidade.
+                    Leia estas avaliações reais sobre "${nomeReal}" no endereço "${enderecoReal}".
+                    
+                    Avaliações:
+                    ${comentariosReais}
+
+                    Se as avaliações forem 100% perfeitas, maravilhosas e sem NENHUMA crítica, retorne APENAS a palavra IGNORAR.
+                    MAS, se houver QUALQUER RECLAMAÇÃO (comida fria, atraso, mau atendimento, sujeira, insetos, preço errado, etc), você DEVE reportar.
+                    
+                    Retorne um JSON puro, sem crases de formatação:
+                    {
+                        "nivel": "AMARELO" ou "VERMELHO",
+                        "perigo": "Resumo da pior reclamação encontrada (máx 20 palavras)."
+                    }
+                    Use VERMELHO para risco à saúde (sujeira, bicho, comida estragada, intoxicação).
+                    Use AMARELO para má gestão (atraso, erro de pedido, comida fria, atendimento ruim).`;
+
+                    try {
+                        const respostaIA = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                        });
+                        
+                        if (!respostaIA.ok) {
+                            const errData = await respostaIA.json();
+                            if(errData.error && errData.error.code === 429) {
+                                throw new Error("Limite da IA atingido! O plano gratuito bloqueou temporariamente.");
+                            }
+                            throw new Error("Erro na IA: " + (errData.error?.message || "Desconhecido"));
+                        }
+
+                        const dataIA = await respostaIA.json();
+                        let resposta = dataIA.candidates[0].content.parts[0].text.trim();
+
+                        if (!resposta.includes("IGNORAR")) {
+                            let textoLimpo = resposta.replace(/```json/g, '').replace(/```/g, '').trim();
+                            let resultado = JSON.parse(textoLimpo);
+
+                            let color = resultado.nivel === 'AMARELO' ? 'var(--warning)' : 'var(--danger)';
+                            let bgClass = resultado.nivel === 'AMARELO' ? 'rgba(245, 158, 11, 0.05)' : 'rgba(239, 68, 68, 0.05)';
+
+                            if(!radarCircle.classList.contains('danger-mode')) {
+                                radarCircle.classList.add('danger-mode');
+                            }
+                            
+                            radarCircle.style.borderColor = color;
+                            radarCircle.style.background = `radial-gradient(circle, ${bgClass} 0%, transparent 70%)`;
+
+                            let blip = document.createElement('div');
+                            blip.className = 'radar-blip';
+                            blip.style.background = color;
+                            blip.style.boxShadow = `0 0 15px ${color}`;
+                            blip.style.top = `${Math.floor(Math.random() * 60) + 20}%`;
+                            blip.style.left = `${Math.floor(Math.random() * 60) + 20}%`;
+                            radarCircle.appendChild(blip);
+
+                            let divTarget = document.createElement('div');
+                            divTarget.className = 'target-card-hud';
+                            divTarget.style.borderColor = color;
+                            divTarget.style.borderLeftColor = color;
+                            divTarget.style.background = bgClass;
+                            divTarget.innerHTML = `
+                                <h4 style="color:white;"><i class="fas fa-crosshairs" style="color:${color}"></i> ${nomeReal} <span style="background:${color}; color:#000; padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-left:10px;">${resultado.nivel}</span></h4>
+                                <span class="loc">${enderecoReal}</span>
+                                <div class="reason" style="color: ${resultado.nivel === 'AMARELO' ? '#fcd34d' : '#fca5a5'};"><strong>RELATO INTERCEPTADO:</strong> ${resultado.perigo}</div>
+                            `;
+                            statusMsg.insertAdjacentElement('afterend', divTarget);
+                            
+                            await new Promise(r => setTimeout(r, 1000));
+                        }
+
+                    } catch (iaErr) {
+                        console.error("Erro no Gemini para este alvo", iaErr);
+                        statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size: 1.2rem; color: var(--warning);"></i><span style="color:var(--warning);">${iaErr.message}</span>`;
+                        
+                        if(iaErr.message.includes('Limite')) {
+                            isRadarScanning = false;
+                            break;
+                        }
+                        await new Promise(r => setTimeout(r, 2000));
+                    }
+                } // Fim do For
+
+                if (!isRadarScanning) break;
+
+                radarNextPageToken = dadosGoogle.nextPageToken;
+                
+                if (!radarNextPageToken) {
+                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--success);"></i><span style="color:var(--success);">Varredura profunda concluída. Sem mais dados nesta cidade.</span>`;
+                    isRadarScanning = false;
+                    break;
+                } else if (isRadarScanning) {
+                    statusMsg.innerHTML = `<i class="fas fa-sync fa-spin" style="font-size: 1.5rem; color: var(--info);"></i><span>Carregando novos satélites (Próxima Página)...</span>`;
+                    // O Google exige aguardar uns segundos antes de usar o nextPageToken
+                    await new Promise(r => setTimeout(r, 3500));
+                }
+
+            } catch (error) {
+                console.error("Falha no Radar HUD:", error);
+                statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; color: var(--danger);"></i><span style="color:var(--danger)">Erro Maps: ${error.message}</span>`;
+                isRadarScanning = false;
+            }
+        } // Fim do While
+
+        btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura';
+        btn.style.borderColor = 'var(--danger)';
+        btn.style.color = 'var(--danger)';
+        radarSweep.style.display = 'none';
+        
+        setTimeout(() => {
+            document.querySelectorAll('.radar-blip').forEach(el => el.remove());
+            document.getElementById('radar-circle-ui').classList.remove('danger-mode');
+            document.getElementById('radar-circle-ui').style.borderColor = 'rgba(16, 185, 129, 0.3)';
+            document.getElementById('radar-circle-ui').style.background = 'radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%)';
+        }, 5000);
     };
 
     function converterArquivoParaBase64(file) {
