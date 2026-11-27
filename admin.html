@@ -743,39 +743,46 @@
     }
     .radar-hist-search:focus { border-color: var(--primary); }
 
-    .osint-results-list { flex: 1; width: 100%; height: 470px; overflow-y: auto; padding-right: 6px; display: flex; flex-direction: column; gap: 12px; }
+    .osint-results-list { flex: 1; width: 100%; height: 500px; overflow-y: auto; padding-right: 6px; display: flex; flex-direction: column; gap: 12px; }
     .radar-mode-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .radar-mode-opt {
       background: rgba(255,255,255,0.03); border: 1px solid #1e293b; color: var(--text-muted);
-      padding: 10px 8px; border-radius: 8px; cursor: pointer; font-size: 0.78rem; font-weight: 800;
-      display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.2s; text-align: center;
+      padding: 10px 8px; border-radius: 10px; cursor: pointer; font-size: 0.77rem; font-weight: 800;
+      display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.25s; text-align: center;
     }
+    .radar-mode-opt small { font-size: 0.65rem; font-weight: 600; opacity: 0.8; line-height: 1.2; }
     .radar-mode-opt:hover { border-color: var(--primary); color: white; }
-    .radar-mode-opt.active { background: rgba(59, 130, 246, 0.16); border-color: var(--primary); color: #ffffff; box-shadow: 0 0 12px rgba(59,130,246,0.25); }
-
-    .radar-region-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
-    .radar-reg-chip {
-      background: #070e1c; border: 1px solid #223456; color: #94a3b8;
-      padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 800;
-      cursor: pointer; transition: 0.2s;
+    .radar-mode-opt.active { background: rgba(59, 130, 246, 0.16); border-color: var(--primary); color: #ffffff; box-shadow: 0 0 14px rgba(59,130,246,0.28); }
+    .radar-mode-opt.mode-premium { border-color: rgba(192,132,252,0.35); }
+    .radar-mode-opt.mode-premium:hover { border-color: #c084fc; }
+    .radar-mode-opt.mode-premium.active {
+      background: linear-gradient(135deg, rgba(168,85,247,0.24), rgba(245,158,11,0.16));
+      border-color: #c084fc; color: #ffffff; box-shadow: 0 0 18px rgba(192,132,252,0.35);
     }
-    .radar-reg-chip:hover { color: #ffffff; border-color: #38bdf8; }
-    .radar-reg-chip.active { background: rgba(56,189,248,0.18); color: #e0f2fe; border-color: #38bdf8; }
+
+    .threat-grid-pro {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 7px;
+      max-height: 295px; overflow-y: auto; padding-right: 4px;
+    }
+    .threat-grid-pro .threat-btn {
+      padding: 9px 7px; font-size: 0.74rem; gap: 5px; border-radius: 8px;
+    }
+    .threat-grid-pro .threat-btn i { font-size: 1.15rem; }
 
     .radar-loc-wrap { position: relative; }
     .radar-autocomplete-list {
       position: absolute; top: 100%; left: 0; right: 0; z-index: 999;
       background: #070e1c; border: 1px solid #38bdf8; border-top: none;
-      border-radius: 0 0 10px 10px; max-height: 220px; overflow-y: auto;
+      border-radius: 0 0 10px 10px; max-height: 240px; overflow-y: auto;
       box-shadow: 0 14px 30px rgba(0,0,0,0.85); display: none;
     }
     .radar-ac-item {
-      padding: 8px 12px; cursor: pointer; font-size: 0.82rem; color: #e2e8f0;
+      padding: 9px 12px; cursor: pointer; font-size: 0.8rem; color: #e2e8f0;
       display: flex; justify-content: space-between; align-items: center; gap: 8px;
-      border-bottom: 1px solid #162238;
+      border-bottom: 1px solid #162238; line-height: 1.3;
     }
-    .radar-ac-item:hover { background: rgba(59,130,246,0.22); color: #ffffff; }
-    .radar-ac-tag { font-size: 0.66rem; color: #38bdf8; font-weight: 800; text-transform: uppercase; background: rgba(56,189,248,0.12); padding: 2px 6px; border-radius: 4px; }
+    .radar-ac-item:hover { background: rgba(59,130,246,0.24); color: #ffffff; }
+    .radar-ac-tag { font-size: 0.64rem; color: #38bdf8; font-weight: 800; text-transform: uppercase; background: rgba(56,189,248,0.12); padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }
     .radar-cep-info {
       display: none; margin-top: 7px; padding: 7px 10px; border-radius: 7px;
       background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.4);
@@ -795,9 +802,14 @@
     }
     .target-meta-chip.cnpj-ok { border-color: rgba(16,185,129,0.55); color: #6ee7b7; background: rgba(16,185,129,0.1); }
     .target-meta-chip.cnpj-warn { border-color: rgba(245,158,11,0.55); color: #fde68a; background: rgba(245,158,11,0.1); }
+    .target-meta-chip.chip-score { border-color: rgba(192,132,252,0.55); color: #e9d5ff; background: rgba(192,132,252,0.14); }
     .target-receita-box {
       margin-top: 8px; padding: 9px 11px; border-radius: 7px; background: rgba(16,185,129,0.08);
       border: 1px solid rgba(16,185,129,0.35); color: #d1fae5; font-size: 0.78rem; line-height: 1.48;
+    }
+    .target-strategy-box {
+      margin-top: 7px; padding: 8px 11px; border-radius: 7px; background: rgba(192,132,252,0.1);
+      border: 1px solid rgba(192,132,252,0.38); color: #f3e8ff; font-size: 0.78rem; line-height: 1.45;
     }
     .target-photos-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 9px; align-items: center; }
     .target-photo-thumb {
@@ -1727,8 +1739,8 @@
           
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-              <h3 style="color:#ffffff; font-size:1.18rem; margin:0;"><i class="fas fa-radar" style="color:#ef4444;"></i> Radar OSINT 360° PRO — SP Completo (Capital, ABC, Litoral, Interior, Bairros & CEP)</h3>
-              <span class="fn-help-pill"><i class="fas fa-infinity"></i> Varredura contínua até pausar • Histórico salvo • 🔴 Grave / 🟡 Atenção / 🟢 De Boa</span>
+              <h3 style="color:#ffffff; font-size:1.18rem; margin:0;"><i class="fas fa-radar" style="color:#ef4444;"></i> Radar OSINT 360° PRO — Busca por Rua, Bairro, Cidade ou CEP (SP Todo)</h3>
+              <span class="fn-help-pill"><i class="fas fa-infinity"></i> Varredura contínua • Histórico salvo • 🔴 Grave / 🟡 Atenção / 🟢 De Boa</span>
             </div>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
               <button type="button" class="target-act-btn" id="btn-radar-sound" onclick="alternarSomRadar()" title="Tocar bip discreto quando achar caso VERMELHO"><i class="fas fa-volume-up" style="color:#10b981;"></i> Alerta Som: ON</button>
@@ -1737,78 +1749,70 @@
             </div>
           </div>
 
-          <div class="radar-container" style="grid-template-columns: 360px 1fr; margin-bottom: 36px; gap: 22px; padding: 22px;">
+          <div class="radar-container" style="grid-template-columns: 370px 1fr; margin-bottom: 36px; gap: 22px; padding: 22px;">
             
-            <div class="target-console" style="gap: 18px; padding-right: 22px;">
+            <div class="target-console" style="gap: 16px; padding-right: 22px;">
                 <div class="console-step">
                     <h4><i class="fas fa-sliders-h"></i> 1. Motor de Varredura</h4>
                     <div class="radar-mode-switch">
                         <button type="button" class="radar-mode-opt active" id="radar-mode-web" onclick="definirModoRadar('web')">
-                            <i class="fas fa-globe" style="color:#38bdf8; font-size:1.1rem;"></i>
+                            <i class="fas fa-globe" style="color:#38bdf8; font-size:1.15rem;"></i>
                             <span>Reclame Aqui + Google</span>
+                            <small>Avaliações e reclamações</small>
                         </button>
-                        <button type="button" class="radar-mode-opt" id="radar-mode-osm" onclick="definirModoRadar('osm')">
-                            <i class="fas fa-map-marked-alt" style="color:#10b981; font-size:1.1rem;"></i>
-                            <span>OSM + Reclamações</span>
+                        <button type="button" class="radar-mode-opt mode-premium" id="radar-mode-premium" onclick="definirModoRadar('premium')">
+                            <i class="fas fa-bolt" style="color:#facc15; font-size:1.15rem;"></i>
+                            <span>Deep Scan Premium</span>
+                            <small>Diário Oficial, iFood, Redes & CNPJ</small>
                         </button>
                     </div>
                 </div>
 
                 <div class="console-step">
-                    <h4><i class="fas fa-map-marked-alt"></i> 2. Região / Cidade / Bairro / CEP (SP)</h4>
-                    <div class="radar-region-chips" id="radar-region-chips">
-                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Diadema - Inamar')">Inamar</button>
-                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Diadema - Serraria')">Serraria</button>
-                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Diadema - Eldorado')">Eldorado</button>
-                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Diadema')">Diadema</button>
-                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Grande ABC - SP')">ABC</button>
-                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('São Paulo - Capital')">Capital SP</button>
-                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Litoral de São Paulo')">Litoral SP</button>
-                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Interior de São Paulo')">Interior SP</button>
-                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Estado de São Paulo')">SP Todo</button>
-                    </div>
+                    <h4><i class="fas fa-search-location"></i> 2. Pesquisar Rua, Bairro, Cidade ou CEP</h4>
                     <div class="radar-loc-wrap">
                         <div style="display:flex; gap:6px;">
-                            <input type="text" class="form-input" id="radar-cidade" value="Diadema" autocomplete="off"
-                                   placeholder="Digite cidade, bairro (ex: dia, inamar) ou CEP..."
-                                   style="background: rgba(255,255,255,0.04); border-color: #26385a; padding: 11px 14px; font-weight: 700; font-size: 0.92rem; flex:1;"
+                            <input type="text" class="form-input" id="radar-cidade" value="" autocomplete="off"
+                                   placeholder="Digite rua, bairro, cidade ou CEP..."
+                                   style="background: rgba(255,255,255,0.04); border-color: #26385a; padding: 12px 14px; font-weight: 700; font-size: 0.9rem; flex:1;"
                                    oninput="aoDigitarLocalRadar(this.value)"
-                                   onfocus="aoDigitarLocalRadar(this.value)"
                                    onkeydown="if(event.key==='Enter'){ event.preventDefault(); verificarCepOuLocalRadar(); }">
-                            <button type="button" class="target-act-btn" id="btn-radar-cep" style="padding: 0 12px; border-color: #38bdf8; color: #bae6fd;" onclick="verificarCepOuLocalRadar()" title="Buscar endereço por CEP ou centralizar no mapa">
-                                <i class="fas fa-crosshairs"></i> CEP
+                            <button type="button" class="target-act-btn" id="btn-radar-cep" style="padding: 0 12px; border-color: #38bdf8; color: #bae6fd;" onclick="verificarCepOuLocalRadar()" title="Localizar rua, bairro ou CEP no mapa">
+                                <i class="fas fa-crosshairs"></i> Achar
                             </button>
                         </div>
                         <div class="radar-autocomplete-list" id="radar-ac-list"></div>
                     </div>
                     <div class="radar-cep-info" id="radar-cep-info"></div>
-                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px;">
-                        <span style="font-size:0.72rem; color:#94a3b8; font-weight:700;"><i class="fas fa-circle-dot" style="color:#10b981;"></i> Raio OSM/Mapa:</span>
-                        <select id="radar-raio-osm" style="background:#070e1c; border:1px solid #26385a; color:#e2e8f0; padding:4px 9px; border-radius:7px; font-size:0.76rem; font-weight:800;">
-                            <option value="1500">1,5 km (Bairro)</option>
-                            <option value="3000" selected>3 km (Padrão)</option>
-                            <option value="6000">6 km (Cidade)</option>
-                            <option value="12000">12 km (Região)</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="console-step">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:9px;">
-                        <h4 style="margin:0;"><i class="fas fa-crosshairs"></i> 3. Ramos / Alvos</h4>
-                        <button type="button" class="target-act-btn" style="padding:3px 9px; font-size:0.72rem;" onclick="selecionarTodosRamosRadar()"><i class="fas fa-check-double"></i> Tudo (Geral)</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; gap:6px;">
+                        <h4 style="margin:0;"><i class="fas fa-crosshairs"></i> 3. Ramos / Alvos (14)</h4>
+                        <div style="display:flex; gap:5px;">
+                            <button type="button" class="target-act-btn" style="padding:3px 8px; font-size:0.7rem;" onclick="selecionarTodosRamosRadar()"><i class="fas fa-check-double"></i> Tudo</button>
+                            <button type="button" class="target-act-btn" style="padding:3px 8px; font-size:0.7rem; color:#94a3b8;" onclick="limparRamosRadar()" title="Desmarcar todos"><i class="fas fa-times"></i></button>
+                        </div>
                     </div>
-                    <div class="threat-grid">
-                        <button type="button" class="threat-btn active" data-cat="alimentos" data-query="Restaurantes, lanchonetes, padarias, açougues, bares, adegas, pizzarias, marmitarias e mercados de bairro" onclick="toggleThreat(this)"><i class="fas fa-hamburger"></i> Alimentos</button>
-                        <button type="button" class="threat-btn" data-cat="saude" data-query="Clínicas médicas, consultórios, médicos, dentistas, laboratórios, clínicas populares, hospitais e estética invasiva" onclick="toggleThreat(this)"><i class="fas fa-user-md"></i> Médicos / Clínicas</button>
-                        <button type="button" class="threat-btn" data-cat="idosos" data-query="Casas de repouso, asilos, lares de idosos (ILPI), clínicas geriátricas e clínicas de reabilitação" onclick="toggleThreat(this)"><i class="fas fa-wheelchair"></i> Casa de Idosos</button>
-                        <button type="button" class="threat-btn" data-cat="farmacia" data-query="Farmácias, drogarias e farmácias de manipulação" onclick="toggleThreat(this)"><i class="fas fa-pills"></i> Farmácias / Meds</button>
-                        <button type="button" class="threat-btn" data-cat="beleza" data-query="Salões de beleza, barbearias, clínicas de estética, estúdios de tatuagem, podologia e academias" onclick="toggleThreat(this)"><i class="fas fa-cut"></i> Beleza / Estética</button>
-                        <button type="button" class="threat-btn" data-cat="geral" data-query="Pet shops, clínicas veterinárias, hotéis, motéis, escolas, creches, dedetizadoras e comércios locais em geral" onclick="toggleThreat(this)"><i class="fas fa-store"></i> Geral / Pet / Outros</button>
+                    <div class="threat-grid-pro">
+                        <button type="button" class="threat-btn active" data-cat="alimentos" data-query="Restaurantes, lanchonetes, padarias, pizzarias, hamburguerias, marmitarias e pastelarias" onclick="toggleThreat(this)"><i class="fas fa-hamburger"></i> Alimentos</button>
+                        <button type="button" class="threat-btn" data-cat="medicos" data-query="Médicos, clínicas médicas, consultórios, dentistas, laboratórios, clínicas populares e hospitais" onclick="toggleThreat(this)"><i class="fas fa-user-md"></i> Médicos / Clínicas</button>
+                        <button type="button" class="threat-btn" data-cat="idosos" data-query="Casas de idosos, casas de repouso, asilos, lares geriátricos (ILPI) e clínicas de reabilitação" onclick="toggleThreat(this)"><i class="fas fa-wheelchair"></i> Casa de Idosos</button>
+                        <button type="button" class="threat-btn" data-cat="farmacia" data-query="Farmácias, drogarias, farmácias de manipulação e distribuidoras de medicamentos" onclick="toggleThreat(this)"><i class="fas fa-pills"></i> Farmácias / Meds</button>
+                        <button type="button" class="threat-btn" data-cat="nails" data-query="Nails designer, estúdios de unhas, alongamento de unhas, cílios, lash designer, sobrancelhas, salões de beleza e barbearias" onclick="toggleThreat(this)"><i class="fas fa-spa"></i> Nails / Cílios / Salão</button>
+                        <button type="button" class="threat-btn" data-cat="botox" data-query="Clínicas de estética, botox, harmonização facial, preenchimento, biomedicina estética, depilação a laser e procedimentos invasivos" onclick="toggleThreat(this)"><i class="fas fa-syringe"></i> Estética / Botox</button>
+                        <button type="button" class="threat-btn" data-cat="academia" data-query="Academias de ginástica, crossfit, pilates, estúdios fitness, lutas, natação e lojas de suplementos" onclick="toggleThreat(this)"><i class="fas fa-dumbbell"></i> Academias / Fitness</button>
+                        <button type="button" class="threat-btn" data-cat="adega" data-query="Adegas, distribuidoras de bebidas, bares, tabacarias, empórios e conveniências" onclick="toggleThreat(this)"><i class="fas fa-wine-bottle"></i> Adegas / Bares</button>
+                        <button type="button" class="threat-btn" data-cat="mercado" data-query="Mercados de bairro, supermercados, açougues, peixarias, hortifruti e sacolões" onclick="toggleThreat(this)"><i class="fas fa-shopping-basket"></i> Mercados / Açougue</button>
+                        <button type="button" class="threat-btn" data-cat="pet" data-query="Pet shops, banho e tosa, clínicas veterinárias, hospitais veterinários e hotéis para pets" onclick="toggleThreat(this)"><i class="fas fa-paw"></i> Pet Shop / Vet</button>
+                        <button type="button" class="threat-btn" data-cat="tatuagem" data-query="Estúdios de tatuagem, body piercing, micropigmentação e clínicas de podologia" onclick="toggleThreat(this)"><i class="fas fa-pen-nib"></i> Tatuagem / Podologia</button>
+                        <button type="button" class="threat-btn" data-cat="hotel" data-query="Hotéis, motéis, pousadas, hostels e hospedagens" onclick="toggleThreat(this)"><i class="fas fa-bed"></i> Hotéis / Motéis</button>
+                        <button type="button" class="threat-btn" data-cat="escola" data-query="Escolas infantis, creches, berçários, cantinas escolares e buffets infantis" onclick="toggleThreat(this)"><i class="fas fa-school"></i> Escolas / Creches</button>
+                        <button type="button" class="threat-btn" data-cat="geral" data-query="Dedetizadoras, lavanderias, óticas, cosméticos, saneantes, indústrias e comércios locais em geral" onclick="toggleThreat(this)"><i class="fas fa-store"></i> Geral / Outros</button>
                     </div>
                 </div>
 
-                <button type="button" class="btn-scan" id="btn-start-radar" style="padding: 16px; font-size: 1.05rem;" onclick="toggleRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura Contínua</button>
+                <button type="button" class="btn-scan" id="btn-start-radar" style="padding: 15px; font-size: 1.02rem;" onclick="toggleRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura Contínua</button>
             </div>
 
             <div class="radar-display-area">
@@ -1857,7 +1861,7 @@
                     <button type="button" class="radar-flt-btn flt-yellow" id="radar-flt-AMARELO" onclick="definirFiltroRadar('AMARELO')">🟡 Atenção</button>
                     <button type="button" class="radar-flt-btn flt-green" id="radar-flt-VERDE" onclick="definirFiltroRadar('VERDE')">🟢 De Boa</button>
                     <button type="button" class="radar-flt-btn" id="radar-flt-SALVOS" onclick="definirFiltroRadar('SALVOS')">🗄️ Salvos</button>
-                    <input type="text" class="radar-hist-search" id="radar-hist-search" placeholder="Filtrar no histórico (nome, bairro, CNPJ)..." oninput="renderizarHistoricoRadar()">
+                    <input type="text" class="radar-hist-search" id="radar-hist-search" placeholder="Filtrar no histórico (nome, rua, bairro, CNPJ)..." oninput="renderizarHistoricoRadar()">
                 </div>
 
                 <!-- STATUS LIVE DA VARREDURA -->
@@ -4355,11 +4359,11 @@
     let arquivoLaboratorio = null;
     const TAMANHO_MAX_ARQUIVO_MB = 15;
 
-    // --- VARIÁVEIS DO RADAR OSINT 360° PRO (CONTÍNUO + HISTÓRICO + SP/BAIRROS/CEP) ---
+    // --- VARIÁVEIS DO RADAR OSINT 360° PRO V3 (RUA/BAIRRO/CEP REAL-TIME + DEEP SCAN PREMIUM) ---
     const RADAR_STORAGE_KEY = 'covisa_radar_historico_v2';
-    let radarTargetCity = "Diadema";
+    let radarTargetCity = "";
     let isRadarScanning = false;
-    let radarModoAtual = 'web'; // 'web' = Reclame Aqui + Google | 'osm' = OpenStreetMap + Reclamações
+    let radarModoAtual = 'web'; // 'web' = Reclame Aqui + Google | 'premium' = Deep Scan Premium (Diário Oficial, iFood, Redes & CNPJ)
     let radarAlvosEncontrados = [];
     let radarFiltroNivel = 'todos';
     let radarOndaAtual = 0;
@@ -4369,136 +4373,7 @@
     let radarMarkersLayer = null;
     let radarMarkerById = new Map();
     let radarBoundsPoints = [];
-
-    // Base completa de locais de SP (Capital, ABC, Diadema todos os bairros, Litoral e Interior)
-    const RADAR_LOCAIS_SP = [
-        // Diadema + todos os bairros
-        { label: "Diadema", tag: "ABC" },
-        { label: "Diadema - Inamar", tag: "Bairro Diadema" },
-        { label: "Diadema - Serraria", tag: "Bairro Diadema" },
-        { label: "Diadema - Eldorado", tag: "Bairro Diadema" },
-        { label: "Diadema - Centro", tag: "Bairro Diadema" },
-        { label: "Diadema - Campanário", tag: "Bairro Diadema" },
-        { label: "Diadema - Canhema", tag: "Bairro Diadema" },
-        { label: "Diadema - Casa Grande", tag: "Bairro Diadema" },
-        { label: "Diadema - Conceição", tag: "Bairro Diadema" },
-        { label: "Diadema - Piraporinha", tag: "Bairro Diadema" },
-        { label: "Diadema - Taboão", tag: "Bairro Diadema" },
-        { label: "Diadema - Vila Nogueira", tag: "Bairro Diadema" },
-        // Grande ABC
-        { label: "Grande ABC - SP", tag: "Região" },
-        { label: "São Bernardo do Campo", tag: "ABC" },
-        { label: "São Bernardo do Campo - Rudge Ramos", tag: "Bairro SBC" },
-        { label: "São Bernardo do Campo - Centro", tag: "Bairro SBC" },
-        { label: "São Bernardo do Campo - Assunção", tag: "Bairro SBC" },
-        { label: "São Bernardo do Campo - Baeta Neves", tag: "Bairro SBC" },
-        { label: "São Bernardo do Campo - Paulicéia", tag: "Bairro SBC" },
-        { label: "Santo André", tag: "ABC" },
-        { label: "Santo André - Centro", tag: "Bairro Sto André" },
-        { label: "Santo André - Vila Assunção", tag: "Bairro Sto André" },
-        { label: "Santo André - Campestre", tag: "Bairro Sto André" },
-        { label: "São Caetano do Sul", tag: "ABC" },
-        { label: "Mauá", tag: "ABC" },
-        { label: "Ribeirão Pires", tag: "ABC" },
-        { label: "Rio Grande da Serra", tag: "ABC" },
-        // São Paulo Capital + Principais Bairros
-        { label: "São Paulo - Capital", tag: "Capital" },
-        { label: "Jabaquara - São Paulo", tag: "Zona Sul SP" },
-        { label: "Santo Amaro - São Paulo", tag: "Zona Sul SP" },
-        { label: "Moema - São Paulo", tag: "Zona Sul SP" },
-        { label: "Vila Mariana - São Paulo", tag: "Zona Sul SP" },
-        { label: "Saúde - São Paulo", tag: "Zona Sul SP" },
-        { label: "Ipiranga - São Paulo", tag: "Zona Sul SP" },
-        { label: "Interlagos - São Paulo", tag: "Zona Sul SP" },
-        { label: "Grajaú - São Paulo", tag: "Zona Sul SP" },
-        { label: "Capão Redondo - São Paulo", tag: "Zona Sul SP" },
-        { label: "Campo Limpo - São Paulo", tag: "Zona Sul SP" },
-        { label: "Cidade Ademar - São Paulo", tag: "Zona Sul SP" },
-        { label: "Pedreira - São Paulo", tag: "Zona Sul SP" },
-        { label: "Morumbi - São Paulo", tag: "Zona Sul SP" },
-        { label: "Itaim Bibi - São Paulo", tag: "Zona Sul SP" },
-        { label: "Pinheiros - São Paulo", tag: "Zona Oeste SP" },
-        { label: "Vila Madalena - São Paulo", tag: "Zona Oeste SP" },
-        { label: "Lapa - São Paulo", tag: "Zona Oeste SP" },
-        { label: "Butantã - São Paulo", tag: "Zona Oeste SP" },
-        { label: "Perdizes - São Paulo", tag: "Zona Oeste SP" },
-        { label: "Tatuapé - São Paulo", tag: "Zona Leste SP" },
-        { label: "Mooca - São Paulo", tag: "Zona Leste SP" },
-        { label: "Itaquera - São Paulo", tag: "Zona Leste SP" },
-        { label: "Penha - São Paulo", tag: "Zona Leste SP" },
-        { label: "Vila Prudente - São Paulo", tag: "Zona Leste SP" },
-        { label: "São Mateus - São Paulo", tag: "Zona Leste SP" },
-        { label: "São Miguel Paulista - São Paulo", tag: "Zona Leste SP" },
-        { label: "Santana - São Paulo", tag: "Zona Norte SP" },
-        { label: "Tucuruvi - São Paulo", tag: "Zona Norte SP" },
-        { label: "Casa Verde - São Paulo", tag: "Zona Norte SP" },
-        { label: "Freguesia do Ó - São Paulo", tag: "Zona Norte SP" },
-        { label: "Jaçanã - São Paulo", tag: "Zona Norte SP" },
-        { label: "Centro - São Paulo", tag: "Centro SP" },
-        { label: "Bela Vista - São Paulo", tag: "Centro SP" },
-        { label: "Liberdade - São Paulo", tag: "Centro SP" },
-        { label: "Brás - São Paulo", tag: "Centro SP" },
-        { label: "Consolação - São Paulo", tag: "Centro SP" },
-        // Grande SP
-        { label: "Guarulhos", tag: "Grande SP" },
-        { label: "Osasco", tag: "Grande SP" },
-        { label: "Barueri", tag: "Grande SP" },
-        { label: "Barueri - Alphaville", tag: "Grande SP" },
-        { label: "Cotia", tag: "Grande SP" },
-        { label: "Taboão da Serra", tag: "Grande SP" },
-        { label: "Embu das Artes", tag: "Grande SP" },
-        { label: "Itapecerica da Serra", tag: "Grande SP" },
-        { label: "Suzano", tag: "Grande SP" },
-        { label: "Mogi das Cruzes", tag: "Grande SP" },
-        { label: "Ferraz de Vasconcelos", tag: "Grande SP" },
-        { label: "Poá", tag: "Grande SP" },
-        { label: "Itaquaquecetuba", tag: "Grande SP" },
-        { label: "Carapicuíba", tag: "Grande SP" },
-        { label: "Franco da Rocha", tag: "Grande SP" },
-        // Litoral SP
-        { label: "Litoral de São Paulo", tag: "Litoral" },
-        { label: "Santos", tag: "Litoral Sul" },
-        { label: "São Vicente", tag: "Litoral Sul" },
-        { label: "Praia Grande", tag: "Litoral Sul" },
-        { label: "Guarujá", tag: "Litoral Sul" },
-        { label: "Cubatão", tag: "Litoral Sul" },
-        { label: "Bertioga", tag: "Litoral Sul" },
-        { label: "Mongaguá", tag: "Litoral Sul" },
-        { label: "Itanhaém", tag: "Litoral Sul" },
-        { label: "Peruíbe", tag: "Litoral Sul" },
-        { label: "Ubatuba", tag: "Litoral Norte" },
-        { label: "Caraguatatuba", tag: "Litoral Norte" },
-        { label: "São Sebastião", tag: "Litoral Norte" },
-        { label: "Ilhabela", tag: "Litoral Norte" },
-        // Interior SP
-        { label: "Interior de São Paulo", tag: "Interior" },
-        { label: "Estado de São Paulo", tag: "SP Todo" },
-        { label: "Campinas", tag: "Interior SP" },
-        { label: "Sorocaba", tag: "Interior SP" },
-        { label: "Jundiaí", tag: "Interior SP" },
-        { label: "Ribeirão Preto", tag: "Interior SP" },
-        { label: "São José dos Campos", tag: "Interior SP" },
-        { label: "São José do Rio Preto", tag: "Interior SP" },
-        { label: "Bauru", tag: "Interior SP" },
-        { label: "Piracicaba", tag: "Interior SP" },
-        { label: "Taubaté", tag: "Interior SP" },
-        { label: "Indaiatuba", tag: "Interior SP" },
-        { label: "Americana", tag: "Interior SP" },
-        { label: "Limeira", tag: "Interior SP" },
-        { label: "Marília", tag: "Interior SP" },
-        { label: "Presidente Prudente", tag: "Interior SP" },
-        { label: "Franca", tag: "Interior SP" },
-        { label: "Araraquara", tag: "Interior SP" },
-        { label: "São Carlos", tag: "Interior SP" },
-        { label: "Atibaia", tag: "Interior SP" },
-        { label: "Bragança Paulista", tag: "Interior SP" },
-        { label: "Itu", tag: "Interior SP" },
-        { label: "Valinhos", tag: "Interior SP" },
-        { label: "Vinhedo", tag: "Interior SP" },
-        { label: "Sumaré", tag: "Interior SP" },
-        { label: "Hortolândia", tag: "Interior SP" },
-        { label: "Jacareí", tag: "Interior SP" }
-    ];
+    let radarAcTimer = null;
 
     function limparValorVazioIA(v) {
         const s = String(v || '').trim();
@@ -4557,7 +4432,6 @@
             localStorage.setItem(RADAR_STORAGE_KEY, JSON.stringify(compacto));
         } catch (_) {
             try {
-                // Se fotos base64 lotarem o localStorage, salva sem as fotos pesadas
                 const leve = radarAlvosEncontrados.slice(0, 120).map(a => ({
                     ...a,
                     fotos: (a.fotos || []).filter(f => !String(f.url || '').startsWith('data:'))
@@ -4572,9 +4446,7 @@
             const raw = localStorage.getItem(RADAR_STORAGE_KEY);
             if (!raw) return;
             const arr = JSON.parse(raw);
-            if (Array.isArray(arr)) {
-                radarAlvosEncontrados = arr;
-            }
+            if (Array.isArray(arr)) radarAlvosEncontrados = arr;
         } catch (_) {}
     }
 
@@ -4588,33 +4460,37 @@
         btns.forEach((b, i) => b.classList.toggle('active', todosAtivos ? i === 0 : true));
     };
 
+    window.limparRamosRadar = () => {
+        document.querySelectorAll('.threat-btn').forEach(b => b.classList.remove('active'));
+    };
+
     window.definirModoRadar = (modo) => {
         radarModoAtual = modo;
         document.getElementById('radar-mode-web')?.classList.toggle('active', modo === 'web');
-        document.getElementById('radar-mode-osm')?.classList.toggle('active', modo === 'osm');
+        document.getElementById('radar-mode-premium')?.classList.toggle('active', modo === 'premium');
     };
 
-    window.selecionarLocalRapidoRadar = (localStr) => {
+    window.selecionarSugestaoLocalRadar = (texto, lat, lon) => {
         const inp = document.getElementById('radar-cidade');
-        if (inp) inp.value = localStr;
-        radarTargetCity = localStr;
+        if (inp) inp.value = texto;
+        radarTargetCity = texto;
         const ac = document.getElementById('radar-ac-list');
         if (ac) ac.style.display = 'none';
-        const cepInfo = document.getElementById('radar-cep-info');
-        if (cepInfo) cepInfo.style.display = 'none';
-        document.querySelectorAll('.radar-reg-chip').forEach(c => {
-            c.classList.toggle('active', c.innerText.toLowerCase() === localStr.toLowerCase() || localStr.toLowerCase().includes(c.innerText.toLowerCase()));
-        });
-        centralizarMapaPorTexto(localStr);
+        const mapa = garantirMapaRadar();
+        if (mapa && lat && lon && !isNaN(lat) && !isNaN(lon)) {
+            mapa.setView([lat, lon], 15, { animate: true });
+        }
     };
 
+    // Autocomplete REAL-TIME para qualquer rua, bairro, cidade ou CEP do Estado de SP / Brasil
     window.aoDigitarLocalRadar = (valor) => {
         const termo = String(valor || '').trim();
         radarTargetCity = termo;
         const ac = document.getElementById('radar-ac-list');
         if (!ac) return;
 
-        // Se digitou 8 dígitos de CEP, já consulta automaticamente no ViaCEP
+        if (radarAcTimer) clearTimeout(radarAcTimer);
+
         const soDigitos = termo.replace(/\D/g, '');
         if (soDigitos.length === 8 && /^\d{5}-?\d{3}$/.test(termo)) {
             ac.style.display = 'none';
@@ -4622,24 +4498,58 @@
             return;
         }
 
-        const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-        const tNorm = norm(termo);
-        const matches = tNorm
-            ? RADAR_LOCAIS_SP.filter(item => norm(item.label).includes(tNorm) || norm(item.tag).includes(tNorm)).slice(0, 12)
-            : RADAR_LOCAIS_SP.slice(0, 10);
-
-        if (matches.length === 0) {
+        if (termo.length < 3) {
             ac.style.display = 'none';
             return;
         }
 
-        ac.innerHTML = matches.map(m =>
-            `<div class="radar-ac-item" onmousedown="selecionarLocalRapidoRadar('${escaparHtmlWA(m.label)}')">
-                <span><i class="fas fa-map-marker-alt" style="color:#38bdf8; margin-right:6px;"></i>${escaparHtmlWA(m.label)}</span>
-                <span class="radar-ac-tag">${escaparHtmlWA(m.tag)}</span>
-            </div>`
-        ).join('');
-        ac.style.display = 'block';
+        radarAcTimer = setTimeout(async () => {
+            try {
+                const q = encodeURIComponent(`${termo}, São Paulo, Brasil`);
+                const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&addressdetails=1&countrycodes=br&limit=8`, {
+                    headers: { 'Accept-Language': 'pt-BR' }
+                });
+                if (!r.ok) return;
+                const itens = await r.json();
+                if (!Array.isArray(itens) || itens.length === 0) {
+                    ac.style.display = 'none';
+                    return;
+                }
+
+                const vistos = new Set();
+                const htmlSug = [];
+                for (const it of itens) {
+                    const ad = it.address || {};
+                    const rua = ad.road || ad.pedestrian || '';
+                    const bairro = ad.suburb || ad.neighbourhood || ad.quarter || ad.city_district || '';
+                    const cidade = ad.city || ad.town || ad.municipality || ad.village || '';
+                    const uf = ad['ISO3166-2-lvl4'] ? ad['ISO3166-2-lvl4'].replace('BR-', '') : 'SP';
+
+                    let label = [rua, bairro, cidade].filter(Boolean).join(', ');
+                    if (!label) label = String(it.display_name || '').split(',').slice(0, 3).join(',').trim();
+                    if (!label || vistos.has(label.toLowerCase())) continue;
+                    vistos.add(label.toLowerCase());
+
+                    const tag = rua ? 'Rua' : (bairro ? 'Bairro' : (cidade ? `Cidade/${uf}` : 'Local'));
+                    const safeLbl = escaparHtmlWA(label).replace(/'/g, "\\'");
+                    htmlSug.push(
+                        `<div class="radar-ac-item" onmousedown="selecionarSugestaoLocalRadar('${safeLbl}', ${parseFloat(it.lat)}, ${parseFloat(it.lon)})">
+                            <span><i class="fas fa-map-marker-alt" style="color:#38bdf8; margin-right:6px;"></i>${escaparHtmlWA(label)}</span>
+                            <span class="radar-ac-tag">${escaparHtmlWA(tag)}</span>
+                        </div>`
+                    );
+                }
+
+                if (htmlSug.length > 0) {
+                    ac.innerHTML = htmlSug.join('');
+                    ac.style.display = 'block';
+                } else {
+                    ac.style.display = 'none';
+                }
+            } catch (_) {
+                ac.style.display = 'none';
+            }
+        }, 380);
     };
 
     document.addEventListener('click', (e) => {
@@ -4653,6 +4563,9 @@
         const inp = document.getElementById('radar-cidade');
         const infoBox = document.getElementById('radar-cep-info');
         const btn = document.getElementById('btn-radar-cep');
+        const ac = document.getElementById('radar-ac-list');
+        if (ac) ac.style.display = 'none';
+
         const val = (inp?.value || '').trim();
         const dig = val.replace(/\D/g, '');
 
@@ -4663,7 +4576,7 @@
                 const r = await fetch(`https://viacep.com.br/ws/${dig}/json/`);
                 const d = await r.json();
                 if (d.erro) throw new Error('CEP não encontrado no ViaCEP.');
-                const localFormatado = [d.localidade, d.bairro].filter(Boolean).join(' - ');
+                const localFormatado = [d.logradouro, d.bairro, d.localidade].filter(Boolean).join(', ');
                 inp.value = localFormatado || `${d.localidade} - ${d.uf}`;
                 radarTargetCity = inp.value;
                 if (infoBox) {
@@ -4678,8 +4591,9 @@
                 if (btn) { btn.disabled = false; btn.innerHTML = orig; }
             }
         } else if (val) {
+            if (infoBox) infoBox.style.display = 'none';
             centralizarMapaPorTexto(val);
-            showToast('Mapa Centralizado', `Foco movido para ${val}.`, 'success');
+            showToast('Localização Focada', `Mapa centralizado em ${val}.`, 'success');
         }
     };
 
@@ -4828,109 +4742,6 @@
         return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
     }
 
-    function montarFiltroOverpassPorRaio(cats, lat, lon, raio) {
-        const blocos = [];
-        const ar = `around:${raio},${lat},${lon}`;
-        if (cats.includes('alimentos')) {
-            blocos.push(`nwr["amenity"~"restaurant|fast_food|cafe|bakery|bar|pub|food_court|ice_cream"](${ar});`);
-            blocos.push(`nwr["shop"~"supermarket|butcher|bakery|convenience|greengrocer|beverages|alcohol"](${ar});`);
-        }
-        if (cats.includes('saude')) {
-            blocos.push(`nwr["amenity"~"clinic|hospital|dentist|doctors|laboratory"](${ar});`);
-            blocos.push(`nwr["healthcare"](${ar});`);
-        }
-        if (cats.includes('idosos')) {
-            blocos.push(`nwr["amenity"~"nursing_home|social_facility"](${ar});`);
-            blocos.push(`nwr["social_facility"~"nursing_home|assisted_living|group_home"](${ar});`);
-        }
-        if (cats.includes('farmacia')) {
-            blocos.push(`nwr["amenity"="pharmacy"](${ar});`);
-        }
-        if (cats.includes('beleza')) {
-            blocos.push(`nwr["shop"~"beauty|hairdresser|tattoo|massage|cosmetics"](${ar});`);
-            blocos.push(`nwr["leisure"="fitness_centre"](${ar});`);
-        }
-        if (cats.includes('geral')) {
-            blocos.push(`nwr["amenity"~"veterinary|school|kindergarten|hotel|motel"](${ar});`);
-            blocos.push(`nwr["shop"~"pet|chemist|perfumery"](${ar});`);
-        }
-        if (blocos.length === 0) {
-            blocos.push(`nwr["amenity"~"restaurant|fast_food|pharmacy|clinic|nursing_home"](${ar});`);
-        }
-        return `[out:json][timeout:25];(${blocos.join('')});out center 60;`;
-    }
-
-    async function buscarLocaisOpenStreetMap(localTexto, cats, raioMeters) {
-        // FIX: usa busca livre q=... para aceitar bairros (Jabaquara, Inamar, Serraria), cidades, regiões e CEPs!
-        const consulta = localTexto.toLowerCase().includes('brasil')
-            ? localTexto
-            : `${localTexto}, São Paulo, Brasil`;
-        const nomUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(consulta)}&format=json&limit=1`;
-        const rNom = await fetch(nomUrl, { headers: { 'Accept-Language': 'pt-BR' } });
-        if (!rNom.ok) throw new Error('Falha ao localizar coordenadas no OpenStreetMap.');
-        const nomData = await rNom.json();
-        if (!Array.isArray(nomData) || nomData.length === 0) {
-            throw new Error(`Local "${localTexto}" não encontrado no OpenStreetMap. Tente digitar "Cidade - Bairro" (ex: Diadema - Inamar).`);
-        }
-
-        const latCentro = parseFloat(nomData[0].lat);
-        const lonCentro = parseFloat(nomData[0].lon);
-        const mapa = garantirMapaRadar();
-        if (mapa && !isNaN(latCentro) && !isNaN(lonCentro)) {
-            mapa.setView([latCentro, lonCentro], 14, { animate: true });
-        }
-
-        const queryOverpass = montarFiltroOverpassPorRaio(cats, latCentro, lonCentro, raioMeters);
-
-        const endpoints = [
-            'https://overpass-api.de/api/interpreter',
-            'https://overpass.kumi.systems/api/interpreter',
-            'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
-        ];
-
-        let dadosOSM = null;
-        for (const ep of endpoints) {
-            try {
-                const rOv = await fetch(ep, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-                    body: 'data=' + encodeURIComponent(queryOverpass)
-                });
-                if (rOv.ok) {
-                    dadosOSM = await rOv.json();
-                    break;
-                }
-            } catch (_) {}
-        }
-
-        if (!dadosOSM || !Array.isArray(dadosOSM.elements)) {
-            throw new Error('Servidores do OpenStreetMap ocupados no momento. Tente novamente em alguns segundos ou use o modo Reclame Aqui + Google.');
-        }
-
-        const vistos = new Set(radarAlvosEncontrados.map(a => String(a.nome || '').toLowerCase()));
-        const locais = [];
-        for (const el of dadosOSM.elements) {
-            const tags = el.tags || {};
-            const nome = (tags.name || '').trim();
-            if (!nome || vistos.has(nome.toLowerCase())) continue;
-            vistos.add(nome.toLowerCase());
-
-            const rua = tags['addr:street'] || '';
-            const num = tags['addr:housenumber'] || '';
-            const bairro = tags['addr:suburb'] || tags['addr:neighbourhood'] || '';
-            const cidTag = tags['addr:city'] || localTexto;
-            const endereco = [rua && num ? `${rua}, ${num}` : rua, bairro, `${cidTag} - SP`].filter(Boolean).join(' - ');
-            const telefone = tags.phone || tags['contact:phone'] || tags['contact:whatsapp'] || '';
-            const site = tags.website || tags['contact:website'] || '';
-            const catTag = tags.amenity || tags.shop || tags.healthcare || tags.social_facility || 'Estabelecimento';
-            const lat = el.lat || el.center?.lat || null;
-            const lon = el.lon || el.center?.lon || null;
-
-            locais.push({ nome, endereco, bairro, telefone, site, categoria: catTag, lat, lon });
-        }
-        return locais;
-    }
-
     async function chamarGeminiComBuscaWeb(promptTexto) {
         const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
             method: 'POST',
@@ -5013,10 +4824,12 @@
         const telLimpo = limparValorVazioIA(alvo.telefone);
         const notaLimpa = limparValorVazioIA(alvo.nota_google);
         const catLimpa = limparValorVazioIA(alvo.categoria);
+        const scoreLimpo = alvo.score_oportunidade ? `${alvo.score_oportunidade}/100` : '';
 
         const telChip = telLimpo ? `<span class="target-meta-chip"><i class="fas fa-phone" style="color:#10b981;"></i> ${escaparHtmlWA(telLimpo)}</span>` : '';
         const notaChip = notaLimpa ? `<span class="target-meta-chip"><i class="fas fa-star" style="color:#fbbf24;"></i> ${escaparHtmlWA(notaLimpa)}</span>` : '';
         const catChip = catLimpa ? `<span class="target-meta-chip"><i class="fas fa-tag" style="color:#38bdf8;"></i> ${escaparHtmlWA(catLimpa)}</span>` : '';
+        const scoreChip = scoreLimpo ? `<span class="target-meta-chip chip-score"><i class="fas fa-bolt" style="color:#facc15;"></i> Score: ${escaparHtmlWA(scoreLimpo)}</span>` : '';
         const horaChip = alvo.captado_em ? `<span class="target-meta-chip" style="color:#94a3b8;"><i class="fas fa-clock"></i> ${escaparHtmlWA(alvo.captado_em)}</span>` : '';
         const salvoChip = alvo.salvo_dossie ? `<span class="target-meta-chip cnpj-ok"><i class="fas fa-check-double"></i> Salvo no Dossiê</span>` : '';
 
@@ -5033,7 +4846,11 @@
                 </div>`;
         }
 
-        const labelRelato = nivel === 'VERDE' ? 'SITUAÇÃO / OPORTUNIDADE PREVENTIVA' : 'FATOS / RECLAMAÇÃO REAL';
+        const estrategiaHtml = limparValorVazioIA(alvo.estrategia)
+            ? `<div class="target-strategy-box"><strong><i class="fas fa-chess-knight" style="color:#facc15;"></i> Oportunidade / Abordagem Premium:</strong> ${escaparHtmlWA(alvo.estrategia)}</div>`
+            : '';
+
+        const labelRelato = nivel === 'VERDE' ? 'SITUAÇÃO / PERFIL DO LOCAL' : 'FATOS / RECLAMAÇÃO REAL';
 
         return `
             <h4 style="color:white; flex-wrap:wrap;">
@@ -5042,11 +4859,12 @@
                 <span style="background:${color}; color:${nivel === 'AMARELO' ? '#000' : '#fff'}; padding:3px 9px; border-radius:5px; font-size:0.7rem; margin-left:auto; font-weight:900;">${badgeLabel}</span>
             </h4>
             <span class="loc"><i class="fas fa-map-marker-alt" style="color:var(--primary);"></i> ${escaparHtmlWA(alvo.endereco || alvo.cidade || '')}</span>
-            <div class="target-meta-grid">${cnpjChip}${telChip}${notaChip}${catChip}${horaChip}${salvoChip}</div>
+            <div class="target-meta-grid">${cnpjChip}${telChip}${notaChip}${catChip}${scoreChip}${horaChip}${salvoChip}</div>
             <div class="reason" style="color: ${txtCor};">
                 <strong>${labelRelato} (${escaparHtmlWA(alvo.fonte || 'Web')}):</strong> ${escaparHtmlWA(alvo.perigo || '')}
-                ${limparValorVazioIA(alvo.infracao_possivel) ? `<div style="margin-top:6px; font-size:0.8rem; color:#93c5fd;"><strong><i class="fas fa-gavel"></i> Base / Ação:</strong> ${escaparHtmlWA(alvo.infracao_possivel)}</div>` : ''}
+                ${limparValorVazioIA(alvo.infracao_possivel) ? `<div style="margin-top:6px; font-size:0.8rem; color:#93c5fd;"><strong><i class="fas fa-gavel"></i> Base / Documentos Exigidos:</strong> ${escaparHtmlWA(alvo.infracao_possivel)}</div>` : ''}
             </div>
+            ${estrategiaHtml}
             ${receitaHtml}
             ${fotosHtml}
             ${provasHtml ? `<div class="target-proof-links">${provasHtml}</div>` : ''}
@@ -5095,7 +4913,7 @@
                 <div class="osint-idle-msg">
                     <i class="fas fa-satellite" style="font-size: 2.5rem; color:#38bdf8;"></i>
                     <span>${radarAlvosEncontrados.length === 0
-                        ? 'Escolha Cidade, Bairro (ex: Inamar, Serraria, Jabaquara) ou CEP e clique em <strong>Iniciar Varredura Contínua</strong>. Todos os alvos ficam salvos aqui no histórico.'
+                        ? 'Digite qualquer <strong>Rua, Bairro, Cidade ou CEP</strong>, escolha o motor (<strong>Reclame Aqui + Google</strong> ou <strong>⚡ Deep Scan Premium</strong>) e clique em <strong>Iniciar Varredura Contínua</strong>.'
                         : 'Nenhum alvo encontrado neste filtro do histórico.'}</span>
                 </div>`;
             return;
@@ -5122,7 +4940,6 @@
         const nomeLimpo = limparValorVazioIA(rawAlvo.nome);
         if (!nomeLimpo) return false;
 
-        // Evita duplicata no histórico
         const jaExiste = radarAlvosEncontrados.some(a =>
             String(a.nome || '').toLowerCase() === nomeLimpo.toLowerCase() &&
             String(a.cidade || '').toLowerCase() === String(rawAlvo.cidade || '').toLowerCase()
@@ -5150,6 +4967,8 @@
             nivel,
             perigo: limparValorVazioIA(rawAlvo.perigo) || (nivel === 'VERDE' ? 'Estabelecimento sem reclamações graves recentes — oportunidade de regularização preventiva.' : 'Reclamação pública identificada.'),
             infracao_possivel: limparValorVazioIA(rawAlvo.infracao_possivel),
+            estrategia: limparValorVazioIA(rawAlvo.estrategia),
+            score_oportunidade: rawAlvo.score_oportunidade ? Number(rawAlvo.score_oportunidade) : null,
             ramo: rawAlvo.ramo || '',
             provas: Array.isArray(rawAlvo.provas) ? rawAlvo.provas : [],
             fotos,
@@ -5208,11 +5027,12 @@
         if (radarAlvosEncontrados.length === 0) {
             return showToast('Histórico Vazio', 'Faça uma varredura antes de exportar os leads.', 'warning');
         }
-        let csv = 'Nivel,Nome,Categoria,CNPJ,Telefone,Endereco,Cidade,Fonte,Relato,Salvo_Dossie\n';
+        let csv = 'Nivel,Score,Nome,Categoria,CNPJ,Telefone,Endereco,Cidade,Fonte,Relato,Estrategia,Salvo_Dossie\n';
         radarAlvosEncontrados.forEach(a => {
             const esc = (s) => '"' + String(s || '').replace(/"/g, '""').replace(/\n/g, ' ') + '"';
             csv += [
                 esc(normalizarNivelRadar(a.nivel)),
+                esc(a.score_oportunidade || ''),
                 esc(a.nome),
                 esc(a.categoria),
                 esc(a.cnpj),
@@ -5221,6 +5041,7 @@
                 esc(a.cidade),
                 esc(a.fonte),
                 esc(a.perigo),
+                esc(a.estrategia || ''),
                 esc(a.salvo_dossie ? 'SIM' : 'NAO')
             ].join(',') + '\n';
         });
@@ -5405,9 +5226,10 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
 
             const dossieTexto = [
                 `[RADAR OSINT 360° PRO - ${alvo.fonte || 'Web'}]`,
-                `Nível: ${nv} | Categoria: ${alvo.categoria || alvo.ramo || 'Geral'}${alvo.nota_google ? ' | Nota Google: ' + alvo.nota_google : ''}`,
+                `Nível: ${nv}${alvo.score_oportunidade ? ' | Score: ' + alvo.score_oportunidade + '/100' : ''} | Categoria: ${alvo.categoria || alvo.ramo || 'Geral'}${alvo.nota_google ? ' | Nota Google: ' + alvo.nota_google : ''}`,
                 `Relato / Situação: ${alvo.perigo || ''}`,
-                alvo.infracao_possivel ? `Base / Enquadramento: ${alvo.infracao_possivel}` : '',
+                alvo.infracao_possivel ? `Base / Documentos: ${alvo.infracao_possivel}` : '',
+                alvo.estrategia ? `Estratégia / Abordagem: ${alvo.estrategia}` : '',
                 `Endereço: ${rc.endereco_oficial || alvo.endereco || alvo.cidade || ''}`,
                 `Telefone / WhatsApp: ${alvo.telefone || rc.telefone_receita || 'Não informado'}`,
                 alvo.instagram_site ? `Instagram / Site: ${alvo.instagram_site}` : '',
@@ -5467,11 +5289,30 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
         }
     }
 
-    const RADAR_ANGULOS_BUSCA = [
+    const RADAR_ANGULOS_WEB = [
         'avaliações negativas no Google Maps e Reclame Aqui sobre higiene, sujeira, atendimento ou produtos vencidos',
-        'autuações da Vigilância Sanitária (COVISA), Diário Oficial, Procon ou notícias locais de irregularidades',
-        'reclamações recentes no iFood, Google e redes sociais de pequenos comércios de bairro, clínicas e casas de repouso',
-        'estabelecimentos locais pequenos e médios (incluindo alguns regulares/bem avaliados para prospecção preventiva VERDE e outros com críticas AMARELO/VERMELHO)'
+        'reclamações recentes no iFood, Google e redes sociais de pequenos e médios estabelecimentos do bairro',
+        'críticas de clientes sobre higiene, demora, estrutura precária ou irregularidades sanitárias locais',
+        'estabelecimentos reais da rua/bairro (misturando casos graves VERMELHO, atenção AMARELO e regulares VERDE)'
+    ];
+
+    const RADAR_CAMADAS_PREMIUM = [
+        {
+            nome: 'Diário Oficial, COVISA, Autuações & Interdições',
+            foco: 'publicações do Diário Oficial, autos de infração da Vigilância Sanitária (COVISA/UVIS), interdições, multas do Procon, operações sanitárias e notícias locais (G1, R7, jornais regionais) citando estabelecimentos reais'
+        },
+        {
+            nome: 'iFood, Instagram, Facebook & Denúncias de Bairro',
+            foco: 'reclamações reais de clientes no iFood, Instagram, Facebook, TikTok e Google sobre comércios locais, estúdios de nails/cílios, clínicas de estética/botox/harmonização, academias, adegas, lanchonetes e clínicas'
+        },
+        {
+            nome: 'Raio-X Comercial da Rua/Bairro (CNPJ + Documentação Obrigatória)',
+            foco: 'estabelecimentos reais localizados exatamente nesta rua/bairro/região (incluindo empresas novas ou pequenas) identificando CNPJ, WhatsApp/telefone, endereço completo e quais licenças sanitárias (LFS/Alvará COVISA, RT, PGRSS, Dedetização, Manual BPF, Esterilização) eles precisam regularizar'
+        },
+        {
+            nome: 'Clínicas Médicas, Estética Invasiva, Casas de Idosos & Farmácias',
+            foco: 'clínicas médicas/odontológicas, casas de repouso/idosos (ILPI), estética com botox/preenchimento, farmácias e pet shops da região com apontamentos, processos, denúncias ou necessidade de regularização técnica'
+        }
     ];
 
     window.toggleRadarHUD = async () => {
@@ -5492,19 +5333,24 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
 
         radarTargetCity = (document.getElementById('radar-cidade')?.value || '').trim();
         if (!radarTargetCity) {
-            showToast("Local Obrigatório", "Digite uma cidade, bairro (ex: Inamar, Jabaquara) ou CEP.", "warning");
+            showToast("Digite um Local", "Informe uma rua, bairro, cidade ou CEP para iniciar a varredura.", "warning");
+            document.getElementById('radar-cidade')?.focus();
             return;
+        }
+
+        // Se o usuário digitou um CEP e apertou Iniciar direto, resolve o CEP primeiro
+        if (/^\d{5}-?\d{3}$/.test(radarTargetCity)) {
+            await verificarCepOuLocalRadar();
+            radarTargetCity = (document.getElementById('radar-cidade')?.value || '').trim();
         }
 
         const activeThreatsBtn = Array.from(document.querySelectorAll('.threat-btn.active'));
         if (activeThreatsBtn.length === 0) {
-            showToast("Selecione um Ramo", "Marque pelo menos uma categoria de estabelecimento.", "warning");
+            showToast("Selecione um Ramo", "Marque pelo menos uma categoria de estabelecimento (ou clique em Tudo).", "warning");
             return;
         }
 
         const queries = activeThreatsBtn.map(b => b.getAttribute('data-query')).join('; ');
-        const cats = activeThreatsBtn.map(b => b.getAttribute('data-cat')).filter(Boolean);
-        const raioBase = parseInt(document.getElementById('radar-raio-osm')?.value || '3000', 10);
 
         garantirMapaRadar();
         centralizarMapaPorTexto(radarTargetCity);
@@ -5516,169 +5362,120 @@ Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escr
         radarSweep.style.display = 'block';
 
         try {
-            if (radarModoAtual === 'web') {
-                // LOOP CONTÍNUO ATÉ O USUÁRIO PAUSAR
-                while (isRadarScanning) {
-                    radarOndaAtual++;
-                    atualizarKpisRadar();
-                    const angulo = RADAR_ANGULOS_BUSCA[(radarOndaAtual - 1) % RADAR_ANGULOS_BUSCA.length];
-                    atualizarStatusLiveRadar(true, `Onda #${radarOndaAtual} em ${radarTargetCity} — varrendo ${angulo.slice(0, 62)}...`);
+            while (isRadarScanning) {
+                radarOndaAtual++;
+                atualizarKpisRadar();
+                const jaEncontrados = radarAlvosEncontrados.slice(0, 45).map(a => a.nome).join(', ');
 
-                    const jaEncontrados = radarAlvosEncontrados.slice(0, 40).map(a => a.nome).join(', ');
-                    const promptWeb = `Você é um investigador de campo da Vigilância Sanitária (COVISA SP). Faça uma busca na web AGORA por estabelecimentos REAIS em "${radarTargetCity} - SP" nos ramos: (${queries}), focando em: ${angulo}.
+                let promptFinal = '';
+                if (radarModoAtual === 'web') {
+                    const angulo = RADAR_ANGULOS_WEB[(radarOndaAtual - 1) % RADAR_ANGULOS_WEB.length];
+                    atualizarStatusLiveRadar(true, `[Google + Reclame Aqui] Onda #${radarOndaAtual} em ${radarTargetCity} — ${angulo.slice(0, 58)}...`);
+
+                    promptFinal = `Você é um investigador de campo da Vigilância Sanitária (COVISA SP). Faça uma busca na web AGORA por estabelecimentos REAIS em "${radarTargetCity} - SP" nos ramos: (${queries}), focando em: ${angulo}.
 
 REGRAS OBRIGATÓRIAS:
 1. NÃO repita nenhum destes locais já encontrados: [${jaEncontrados || 'nenhum'}].
-2. PRIORIZE estabelecimentos locais, pequenos e médios de bairro (lanchonetes, padarias, mercados, clínicas médicas, consultórios, casas de idosos, farmácias de bairro, salões, pet shops). Evite só grandes redes nacionais.
+2. PRIORIZE estabelecimentos locais, pequenos e médios do bairro/rua pesquisada. Evite só grandes redes nacionais.
 3. CLASSIFIQUE CADA LOCAL EM 3 NÍVEIS REAIS:
-   - "VERMELHO": Caso GRAVE (sujeira, insetos/baratas, comida vencida/estragada, intoxicação, maus-tratos em casa de idosos, autuação/multa COVISA/ANVISA, clínica sem higiene).
+   - "VERMELHO": Caso GRAVE (sujeira, insetos/baratas, comida vencida/estragada, intoxicação, maus-tratos em casa de idosos, autuação/multa COVISA/ANVISA, procedimento estético/botox ou clínica sem higiene).
    - "AMARELO": Caso de ATENÇÃO (mau atendimento, atraso, erro de pedido, reclamações médias recorrentes, estrutura precária).
-   - "VERDE": Mais DE BOA / Preventivo (estabelecimento real da região sem reclamação grave aparente, bom potencial para consultoria/renovação preventiva de alvará).
-4. NO CAMPO "perigo", É PROIBIDO texto genérico ("possui reclamações em plataforma"). Descreva o FATO REAL encontrado (ou, se VERDE, descreva o perfil real do estabelecimento e boa reputação).
-5. Deixe string vazia "" nos campos não encontrados — NUNCA escreva a palavra "vazio" ou "não informado".
+   - "VERDE": Mais DE BOA / Preventivo (estabelecimento real da região sem reclamação grave aparente, bom potencial para regularização/renovação preventiva).
+4. NO CAMPO "perigo", É PROIBIDO texto genérico ("possui reclamações em plataforma"). Descreva o FATO REAL encontrado.
+5. Deixe string vazia "" nos campos não encontrados — NUNCA escreva "vazio" ou "não informado".
 
 Retorne APENAS um array JSON válido com 6 a 8 estabelecimentos reais:
 [
   {
     "nome": "Nome real do estabelecimento",
-    "categoria": "Ex: Lanchonete / Clínica Médica / Casa de Idosos / Padaria / Farmácia",
+    "categoria": "Ex: Lanchonete / Studio Nails / Clínica Botox / Academia / Casa de Idosos / Adega",
     "cnpj": "",
-    "endereco": "Rua, número e bairro em ${radarTargetCity} - SP",
+    "endereco": "Rua, número e bairro em ${radarTargetCity}",
     "bairro": "",
     "telefone": "",
     "nota_google": "",
     "foto_url": "",
-    "fonte": "Google Avaliações / Reclame Aqui / Diário Oficial / Notícia",
+    "fonte": "Google Avaliações / Reclame Aqui / iFood",
     "nivel": "VERMELHO" ou "AMARELO" ou "VERDE",
     "perigo": "Fato real e objetivo encontrado (15 a 38 palavras).",
     "infracao_possivel": "Art. 122 Lei 10.083/98, RDC 216 ou Regularização Preventiva"
   }
 ]`;
+                } else {
+                    // MOTOR 2: DEEP SCAN PREMIUM (DIÁRIO OFICIAL + IFOOD + REDES + CNPJ + SCORE + ABORDAGEM)
+                    const camada = RADAR_CAMADAS_PREMIUM[(radarOndaAtual - 1) % RADAR_CAMADAS_PREMIUM.length];
+                    atualizarStatusLiveRadar(true, `⚡ [DEEP SCAN PREMIUM] Onda #${radarOndaAtual} • ${camada.nome} em ${radarTargetCity}...`);
 
-                    try {
-                        const { texto, fontes } = await chamarGeminiComBuscaWeb(promptWeb);
-                        const matchArr = texto.match(/\[[\s\S]*\]/);
-                        let novosNaOnda = 0;
-                        if (matchArr) {
-                            const lista = JSON.parse(matchArr[0]);
-                            if (Array.isArray(lista)) {
-                                for (const item of lista) {
-                                    if (!isRadarScanning) break;
-                                    const ok = adicionarAlvoNoHistoricoRadar({
-                                        ...item,
-                                        cidade: radarTargetCity,
-                                        ramo: queries,
-                                        provas: fontes.slice(0, 3)
-                                    }, radarCircle);
-                                    if (ok) novosNaOnda++;
-                                    await new Promise(r => setTimeout(r, 250));
-                                }
-                            }
-                        }
-                        if (!isRadarScanning) break;
-                        atualizarStatusLiveRadar(true, `Onda #${radarOndaAtual} concluída (+${novosNaOnda} novo(s)). Preparando Onda #${radarOndaAtual + 1} em 4s... (clique em Pausar quando quiser)`);
-                        await new Promise(r => setTimeout(r, 4000));
-                    } catch (errWave) {
-                        if (!isRadarScanning) break;
-                        if (errWave.message.includes('Limite')) {
-                            atualizarStatusLiveRadar(true, `Limite temporário da IA. Aguardando 15s para continuar a Onda #${radarOndaAtual + 1}...`);
-                            await new Promise(r => setTimeout(r, 15000));
-                        } else {
-                            atualizarStatusLiveRadar(true, `Aviso na Onda #${radarOndaAtual}: ${errWave.message}. Tentando próxima onda em 5s...`);
-                            await new Promise(r => setTimeout(r, 5000));
-                        }
-                    }
+                    promptFinal = `Você é um sistema de Inteligência OSINT PREMIUM da Vigilância Sanitária e Consultoria Regulatória em São Paulo.
+LOCAL ALVO EXATO: "${radarTargetCity} - SP"
+RAMOS SELECIONADOS: (${queries})
+CAMADA ATUAL DE VARREDURA: ${camada.nome} — pesquise profundamente por ${camada.foco}.
+
+REGRAS OBRIGATÓRIAS DO MODO PREMIUM:
+1. NÃO repita nenhum destes locais já encontrados: [${jaEncontrados || 'nenhum'}].
+2. Encontre estabelecimentos REAIS, específicos e verificáveis na web ligados a "${radarTargetCity}" (ou arredores imediatos se for uma rua pequena).
+3. Para CADA estabelecimento, faça um RAIO-X COMPLETO:
+   - Busque CNPJ real (14 dígitos), telefone/WhatsApp, endereço exato e nota Google se existir.
+   - Calcule um "score_oportunidade" de 0 a 100 (quanto maior, maior a urgência de fiscalização ou chance de fechar regularização).
+   - Classifique em "VERMELHO" (grave: autuação, sujeira, pragas, interdição, irregularidade sanitária séria), "AMARELO" (atenção: críticas recorrentes, estrutura/higiene questionada) ou "VERDE" (de boa: sem escândalo, ideal para prospecção preventiva de alvará/PGRSS/RT).
+   - Em "perigo", descreva o FATO REAL encontrado na fonte (PROIBIDO frase genérica).
+   - Em "infracao_possivel", liste a lei/norma exata ou documentos obrigatórios para o ramo (ex: "Alvará COVISA + PGRSS + RT Biomédico/Médico + Autoclave" para estética/botox/nails).
+   - Em "estrategia", escreva 1 frase prática e direta de como abordar esse estabelecimento para fechar o serviço ou agir.
+4. Deixe "" (vazio) onde não encontrar — NUNCA escreva "vazio" ou "não informado".
+
+Retorne APENAS um array JSON válido com 6 a 8 estabelecimentos reais:
+[
+  {
+    "nome": "Nome real do estabelecimento",
+    "categoria": "Categoria exata (ex: Clínica de Botox/Estética, Studio Nails, Academia, Adega, Casa de Idosos)",
+    "cnpj": "",
+    "endereco": "Rua, número e bairro",
+    "bairro": "",
+    "telefone": "",
+    "nota_google": "",
+    "foto_url": "",
+    "fonte": "Diário Oficial / COVISA / iFood / Instagram / Google / Procon / Notícia",
+    "nivel": "VERMELHO" ou "AMARELO" ou "VERDE",
+    "score_oportunidade": 85,
+    "perigo": "Descrição real e concreta encontrada na investigação (18 a 42 palavras).",
+    "infracao_possivel": "Norma/Lei aplicável e documentos exigidos para este ramo",
+    "estrategia": "Dica objetiva de abordagem comercial/regulatória para este lead."
+  }
+]`;
                 }
-            } else {
-                // MODO OSM + RECLAMAÇÕES (CORRIGIDO PARA BAIRROS, CIDADES E CEP + LOOP CONTÍNUO)
-                let raioAtual = raioBase;
-                while (isRadarScanning) {
-                    radarOndaAtual++;
-                    atualizarKpisRadar();
-                    atualizarStatusLiveRadar(true, `Onda #${radarOndaAtual} (OSM ${(raioAtual / 1000).toFixed(1)}km): mapeando estabelecimentos reais em ${radarTargetCity}...`);
 
-                    const locaisOSM = await buscarLocaisOpenStreetMap(radarTargetCity, cats, raioAtual);
-
-                    if (locaisOSM.length === 0) {
-                        if (raioAtual < 15000) {
-                            raioAtual = Math.min(raioAtual * 2, 15000);
-                            atualizarStatusLiveRadar(true, `Poucos locais no raio anterior. Expandindo mapa para ${(raioAtual / 1000).toFixed(1)}km...`);
-                            await new Promise(r => setTimeout(r, 2000));
-                            continue;
-                        } else {
-                            showToast('OSM Concluído', `Todos os locais mapeados no OSM em ${radarTargetCity} já foram varridos. Troque para Reclame Aqui + Google ou mude o bairro.`, 'warning');
-                            break;
-                        }
-                    }
-
-                    for (let i = 0; i < locaisOSM.length; i++) {
-                        if (!isRadarScanning) break;
-                        const loc = locaisOSM[i];
-                        atualizarStatusLiveRadar(true, `Onda #${radarOndaAtual} • Investigando (${i + 1}/${locaisOSM.length}): ${loc.nome}...`);
-
-                        try {
-                            const promptCheck = `Pesquise na web avaliações no Google, Reclame Aqui, iFood ou notícias sobre "${loc.nome}" em "${loc.endereco || radarTargetCity}, SP".
-Classifique em:
-- "VERMELHO": reclamação grave (sujeira, insetos, comida vencida, risco sanitário, autuação).
-- "AMARELO": reclamação média (atendimento ruim, atraso, erro de pedido, estrutura precária).
-- "VERDE": sem reclamação grave encontrada / boa avaliação (oportunidade de regularização preventiva).
-
-Responda APENAS um JSON puro (string vazia "" se não achar um campo, NUNCA escreva "vazio"):
-{"nivel":"VERMELHO" ou "AMARELO" ou "VERDE","fonte":"Google / Reclame Aqui / OpenStreetMap","cnpj":"","nota_google":"","foto_url":"","perigo":"Resumo real da avaliação/reclamação ou status do local (15 a 35 palavras)","infracao_possivel":"Art. 122 Lei 10.083/98, RDC 216 ou Regularização Preventiva"}`;
-
-                            const { texto, fontes } = await chamarGeminiComBuscaWeb(promptCheck);
-                            const matchObj = texto.match(/\{[\s\S]*\}/);
-                            if (matchObj) {
-                                const res = JSON.parse(matchObj[0]);
-                                adicionarAlvoNoHistoricoRadar({
-                                    nome: loc.nome,
-                                    categoria: loc.categoria,
-                                    endereco: loc.endereco,
-                                    bairro: loc.bairro || '',
-                                    telefone: loc.telefone,
-                                    cnpj: res.cnpj || '',
-                                    nota_google: res.nota_google || '',
-                                    foto_url: res.foto_url || '',
-                                    lat: loc.lat,
-                                    lon: loc.lon,
+                try {
+                    const { texto, fontes } = await chamarGeminiComBuscaWeb(promptFinal);
+                    const matchArr = texto.match(/\[[\s\S]*\]/);
+                    let novosNaOnda = 0;
+                    if (matchArr) {
+                        const lista = JSON.parse(matchArr[0]);
+                        if (Array.isArray(lista)) {
+                            for (const item of lista) {
+                                if (!isRadarScanning) break;
+                                const ok = adicionarAlvoNoHistoricoRadar({
+                                    ...item,
                                     cidade: radarTargetCity,
                                     ramo: queries,
-                                    nivel: res.nivel || 'VERDE',
-                                    fonte: res.fonte || 'OSM + Web',
-                                    perigo: res.perigo || 'Estabelecimento mapeado via OpenStreetMap.',
-                                    infracao_possivel: res.infracao_possivel || '',
                                     provas: fontes.slice(0, 3)
                                 }, radarCircle);
-                            }
-                            await new Promise(r => setTimeout(r, 900));
-                        } catch (errItem) {
-                            if (errItem.message.includes('Limite')) {
-                                atualizarStatusLiveRadar(true, `Limite temporário da IA. Aguardando 15s...`);
-                                await new Promise(r => setTimeout(r, 15000));
-                            } else {
-                                // Mesmo se a IA falhar neste item, salva o local real do OSM como VERDE para não perder o lead!
-                                adicionarAlvoNoHistoricoRadar({
-                                    nome: loc.nome,
-                                    categoria: loc.categoria,
-                                    endereco: loc.endereco,
-                                    bairro: loc.bairro || '',
-                                    telefone: loc.telefone,
-                                    lat: loc.lat,
-                                    lon: loc.lon,
-                                    cidade: radarTargetCity,
-                                    ramo: queries,
-                                    nivel: 'VERDE',
-                                    fonte: 'OpenStreetMap',
-                                    perigo: 'Estabelecimento localizado no mapa para prospecção de regularização sanitária.',
-                                    infracao_possivel: 'Regularização Preventiva / Alvará'
-                                }, radarCircle);
+                                if (ok) novosNaOnda++;
+                                await new Promise(r => setTimeout(r, 250));
                             }
                         }
                     }
                     if (!isRadarScanning) break;
-                    raioAtual = Math.min(raioAtual + 2500, 15000);
-                    atualizarStatusLiveRadar(true, `Lote OSM concluído. Expandindo varredura para ${(raioAtual / 1000).toFixed(1)}km em 3s...`);
-                    await new Promise(r => setTimeout(r, 3000));
+                    atualizarStatusLiveRadar(true, `Onda #${radarOndaAtual} concluída (+${novosNaOnda} novo(s)). Iniciando Onda #${radarOndaAtual + 1} em 4s... (clique em Pausar quando quiser)`);
+                    await new Promise(r => setTimeout(r, 4000));
+                } catch (errWave) {
+                    if (!isRadarScanning) break;
+                    if (errWave.message.includes('Limite')) {
+                        atualizarStatusLiveRadar(true, `Limite temporário da IA. Aguardando 15s para continuar a Onda #${radarOndaAtual + 1}...`);
+                        await new Promise(r => setTimeout(r, 15000));
+                    } else {
+                        atualizarStatusLiveRadar(true, `Aviso na Onda #${radarOndaAtual}: ${errWave.message}. Tentando próxima onda em 5s...`);
+                        await new Promise(r => setTimeout(r, 5000));
+                    }
                 }
             }
         } catch (error) {
@@ -5694,7 +5491,6 @@ Responda APENAS um JSON puro (string vazia "" se não achar um campo, NUNCA escr
         }
     };
 
-    // Inicializa histórico persistente e mapa ao carregar o painel
     carregarHistoricoRadarStorage();
     renderizarHistoricoRadar();
     setTimeout(() => {
