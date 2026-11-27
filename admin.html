@@ -698,11 +698,52 @@
     .target-card-hud h4 { color: white; margin: 0 0 5px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
     .target-card-hud .loc { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-code); margin-bottom: 10px; display: block; }
     .target-card-hud .reason { font-size: 0.9rem; line-height: 1.4; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; }
-    .radar-display-area { display: flex; flex-direction: column; gap: 16px; align-items: stretch; position: relative; overflow: hidden; min-width: 0; }
-    .radar-top-strip { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; background: rgba(15,23,42,0.55); border: 1px solid #1e293b; border-radius: 12px; padding: 12px 14px; }
-    .radar-circle-wrap { width: 125px; height: 125px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .radar-map-box { flex: 1; min-width: 240px; height: 195px; border-radius: 10px; border: 1px solid #26385a; overflow: hidden; background: #070e1c; position: relative; z-index: 1; }
-    .osint-results-list { flex: 1; width: 100%; height: 480px; overflow-y: auto; padding-right: 6px; display: flex; flex-direction: column; gap: 14px; }
+    .radar-display-area { display: flex; flex-direction: column; gap: 14px; align-items: stretch; position: relative; overflow: hidden; min-width: 0; }
+    .radar-hud-kpis {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+    }
+    .radar-kpi-pill {
+      background: linear-gradient(145deg, rgba(15,23,42,0.9), rgba(7,14,28,0.95));
+      border: 1px solid #1e2f4f; border-radius: 10px; padding: 9px 11px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .radar-kpi-pill span { font-size: 0.66rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; }
+    .radar-kpi-pill strong { font-size: 1.15rem; font-weight: 900; color: #ffffff; font-family: var(--font-code); }
+    .radar-top-strip { display: flex; align-items: stretch; gap: 14px; flex-wrap: wrap; background: rgba(10,18,34,0.85); border: 1px solid #1e2f4f; border-radius: 12px; padding: 12px; }
+    .radar-circle-col { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; min-width: 140px; }
+    .radar-circle-wrap { width: 126px; height: 126px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .radar-wave-badge {
+      font-size: 0.7rem; font-weight: 900; font-family: var(--font-code); padding: 3px 9px; border-radius: 999px;
+      background: rgba(56,189,248,0.12); color: #38bdf8; border: 1px solid rgba(56,189,248,0.35);
+      text-align: center; white-space: nowrap;
+    }
+    .radar-wave-badge.is-live { background: rgba(239,68,68,0.18); color: #fca5a5; border-color: #ef4444; animation: pulseDanger 1.8s infinite; }
+    .radar-map-wrap { flex: 1; min-width: 260px; display: flex; flex-direction: column; gap: 6px; }
+    .radar-map-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .radar-map-box { width: 100%; height: 185px; border-radius: 10px; border: 1px solid #26385a; overflow: hidden; background: #070e1c; position: relative; z-index: 1; }
+    #radar-osint-map.radar-map-dark .leaflet-tile-pane { filter: invert(92%) hue-rotate(180deg) brightness(95%) contrast(92%); }
+
+    .radar-hist-toolbar {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      background: #070e1c; border: 1px solid #1e2f4f; border-radius: 10px; padding: 9px 12px;
+    }
+    .radar-flt-btn {
+      background: #0d1629; border: 1px solid #26385a; color: #cbd5e1;
+      padding: 5px 10px; border-radius: 999px; font-size: 0.74rem; font-weight: 800;
+      cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px;
+    }
+    .radar-flt-btn:hover { color: #ffffff; border-color: var(--primary); }
+    .radar-flt-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+    .radar-flt-btn.flt-red.active { background: #dc2626; border-color: #ef4444; }
+    .radar-flt-btn.flt-yellow.active { background: #d97706; border-color: #f59e0b; color: #000; }
+    .radar-flt-btn.flt-green.active { background: #059669; border-color: #10b981; }
+    .radar-hist-search {
+      flex: 1; min-width: 150px; background: #040914; border: 1px solid #243554; color: #ffffff;
+      padding: 6px 11px; border-radius: 999px; font-size: 0.78rem;
+    }
+    .radar-hist-search:focus { border-color: var(--primary); }
+
+    .osint-results-list { flex: 1; width: 100%; height: 470px; overflow-y: auto; padding-right: 6px; display: flex; flex-direction: column; gap: 12px; }
     .radar-mode-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .radar-mode-opt {
       background: rgba(255,255,255,0.03); border: 1px solid #1e293b; color: var(--text-muted);
@@ -711,6 +752,41 @@
     }
     .radar-mode-opt:hover { border-color: var(--primary); color: white; }
     .radar-mode-opt.active { background: rgba(59, 130, 246, 0.16); border-color: var(--primary); color: #ffffff; box-shadow: 0 0 12px rgba(59,130,246,0.25); }
+
+    .radar-region-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+    .radar-reg-chip {
+      background: #070e1c; border: 1px solid #223456; color: #94a3b8;
+      padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 800;
+      cursor: pointer; transition: 0.2s;
+    }
+    .radar-reg-chip:hover { color: #ffffff; border-color: #38bdf8; }
+    .radar-reg-chip.active { background: rgba(56,189,248,0.18); color: #e0f2fe; border-color: #38bdf8; }
+
+    .radar-loc-wrap { position: relative; }
+    .radar-autocomplete-list {
+      position: absolute; top: 100%; left: 0; right: 0; z-index: 999;
+      background: #070e1c; border: 1px solid #38bdf8; border-top: none;
+      border-radius: 0 0 10px 10px; max-height: 220px; overflow-y: auto;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.85); display: none;
+    }
+    .radar-ac-item {
+      padding: 8px 12px; cursor: pointer; font-size: 0.82rem; color: #e2e8f0;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      border-bottom: 1px solid #162238;
+    }
+    .radar-ac-item:hover { background: rgba(59,130,246,0.22); color: #ffffff; }
+    .radar-ac-tag { font-size: 0.66rem; color: #38bdf8; font-weight: 800; text-transform: uppercase; background: rgba(56,189,248,0.12); padding: 2px 6px; border-radius: 4px; }
+    .radar-cep-info {
+      display: none; margin-top: 7px; padding: 7px 10px; border-radius: 7px;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.4);
+      color: #a7f3d0; font-size: 0.74rem; line-height: 1.4;
+    }
+
+    .target-card-hud.level-verde { background: rgba(16, 185, 129, 0.06); border-color: #10b981; border-left-color: #10b981; }
+    .target-card-hud.level-amarelo { background: rgba(245, 158, 11, 0.06); border-color: #f59e0b; border-left-color: #f59e0b; }
+    .target-card-hud.level-vermelho { background: rgba(239, 68, 68, 0.06); border-color: #ef4444; border-left-color: #ef4444; }
+    .target-card-hud.is-saved { box-shadow: inset 0 0 0 1px rgba(16,185,129,0.45); }
+
     .target-meta-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 9px; }
     .target-meta-chip {
       background: rgba(2,6,23,0.75); border: 1px solid #26385a; color: #e2e8f0;
@@ -732,7 +808,7 @@
     .target-card-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
     .target-act-btn {
       background: #0a1222; border: 1px solid #2a3d61; color: #e2e8f0; padding: 6px 10px;
-      border-radius: 7px; font-size: 0.75rem; font-weight: 800; cursor: pointer; text-decoration: none;
+      border-radius: 7px; font-size: 0.74rem; font-weight: 800; cursor: pointer; text-decoration: none;
       display: inline-flex; align-items: center; gap: 5px; transition: 0.2s;
     }
     .target-act-btn:hover { border-color: var(--primary); color: #ffffff; background: #13223d; }
@@ -744,6 +820,8 @@
     .target-act-btn.act-cnpj:hover { background: #9333ea; color: #ffffff; }
     .target-act-btn.act-photo { border-color: rgba(245,158,11,0.55); color: #fde68a; }
     .target-act-btn.act-photo:hover { background: #d97706; color: #ffffff; }
+    .target-act-btn.act-del { border-color: rgba(239,68,68,0.45); color: #fca5a5; margin-left: auto; }
+    .target-act-btn.act-del:hover { background: #dc2626; color: #ffffff; }
     .target-proof-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .target-proof-pill {
       font-size: 0.72rem; color: #93c5fd; background: rgba(59,130,246,0.12);
@@ -751,6 +829,9 @@
       text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
     }
     .target-proof-pill:hover { background: var(--primary); color: white; }
+    @media (max-width: 1100px) {
+      .radar-hud-kpis { grid-template-columns: repeat(3, 1fr); }
+    }
     
     /* ======================================================== */
     /* CSS MONITOR ESPIÃO (FEED DE OPERAÇÕES)                   */
@@ -1646,15 +1727,21 @@
           
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-              <h3 style="color:#ffffff; font-size:1.15rem; margin:0;"><i class="fas fa-radar" style="color:#ef4444;"></i> Radar OSINT 360° (Reclame Aqui + Google + OpenStreetMap + CNPJ)</h3>
-              <span class="fn-help-pill"><i class="fas fa-info-circle"></i> Varre pequenos/médios locais, médicos, casas de idosos e comércios com mapa, fotos, CNPJ e dossiê completo</span>
+              <h3 style="color:#ffffff; font-size:1.18rem; margin:0;"><i class="fas fa-radar" style="color:#ef4444;"></i> Radar OSINT 360° PRO — SP Completo (Capital, ABC, Litoral, Interior, Bairros & CEP)</h3>
+              <span class="fn-help-pill"><i class="fas fa-infinity"></i> Varredura contínua até pausar • Histórico salvo • 🔴 Grave / 🟡 Atenção / 🟢 De Boa</span>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="target-act-btn" id="btn-radar-sound" onclick="alternarSomRadar()" title="Tocar bip discreto quando achar caso VERMELHO"><i class="fas fa-volume-up" style="color:#10b981;"></i> Alerta Som: ON</button>
+              <button type="button" class="target-act-btn act-wa" onclick="exportarHistoricoRadarCSV()" title="Baixar todos os alvos do histórico em planilha CSV/Excel"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+              <button type="button" class="target-act-btn act-pdf" onclick="limparTodoHistoricoRadar()" title="Apagar todo o histórico do Radar"><i class="fas fa-trash-alt"></i> Limpar Histórico</button>
             </div>
           </div>
-          <div class="radar-container" style="grid-template-columns: 340px 1fr; margin-bottom: 36px;">
+
+          <div class="radar-container" style="grid-template-columns: 360px 1fr; margin-bottom: 36px; gap: 22px; padding: 22px;">
             
-            <div class="target-console">
+            <div class="target-console" style="gap: 18px; padding-right: 22px;">
                 <div class="console-step">
-                    <h4><i class="fas fa-sliders-h"></i> 1. Modo de Varredura</h4>
+                    <h4><i class="fas fa-sliders-h"></i> 1. Motor de Varredura</h4>
                     <div class="radar-mode-switch">
                         <button type="button" class="radar-mode-opt active" id="radar-mode-web" onclick="definirModoRadar('web')">
                             <i class="fas fa-globe" style="color:#38bdf8; font-size:1.1rem;"></i>
@@ -1668,12 +1755,46 @@
                 </div>
 
                 <div class="console-step">
-                    <h4><i class="fas fa-map-marker-alt"></i> 2. Cidade / Região</h4>
-                    <input type="text" class="form-input" id="radar-cidade" value="Diadema" placeholder="Ex: Diadema, Ferraz, São Paulo, Santos..." style="background: rgba(255,255,255,0.03); border-color: #26385a; padding: 13px 16px; font-weight: 700;">
+                    <h4><i class="fas fa-map-marked-alt"></i> 2. Região / Cidade / Bairro / CEP (SP)</h4>
+                    <div class="radar-region-chips" id="radar-region-chips">
+                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Diadema - Inamar')">Inamar</button>
+                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Diadema - Serraria')">Serraria</button>
+                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Diadema - Eldorado')">Eldorado</button>
+                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Diadema')">Diadema</button>
+                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Grande ABC - SP')">ABC</button>
+                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('São Paulo - Capital')">Capital SP</button>
+                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Litoral de São Paulo')">Litoral SP</button>
+                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Interior de São Paulo')">Interior SP</button>
+                        <button type="button" class="radar-reg-chip" onclick="selecionarLocalRapidoRadar('Estado de São Paulo')">SP Todo</button>
+                    </div>
+                    <div class="radar-loc-wrap">
+                        <div style="display:flex; gap:6px;">
+                            <input type="text" class="form-input" id="radar-cidade" value="Diadema" autocomplete="off"
+                                   placeholder="Digite cidade, bairro (ex: dia, inamar) ou CEP..."
+                                   style="background: rgba(255,255,255,0.04); border-color: #26385a; padding: 11px 14px; font-weight: 700; font-size: 0.92rem; flex:1;"
+                                   oninput="aoDigitarLocalRadar(this.value)"
+                                   onfocus="aoDigitarLocalRadar(this.value)"
+                                   onkeydown="if(event.key==='Enter'){ event.preventDefault(); verificarCepOuLocalRadar(); }">
+                            <button type="button" class="target-act-btn" id="btn-radar-cep" style="padding: 0 12px; border-color: #38bdf8; color: #bae6fd;" onclick="verificarCepOuLocalRadar()" title="Buscar endereço por CEP ou centralizar no mapa">
+                                <i class="fas fa-crosshairs"></i> CEP
+                            </button>
+                        </div>
+                        <div class="radar-autocomplete-list" id="radar-ac-list"></div>
+                    </div>
+                    <div class="radar-cep-info" id="radar-cep-info"></div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px;">
+                        <span style="font-size:0.72rem; color:#94a3b8; font-weight:700;"><i class="fas fa-circle-dot" style="color:#10b981;"></i> Raio OSM/Mapa:</span>
+                        <select id="radar-raio-osm" style="background:#070e1c; border:1px solid #26385a; color:#e2e8f0; padding:4px 9px; border-radius:7px; font-size:0.76rem; font-weight:800;">
+                            <option value="1500">1,5 km (Bairro)</option>
+                            <option value="3000" selected>3 km (Padrão)</option>
+                            <option value="6000">6 km (Cidade)</option>
+                            <option value="12000">12 km (Região)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="console-step">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:9px;">
                         <h4 style="margin:0;"><i class="fas fa-crosshairs"></i> 3. Ramos / Alvos</h4>
                         <button type="button" class="target-act-btn" style="padding:3px 9px; font-size:0.72rem;" onclick="selecionarTodosRamosRadar()"><i class="fas fa-check-double"></i> Tudo (Geral)</button>
                     </div>
@@ -1687,25 +1808,66 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn-scan" id="btn-start-radar" onclick="toggleRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura</button>
+                <button type="button" class="btn-scan" id="btn-start-radar" style="padding: 16px; font-size: 1.05rem;" onclick="toggleRadarHUD()"><i class="fas fa-satellite-dish"></i> Iniciar Varredura Contínua</button>
             </div>
 
             <div class="radar-display-area">
-                <div class="radar-top-strip">
-                    <div class="radar-circle-wrap">
-                        <div class="radar-circle" id="radar-circle-ui">
-                            <div class="radar-sweep" id="radar-sweep-ui"></div>
-                        </div>
-                    </div>
-                    <div class="radar-map-box" id="radar-osint-map"></div>
+                <!-- BARRA HUD DE TELEMETRIA -->
+                <div class="radar-hud-kpis">
+                    <div class="radar-kpi-pill"><span>Histórico Total</span><strong id="radar-kpi-total">0</strong></div>
+                    <div class="radar-kpi-pill" style="border-color:rgba(239,68,68,0.4);"><span style="color:#fca5a5;">🔴 Grave</span><strong id="radar-kpi-red" style="color:#f87171;">0</strong></div>
+                    <div class="radar-kpi-pill" style="border-color:rgba(245,158,11,0.4);"><span style="color:#fde68a;">🟡 Atenção</span><strong id="radar-kpi-yellow" style="color:#fbbf24;">0</strong></div>
+                    <div class="radar-kpi-pill" style="border-color:rgba(16,185,129,0.4);"><span style="color:#6ee7b7;">🟢 De Boa</span><strong id="radar-kpi-green" style="color:#34d399;">0</strong></div>
+                    <div class="radar-kpi-pill" style="border-color:rgba(56,189,248,0.4);"><span style="color:#bae6fd;">🗄️ No Dossiê</span><strong id="radar-kpi-saved" style="color:#38bdf8;">0</strong></div>
+                    <div class="radar-kpi-pill" style="border-color:rgba(192,132,252,0.4);"><span style="color:#e9d5ff;">⚡ Ondas</span><strong id="radar-kpi-waves" style="color:#c084fc;">0</strong></div>
                 </div>
 
-                <div class="osint-results-list" id="radar-results-list">
-                    <div class="osint-idle-msg" id="radar-idle-msg">
-                        <i class="fas fa-satellite" style="font-size: 2.6rem;"></i>
-                        <span>Escolha o Modo, a Cidade e os Ramos (Alimentos, Médicos, Casa de Idosos ou <strong>Tudo</strong>) e clique em <strong>Iniciar Varredura</strong>.</span>
+                <!-- RADAR + MAPA INTERATIVO -->
+                <div class="radar-top-strip">
+                    <div class="radar-circle-col">
+                        <div class="radar-circle-wrap">
+                            <div class="radar-circle" id="radar-circle-ui">
+                                <div class="radar-sweep" id="radar-sweep-ui"></div>
+                            </div>
+                        </div>
+                        <span class="radar-wave-badge" id="radar-wave-status">⏸ Em Espera</span>
+                    </div>
+                    <div class="radar-map-wrap">
+                        <div class="radar-map-toolbar">
+                            <span style="font-size:0.74rem; color:#cbd5e1; font-weight:800;">
+                                <i class="fas fa-map-pin" style="color:#ef4444;"></i> Grave
+                                <i class="fas fa-map-pin" style="color:#f59e0b; margin-left:7px;"></i> Atenção
+                                <i class="fas fa-map-pin" style="color:#10b981; margin-left:7px;"></i> De Boa
+                            </span>
+                            <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                                <button type="button" class="spy-map-btn active" id="radar-map-ruas" onclick="trocarEstiloMapaRadar('ruas')">Ruas</button>
+                                <button type="button" class="spy-map-btn" id="radar-map-satelite" onclick="trocarEstiloMapaRadar('satelite')">Satélite</button>
+                                <button type="button" class="spy-map-btn" id="radar-map-escuro" onclick="trocarEstiloMapaRadar('escuro')">Noturno</button>
+                                <button type="button" class="spy-map-btn" onclick="centralizarMapaRadar()" title="Enquadrar todos os alvos"><i class="fas fa-expand-arrows-alt"></i></button>
+                            </div>
+                        </div>
+                        <div class="radar-map-box" id="radar-osint-map"></div>
                     </div>
                 </div>
+
+                <!-- BARRA DE FILTROS DO HISTÓRICO -->
+                <div class="radar-hist-toolbar">
+                    <button type="button" class="radar-flt-btn active" id="radar-flt-todos" onclick="definirFiltroRadar('todos')">Todos</button>
+                    <button type="button" class="radar-flt-btn flt-red" id="radar-flt-VERMELHO" onclick="definirFiltroRadar('VERMELHO')">🔴 Graves</button>
+                    <button type="button" class="radar-flt-btn flt-yellow" id="radar-flt-AMARELO" onclick="definirFiltroRadar('AMARELO')">🟡 Atenção</button>
+                    <button type="button" class="radar-flt-btn flt-green" id="radar-flt-VERDE" onclick="definirFiltroRadar('VERDE')">🟢 De Boa</button>
+                    <button type="button" class="radar-flt-btn" id="radar-flt-SALVOS" onclick="definirFiltroRadar('SALVOS')">🗄️ Salvos</button>
+                    <input type="text" class="radar-hist-search" id="radar-hist-search" placeholder="Filtrar no histórico (nome, bairro, CNPJ)..." oninput="renderizarHistoricoRadar()">
+                </div>
+
+                <!-- STATUS LIVE DA VARREDURA -->
+                <div id="radar-live-status-bar" style="display:none; padding:9px 14px; border-radius:9px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.35); color:#bae6fd; font-size:0.82rem; font-family:var(--font-code); align-items:center; gap:10px;">
+                    <i class="fas fa-circle-notch fa-spin" style="color:#38bdf8;"></i>
+                    <span id="radar-live-status-text">Varredura em andamento...</span>
+                </div>
+
+                <!-- HISTÓRICO PERSISTENTE DE ALVOS -->
+                <div class="osint-results-list" id="radar-results-list"></div>
             </div>
 
           </div>
@@ -4193,13 +4355,228 @@
     let arquivoLaboratorio = null;
     const TAMANHO_MAX_ARQUIVO_MB = 15;
 
-    // --- VARIÁVEIS DO RADAR OSINT 360° ---
-    let radarTargetCity = "";
+    // --- VARIÁVEIS DO RADAR OSINT 360° PRO (CONTÍNUO + HISTÓRICO + SP/BAIRROS/CEP) ---
+    const RADAR_STORAGE_KEY = 'covisa_radar_historico_v2';
+    let radarTargetCity = "Diadema";
     let isRadarScanning = false;
     let radarModoAtual = 'web'; // 'web' = Reclame Aqui + Google | 'osm' = OpenStreetMap + Reclamações
     let radarAlvosEncontrados = [];
+    let radarFiltroNivel = 'todos';
+    let radarOndaAtual = 0;
+    let radarSomAtivo = true;
     let radarLeafletMap = null;
+    let radarTileLayer = null;
     let radarMarkersLayer = null;
+    let radarMarkerById = new Map();
+    let radarBoundsPoints = [];
+
+    // Base completa de locais de SP (Capital, ABC, Diadema todos os bairros, Litoral e Interior)
+    const RADAR_LOCAIS_SP = [
+        // Diadema + todos os bairros
+        { label: "Diadema", tag: "ABC" },
+        { label: "Diadema - Inamar", tag: "Bairro Diadema" },
+        { label: "Diadema - Serraria", tag: "Bairro Diadema" },
+        { label: "Diadema - Eldorado", tag: "Bairro Diadema" },
+        { label: "Diadema - Centro", tag: "Bairro Diadema" },
+        { label: "Diadema - Campanário", tag: "Bairro Diadema" },
+        { label: "Diadema - Canhema", tag: "Bairro Diadema" },
+        { label: "Diadema - Casa Grande", tag: "Bairro Diadema" },
+        { label: "Diadema - Conceição", tag: "Bairro Diadema" },
+        { label: "Diadema - Piraporinha", tag: "Bairro Diadema" },
+        { label: "Diadema - Taboão", tag: "Bairro Diadema" },
+        { label: "Diadema - Vila Nogueira", tag: "Bairro Diadema" },
+        // Grande ABC
+        { label: "Grande ABC - SP", tag: "Região" },
+        { label: "São Bernardo do Campo", tag: "ABC" },
+        { label: "São Bernardo do Campo - Rudge Ramos", tag: "Bairro SBC" },
+        { label: "São Bernardo do Campo - Centro", tag: "Bairro SBC" },
+        { label: "São Bernardo do Campo - Assunção", tag: "Bairro SBC" },
+        { label: "São Bernardo do Campo - Baeta Neves", tag: "Bairro SBC" },
+        { label: "São Bernardo do Campo - Paulicéia", tag: "Bairro SBC" },
+        { label: "Santo André", tag: "ABC" },
+        { label: "Santo André - Centro", tag: "Bairro Sto André" },
+        { label: "Santo André - Vila Assunção", tag: "Bairro Sto André" },
+        { label: "Santo André - Campestre", tag: "Bairro Sto André" },
+        { label: "São Caetano do Sul", tag: "ABC" },
+        { label: "Mauá", tag: "ABC" },
+        { label: "Ribeirão Pires", tag: "ABC" },
+        { label: "Rio Grande da Serra", tag: "ABC" },
+        // São Paulo Capital + Principais Bairros
+        { label: "São Paulo - Capital", tag: "Capital" },
+        { label: "Jabaquara - São Paulo", tag: "Zona Sul SP" },
+        { label: "Santo Amaro - São Paulo", tag: "Zona Sul SP" },
+        { label: "Moema - São Paulo", tag: "Zona Sul SP" },
+        { label: "Vila Mariana - São Paulo", tag: "Zona Sul SP" },
+        { label: "Saúde - São Paulo", tag: "Zona Sul SP" },
+        { label: "Ipiranga - São Paulo", tag: "Zona Sul SP" },
+        { label: "Interlagos - São Paulo", tag: "Zona Sul SP" },
+        { label: "Grajaú - São Paulo", tag: "Zona Sul SP" },
+        { label: "Capão Redondo - São Paulo", tag: "Zona Sul SP" },
+        { label: "Campo Limpo - São Paulo", tag: "Zona Sul SP" },
+        { label: "Cidade Ademar - São Paulo", tag: "Zona Sul SP" },
+        { label: "Pedreira - São Paulo", tag: "Zona Sul SP" },
+        { label: "Morumbi - São Paulo", tag: "Zona Sul SP" },
+        { label: "Itaim Bibi - São Paulo", tag: "Zona Sul SP" },
+        { label: "Pinheiros - São Paulo", tag: "Zona Oeste SP" },
+        { label: "Vila Madalena - São Paulo", tag: "Zona Oeste SP" },
+        { label: "Lapa - São Paulo", tag: "Zona Oeste SP" },
+        { label: "Butantã - São Paulo", tag: "Zona Oeste SP" },
+        { label: "Perdizes - São Paulo", tag: "Zona Oeste SP" },
+        { label: "Tatuapé - São Paulo", tag: "Zona Leste SP" },
+        { label: "Mooca - São Paulo", tag: "Zona Leste SP" },
+        { label: "Itaquera - São Paulo", tag: "Zona Leste SP" },
+        { label: "Penha - São Paulo", tag: "Zona Leste SP" },
+        { label: "Vila Prudente - São Paulo", tag: "Zona Leste SP" },
+        { label: "São Mateus - São Paulo", tag: "Zona Leste SP" },
+        { label: "São Miguel Paulista - São Paulo", tag: "Zona Leste SP" },
+        { label: "Santana - São Paulo", tag: "Zona Norte SP" },
+        { label: "Tucuruvi - São Paulo", tag: "Zona Norte SP" },
+        { label: "Casa Verde - São Paulo", tag: "Zona Norte SP" },
+        { label: "Freguesia do Ó - São Paulo", tag: "Zona Norte SP" },
+        { label: "Jaçanã - São Paulo", tag: "Zona Norte SP" },
+        { label: "Centro - São Paulo", tag: "Centro SP" },
+        { label: "Bela Vista - São Paulo", tag: "Centro SP" },
+        { label: "Liberdade - São Paulo", tag: "Centro SP" },
+        { label: "Brás - São Paulo", tag: "Centro SP" },
+        { label: "Consolação - São Paulo", tag: "Centro SP" },
+        // Grande SP
+        { label: "Guarulhos", tag: "Grande SP" },
+        { label: "Osasco", tag: "Grande SP" },
+        { label: "Barueri", tag: "Grande SP" },
+        { label: "Barueri - Alphaville", tag: "Grande SP" },
+        { label: "Cotia", tag: "Grande SP" },
+        { label: "Taboão da Serra", tag: "Grande SP" },
+        { label: "Embu das Artes", tag: "Grande SP" },
+        { label: "Itapecerica da Serra", tag: "Grande SP" },
+        { label: "Suzano", tag: "Grande SP" },
+        { label: "Mogi das Cruzes", tag: "Grande SP" },
+        { label: "Ferraz de Vasconcelos", tag: "Grande SP" },
+        { label: "Poá", tag: "Grande SP" },
+        { label: "Itaquaquecetuba", tag: "Grande SP" },
+        { label: "Carapicuíba", tag: "Grande SP" },
+        { label: "Franco da Rocha", tag: "Grande SP" },
+        // Litoral SP
+        { label: "Litoral de São Paulo", tag: "Litoral" },
+        { label: "Santos", tag: "Litoral Sul" },
+        { label: "São Vicente", tag: "Litoral Sul" },
+        { label: "Praia Grande", tag: "Litoral Sul" },
+        { label: "Guarujá", tag: "Litoral Sul" },
+        { label: "Cubatão", tag: "Litoral Sul" },
+        { label: "Bertioga", tag: "Litoral Sul" },
+        { label: "Mongaguá", tag: "Litoral Sul" },
+        { label: "Itanhaém", tag: "Litoral Sul" },
+        { label: "Peruíbe", tag: "Litoral Sul" },
+        { label: "Ubatuba", tag: "Litoral Norte" },
+        { label: "Caraguatatuba", tag: "Litoral Norte" },
+        { label: "São Sebastião", tag: "Litoral Norte" },
+        { label: "Ilhabela", tag: "Litoral Norte" },
+        // Interior SP
+        { label: "Interior de São Paulo", tag: "Interior" },
+        { label: "Estado de São Paulo", tag: "SP Todo" },
+        { label: "Campinas", tag: "Interior SP" },
+        { label: "Sorocaba", tag: "Interior SP" },
+        { label: "Jundiaí", tag: "Interior SP" },
+        { label: "Ribeirão Preto", tag: "Interior SP" },
+        { label: "São José dos Campos", tag: "Interior SP" },
+        { label: "São José do Rio Preto", tag: "Interior SP" },
+        { label: "Bauru", tag: "Interior SP" },
+        { label: "Piracicaba", tag: "Interior SP" },
+        { label: "Taubaté", tag: "Interior SP" },
+        { label: "Indaiatuba", tag: "Interior SP" },
+        { label: "Americana", tag: "Interior SP" },
+        { label: "Limeira", tag: "Interior SP" },
+        { label: "Marília", tag: "Interior SP" },
+        { label: "Presidente Prudente", tag: "Interior SP" },
+        { label: "Franca", tag: "Interior SP" },
+        { label: "Araraquara", tag: "Interior SP" },
+        { label: "São Carlos", tag: "Interior SP" },
+        { label: "Atibaia", tag: "Interior SP" },
+        { label: "Bragança Paulista", tag: "Interior SP" },
+        { label: "Itu", tag: "Interior SP" },
+        { label: "Valinhos", tag: "Interior SP" },
+        { label: "Vinhedo", tag: "Interior SP" },
+        { label: "Sumaré", tag: "Interior SP" },
+        { label: "Hortolândia", tag: "Interior SP" },
+        { label: "Jacareí", tag: "Interior SP" }
+    ];
+
+    function limparValorVazioIA(v) {
+        const s = String(v || '').trim();
+        if (!s) return '';
+        const low = s.toLowerCase();
+        if (['vazio', 'empty', 'null', 'none', 'n/a', 'na', 'não informado', 'nao informado', 'não encontrado', 'nao encontrado', '-', '--', 'sem nota', 'desconhecido'].includes(low)) {
+            return '';
+        }
+        return s;
+    }
+
+    function normalizarNivelRadar(raw) {
+        const u = String(raw || '').toUpperCase().trim();
+        if (u.includes('VERMELH') || u.includes('GRAV') || u.includes('ALT') || u.includes('CRIT')) return 'VERMELHO';
+        if (u.includes('VERD') || u.includes('BOA') || u.includes('BAIX') || u.includes('REGUL')) return 'VERDE';
+        return 'AMARELO';
+    }
+
+    function tocarBipRadar(ehGrave = true) {
+        if (!radarSomAtivo) return;
+        try {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return;
+            const ctx = new Ctx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(ehGrave ? 920 : 640, ctx.currentTime);
+            gain.gain.setValueAtTime(0.001, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.11, ctx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.18);
+            setTimeout(() => ctx.close().catch(() => {}), 350);
+        } catch (_) {}
+    }
+
+    window.alternarSomRadar = () => {
+        radarSomAtivo = !radarSomAtivo;
+        const btn = document.getElementById('btn-radar-sound');
+        if (btn) {
+            btn.innerHTML = radarSomAtivo
+                ? '<i class="fas fa-volume-up" style="color:#10b981;"></i> Alerta Som: ON'
+                : '<i class="fas fa-volume-mute" style="color:#94a3b8;"></i> Alerta Som: OFF';
+        }
+    };
+
+    function salvarHistoricoRadarStorage() {
+        try {
+            const compacto = radarAlvosEncontrados.slice(0, 150).map(a => ({
+                ...a,
+                fotos: Array.isArray(a.fotos) ? a.fotos.slice(0, 4) : []
+            }));
+            localStorage.setItem(RADAR_STORAGE_KEY, JSON.stringify(compacto));
+        } catch (_) {
+            try {
+                // Se fotos base64 lotarem o localStorage, salva sem as fotos pesadas
+                const leve = radarAlvosEncontrados.slice(0, 120).map(a => ({
+                    ...a,
+                    fotos: (a.fotos || []).filter(f => !String(f.url || '').startsWith('data:'))
+                }));
+                localStorage.setItem(RADAR_STORAGE_KEY, JSON.stringify(leve));
+            } catch (__) {}
+        }
+    }
+
+    function carregarHistoricoRadarStorage() {
+        try {
+            const raw = localStorage.getItem(RADAR_STORAGE_KEY);
+            if (!raw) return;
+            const arr = JSON.parse(raw);
+            if (Array.isArray(arr)) {
+                radarAlvosEncontrados = arr;
+            }
+        } catch (_) {}
+    }
 
     window.toggleThreat = (element) => {
         element.classList.toggle('active');
@@ -4217,12 +4594,119 @@
         document.getElementById('radar-mode-osm')?.classList.toggle('active', modo === 'osm');
     };
 
+    window.selecionarLocalRapidoRadar = (localStr) => {
+        const inp = document.getElementById('radar-cidade');
+        if (inp) inp.value = localStr;
+        radarTargetCity = localStr;
+        const ac = document.getElementById('radar-ac-list');
+        if (ac) ac.style.display = 'none';
+        const cepInfo = document.getElementById('radar-cep-info');
+        if (cepInfo) cepInfo.style.display = 'none';
+        document.querySelectorAll('.radar-reg-chip').forEach(c => {
+            c.classList.toggle('active', c.innerText.toLowerCase() === localStr.toLowerCase() || localStr.toLowerCase().includes(c.innerText.toLowerCase()));
+        });
+        centralizarMapaPorTexto(localStr);
+    };
+
+    window.aoDigitarLocalRadar = (valor) => {
+        const termo = String(valor || '').trim();
+        radarTargetCity = termo;
+        const ac = document.getElementById('radar-ac-list');
+        if (!ac) return;
+
+        // Se digitou 8 dígitos de CEP, já consulta automaticamente no ViaCEP
+        const soDigitos = termo.replace(/\D/g, '');
+        if (soDigitos.length === 8 && /^\d{5}-?\d{3}$/.test(termo)) {
+            ac.style.display = 'none';
+            verificarCepOuLocalRadar();
+            return;
+        }
+
+        const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        const tNorm = norm(termo);
+        const matches = tNorm
+            ? RADAR_LOCAIS_SP.filter(item => norm(item.label).includes(tNorm) || norm(item.tag).includes(tNorm)).slice(0, 12)
+            : RADAR_LOCAIS_SP.slice(0, 10);
+
+        if (matches.length === 0) {
+            ac.style.display = 'none';
+            return;
+        }
+
+        ac.innerHTML = matches.map(m =>
+            `<div class="radar-ac-item" onmousedown="selecionarLocalRapidoRadar('${escaparHtmlWA(m.label)}')">
+                <span><i class="fas fa-map-marker-alt" style="color:#38bdf8; margin-right:6px;"></i>${escaparHtmlWA(m.label)}</span>
+                <span class="radar-ac-tag">${escaparHtmlWA(m.tag)}</span>
+            </div>`
+        ).join('');
+        ac.style.display = 'block';
+    };
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.radar-loc-wrap')) {
+            const ac = document.getElementById('radar-ac-list');
+            if (ac) ac.style.display = 'none';
+        }
+    });
+
+    window.verificarCepOuLocalRadar = async () => {
+        const inp = document.getElementById('radar-cidade');
+        const infoBox = document.getElementById('radar-cep-info');
+        const btn = document.getElementById('btn-radar-cep');
+        const val = (inp?.value || '').trim();
+        const dig = val.replace(/\D/g, '');
+
+        if (dig.length === 8) {
+            const orig = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
+            try {
+                const r = await fetch(`https://viacep.com.br/ws/${dig}/json/`);
+                const d = await r.json();
+                if (d.erro) throw new Error('CEP não encontrado no ViaCEP.');
+                const localFormatado = [d.localidade, d.bairro].filter(Boolean).join(' - ');
+                inp.value = localFormatado || `${d.localidade} - ${d.uf}`;
+                radarTargetCity = inp.value;
+                if (infoBox) {
+                    infoBox.style.display = 'block';
+                    infoBox.innerHTML = `<i class="fas fa-check-circle"></i> <strong>CEP ${d.cep}:</strong> ${escaparHtmlWA(d.logradouro || 'Logradouro')} — ${escaparHtmlWA(d.bairro || '')}, ${escaparHtmlWA(d.localidade || '')}/${escaparHtmlWA(d.uf || 'SP')}`;
+                }
+                showToast('CEP Localizado!', `${d.logradouro || ''} - ${d.bairro || ''}, ${d.localidade || ''}`, 'success');
+                centralizarMapaPorTexto(`${d.logradouro || ''}, ${d.bairro || ''}, ${d.localidade || ''}, ${d.uf || 'SP'}, Brasil`);
+            } catch (err) {
+                showToast('CEP Inválido', err.message, 'warning');
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+            }
+        } else if (val) {
+            centralizarMapaPorTexto(val);
+            showToast('Mapa Centralizado', `Foco movido para ${val}.`, 'success');
+        }
+    };
+
+    async function centralizarMapaPorTexto(localStr) {
+        const mapa = garantirMapaRadar();
+        if (!mapa || !localStr) return;
+        try {
+            const q = encodeURIComponent(localStr.toLowerCase().includes('brasil') ? localStr : `${localStr}, São Paulo, Brasil`);
+            const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
+            if (!r.ok) return;
+            const arr = await r.json();
+            if (arr[0]) {
+                const lat = parseFloat(arr[0].lat);
+                const lon = parseFloat(arr[0].lon);
+                if (!isNaN(lat) && !isNaN(lon)) {
+                    mapa.setView([lat, lon], 14, { animate: true });
+                }
+            }
+        } catch (_) {}
+    }
+
     function garantirMapaRadar() {
         const el = document.getElementById('radar-osint-map');
         if (!el || typeof L === 'undefined') return null;
         if (!radarLeafletMap) {
             radarLeafletMap = L.map('radar-osint-map', { zoomControl: true }).setView([-23.686, -46.623], 12);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            radarTileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OSM',
                 maxZoom: 19
             }).addTo(radarLeafletMap);
@@ -4232,69 +4716,176 @@
         return radarLeafletMap;
     }
 
-    setTimeout(garantirMapaRadar, 1200);
+    window.trocarEstiloMapaRadar = (estilo) => {
+        const mapa = garantirMapaRadar();
+        if (!mapa) return;
+        const mapEl = document.getElementById('radar-osint-map');
+        ['ruas', 'satelite', 'escuro'].forEach(e => {
+            document.getElementById('radar-map-' + e)?.classList.toggle('active', e === estilo);
+        });
+        if (radarTileLayer) mapa.removeLayer(radarTileLayer);
+        mapEl?.classList.remove('radar-map-dark');
+        if (estilo === 'satelite') {
+            radarTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri', maxZoom: 19
+            }).addTo(mapa);
+        } else {
+            radarTileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OSM', maxZoom: 19
+            }).addTo(mapa);
+            if (estilo === 'escuro') mapEl?.classList.add('radar-map-dark');
+        }
+    };
+
+    window.centralizarMapaRadar = () => {
+        const mapa = garantirMapaRadar();
+        if (!mapa) return;
+        if (radarBoundsPoints.length === 1) {
+            mapa.setView(radarBoundsPoints[0], 15, { animate: true });
+        } else if (radarBoundsPoints.length > 1) {
+            mapa.fitBounds(radarBoundsPoints, { padding: [25, 25], maxZoom: 15 });
+        } else {
+            mapa.setView([-23.686, -46.623], 11);
+        }
+    };
+
+    window.focarAlvoNoMapaRadar = (id) => {
+        const alvo = radarAlvosEncontrados.find(a => a._id === id);
+        const mapa = garantirMapaRadar();
+        if (!alvo || !mapa) return;
+        if (alvo.lat && alvo.lon) {
+            mapa.setView([alvo.lat, alvo.lon], 16, { animate: true });
+            const mk = radarMarkerById.get(id);
+            if (mk) mk.openPopup();
+            document.getElementById('radar-osint-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            geocodificarEPlotarAlvoNoMapa(alvo, true);
+        }
+    };
+
+    function replottarTodosPinsRadar() {
+        const mapa = garantirMapaRadar();
+        if (!mapa || !radarMarkersLayer) return;
+        radarMarkersLayer.clearLayers();
+        radarMarkerById.clear();
+        radarBoundsPoints = [];
+
+        radarAlvosEncontrados.forEach(alvo => {
+            if (alvo.lat && alvo.lon) {
+                const nv = normalizarNivelRadar(alvo.nivel);
+                const corPin = nv === 'VERMELHO' ? '#ef4444' : (nv === 'VERDE' ? '#10b981' : '#f59e0b');
+                const mk = L.circleMarker([alvo.lat, alvo.lon], {
+                    radius: 8, fillColor: corPin, color: '#ffffff', weight: 2, fillOpacity: 0.92
+                }).addTo(radarMarkersLayer);
+                mk.bindPopup(`<strong>${escaparHtmlWA(alvo.nome)}</strong><br><small>${escaparHtmlWA(alvo.endereco || '')}</small><br><span style="color:${corPin}; font-weight:700;">${nv}:</span> ${escaparHtmlWA((alvo.perigo || '').slice(0, 140))}`);
+                radarMarkerById.set(alvo._id, mk);
+                radarBoundsPoints.push([alvo.lat, alvo.lon]);
+            }
+        });
+    }
+
+    async function geocodificarEPlotarAlvoNoMapa(alvo, focar = false) {
+        const mapa = garantirMapaRadar();
+        if (!mapa || !radarMarkersLayer) return;
+        let lat = alvo.lat, lon = alvo.lon;
+        if (!lat || !lon) {
+            try {
+                const q = encodeURIComponent(`${alvo.endereco || alvo.nome}, ${alvo.cidade || 'São Paulo'}, SP, Brasil`);
+                const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
+                if (r.ok) {
+                    const arr = await r.json();
+                    if (arr[0]) {
+                        lat = parseFloat(arr[0].lat);
+                        lon = parseFloat(arr[0].lon);
+                        alvo.lat = lat;
+                        alvo.lon = lon;
+                        salvarHistoricoRadarStorage();
+                    }
+                }
+            } catch (_) {}
+        }
+        if (lat && lon) {
+            const nv = normalizarNivelRadar(alvo.nivel);
+            const corPin = nv === 'VERMELHO' ? '#ef4444' : (nv === 'VERDE' ? '#10b981' : '#f59e0b');
+            const mk = L.circleMarker([lat, lon], {
+                radius: 8, fillColor: corPin, color: '#ffffff', weight: 2, fillOpacity: 0.92
+            }).addTo(radarMarkersLayer);
+            mk.bindPopup(`<strong>${escaparHtmlWA(alvo.nome)}</strong><br><small>${escaparHtmlWA(alvo.endereco || '')}</small><br><span style="color:${corPin}; font-weight:700;">${nv}:</span> ${escaparHtmlWA((alvo.perigo || '').slice(0, 140))}`);
+            radarMarkerById.set(alvo._id, mk);
+            radarBoundsPoints.push([lat, lon]);
+            if (focar) {
+                mapa.setView([lat, lon], 16, { animate: true });
+                mk.openPopup();
+            } else {
+                mapa.setView([lat, lon], 13);
+            }
+        }
+    }
 
     function formatarCNPJDisplayRadar(raw) {
         const d = String(raw || '').replace(/\D/g, '');
-        if (d.length !== 14) return raw || '';
+        if (d.length !== 14) return '';
         return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
     }
 
-    function montarFiltroOverpassPorCategorias(cats, bboxStr) {
+    function montarFiltroOverpassPorRaio(cats, lat, lon, raio) {
         const blocos = [];
+        const ar = `around:${raio},${lat},${lon}`;
         if (cats.includes('alimentos')) {
-            blocos.push(`node["amenity"~"restaurant|fast_food|cafe|bakery|bar|pub|food_court|ice_cream"](${bboxStr});`);
-            blocos.push(`node["shop"~"supermarket|butcher|bakery|convenience|greengrocer|beverages|alcohol"](${bboxStr});`);
+            blocos.push(`nwr["amenity"~"restaurant|fast_food|cafe|bakery|bar|pub|food_court|ice_cream"](${ar});`);
+            blocos.push(`nwr["shop"~"supermarket|butcher|bakery|convenience|greengrocer|beverages|alcohol"](${ar});`);
         }
         if (cats.includes('saude')) {
-            blocos.push(`node["amenity"~"clinic|hospital|dentist|doctors|laboratory"](${bboxStr});`);
-            blocos.push(`node["healthcare"](${bboxStr});`);
+            blocos.push(`nwr["amenity"~"clinic|hospital|dentist|doctors|laboratory"](${ar});`);
+            blocos.push(`nwr["healthcare"](${ar});`);
         }
         if (cats.includes('idosos')) {
-            blocos.push(`node["amenity"~"nursing_home|social_facility"](${bboxStr});`);
-            blocos.push(`node["social_facility"~"nursing_home|assisted_living|group_home"](${bboxStr});`);
-            blocos.push(`way["amenity"~"nursing_home|social_facility"](${bboxStr});`);
+            blocos.push(`nwr["amenity"~"nursing_home|social_facility"](${ar});`);
+            blocos.push(`nwr["social_facility"~"nursing_home|assisted_living|group_home"](${ar});`);
         }
         if (cats.includes('farmacia')) {
-            blocos.push(`node["amenity"="pharmacy"](${bboxStr});`);
+            blocos.push(`nwr["amenity"="pharmacy"](${ar});`);
         }
         if (cats.includes('beleza')) {
-            blocos.push(`node["shop"~"beauty|hairdresser|tattoo|massage|cosmetics"](${bboxStr});`);
-            blocos.push(`node["leisure"="fitness_centre"](${bboxStr});`);
+            blocos.push(`nwr["shop"~"beauty|hairdresser|tattoo|massage|cosmetics"](${ar});`);
+            blocos.push(`nwr["leisure"="fitness_centre"](${ar});`);
         }
         if (cats.includes('geral')) {
-            blocos.push(`node["amenity"~"veterinary|school|kindergarten|hotel|motel"](${bboxStr});`);
-            blocos.push(`node["shop"~"pet|chemist|perfumery"](${bboxStr});`);
+            blocos.push(`nwr["amenity"~"veterinary|school|kindergarten|hotel|motel"](${ar});`);
+            blocos.push(`nwr["shop"~"pet|chemist|perfumery"](${ar});`);
         }
         if (blocos.length === 0) {
-            blocos.push(`node["amenity"~"restaurant|fast_food|pharmacy|clinic|nursing_home"](${bboxStr});`);
+            blocos.push(`nwr["amenity"~"restaurant|fast_food|pharmacy|clinic|nursing_home"](${ar});`);
         }
-        return `[out:json][timeout:25];(${blocos.join('')});out center 35;`;
+        return `[out:json][timeout:25];(${blocos.join('')});out center 60;`;
     }
 
-    async function buscarLocaisOpenStreetMap(cidade, cats) {
-        const nomUrl = `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(cidade)}&state=Sao%20Paulo&country=Brazil&format=json&limit=1`;
+    async function buscarLocaisOpenStreetMap(localTexto, cats, raioMeters) {
+        // FIX: usa busca livre q=... para aceitar bairros (Jabaquara, Inamar, Serraria), cidades, regiões e CEPs!
+        const consulta = localTexto.toLowerCase().includes('brasil')
+            ? localTexto
+            : `${localTexto}, São Paulo, Brasil`;
+        const nomUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(consulta)}&format=json&limit=1`;
         const rNom = await fetch(nomUrl, { headers: { 'Accept-Language': 'pt-BR' } });
-        if (!rNom.ok) throw new Error('Falha ao localizar coordenadas da cidade no OpenStreetMap.');
+        if (!rNom.ok) throw new Error('Falha ao localizar coordenadas no OpenStreetMap.');
         const nomData = await rNom.json();
         if (!Array.isArray(nomData) || nomData.length === 0) {
-            throw new Error(`Cidade "${cidade}" não encontrada no OpenStreetMap.`);
+            throw new Error(`Local "${localTexto}" não encontrado no OpenStreetMap. Tente digitar "Cidade - Bairro" (ex: Diadema - Inamar).`);
         }
 
         const latCentro = parseFloat(nomData[0].lat);
         const lonCentro = parseFloat(nomData[0].lon);
         const mapa = garantirMapaRadar();
         if (mapa && !isNaN(latCentro) && !isNaN(lonCentro)) {
-            mapa.setView([latCentro, lonCentro], 13);
+            mapa.setView([latCentro, lonCentro], 14, { animate: true });
         }
 
-        const [south, north, west, east] = nomData[0].boundingbox;
-        const bboxStr = `${south},${west},${north},${east}`;
-        const queryOverpass = montarFiltroOverpassPorCategorias(cats, bboxStr);
+        const queryOverpass = montarFiltroOverpassPorRaio(cats, latCentro, lonCentro, raioMeters);
 
         const endpoints = [
             'https://overpass-api.de/api/interpreter',
-            'https://overpass.kumi.systems/api/interpreter'
+            'https://overpass.kumi.systems/api/interpreter',
+            'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
         ];
 
         let dadosOSM = null;
@@ -4313,10 +4904,10 @@
         }
 
         if (!dadosOSM || !Array.isArray(dadosOSM.elements)) {
-            throw new Error('Servidores do OpenStreetMap ocupados no momento. Tente novamente ou use o Modo Web.');
+            throw new Error('Servidores do OpenStreetMap ocupados no momento. Tente novamente em alguns segundos ou use o modo Reclame Aqui + Google.');
         }
 
-        const vistos = new Set();
+        const vistos = new Set(radarAlvosEncontrados.map(a => String(a.nome || '').toLowerCase()));
         const locais = [];
         for (const el of dadosOSM.elements) {
             const tags = el.tags || {};
@@ -4327,13 +4918,15 @@
             const rua = tags['addr:street'] || '';
             const num = tags['addr:housenumber'] || '';
             const bairro = tags['addr:suburb'] || tags['addr:neighbourhood'] || '';
-            const endereco = [rua && num ? `${rua}, ${num}` : rua, bairro, `${cidade} - SP`].filter(Boolean).join(' - ');
+            const cidTag = tags['addr:city'] || localTexto;
+            const endereco = [rua && num ? `${rua}, ${num}` : rua, bairro, `${cidTag} - SP`].filter(Boolean).join(' - ');
             const telefone = tags.phone || tags['contact:phone'] || tags['contact:whatsapp'] || '';
             const site = tags.website || tags['contact:website'] || '';
+            const catTag = tags.amenity || tags.shop || tags.healthcare || tags.social_facility || 'Estabelecimento';
             const lat = el.lat || el.center?.lat || null;
             const lon = el.lon || el.center?.lon || null;
 
-            locais.push({ nome, endereco, bairro, telefone, site, lat, lon });
+            locais.push({ nome, endereco, bairro, telefone, site, categoria: catTag, lat, lon });
         }
         return locais;
     }
@@ -4350,7 +4943,7 @@
 
         if (!resp.ok) {
             const errData = await resp.json().catch(() => ({}));
-            if (resp.status === 429) throw new Error('Limite temporário do Gemini atingido. Aguarde 30 segundos e tente novamente.');
+            if (resp.status === 429) throw new Error('Limite temporário do Gemini atingido. Aguardando 15s para retomar...');
             throw new Error(errData.error?.message || `Erro HTTP ${resp.status} no Gemini`);
         }
 
@@ -4365,41 +4958,36 @@
         return { texto, fontes };
     }
 
-    async function geocodificarEPlotarAlvoNoMapa(alvo) {
-        const mapa = garantirMapaRadar();
-        if (!mapa || !radarMarkersLayer) return;
-        let lat = alvo.lat, lon = alvo.lon;
-        if (!lat || !lon) {
-            try {
-                const q = encodeURIComponent(`${alvo.endereco || alvo.nome}, ${alvo.cidade || 'São Paulo'}, SP, Brazil`);
-                const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
-                if (r.ok) {
-                    const arr = await r.json();
-                    if (arr[0]) {
-                        lat = parseFloat(arr[0].lat);
-                        lon = parseFloat(arr[0].lon);
-                        alvo.lat = lat;
-                        alvo.lon = lon;
-                    }
-                }
-            } catch (_) {}
-        }
-        if (lat && lon) {
-            const ehAmarelo = String(alvo.nivel || '').toUpperCase() === 'AMARELO';
-            const corPin = ehAmarelo ? '#f59e0b' : '#ef4444';
-            const marker = L.circleMarker([lat, lon], {
-                radius: 8, fillColor: corPin, color: '#ffffff', weight: 2, fillOpacity: 0.92
-            }).addTo(radarMarkersLayer);
-            marker.bindPopup(`<strong>${escaparHtmlWA(alvo.nome)}</strong><br><small>${escaparHtmlWA(alvo.endereco || '')}</small><br><span style="color:${corPin};">${escaparHtmlWA((alvo.perigo || '').slice(0, 140))}</span>`);
-            mapa.setView([lat, lon], 13);
-        }
+    function atualizarKpisRadar() {
+        const total = radarAlvosEncontrados.length;
+        const reds = radarAlvosEncontrados.filter(a => normalizarNivelRadar(a.nivel) === 'VERMELHO').length;
+        const yellows = radarAlvosEncontrados.filter(a => normalizarNivelRadar(a.nivel) === 'AMARELO').length;
+        const greens = radarAlvosEncontrados.filter(a => normalizarNivelRadar(a.nivel) === 'VERDE').length;
+        const saved = radarAlvosEncontrados.filter(a => a.salvo_dossie).length;
+
+        const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = String(v); };
+        setTxt('radar-kpi-total', total);
+        setTxt('radar-kpi-red', reds);
+        setTxt('radar-kpi-yellow', yellows);
+        setTxt('radar-kpi-green', greens);
+        setTxt('radar-kpi-saved', saved);
+        setTxt('radar-kpi-waves', radarOndaAtual);
     }
 
-    function renderizarHtmlCardAlvo(idx) {
-        const alvo = radarAlvosEncontrados[idx];
-        if (!alvo) return '';
-        const ehAmarelo = String(alvo.nivel || '').toUpperCase() === 'AMARELO';
-        const color = ehAmarelo ? 'var(--warning)' : 'var(--danger)';
+    window.definirFiltroRadar = (flt) => {
+        radarFiltroNivel = flt;
+        ['todos', 'VERMELHO', 'AMARELO', 'VERDE', 'SALVOS'].forEach(k => {
+            document.getElementById('radar-flt-' + k)?.classList.toggle('active', k === flt);
+        });
+        renderizarHistoricoRadar();
+    };
+
+    function renderizarHtmlCardAlvo(alvo) {
+        const id = alvo._id;
+        const nivel = normalizarNivelRadar(alvo.nivel);
+        const color = nivel === 'VERMELHO' ? 'var(--danger)' : (nivel === 'VERDE' ? 'var(--success)' : 'var(--warning)');
+        const txtCor = nivel === 'VERMELHO' ? '#fecaca' : (nivel === 'VERDE' ? '#a7f3d0' : '#fde68a');
+        const badgeLabel = nivel === 'VERMELHO' ? '🔴 GRAVE' : (nivel === 'VERDE' ? '🟢 DE BOA' : '🟡 ATENÇÃO');
 
         const buscaFotosReclameUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent('"' + alvo.nome + '" ' + (alvo.cidade || '') + ' sujeira OR barata OR reclamação OR irregularidade OR denúncia')}`;
         const buscaFotosLocalUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent('"' + alvo.nome + '" ' + (alvo.cidade || '') + ' fachada OR fotos')}`;
@@ -4417,14 +5005,20 @@
               ).join('')}</div>`
             : '';
 
-        const cnpjLimpo = String(alvo.cnpj || '').replace(/\D/g, '');
-        const cnpjChip = cnpjLimpo.length === 14
-            ? `<span class="target-meta-chip cnpj-ok"><i class="fas fa-id-card"></i> CNPJ: ${formatarCNPJDisplayRadar(cnpjLimpo)}</span>`
-            : `<span class="target-meta-chip cnpj-warn"><i class="fas fa-id-card"></i> CNPJ: pendente (auto-consulta ao salvar ou clique em Buscar CNPJ)</span>`;
+        const cnpjFmt = formatarCNPJDisplayRadar(alvo.cnpj);
+        const cnpjChip = cnpjFmt
+            ? `<span class="target-meta-chip cnpj-ok"><i class="fas fa-id-card"></i> CNPJ: ${cnpjFmt}</span>`
+            : `<span class="target-meta-chip cnpj-warn"><i class="fas fa-id-card"></i> CNPJ: auto-consulta ao salvar</span>`;
 
-        const telChip = alvo.telefone ? `<span class="target-meta-chip"><i class="fas fa-phone" style="color:#10b981;"></i> ${escaparHtmlWA(alvo.telefone)}</span>` : '';
-        const notaChip = alvo.nota_google ? `<span class="target-meta-chip"><i class="fas fa-star" style="color:#fbbf24;"></i> ${escaparHtmlWA(alvo.nota_google)}</span>` : '';
-        const catChip = alvo.categoria ? `<span class="target-meta-chip"><i class="fas fa-tag" style="color:#38bdf8;"></i> ${escaparHtmlWA(alvo.categoria)}</span>` : '';
+        const telLimpo = limparValorVazioIA(alvo.telefone);
+        const notaLimpa = limparValorVazioIA(alvo.nota_google);
+        const catLimpa = limparValorVazioIA(alvo.categoria);
+
+        const telChip = telLimpo ? `<span class="target-meta-chip"><i class="fas fa-phone" style="color:#10b981;"></i> ${escaparHtmlWA(telLimpo)}</span>` : '';
+        const notaChip = notaLimpa ? `<span class="target-meta-chip"><i class="fas fa-star" style="color:#fbbf24;"></i> ${escaparHtmlWA(notaLimpa)}</span>` : '';
+        const catChip = catLimpa ? `<span class="target-meta-chip"><i class="fas fa-tag" style="color:#38bdf8;"></i> ${escaparHtmlWA(catLimpa)}</span>` : '';
+        const horaChip = alvo.captado_em ? `<span class="target-meta-chip" style="color:#94a3b8;"><i class="fas fa-clock"></i> ${escaparHtmlWA(alvo.captado_em)}</span>` : '';
+        const salvoChip = alvo.salvo_dossie ? `<span class="target-meta-chip cnpj-ok"><i class="fas fa-check-double"></i> Salvo no Dossiê</span>` : '';
 
         let receitaHtml = '';
         if (alvo.receita) {
@@ -4439,76 +5033,207 @@
                 </div>`;
         }
 
+        const labelRelato = nivel === 'VERDE' ? 'SITUAÇÃO / OPORTUNIDADE PREVENTIVA' : 'FATOS / RECLAMAÇÃO REAL';
+
         return `
             <h4 style="color:white; flex-wrap:wrap;">
                 <i class="fas fa-crosshairs" style="color:${color}"></i>
                 <span>${escaparHtmlWA(alvo.nome)}</span>
-                <span style="background:${color}; color:#000; padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-left:auto;">${escaparHtmlWA(alvo.nivel || 'VERMELHO')}</span>
+                <span style="background:${color}; color:${nivel === 'AMARELO' ? '#000' : '#fff'}; padding:3px 9px; border-radius:5px; font-size:0.7rem; margin-left:auto; font-weight:900;">${badgeLabel}</span>
             </h4>
             <span class="loc"><i class="fas fa-map-marker-alt" style="color:var(--primary);"></i> ${escaparHtmlWA(alvo.endereco || alvo.cidade || '')}</span>
-            <div class="target-meta-grid">${cnpjChip}${telChip}${notaChip}${catChip}</div>
-            <div class="reason" style="color: ${ehAmarelo ? '#fde68a' : '#fecaca'};">
-                <strong>FATOS / RECLAMAÇÃO REAL (${escaparHtmlWA(alvo.fonte || 'Web')}):</strong> ${escaparHtmlWA(alvo.perigo || '')}
-                ${alvo.infracao_possivel ? `<div style="margin-top:6px; font-size:0.8rem; color:#93c5fd;"><strong><i class="fas fa-gavel"></i> Possível Enquadramento:</strong> ${escaparHtmlWA(alvo.infracao_possivel)}</div>` : ''}
+            <div class="target-meta-grid">${cnpjChip}${telChip}${notaChip}${catChip}${horaChip}${salvoChip}</div>
+            <div class="reason" style="color: ${txtCor};">
+                <strong>${labelRelato} (${escaparHtmlWA(alvo.fonte || 'Web')}):</strong> ${escaparHtmlWA(alvo.perigo || '')}
+                ${limparValorVazioIA(alvo.infracao_possivel) ? `<div style="margin-top:6px; font-size:0.8rem; color:#93c5fd;"><strong><i class="fas fa-gavel"></i> Base / Ação:</strong> ${escaparHtmlWA(alvo.infracao_possivel)}</div>` : ''}
             </div>
             ${receitaHtml}
             ${fotosHtml}
             ${provasHtml ? `<div class="target-proof-links">${provasHtml}</div>` : ''}
             <div class="target-card-actions">
-                <button type="button" class="target-act-btn act-cnpj" id="btn-radar-cnpj-${idx}" onclick="enriquecerAlvoRadar(${idx}, false)"><i class="fas fa-search-dollar"></i> Buscar CNPJ + Receita</button>
-                <button type="button" class="target-act-btn" id="btn-radar-save-${idx}" onclick="salvarAlvoRadarNoFirebase(${idx})"><i class="fas fa-database"></i> Salvar Dossiê Completo</button>
-                <button type="button" class="target-act-btn act-wa" onclick="abordarAlvoRadarZap(${idx})"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-                <button type="button" class="target-act-btn act-pdf" onclick="enviarAlvoRadarParaDocGen(${idx})"><i class="fas fa-file-pdf"></i> Gerar PDF</button>
-                <button type="button" class="target-act-btn act-photo" onclick="anexarFotoAlvoRadar(${idx})"><i class="fas fa-upload"></i> Anexar Print/Foto</button>
-                <a class="target-act-btn" href="${buscaFotosReclameUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-camera"></i> Fotos Sujeira/Reclamação</a>
-                <a class="target-act-btn" href="${buscaFotosLocalUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-store"></i> Fotos Fachada</a>
+                <button type="button" class="target-act-btn act-cnpj" id="btn-radar-cnpj-${id}" onclick="enriquecerAlvoRadar('${id}', false)"><i class="fas fa-search-dollar"></i> CNPJ + Receita</button>
+                <button type="button" class="target-act-btn" id="btn-radar-save-${id}" onclick="salvarAlvoRadarNoFirebase('${id}')" style="${alvo.salvo_dossie ? 'border-color:#10b981; color:#6ee7b7;' : ''}"><i class="fas fa-database"></i> ${alvo.salvo_dossie ? 'Reenviar p/ Dossiê' : 'Levar p/ Dossiê'}</button>
+                <button type="button" class="target-act-btn act-wa" onclick="abordarAlvoRadarZap('${id}')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                <button type="button" class="target-act-btn act-pdf" onclick="enviarAlvoRadarParaDocGen('${id}')"><i class="fas fa-file-pdf"></i> PDF</button>
+                <button type="button" class="target-act-btn" onclick="focarAlvoNoMapaRadar('${id}')"><i class="fas fa-map-pin" style="color:#38bdf8;"></i> Mapa</button>
+                <button type="button" class="target-act-btn act-photo" onclick="anexarFotoAlvoRadar('${id}')"><i class="fas fa-upload"></i> Print/Foto</button>
+                <a class="target-act-btn" href="${buscaFotosReclameUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-camera"></i> Fotos Reclamação</a>
+                <a class="target-act-btn" href="${buscaFotosLocalUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-store"></i> Fachada</a>
                 <a class="target-act-btn" href="${buscaReclameUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Reclame Aqui</a>
-                <a class="target-act-btn" href="${buscaCnpjGoogleUrl}" target="_blank" rel="noopener noreferrer"><i class="fab fa-google"></i> CNPJ Google</a>
+                <a class="target-act-btn" href="${buscaCnpjGoogleUrl}" target="_blank" rel="noopener noreferrer"><i class="fab fa-google"></i> CNPJ</a>
+                <button type="button" class="target-act-btn act-del" onclick="removerAlvoHistoricoRadar('${id}')" title="Apagar este item do histórico"><i class="fas fa-trash"></i></button>
             </div>
         `;
     }
 
-    function atualizarCardAlvoNoDOM(idx) {
-        const el = document.getElementById(`radar-target-card-${idx}`);
-        if (el) el.innerHTML = renderizarHtmlCardAlvo(idx);
-    }
+    window.renderizarHistoricoRadar = () => {
+        const listEl = document.getElementById('radar-results-list');
+        if (!listEl) return;
+        atualizarKpisRadar();
 
-    function adicionarCardAlvoRadar(alvo, statusMsg, radarCircle) {
-        if (!Array.isArray(alvo.fotos)) alvo.fotos = [];
-        if (alvo.foto_url && /^https?:\/\//i.test(alvo.foto_url)) {
-            alvo.fotos.push({ nome: `Foto ${alvo.nome}`, url: alvo.foto_url });
+        const termo = (document.getElementById('radar-hist-search')?.value || '').toLowerCase().trim();
+        let filtrados = radarAlvosEncontrados;
+
+        if (radarFiltroNivel === 'SALVOS') {
+            filtrados = filtrados.filter(a => a.salvo_dossie);
+        } else if (radarFiltroNivel !== 'todos') {
+            filtrados = filtrados.filter(a => normalizarNivelRadar(a.nivel) === radarFiltroNivel);
         }
-        const idx = radarAlvosEncontrados.push(alvo) - 1;
-        const ehAmarelo = String(alvo.nivel || '').toUpperCase() === 'AMARELO';
-        const color = ehAmarelo ? 'var(--warning)' : 'var(--danger)';
-        const bgClass = ehAmarelo ? 'rgba(245, 158, 11, 0.06)' : 'rgba(239, 68, 68, 0.06)';
 
-        radarCircle.classList.add('danger-mode');
-        radarCircle.style.borderColor = color;
-        radarCircle.style.background = `radial-gradient(circle, ${bgClass} 0%, transparent 70%)`;
+        if (termo) {
+            filtrados = filtrados.filter(a =>
+                String(a.nome || '').toLowerCase().includes(termo) ||
+                String(a.endereco || '').toLowerCase().includes(termo) ||
+                String(a.cidade || '').toLowerCase().includes(termo) ||
+                String(a.cnpj || '').toLowerCase().includes(termo) ||
+                String(a.perigo || '').toLowerCase().includes(termo)
+            );
+        }
 
-        const blip = document.createElement('div');
-        blip.className = 'radar-blip';
-        blip.style.background = color;
-        blip.style.boxShadow = `0 0 15px ${color}`;
-        blip.style.top = `${Math.floor(Math.random() * 60) + 20}%`;
-        blip.style.left = `${Math.floor(Math.random() * 60) + 20}%`;
-        radarCircle.appendChild(blip);
+        if (filtrados.length === 0) {
+            listEl.innerHTML = `
+                <div class="osint-idle-msg">
+                    <i class="fas fa-satellite" style="font-size: 2.5rem; color:#38bdf8;"></i>
+                    <span>${radarAlvosEncontrados.length === 0
+                        ? 'Escolha Cidade, Bairro (ex: Inamar, Serraria, Jabaquara) ou CEP e clique em <strong>Iniciar Varredura Contínua</strong>. Todos os alvos ficam salvos aqui no histórico.'
+                        : 'Nenhum alvo encontrado neste filtro do histórico.'}</span>
+                </div>`;
+            return;
+        }
 
-        const divTarget = document.createElement('div');
-        divTarget.id = `radar-target-card-${idx}`;
-        divTarget.className = 'target-card-hud';
-        divTarget.style.borderColor = color;
-        divTarget.style.borderLeftColor = color;
-        divTarget.style.background = bgClass;
-        divTarget.innerHTML = renderizarHtmlCardAlvo(idx);
-        statusMsg.insertAdjacentElement('afterend', divTarget);
+        listEl.innerHTML = filtrados.map(alvo => {
+            const nv = normalizarNivelRadar(alvo.nivel);
+            const lvlClass = nv === 'VERMELHO' ? 'level-vermelho' : (nv === 'VERDE' ? 'level-verde' : 'level-amarelo');
+            return `<div id="radar-target-card-${alvo._id}" class="target-card-hud ${lvlClass} ${alvo.salvo_dossie ? 'is-saved' : ''}">${renderizarHtmlCardAlvo(alvo)}</div>`;
+        }).join('');
+    };
 
-        geocodificarEPlotarAlvoNoMapa(alvo);
+    function atualizarCardAlvoNoDOM(id) {
+        const alvo = radarAlvosEncontrados.find(a => a._id === id);
+        const el = document.getElementById(`radar-target-card-${id}`);
+        if (alvo && el) {
+            el.innerHTML = renderizarHtmlCardAlvo(alvo);
+            el.classList.toggle('is-saved', !!alvo.salvo_dossie);
+        }
+        atualizarKpisRadar();
     }
 
-    window.anexarFotoAlvoRadar = (idx) => {
-        const alvo = radarAlvosEncontrados[idx];
+    function adicionarAlvoNoHistoricoRadar(rawAlvo, radarCircle) {
+        const nomeLimpo = limparValorVazioIA(rawAlvo.nome);
+        if (!nomeLimpo) return false;
+
+        // Evita duplicata no histórico
+        const jaExiste = radarAlvosEncontrados.some(a =>
+            String(a.nome || '').toLowerCase() === nomeLimpo.toLowerCase() &&
+            String(a.cidade || '').toLowerCase() === String(rawAlvo.cidade || '').toLowerCase()
+        );
+        if (jaExiste) return false;
+
+        const nivel = normalizarNivelRadar(rawAlvo.nivel);
+        const fotos = Array.isArray(rawAlvo.fotos) ? [...rawAlvo.fotos] : [];
+        const fotoUrl = limparValorVazioIA(rawAlvo.foto_url);
+        if (fotoUrl && /^https?:\/\//i.test(fotoUrl)) {
+            fotos.push({ nome: `Foto ${nomeLimpo}`, url: fotoUrl });
+        }
+
+        const alvo = {
+            _id: 'rad_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6),
+            nome: nomeLimpo,
+            categoria: limparValorVazioIA(rawAlvo.categoria),
+            cnpj: formatarCNPJDisplayRadar(rawAlvo.cnpj),
+            endereco: limparValorVazioIA(rawAlvo.endereco) || rawAlvo.cidade || '',
+            bairro: limparValorVazioIA(rawAlvo.bairro),
+            cidade: rawAlvo.cidade || radarTargetCity || 'São Paulo',
+            telefone: limparValorVazioIA(rawAlvo.telefone),
+            nota_google: limparValorVazioIA(rawAlvo.nota_google),
+            fonte: limparValorVazioIA(rawAlvo.fonte) || 'Web',
+            nivel,
+            perigo: limparValorVazioIA(rawAlvo.perigo) || (nivel === 'VERDE' ? 'Estabelecimento sem reclamações graves recentes — oportunidade de regularização preventiva.' : 'Reclamação pública identificada.'),
+            infracao_possivel: limparValorVazioIA(rawAlvo.infracao_possivel),
+            ramo: rawAlvo.ramo || '',
+            provas: Array.isArray(rawAlvo.provas) ? rawAlvo.provas : [],
+            fotos,
+            lat: rawAlvo.lat || null,
+            lon: rawAlvo.lon || null,
+            receita: rawAlvo.receita || null,
+            salvo_dossie: false,
+            captado_em: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+        };
+
+        radarAlvosEncontrados.unshift(alvo);
+        salvarHistoricoRadarStorage();
+
+        if (radarCircle) {
+            const color = nivel === 'VERMELHO' ? 'var(--danger)' : (nivel === 'VERDE' ? 'var(--success)' : 'var(--warning)');
+            const bgClass = nivel === 'VERMELHO' ? 'rgba(239, 68, 68, 0.08)' : (nivel === 'VERDE' ? 'rgba(16, 185, 129, 0.08)' : 'rgba(245, 158, 11, 0.08)');
+            radarCircle.classList.toggle('danger-mode', nivel === 'VERMELHO');
+            radarCircle.style.borderColor = color;
+            radarCircle.style.background = `radial-gradient(circle, ${bgClass} 0%, transparent 70%)`;
+
+            const blip = document.createElement('div');
+            blip.className = 'radar-blip';
+            blip.style.background = color;
+            blip.style.boxShadow = `0 0 15px ${color}`;
+            blip.style.top = `${Math.floor(Math.random() * 60) + 20}%`;
+            blip.style.left = `${Math.floor(Math.random() * 60) + 20}%`;
+            radarCircle.appendChild(blip);
+            setTimeout(() => blip.remove(), 8000);
+        }
+
+        if (nivel === 'VERMELHO') tocarBipRadar(true);
+        renderizarHistoricoRadar();
+        geocodificarEPlotarAlvoNoMapa(alvo, false);
+        return true;
+    }
+
+    window.removerAlvoHistoricoRadar = (id) => {
+        radarAlvosEncontrados = radarAlvosEncontrados.filter(a => a._id !== id);
+        salvarHistoricoRadarStorage();
+        replottarTodosPinsRadar();
+        renderizarHistoricoRadar();
+    };
+
+    window.limparTodoHistoricoRadar = () => {
+        if (radarAlvosEncontrados.length === 0) return;
+        if (!confirm(`Apagar todos os ${radarAlvosEncontrados.length} alvos do histórico do Radar? (Os que já foram levados pro Dossiê continuam salvos no Firebase).`)) return;
+        radarAlvosEncontrados = [];
+        radarOndaAtual = 0;
+        salvarHistoricoRadarStorage();
+        replottarTodosPinsRadar();
+        renderizarHistoricoRadar();
+        showToast('Histórico Limpo', 'Todos os registros do Radar foram removidos.', 'success');
+    };
+
+    window.exportarHistoricoRadarCSV = () => {
+        if (radarAlvosEncontrados.length === 0) {
+            return showToast('Histórico Vazio', 'Faça uma varredura antes de exportar os leads.', 'warning');
+        }
+        let csv = 'Nivel,Nome,Categoria,CNPJ,Telefone,Endereco,Cidade,Fonte,Relato,Salvo_Dossie\n';
+        radarAlvosEncontrados.forEach(a => {
+            const esc = (s) => '"' + String(s || '').replace(/"/g, '""').replace(/\n/g, ' ') + '"';
+            csv += [
+                esc(normalizarNivelRadar(a.nivel)),
+                esc(a.nome),
+                esc(a.categoria),
+                esc(a.cnpj),
+                esc(a.telefone),
+                esc(a.endereco),
+                esc(a.cidade),
+                esc(a.fonte),
+                esc(a.perigo),
+                esc(a.salvo_dossie ? 'SIM' : 'NAO')
+            ].join(',') + '\n';
+        });
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Radar_OSINT_Leads_${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+        showToast('CSV Exportado!', `${radarAlvosEncontrados.length} lead(s) baixados para Excel.`, 'success');
+    };
+
+    window.anexarFotoAlvoRadar = (id) => {
+        const alvo = radarAlvosEncontrados.find(a => a._id === id);
         if (!alvo) return;
         const inp = document.createElement('input');
         inp.type = 'file';
@@ -4540,47 +5265,47 @@
                     alvo.fotos.push({ nome: file.name, url: dataUrl });
                 } catch (_) {}
             }
-            atualizarCardAlvoNoDOM(idx);
-            showToast('Foto Anexada', `${files.length} imagem(ns) adicionada(s) ao alvo para salvar no dossiê.`, 'success');
+            salvarHistoricoRadarStorage();
+            atualizarCardAlvoNoDOM(id);
+            showToast('Foto Anexada', `${files.length} imagem(ns) adicionada(s) ao alvo.`, 'success');
         };
         inp.click();
     };
 
-    window.enriquecerAlvoRadar = async (idx, silencioso = false) => {
-        const alvo = radarAlvosEncontrados[idx];
+    window.enriquecerAlvoRadar = async (id, silencioso = false) => {
+        const alvo = radarAlvosEncontrados.find(a => a._id === id);
         if (!alvo) return;
-        const btn = document.getElementById(`btn-radar-cnpj-${idx}`);
+        const btn = document.getElementById(`btn-radar-cnpj-${id}`);
         const orig = btn ? btn.innerHTML : '';
-        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Consultando...'; }
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...'; }
 
         try {
             let cnpjDigits = String(alvo.cnpj || '').replace(/\D/g, '');
             if (cnpjDigits.length !== 14) {
                 const promptCnpj = `Pesquise no Google o CNPJ, telefone, WhatsApp, endereço completo, razão social, Instagram/site e URL de foto pública do estabelecimento "${alvo.nome}" localizado em "${alvo.cidade || 'São Paulo'} - SP" (${alvo.endereco || ''}).
-Retorne APENAS um JSON puro:
+Retorne APENAS um JSON puro (deixe string vazia "" se não encontrar, NUNCA escreva "vazio"):
 {
-  "cnpj": "somente os 14 digitos ou vazio se nao achar",
-  "razao_social": "Razão social se achar ou vazio",
-  "endereco": "Endereço completo com número e bairro se achar",
-  "bairro": "Bairro se achar",
-  "telefone": "Telefone ou WhatsApp se achar",
-  "instagram_site": "Instagram ou site se achar ou vazio",
-  "foto_url": "URL direta de imagem pública do local/fachada/reclamação se achar ou vazio"
+  "cnpj": "",
+  "razao_social": "",
+  "endereco": "",
+  "bairro": "",
+  "telefone": "",
+  "instagram_site": "",
+  "foto_url": ""
 }`;
                 const { texto, fontes } = await chamarGeminiComBuscaWeb(promptCnpj);
                 const match = texto.match(/\{[\s\S]*\}/);
                 if (match) {
                     const info = JSON.parse(match[0]);
-                    if (info.cnpj) cnpjDigits = String(info.cnpj).replace(/\D/g, '');
-                    if (info.endereco && (!alvo.endereco || info.endereco.length > alvo.endereco.length)) alvo.endereco = info.endereco;
-                    if (info.bairro && !alvo.bairro) alvo.bairro = info.bairro;
-                    if (info.telefone && !alvo.telefone) alvo.telefone = info.telefone;
-                    if (info.razao_social) alvo.razao_social = info.razao_social;
-                    if (info.instagram_site) alvo.instagram_site = info.instagram_site;
-                    if (info.foto_url && /^https?:\/\//i.test(info.foto_url)) {
-                        if (!alvo.fotos.some(f => f.url === info.foto_url)) {
-                            alvo.fotos.push({ nome: `Foto ${alvo.nome}`, url: info.foto_url });
-                        }
+                    if (limparValorVazioIA(info.cnpj)) cnpjDigits = String(info.cnpj).replace(/\D/g, '');
+                    if (limparValorVazioIA(info.endereco) && (!alvo.endereco || info.endereco.length > alvo.endereco.length)) alvo.endereco = info.endereco;
+                    if (limparValorVazioIA(info.bairro) && !alvo.bairro) alvo.bairro = info.bairro;
+                    if (limparValorVazioIA(info.telefone) && !alvo.telefone) alvo.telefone = info.telefone;
+                    if (limparValorVazioIA(info.razao_social)) alvo.razao_social = info.razao_social;
+                    if (limparValorVazioIA(info.instagram_site)) alvo.instagram_site = info.instagram_site;
+                    const fUrl = limparValorVazioIA(info.foto_url);
+                    if (fUrl && /^https?:\/\//i.test(fUrl) && !alvo.fotos.some(f => f.url === fUrl)) {
+                        alvo.fotos.push({ nome: `Foto ${alvo.nome}`, url: fUrl });
                     }
                 }
                 if (fontes && fontes.length > 0) {
@@ -4618,9 +5343,10 @@ Retorne APENAS um JSON puro:
                 } catch (_) {}
                 if (!silencioso) showToast('CNPJ + Receita Encontrados!', `${alvo.cnpj} consultado com sucesso.`, 'success');
             } else if (!silencioso) {
-                showToast('CNPJ não localizado automaticamente', 'Use o botão "CNPJ Google" no card para consulta manual.', 'warning');
+                showToast('CNPJ não localizado automaticamente', 'Clique no botão "CNPJ" para pesquisar no Google.', 'warning');
             }
-            atualizarCardAlvoNoDOM(idx);
+            salvarHistoricoRadarStorage();
+            atualizarCardAlvoNoDOM(id);
         } catch (err) {
             if (!silencioso) showToast('Erro na Consulta', err.message, 'error');
         } finally {
@@ -4628,19 +5354,22 @@ Retorne APENAS um JSON puro:
         }
     };
 
-    window.abordarAlvoRadarZap = (idx) => {
-        const alvo = radarAlvosEncontrados[idx];
+    window.abordarAlvoRadarZap = (id) => {
+        const alvo = radarAlvosEncontrados.find(a => a._id === id);
         if (!alvo) return;
         const fone = normalizarNumeroInput(alvo.telefone || '');
-        const msg = `Olá, tudo bem? Falo da consultoria de regularização sanitária.\n\nNotamos apontamentos públicos recentes relacionados a *${alvo.nome}* e queremos ajudar vocês a blindar o estabelecimento com toda a documentação sanitária em dia (Alvará/Licença COVISA) para evitar autuações e multas.\n\nPodemos conversar rapidamente?`;
+        const nv = normalizarNivelRadar(alvo.nivel);
+        const msg = nv === 'VERDE'
+            ? `Olá, tudo bem? Falo da consultoria de regularização sanitária.\n\nVi que *${alvo.nome}* tem um ótimo trabalho na região e entrei em contato para oferecer nosso suporte na emissão/renovação do Alvará Sanitário (COVISA/ANVISA) e documentação preventiva para manter tudo 100% em dia.\n\nPodemos conversar rapidamente?`
+            : `Olá, tudo bem? Falo da consultoria de regularização sanitária.\n\nNotamos apontamentos públicos recentes relacionados a *${alvo.nome}* e queremos ajudar vocês a blindar o estabelecimento com toda a documentação sanitária em dia (Alvará/Licença COVISA) para evitar autuações e multas.\n\nPodemos conversar rapidamente?`;
         const url = fone.length >= 12
             ? `https://api.whatsapp.com/send?phone=${fone}&text=${encodeURIComponent(msg)}`
             : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
         window.open(url, '_blank');
     };
 
-    window.enviarAlvoRadarParaDocGen = (idx) => {
-        const alvo = radarAlvosEncontrados[idx];
+    window.enviarAlvoRadarParaDocGen = (id) => {
+        const alvo = radarAlvosEncontrados.find(a => a._id === id);
         if (!alvo) return;
         const navDoc = document.getElementById('nav-item-docgen');
         switchView('view-docgen', navDoc);
@@ -4649,24 +5378,24 @@ Retorne APENAS um JSON puro:
         if (document.getElementById('docgen-rua')) document.getElementById('docgen-rua').value = alvo.receita?.endereco_oficial || alvo.endereco || '';
         if (document.getElementById('docgen-cidade')) document.getElementById('docgen-cidade').value = `${alvo.cidade || 'São Paulo'} - SP`;
         if (document.getElementById('docgen-ramo')) document.getElementById('docgen-ramo').value = alvo.receita?.cnae || alvo.categoria || alvo.ramo || 'Alimentos';
-        if (document.getElementById('docgen-corpo')) document.getElementById('docgen-corpo').value = `Apontamento identificado via monitoramento público (${alvo.fonte || 'Web'}): ${alvo.perigo || ''}`;
+        if (document.getElementById('docgen-corpo')) document.getElementById('docgen-corpo').value = `Registro via Radar OSINT 360° (${alvo.fonte || 'Web'}): ${alvo.perigo || ''}`;
         showToast('Dados Importados', `${alvo.nome} enviado para o Gerador de Documentos.`, 'success');
     };
 
-    window.salvarAlvoRadarNoFirebase = async (idx) => {
-        const alvo = radarAlvosEncontrados[idx];
+    window.salvarAlvoRadarNoFirebase = async (id) => {
+        const alvo = radarAlvosEncontrados.find(a => a._id === id);
         if (!alvo) return;
-        const btn = document.getElementById(`btn-radar-save-${idx}`);
+        const btn = document.getElementById(`btn-radar-save-${id}`);
         const orig = btn ? btn.innerHTML : '';
         if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando CNPJ e Salvando...'; }
 
         try {
-            // Consulta CNPJ no Google + Receita Federal automaticamente antes de salvar o Dossiê
             if (!alvo.receita) {
-                await enriquecerAlvoRadar(idx, true);
+                await enriquecerAlvoRadar(id, true);
             }
 
             const rc = alvo.receita || {};
+            const nv = normalizarNivelRadar(alvo.nivel);
             const nomeFinal = rc.razao_social && rc.razao_social.toLowerCase() !== String(alvo.nome || '').toLowerCase()
                 ? `${alvo.nome} (${rc.razao_social})`
                 : alvo.nome;
@@ -4675,10 +5404,10 @@ Retorne APENAS um JSON puro:
             const linksProvas = (alvo.provas || []).map(p => `- ${p.title || 'Link'}: ${p.uri}`).join('\n');
 
             const dossieTexto = [
-                `[RADAR OSINT 360° - ${alvo.fonte || 'Web'}]`,
-                `Categoria: ${alvo.categoria || alvo.ramo || 'Geral'} | Nível: ${alvo.nivel || 'VERMELHO'}${alvo.nota_google ? ' | Nota Google: ' + alvo.nota_google : ''}`,
-                `Relato Real da Reclamação: ${alvo.perigo || ''}`,
-                alvo.infracao_possivel ? `Enquadramento Sugerido: ${alvo.infracao_possivel}` : '',
+                `[RADAR OSINT 360° PRO - ${alvo.fonte || 'Web'}]`,
+                `Nível: ${nv} | Categoria: ${alvo.categoria || alvo.ramo || 'Geral'}${alvo.nota_google ? ' | Nota Google: ' + alvo.nota_google : ''}`,
+                `Relato / Situação: ${alvo.perigo || ''}`,
+                alvo.infracao_possivel ? `Base / Enquadramento: ${alvo.infracao_possivel}` : '',
                 `Endereço: ${rc.endereco_oficial || alvo.endereco || alvo.cidade || ''}`,
                 `Telefone / WhatsApp: ${alvo.telefone || rc.telefone_receita || 'Não informado'}`,
                 alvo.instagram_site ? `Instagram / Site: ${alvo.instagram_site}` : '',
@@ -4686,7 +5415,7 @@ Retorne APENAS um JSON puro:
                 rc.cnae ? `CNAE Principal: ${rc.cnae}` : '',
                 rc.data_abertura ? `Data de Abertura: ${rc.data_abertura}` : '',
                 rc.socios ? `Quadro de Sócios: ${rc.socios}` : '',
-                `Fotos de Reclamação / Sujeira (Google Imagens): ${buscaFotosReclame}`,
+                `Fotos (Google Imagens): ${buscaFotosReclame}`,
                 linksProvas ? `Links de Provas:\n${linksProvas}` : ''
             ].filter(Boolean).join('\n');
 
@@ -4698,18 +5427,22 @@ Retorne APENAS um JSON puro:
                 telefone: alvo.telefone || rc.telefone_receita || "",
                 bairro: alvo.bairro || rc.bairro || "",
                 cidadeUF: `${alvo.cidade || 'São Paulo'} - SP`,
-                tipo: "🚨 DENÚNCIA",
+                tipo: nv === 'VERDE' ? (alvo.categoria || "Alimentos") : "🚨 DENÚNCIA",
                 data: new Date().toLocaleString('pt-BR'),
                 docs: dossieTexto,
-                notas: `Captado pelo Radar OSINT 360° em ${alvo.cidade || 'SP'}. ${alvo.infracao_possivel || ''} | Tel: ${alvo.telefone || 'N/D'}`,
+                notas: `Captado pelo Radar OSINT 360° PRO (${nv}) em ${alvo.cidade || 'SP'}. ${alvo.infracao_possivel || ''} | Tel: ${alvo.telefone || 'N/D'}`,
                 evidencias: evidenciasSalvar,
                 total_evidencias: evidenciasSalvar.length,
                 pago: false,
                 valor: ""
             });
 
-            showToast('Dossiê Completo Salvo!', `${alvo.nome} salvo na Malha Fina com CNPJ, Receita e ${evidenciasSalvar.length} foto(s).`, 'success');
-            registrarLog('Radar OSINT', `Dossiê completo salvo: ${nomeFinal} (${cnpjFinal})`);
+            alvo.salvo_dossie = true;
+            salvarHistoricoRadarStorage();
+            atualizarCardAlvoNoDOM(id);
+
+            showToast('Dossiê Completo Salvo!', `${alvo.nome} levado para a Malha Fina com CNPJ, Receita e ${evidenciasSalvar.length} foto(s).`, 'success');
+            registrarLog('Radar OSINT PRO', `Dossiê completo salvo: ${nomeFinal} (${cnpjFinal})`);
         } catch (e) {
             showToast('Erro ao Salvar', e.message, 'error');
         } finally {
@@ -4717,24 +5450,49 @@ Retorne APENAS um JSON puro:
         }
     };
 
+    function atualizarStatusLiveRadar(visivel, texto = '') {
+        const bar = document.getElementById('radar-live-status-bar');
+        const txt = document.getElementById('radar-live-status-text');
+        const badge = document.getElementById('radar-wave-status');
+        if (bar) bar.style.display = visivel ? 'flex' : 'none';
+        if (txt && texto) txt.innerText = texto;
+        if (badge) {
+            if (isRadarScanning) {
+                badge.classList.add('is-live');
+                badge.innerText = `● AO VIVO • Onda #${radarOndaAtual}`;
+            } else {
+                badge.classList.remove('is-live');
+                badge.innerText = radarOndaAtual > 0 ? `⏸ Pausado (Onda #${radarOndaAtual})` : '⏸ Em Espera';
+            }
+        }
+    }
+
+    const RADAR_ANGULOS_BUSCA = [
+        'avaliações negativas no Google Maps e Reclame Aqui sobre higiene, sujeira, atendimento ou produtos vencidos',
+        'autuações da Vigilância Sanitária (COVISA), Diário Oficial, Procon ou notícias locais de irregularidades',
+        'reclamações recentes no iFood, Google e redes sociais de pequenos comércios de bairro, clínicas e casas de repouso',
+        'estabelecimentos locais pequenos e médios (incluindo alguns regulares/bem avaliados para prospecção preventiva VERDE e outros com críticas AMARELO/VERMELHO)'
+    ];
+
     window.toggleRadarHUD = async () => {
         const btn = document.getElementById('btn-start-radar');
         const radarCircle = document.getElementById('radar-circle-ui');
         const radarSweep = document.getElementById('radar-sweep-ui');
-        const resultsList = document.getElementById('radar-results-list');
 
         if (isRadarScanning) {
             isRadarScanning = false;
-            btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura';
-            btn.style.borderColor = 'var(--danger)';
-            btn.style.color = 'var(--danger)';
+            btn.innerHTML = '<i class="fas fa-play"></i> Retomar Varredura Contínua';
+            btn.style.borderColor = 'var(--success)';
+            btn.style.color = 'var(--success)';
             radarSweep.style.display = 'none';
+            atualizarStatusLiveRadar(false);
+            showToast('Radar Pausado', 'Varredura pausada. Todo o histórico permanece salvo.', 'warning');
             return;
         }
 
         radarTargetCity = (document.getElementById('radar-cidade')?.value || '').trim();
         if (!radarTargetCity) {
-            showToast("Cidade Obrigatória", "Digite uma cidade ou região para iniciar a varredura.", "warning");
+            showToast("Local Obrigatório", "Digite uma cidade, bairro (ex: Inamar, Jabaquara) ou CEP.", "warning");
             return;
         }
 
@@ -4746,143 +5504,203 @@ Retorne APENAS um JSON puro:
 
         const queries = activeThreatsBtn.map(b => b.getAttribute('data-query')).join('; ');
         const cats = activeThreatsBtn.map(b => b.getAttribute('data-cat')).filter(Boolean);
+        const raioBase = parseInt(document.getElementById('radar-raio-osm')?.value || '3000', 10);
 
         garantirMapaRadar();
-        if (radarMarkersLayer) radarMarkersLayer.clearLayers();
+        centralizarMapaPorTexto(radarTargetCity);
 
         isRadarScanning = true;
-        btn.innerHTML = '<i class="fas fa-stop"></i> Parar Varredura';
+        btn.innerHTML = '<i class="fas fa-pause"></i> Pausar Varredura';
         btn.style.borderColor = 'var(--warning)';
         btn.style.color = 'var(--warning)';
-        radarCircle.classList.remove('danger-mode');
         radarSweep.style.display = 'block';
-
-        if (resultsList.innerHTML.includes('Iniciar Varredura') || resultsList.innerHTML.includes('Aguardando Trava')) {
-            resultsList.innerHTML = '';
-            document.querySelectorAll('.radar-blip').forEach(el => el.remove());
-        }
-
-        let statusMsg = document.getElementById('radar-status-msg');
-        if (!statusMsg) {
-            resultsList.insertAdjacentHTML('afterbegin', `<div id="radar-status-msg" class="osint-idle-msg" style="margin-bottom: 10px;"><i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary);"></i><span>Iniciando varredura em ${escaparHtmlWA(radarTargetCity)}...</span></div>`);
-            statusMsg = document.getElementById('radar-status-msg');
-        }
 
         try {
             if (radarModoAtual === 'web') {
-                statusMsg.innerHTML = `<i class="fas fa-globe fa-spin" style="font-size: 1.5rem; color: #38bdf8;"></i><span>Buscando reclamações reais (pequenos e médios locais, clínicas, casas de idosos e comércios) em ${escaparHtmlWA(radarTargetCity)}...</span>`;
+                // LOOP CONTÍNUO ATÉ O USUÁRIO PAUSAR
+                while (isRadarScanning) {
+                    radarOndaAtual++;
+                    atualizarKpisRadar();
+                    const angulo = RADAR_ANGULOS_BUSCA[(radarOndaAtual - 1) % RADAR_ANGULOS_BUSCA.length];
+                    atualizarStatusLiveRadar(true, `Onda #${radarOndaAtual} em ${radarTargetCity} — varrendo ${angulo.slice(0, 62)}...`);
 
-                const promptWeb = `Você é um investigador da Vigilância Sanitária (COVISA SP). Faça uma busca na web AGORA por estabelecimentos REAIS em ${radarTargetCity} - SP nos ramos: (${queries}) que tenham reclamações concretas no Google Avaliações, Reclame Aqui, iFood, notícias locais, Procon ou redes sociais.
+                    const jaEncontrados = radarAlvosEncontrados.slice(0, 40).map(a => a.nome).join(', ');
+                    const promptWeb = `Você é um investigador de campo da Vigilância Sanitária (COVISA SP). Faça uma busca na web AGORA por estabelecimentos REAIS em "${radarTargetCity} - SP" nos ramos: (${queries}), focando em: ${angulo}.
 
 REGRAS OBRIGATÓRIAS:
-1. NÃO traga apenas grandes redes nacionais (como McDonald's, Coop, Drogasil, Sodiê, Carrefour). PRIORIZE estabelecimentos locais, pequenos e médios de bairro (lanchonetes, padarias, mercados de bairro, clínicas médicas/odontológicas, casas de repouso/idosos, salões, pet shops, farmácias locais).
-2. NO CAMPO "perigo", É TERMINANTEMENTE PROIBIDO escrever frases genéricas como "possui reclamações em plataforma de defesa do consumidor" ou "histórico de manifestações". Você DEVE escrever o FATO REAL E CONCRETO relatado (ex: "Avaliação cita barata na cozinha e salgado azedo", "Denúncia de falta de higiene e negligência com idosos", "Reclamação de clínica suja e falta de higiene no banheiro").
-3. Pesquise também o CNPJ (se existir na web), endereço completo com bairro, telefone/WhatsApp, nota do Google e URL de foto pública se houver.
+1. NÃO repita nenhum destes locais já encontrados: [${jaEncontrados || 'nenhum'}].
+2. PRIORIZE estabelecimentos locais, pequenos e médios de bairro (lanchonetes, padarias, mercados, clínicas médicas, consultórios, casas de idosos, farmácias de bairro, salões, pet shops). Evite só grandes redes nacionais.
+3. CLASSIFIQUE CADA LOCAL EM 3 NÍVEIS REAIS:
+   - "VERMELHO": Caso GRAVE (sujeira, insetos/baratas, comida vencida/estragada, intoxicação, maus-tratos em casa de idosos, autuação/multa COVISA/ANVISA, clínica sem higiene).
+   - "AMARELO": Caso de ATENÇÃO (mau atendimento, atraso, erro de pedido, reclamações médias recorrentes, estrutura precária).
+   - "VERDE": Mais DE BOA / Preventivo (estabelecimento real da região sem reclamação grave aparente, bom potencial para consultoria/renovação preventiva de alvará).
+4. NO CAMPO "perigo", É PROIBIDO texto genérico ("possui reclamações em plataforma"). Descreva o FATO REAL encontrado (ou, se VERDE, descreva o perfil real do estabelecimento e boa reputação).
+5. Deixe string vazia "" nos campos não encontrados — NUNCA escreva a palavra "vazio" ou "não informado".
 
-Retorne APENAS um array JSON válido (sem texto antes ou depois) com até 10 estabelecimentos reais:
+Retorne APENAS um array JSON válido com 6 a 8 estabelecimentos reais:
 [
   {
     "nome": "Nome real do estabelecimento",
     "categoria": "Ex: Lanchonete / Clínica Médica / Casa de Idosos / Padaria / Farmácia",
-    "cnpj": "14 dígitos do CNPJ se encontrado ou vazio",
+    "cnpj": "",
     "endereco": "Rua, número e bairro em ${radarTargetCity} - SP",
-    "bairro": "Nome do bairro ou vazio",
-    "telefone": "Telefone/WhatsApp se encontrado ou vazio",
-    "nota_google": "Ex: 3.1/5 ou vazio",
-    "foto_url": "URL direta de imagem pública se encontrada ou vazio",
-    "fonte": "Google Avaliações, Reclame Aqui, Notícia G1/Local ou iFood",
-    "nivel": "VERMELHO" ou "AMARELO",
-    "perigo": "Descrição REAL, direta e específica da irregularidade/sujeira/reclamação encontrada (15 a 40 palavras).",
-    "infracao_possivel": "Ex: Art. 122, I / XIII da Lei 10.083/98 ou RDC 216 (higiene/validade/alvará)"
+    "bairro": "",
+    "telefone": "",
+    "nota_google": "",
+    "foto_url": "",
+    "fonte": "Google Avaliações / Reclame Aqui / Diário Oficial / Notícia",
+    "nivel": "VERMELHO" ou "AMARELO" ou "VERDE",
+    "perigo": "Fato real e objetivo encontrado (15 a 38 palavras).",
+    "infracao_possivel": "Art. 122 Lei 10.083/98, RDC 216 ou Regularização Preventiva"
   }
-]
-Use VERMELHO para sujeira, barata/inseto, comida estragada/vencida, intoxicação, maus-tratos a idosos, erro médico/higiene clínica ou interdição. Use AMARELO para mau atendimento, atraso, erro de pedido ou estrutura precária.`;
+]`;
 
-                const { texto, fontes } = await chamarGeminiComBuscaWeb(promptWeb);
-                const matchArr = texto.match(/\[[\s\S]*\]/);
-                if (!matchArr) throw new Error('Nenhuma reclamação detalhada retornada para este filtro. Tente clicar novamente ou marcar mais categorias.');
-
-                const lista = JSON.parse(matchArr[0]);
-                if (!Array.isArray(lista) || lista.length === 0) {
-                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.4rem; color: var(--success);"></i><span>Nenhum alvo com reclamação encontrado para este filtro.</span>`;
-                } else {
-                    for (const item of lista) {
-                        if (!isRadarScanning) break;
-                        adicionarCardAlvoRadar({
-                            ...item,
-                            cidade: radarTargetCity,
-                            ramo: queries,
-                            provas: fontes.slice(0, 3)
-                        }, statusMsg, radarCircle);
-                        await new Promise(r => setTimeout(r, 250));
-                    }
-                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.4rem; color: var(--success);"></i><span style="color:var(--success);">Varredura concluída: ${lista.length} estabelecimento(s) encontrado(s) em ${escaparHtmlWA(radarTargetCity)}.</span>`;
-                }
-            } else {
-                statusMsg.innerHTML = `<i class="fas fa-map-marked-alt fa-spin" style="font-size: 1.5rem; color: #10b981;"></i><span>Varrendo estabelecimentos pequenos e médios no OpenStreetMap em ${escaparHtmlWA(radarTargetCity)}...</span>`;
-                const locaisOSM = await buscarLocaisOpenStreetMap(radarTargetCity, cats);
-
-                if (locaisOSM.length === 0) {
-                    statusMsg.innerHTML = `<i class="fas fa-info-circle" style="font-size: 1.4rem; color: var(--warning);"></i><span>Nenhum local mapeado no OpenStreetMap para essa categoria em ${escaparHtmlWA(radarTargetCity)}. Use o modo Reclame Aqui + Google.</span>`;
-                } else {
-                    let achados = 0;
-                    const limite = Math.min(locaisOSM.length, 12);
-                    for (let i = 0; i < limite; i++) {
-                        if (!isRadarScanning) break;
-                        const loc = locaisOSM[i];
-                        statusMsg.innerHTML = `<i class="fas fa-satellite-dish fa-spin" style="font-size: 1.4rem; color: var(--warning);"></i><span>Checando reclamações reais e CNPJ (${i + 1}/${limite}): ${escaparHtmlWA(loc.nome)}...</span>`;
-
-                        try {
-                            const promptCheck = `Pesquise na web avaliações negativas no Google, Reclame Aqui, iFood ou notícias sobre "${loc.nome}" em "${radarTargetCity}, SP".
-Se NÃO houver nenhuma reclamação concreta encontrada, responda apenas: IGNORAR.
-Se houver reclamação, responda APENAS um JSON puro. É PROIBIDO texto genérico — descreva o problema REAL citado pelos clientes:
-{"nivel":"VERMELHO" ou "AMARELO","fonte":"Google / Reclame Aqui / Notícia","cnpj":"14 dígitos se achar ou vazio","nota_google":"ex: 3.4/5 ou vazio","foto_url":"URL direta de imagem pública se achar ou vazio","perigo":"Relato concreto e real da reclamação (15 a 35 palavras)","infracao_possivel":"Possível artigo Lei 10.083/98 ou RDC 216"}`;
-
-                            const { texto, fontes } = await chamarGeminiComBuscaWeb(promptCheck);
-                            if (texto && !texto.toUpperCase().includes('IGNORAR')) {
-                                const matchObj = texto.match(/\{[\s\S]*\}/);
-                                if (matchObj) {
-                                    const res = JSON.parse(matchObj[0]);
-                                    achados++;
-                                    adicionarCardAlvoRadar({
-                                        nome: loc.nome,
-                                        endereco: loc.endereco,
-                                        bairro: loc.bairro || '',
-                                        telefone: loc.telefone,
-                                        cnpj: res.cnpj || '',
-                                        nota_google: res.nota_google || '',
-                                        foto_url: res.foto_url || '',
-                                        lat: loc.lat,
-                                        lon: loc.lon,
+                    try {
+                        const { texto, fontes } = await chamarGeminiComBuscaWeb(promptWeb);
+                        const matchArr = texto.match(/\[[\s\S]*\]/);
+                        let novosNaOnda = 0;
+                        if (matchArr) {
+                            const lista = JSON.parse(matchArr[0]);
+                            if (Array.isArray(lista)) {
+                                for (const item of lista) {
+                                    if (!isRadarScanning) break;
+                                    const ok = adicionarAlvoNoHistoricoRadar({
+                                        ...item,
                                         cidade: radarTargetCity,
                                         ramo: queries,
-                                        nivel: res.nivel || 'AMARELO',
-                                        fonte: res.fonte || 'Web / OSM',
-                                        perigo: res.perigo || 'Reclamação pública identificada.',
-                                        infracao_possivel: res.infracao_possivel || '',
                                         provas: fontes.slice(0, 3)
-                                    }, statusMsg, radarCircle);
+                                    }, radarCircle);
+                                    if (ok) novosNaOnda++;
+                                    await new Promise(r => setTimeout(r, 250));
                                 }
                             }
-                            await new Promise(r => setTimeout(r, 850));
-                        } catch (errItem) {
-                            if (errItem.message.includes('Limite')) throw errItem;
+                        }
+                        if (!isRadarScanning) break;
+                        atualizarStatusLiveRadar(true, `Onda #${radarOndaAtual} concluída (+${novosNaOnda} novo(s)). Preparando Onda #${radarOndaAtual + 1} em 4s... (clique em Pausar quando quiser)`);
+                        await new Promise(r => setTimeout(r, 4000));
+                    } catch (errWave) {
+                        if (!isRadarScanning) break;
+                        if (errWave.message.includes('Limite')) {
+                            atualizarStatusLiveRadar(true, `Limite temporário da IA. Aguardando 15s para continuar a Onda #${radarOndaAtual + 1}...`);
+                            await new Promise(r => setTimeout(r, 15000));
+                        } else {
+                            atualizarStatusLiveRadar(true, `Aviso na Onda #${radarOndaAtual}: ${errWave.message}. Tentando próxima onda em 5s...`);
+                            await new Promise(r => setTimeout(r, 5000));
                         }
                     }
-                    statusMsg.innerHTML = `<i class="fas fa-check-circle" style="font-size: 1.4rem; color: var(--success);"></i><span style="color:var(--success);">Varredura Híbrida concluída: ${limite} locais checados no OSM, ${achados} com reclamação real.</span>`;
+                }
+            } else {
+                // MODO OSM + RECLAMAÇÕES (CORRIGIDO PARA BAIRROS, CIDADES E CEP + LOOP CONTÍNUO)
+                let raioAtual = raioBase;
+                while (isRadarScanning) {
+                    radarOndaAtual++;
+                    atualizarKpisRadar();
+                    atualizarStatusLiveRadar(true, `Onda #${radarOndaAtual} (OSM ${(raioAtual / 1000).toFixed(1)}km): mapeando estabelecimentos reais em ${radarTargetCity}...`);
+
+                    const locaisOSM = await buscarLocaisOpenStreetMap(radarTargetCity, cats, raioAtual);
+
+                    if (locaisOSM.length === 0) {
+                        if (raioAtual < 15000) {
+                            raioAtual = Math.min(raioAtual * 2, 15000);
+                            atualizarStatusLiveRadar(true, `Poucos locais no raio anterior. Expandindo mapa para ${(raioAtual / 1000).toFixed(1)}km...`);
+                            await new Promise(r => setTimeout(r, 2000));
+                            continue;
+                        } else {
+                            showToast('OSM Concluído', `Todos os locais mapeados no OSM em ${radarTargetCity} já foram varridos. Troque para Reclame Aqui + Google ou mude o bairro.`, 'warning');
+                            break;
+                        }
+                    }
+
+                    for (let i = 0; i < locaisOSM.length; i++) {
+                        if (!isRadarScanning) break;
+                        const loc = locaisOSM[i];
+                        atualizarStatusLiveRadar(true, `Onda #${radarOndaAtual} • Investigando (${i + 1}/${locaisOSM.length}): ${loc.nome}...`);
+
+                        try {
+                            const promptCheck = `Pesquise na web avaliações no Google, Reclame Aqui, iFood ou notícias sobre "${loc.nome}" em "${loc.endereco || radarTargetCity}, SP".
+Classifique em:
+- "VERMELHO": reclamação grave (sujeira, insetos, comida vencida, risco sanitário, autuação).
+- "AMARELO": reclamação média (atendimento ruim, atraso, erro de pedido, estrutura precária).
+- "VERDE": sem reclamação grave encontrada / boa avaliação (oportunidade de regularização preventiva).
+
+Responda APENAS um JSON puro (string vazia "" se não achar um campo, NUNCA escreva "vazio"):
+{"nivel":"VERMELHO" ou "AMARELO" ou "VERDE","fonte":"Google / Reclame Aqui / OpenStreetMap","cnpj":"","nota_google":"","foto_url":"","perigo":"Resumo real da avaliação/reclamação ou status do local (15 a 35 palavras)","infracao_possivel":"Art. 122 Lei 10.083/98, RDC 216 ou Regularização Preventiva"}`;
+
+                            const { texto, fontes } = await chamarGeminiComBuscaWeb(promptCheck);
+                            const matchObj = texto.match(/\{[\s\S]*\}/);
+                            if (matchObj) {
+                                const res = JSON.parse(matchObj[0]);
+                                adicionarAlvoNoHistoricoRadar({
+                                    nome: loc.nome,
+                                    categoria: loc.categoria,
+                                    endereco: loc.endereco,
+                                    bairro: loc.bairro || '',
+                                    telefone: loc.telefone,
+                                    cnpj: res.cnpj || '',
+                                    nota_google: res.nota_google || '',
+                                    foto_url: res.foto_url || '',
+                                    lat: loc.lat,
+                                    lon: loc.lon,
+                                    cidade: radarTargetCity,
+                                    ramo: queries,
+                                    nivel: res.nivel || 'VERDE',
+                                    fonte: res.fonte || 'OSM + Web',
+                                    perigo: res.perigo || 'Estabelecimento mapeado via OpenStreetMap.',
+                                    infracao_possivel: res.infracao_possivel || '',
+                                    provas: fontes.slice(0, 3)
+                                }, radarCircle);
+                            }
+                            await new Promise(r => setTimeout(r, 900));
+                        } catch (errItem) {
+                            if (errItem.message.includes('Limite')) {
+                                atualizarStatusLiveRadar(true, `Limite temporário da IA. Aguardando 15s...`);
+                                await new Promise(r => setTimeout(r, 15000));
+                            } else {
+                                // Mesmo se a IA falhar neste item, salva o local real do OSM como VERDE para não perder o lead!
+                                adicionarAlvoNoHistoricoRadar({
+                                    nome: loc.nome,
+                                    categoria: loc.categoria,
+                                    endereco: loc.endereco,
+                                    bairro: loc.bairro || '',
+                                    telefone: loc.telefone,
+                                    lat: loc.lat,
+                                    lon: loc.lon,
+                                    cidade: radarTargetCity,
+                                    ramo: queries,
+                                    nivel: 'VERDE',
+                                    fonte: 'OpenStreetMap',
+                                    perigo: 'Estabelecimento localizado no mapa para prospecção de regularização sanitária.',
+                                    infracao_possivel: 'Regularização Preventiva / Alvará'
+                                }, radarCircle);
+                            }
+                        }
+                    }
+                    if (!isRadarScanning) break;
+                    raioAtual = Math.min(raioAtual + 2500, 15000);
+                    atualizarStatusLiveRadar(true, `Lote OSM concluído. Expandindo varredura para ${(raioAtual / 1000).toFixed(1)}km em 3s...`);
+                    await new Promise(r => setTimeout(r, 3000));
                 }
             }
         } catch (error) {
-            console.error('Erro no Radar OSINT 360:', error);
-            statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size: 1.4rem; color: var(--danger);"></i><span style="color:var(--danger);">${escaparHtmlWA(error.message)}</span>`;
+            console.error('Erro no Radar OSINT 360 PRO:', error);
+            showToast('Erro no Radar', error.message, 'error');
         } finally {
             isRadarScanning = false;
-            btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura';
+            btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Iniciar Varredura Contínua';
             btn.style.borderColor = 'var(--danger)';
             btn.style.color = 'var(--danger)';
             radarSweep.style.display = 'none';
+            atualizarStatusLiveRadar(false);
         }
     };
+
+    // Inicializa histórico persistente e mapa ao carregar o painel
+    carregarHistoricoRadarStorage();
+    renderizarHistoricoRadar();
+    setTimeout(() => {
+        garantirMapaRadar();
+        replottarTodosPinsRadar();
+    }, 1400);
 
     function converterArquivoParaBase64(file) {
       return new Promise((resolve, reject) => {
